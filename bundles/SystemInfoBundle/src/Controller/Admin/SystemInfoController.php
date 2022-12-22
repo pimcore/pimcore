@@ -1,20 +1,6 @@
 <?php
-declare(strict_types=1);
 
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
- */
-
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\SystemInfoBundle\Controller\Admin;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
@@ -25,14 +11,43 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/install")
+ * @Route("/system-info")
  *
  * @internal
  */
-class InstallController extends AdminController
+
+class SystemInfoController extends AdminController
 {
+
     /**
-     * @Route("/check", name="pimcore_admin_install_check", methods={"GET", "POST"})
+     * @Route("/phpinfo", name="pimcore_admin_misc_phpinfo", methods={"GET"})
+     *
+     * @param Request $request
+     * @param Profiler|null $profiler
+     *
+     * @throws \Exception
+     *
+     * @return Response
+     */
+    public function phpinfoAction(Request $request, ?Profiler $profiler): Response
+    {
+        if ($profiler) {
+            $profiler->disable();
+        }
+
+        if (!$this->getAdminUser()->isAdmin()) {
+            throw new \Exception('Permission denied');
+        }
+
+        ob_start();
+        phpinfo();
+        $content = ob_get_clean();
+
+        return new Response($content);
+    }
+
+    /**
+     * @Route("/install/check", name="pimcore_admin_install_check", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param Connection $db

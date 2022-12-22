@@ -410,7 +410,18 @@
                      }
                  });
              }
- 
+
+             this.extrasMenu = new Ext.menu.Menu({
+                 cls: "pimcore_navigation_flyout",
+                 listeners: {
+                     "show": function (e) {
+                         Ext.get('pimcore_menu_extras').addCls('active');
+                     },
+                     "hide": function (e) {
+                         Ext.get('pimcore_menu_extras').removeCls('active');
+                     }
+                 }
+             });
              if (user.admin) {
                  if (perspectiveCfg.inToolbar("extras.maintenance")) {
                      extrasItems.push({
@@ -420,43 +431,11 @@
                          handler: this.showMaintenance
                      });
                  }
- 
+
+                 // TODO: Move this part to system info bundle once adminer and file explorer are extracted out to their separate bundles
                  if (perspectiveCfg.inToolbar("extras.systemtools")) {
                      var systemItems = [];
- 
-                     if (perspectiveCfg.inToolbar("extras.systemtools.phpinfo")) {
-                         systemItems.push(
-                             {
-                                 text: t("php_info"),
-                                 iconCls: "pimcore_nav_icon_php",
-                                 itemId: 'pimcore_menu_extras_system_info_php_info',
-                                 handler: this.showPhpInfo
-                             }
-                         );
-                     }
- 
-                     if (perspectiveCfg.inToolbar("extras.systemtools.opcache")) {
-                         systemItems.push(
-                             {
-                                 text: t("php_opcache_status"),
-                                 iconCls: "pimcore_nav_icon_reports",
-                                 itemId: 'pimcore_menu_extras_system_info_php_opcache_status',
-                                 handler: this.showOpcacheStatus
-                             }
-                         );
-                     }
- 
-                     if (perspectiveCfg.inToolbar("extras.systemtools.requirements")) {
-                         systemItems.push(
-                             {
-                                 text: t("system_requirements_check"),
-                                 iconCls: "pimcore_nav_icon_systemrequirements",
-                                 itemId: 'pimcore_menu_extras_system_info_system_requirements_check',
-                                 handler: this.showSystemRequirementsCheck
-                             }
-                         );
-                     }
- 
+
                      if (perspectiveCfg.inToolbar("extras.systemtools.database")) {
                          systemItems.push(
                              {
@@ -490,24 +469,12 @@
                              items: systemItems
                          }
                      });
+
+                     extrasItems.map(function(item) {
+                         this.extrasMenu.add(item)
+                     }.bind(this));
+                     pimcore.globalmanager.add('toolbar.extrasMenu', this.extrasMenu);
                  }
-             }
- 
- 
-             if (extrasItems.length > 0) {
-                 this.extrasMenu = new Ext.menu.Menu({
-                     items: extrasItems,
-                     shadow: false,
-                     cls: "pimcore_navigation_flyout",
-                     listeners: {
-                         "show": function (e) {
-                             Ext.get('pimcore_menu_extras').addCls('active');
-                         },
-                         "hide": function (e) {
-                             Ext.get('pimcore_menu_extras').removeCls('active');
-                         }
-                     }
-                 });
              }
          }
  
@@ -1647,18 +1614,6 @@
          catch (e) {
              pimcore.globalmanager.add("word", new pimcore.settings.translation.word());
          }
-     },
- 
-     showPhpInfo: function () {
-         pimcore.helpers.openGenericIframeWindow("phpinfo", Routing.generate('pimcore_admin_misc_phpinfo'), "pimcore_icon_php", "PHP Info");
-     },
- 
-     showOpcacheStatus: function () {
-         pimcore.helpers.openGenericIframeWindow("opcachestatus", Routing.generate('pimcore_admin_external_opcache_index'), "pimcore_icon_reports", "PHP OPcache Status");
-     },
- 
-     showSystemRequirementsCheck: function () {
-         pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_admin_install_check'), "pimcore_icon_systemrequirements", "System-Requirements Check");
      },
  
      showAdminer: function () {

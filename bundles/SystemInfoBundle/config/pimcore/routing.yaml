@@ -1,0 +1,6 @@
+_pimcore_admin:
+    resource: "../../src/Controller/Admin/"
+    type:     annotation
+    prefix:   /admin
+    options:
+        expose: true
