@@ -54,9 +54,9 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
     }
 
     /**
-     * @param string $property
+     * @param string|null $property
      *
-     * @return array|string
+     * @return array|string|null
      */
     public function getClientConfig($property = null)
     {

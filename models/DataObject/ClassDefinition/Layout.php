@@ -28,42 +28,42 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $name;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $type;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $region;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $title;
 
     /**
      * @internal
      *
-     * @var string|int
+     * @var string|int|null
      */
     public $width = 0;
 
     /**
      * @internal
      *
-     * @var string|int
+     * @var string|int|null
      */
     public $height = 0;
 
@@ -84,7 +84,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $bodyStyle;
 
@@ -98,7 +98,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @var array
+     * @var array|string|null
      */
     public $permissions;
 
@@ -149,7 +149,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     }
 
     /**
-     * @return int
+     * @return int|string|null
      */
     public function getWidth()
     {
@@ -157,7 +157,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     }
 
     /**
-     * @return int
+     * @return int|string|null
      */
     public function getHeight()
     {
@@ -173,7 +173,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     }
 
     /**
-     * @return array
+     * @return array|string
      */
     public function getPermissions()
     {
@@ -229,7 +229,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     }
 
     /**
-     * @param string|int $width
+     * @param string|int|null $width
      *
      * @return $this
      */
@@ -244,7 +244,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     }
 
     /**
-     * @param string|int $height
+     * @param string|int|null $height
      *
      * @return $this
      */
@@ -273,7 +273,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     }
 
     /**
-     * @param array $permissions
+     * @param array|string $permissions
      *
      * @return $this
      */

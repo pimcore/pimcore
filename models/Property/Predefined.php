@@ -29,7 +29,7 @@ use Pimcore\Model;
 final class Predefined extends Model\AbstractModel
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $id;
 
@@ -219,7 +219,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {

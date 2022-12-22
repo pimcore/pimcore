@@ -36,7 +36,7 @@ class Rule extends Model\AbstractModel
     const SCOPE_VISITOR = 'visitor';
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -173,7 +173,7 @@ class Rule extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {

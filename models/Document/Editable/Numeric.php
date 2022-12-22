@@ -27,7 +27,7 @@ class Numeric extends Model\Document\Editable
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $number = '';
 
@@ -40,7 +40,7 @@ class Numeric extends Model\Document\Editable
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
     public function getData()
     {

@@ -30,7 +30,7 @@ class TargetGroup extends Model\AbstractModel
     use RecursionBlockingEventDispatchHelperTrait;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -137,7 +137,7 @@ class TargetGroup extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {

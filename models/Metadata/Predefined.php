@@ -31,7 +31,7 @@ use Pimcore\Model;
 final class Predefined extends Model\AbstractModel
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $id;
 

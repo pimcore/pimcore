@@ -504,7 +504,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @param  string $type
-     * @param  int $id
+     * @param  int|string $id
      * @param  array|bool $force
      *
      * @return Asset|AbstractObject|Document|null
@@ -1646,7 +1646,7 @@ class Service extends Model\AbstractModel
      * @internal
      *
      * @param string $type
-     * @param int|string $id
+     * @param int|string|null $id
      *
      * @return string
      */

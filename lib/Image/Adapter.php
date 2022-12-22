@@ -65,7 +65,7 @@ abstract class Adapter
     protected $preserveMetaData = false;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $sourceImageFormat;
 
