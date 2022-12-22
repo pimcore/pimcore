@@ -57,7 +57,7 @@ pimcore.settings.glossary = Class.create({
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         this.store = pimcore.helpers.grid.buildDefaultStore(
-            Routing.generate('pimcore_admin_glossary_settings_glossary'),
+            Routing.generate('pimcore_glossary_settings_glossary'),
             [
                 'id', {name: 'text', allowBlank: false}, 'language', 'casesensitive', 'exactmatch',
                 'site', 'link', 'abbr', 'creationDate', 'modificationDate'
