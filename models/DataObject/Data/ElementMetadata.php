@@ -17,8 +17,8 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Data\ElementMetadata\Dao getDao()
