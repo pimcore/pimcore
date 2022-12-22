@@ -231,10 +231,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    public function getFieldtype(): string
-    {
-        return $this->fieldtype;
-    }
+    abstract public function getFieldType(): string;
 
     public function getNoteditable(): bool
     {

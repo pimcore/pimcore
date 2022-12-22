@@ -32,40 +32,13 @@ class Input extends Data implements
     use DataObject\ClassDefinition\Data\Extension\Text;
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\Traits\SimpleNormalizerTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     */
-    public string $fieldtype = 'input';
 
     /**
      * @internal
      */
     public ?string $defaultValue = null;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'varchar';
 
     /**
      * Column length
@@ -241,7 +214,7 @@ class Input extends Data implements
      */
     public function getColumnType(): array|string|null
     {
-        return $this->columnType . '(' . $this->getColumnLength() . ')';
+        return 'varchar(' . $this->getColumnLength() . ')';
     }
 
     /**
@@ -249,7 +222,7 @@ class Input extends Data implements
      */
     public function getQueryColumnType(): array|string|null
     {
-        return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
+        return 'varchar(' . $this->getColumnLength() . ')';
     }
 
     /**
@@ -319,5 +292,10 @@ class Input extends Data implements
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'input';
     }
 }

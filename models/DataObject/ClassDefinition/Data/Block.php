@@ -32,17 +32,7 @@ use Pimcore\Tool\Serialize;
 
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface
 {
-    use Extension\ColumnType;
     use DataObject\Traits\ClassSavedTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'block';
 
     /**
      * @internal
@@ -75,15 +65,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @var int|null
      */
     public ?int $maxItems = null;
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
 
     /**
      * @internal
@@ -1218,5 +1199,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $obj->setValues($data);
 
         return $obj;
+    }
+
+    public function getColumnType(): array|string|null
+    {
+        return 'longtext';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'block';
     }
 }

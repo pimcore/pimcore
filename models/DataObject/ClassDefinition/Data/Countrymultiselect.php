@@ -22,15 +22,6 @@ use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptio
 class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'countrymultiselect';
-
-    /**
      * Restrict selection to comma-separated list of countries.
      *
      * @internal
@@ -59,5 +50,10 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
     public function getOptionsProviderClass(): string
     {
         return '@' . CountryOptionsProvider::class;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'countrymultiselect';
     }
 }

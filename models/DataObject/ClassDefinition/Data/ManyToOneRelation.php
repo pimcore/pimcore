@@ -31,21 +31,11 @@ use Pimcore\Normalizer\NormalizerInterface;
 class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
-    use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
     use DataObject\Traits\DataWidthTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'manyToOneRelation';
 
     /**
      * @internal
@@ -68,18 +58,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @internal
      */
     public bool $relationType = true;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'id' => 'int(11)',
-        'type' => "enum('document','asset','object')",
-    ];
 
     /**
      * @internal
@@ -620,5 +598,18 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         return $this->getRelationFilterCondition($value, $operator, $name);
+    }
+
+    public function getQueryColumnType(): array|string|null
+    {
+        return [
+            'id' => 'int(11)',
+            'type' => "enum('document','asset','object')",
+        ];
+    }
+
+    public function getFieldType(): string
+    {
+        return 'manyToOneRelation';
     }
 }

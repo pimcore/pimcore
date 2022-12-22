@@ -23,15 +23,6 @@ use Pimcore\Tool;
 class Language extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'language';
-
-    /**
      * @internal
      */
     public bool $onlySystemLanguages = false;
@@ -112,5 +103,10 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'language';
     }
 }

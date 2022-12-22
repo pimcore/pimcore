@@ -20,8 +20,6 @@ use Exception;
 use InvalidArgumentException;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Extension\ColumnType;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Extension\QueryColumnType;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -34,49 +32,10 @@ class NumericRange extends Data implements
     NormalizerInterface
 {
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType {
-        ColumnType::getColumnType as public genericGetColumnType;
-    }
-    use Extension\QueryColumnType {
-        QueryColumnType::getQueryColumnType as public genericGetQueryColumnType;
-    }
 
     public const DECIMAL_SIZE_DEFAULT = 64;
 
     public const DECIMAL_PRECISION_DEFAULT = 0;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'numericRange';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'minimum' => 'double',
-        'maximum' => 'double',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'minimum' => 'double',
-        'maximum' => 'double',
-    ];
 
     /**
      * @internal
@@ -195,7 +154,10 @@ class NumericRange extends Data implements
             return $this->buildDecimalColumnType();
         }
 
-        return $this->genericGetColumnType();
+        return [
+            'minimum' => 'double',
+            'maximum' => 'double',
+        ];
     }
 
     /**
@@ -214,7 +176,10 @@ class NumericRange extends Data implements
             return $this->buildDecimalColumnType();
         }
 
-        return $this->genericGetQueryColumnType();
+        return [
+            'minimum' => 'double',
+            'maximum' => 'double',
+        ];
     }
 
     private function isDecimalType(): bool
@@ -565,5 +530,10 @@ class NumericRange extends Data implements
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\NumericRange::class . '|null';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'numericRange';
     }
 }

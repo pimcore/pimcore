@@ -34,8 +34,6 @@ use Pimcore\Normalizer\NormalizerInterface;
  */
 class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, LayoutDefinitionEnrichmentInterface
 {
-    use Extension\ColumnType;
-
     /**
      * don't throw an error it encrypted field cannot be decoded (default)
      */
@@ -47,15 +45,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     const STRICT_ENABLED = 1;
 
     private static int $strictMode = self::STRICT_ENABLED;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'encryptedField';
 
     /**
      * @internal
@@ -70,15 +59,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @var Model\DataObject\ClassDefinition\Data|array|null
      */
     public Data|array|null $delegate = null;
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'LONGBLOB';
 
     /**
      * @param mixed $data
@@ -512,5 +492,15 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         $value = new Model\DataObject\Data\EncryptedField($this->delegate, $value);
 
         return $value;
+    }
+
+    public function getColumnType(): array|string|null
+    {
+        return 'LONGBLOB';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'encryptedField';
     }
 }

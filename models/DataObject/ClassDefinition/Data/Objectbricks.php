@@ -32,15 +32,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     use DataObject\Traits\ClassSavedTrait;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'objectbricks';
-
-    /**
      * @internal
      *
      * @var array
@@ -922,5 +913,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
 
         return null;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'objectbricks';
     }
 }

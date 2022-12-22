@@ -26,38 +26,9 @@ use Pimcore\Tool\Serialize;
 
 class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface, IdRewriterInterface
 {
-    use Extension\ColumnType;
     use ImageTrait;
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'hotspotimage';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = ['image' => 'int(11)', 'hotspots' => 'text'];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
 
     /**
      * @internal
@@ -654,5 +625,23 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         $name .= '__image';
 
         return $this->getRelationFilterCondition($value, $operator, $name);
+    }
+
+    public function getColumnType(): array|string|null
+    {
+        return [
+            'image' => 'int(11)',
+            'hotspots' => 'text'
+        ];
+    }
+
+    public function getQueryColumnType(): array|string|null
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'hotspotimage';
     }
 }

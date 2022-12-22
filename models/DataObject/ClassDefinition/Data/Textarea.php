@@ -27,18 +27,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     use DataObject\Traits\DataWidthTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use Model\DataObject\Traits\SimpleNormalizerTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'textarea';
 
     /**
      * @internal
@@ -56,24 +45,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @internal
      */
     public bool $excludeFromSearchIndex = false;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
 
     public function getMaxLength(): ?int
     {
@@ -258,5 +229,20 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';
+    }
+
+    public function getColumnType(): array|string|null
+    {
+        return 'longtext';
+    }
+
+    public function getQueryColumnType(): array|string|null
+    {
+        return 'longtext';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'textarea';
     }
 }

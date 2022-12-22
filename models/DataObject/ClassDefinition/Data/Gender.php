@@ -21,15 +21,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class Gender extends Model\DataObject\ClassDefinition\Data\Select
 {
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'gender';
-
     public function configureOptions()
     {
         $options = [
@@ -73,5 +64,10 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
         $blockedVars[] = 'options';
 
         return $blockedVars;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'gender';
     }
 }

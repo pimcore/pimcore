@@ -34,13 +34,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     use DataObject\Traits\ClassSavedTrait;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     */
-    public string $fieldtype = 'localizedfields';
-
-    /**
      * @internal
      */
     public array $children = [];
@@ -1208,5 +1201,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $obj->setValues($data);
 
         return $obj;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'localizedfields';
     }
 }

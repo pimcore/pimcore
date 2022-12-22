@@ -24,15 +24,6 @@ use Pimcore\Model\DataObject\Concrete;
 class User extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'user';
-
-    /**
      * @internal
      */
     public bool $unique = false;
@@ -210,5 +201,10 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     public function setUnique(bool $unique)
     {
         $this->unique = (bool) $unique;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'user';
     }
 }

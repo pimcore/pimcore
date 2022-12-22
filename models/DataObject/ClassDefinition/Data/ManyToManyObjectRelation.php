@@ -33,16 +33,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\DataHeightTrait;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'manyToManyObjectRelation';
 
     /**
      * @internal
@@ -50,15 +40,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @var int|null
      */
     public ?int $maxItems = null;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'text';
 
     /**
      * @internal
@@ -826,5 +807,15 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $name = $params['name'] ?: $this->name;
 
         return $this->getRelationFilterCondition($value, $operator, $name);
+    }
+
+    public function getQueryColumnType(): array|string|null
+    {
+        return 'text';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'manyToManyObjectRelation';
     }
 }

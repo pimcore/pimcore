@@ -34,41 +34,6 @@ class DateRange extends Data implements
     NormalizerInterface
 {
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'dateRange';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'start_date' => 'bigint(20)',
-        'end_date' => 'bigint(20)',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'start_date' => 'bigint(20)',
-        'end_date' => 'bigint(20)',
-    ];
 
     /**
      * @param DataObject\Concrete|null $object
@@ -381,5 +346,26 @@ class DateRange extends Data implements
         $date->setTimestamp($timestamp);
 
         return $date;
+    }
+
+    public function getColumnType(): array|string|null
+    {
+        return [
+            'start_date' => 'bigint(20)',
+            'end_date' => 'bigint(20)',
+        ];
+    }
+
+    public function getQueryColumnType(): array|string|null
+    {
+        return [
+            'start_date' => 'bigint(20)',
+            'end_date' => 'bigint(20)',
+        ];
+    }
+
+    public function getFieldType(): string
+    {
+        return 'dateRange';
     }
 }

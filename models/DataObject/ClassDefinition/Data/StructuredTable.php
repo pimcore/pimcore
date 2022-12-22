@@ -28,15 +28,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @var string
-     */
-    public string $fieldtype = 'structuredTable';
 
     /**
      * @internal
@@ -513,5 +504,10 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         }
 
         return null;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'structuredTable';
     }
 }

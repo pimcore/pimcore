@@ -27,15 +27,6 @@ use Pimcore\Model\DataObject\Localizedfield;
 class ReverseObjectRelation extends ManyToManyObjectRelation
 {
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'reverseObjectRelation';
-
-    /**
      * @internal
      *
      * @var string
@@ -218,5 +209,10 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     public function supportsInheritance(): bool
     {
         return false;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'reverseObjectRelation';
     }
 }

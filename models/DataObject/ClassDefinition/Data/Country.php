@@ -25,15 +25,6 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     use Model\DataObject\Traits\DataWidthTrait;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'country';
-
-    /**
      * Restrict selection to comma-separated list of countries.
      *
      * @internal
@@ -78,5 +69,10 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     public function getOptionsProviderClass(): string
     {
         return '@' . CountryOptionsProvider::class;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'country';
     }
 }

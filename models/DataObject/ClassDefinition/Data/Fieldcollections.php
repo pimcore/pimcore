@@ -30,15 +30,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     use DataObject\Traits\ClassSavedTrait;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'fieldcollections';
-
-    /**
      * @internal
      *
      * @var array
@@ -815,5 +806,10 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
 
         return null;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'fieldcollections';
     }
 }

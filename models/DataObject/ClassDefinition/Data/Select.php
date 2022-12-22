@@ -36,21 +36,10 @@ class Select extends Data implements
     FieldDefinitionEnrichmentInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\Traits\DefaultValueTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
     use DataObject\Traits\DataWidthTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'select';
 
     /**
      * Available options to select
@@ -85,24 +74,6 @@ class Select extends Data implements
      * @var string|null
      */
     public ?string $optionsProviderData = null;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'varchar';
 
     /**
      * Column length
@@ -155,7 +126,7 @@ class Select extends Data implements
     {
         $this->correctColumnDefinition('columnType');
 
-        return $this->columnType . '(' . $this->getColumnLength() . ')';
+        return 'varchar(' . $this->getColumnLength() . ')';
     }
 
     /**
@@ -165,7 +136,7 @@ class Select extends Data implements
     {
         $this->correctColumnDefinition('queryColumnType');
 
-        return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
+        return 'varchar(' . $this->getColumnLength() . ')';
     }
 
     public function getOptions(): ?array
@@ -548,5 +519,10 @@ class Select extends Data implements
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'select';
     }
 }

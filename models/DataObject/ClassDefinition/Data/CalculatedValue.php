@@ -27,7 +27,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 {
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
-    use Extension\QueryColumnType;
 
     /**
      * @internal
@@ -38,15 +37,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @internal
      */
     const CALCULATOR_TYPE_CLASS = 'class';
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'calculatedValue';
 
     /**
      * @internal
@@ -71,15 +61,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @var string
      */
     public string $calculatorClass;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar';
 
     /**
      * Column length
@@ -238,7 +219,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function getQueryColumnType(): array|string|null
     {
-        return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
+        return 'varchar(' . $this->getColumnLength() . ')';
     }
 
     /**
@@ -457,5 +438,10 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function getPhpdocReturnType(): ?string
     {
         return 'mixed';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'calculatedValue';
     }
 }

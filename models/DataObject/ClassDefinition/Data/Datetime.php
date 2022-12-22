@@ -26,36 +26,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use Model\DataObject\Traits\DefaultValueTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'datetime';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'bigint(20)';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'bigint(20)';
 
     /**
      * @internal
@@ -455,5 +426,20 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         ];
 
         return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
+    }
+
+    public function getColumnType(): array|string|null
+    {
+        return 'bigint(20)';
+    }
+
+    public function getQueryColumnType(): array|string|null
+    {
+        return 'bigint(20)';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'datetime';
     }
 }

@@ -23,15 +23,6 @@ use Pimcore\Model\Tool;
 class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'targetGroupMultiselect';
-
-    /**
      * @internal
      */
     public function configureOptions()
@@ -88,5 +79,10 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
         $blockedVars[] = 'options';
 
         return $blockedVars;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'targetGroupMultiselect';
     }
 }
