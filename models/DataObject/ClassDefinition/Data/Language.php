@@ -75,7 +75,6 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
 
     public static function __set_state(array $data): static
     {
-        /** @var static $obj */
         $obj = parent::__set_state($data);
         $obj->configureOptions();
 
