@@ -866,16 +866,7 @@
                      }
                  }
              }
- 
-             if (user.isAllowed("routes") && perspectiveCfg.inToolbar("settings.routes")) {
-                 settingsItems.push({
-                     text: t("static_routes"),
-                     iconCls: "pimcore_nav_icon_routes",
-                     itemId: 'pimcore_menu_settings_static_routes',
-                     handler: this.editRoutes
-                 });
-             }
- 
+
              if (perspectiveCfg.inToolbar("settings.cache") && (user.isAllowed("clear_cache") || user.isAllowed("clear_temp_files") || user.isAllowed("clear_fullpage_cache"))) {
  
                  var cacheItems = [];

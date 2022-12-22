@@ -14,12 +14,12 @@ pimcore.staticroutes = Class.create({
         const toolbar = pimcore.globalmanager.get('layout_toolbar');
 
         if (user.isAllowed("routes") && perspectiveCfg.inToolbar("settings.routes")) {
-            //settingsItems.push({
-            //    text: t("static_routes"),
-            //    iconCls: "pimcore_nav_icon_routes",
-            //    itemId: 'pimcore_menu_settings_static_routes',
-            //    handler: this.editRoutes
-            //});
+            toolbar.settingsMenu.add({
+                text: t("static_routes"),
+                iconCls: "pimcore_nav_icon_routes",
+                itemId: 'pimcore_menu_settings_static_routes',
+                handler: this.editRoutes
+            });
         }
     },
 

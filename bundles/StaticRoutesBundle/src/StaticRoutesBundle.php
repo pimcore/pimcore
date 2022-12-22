@@ -23,6 +23,12 @@ class StaticRoutesBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
+    public function getCssPaths(): array
+    {
+        return [
+            '/bundles/staticroutes/css/icons.css',
+        ];
+    }
 
     public function getJsPaths(): array
     {

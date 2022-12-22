@@ -15,27 +15,28 @@
 namespace Pimcore\Bundle\StaticRoutesBundle;
 
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
+use Pimcore\Model\Tool\SettingsStore;
 
 /**
  * @internal
  */
 class Installer extends SettingsStoreAwareInstaller
 {
+    protected const SETTINGS_STORE_SCOPE = 'pimcore_staticroutes';
     protected const USER_PERMISSIONS = [
-        'glossary'
+        'staticroutes'
     ];
 
     public function install(): void
     {
-        //$this->installDatabaseTable();
-        //$this->addUserPermission();
+        $this->addUserPermission();
         parent::install();
     }
 
     public function uninstall(): void
     {
-       // $this->uninstallDatabaseTable();
-      //  $this->removeUserPermission();
+        $this->removeUserPermission();
+        $this->removeRoutesFromSettingsStore();
         parent::uninstall();
     }
 
@@ -61,27 +62,12 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
-    private function installDatabaseTable(): void
-    {
-        $sqlPath = __DIR__ . '/Resources/install/';
-        $sqlFileNames = ['install.sql'];
-        $db = \Pimcore\Db::get();
-
-        foreach ($sqlFileNames as $fileName) {
-            $statement = file_get_contents($sqlPath.$fileName);
-            $db->executeQuery($statement);
-        }
-    }
-
-    private function uninstallDatabaseTable(): void
-    {
-        $sqlPath = __DIR__ . '/Resources/uninstall/';
-        $sqlFileNames = ['uninstall.sql'];
-        $db = \Pimcore\Db::get();
-
-        foreach ($sqlFileNames as $fileName) {
-            $statement = file_get_contents($sqlPath.$fileName);
-            $db->executeQuery($statement);
+    private function removeRoutesFromSettingsStore() {
+        $staticRoutes = SettingsStore::getIdsByScope(self::SETTINGS_STORE_SCOPE);
+        if(!empty($staticRoutes)) {
+            foreach($staticRoutes as $staticRoute) {
+                SettingsStore::delete($staticRoute, self::SETTINGS_STORE_SCOPE);
+            }
         }
     }
 }
