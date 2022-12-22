@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
@@ -110,7 +111,7 @@ class Token extends AbstractModel
         return true;
     }
 
-    public function release($cart): bool
+    public function release(?CartInterface $cart): bool
     {
         return Reservation::releaseToken($this->getToken(), $cart);
     }
