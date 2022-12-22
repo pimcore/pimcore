@@ -48,6 +48,9 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
      */
     protected ?array $staticRoutes = null;
 
+    /**
+     * @var string[]|null
+     */
     protected ?array $supportedNames = null;
 
     /**
@@ -68,7 +71,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->context = $context;
     }
@@ -86,7 +89,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         return $this->localeParams;
     }
 
-    public function setLocaleParams(array $localeParams)
+    public function setLocaleParams(array $localeParams): void
     {
         $this->localeParams = $localeParams;
     }
@@ -102,9 +105,9 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function getRouteDebugMessage($name, array $parameters = []): string
+    public function getRouteDebugMessage(string $name, array $parameters = []): string
     {
-        return (string)$name;
+        return $name;
     }
 
     /**
@@ -193,8 +196,6 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
 
     /**
      * {@inheritdoc}
-     *
-     * @return array
      */
     public function matchRequest(Request $request): array
     {
@@ -203,20 +204,12 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
 
     /**
      * {@inheritdoc}
-     *
-     * @return array
      */
-    public function match($pathinfo): array
+    public function match(string $pathinfo): array
     {
         return $this->doMatch($pathinfo);
     }
 
-    /**
-     * @param string $pathinfo
-     * @param Request|null $request
-     *
-     * @return array
-     */
     protected function doMatch(string $pathinfo, Request $request = null): array
     {
         $pathinfo = urldecode($pathinfo);
@@ -318,6 +311,9 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         return $this->staticRoutes;
     }
 
+    /**
+     * @return string[]
+     */
     protected function getSupportedNames(): array
     {
         if (null === $this->supportedNames) {
