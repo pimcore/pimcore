@@ -325,6 +325,11 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         ];
     }
 
+    public function getQueryColumnType(): array|string|null
+    {
+        return $this->getColumnType();
+    }
+
     public function getFieldType(): string
     {
         return 'indexFieldSelection';
