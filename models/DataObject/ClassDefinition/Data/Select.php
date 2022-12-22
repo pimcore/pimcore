@@ -104,28 +104,10 @@ class Select extends Data implements
     }
 
     /**
-     * Correct old column definitions (e.g varchar(255)) to the new format
-     *
-     * @param string $type
-     */
-    private function correctColumnDefinition(string $type): void
-    {
-        if (preg_match("/(.*)\((\d+)\)/i", $this->$type, $matches)) {
-            $this->{'set' . ucfirst($type)}($matches[1]);
-            if ($matches[2] > 190) {
-                $matches[2] = 190;
-            }
-            $this->setColumnLength($matches[2] <= 190 ? $matches[2] : 190);
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getColumnType(): array|string|null
     {
-        $this->correctColumnDefinition('columnType');
-
         return 'varchar(' . $this->getColumnLength() . ')';
     }
 
@@ -134,8 +116,6 @@ class Select extends Data implements
      */
     public function getQueryColumnType(): array|string|null
     {
-        $this->correctColumnDefinition('queryColumnType');
-
         return 'varchar(' . $this->getColumnLength() . ')';
     }
 
