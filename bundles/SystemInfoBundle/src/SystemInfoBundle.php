@@ -18,7 +18,9 @@ class SystemInfoBundle extends AbstractPimcoreBundle
 
     public function getCssPaths(): array
     {
-        return [];
+        return [
+            '/bundles/systeminfo/css/system-info.css'
+        ];
     }
 
     public function getJsPaths(): array
