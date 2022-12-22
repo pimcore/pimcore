@@ -31,7 +31,7 @@ abstract class AbstractAnalyticsTracker extends EcommerceTracker
      * TODO Pimcore 10 remove this setter and set as constructor dependency!
      */
     #[Required]
-    public function setTracker(Tracker $tracker)
+    public function setTracker(Tracker $tracker): void
     {
         $this->tracker = $tracker;
     }

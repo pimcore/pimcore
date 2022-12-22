@@ -53,7 +53,7 @@ class ClassesRebuildCommand extends AbstractCommand
     }
 
     #[Required]
-    public function setClassDefinitionManager(ClassDefinitionManager $classDefinitionManager)
+    public function setClassDefinitionManager(ClassDefinitionManager $classDefinitionManager): void
     {
         $this->classDefinitionManager = $classDefinitionManager;
     }

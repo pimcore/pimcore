@@ -88,7 +88,7 @@ abstract class AbstractConfig implements ConfigInterface
      * TODO Pimcore 10 add to constructor signature.
      */
     #[Required]
-    public function setAttributeFactory(AttributeFactory $attributeFactory)
+    public function setAttributeFactory(AttributeFactory $attributeFactory): void
     {
         if (null !== $this->attributeFactory) {
             throw new \RuntimeException('Attribute factory is already set.');

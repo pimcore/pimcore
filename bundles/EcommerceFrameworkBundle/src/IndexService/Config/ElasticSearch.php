@@ -340,7 +340,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     #[Required]
-    public function setEnvironment(EnvironmentInterface $environment)
+    public function setEnvironment(EnvironmentInterface $environment): void
     {
         $this->environment = $environment;
     }
