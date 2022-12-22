@@ -18,6 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Workflow\Place\StatusInfo;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * @internal
@@ -46,11 +47,7 @@ final class WorkflowState extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @param StatusInfo $statusInfo
-     *
-     * @required
-     */
+    #[Required]
     public function setWorkflowStatusInfo(StatusInfo $statusInfo)
     {
         $this->statusInfo = $statusInfo;
