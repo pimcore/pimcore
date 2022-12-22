@@ -14,9 +14,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Staticroute;
+namespace Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 
-use Pimcore\Model;
+use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\CallableFilterListingInterface;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
@@ -24,7 +24,7 @@ use Pimcore\Model\Listing\Traits\FilterListingTrait;
 use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
 /**
- * @method \Pimcore\Model\Staticroute\Listing\Dao getDao()
+ * @method Listing\Dao getDao()
  * @method int getTotalCount()
  */
 class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
@@ -33,12 +33,12 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     use OrderListingTrait;
 
     /**
-     * @var \Pimcore\Model\Staticroute[]|null
+     * @var Staticroute[]|null
      */
     protected ?array $routes = null;
 
     /**
-     * @return \Pimcore\Model\Staticroute[]
+     * @return Staticroute[]
      */
     public function getRoutes(): array
     {
@@ -50,7 +50,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     }
 
     /**
-     * @param \Pimcore\Model\Staticroute[]|null $routes
+     * @param Staticroute[]|null $routes
      *
      * @return $this
      */
@@ -62,7 +62,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     }
 
     /**
-     * @return Model\Staticroute[]
+     * @return Staticroute[]
      */
     public function load(): array
     {

@@ -1,0 +1,6 @@
+_pimcore_staticroutes_backend:
+    resource: "@StaticRoutesBundle/src/Controller/"
+    type:     annotation
+    prefix:   /admin/staticroutes
+    options:
+        expose: true

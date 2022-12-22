@@ -1342,17 +1342,6 @@
          }
      },
  
-     editRoutes: function () {
- 
-         try {
-             pimcore.globalmanager.get("staticroutes").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("staticroutes", new pimcore.settings.staticroutes());
-         }
-     },
- 
- 
      editRedirects: function () {
  
          try {

@@ -14,9 +14,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model;
+namespace Pimcore\Bundle\StaticRoutesBundle\Model;
 
 use Pimcore\Event\FrontendEvents;
+use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

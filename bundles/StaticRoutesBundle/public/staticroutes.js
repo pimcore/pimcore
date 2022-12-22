@@ -54,7 +54,7 @@ pimcore.settings.staticroutes = Class.create({
 
     getRowEditor:function () {
 
-        var url = Routing.generate('pimcore_admin_settings_staticroutes');
+        var url = Routing.generate('pimcore_staticroutes_settings_staticroutes');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
