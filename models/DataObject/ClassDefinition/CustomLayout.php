@@ -481,13 +481,14 @@ class CustomLayout extends Model\AbstractModel
      */
     public function setDefault($default)
     {
-        if(is_int($default)){
+        if (is_bool($default)) {
+            $this->default = $default;
+        } else {
             trigger_deprecation('pimcore/pimcore', '10.6',
                 sprintf('Passing int to %s is deprecated and will be removed in Pimcore 11.' .
                     'Use bool instead.', __FUNCTION__));
+            $this->default = (int)$default;
         }
-
-        $this->default = (int)$default;
 
         return $this;
     }
