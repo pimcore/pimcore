@@ -36,6 +36,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
+use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -235,7 +236,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * @param DataObject\AbstractObject $element
+     * @param ElementInterface $element
      *
      * @return array
      *
@@ -243,6 +244,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     protected function getTreeNodeConfig($element): array
     {
+        /** @var DataObject $child */
         $child = $element;
 
         $tmpObject = [

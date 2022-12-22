@@ -23,6 +23,7 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Symfony\Component\Uid\UuidV4;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Dao getDao()
@@ -78,7 +79,9 @@ class CustomLayout extends Model\AbstractModel
     protected $layoutDefinitions;
 
     /**
-     * @var int
+     * @var bool|int
+     *
+     * Note: type will change to bool in Pimcore 11
      */
     protected $default = 0;
 
@@ -143,7 +146,7 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @param string $field
      *
-     * @return Data|null
+     * @return Data|Layout|null
      */
     public function getFieldDefinition($field)
     {
@@ -343,8 +346,9 @@ class CustomLayout extends Model\AbstractModel
      *
      * @param string $classId
      *
-     * @return int|null
+     * @return int|null (will be changed to UuidV4|null)
      */
+    #[\ReturnTypeWillChange]
     public static function getIdentifier($classId)
     {
         try {
@@ -462,21 +466,29 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return bool|int (will be bool)
      */
+    #[\ReturnTypeWillChange]
     public function getDefault()
     {
         return $this->default;
     }
 
     /**
-     * @param int $default
+     * @param bool|int $default
      *
      * @return $this
      */
     public function setDefault($default)
     {
-        $this->default = (int)$default;
+        if (is_bool($default)) {
+            $this->default = $default;
+        } else {
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                sprintf('Passing int to %s is deprecated and will be removed in Pimcore 11.' .
+                    'Use bool instead.', __FUNCTION__));
+            $this->default = (int)$default;
+        }
 
         return $this;
     }

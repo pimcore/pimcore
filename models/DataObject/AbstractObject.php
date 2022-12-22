@@ -359,7 +359,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Static helper to get an object by the passed ID
      *
-     * @param int $id
+     * @param int|string $id
      * @param array|bool $force
      *
      * @return static|null

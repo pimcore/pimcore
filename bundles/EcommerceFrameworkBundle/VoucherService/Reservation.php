@@ -25,16 +25,24 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class Reservation extends AbstractModel
 {
-    /** @var int|null */
+    /**
+     * @var int|null
+     */
     public $id;
 
-    /** @var string|null */
+    /**
+     * @var string|null
+     */
     public $token;
 
-    /** @var int|null */
+    /**
+     * @var string|null
+     */
     public $timestamp;
 
-    /** @var string|null */
+    /**
+     * @var string|null
+     */
     public $cart_id;
 
     /**
@@ -259,7 +267,7 @@ class Reservation extends AbstractModel
     }
 
     /**
-     * @return int|null
+     * @return string|null
      */
     public function getTimestamp()
     {
@@ -267,7 +275,7 @@ class Reservation extends AbstractModel
     }
 
     /**
-     * @param int|null $timestamp
+     * @param string|null $timestamp
      */
     public function setTimestamp($timestamp): void
     {

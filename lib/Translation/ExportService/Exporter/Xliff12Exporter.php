@@ -122,7 +122,7 @@ class Xliff12Exporter implements ExporterInterface
      * @param string $name
      * @param string $sourceContent
      * @param string $sourceLang
-     * @param string $targetContent
+     * @param string|null $targetContent
      * @param string $targetLang
      */
     protected function addTransUnitNode(\SimpleXMLElement $xml, $name, $sourceContent, $sourceLang, $targetContent, $targetLang)

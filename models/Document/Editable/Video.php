@@ -92,7 +92,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * @param int|string|null $id
      *
-     * @return Video
+     * @return $this
      */
     public function setId($id)
     {
@@ -520,8 +520,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @param Asset\Video $asset
-     *
      * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail
      */
     private function getPosterThumbnailImage(Asset\Video $asset)
@@ -1167,7 +1165,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function rewriteIds($idMapping) /** : void */
     {

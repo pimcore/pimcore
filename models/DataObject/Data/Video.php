@@ -19,6 +19,8 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Element\ElementInterface;
 
 class Video implements OwnerAwareFieldInterface
 {
@@ -31,12 +33,12 @@ class Video implements OwnerAwareFieldInterface
     protected $type;
 
     /**
-     * @var Asset|string|int
+     * @var string|int|ElementInterface|Asset|ElementDescriptor
      */
     protected $data;
 
     /**
-     * @var Asset|string|int
+     * @var string|int|Asset|ElementDescriptor|null
      */
     protected $poster;
 
@@ -102,7 +104,7 @@ class Video implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param Asset|string|int $poster
+     * @param Asset|int|string|null $poster
      */
     public function setPoster($poster)
     {
@@ -111,7 +113,7 @@ class Video implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return Asset|string|int
+     * @return Asset|int|string|null
      */
     public function getPoster()
     {

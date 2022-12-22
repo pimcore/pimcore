@@ -29,7 +29,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 final class Staticroute extends AbstractModel
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $id;
 
@@ -234,7 +234,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {

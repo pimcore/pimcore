@@ -17,6 +17,7 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\DataObject;
 
 /**
@@ -37,7 +38,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     protected $elementId;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $fieldname;
 
@@ -52,9 +53,9 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     protected $data = [];
 
     /**
-     * @param string $fieldname
+     * @param string|null $fieldname
      * @param array $columns
-     * @param Model\Element\ElementInterface|null $element
+     * @param ElementInterface|null $element
      *
      * @throws \Exception
      */
@@ -207,7 +208,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getElementType()
     {
@@ -215,7 +216,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getElementId()
     {

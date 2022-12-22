@@ -38,7 +38,7 @@ class BuildConditionEvent extends Event
     private $config;
 
     /**
-     * @var ConditionInterface
+     * @var ConditionInterface|null
      */
     private $condition;
 

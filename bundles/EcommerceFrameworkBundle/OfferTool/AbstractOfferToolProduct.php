@@ -143,8 +143,8 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
     /**
      * @static
      *
-     * @param int $id
-     * @param bool $force
+     * @param int|string $id
+     * @param array|bool $force
      *
      * @return AbstractOfferToolProduct|null
      */

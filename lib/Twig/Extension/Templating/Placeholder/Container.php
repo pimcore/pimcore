@@ -209,7 +209,7 @@ class Container extends \ArrayObject
      *
      * Used to implode elements in container
      *
-     * @param  string $separator
+     * @param string $separator
      *
      * @return Container
      */
@@ -234,7 +234,7 @@ class Container extends \ArrayObject
      * Set the indentation string for __toString() serialization,
      * optionally, if a number is passed, it will be the number of spaces
      *
-     * @param  string|int $indent
+     * @param string|int $indent
      *
      * @return Container
      */

@@ -46,7 +46,7 @@ final class Redirect extends AbstractModel
     ];
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -56,7 +56,7 @@ final class Redirect extends AbstractModel
     protected $type;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $source;
 
@@ -71,7 +71,7 @@ final class Redirect extends AbstractModel
     protected $passThroughParameters = false;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $target;
 
@@ -179,7 +179,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -187,7 +187,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getSource()
     {
@@ -195,7 +195,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getTarget()
     {
@@ -414,7 +414,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getSourceSite()
     {
@@ -438,7 +438,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getTargetSite()
     {

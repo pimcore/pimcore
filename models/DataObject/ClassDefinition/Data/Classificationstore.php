@@ -47,7 +47,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $name;
 
@@ -68,7 +68,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $title;
 
@@ -182,9 +182,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Classificationstore|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
      */
@@ -342,9 +342,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $containerData
+     * @param mixed $containerData
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Classificationstore
      */
@@ -406,7 +406,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param mixed $data
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
@@ -419,9 +419,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Classificationstore|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */
@@ -477,7 +477,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\Classificationstore|null $data
+     * @param mixed $data
      *
      * @return bool
      */
@@ -524,7 +524,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param Data|Layout $child
+     * @param mixed $child
      */
     public function addChild($child)
     {
@@ -611,7 +611,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
@@ -850,7 +850,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @throws \Exception
      */
@@ -862,7 +862,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @throws \Exception
      */

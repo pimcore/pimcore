@@ -224,7 +224,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param int $id
+     * @param int|string $id
      * @param array|bool $force
      *
      * @return static|null
