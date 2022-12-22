@@ -21,17 +21,10 @@ final class Version20221215071650 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $tableExists = Db::get()->fetchOne('SHOW TABLES LIKE "glossary"');
-
-        $installed = !empty($tableExists);
-
-        if ($installed) {
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\GlossaryBundle', $installed, 'bool', 'pimcore');
+        if ($schema->hasTable('glossary')) {
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\GlossaryBundle', true, 'bool', 'pimcore');
         }
-    }
 
-    public function down(Schema $schema): void
-    {
-        // nothing to do here
+        $this->warnIf($schema->hasTable('glossary'), 'Please make sure to enable the bundle manually in config/bundles.php');
     }
 }

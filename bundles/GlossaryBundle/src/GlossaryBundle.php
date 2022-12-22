@@ -26,7 +26,7 @@ class GlossaryBundle extends AbstractPimcoreBundle
     public function getCssPaths(): array
     {
         return [
-            '/bundles/glossary/css/glossary.css',
+            '/bundles/glossary/css/icons.css',
         ];
     }
 

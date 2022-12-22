@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -18,13 +17,11 @@ namespace Pimcore\Bundle\GlossaryBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 
-final class GlossaryExtension extends Extension implements PrependExtensionInterface
+final class GlossaryExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -38,10 +35,5 @@ final class GlossaryExtension extends Extension implements PrependExtensionInter
         );
 
         $loader->load('services.yaml');
-    }
-
-    public function prepend(ContainerBuilder $container): void
-    {
-        // doctrine_migrations.yaml loaded with pimcore config.yaml as in CoreBundle
     }
 }
