@@ -1,13 +1,5 @@
 <?php
 declare(strict_types=1);
-
-namespace Pimcore\Bundle\SeoBundle\DependencyInjection;
-
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-
 /**
  * Pimcore
  *
@@ -21,7 +13,14 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-class SeoExtension extends Extension implements PrependExtensionInterface
+namespace Pimcore\Bundle\SeoBundle\DependencyInjection;
+
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+
+class SeoExtension extends Extension
 {
 
     public function load(array $configs, \Symfony\Component\DependencyInjection\ContainerBuilder $container)
@@ -32,10 +31,5 @@ class SeoExtension extends Extension implements PrependExtensionInterface
         );
 
         $loader->load('services.yaml');
-    }
-
-    public function prepend(\Symfony\Component\DependencyInjection\ContainerBuilder $container)
-    {
-        // doctrine_migrations.yaml loaded with pimcore config.yaml as in CoreBundle
     }
 }

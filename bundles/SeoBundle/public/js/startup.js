@@ -45,10 +45,8 @@ pimcore.seo = Class.create({
             // get index of marketing.targeting
             if (seoMenu.length > 0) {
                 const toolbar = pimcore.globalmanager.get('layout_toolbar');
-                // try to insert it after the marketing_personalization
-                // setting constant index, user maybe does not have the rights for marketing_personalization
-                const index = 2;
-                toolbar.marketingMenu.insert(index, {
+
+                toolbar.marketingMenu.add({
                     text: t("search_engine_optimization"),
                     iconCls: "pimcore_nav_icon_seo",
                     itemId: 'pimcore_menu_marketing_seo',
@@ -68,7 +66,7 @@ pimcore.seo = Class.create({
             pimcore.globalmanager.get("seo_seopanel").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("seo_seopanel", new pimcore.seo.seopanel());
+            pimcore.globalmanager.add("seo_seopanel", new pimcore.document.seopanel());
         }
     },
 
@@ -77,7 +75,7 @@ pimcore.seo = Class.create({
             pimcore.globalmanager.get("robotstxt").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("robotstxt", new pimcore.seo.robotstxt());
+            pimcore.globalmanager.add("robotstxt", new pimcore.settings.robotstxt());
         }
     },
 
@@ -86,7 +84,7 @@ pimcore.seo = Class.create({
             pimcore.globalmanager.get("http_error_log").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("http_error_log", new pimcore.seo.httpErrorLog());
+            pimcore.globalmanager.add("http_error_log", new pimcore.settings.httpErrorLog());
         }
     },
 

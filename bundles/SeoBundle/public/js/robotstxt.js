@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.seo.robotstxt");
-pimcore.seo.robotstxt = Class.create({
+pimcore.registerNS("pimcore.settings.robotstxt");
+pimcore.settings.robotstxt = Class.create({
     onFileSystem: false,
     data: {},
     textEditors: [],
@@ -26,7 +26,7 @@ pimcore.seo.robotstxt = Class.create({
         this.panel.setLoading(true);
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_seo_settings_robotstxtget'),
+            url: Routing.generate('pimcore_admin_seo_settings_robotstxtget'),
             success: function (response) {
 
                 try {
@@ -176,7 +176,7 @@ pimcore.seo.robotstxt = Class.create({
 
     save : function () {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_seo_settings_robotstxtput'),
+            url: Routing.generate('pimcore_admin_seo_settings_robotstxtput'),
             method: "PUT",
             params: this.getValues(),
             success: function (response) {

@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.seo.httpErrorLog");
-pimcore.seo.httpErrorLog = Class.create({
+pimcore.registerNS("pimcore.settings.httpErrorLog");
+pimcore.settings.httpErrorLog = Class.create({
 
     initialize: function(id) {
         this.getTabPanel();
@@ -55,7 +55,7 @@ pimcore.seo.httpErrorLog = Class.create({
     getGrid: function () {
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = Routing.generate('pimcore_seo_misc_httperrorlog');
+        var url = Routing.generate('pimcore_admin_seo_misc_httperrorlog');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
@@ -124,7 +124,7 @@ pimcore.seo.httpErrorLog = Class.create({
             listeners: {
                 "rowdblclick": function (grid, record, tr, rowIndex, e, eOpts ) {
                     var data = grid.getStore().getAt(rowIndex);
-                    var path = Routing.generate('pimcore_seo_misc_httperrorlogdetail', {
+                    var path = Routing.generate('pimcore_admin_seo_misc_httperrorlogdetail', {
                         uri: data.get("uri"),
                     });
                     var win = new Ext.Window({
@@ -160,7 +160,7 @@ pimcore.seo.httpErrorLog = Class.create({
                     text: t('flush'),
                     handler: function () {
                         Ext.Ajax.request({
-                            url: Routing.generate('pimcore_seo_misc_httperrorlogflush'),
+                            url: Routing.generate('pimcore_admin_seo_misc_httperrorlogflush'),
                             method: "DELETE",
                             success: function () {
                                 var proxy = this.store.getProxy();
