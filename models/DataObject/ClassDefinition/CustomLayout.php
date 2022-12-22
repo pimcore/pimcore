@@ -466,7 +466,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return int (will be bool)
+     * @return bool|int (will be bool)
      */
     #[\ReturnTypeWillChange]
     public function getDefault()
