@@ -709,6 +709,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         // the inheritance enabled flag has been changed in the meantime
         if ($this->getClass()->getModificationDate() >= $this->getModificationDate() && $this->getId()) {
             DataObject::disableDirtyDetection();
+        } elseif ($this->getClass()->getAllowInherit() && $this->isFieldDirty('parentId')) {
+            // if inherit is enabled and the data object is moved the query table should be updated
+            DataObject::disableDirtyDetection();
         }
 
         try {

@@ -92,7 +92,8 @@ pimcore.helpers.grid.buildDefaultPagingToolbar = function (store, options) {
         store: store,
         displayInfo: true,
         displayMsg: '{0} - {1} / {2}',
-        emptyMsg: t("no_items_found")
+        emptyMsg: t("no_items_found"),
+        scrollable: true
     };
     if (typeof options !== "undefined") {
         config = Ext.applyIf(options, config);
