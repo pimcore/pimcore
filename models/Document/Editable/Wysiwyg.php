@@ -29,7 +29,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $text;
 
@@ -58,7 +58,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     }
 
     /**
-     * {@inheritdoc}
+     * @return string|null
      */
     public function getDataEditmode() /** : mixed */
     {
@@ -119,16 +119,13 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return Text::getDependenciesOfWysiwygText($this->text);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
         return Text::getCacheTagsOfWysiwygText($this->text, $tags);
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function rewriteIds($idMapping) /** : void */
     {

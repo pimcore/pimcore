@@ -649,6 +649,7 @@ class Mail extends Email
 
     /**
      * @param string $string
+     * @param string $context
      *
      * @return string
      */
@@ -994,7 +995,7 @@ class Mail extends Email
     /**
      * format Address from old params(string $address, string $name)
      *
-     * @param string|array $addresses
+     * @param string|array|Address $addresses
      *
      * @return array
      */

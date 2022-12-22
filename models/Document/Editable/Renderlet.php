@@ -43,7 +43,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @internal
      *
-     * @var Document|Asset|DataObject|null
+     * @var Document|Asset|null|DataObject|Element\ElementDescriptor
      */
     protected $o;
 
@@ -86,7 +86,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * {@inheritdoc}
+     * @return array|null
      */
     public function getDataEditmode() /** : mixed */
     {
@@ -166,6 +166,8 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
     public function setDataFromResource($data)
     {
@@ -182,6 +184,8 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {
@@ -237,7 +241,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @return string|null
      *
-     * @internal param mixed $data
+     * @internal
      */
     private function getObjectType($object = null)
     {
@@ -338,7 +342,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     /**
      * @param Asset|Document|DataObject|null $o
      *
-     * @return Document\Editable\Renderlet
+     * @return $this
      */
     public function setO($o)
     {
@@ -358,7 +362,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     /**
      * @param string $subtype
      *
-     * @return Document\Editable\Renderlet
+     * @return $this
      */
     public function setSubtype($subtype)
     {
@@ -368,7 +372,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getSubtype()
     {
@@ -376,7 +380,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function rewriteIds($idMapping) /** : void */
     {

@@ -29,7 +29,7 @@ trait OwnerAwareFieldTrait
     protected $_owner;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $_fieldname;
 

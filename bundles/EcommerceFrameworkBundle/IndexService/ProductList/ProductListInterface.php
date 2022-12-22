@@ -94,6 +94,8 @@ interface ProductListInterface extends PaginateListingInterface
      * Reset query condition for fieldname
      *
      * @param string $fieldname
+     *
+     * @return void
      */
     public function resetQueryCondition($fieldname);
 
@@ -101,7 +103,7 @@ interface ProductListInterface extends PaginateListingInterface
      * Adds relation condition to product list
      *
      * @param string $fieldname
-     * @param string $condition
+     * @param string|array $condition
      */
     public function addRelationCondition($fieldname, $condition);
 
@@ -140,7 +142,7 @@ interface ProductListInterface extends PaginateListingInterface
     /**
      * gets order direction
      *
-     * @return string
+     * @return string|null
      */
     public function getOrder();
 
@@ -162,7 +164,7 @@ interface ProductListInterface extends PaginateListingInterface
     public function setLimit($limit);
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getLimit();
 

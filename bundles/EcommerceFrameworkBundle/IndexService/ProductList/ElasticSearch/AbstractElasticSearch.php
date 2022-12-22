@@ -20,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 abstract class AbstractElasticSearch implements ProductListInterface
@@ -70,12 +71,12 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $limit;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $order;
 
@@ -157,8 +158,14 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     protected $productPositionMap = [];
 
+    /**
+     * @var bool
+     */
     protected $doScrollRequest = false;
 
+    /**
+     * @var string
+     */
     protected $scrollRequestKeepAlive = '30s';
 
     /**
@@ -212,7 +219,9 @@ abstract class AbstractElasticSearch implements ProductListInterface
         return $this;
     }
 
-    /** @inheritDoc */
+    /**
+     * {@inheritDoc}
+     */
     public function getProducts()
     {
         if ($this->products === null) {
@@ -275,7 +284,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * Adds relation condition to product list
      *
      * @param string $fieldname
-     * @param string $condition
+     * @param string|array $condition
      */
     public function addRelationCondition($fieldname, $condition)
     {
@@ -373,7 +382,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * gets order direction
      *
-     * @return string
+     * @return string|null
      */
     public function getOrder()
     {
@@ -434,7 +443,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getLimit()
     {
@@ -506,6 +515,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * loads search results from index and returns them
      *
      * @return IndexableInterface[]
+     *
+     * @throws \Exception
      */
     public function load()
     {
@@ -870,7 +881,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @param int $elementId
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup|null
+     * @return DefaultMockup|null
      */
     protected function loadElementById($elementId)
     {
@@ -898,6 +909,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded
      *
      * @return void
      */
@@ -938,6 +951,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded
      *
      * @return void
      */
@@ -954,6 +969,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded
      *
      * @return void
      */
