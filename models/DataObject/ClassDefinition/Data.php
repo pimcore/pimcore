@@ -45,8 +45,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public array|string|null $permissions = null;
 
-    public string $datatype = 'data';
-
     public string $fieldtype;
 
     public bool $relationType = false;
@@ -215,18 +213,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                 }
             }
         }
-
-        return $this;
-    }
-
-    public function getDatatype(): string
-    {
-        return $this->datatype;
-    }
-
-    public function setDatatype(string $datatype): static
-    {
-        $this->datatype = $datatype;
 
         return $this;
     }
@@ -1311,6 +1297,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $tempObj = clone $this; // we clone, so that we only get public properties of the object
         $data = get_object_vars($tempObj);
         $data['fieldtype'] = $this->getFieldType();
+        $data['datatype'] = 'data';
+        unset($data['blockedVarsForExport']);
         return $data;
     }
 }

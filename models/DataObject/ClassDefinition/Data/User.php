@@ -173,13 +173,13 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         $this->init();
     }
 
-    public function jsonSerialize(): static
+    public function jsonSerialize(): mixed
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
     /**

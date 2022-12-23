@@ -271,7 +271,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->datatype = $masterDefinition->datatype;
+
     }
 
     public function isEmpty(mixed $data): bool
