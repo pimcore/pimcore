@@ -1012,7 +1012,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @return $this
      */
     public function setChildren(
-        ?listing $children,
+        ?Listing $children,
         array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
         bool $includingUnpublished = false
     ): static

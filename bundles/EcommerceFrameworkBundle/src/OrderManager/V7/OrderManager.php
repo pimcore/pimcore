@@ -626,7 +626,7 @@ class OrderManager implements OrderManagerInterface
         }
 
         $orderItemChildren = $order->getChildren();
-        foreach ($orderItemChildren ?: [] as $orderItemChild) {
+        foreach ($orderItemChildren as $orderItemChild) {
             if ($orderItemChild instanceof AbstractOrderItem) {
                 if (!in_array($orderItemChild->getId(), $validItemIds)) {
                     if (!$orderItemChild->getDependencies()->getRequiredBy(null, 1)) {

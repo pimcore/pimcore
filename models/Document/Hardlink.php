@@ -167,7 +167,7 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    public function getChildren(bool $includingUnpublished = false): listing
+    public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
         if (!isset($this->children[$cacheKey])) {

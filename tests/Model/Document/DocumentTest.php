@@ -348,7 +348,7 @@ class DocumentTest extends ModelTestCase
         $listing->setData([$childDoc]);
         $parentDoc->setChildren($listing);
 
-        $this->assertSame($parentDoc->getChildren()[0], $childDoc);
+        $this->assertSame($parentDoc->getChildren()->getDocuments()[0], $childDoc);
     }
 
     public function testDocumentSerialization()
