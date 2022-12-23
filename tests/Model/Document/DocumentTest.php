@@ -19,6 +19,7 @@ namespace Pimcore\Tests\Model\Document;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Link;
+use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PrintAbstract;
 use Pimcore\Model\Document\Printpage;
@@ -343,7 +344,9 @@ class DocumentTest extends ModelTestCase
         $parentDoc = TestHelper::createEmptyDocumentPage();
 
         $childDoc = TestHelper::createEmptyDocumentPage('child1-', false);
-        $parentDoc->setChildren([$childDoc]);
+        $listing = new Listing();
+        $listing->setData([$childDoc]);
+        $parentDoc->setChildren($listing);
 
         $this->assertSame($parentDoc->getChildren()[0], $childDoc);
     }
