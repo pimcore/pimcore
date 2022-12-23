@@ -745,13 +745,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         parent::__wakeup();
 
-        // renew localized fields
-        // do not use the getter ($this->getLocalizedfields()) as it somehow slows down the process around a sec
-        // no clue why this happens
-        //if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
-        //    $this->localizedfields->setObject($this, false);
-        //}
-
         // renew object reference to other object aware fields
         foreach ($this->__objectAwareFields as $objectAwareField => $exists) {
             if (isset($this->$objectAwareField) && $this->$objectAwareField instanceof ObjectAwareFieldInterface) {
