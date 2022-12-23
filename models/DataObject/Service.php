@@ -2116,18 +2116,17 @@ class Service extends Model\Element\Service
     {
         $currentVersion = \Pimcore\Version::getVersion();
 
-        $fieldName = strtolower($fieldName);
         if (str_starts_with($currentVersion, '11.')) {
             $newFieldName = $fieldName;
             if (str_starts_with($newFieldName, 'o_')) {
                 $newFieldName = substr($newFieldName, 2);
             }
-            if (in_array($newFieldName, self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
+            if (in_array(strtolower($newFieldName), self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
                 return $newFieldName;
             }
         } else {
             if (!str_starts_with($fieldName, 'o_')
-                && in_array($fieldName, self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
+                && in_array(strtolower($fieldName), self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
                 return 'o_' . $fieldName;
             }
         }
