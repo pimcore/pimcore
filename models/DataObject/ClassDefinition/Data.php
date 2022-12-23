@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 
-abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
+abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface, \JsonSerializable
 {
     use DataObject\ClassDefinition\Helper\VarExport;
 
@@ -1304,5 +1304,13 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function isForbiddenName(): bool
     {
         return in_array($this->getName(), self::FORBIDDEN_NAMES);
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        $tempObj = clone $this; // we clone, so that we only get public properties of the object
+        $data = get_object_vars($tempObj);
+        $data['fieldtype'] = $this->getFieldType();
+        return $data;
     }
 }
