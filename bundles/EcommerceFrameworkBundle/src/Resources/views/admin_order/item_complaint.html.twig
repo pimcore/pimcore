@@ -2,7 +2,7 @@
 {% set urlSave = pimcore_url() %}
 
 <form action="{{ urlSave }}" method="post">
-    <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+    <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken(app.request.session) }}">
     <div class="modal-header">
         <h5 class="modal-title">{{ orderItem.getProductName() }} <small>{{ ('bundle_ecommerce.back-office.order.item-complaint')|trans([],'admin') }}</small></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">

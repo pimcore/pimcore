@@ -31,10 +31,14 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPasswordValidator;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @internal
@@ -546,8 +550,9 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function updateCurrentUserAction(Request $request): JsonResponse
+    public function updateCurrentUserAction(Request $request, ValidatorInterface $validator): JsonResponse
     {
+        //TODO Can be completely validated with Symfony Validator
         $user = $this->getAdminUser();
         if ($user != null) {
             if ($user->getId() == $request->get('id')) {
@@ -565,7 +570,7 @@ class UserController extends AdminController implements KernelControllerEventInt
 
                     if (empty($values['old_password'])) {
                         // if the user want to reset the password, the old password isn't required
-                        $oldPasswordCheck = Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+                        $oldPasswordCheck = Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession) {
                             if ($adminSession->get('password_reset')) {
                                 return true;
                             }
@@ -573,9 +578,9 @@ class UserController extends AdminController implements KernelControllerEventInt
                             return false;
                         });
                     } else {
-                        // the password has to match
-                        $checkUser = Tool\Authentication::authenticatePlaintext($user->getName(), $values['old_password']);
-                        if ($checkUser) {
+                        $errors = $validator->validate($values['old_password'], [new UserPassword()]);
+
+                        if (count($errors) === 0) {
                             $oldPasswordCheck = true;
                         }
                     }
@@ -648,7 +653,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         $userData['twoFactorAuthentication']['isActive'] = $user->getTwoFactorAuthentication('enabled') && $user->getTwoFactorAuthentication('secret');
         $userData['hasImage'] = $user->hasImage();
 
-        $userData['isPasswordReset'] = Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+        $userData['isPasswordReset'] = Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession) {
             return $adminSession->get('password_reset');
         });
 
@@ -845,8 +850,8 @@ class UserController extends AdminController implements KernelControllerEventInt
         $user->setTwoFactorAuthentication('secret', $newSecret);
         $user->save();
 
-        Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
-            Tool\Session::regenerateId();
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession, SessionInterface $session) {
+            $session->migrate();
             $adminSession->set('2fa_required', true);
         });
 

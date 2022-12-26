@@ -96,7 +96,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             // only one login is allowed to setup 2FA by the user himself
             $user->setTwoFactorAuthentication('enabled', true);
             // disable the 2FA prompt for the current session
-            Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+            Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession) {
                 $adminSession->set('2fa_required', false);
             });
 
@@ -196,7 +196,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'disableMinifyJs'     => \Pimcore::disableMinifyJs(),
             'environment'         => $kernel->getEnvironment(),
             'cached_environments' => Tool::getCachedSymfonyEnvironments(),
-            'sessionId'           => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
+            'sessionId'           => htmlentities($request->getSession()->getId(), ENT_QUOTES, 'UTF-8'),
 
             // languages
             'language'         => $request->getLocale(),
@@ -257,7 +257,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             ->addCustomViewSettings($settings)
             ->addNotificationSettings($settings, $config);
 
-        $settings['csrfToken'] = $csrfProtection->getCsrfToken();
+        $settings['csrfToken'] = $csrfProtection->getCsrfToken($request->getSession());
 
         $templateParams['settings'] = $settings;
 

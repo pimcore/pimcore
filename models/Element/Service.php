@@ -103,7 +103,15 @@ class Service extends Model\AbstractModel
 
         $type = $element->getType();
         if ($type !== DataObject::OBJECT_TYPE_FOLDER) {
-            $type = self::getElementType($element) ?? throw new \Exception('unknown type');
+            if ($element instanceof Document) {
+                $type = 'document';
+            } elseif ($element instanceof DataObject\AbstractObject) {
+                $type = 'object';
+            } elseif ($element instanceof Asset) {
+                $type = 'asset';
+            } else {
+                throw new \Exception('unknown type');
+            }
         }
         $path .= '/' . $type;
 
@@ -142,7 +150,8 @@ class Service extends Model\AbstractModel
      *
      * @return int[]
      *
-     * @internal
+     *@internal
+     *
      */
     public static function getIdList(Model\Listing\AbstractListing|array $list, string $idGetter = 'getId'): array
     {
@@ -236,15 +245,22 @@ class Service extends Model\AbstractModel
 
     private static function getDependedElement(array $config): Asset|Document|AbstractObject|null
     {
-        return match ($config['type']) {
-            'asset' => Asset::getById($config['id']),
-            'object' => DataObject::getById($config['id']),
-            'document' => Document::getById($config['id']),
-            default => null,
-        };
+        if ($config['type'] == 'object') {
+            return DataObject::getById($config['id']);
+        } elseif ($config['type'] == 'asset') {
+            return Asset::getById($config['id']);
+        } elseif ($config['type'] == 'document') {
+            return Document::getById($config['id']);
+        }
+
+        return null;
     }
 
-    public static function doHideUnpublished(?ElementInterface $element): bool
+    /**
+     * @static
+     *
+     */
+    public static function doHideUnpublished($element): bool
     {
         return ($element instanceof AbstractObject && DataObject::doHideUnpublished())
             || ($element instanceof Document && Document::doHideUnpublished());
@@ -257,7 +273,8 @@ class Service extends Model\AbstractModel
      *
      * @return bool
      *
-     * @internal
+     *@internal
+     *
      */
     public static function isPublished(ElementInterface $element = null): bool
     {
@@ -279,7 +296,8 @@ class Service extends Model\AbstractModel
      *
      * @throws \Exception
      *
-     * @internal
+     *@internal
+     *
      */
     public static function filterUnpublishedAdvancedElements(?array $data): array
     {
@@ -349,12 +367,17 @@ class Service extends Model\AbstractModel
 
     public static function getElementByPath(string $type, string $path): ?ElementInterface
     {
-        return match ($type) {
-            'asset' => Asset::getByPath($path),
-            'object' => DataObject::getByPath($path),
-            'document' => Document::getByPath($path),
-            default => null,
-        };
+        $element = null;
+
+        if ($type == 'asset') {
+            $element = Asset::getByPath($path);
+        } elseif ($type == 'object') {
+            $element = DataObject::getByPath($path);
+        } elseif ($type == 'document') {
+            $element = Document::getByPath($path);
+        }
+
+        return $element;
     }
 
     /**
@@ -364,7 +387,8 @@ class Service extends Model\AbstractModel
      *
      * @throws \Exception
      *
-     * @internal
+     *@internal
+     *
      */
     public static function getBaseClassNameForElement(string|ElementInterface $element): string
     {
@@ -391,7 +415,8 @@ class Service extends Model\AbstractModel
      *
      * @return string
      *
-     * @deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
+     *@deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
+     *
      */
     public static function getSaveCopyName(string $type, string $sourceKey, ElementInterface $target): string
     {
@@ -441,32 +466,30 @@ class Service extends Model\AbstractModel
      */
     public static function pathExists(string $path, string $type = null): bool
     {
-        return match ($type) {
-            'asset' => Asset\Service::pathExists($path),
-            'object' => DataObject\Service::pathExists($path),
-            'document' => Document\Service::pathExists($path),
-            default => false,
-        };
+        if ($type == 'asset') {
+            return Asset\Service::pathExists($path);
+        } elseif ($type == 'document') {
+            return Document\Service::pathExists($path);
+        } elseif ($type == 'object') {
+            return DataObject\Service::pathExists($path);
+        }
+
+        return false;
     }
 
     public static function getElementById(string $type, int|string $id, array $params = []): Asset|Document|AbstractObject|null
     {
-        if (is_string($id)) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '11.0',
-                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
-            );
-            $id = is_numeric($id) ? (int) $id : 0;
-        }
+        $element = null;
         $params = self::prepareGetByIdParams($params);
+        if ($type === 'asset') {
+            $element = Asset::getById($id, $params);
+        } elseif ($type === 'object') {
+            $element = DataObject::getById($id, $params);
+        } elseif ($type === 'document') {
+            $element = Document::getById($id, $params);
+        }
 
-        return match ($type) {
-            'asset' => Asset::getById($id, $params),
-            'object' => DataObject::getById($id, $params),
-            'document' => Document::getById($id, $params),
-            default => null,
-        };
+        return $element;
     }
 
     /**
@@ -497,12 +520,19 @@ class Service extends Model\AbstractModel
      */
     public static function getElementType(ElementInterface $element): ?string
     {
-        return match (true) {
-            $element instanceof Asset => 'asset',
-            $element instanceof Document => 'document',
-            $element instanceof DataObject\AbstractObject => 'object',
-            default => null,
-        };
+        if ($element instanceof DataObject\AbstractObject) {
+            return 'object';
+        }
+
+        if ($element instanceof Document) {
+            return 'document';
+        }
+
+        if ($element instanceof Asset) {
+            return 'asset';
+        }
+
+        return null;
     }
 
     /**
@@ -515,13 +545,17 @@ class Service extends Model\AbstractModel
     public static function getElementTypeByClassName(string $className): ?string
     {
         $className = trim($className, '\\');
+        if (is_a($className, AbstractObject::class, true)) {
+            return 'object';
+        }
+        if (is_a($className, Asset::class, true)) {
+            return 'asset';
+        }
+        if (is_a($className, Document::class, true)) {
+            return 'document';
+        }
 
-        return match (true) {
-            is_a($className, Asset::class, true) => 'asset',
-            is_a($className, Document::class, true) => 'document',
-            is_a($className, AbstractObject::class, true) => 'object',
-            default => null,
-        };
+        return null;
     }
 
     /**
@@ -542,11 +576,33 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * determines the type of an element (object,asset,document)
+     *
+     * @param  ElementInterface $element
+     *
+     * @return string|null
+     *
+     *@deprecated use getElementType() instead, will be removed in Pimcore 11
+     *
+     */
+    public static function getType(ElementInterface $element): ?string
+    {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.0',
+            'The Service::getType() method is deprecated, use Service::getElementType() instead.'
+        );
+
+        return self::getElementType($element);
+    }
+
+    /**
      * @param array $props
      *
      * @return array
      *
-     * @internal
+     *@internal
+     *
      */
     public static function minimizePropertiesForEditmode(array $props): array
     {
@@ -599,9 +655,10 @@ class Service extends Model\AbstractModel
      * @param DataObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
      *
-     * @internal
+     *@internal
+     *
      */
-    protected function updateChildren(DataObject|Document|Asset\Folder $target, ElementInterface $new): void
+    protected function updateChildren(DataObject|Document|Asset\Folder $target, ElementInterface $new)
     {
         //check in case of recursion
         $found = false;
@@ -614,9 +671,7 @@ class Service extends Model\AbstractModel
         }
         if (!$found) {
             $newElement = Element\Service::getElementById($new->getType(), $new->getId());
-            $listing = $target->getChildren();
-            $listing->setData(array_merge($listing->getData(), [$newElement]));
-            $target->setChildren($listing);
+            $target->setChildren(array_merge($target->getChildren(), [$newElement]));
         }
     }
 
@@ -657,7 +712,8 @@ class Service extends Model\AbstractModel
      *
      * @return array{forbidden: array, allowed: array}
      *
-     * @internal
+     *@internal
+     *
      */
     public static function findForbiddenPaths(string $type, Model\User $user): array
     {
@@ -734,7 +790,8 @@ class Service extends Model\AbstractModel
      *
      * @return mixed
      *
-     * @internal
+     *@internal
+     *
      */
     public static function renewReferences(mixed $data, bool $initial = true, string $key = null): mixed
     {
@@ -949,7 +1006,7 @@ class Service extends Model\AbstractModel
      * @internal
      *
      */
-    public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList): void
+    public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList)
     {
         if ($cv) {
             $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
@@ -989,7 +1046,8 @@ class Service extends Model\AbstractModel
      *
      * @return array|null
      *
-     * @internal
+     *@internal
+     *
      */
     public static function getCustomViewById(string $id): ?array
     {
@@ -1012,30 +1070,40 @@ class Service extends Model\AbstractModel
             'type' => $type,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, SystemEvents::SERVICE_PRE_GET_VALID_KEY);
-        $key = trim($event->getArgument('key'));
+        $key = $event->getArgument('key');
+        $key = trim($key);
 
-        // replace all control/format/private/surrogate/unassigned and 4 byte unicode characters
-        $key = preg_replace(['/\p{C}/u', '/[\x{10000}-\x{10FFFF}]/u'], ['', '-'], $key);
+        // replace all control/unassigned and invalid characters
+        $key = preg_replace('/[^\PCc^\PCn^\PCs]/u', '', $key);
+        // replace all 4 byte unicode characters
+        $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
+        // replace left to right marker characters ( lrm )
+        $key = preg_replace('/(\x{200e}|\x{200f})/u', '-', $key);
         // replace slashes with a hyphen
         $key = str_replace('/', '-', $key);
+
+        // replace some other special characters
+        $key = preg_replace('/[\t\n\r\f\v]/', '', $key);
 
         if ($type === 'object') {
             $key = preg_replace('/[<>]/', '-', $key);
         } elseif ($type === 'document') {
             // replace URL reserved characters with a hyphen
-            $key = preg_replace('/[#?*:\\\\<>|"%&@=;+]/', '-', $key);
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;\+]/', '-', $key);
         } elseif ($type === 'asset') {
             // keys shouldn't start with a "." (=hidden file) *nix operating systems
             // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
             $key = trim($key, '. ');
 
             // windows forbidden filenames + URL reserved characters (at least the ones which are problematic)
-            $key = preg_replace('/[#?*:\\\\<>|"%+]/', '-', $key);
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%\+]/', '-', $key);
         } else {
             $key = ltrim($key, '. ');
         }
 
-        return mb_substr($key, 0, 255);
+        $key = mb_substr($key, 0, 255);
+
+        return $key;
     }
 
     public static function isValidKey(string $key, string $type): bool
@@ -1088,7 +1156,8 @@ class Service extends Model\AbstractModel
      *
      * @return array
      *
-     * @internal
+     *@internal
+     *
      */
     public static function fixAllowedTypes(array $data, string $type): array
     {
@@ -1129,7 +1198,8 @@ class Service extends Model\AbstractModel
      *
      * @return array
      *
-     * @internal
+     *@internal
+     *
      */
     public static function getSafeVersionInfo(array $versions): array
     {
@@ -1326,20 +1396,18 @@ class Service extends Model\AbstractModel
      *
      * @return string
      *
-     * @internal
+     *@internal
+     *
      */
-    public static function getSessionKey(string $type, int $elementId, ?string $postfix = ''): string
+    public static function getSessionKey(string $type, int $elementId, string $sessionId, ?string $postfix = ''): string
     {
-        $sessionId = Session::getSessionId();
-        $tmpStoreKey = $type . '_session_' . $elementId . '_' . $sessionId . $postfix;
-
-        return $tmpStoreKey;
+        return $type . '_session_' . $elementId . '_' . $sessionId . $postfix;
     }
 
-    public static function getElementFromSession(string $type, int $elementId, ?string $postfix = ''): Asset|Document|AbstractObject|null
+    public static function getElementFromSession(string $type, int $elementId, string $sessionId, ?string $postfix = ''): Asset|Document|AbstractObject|null
     {
         $element = null;
-        $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
+        $tmpStoreKey = self::getSessionKey($type, $elementId, $sessionId, $postfix);
 
         $tmpStore = TmpStore::get($tmpStoreKey);
         if ($tmpStore) {
@@ -1381,9 +1449,10 @@ class Service extends Model\AbstractModel
      * @param string $postfix
      * @param bool $clone save a copy
      *
-     * @internal
+     *@internal
+     *
      */
-    public static function saveElementToSession(ElementInterface $element, string $postfix = '', bool $clone = true): void
+    public static function saveElementToSession(ElementInterface $element, string $sessionId, string $postfix = '', bool $clone = true)
     {
         if ($clone) {
             $context = [
@@ -1411,7 +1480,7 @@ class Service extends Model\AbstractModel
         }
 
         $elementType = Service::getElementType($element);
-        $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $postfix);
+        $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $sessionId, $postfix);
         $tag = $elementType . '-session' . $postfix;
 
         self::loadAllFields($element);
@@ -1422,15 +1491,11 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
-     * @param int $elementId
-     * @param string $postfix
-     *
      * @internal
      */
-    public static function removeElementFromSession(string $type, int $elementId, string $postfix = ''): void
+    public static function removeElementFromSession(string $type, int $elementId, string $sessionId, string $postfix = '')
     {
-        $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
+        $tmpStoreKey = self::getSessionKey($type, $elementId, $sessionId, $postfix);
         TmpStore::delete($tmpStoreKey);
     }
 
@@ -1525,7 +1590,8 @@ class Service extends Model\AbstractModel
      *
      * @return string
      *
-     * @internal
+     *@internal
+     *
      */
     public static function getElementCacheTag(string $type, int|string|null $id): string
     {

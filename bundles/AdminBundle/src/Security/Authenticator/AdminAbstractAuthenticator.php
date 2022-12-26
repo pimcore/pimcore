@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -44,7 +45,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @internal
  */
-abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implements AuthenticatorInterface, LoggerAwareInterface
+abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implements LoggerAwareInterface
 {
     public const PIMCORE_ADMIN_LOGIN = 'pimcore_admin_login';
 
@@ -70,7 +71,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
             return new Response(strtr($exception->getMessageKey(), $exception->getMessageData()));
         }
 
-        $url = $this->router->generate(AdminLoginAuthenticator::PIMCORE_ADMIN_LOGIN, [
+        $url = $this->router->generate(AdminAbstractAuthenticator::PIMCORE_ADMIN_LOGIN, [
             'auth_failed' => 'true',
         ]);
 
@@ -101,7 +102,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
 
         if ($user->isAdmin()) {
             if (Admin::isMaintenanceModeScheduledForLogin()) {
-                Admin::activateMaintenanceMode(Session::getSessionId());
+                Admin::activateMaintenanceMode($request->getSession()->getId());
                 Admin::unscheduleMaintenanceModeOnLogin();
             }
         }
@@ -109,8 +110,8 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         // as we authenticate statelessly (short lived sessions) the authentication is called for
         // every request. therefore we only redirect if we're on the login page
         if (!in_array($request->attributes->get('_route'), [
-            AdminLoginAuthenticator::PIMCORE_ADMIN_LOGIN,
-            AdminLoginAuthenticator::PIMCORE_ADMIN_LOGIN_CHECK,
+            AdminAbstractAuthenticator::PIMCORE_ADMIN_LOGIN,
+            AdminAbstractAuthenticator::PIMCORE_ADMIN_LOGIN_CHECK,
         ])) {
             return null;
         }
@@ -135,13 +136,13 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         return null;
     }
 
-    protected function saveUserToSession(User $user): void
+    protected function saveUserToSession(User $user, SessionInterface $session): void
     {
         if (Authentication::isValidUser($user->getUser())) {
             $pimcoreUser = $user->getUser();
 
-            Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser) {
-                Session::regenerateId();
+            Session::useBag($session, function (AttributeBagInterface $adminSession, SessionInterface $session) use ($pimcoreUser) {
+                $session->migrate();
                 $adminSession->set('user', $pimcoreUser);
 
                 // this flag gets removed after successful authentication in \Pimcore\Bundle\AdminBundle\EventListener\TwoFactorListener

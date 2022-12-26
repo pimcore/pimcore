@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -41,6 +40,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 
@@ -86,6 +86,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
      */
     public function loginAction(
         Request $request,
+        AuthenticationUtils $authenticationUtils,
         CsrfProtectionHandler $csrfProtection,
         Config $config,
         EventDispatcherInterface $eventDispatcher
@@ -94,9 +95,9 @@ class LoginController extends AdminController implements KernelControllerEventIn
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $csrfProtection->regenerateCsrfToken();
+        $csrfProtection->regenerateCsrfToken($request->getSession());
 
-        $user = $this->getAdminUser();
+        $user = $this->getUser();
         if ($user instanceof UserInterface) {
             return $this->redirectToRoute('pimcore_admin_index');
         }
@@ -129,8 +130,11 @@ class LoginController extends AdminController implements KernelControllerEventIn
             'config' => $config,
             'request' => $request,
         ]);
+
         $eventDispatcher->dispatch($event, AdminEvents::LOGIN_BEFORE_RENDER);
         $params = $event->getArgument('parameters');
+
+        $params['login_error'] = $authenticationUtils->getLastAuthenticationError();
 
         return $this->render('@PimcoreAdmin/admin/login/login.html.twig', $params);
     }
@@ -141,11 +145,11 @@ class LoginController extends AdminController implements KernelControllerEventIn
     public function csrfTokenAction(Request $request, CsrfProtectionHandler $csrfProtection): \Symfony\Component\HttpFoundation\JsonResponse
     {
         if (!$this->getAdminUser()) {
-            $csrfProtection->regenerateCsrfToken();
+            $csrfProtection->regenerateCsrfToken($request->getSession());
         }
 
         return $this->json([
-           'csrfToken' => $csrfProtection->getCsrfToken(),
+           'csrfToken' => $csrfProtection->getCsrfToken($request->getSession()),
         ]);
     }
 
@@ -161,8 +165,6 @@ class LoginController extends AdminController implements KernelControllerEventIn
      * Dummy route used to check authentication
      *
      * @Route("/login/login", name="pimcore_admin_login_check")
-     *
-     * @see AdminLoginAuthenticator for the security implementation
      */
     public function loginCheckAction(): RedirectResponse
     {
@@ -232,7 +234,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
             }
         }
 
-        $csrfProtection->regenerateCsrfToken();
+        $csrfProtection->regenerateCsrfToken($request->getSession());
 
         return $this->render('@PimcoreAdmin/admin/login/lost_password.html.twig', $params);
     }

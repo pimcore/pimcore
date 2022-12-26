@@ -28,7 +28,6 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
-use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AdminController extends Controller implements AdminControllerInterface
@@ -38,24 +37,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
     protected TranslatorInterface $translator;
 
     protected PimcoreBundleManager $bundleManager;
-
-    #[Required]
-    public function setTranslator(TranslatorInterface $translator): void
-    {
-        $this->translator = $translator;
-    }
-
-    #[Required]
-    public function setBundleManager(PimcoreBundleManager $bundleManager): void
-    {
-        $this->bundleManager = $bundleManager;
-    }
-
-    #[Required]
-    public function setTokenResolver(TokenStorageUserResolver $tokenResolver): void
-    {
-        $this->tokenResolver = $tokenResolver;
-    }
 
     /**
      * @return string[]
@@ -87,6 +68,21 @@ abstract class AdminController extends Controller implements AdminControllerInte
         return true;
     }
 
+    public function getTranslator()
+    {
+        return $this->container->get('translator');
+    }
+
+    public function getBundleManager()
+    {
+        return $this->container->get(PimcoreBundleManager::class);
+    }
+
+    public function getTokenResolver()
+    {
+        return $this->container->get(TokenStorageUserResolver::class);
+    }
+
     /**
      * Get user from user proxy object which is registered on security component
      *
@@ -96,11 +92,13 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     protected function getAdminUser(bool $proxyUser = false): User|UserProxy|null
     {
-        if ($proxyUser) {
-            return $this->tokenResolver->getUserProxy();
+        $user = $this->getUser();
+
+        if (!$user instanceof UserProxy) {
+            return null;
         }
 
-        return $this->tokenResolver->getUser();
+        return $user->getUser();
     }
 
     /**
@@ -110,7 +108,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      *
      * @throws AccessDeniedHttpException
      */
-    protected function checkPermission(string $permission): void
+    protected function checkPermission(string $permission)
     {
         if (!$this->getAdminUser() || !$this->getAdminUser()->isAllowed($permission)) {
             Logger::error(
@@ -142,7 +140,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * @param string[] $permissions
      */
-    protected function checkPermissionsHasOneOf(array $permissions): void
+    protected function checkPermissionsHasOneOf(array $permissions)
     {
         $allowed = false;
         $permission = null;
@@ -174,7 +172,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @param string $permission
      * @param array $unrestrictedActions
      */
-    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = []): void
+    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = [])
     {
         $actionName = null;
         $controller = $event->getController();
@@ -276,6 +274,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     public function trans(string $id, array $parameters = [], ?string $domain = 'admin', string $locale = null): string
     {
-        return $this->translator->trans($id, $parameters, $domain, $locale);
+        return $this->getTranslator()->trans($id, $parameters, $domain, $locale);
     }
 }

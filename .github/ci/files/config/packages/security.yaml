@@ -19,9 +19,6 @@ security:
         # Pimcore admin form login // DO NOT CHANGE!
         pimcore_admin:
             pattern: ^/admin(/.*)?$
-            # admin firewall is stateless as we open the admin
-            # session on demand for non-blocking parallel requests
-            stateless: true
             provider: pimcore_admin
             login_throttling:
                 max_attempts: 3
@@ -29,10 +26,15 @@ security:
             logout:
                 path: pimcore_admin_logout
                 target: pimcore_admin_login
+            form_login:
+                default_target_path: pimcore_admin_index
+                always_use_default_target_path: true
+                login_path: pimcore_admin_login
+                check_path: pimcore_admin_login_check
+                username_parameter: username
+                password_parameter: password
             custom_authenticators:
-                    - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator
-                    - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminTokenAuthenticator
-                    - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminSessionAuthenticator
+                - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminTokenAuthenticator
             two_factor:
                 auth_form_path: /admin/login/2fa                   # Path or route name of the two-factor form
                 check_path: /admin/login/2fa-verify                # Path or route name of the two-factor code check
@@ -41,7 +43,6 @@ security:
                 auth_code_parameter_name: _auth_code   # Name of the parameter for the two-factor authentication code
                 trusted_parameter_name: _trusted       # Name of the parameter for the trusted device option
                 multi_factor: false                    # If ALL active two-factor methods need to be fulfilled (multi-factor authentication)
-
 
     access_control:
         # Pimcore admin ACl  // DO NOT CHANGE!

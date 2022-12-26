@@ -5,7 +5,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <form class="form-horizontal js-cleanup-reservations-modal-form"
                       action="{{ path('pimcore_ecommerce_backend_voucher_cleanup-reservations', urlParams) }}" method="post">
-                    <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+                    <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken(app.request.session) }}">
                     <h3>{{ ('bundle_ecommerce_voucherservice_modal_cleanup-reservations-headline')|trans([],'admin') }}</h3>
                     <div class="form-group" style="margin-top: 20px">
                         <div class="col col-sm-12">

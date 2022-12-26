@@ -46,7 +46,7 @@ class TwoFactorListener
     {
         // this session flag is set in \Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminAbstractAuthenticator
         // @TODO: check if there's a nicer way of doing this, actually it feels a bit like a hack :)
-        Session::useSession(function (AttributeBagInterface $adminSession) {
+        Session::useBag($event->getRequest()->getSession(), function (AttributeBagInterface $adminSession) {
             $adminSession->set('2fa_required', false);
         });
     }
