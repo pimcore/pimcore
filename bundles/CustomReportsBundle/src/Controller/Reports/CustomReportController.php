@@ -14,8 +14,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
+namespace Pimcore\Bundle\CustomReportsBundle\Controller\Reports;
 
+use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Tool\CustomReport;
@@ -31,7 +32,7 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @internal
  */
-class CustomReportController extends ReportsControllerBase
+class CustomReportController extends AdminController
 {
     /**
      * @Route("/tree", name="pimcore_admin_reports_customreport_tree", methods={"GET", "POST"})

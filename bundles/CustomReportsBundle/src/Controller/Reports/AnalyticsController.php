@@ -14,10 +14,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
+namespace Pimcore\Bundle\CustomReportsBundle\Controller\Reports;
 
 use Google\Service\Analytics;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
+use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Google;
 use Pimcore\Model\Document;
@@ -27,13 +28,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
-
 /**
  * @Route("/analytics")
  *
  * @internal
  */
-class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
+class AnalyticsController extends AdminController implements KernelControllerEventInterface
 {
     protected Analytics $service;
 

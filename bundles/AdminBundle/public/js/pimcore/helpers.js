@@ -2797,13 +2797,6 @@ pimcore.helpers.applicationLogger = function() {
     }
 };
 
-pimcore.helpers.reports = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("reports")) {
-        pimcore.layout.toolbar.prototype.showReports(null);
-    }
-};
-
 pimcore.helpers.seoDocumentEditor = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
@@ -2822,13 +2815,6 @@ pimcore.helpers.httpErrorLog = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("http_errors")) {
         pimcore.layout.toolbar.prototype.showHttpErrorLog();
-    }
-};
-
-pimcore.helpers.customReports = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("reports")) {
-        pimcore.layout.toolbar.prototype.showCustomReports();
     }
 };
 
@@ -2933,12 +2919,10 @@ pimcore.helpers.keyBindingMapping = {
     "recycleBin": pimcore.helpers.recycleBin,
     "notesEvents": pimcore.helpers.notesEvents,
     "applicationLogger": pimcore.helpers.applicationLogger,
-    "reports": pimcore.helpers.reports,
     "tagManager": pimcore.helpers.tagManager,
     "seoDocumentEditor": pimcore.helpers.seoDocumentEditor,
     "robots": pimcore.helpers.robots,
     "httpErrorLog": pimcore.helpers.httpErrorLog,
-    "customReports": pimcore.helpers.customReports,
     "tagConfiguration": pimcore.helpers.tagConfiguration,
     "users": pimcore.helpers.users,
     "roles": pimcore.helpers.roles,

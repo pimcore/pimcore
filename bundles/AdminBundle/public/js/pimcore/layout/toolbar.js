@@ -515,15 +515,6 @@
              // marketing menu
              var marketingItems = [];
  
-             if (user.isAllowed("reports") && perspectiveCfg.inToolbar("marketing.reports")) {
-                 marketingItems.push({
-                     text: t("reports"),
-                     iconCls: "pimcore_nav_icon_reports",
-                     itemId: 'pimcore_menu_marketing_reports',
-                     handler: this.showReports.bind(this, null)
-                 });
-             }
- 
              if (user.isAllowed("targeting") && perspectiveCfg.inToolbar("marketing.targeting")) {
                  marketingItems.push({
                      text: t("personalization") + " / " + t("targeting"),
@@ -596,17 +587,6 @@
                              shadow: false,
                              items: seoMenu
                          }
-                     });
-                 }
-             }
- 
-             if (user.isAllowed("reports_config")) {
-                 if (perspectiveCfg.inToolbar("settings.customReports")) {
-                     marketingItems.push({
-                         text: t("custom_reports"),
-                         iconCls: "pimcore_nav_icon_reports",
-                         itemId: 'pimcore_menu_marketing_custom_reports',
-                         handler: this.showCustomReports
                      });
                  }
              }
@@ -1385,34 +1365,7 @@
      sendTestEmail: function () {
          pimcore.helpers.sendTestEmail(pimcore.settings.mailDefaultAddress);
      },
- 
-     showReports: function (reportClass, reportConfig) {
-         try {
-             pimcore.globalmanager.get("reports").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("reports", new pimcore.report.panel());
-         }
- 
-         // this is for generated/configured reports like the SQL Report
-         try {
-             if(reportClass) {
-                 pimcore.globalmanager.get("reports").openReportViaToolbar(reportClass, reportConfig);
-             }
-         } catch (e) {
-             console.log(e);
-         }
-     },
- 
-     showCustomReports: function () {
-         try {
-             pimcore.globalmanager.get("custom_reports_settings").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("custom_reports_settings", new pimcore.report.custom.settings());
-         }
-     },
- 
+
      showTargetingRules: function () {
          var tabPanel = Ext.getCmp("pimcore_panel_tabs");
          try {
