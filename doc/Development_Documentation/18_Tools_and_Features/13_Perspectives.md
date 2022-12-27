@@ -36,8 +36,8 @@ You can restrict the access to certain perspectives via the user settings.
 ## The Configuration File
 
 Where the perspective configure is stored depends on your configuration.
-Per default this will be the settings-store. 
-If you want to change the default behaviour have a look at the [environment](../21_Deployment/03_Configuration_Environments.md#page_Configuration-Storage-Locations-Fallbacks) configuration options. 
+Per default, this will be the settings-store. 
+If you want to change the default behaviour, have a look at the [environment](../21_Deployment/03_Configuration_Environments.md#page_Configuration-Storage-Locations-Fallbacks) configuration options. 
 
 Please refer to the [Example File](https://github.com/pimcore/skeleton/blob/11.x/var/config/perspectives/perspectives.example.yaml) 
 for further details on how this can be set up.
