@@ -1294,8 +1294,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function jsonSerialize(): mixed
     {
-        $tempObj = clone $this; // we clone, so that we only get public properties of the object
-        $data = get_object_vars($tempObj);
+        $data = \Closure::bind(fn($obj) => get_object_vars($obj),null,null)($this); // only get public properties
         $data['fieldtype'] = $this->getFieldType();
         $data['datatype'] = 'data';
         unset($data['blockedVarsForExport']);
