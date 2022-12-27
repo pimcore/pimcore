@@ -10,7 +10,7 @@ You can create or edit perspectives and custom views within the pimcore backend 
 > **Security Note**    
 > Perspectives and Custom Views are not intended to be used to restrict access to data
 
-Please be aware that if combined with custom views, the custom view settings must be defined in the `customviews.php`. 
+Please be aware that if combined with custom views, the custom view settings must be defined in the `customviews.yaml` (the filename is up to you). 
 The link is accomplished via the ID.
 
 You can define:
@@ -35,7 +35,11 @@ You can restrict the access to certain perspectives via the user settings.
 
 ## The Configuration File
 
-Please refer to the [Example File](https://github.com/pimcore/skeleton/blob/11.x/var/config/perspectives/demo.example.yaml) 
+Where the perspective configure is stored depends on your configuration.
+Per default this will be the settings-store. 
+If you want to change the default behaviour have a look at the [environment](../21_Deployment/03_Configuration_Environments.md#page_Configuration-Storage-Locations-Fallbacks) configuration options. 
+
+Please refer to the [Example File](https://github.com/pimcore/skeleton/blob/11.x/var/config/perspectives/perspectives.example.yaml) 
 for further details on how this can be set up.
 
 You can find out there how the default view is prepared and how to add a special perspective.
@@ -58,7 +62,7 @@ The table below, describes the most useful of available options in the configura
 
 ## Simple example
 
-In the [Example File](https://github.com/pimcore/skeleton/blob/11.x/config/pimcore/perspectives.example.php) you 
+In the [Example File](https://github.com/pimcore/skeleton/blob/11.x/var/config/perspectives/perspectives.example.yaml) you 
 can find advance usage. Below, I showed how to create the simple structure which would be use for catalog administrators.
 
 We need only to see 
@@ -106,7 +110,7 @@ The custom view definition would look like that:
     id: 4e9f892c-7734-f5fa-d6f0-31e7f9787ffc
 ```
 
-Let's update the `var/config/perspectives/demo.yaml` by the new perspective.
+Let's update the `var/config/perspectives/example.yaml` by the new perspective.
 
 ```yaml
 ...
