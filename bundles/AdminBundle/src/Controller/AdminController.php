@@ -86,11 +86,9 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * Get user from user proxy object which is registered on security component
      *
-     * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model
-     *
      * @return UserProxy|User|null
      */
-    protected function getAdminUser(bool $proxyUser = false): User|UserProxy|null
+    protected function getAdminUser(): User|UserProxy|null
     {
         $user = $this->getUser();
 
