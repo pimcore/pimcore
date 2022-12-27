@@ -22,6 +22,9 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 final class Session
 {
+    /**
+     * @param callable(SessionBagInterface, SessionInterface):mixed $func
+     */
     public static function useBag(SessionInterface $session, callable $func, string $namespace = 'pimcore_admin'): mixed
     {
         $bag = $session->getBag($namespace);
