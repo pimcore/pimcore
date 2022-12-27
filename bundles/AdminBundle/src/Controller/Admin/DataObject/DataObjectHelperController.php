@@ -464,7 +464,7 @@ class DataObjectHelperController extends AdminController
                             }
                         } else {
                             if (DataObject\Service::isHelperGridColumnConfig($key)) {
-                                $calculatedColumnConfig = $this->getCalculatedColumnConfig($savedColumns[$key]);
+                                $calculatedColumnConfig = $this->getCalculatedColumnConfig($request, $savedColumns[$key]);
                                 if ($calculatedColumnConfig) {
                                     $availableFields[] = $calculatedColumnConfig;
                                 }
@@ -670,7 +670,7 @@ class DataObjectHelperController extends AdminController
         }
     }
 
-    protected function getCalculatedColumnConfig(array $config): mixed
+    protected function getCalculatedColumnConfig(Request $request, array $config): mixed
     {
         try {
             $calculatedColumnConfig = Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($config) {
