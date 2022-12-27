@@ -567,7 +567,7 @@ class Service extends Model\Element\Service
     public static function getHelperDefinitions(): array
     {
         $stack = \Pimcore::getContainer()->get('request_stack');
-        if ($stack->getMainRequest() && $stack->getMainRequest()->hasSession()) {
+        if ($stack->getMainRequest()?->hasSession()) {
             $session = $stack->getSession();
 
             return Session::useBag($session, function (AttributeBagInterface $session) {
