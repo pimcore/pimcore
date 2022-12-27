@@ -76,6 +76,8 @@ See the [Custom views](../05_Objects/01_Object_Classes/05_Class_Settings/20_Cust
 The custom view definition would look like that:
 
 ```yaml
+#var/config/perspectives/perspective.yaml
+
 ...
 4e9f892c-7734-f5fa-d6f0-31e7f9787ffc:
     name: Cars
@@ -113,6 +115,8 @@ The custom view definition would look like that:
 Let's update the `var/config/perspectives/example.yaml` by the new perspective.
 
 ```yaml
+#var/config/perspectives/perspective.yaml
+
 ...
 demo:
     elementTree:

@@ -10,18 +10,16 @@ Note that the ID is mandatory and must be unique!
 
 ![Custom Views](../../../img/classes-custom-views1.png)
 
-For a sample configuration file have a look at the [sample configuration file](https://github.com/pimcore/skeleton/blob/11.x/config/pimcore/customviews.example.php) 
+For a sample configuration file have a look at the [sample configuration file](https://github.com/pimcore/skeleton/blob/11.x/var/config/custom-views/customviews.example.yaml) 
 that ships with Pimcore and its comments. 
 
 ## Advanced Features / Configurations
 
 #### Additional object tree including condition filter
 The main idea for this configuration is to
-* add an additional object tree called `Articles` having its root at `/blog`
+* add an additional object tree called `Events` having its root at `/Events`
 * not showing the parent folder as its root
-* showing it at the right side in expanded state (there can be only one expanded tree on each side)
-* do NOT show all blog articles which have the text "magnis" in their English title.
-* only the classes `Category` (class id: 5) and `Subarticle` (class id: SUBARTICLE) should be enabled to be added. `Category` is only allowed to be added on the first level of the object tree. `Subarticle` is available in the context menu on the first three levels of the object tree.   
+* only show events that have the "Salzburg" tag.
 
 > **Note**
 > Be aware: for tree pagination to work properly, there needs to be a parent node available. 
@@ -36,7 +34,7 @@ pimcore:
             87705013-edb9-c9ec-0f5e-c3ee45ca4459:
                 name: Events
                 treetype: object
-                position: left
+                position: right
                 rootfolder: /Events
                 showroot: false
                 sort: 0
@@ -140,7 +138,7 @@ pimcore:
 
 #### Document tree filtering using the where clause
 The intention is to
-* show the `/en/basic-examples subtree` (including the parent node on the right side)
+* show the `/en/Magazine` (including the parent node on the right side)
 * apply a simple filter which allows us to only show
    * folders 
    * links
