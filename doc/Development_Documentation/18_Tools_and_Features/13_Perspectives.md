@@ -40,18 +40,18 @@ You can find out there how the default view is prepared and how to add a special
 
 The table below, describes the most useful of available options in the configuration file.
 
-| Reference                                                         | Value                                          | Description                                                                                 |
-|-------------------------------------------------------------------|------------------------------------------------|---------------------------------------------------------------------------------------------|
-| `[perspectiveName]["icon"]`                                       | string                                         | Path to the icon file.                                                                      |
-| `[parspectiveName]["iconCls"]`                                    | string                                         | The CSS class added to the icon.                                                            |
-| `[perspectiveName]["elementTree"]`                                | array                                          | Array which contain the rows with configuration information like the tree type .            |
-| `[perspectiveName]["elementTree"][i]["type"]`                     | string (documents,objects,assets,customview)   | What type of elements will be rendered in the tree.                                         |
-| `[perspectiveName]["elementTree"][i]["position"]`                 | string (left,right)                            | a place, where the tree is initially generated                                              |
+| Reference                                                         | Value                                          | Description                                                                                |
+|-------------------------------------------------------------------|------------------------------------------------|--------------------------------------------------------------------------------------------|
+| `[perspectiveName]["icon"]`                                       | string                                         | Path to the icon file.                                                                     |
+| `[parspectiveName]["iconCls"]`                                    | string                                         | The CSS class added to the icon.                                                           |
+| `[perspectiveName]["elementTree"]`                                | array                                          | Array which contain the rows with configuration information like the tree type .           |
+| `[perspectiveName]["elementTree"][i]["type"]`                     | string (documents,objects,assets,customview)   | What type of elements will be rendered in the tree.                                        |
+| `[perspectiveName]["elementTree"][i]["position"]`                 | string (left,right)                            | a place, where the tree is initially generated                                             |
 | `[perspectiveName]["elementTree"][i]["id"]`                       | integer                                        | The id of customview elements rendered in the tree. (works only with the *customview* type) |
-| `[perspectiveName]["toolbar"]`                                    | array                                          | that option allows to add changes in the toolbar menu.                                      |
-| `[perspectiveName]["toolbar"][i][menuName]`                       | string (file,marketing,extras,settings,search) | these are the default toolbar menus                                                         |
-| `[perspectiveName]["toolbar"][i][menuName]["hidden"]`             | boolean                                        | ability to hide a specified menu (the available list you can find in the example below)     |
-| `[perspectiveName]["toolbar"][i][menuName]["items"]["itemsName"]` | boolean                                        | You could specify there, which submenus elements you would like to generate.                |
+| `[perspectiveName]["toolbar"]`                                    | array                                          | that option allows to add changes in the toolbar menu.                                     |
+| `[perspectiveName]["toolbar"][i][menuName]`                       | string (file,marketing,extras,settings,search) | these are the default toolbar menus                                                        |
+| `[perspectiveName]["toolbar"][i][menuName]["hidden"]`             | boolean                                        | ability to hide a specified menu (the available list you can find in the example below)    |
+| `[perspectiveName]["toolbar"][i][menuName]["items"]["itemsName"]` | boolean                                        | You could specify there, which submenu elements you would like to generate.                |
 
 
 ## Simple example
