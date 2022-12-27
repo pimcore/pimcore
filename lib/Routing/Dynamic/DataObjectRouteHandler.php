@@ -32,14 +32,10 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
     private SiteResolver $siteResolver;
 
-    private Config $config;
-
     public function __construct(
-        SiteResolver $siteResolver,
-        Config $config
+        SiteResolver $siteResolver
     ) {
         $this->siteResolver = $siteResolver;
-        $this->config = $config;
     }
 
     /**
@@ -96,10 +92,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
             $route->setDefault('_locale', $slug->getPosition());
         }
 
-        $route->setDefault(
-            ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS,
-            $this->config['routing']['allow_processing_unpublished_fallback_document']
-        );
+        $route->setDefault(ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS, true);
 
         return $route;
     }
