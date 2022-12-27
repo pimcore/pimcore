@@ -95,7 +95,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $user = $this->getUser();
 
         if ($proxyUser && $user instanceof UserProxy) {
-            return $proxyUser;
+            return $user;
         }
 
         if (!$user instanceof UserProxy) {

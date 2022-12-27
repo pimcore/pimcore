@@ -18,9 +18,11 @@ declare(strict_types=1);
 namespace Pimcore\Tool;
 
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * @internal
+ */
 final class Session
 {
     /**
