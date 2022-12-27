@@ -87,7 +87,7 @@ class Authentication
         return null;
     }
 
-    private static function safelyUnserialize(string $serializedToken)
+    protected static function safelyUnserialize(string $serializedToken)
     {
         $token = null;
         $prevUnserializeHandler = ini_set('unserialize_callback_func', __CLASS__.'::handleUnserializeCallback');
@@ -119,7 +119,6 @@ class Authentication
         $user = $token->getUser();
 
         $userNotFoundByProvider = false;
-        $userDeauthenticated = false;
         $userClass = $user::class;
 
         if (!$provider instanceof UserProviderInterface) {
@@ -133,7 +132,7 @@ class Authentication
         try {
             $refreshedUser = $provider->refreshUser($user);
             $newToken = clone $token;
-            $newToken->setUser($refreshedUser, false);
+            $newToken->setUser($refreshedUser);
             $token->setUser($refreshedUser);
 
             return $token;
@@ -143,10 +142,6 @@ class Authentication
             Logger::warning('Username could not be found in the selected user provider.', ['username' => $e->getUserIdentifier(), 'provider' => $provider::class]);
 
             $userNotFoundByProvider = true;
-        }
-
-        if ($userDeauthenticated) {
-            return null;
         }
 
         if ($userNotFoundByProvider) {
