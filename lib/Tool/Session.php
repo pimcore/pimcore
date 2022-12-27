@@ -26,7 +26,7 @@ final class Session
     {
         $bag = $session->getBag($namespace);
 
-        return call_user_func_array($func, [$bag, $session]);
+        return $func($bag, $session);
     }
 
     public static function getSessionBag(
