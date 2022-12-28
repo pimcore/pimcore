@@ -25,7 +25,7 @@ final class Version
 {
     const PACKAGE_NAME = 'pimcore/pimcore';
 
-    const MAJOR_VERSION = 10;
+    const MAJOR_VERSION = 11;
 
     /**
      * @return string

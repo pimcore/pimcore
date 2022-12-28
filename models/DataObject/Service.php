@@ -1990,9 +1990,13 @@ class Service extends Model\Element\Service
      */
     public static function getVersionDependentDatabaseColumnName(string $fieldName): string
     {
-        if (!str_starts_with($fieldName, 'o_')
-            && in_array(strtolower($fieldName), self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
-            return 'o_' . $fieldName;
+        $newFieldName = $fieldName;
+        if (str_starts_with($newFieldName, 'o_')) {
+            $newFieldName = substr($newFieldName, 2);
+        }
+
+        if (in_array(strtolower($newFieldName), self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
+            return $newFieldName;
         }
 
         return $fieldName;
