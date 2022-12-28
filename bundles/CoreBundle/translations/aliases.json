@@ -70,6 +70,7 @@
   "navigation_target": "target",
   "log_type": "type",
   "gdpr_dataSource_export": "export",
+  "keybinding_glossary": "glossary",
   "keybinding_users": "users",
   "classificationstore_configuration": "configuration",
   "classificationstore_tag_col_value": "value",

@@ -3251,13 +3251,14 @@ pimcore.helpers.buildMenu = function(items) {
             items[i].priority = priority;
             priority += 10;
         }
+        // if there are no submenus left, skip to the next item
         if(items[i].menu === undefined) {
             continue;
         }
-        if(items[i].menu !== undefined) {
-            pimcore.helpers.buildMenu(items[i].menu.items);
-            items[i].menu = pimcore.helpers.createMenu(items[i].menu);
-        }
+
+        pimcore.helpers.buildMenu(items[i].menu.items);
+        items[i].menu = pimcore.helpers.createMenu(items[i].menu);
+
     }
 };
 
