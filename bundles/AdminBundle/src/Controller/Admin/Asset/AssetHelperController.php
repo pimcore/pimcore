@@ -135,7 +135,7 @@ class AssetHelperController extends AdminController
      */
     public function gridDeleteColumnConfigAction(Request $request): JsonResponse
     {
-        $gridConfigId = $request->get('gridConfigId');
+        $gridConfigId = (int) $request->get('gridConfigId');
         $gridConfig = GridConfig::getById($gridConfigId);
         $success = false;
         if ($gridConfig) {
@@ -183,7 +183,7 @@ class AssetHelperController extends AdminController
 
         $userId = $this->getAdminUser()->getId();
 
-        $requestedGridConfigId = $isDelete ? null : $request->get('gridConfigId');
+        $requestedGridConfigId = $isDelete ? '' : $request->get('gridConfigId', '');
 
         // grid config
         $gridConfig = [];
@@ -412,7 +412,7 @@ class AssetHelperController extends AdminController
         $asset = Asset::getById($classId);
 
         if ($asset->isAllowed('list')) {
-            $gridConfigId = $request->get('gridConfigId');
+            $gridConfigId = (int) $request->get('gridConfigId');
             $searchType = $request->get('searchType');
             $type = $request->get('type');
             $user = $this->getAdminUser();
@@ -503,7 +503,10 @@ class AssetHelperController extends AdminController
                 $metadata = json_decode($metadata, true);
 
                 $gridConfigId = $metadata['gridConfigId'];
-                $gridConfig = GridConfig::getById($gridConfigId);
+                $gridConfig = null;
+                if($gridConfigId) {
+                    $gridConfig = GridConfig::getById($gridConfigId);
+                }
 
                 if ($gridConfig && $gridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
                     throw new \Exception("don't mess around with somebody else's configuration");

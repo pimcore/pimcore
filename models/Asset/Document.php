@@ -130,7 +130,7 @@ class Document extends Model\Asset
                     Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true); // force cache write
                 }
 
-                return $text;
+                return (string) $text;
             } else {
                 Logger::info('Unable to fetch text of ' . $this->getRealFullPath() . ' as it was not processed yet by the maintenance script');
             }
