@@ -504,7 +504,7 @@ class AssetHelperController extends AdminController
 
                 $gridConfigId = $metadata['gridConfigId'];
                 $gridConfig = null;
-                if($gridConfigId) {
+                if ($gridConfigId) {
                     $gridConfig = GridConfig::getById($gridConfigId);
                 }
 
