@@ -343,6 +343,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return Text::wysiwygText($data, [
                 'object' => $container,
                 'context' => $this,
+                'language' => $params['language'] ?? null,
             ]);
     }
 

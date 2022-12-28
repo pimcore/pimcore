@@ -277,7 +277,7 @@ EOT;
      *
      * @internal
      *
-     * @param string|array|Image\Thumbnail\Config $config
+     * @param string|array|Image\Thumbnail\Config|null $config
      *
      * @return Image\Thumbnail\Config|null
      */

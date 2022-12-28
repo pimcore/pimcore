@@ -32,7 +32,7 @@ final class Site extends AbstractModel
     protected static ?Site $currentSite = null;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -91,7 +91,9 @@ final class Site extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Site|null
+     * @return Site|string|null
+     *
+     * @throws \Exception
      */
     public static function getById($id)
     {
@@ -139,7 +141,7 @@ final class Site extends AbstractModel
     /**
      * @param string $domain
      *
-     * @return Site|null
+     * @return Site|string|null
      */
     public static function getByDomain($domain)
     {
@@ -171,7 +173,9 @@ final class Site extends AbstractModel
     /**
      * @param mixed $mixed
      *
-     * @return Site|null
+     * @return Site|string|null
+     *
+     * @throws \Exception
      */
     public static function getBy($mixed)
     {
@@ -241,7 +245,7 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {

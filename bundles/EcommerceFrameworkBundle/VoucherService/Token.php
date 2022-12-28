@@ -57,7 +57,7 @@ class Token extends AbstractModel
     public $usages;
 
     /**
-     * @var int
+     * @var string
      */
     public $timestamp;
 
@@ -171,7 +171,7 @@ class Token extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getTimestamp()
     {
@@ -179,7 +179,7 @@ class Token extends AbstractModel
     }
 
     /**
-     * @param int $timestamp
+     * @param string $timestamp
      */
     public function setTimestamp($timestamp)
     {

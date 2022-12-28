@@ -25,7 +25,7 @@ class Embed extends Model\Document\Editable
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $url;
 
@@ -39,6 +39,8 @@ class Embed extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
+     *
+     * @return mixed
      */
     public function getData()
     {
@@ -48,7 +50,7 @@ class Embed extends Model\Document\Editable
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -57,6 +59,8 @@ class Embed extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
+     *
+     * @return array
      */
     public function getDataForResource()
     {

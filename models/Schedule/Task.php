@@ -26,7 +26,7 @@ use Pimcore\Model;
 class Task extends Model\AbstractModel
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -115,7 +115,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {

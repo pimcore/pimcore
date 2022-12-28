@@ -32,7 +32,10 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
     public static function removeAllFromCart($cartId)
     {
         $checkoutDataItem = new self();
-        $checkoutDataItem->getCart()->checkoutData = [];
+        $cart = $checkoutDataItem->getCart();
+        if ($cart instanceof SessionCart) {
+            $cart->checkoutData = [];
+        }
     }
 
     public function setCart(CartInterface $cart)
@@ -41,6 +44,9 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
         $this->cartId = $cart->getId();
     }
 
+    /**
+     * @return CartInterface|null
+     */
     public function getCart()
     {
         if (empty($this->cart)) {
