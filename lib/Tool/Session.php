@@ -44,12 +44,21 @@ final class Session
         return self::getSessionHandler()->useSessionAttributeBag($func, $namespace);
     }
 
+    /**
+     * @desc This is for forward compatibility, the custom Session implementation is not being used anymore in Pimcore 11.
+     * @desc For forward compatibility, you can use this class and pass the SessionInterface from the request, in Pimcore 10.6, the Admin Session will be used instead
+     *
+     * @param SessionInterface $session Session being used is the Admin Session, you can safely pass nothing here
+     *
+     * @param string $namespace
+     *
+     */
     public static function getSessionBag(
         SessionInterface $session,
         string $namespace = 'pimcore_admin'
     ): ?AttributeBagInterface {
 
-        $bag = $session->getBag($namespace);
+        $bag = self::getSessionHandler()->loadAttributeBag($namespace);
         if ($bag instanceof AttributeBagInterface) {
             return $bag;
         }
