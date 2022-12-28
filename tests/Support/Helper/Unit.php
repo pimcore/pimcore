@@ -37,6 +37,10 @@ class Unit extends \Codeception\Module
     }
     public function _beforeSuite(array $settings = [])
     {
+        $this->installGlossaryBundle();
+    }
+
+    private function installGlossaryBundle() {
         if ($this->config['run_installer']) {
             /** @var Pimcore $pimcoreModule */
             $pimcoreModule = $this->getModule('\\' . Pimcore::class);

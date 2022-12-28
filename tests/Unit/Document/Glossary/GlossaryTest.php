@@ -33,9 +33,6 @@ class GlossaryTest extends TestCase
      */
     protected function setUp(): void
     {
-        if(!GlossaryBundle::isInstalled()) {
-            $this->markTestSkipped('GlossaryBundle is not installed. Skipping.');
-        }
         parent::setUp();
 
         $pimcoreModule = $this->getModule('\\'.Pimcore::class);
