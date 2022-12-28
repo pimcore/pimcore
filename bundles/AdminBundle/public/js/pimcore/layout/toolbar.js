@@ -163,7 +163,7 @@
                      text: t("open_document_by_id"),
                      iconCls: "pimcore_nav_icon_document pimcore_icon_overlay_go",
                      itemId: 'pimcore_menu_file_open_document_by_id',
-                     handler: pimcore.helpers.openElementByIdDialog.bind(this, "document"),
+                     handler: pimcore.helpers.openElementByIdDialog.bind(this, "document")
                  });
              }
  
@@ -280,7 +280,7 @@
                  items: fileItems,
                  shadow: false,
                  listeners: true,
-                 cls: "pimcore_navigation_flyout",
+                 cls: "pimcore_navigation_flyout"
              };
          }
  
@@ -315,7 +315,7 @@
                              text: "XLIFF " + t("export") + "/" + t("import"),
                              iconCls: "pimcore_nav_icon_translations",
                              itemId: 'pimcore_menu_extras_translations_xliff',
-                             handler: this.xliffImportExport,
+                             handler: this.xliffImportExport
                          }, {
                              text: "Microsoft® Word " + t("export"),
                              iconCls: "pimcore_nav_icon_word_export",
@@ -485,7 +485,7 @@
                      items: extrasItems,
                      shadow: false,
                      listeners: true,
-                     cls: "pimcore_navigation_flyout",
+                     cls: "pimcore_navigation_flyout"
                  };
              }
          }
@@ -606,7 +606,7 @@
                      items: marketingItems,
                      shadow: false,
                      listeners: true,
-                     cls: "pimcore_navigation_flyout",
+                     cls: "pimcore_navigation_flyout"
                  };
              }
          }
@@ -998,7 +998,7 @@
                     items: settingsItems,
                     shadow: false,
                     listeners: true,
-                    cls: "pimcore_navigation_flyout",
+                    cls: "pimcore_navigation_flyout"
                 };
              }
          }
@@ -1065,7 +1065,7 @@
                      items: searchItems,
                      shadow: false,
                      listeners: true,
-                     cls: "pimcore_navigation_flyout",
+                     cls: "pimcore_navigation_flyout"
                  };
              }
          }
