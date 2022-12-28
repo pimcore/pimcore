@@ -555,7 +555,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @return bool
      */
-    public function isEmpty($data)
     public function isEmpty(mixed $data): bool
     {
         return is_null($data) || count($data) === 0;
