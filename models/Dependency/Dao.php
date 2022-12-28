@@ -48,11 +48,11 @@ class Dao extends Model\Dao\AbstractDao
         // requires
         $data = $this->db->fetchAllAssociative('SELECT dependencies.targetid,dependencies.targettype
             FROM dependencies
-            LEFT JOIN objects ON dependencies.targettype="object" AND dependencies.targetid=objects.o_id
+            LEFT JOIN objects ON dependencies.targettype="object" AND dependencies.targetid=objects.id
             LEFT JOIN assets ON dependencies.targettype="asset" AND dependencies.targetid=assets.id
             LEFT JOIN documents ON dependencies.targettype="document" AND dependencies.targetid=documents.id
             WHERE dependencies.sourceid = ? AND dependencies.sourcetype = ?
-            ORDER BY objects.o_path, objects.o_key, documents.path, documents.key, assets.path, assets.filename',
+            ORDER BY objects.path, objects.key, documents.path, documents.key, assets.path, assets.filename',
             [$this->model->getSourceId(), $this->model->getSourceType()]);
 
         if (is_array($data) && count($data) > 0) {
@@ -185,11 +185,11 @@ class Dao extends Model\Dao\AbstractDao
     {
         $query = '
             SELECT dependencies.sourceid, dependencies.sourcetype FROM dependencies
-            LEFT JOIN objects ON dependencies.sourceid=objects.o_id AND dependencies.sourcetype="object"
+            LEFT JOIN objects ON dependencies.sourceid=objects.id AND dependencies.sourcetype="object"
             LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.sourcetype="asset"
             LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.sourcetype="document"
             WHERE dependencies.targettype = ? AND dependencies.targetid = ?
-            ORDER BY objects.o_path, objects.o_key, documents.path, documents.key, assets.path, assets.filename
+            ORDER BY objects.path, objects.key, documents.path, documents.key, assets.path, assets.filename
         ';
 
         if ($offset !== null && $limit !== null) {
@@ -241,17 +241,17 @@ class Dao extends Model\Dao\AbstractDao
         $query = "
             SELECT id, type, path
             FROM (
-                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(o.o_path, o.o_key) as path
+                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(o.path, o.key) as `path`
                 FROM dependencies d
-                JOIN objects o ON o.o_id = d.sourceid
+                JOIN objects o ON o.id = d.sourceid
                 WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'object'
                 UNION
-                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(doc.path, doc.key) as path
+                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(doc.path, doc.key) as `path`
                 FROM dependencies d
                 JOIN documents doc ON doc.id = d.sourceid
                 WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'document'
                 UNION
-                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(a.path, a.filename) as path
+                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(a.path, a.filename) as `path`
                 FROM dependencies d
                 JOIN assets a ON a.id = d.sourceid
                 WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'asset'

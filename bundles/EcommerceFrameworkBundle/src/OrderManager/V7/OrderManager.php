@@ -409,7 +409,7 @@ class OrderManager implements OrderManagerInterface
         $key = $this->buildOrderItemKey($item, $isGiftItem);
 
         $orderItemList = $this->buildOrderItemList();
-        $orderItemList->setCondition('o_parentId = ? AND o_key = ?', [$parent->getId(), $key]);
+        $orderItemList->setCondition('parentId = ? AND `key` = ?', [$parent->getId(), $key]);
 
         /** @var AbstractOrderItem[] $orderItems */
         $orderItems = $orderItemList->load();
@@ -789,7 +789,7 @@ class OrderManager implements OrderManagerInterface
         $paymentProvider->applyRecurringPaymentCondition($orders, ['paymentMethod' => $paymentMethod]);
 
         if (empty($orders->getOrderKey())) {
-            $orders->setOrderKey('o_creationDate');
+            $orders->setOrderKey('creationDate');
             $orders->setOrder('DESC');
         }
 

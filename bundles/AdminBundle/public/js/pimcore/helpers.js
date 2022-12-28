@@ -656,7 +656,7 @@ pimcore.helpers.handleCtrlS = function (keyCode, e) {
             }
         }
         else if (el.object) {
-            if (el.object.data.general.o_published) {
+            if (el.object.data.general.published) {
                 el.object.publish();
             } else {
                 el.object.save('version');
@@ -952,7 +952,7 @@ pimcore.helpers.openMemorizedTabs = function () {
     }
 };
 
-pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context) {
+pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context, type) {
 
     var params = {};
     params['parent' + ucfirst(parentType)] = parent;
@@ -960,6 +960,10 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
     var url = Routing.generate('pimcore_admin_asset_addassetcompatibility', params);
     if (context) {
         url += "&context=" + Ext.encode(context);
+    }
+
+    if(type) {
+        url += "&type=" + type;
     }
 
     pimcore.helpers.uploadDialog(url, 'Filedata', success, failure);

@@ -229,9 +229,9 @@ class Dao extends Model\Dao\AbstractDao
         $elements = [];
 
         $map = [
-            'document' => ['documents', 'id', 'type', '\Pimcore\Model\Document'],
-            'asset' => ['assets', 'id', 'type', '\Pimcore\Model\Asset'],
-            'object' => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
+            'document' => ['documents', '\Pimcore\Model\Document'],
+            'asset' => ['assets', '\Pimcore\Model\Asset'],
+            'object' => ['objects', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
         $select = $this->db->createQueryBuilder()->select(['*'])
@@ -250,26 +250,26 @@ class Dao extends Model\Dao\AbstractDao
             $select->andWhere('tags_assignment.tagid = :tagId')->setParameter('tagId', $tag->getId());
         }
 
-        $select->innerJoin('tags_assignment', $map[$type][0], 'el', 'tags_assignment.cId = el.' . $map[$type][1]);
+        $select->innerJoin('tags_assignment', $map[$type][0], 'el', 'tags_assignment.cId = el.id');
 
         if (! empty($subtypes)) {
             foreach ($subtypes as $subType) {
                 $quotedSubTypes[] = $this->db->quote($subType);
             }
-            $select->andWhere($map[$type][2] . ' IN (' . implode(',', $quotedSubTypes) . ')');
+            $select->andWhere('`type` IN (' . implode(',', $quotedSubTypes) . ')');
         }
 
         if ('object' === $type && ! empty($classNames)) {
             foreach ($classNames as $cName) {
                 $quotedClassNames[] = $this->db->quote($cName);
             }
-            $select->andWhere('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
+            $select->andWhere('className IN ( ' .  implode(',', $quotedClassNames) . ' )');
         }
 
         $res = $this->db->executeQuery((string) $select, $select->getParameters());
 
         while ($row = $res->fetch()) {
-            $el = $map[$type][3]::getById($row['cid']);
+            $el = $map[$type][1]::getById($row['cid']);
             if ($el) {
                 $elements[] = $el;
             }

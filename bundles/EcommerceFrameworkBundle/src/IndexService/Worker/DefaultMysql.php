@@ -73,10 +73,10 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
 
     protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null)
     {
-        $this->db->delete($this->tenantConfig->getTablename(), ['o_id' => $subObjectId]);
+        $this->db->delete($this->tenantConfig->getTablename(), ['id' => $subObjectId]);
         $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $subObjectId]);
         if ($this->tenantConfig->getTenantRelationTablename()) {
-            $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['o_id' => $subObjectId]);
+            $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['id' => $subObjectId]);
         }
     }
 
@@ -134,12 +134,12 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
                 }
 
                 $data = [
-                    'o_id' => $subObjectId,
-                    'o_classId' => $object->getClassId(),
-                    'o_virtualProductId' => $virtualProductId,
-                    'o_virtualProductActive' => $virtualProductActive,
-                    'o_parentId' => $object->getOSParentId(),
-                    'o_type' => $object->getOSIndexType(),
+                    'id' => $subObjectId,
+                    'classId' => $object->getClassId(),
+                    'virtualProductId' => $virtualProductId,
+                    'virtualProductActive' => $virtualProductActive,
+                    'parentId' => $object->getOSParentId(),
+                    'type' => $object->getOSIndexType(),
                     'categoryIds' => ',' . implode(',', $categoryIds) . ',',
                     'parentCategoryIds' => ',' . implode(',', $parentCategoryIds) . ',',
                     'priceSystemName' => $object->getPriceSystemName(),
@@ -205,7 +205,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
                 Logger::info("Don't adding product " . $subObjectId . ' to index.');
 
                 try {
-                    $this->db->delete($this->tenantConfig->getTablename(), ['o_id' => $subObjectId]);
+                    $this->db->delete($this->tenantConfig->getTablename(), ['id' => $subObjectId]);
                 } catch (\Exception $e) {
                     Logger::warn('Error during updating index table: ' . $e);
                 }
@@ -218,7 +218,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
 
                 try {
                     if ($this->tenantConfig->getTenantRelationTablename()) {
-                        $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['o_id' => $subObjectId]);
+                        $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['id' => $subObjectId]);
                     }
                 } catch (\Exception $e) {
                     Logger::warn('Error during updating index tenant relation table: ' . $e);

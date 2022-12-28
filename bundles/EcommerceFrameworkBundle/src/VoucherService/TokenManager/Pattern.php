@@ -525,7 +525,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $tokens = new Token\Listing();
 
         try {
-            $tokens->setFilterConditions($params['id'], $params);
+            $tokens->setFilterConditions((int) $params['id'], $params);
         } catch (\Exception $e) {
             $this->template = '@PimcoreEcommerceFramework/voucher/voucher_code_tab_error.html.twig';
             $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
@@ -578,7 +578,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     protected function getExportData(array $params): array
     {
         $tokens = new Token\Listing();
-        $tokens->setFilterConditions($params['id'], $params);
+        $tokens->setFilterConditions((int) $params['id'], $params);
 
         $data = [];
 

@@ -108,7 +108,14 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
 - `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
 - [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
-
+- [DataObjects] Removed `o_` prefix for data object properties and database columns.
+- [DataObjects] Due to the removal of the `o_` prefix the property names `classTitle`, `hasChildren`, `siblings`, `hasSiblings`, `childrenSortBy`, `childrenSortOrder`, `versionCount`, `dirtyLanguages` and `dirtyFields`
+   were added to the list of reserved words. Please check your implementation and rename the properties as necessary. 
+- [Ecommerce][IndexService] Please make sure to rebuild your product index to make sure changes apply accordingly (this is relevant for mysql and elasticsearch indices). As an alternative you could manually rename and remove `o_` from all index columns/fields.
+- [Ecommerce] Elasticsearch 7 support was removed
+- [Ecommerce] Config option `es_client_params` in `index_service` was removed 
+- [ClassSavedInterface] Removed `method_exists` bc layer. Please add the corresponding `ClassSavedInterface` interface to your custom field definitions. For more details check the 10.6.0 patch notes.
+ 
 ## 10.6.0
 - [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isBrickEnabled()` method which is also deprecated.
 - [Twig] Pimcore now requires the `twig/extra-bundle` which eases the usage of Twig's "extra" extensions.
@@ -116,6 +123,12 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [DataObject]: Since the `o_` prefix will be removed in Pimcore 11, a new method has been added: `DataObject\Service::getVersionDependentDatabaseColumnName()`.
   This method will return the field/column name for the current version and provide a way to support both version for bundles. 
   E.g. passing `o_id` in Pimcore 10 will return `o_id`, but `id` in Pimcore 11. 
+- [Ecommerce] Elasticsearch 7 support has been deprecated, elasticsearch 8 supported was added.
+- [ClassSavedInterface] Introduced additional interface implementing the `classSaved` method. The interface will be used by field definitions in `Pimcore\Model\DataObject\ClassDefinition\Data\*`. If your custom field definition implements the `classSaved` method, please use the `ClassSavedInterface` interface. Make sure that you either provide a default value (e.g. `$params = []`) for `$params` or don't use a second parameter in the method signature at all. Note that using the `classSaved` method without implementing the interface is deprecated and won't work in Pimcore 11. 
+
+
+## 10.5.13
+- [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
 
 ## 10.5.10
 - [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.

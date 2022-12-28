@@ -257,13 +257,13 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param Concrete|null $object
      * @param array $params
      *
-     * @return Objectbrick\Data\AbstractData
+     * @return Objectbrick
      *
      * @throws \Exception
      *
      * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Objectbrick\Data\AbstractData
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Objectbrick
     {
         $container = $this->getDataFromObjectParam($object);
 
@@ -821,12 +821,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        //TODO Pimcore 11 remove method_exists call
-                        if (method_exists($fd, 'classSaved')) {
+                        if ($fd instanceof ClassSavedInterface) {
                             // defer creation
-                            if (!$fd instanceof DataContainerAwareInterface) {
-                                $fd->classSaved($class);
-                            }
+                            $fd->classSaved($class, $params);
                         }
                     }
 

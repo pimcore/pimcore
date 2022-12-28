@@ -397,7 +397,10 @@ class TranslationController extends AdminController
             } elseif ($request->get('xaction') == 'create') {
                 $t = Translation::getByKey($data['key'], $domain);
                 if ($t) {
-                    throw new \Exception($translator->trans('identifier_already_exists', [], $domain));
+                    return $this->adminJson([
+                        'message' => 'identifier_already_exists',
+                        'success' => false,
+                    ]);
                 }
 
                 $t = new Translation();
@@ -718,7 +721,7 @@ class TranslationController extends AdminController
                         );
                     }
                     $list->setCondition(
-                        ($el instanceof DataObject ? 'o_' : '') . 'path LIKE ?',
+                        'path LIKE ?',
                         [$list->escapeLike($el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '')) . '%']
                     );
                     $children = $list->load();

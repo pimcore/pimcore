@@ -201,7 +201,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridDeleteColumnConfigAction(Request $request, EventDispatcherInterface $eventDispatcher, Config $config): JsonResponse
     {
-        $gridConfigId = $request->get('gridConfigId');
+        $gridConfigId = (int)$request->get('gridConfigId');
         $gridConfig = GridConfig::getById($gridConfigId);
         $success = false;
         if ($gridConfig) {
@@ -325,9 +325,7 @@ class DataObjectHelperController extends AdminController
                 $shared = false;
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = [$this->getAdminUser()->getId()];
-                    if ($this->getAdminUser()->getRoles()) {
-                        $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
-                    }
+                    $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     $userIds = implode(',', $userIds);
                     $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select 1 from gridconfig_shares where sharedWithUserId IN ('.$userIds.') and gridConfigId = '.$savedGridConfig->getId());
 //                  $shared = $savedGridConfig->isShareGlobally() || GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
@@ -799,7 +797,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridMarkFavouriteColumnConfigAction(Request $request): JsonResponse
     {
-        $objectId = $request->get('objectId');
+        $objectId = (int)$request->get('objectId');
         $object = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
@@ -823,7 +821,7 @@ class DataObjectHelperController extends AdminController
 
             try {
                 if ($gridConfigId != 0) {
-                    $gridConfig = GridConfig::getById($gridConfigId);
+                    $gridConfig = GridConfig::getById((int)$gridConfigId);
                     $favourite->setGridConfigId($gridConfig->getId());
                 }
                 $favourite->setObjectId($objectId);
@@ -839,7 +837,7 @@ class DataObjectHelperController extends AdminController
                     . ' and classId = ' . $db->quote($classId).
                     ' and searchType = ' . $db->quote($searchType)
                     . ' and objectId != ' . $objectId . ' and objectId != 0'
-                    . ' and type != ' . $db->quote($type));
+                    . ' and `type` != ' . $db->quote($type));
                 $specializedConfigs = $count > 0;
             } catch (\Exception $e) {
                 $favourite->delete();
@@ -910,7 +908,10 @@ class DataObjectHelperController extends AdminController
                 $metadata = json_decode($metadata, true);
 
                 $gridConfigId = $metadata['gridConfigId'];
-                $gridConfig = GridConfig::getById($gridConfigId);
+                $gridConfig = null;
+                if ($gridConfigId) {
+                    $gridConfig = GridConfig::getById($gridConfigId);
+                }
 
                 if ($gridConfig && $gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin()) {
                     throw new \Exception("don't mess around with somebody elses configuration");
@@ -1277,7 +1278,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-export-jobs", name="getexportjobs", methods={"GET"})
+     * @Route("/get-export-jobs", name="getexportjobs", methods={"POST"})
      *
      * @param Request $request
      * @param GridHelperService $gridHelperService
@@ -1354,8 +1355,8 @@ class DataObjectHelperController extends AdminController
         }
 
         $list->setObjectTypes(DataObject::$types);
-        $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
-        $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
+        $list->setCondition('id IN (' . implode(',', $quotedIds) . ')');
+        $list->setOrderKey(' FIELD(id, ' . implode(',', $quotedIds) . ')', false);
 
         $beforeListExportEvent = new GenericEvent($this, [
             'list' => $list,

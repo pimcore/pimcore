@@ -70,7 +70,7 @@ abstract class AbstractMockupCacheWorker extends ProductCentricBatchProcessingWo
     public function saveToMockupCache(int $objectId, array $data = null): DefaultMockup
     {
         if (empty($data)) {
-            $data = $this->db->fetchOne('SELECT data FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
+            $data = $this->db->fetchOne('SELECT data FROM ' . $this->getStoreTableName() . ' WHERE id = ? AND tenant = ?', [$objectId, $this->name]);
             $data = json_decode($data, true);
         }
 
@@ -93,7 +93,7 @@ abstract class AbstractMockupCacheWorker extends ProductCentricBatchProcessingWo
 
         if ($success && $result) {
             $this->executeTransactionalQuery(function () use ($objectId) {
-                $this->db->executeQuery('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $this->name]);
+                $this->db->executeQuery('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE id = ? and tenant = ?', [$objectId, $this->name]);
             });
         } else {
             Logger::err("Element with ID $objectId could not be added to mockup-cache");

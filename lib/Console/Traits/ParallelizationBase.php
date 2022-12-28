@@ -46,7 +46,7 @@ if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
             }
 
             foreach ($items as $item) {
-                $this->runSingleCommand(trim($item), $input, $output);
+                $this->runSingleCommand(trim((string)$item), $input, $output);
             }
 
             //Method executed after executing all the items

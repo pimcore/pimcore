@@ -46,6 +46,9 @@ final class User extends User\UserRole
 
     protected bool $active = true;
 
+    /**
+     * @var int[]
+     */
     protected array $roles = [];
 
     protected bool $welcomescreen = false;
@@ -226,7 +229,7 @@ final class User extends User\UserRole
                 // check roles
                 foreach ($this->getRoles() as $roleId) {
                     /** @var Role $role */
-                    $role = User\Role::getById((int)$roleId);
+                    $role = User\Role::getById($roleId);
                     if ($role->getPermission($key)) {
                         return true;
                     }
@@ -278,14 +281,16 @@ final class User extends User\UserRole
     }
 
     /**
+     * @param int[]|string $roles
+     *
      * @return $this
      */
     public function setRoles(array|string $roles): static
     {
         if (is_string($roles) && $roles !== '') {
-            $this->roles = explode(',', $roles);
+            $this->roles = array_map('intval', explode(',', $roles));
         } elseif (is_array($roles)) {
-            $this->roles = $roles;
+            $this->roles = array_map('intval', $roles);
         } else {
             $this->roles = [];
         }
@@ -293,12 +298,11 @@ final class User extends User\UserRole
         return $this;
     }
 
+    /**
+     * @return int[]
+     */
     public function getRoles(): array
     {
-        if (empty($this->roles)) {
-            return [];
-        }
-
         return $this->roles;
     }
 
@@ -420,7 +424,7 @@ final class User extends User\UserRole
         $storage = Tool\Storage::get('admin');
         if ($storage->fileExists($this->getOriginalImageStoragePath())) {
             if (!$storage->fileExists($this->getThumbnailImageStoragePath())) {
-                $localFile = self::getLocalFileFromStream((string)$storage->readStream($this->getOriginalImageStoragePath()));
+                $localFile = self::getLocalFileFromStream($storage->readStream($this->getOriginalImageStoragePath()));
                 $targetFile = File::getLocalTempFilePath('png');
 
                 $image = \Pimcore\Image::getInstance();

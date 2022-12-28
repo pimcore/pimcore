@@ -38,7 +38,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $tableName = $this->model->getDefinition()->getTableName($object->getClass());
         $data = [
-            'o_id' => $object->getId(),
+            'id' => $object->getId(),
             'index' => $this->model->getIndex(),
             'fieldname' => $this->model->getFieldname(),
         ];

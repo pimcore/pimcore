@@ -59,7 +59,7 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 
     public function getUnit(): ?Unit
     {
-        if (empty($this->unit)) {
+        if (empty($this->unit) && !empty($this->unitId)) {
             $this->unit = Unit::getById($this->unitId);
         }
 

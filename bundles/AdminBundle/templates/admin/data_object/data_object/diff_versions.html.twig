@@ -27,7 +27,7 @@
     </tr>
     <tr class="system">
         <td>Date</td>
-        <td>o_modificationDate</td>
+        <td>modificationDate</td>
         {% if isImportPreview is not defined or isNew is not defined %}
             <td>{{ object1.getModificationDate()|date('Y-m-d H:i:s') }}</td>
         {% endif %}
@@ -35,7 +35,7 @@
     </tr>
     <tr class="system">
         <td>Path</td>
-        <td>o_path</td>
+        <td>path</td>
         {% if isImportPreview is not defined or isNew is not defined %}
             <td> {{ object1.getRealFullPath() }} </td>
         {% endif %}
@@ -44,7 +44,7 @@
     </tr>
     <tr class="system">
         <td>Published</td>
-        <td>o_published</td>
+        <td>published</td>
         {% if isImportPreview is not defined or isNew is not defined %}
             <td> {{ object1.getPublished() }} </td>
         {% endif %}
@@ -61,7 +61,7 @@
     {% endif %}
     <tr class="system">
         <td>Id</td>
-        <td>o_id</td>
+        <td>id</td>
         {% if isImportPreview is not defined or isNew is not defined %}
             <td> {{ object1.getId() }} </td>
         {% endif %}

@@ -17,7 +17,7 @@ screen shot shows.
 ```javascript
 
 document.addEventListener(pimcore.events.postOpenObject, (e) => {
-    if (e.detail.object.data.general.o_className === 'ShopProduct') {
+    if (e.detail.object.data.general.className === 'ShopProduct') {
         e.detail.object.toolbar.add({
             text: t('show-pdf'),
             iconCls: 'pimcore_icon_pdf',
