@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @internal
+ * @deprecated 
  */
 class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerInterface
 {
