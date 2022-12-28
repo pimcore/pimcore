@@ -69,7 +69,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
     {
         $collection = new RouteCollection();
 
-        if($request->attributes->has('_controller')) {
+        if ($request->attributes->has('_controller')) {
             return $collection;
         }
 
