@@ -69,7 +69,7 @@ class Service extends Model\Element\Service
     private const BC_VERSION_DEPENDENT_DATABASE_COLUMNS = ['id', 'parentid', 'type', 'key', 'path', 'index', 'published',
                                                                 'creationdate', 'modificationdate', 'userowner', 'usermodification',
                                                                 'classid', 'childrensortby', 'classname', 'childrensortorder',
-                                                                'versioncount'];
+                                                                'versioncount', ];
 
     /**
      * @param Model\User $user
