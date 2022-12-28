@@ -25,6 +25,11 @@ final class Version
 {
     const PACKAGE_NAME = 'pimcore/pimcore';
 
+    const MAJOR_VERSION = 10;
+
+    /**
+     * @return string
+     */
     public static function getVersion(): string
     {
         return InstalledVersions::getPrettyVersion(self::PACKAGE_NAME);

@@ -154,14 +154,13 @@ class Multiselect extends Data implements
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
-     *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -173,14 +172,13 @@ class Multiselect extends Data implements
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null
-     *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -192,14 +190,13 @@ class Multiselect extends Data implements
     }
 
     /**
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
-     *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -211,14 +208,13 @@ class Multiselect extends Data implements
     }
 
     /**
+     * @see Data::getDataForEditmode
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
-     *
-     * @see Data::getDataForEditmode
-     *
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -444,7 +440,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Multiselect $masterDefinition
+     * @param DataObject\ClassDefinition\Data $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
@@ -589,7 +585,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function enrichFieldDefinition(array $context = []): static
     {

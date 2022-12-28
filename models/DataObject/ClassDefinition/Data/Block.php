@@ -123,14 +123,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public ?array $fieldDefinitionsCache = null;
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string
-     *
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -188,14 +187,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array|null
-     *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -282,14 +280,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see Data::getDataForEditmode
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
-     *
-     * @see Data::getDataForEditmode
-     *
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -331,14 +328,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see Data::getDataFromEditmode
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
-     *
-     * @see Data::getDataFromEditmode
-     *
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -468,14 +464,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see Data::getVersionPreview
+     *
      * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return string
-     *
-     * @see Data::getVersionPreview
-     *
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -555,6 +550,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->collapsed = $masterDefinition->collapsed;
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return bool
+     */
+    public function isEmpty($data)
     public function isEmpty(mixed $data): bool
     {
         return is_null($data) || count($data) === 0;
@@ -862,7 +863,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
