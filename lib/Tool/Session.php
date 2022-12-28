@@ -56,7 +56,7 @@ final class Session
      */
     public static function getHandler(): AdminSessionHandlerInterface
     {
-        trigger_deprecation('pimcore/pimcore', '10.6', 'Usage of \Pimcore\Tool\Session::getHandler tag is deprecated since version 10.6 and will be removed in Pimcore 11. No alternative given.');
+        trigger_deprecation('pimcore/pimcore', '10.6', sprintf('Usage of method %s  is deprecated since version 10.6 and will be removed in Pimcore 11. No alternative given.', __METHOD__));
 
         if (null === static::$handler) {
             static::$handler = \Pimcore::getContainer()->get(AdminSessionHandler::class);
