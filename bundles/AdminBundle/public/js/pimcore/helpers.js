@@ -3215,7 +3215,7 @@ pimcore.helpers.formatTimeDuration = function (dataDuration) {
 };
 
 /**
- * Delete confim dialog box
+ * Delete confirm dialog box
  *
  * @param title
  * @param name
@@ -3232,3 +3232,36 @@ pimcore.helpers.deleteConfirm = function (title, name, deleteCallback) {
             }
         }.bind(this))
 };
+
+/**
+ * Building menu with priority
+ * @param items
+ */
+pimcore.helpers.buildMenu = function(items) {
+    // priority for every menu and submenu starts at 10
+    // leaving enough space for bundles etc.
+    let priority = 10;
+    for(let i = 0; i < items.length; i++) {
+        // only adding priority if not set yet
+        if(items[i].priority === undefined && items[i].text !== undefined) {
+            items[i].priority = priority;
+            priority += 10;
+        }
+        if(items[i].menu === undefined) {
+            continue;
+        }
+        if(items[i].menu !== undefined) {
+            pimcore.helpers.buildMenu(items[i].menu.items);
+            items[i].menu = pimcore.helpers.createMenu(items[i].menu);
+        }
+    }
+};
+
+/**
+ * Creating menu with sorting function
+ * @param menu
+ * @returns {pimcore.menu.menu}
+ */
+pimcore.helpers.createMenu = function(menu) {
+    return Ext.create('pimcore.menu.menu', menu);
+}

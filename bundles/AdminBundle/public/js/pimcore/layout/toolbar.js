@@ -13,21 +13,23 @@
 
  pimcore.registerNS("pimcore.layout.toolbar");
  pimcore.layout.toolbar = Class.create({
- 
+
      initialize: function() {
  
          var user = pimcore.globalmanager.get("user");
          this.toolbar = Ext.getCmp("pimcore_panel_toolbar");
  
          var perspectiveCfg = pimcore.globalmanager.get("perspective");
+
+         var menu = {};
  
          if (perspectiveCfg.inToolbar("file")) {
              var fileItems = [];
  
              if (perspectiveCfg.inToolbar("file.perspectives")) {
- 
+
                  if (pimcore.settings.availablePerspectives.length > 1) {
- 
+
                      var items = [];
                      for (var i = 0; i < pimcore.settings.availablePerspectives.length; i++) {
                          var perspective = pimcore.settings.availablePerspectives[i];
@@ -47,7 +49,7 @@
                          items.push(itemCfg);
                      }
  
-                     this.perspectivesMenu = new Ext.menu.Item({
+                     this.perspectivesMenu = {
                          text: t("perspectives"),
                          iconCls: "pimcore_nav_icon_perspective",
                          itemId: 'pimcore_menu_file_perspective',
@@ -57,14 +59,14 @@
                              shadow: false,
                              items: items
                          }
-                     });
+                     };
                      fileItems.push(this.perspectivesMenu);
                  }
              }
  
  
              if (user.isAllowed("dashboards") && perspectiveCfg.inToolbar("file.dashboards")) {
-                 this.dashboardMenu = new Ext.menu.Item({
+                 this.dashboardMenu = {
                      text: t("dashboards"),
                      iconCls: "pimcore_nav_icon_dashboards",
                      itemId: 'pimcore_menu_file_dashboards',
@@ -79,14 +81,14 @@
                              handler: pimcore.helpers.openWelcomePage.bind(this)
                          }]
                      }
-                 });
+                 };
  
                  Ext.Ajax.request({
                      url: Routing.generate('pimcore_admin_portal_dashboardlist'),
                      success: function (response) {
                          var data = Ext.decode(response.responseText);
                          for (var i = 0; i < data.length; i++) {
-                             this.dashboardMenu.menu.add(new Ext.menu.Item({
+                             this.dashboardMenu.menu.add({
                                  text: data[i],
                                  iconCls: "pimcore_nav_icon_dashboards",
                                  itemId: 'pimcore_menu_file_dashboards_custom_' + data[i],
@@ -98,7 +100,7 @@
                                          pimcore.globalmanager.add("layout_portal_" + key, new pimcore.layout.portal(key));
                                      }
                                  }.bind(this, data[i])
-                             }));
+                             });
                          }
  
                          this.dashboardMenu.menu.add(new Ext.menu.Separator({}));
@@ -161,7 +163,7 @@
                      text: t("open_document_by_id"),
                      iconCls: "pimcore_nav_icon_document pimcore_icon_overlay_go",
                      itemId: 'pimcore_menu_file_open_document_by_id',
-                     handler: pimcore.helpers.openElementByIdDialog.bind(this, "document")
+                     handler: pimcore.helpers.openElementByIdDialog.bind(this, "document"),
                  });
              }
  
@@ -273,20 +275,13 @@
                      }
                  });
              }
- 
-             this.fileMenu = new Ext.menu.Menu({
+
+             menu.file = {
                  items: fileItems,
                  shadow: false,
+                 listeners: true,
                  cls: "pimcore_navigation_flyout",
-                 listeners: {
-                     "show": function (e) {
-                         Ext.get('pimcore_menu_file').addCls('active');
-                     },
-                     "hide": function (e) {
-                         Ext.get('pimcore_menu_file').removeCls('active');
-                     }
-                 }
-             });
+             };
          }
  
          if (perspectiveCfg.inToolbar("extras")) {
@@ -320,7 +315,7 @@
                              text: "XLIFF " + t("export") + "/" + t("import"),
                              iconCls: "pimcore_nav_icon_translations",
                              itemId: 'pimcore_menu_extras_translations_xliff',
-                             handler: this.xliffImportExport
+                             handler: this.xliffImportExport,
                          }, {
                              text: "Microsoft® Word " + t("export"),
                              iconCls: "pimcore_nav_icon_word_export",
@@ -486,19 +481,12 @@
  
  
              if (extrasItems.length > 0) {
-                 this.extrasMenu = new Ext.menu.Menu({
+                 menu.extras = {
                      items: extrasItems,
                      shadow: false,
+                     listeners: true,
                      cls: "pimcore_navigation_flyout",
-                     listeners: {
-                         "show": function (e) {
-                             Ext.get('pimcore_menu_extras').addCls('active');
-                         },
-                         "hide": function (e) {
-                             Ext.get('pimcore_menu_extras').removeCls('active');
-                         }
-                     }
-                 });
+                 };
              }
          }
  
@@ -614,19 +602,12 @@
              }
  
              if (marketingItems.length > 0) {
-                 this.marketingMenu = new Ext.menu.Menu({
+                 menu.marketing = {
                      items: marketingItems,
                      shadow: false,
+                     listeners: true,
                      cls: "pimcore_navigation_flyout",
-                     listeners: {
-                         "show": function (e) {
-                             Ext.get('pimcore_menu_marketing').addCls('active');
-                         },
-                         "hide": function (e) {
-                             Ext.get('pimcore_menu_marketing').removeCls('active');
-                         }
-                     }
-                 });
+                 };
              }
          }
  
@@ -1013,19 +994,12 @@
  
              // help menu
              if (settingsItems.length > 0) {
-                 this.settingsMenu = new Ext.menu.Menu({
-                     items: settingsItems,
-                     shadow: false,
-                     cls: "pimcore_navigation_flyout",
-                     listeners: {
-                         "show": function (e) {
-                             Ext.get('pimcore_menu_settings').addCls('active');
-                         },
-                         "hide": function (e) {
-                             Ext.get('pimcore_menu_settings').removeCls('active');
-                         }
-                     }
-                 });
+                menu.settings = {
+                    items: settingsItems,
+                    shadow: false,
+                    listeners: true,
+                    cls: "pimcore_navigation_flyout",
+                };
              }
          }
  
@@ -1087,19 +1061,12 @@
              }
  
              if (searchItems.length > 0) {
-                 this.searchMenu = new Ext.menu.Menu({
+                 menu.search = {
                      items: searchItems,
                      shadow: false,
+                     listeners: true,
                      cls: "pimcore_navigation_flyout",
-                     listeners: {
-                         "show": function (e) {
-                             Ext.get('pimcore_menu_search').addCls('active');
-                         },
-                         "hide": function (e) {
-                             Ext.get('pimcore_menu_search').removeCls('active');
-                         }
-                     }
-                 });
+                 };
              }
          }
  
@@ -1169,10 +1136,48 @@
                  });
                  pimcore.notification.helper.incrementCount();
              }
- 
-             this.notificationMenu = new Ext.menu.Menu({
+
+
+             menu.notification = {
                  items: notificationItems,
-                 cls: "pimcore_navigation_flyout"
+                 shadow: false,
+                 listeners: false,
+                 cls: "pimcore_navigation_flyout",
+             };
+         }
+
+         // Additional menu items can be added via this event
+         const preMenuBuild = new CustomEvent(pimcore.events.preMenuBuild, {
+             detail: {
+                 menu: menu,
+             }
+         });
+
+         document.dispatchEvent(preMenuBuild);
+
+         if(Object.keys(menu).length !== 0) {
+             Object.keys(menu).forEach(key => {
+                 // Building all submenus
+                 pimcore.helpers.buildMenu(menu[key].items);
+                 let menuItem = {
+                     items: menu[key].items,
+                     shadow: menu[key].shadow,
+                     cls: "pimcore_navigation_flyout",
+                 }
+
+                 if(menu[key].listeners === true) {
+                     menuItem.listeners = {
+                         "show": function (e) {
+                             Ext.get('pimcore_menu_' + key).addCls('active');
+                         },
+                         "hide": function (e) {
+                             Ext.get('pimcore_menu_' + key).removeCls('active');
+                         }
+                     }
+                 }
+
+                 // Adding single main menu item
+                 this[key + 'Menu'] = pimcore.helpers.createMenu(menuItem);
              });
          }
  

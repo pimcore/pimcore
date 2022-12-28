@@ -234,3 +234,10 @@
  * enable registering outside of core
  */
  pimcore.events.preRegisterKeyBindings = "pimcore.keyBindings.preRegister";
+
+/**
+ * before building menu
+ * for adding menu entries with priorities to be sorted
+ */
+pimcore.events.preMenuBuild = "pimcore.menu.preBuild";
+

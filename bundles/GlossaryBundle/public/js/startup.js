@@ -4,20 +4,19 @@ pimcore.registerNS("pimcore.glossary");
 pimcore.glossary = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
-        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
+        document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
 
-    pimcoreReady: function (e) {
+    preMenuBuild: function (e) {
+        let menu = e.detail.menu;
         const user = pimcore.globalmanager.get('user');
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
 
-        const toolbar = pimcore.globalmanager.get('layout_toolbar');
-
-        if (user.isAllowed("glossary") && perspectiveCfg.inToolbar("extras.glossary")) {
-            const index = 0;
-            toolbar.extrasMenu.insert(index, {
+        if (menu.extras && user.isAllowed("glossary") && perspectiveCfg.inToolbar("extras.glossary")) {
+            menu.extras.items.push({
                 text: t("glossary"),
                 iconCls: "pimcore_nav_icon_glossary",
+                priority: 5,
                 itemId: 'pimcore_menu_extras_glossary',
                 handler: this.editGlossary,
             });
