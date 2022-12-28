@@ -19,22 +19,22 @@ namespace Pimcore\Bundle\GlossaryBundle;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class GlossaryBundle extends AbstractPimcoreBundle
+class PimcoreGlossaryBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
     public function getCssPaths(): array
     {
         return [
-            '/bundles/glossary/css/icons.css',
+            '/bundles/pimcoreglossary/css/icons.css',
         ];
     }
 
     public function getJsPaths(): array
     {
         return [
-            '/bundles/glossary/js/startup.js',
-            '/bundles/glossary/js/glossary.js',
+            '/bundles/pimcoreglossary/js/startup.js',
+            '/bundles/pimcoreglossary/js/glossary.js',
         ];
     }
 

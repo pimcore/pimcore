@@ -12,7 +12,7 @@ But the glossary is not only useful for internal linking, it's also perfect for 
 Make sure the bundle is enabled via ```config/bundles.php``` and installed.
 
 ```console
-bin/console  pimcore:bundle:install GlossaryBundle
+bin/console  pimcore:bundle:install PimcoreGlossaryBundle
 ```
 
 <div class="inline-imgs">

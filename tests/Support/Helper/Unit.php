@@ -37,15 +37,15 @@ class Unit extends \Codeception\Module
     }
     public function _beforeSuite(array $settings = [])
     {
-        $this->installGlossaryBundle();
+        $this->installPimcoreGlossaryBundle();
     }
 
-    private function installGlossaryBundle() {
+    private function installPimcoreGlossaryBundle() {
         if ($this->config['run_installer']) {
             /** @var Pimcore $pimcoreModule */
             $pimcoreModule = $this->getModule('\\' . Pimcore::class);
 
-            $this->debug('[GlossaryBundle] Running GlossaryBundle installer');
+            $this->debug('[PimcoreGlossaryBundle] Running PimcoreGlossaryBundle installer');
 
             // install ecommerce framework
             $installer = $pimcoreModule->getContainer()->get(Installer::class);

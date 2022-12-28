@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 
-final class GlossaryExtension extends Extension
+final class PimcoreGlossaryExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {

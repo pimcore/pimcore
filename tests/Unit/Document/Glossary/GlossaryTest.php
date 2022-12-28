@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Document\Glossary;
 
-use Pimcore\Bundle\GlossaryBundle\GlossaryBundle;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Bundle\GlossaryBundle\Tool\Processor;
 use Pimcore\Tests\Support\Helper\Pimcore;

@@ -1,5 +1,5 @@
 _pimcore_glossary_backend:
-    resource: "@GlossaryBundle/src/Controller/"
+    resource: "../../src/Controller/"
     type:     annotation
     prefix:   /admin/glossary
     options:

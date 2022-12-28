@@ -10,7 +10,7 @@ services:
     Pimcore\Bundle\GlossaryBundle\Installer:
         public: true
         arguments:
-            $bundle: "@=service('kernel').getBundle('GlossaryBundle')"
+            $bundle: "@=service('kernel').getBundle('PimcoreGlossaryBundle')"
 
     #
     # CONTROLLERS

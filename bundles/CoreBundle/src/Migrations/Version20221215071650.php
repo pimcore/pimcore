@@ -6,8 +6,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Bundle\GlossaryBundle\GlossaryBundle;
-use Pimcore\Db;
+use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
 use Pimcore\Model\Tool\SettingsStore;
 
 /**
@@ -23,12 +22,12 @@ final class Version20221215071650 extends AbstractMigration
     public function up(Schema $schema): void
     {
         if ($schema->hasTable('glossary')) {
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\GlossaryBundle', true, 'bool', 'pimcore');
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle', true, 'bool', 'pimcore');
         }
 
         $this->warnIf(
             $schema->hasTable('glossary'),
-            sprintf('Please make sure to enable the %s manually in config/bundles.php', GlossaryBundle::class)
+            sprintf('Please make sure to enable the %s manually in config/bundles.php', PimcoreGlossaryBundle::class)
         );
     }
 }
