@@ -71,7 +71,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/src/IndexService/IndexUpdateService.php
 
 		-
-			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OfferTool\\\\AbstractOfferItem\\:\\:setProduct\\(\\) expects Pimcore\\\\Model\\\\Element\\\\AbstractElement\\|null, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface given\\.$#"
+			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OfferTool\\\\AbstractOfferItem\\:\\:setProduct\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\|null, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface given\\.$#"
 			count: 2
 			path: bundles/EcommerceFrameworkBundle/src/OfferTool/DefaultService.php
 
@@ -81,7 +81,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/src/OrderManager/Order/Listing.php
 
 		-
-			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrderItem\\:\\:setProduct\\(\\) expects Pimcore\\\\Model\\\\Element\\\\AbstractElement\\|null, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface given\\.$#"
+			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrderItem\\:\\:setProduct\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\|null, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/OrderManager/V7/OrderManager.php
 

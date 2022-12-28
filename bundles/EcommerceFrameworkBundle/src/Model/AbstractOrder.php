@@ -18,8 +18,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Carbon\Carbon;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Customer;
 use Pimcore\Model\DataObject\Fieldcollection;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\DataObject\Objectbrick;
+use Pimcore\Model\DataObject\OnlineShopOrder;
+use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 
 /**
  * Abstract base class for order pimcore objects
@@ -88,9 +91,9 @@ abstract class AbstractOrder extends Concrete
      */
     abstract public function setGiftItems(?array $giftItems): static;
 
-    abstract public function getCustomer(): ?AbstractElement;
+    abstract public function getCustomer(): ?Customer;
 
-    abstract public function setCustomer(?AbstractElement $customer): static;
+    abstract public function setCustomer(?Customer $customer): static;
 
     abstract public function getPriceModifications(): ?Fieldcollection;
 
@@ -106,9 +109,9 @@ abstract class AbstractOrder extends Concrete
 
     abstract public function getPaymentInfo(): ?Fieldcollection;
 
-    abstract public function setPaymentInfo(?\Pimcore\Model\DataObject\Fieldcollection $paymentInfo): static;
+    abstract public function setPaymentInfo(?Fieldcollection $paymentInfo): static;
 
-    abstract public function getPaymentProvider(): ?\Pimcore\Model\DataObject\Objectbrick;
+    abstract public function getPaymentProvider(): ?Objectbrick;
 
     /**
      * returns latest payment info entry
@@ -211,14 +214,14 @@ abstract class AbstractOrder extends Concrete
     /**
      * Get voucherTokens - Voucher Tokens
      *
-     * @return \Pimcore\Model\DataObject\OnlineShopVoucherToken[]
+     * @return OnlineShopVoucherToken[]
      */
     abstract public function getVoucherTokens(): array;
 
     /**
      * Set voucherTokens - Voucher Tokens
      *
-     * @param \Pimcore\Model\DataObject\OnlineShopVoucherToken[]|null $voucherTokens
+     * @param OnlineShopVoucherToken[]|null $voucherTokens
      *
      * @return $this
      */
@@ -243,9 +246,9 @@ abstract class AbstractOrder extends Concrete
     /**
      * Set successorOrder - Successor Order
      *
-     * @param AbstractOrder|null $successorOrder
+     * @param OnlineShopOrder|null $successorOrder
      *
      * @return $this
      */
-    abstract public function setSuccessorOrder(?\Pimcore\Model\Element\AbstractElement $successorOrder): static;
+    abstract public function setSuccessorOrder(?OnlineShopOrder $successorOrder): static;
 }

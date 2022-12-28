@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
 /**
@@ -27,9 +28,9 @@ abstract class AbstractOfferItem extends Concrete
     /**
      * @return AbstractOfferToolProduct|null
      */
-    abstract public function getProduct(): ?\Pimcore\Model\Element\AbstractElement;
+    abstract public function getProduct(): ?AbstractObject;
 
-    abstract public function setProduct(?\Pimcore\Model\Element\AbstractElement $product);
+    abstract public function setProduct(?AbstractObject $product);
 
     abstract public function getProductNumber(): ?string;
 

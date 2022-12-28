@@ -18,16 +18,16 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\DataObject\AbstractObject;
 
 /**
  * Abstract base class for order item pimcore objects
  */
 abstract class AbstractOrderItem extends Concrete
 {
-    abstract public function getProduct(): ?AbstractElement;
+    abstract public function getProduct(): ?AbstractObject;
 
-    abstract public function setProduct(?AbstractElement $product);
+    abstract public function setProduct(?AbstractObject $product);
 
     abstract public function getProductNumber(): ?string;
 
