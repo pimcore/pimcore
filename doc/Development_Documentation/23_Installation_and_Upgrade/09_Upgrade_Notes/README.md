@@ -55,7 +55,10 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Email] Removed the deprecated methods setBodyHtml(), setBodyText(), createAttachment() and setSubject(). Use html(),
   text(), attach() and subject() instead.
 - [Application Logger] Table names of archive tables are now named with year-month rather than month-year see [#8237](https://github.com/pimcore/pimcore/issues/8237).
-- [Glossary] `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
+- [Glossary] 
+  - `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
+  -  Glossary was moved into PimcoreGlossaryBundle
+  -  PimcoreGlossaryBundle must be enabled manually in config/bundles.php
 - [Elements] Passing $force parameter as boolean is not valid anymore in `getById`, `getByPath`, `getElementById` methods. Instead, please pass it as an associative array ( eg.`['force' => true]`).
    For details, please see [#12789](https://github.com/pimcore/pimcore/issues/12789)
 - [DataObjects] Changed default behaviour: getByXXX methods on `Concrete` class now returns objects and variants if nothing else is specified.
