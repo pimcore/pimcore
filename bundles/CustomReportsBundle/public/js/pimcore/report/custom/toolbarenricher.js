@@ -4,7 +4,7 @@ document.addEventListener(pimcore.events.pimcoreReady, (e) => {
 
         // get available reports
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_reports_customreport_getreportconfig'),
+            url: Routing.generate('pimcore_reports_customreport_getreportconfig'),
             success: function (response) {
                 const res = Ext.decode(response.responseText);
                 let report;

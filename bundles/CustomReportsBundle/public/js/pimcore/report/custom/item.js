@@ -788,7 +788,7 @@ pimcore.report.custom.item = Class.create({
     getColumnSettings: function () {
         var m = this.getValues();
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_reports_customreport_columnconfig'),
+            url: Routing.generate('pimcore_reports_customreport_columnconfig'),
             method: "post",
             params: {
                 configuration: Ext.encode(m.dataSourceConfig),
@@ -920,7 +920,7 @@ pimcore.report.custom.item = Class.create({
         }
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_reports_customreport_update'),
+            url: Routing.generate('pimcore_reports_customreport_update'),
             method: "PUT",
             params: {
                 configuration: Ext.encode(m),

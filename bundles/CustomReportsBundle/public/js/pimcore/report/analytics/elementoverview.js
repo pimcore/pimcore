@@ -281,7 +281,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
         this.chartStore = new Ext.data.JsonStore({
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_reports_analytics_chartmetricdata'),
+                url: Routing.generate('pimcore_reports_analytics_chartmetricdata'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -304,7 +304,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_reports_analytics_summary'),
+                url: Routing.generate('pimcore_reports_analytics_summary'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -326,7 +326,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_reports_analytics_source'),
+                url: Routing.generate('pimcore_reports_analytics_source'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'

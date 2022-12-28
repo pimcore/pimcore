@@ -69,7 +69,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_reports_analytics_dataexplorer'),
+                url: Routing.generate('pimcore_reports_analytics_dataexplorer'),
                 extraParams: {
                     type: type,
                     id: id,
@@ -165,7 +165,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                                 autoLoad: true,
                                 proxy: {
                                     type: 'ajax',
-                                    url: Routing.generate('pimcore_admin_reports_analytics_getdimensions'),
+                                    url: Routing.generate('pimcore_reports_analytics_getdimensions'),
                                     reader: {
                                         type: 'json',
                                         rootProperty: "data",
@@ -190,7 +190,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                                 autoLoad: true,
                                 proxy: {
                                     type: 'ajax',
-                                    url: Routing.generate('pimcore_admin_reports_analytics_getmetrics'),
+                                    url: Routing.generate('pimcore_reports_analytics_getmetrics'),
                                     reader: {
                                         type: 'json',
                                         rootProperty: "data",
