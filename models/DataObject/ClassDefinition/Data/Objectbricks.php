@@ -258,7 +258,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return Objectbrick\Data\AbstractData
+     * @return Objectbrick
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Objectbrick
     {

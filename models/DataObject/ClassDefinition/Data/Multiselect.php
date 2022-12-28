@@ -440,7 +440,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Multiselect $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
