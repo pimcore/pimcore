@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Pimcore\Bundle\GlossaryBundle\Migrations;
+namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
