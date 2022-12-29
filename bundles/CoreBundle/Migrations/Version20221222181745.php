@@ -41,7 +41,7 @@ final class Version20221222181745 extends AbstractMigration
             $this->addSql("DELETE `object_classificationstore_groups_{$tableNumber}`
             FROM `object_classificationstore_groups_{$tableNumber}`
             LEFT JOIN `classificationstore_groups` ON object_classificationstore_groups_{$tableNumber}.groupId = classificationstore_groups.id
-            WHERE classificationstore_groups.id = NULL;");
+            WHERE classificationstore_groups.id IS NULL;");
 
             $this->addSql("DELETE `object_classificationstore_data_{$tableNumber}`
             FROM `object_classificationstore_data_{$tableNumber}`
