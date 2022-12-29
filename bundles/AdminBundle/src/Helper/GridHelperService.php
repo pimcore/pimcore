@@ -672,7 +672,7 @@ class GridHelperService
         $folder = Model\Asset::getById($allParams['folderId']);
 
         $start = 0;
-        $limit = 0;
+        $limit = null;
         $orderKey = 'id';
         $order = 'ASC';
 

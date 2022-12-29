@@ -84,8 +84,8 @@ pimcore.settings.metadata.predefined = Class.create({
         this.store.getProxy().getReader().setMessageProperty('message');
         this.store.getProxy().on('exception', function (proxy, response, operation) {
             pimcore.helpers.showNotification(t("error"), t(operation.getError()), "error");
-            store.load();
-        });
+            this.store.load();
+        }.bind(this));
 
         this.store.addListener('exception', function(proxy, mode, action, options, response) {
             Ext.Msg.show({

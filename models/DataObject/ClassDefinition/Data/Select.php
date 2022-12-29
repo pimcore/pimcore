@@ -549,4 +549,15 @@ class Select extends Data implements
     {
         return 'string|null';
     }
+
+    /**
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        return $oldValue == $newValue;
+    }
 }

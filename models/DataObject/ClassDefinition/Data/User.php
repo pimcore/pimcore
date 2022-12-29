@@ -160,7 +160,10 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     public static function __set_state($data)
     {
         $obj = parent::__set_state($data);
-        $obj->configureOptions();
+
+        if (\Pimcore::inAdmin()) {
+            $obj->configureOptions();
+        }
 
         return $obj;
     }
