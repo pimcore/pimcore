@@ -13,18 +13,15 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
+namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-/**
- * Abstract base class for voucher token type field collections
- */
-abstract class AbstractVoucherTokenType extends \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
+use Pimcore\Model\DataObject;
+
+interface ClassSavedInterface
 {
     /**
-     * @return bool|null
+     * @param DataObject\ClassDefinition $class
+     * @param array $params
      */
-    public function getOnlyTokenPerCart()
-    {
-        return false;
-    }
+    public function classSaved($class/**, $params = [] **/);
 }

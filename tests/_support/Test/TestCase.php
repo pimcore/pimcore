@@ -56,3 +56,5 @@ abstract class TestCase extends Test
         \Pimcore::collectGarbage();
     }
 }
+
+@class_alias(TestCase::class, 'Pimcore\Tests\Support\Test\TestCase');

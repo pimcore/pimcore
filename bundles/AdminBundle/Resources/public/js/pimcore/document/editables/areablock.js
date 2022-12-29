@@ -691,38 +691,45 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
     },
 
     getTypeMenu: function (scope, element, insertPosition) {
-        var menu = [];
-        var groupMenu;
-        var limits = this.config["limits"] || {};
+        const menu = [];
+        const limits = this.config["limits"] || {};
 
-        if(typeof this.config.group != "undefined") {
-            var groups = Object.keys(this.config.group);
-            for (var g=0; g<groups.length; g++) {
-                if(groups[g].length > 0) {
-                    groupMenu = {
+        if (typeof this.config.group != "undefined") {
+            const groups = Object.keys(this.config.group);
+            const maxHeight = Ext.getBody().getViewSize().height;
+            for (let g = 0; g < groups.length; g++) {
+                if (groups[g].length > 0) {
+                    let groupMenu = {
                         text: t(groups[g]),
                         iconCls: "pimcore_icon_area",
                         hideOnClick: false,
-                        menu: []
+                        menu: {
+                            xtype: 'menu',
+                            items: []
+                        }
                     };
 
-                    for (var i=0; i<this.config.types.length; i++) {
-                        if(in_array(this.config.types[i].type,this.config.group[groups[g]])) {
+                    for (let i = 0; i < this.config.types.length; i++) {
+                        if (in_array(this.config.types[i].type,this.config.group[groups[g]])) {
                             let type = this.config.types[i].type;
                             if (typeof limits[type] == "undefined" ||
                                 typeof this.brickTypeUsageCounter[type] == "undefined" || this.brickTypeUsageCounter[type] < limits[type]) {
-                                    groupMenu.menu.push(this.getMenuConfigForBrick(this.config.types[i], scope, element, insertPosition));
+                                    groupMenu.menu.items.push(this.getMenuConfigForBrick(this.config.types[i], scope, element, insertPosition));
                             }
                         }
                     }
-                    if(groupMenu.menu.length) {
+                    if (groupMenu.menu.items.length) {
+                        // One item has a height of 32px
+                        if (groupMenu.menu.items.length * 32 > maxHeight) {
+                            groupMenu.menu.height = maxHeight;
+                        }
                         menu.push(groupMenu);
                     }
                 }
             }
         } else {
-            for (var i=0; i<this.config.types.length; i++) {
-                let type = this.config.types[i].type;
+            for (let i = 0; i < this.config.types.length; i++) {
+                const type = this.config.types[i].type;
                 if (typeof limits[type] == "undefined" ||
                     typeof this.brickTypeUsageCounter[type] == "undefined" || this.brickTypeUsageCounter[type] < limits[type]) {
                     menu.push(this.getMenuConfigForBrick(this.config.types[i], scope, element, insertPosition));

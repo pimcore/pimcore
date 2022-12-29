@@ -33,6 +33,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
@@ -235,7 +236,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * @param DataObject\AbstractObject $element
+     * @param ElementInterface $element
      *
      * @return array
      *
@@ -243,6 +244,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     protected function getTreeNodeConfig($element): array
     {
+        /** @var DataObject $child */
         $child = $element;
 
         $tmpObject = [

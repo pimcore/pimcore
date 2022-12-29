@@ -132,7 +132,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
@@ -196,9 +196,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
      */
@@ -289,9 +289,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see Data::getDataForEditmode
      *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
      */
@@ -337,9 +337,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
      */
@@ -473,9 +473,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @see Data::getVersionPreview
      *
-     * @param array|null $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */
@@ -505,7 +505,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */
@@ -530,7 +530,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Data\BlockElement[][]|null $data
+     * @param mixed $data
      *
      * @return bool
      */
@@ -768,7 +768,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param array|null $data
+     * @param mixed $data
      *
      * @return array
      */
@@ -902,7 +902,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
     {
@@ -942,7 +942,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     /**
      * {@inheritdoc}
-     */
+     **/
     public function load($container, $params = [])
     {
         $field = $this->getName();

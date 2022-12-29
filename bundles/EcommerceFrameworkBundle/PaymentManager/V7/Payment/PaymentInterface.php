@@ -42,7 +42,7 @@ interface PaymentInterface
     /**
      * Handles response of payment provider and creates payment status object
      *
-     * @param StatusInterface $response
+     * @param StatusInterface|array $response
      *
      * @return StatusInterface
      */

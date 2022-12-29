@@ -30,7 +30,7 @@ use Pimcore\Model\DataObject\Concrete;
 abstract class AbstractCart extends AbstractModel implements CartInterface
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $userId;
 
@@ -331,6 +331,8 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      * @param string $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
      * @return int
+     *
+     * @throws InvalidConfigException
      */
     public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY)
     {
@@ -624,7 +626,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreationDateTimestamp()
     {
@@ -778,7 +780,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param int $count
      *
-     * @return array<int, CartItemInterface>
+     * @return CartItemInterface[]
      */
     public function getRecentlyAddedItems($count)
     {

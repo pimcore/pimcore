@@ -362,3 +362,5 @@ class Pimcore extends Module\Symfony
         // TODO: Implement makeHtmlSnapshot() method.
     }
 }
+
+@class_alias(Pimcore::class, 'Pimcore\Tests\Support\Helper\Pimcore');

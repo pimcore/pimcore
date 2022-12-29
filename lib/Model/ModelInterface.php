@@ -15,10 +15,12 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Model\Dao\DaoInterface;
+
 interface ModelInterface
 {
     /**
-     * @return Dao\AbstractDao
+     * @return DaoInterface
      */
     public function getDao();
 

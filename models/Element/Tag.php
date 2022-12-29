@@ -58,7 +58,7 @@ final class Tag extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var Tag[]
+     * @var Tag[]|null
      */
     protected $children;
 

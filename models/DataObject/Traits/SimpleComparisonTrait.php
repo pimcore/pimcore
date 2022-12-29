@@ -28,7 +28,7 @@ trait SimpleComparisonTrait
      */
     public function isEqual($oldValue, $newValue): bool
     {
-        return $oldValue == $newValue;
+        return $oldValue === $newValue;
     }
 
     /**

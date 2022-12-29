@@ -23,12 +23,12 @@ class GeoCoordinates implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $longitude;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $latitude;
 

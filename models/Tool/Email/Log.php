@@ -31,21 +31,21 @@ class Log extends Model\AbstractModel
     /**
      * EmailLog Id
      *
-     * @var int
+     * @var null|int
      */
     protected $id;
 
     /**
      * Id of the email document or null if no document was given
      *
-     * @var int | null
+     * @var int|null
      */
     protected $documentId;
 
     /**
      * Parameters passed for replacement
      *
-     * @var array
+     * @var string|array
      */
     protected $params;
 
@@ -73,7 +73,7 @@ class Log extends Model\AbstractModel
     /**
      * Contains the reply to email addresses (multiple recipients are separated by a ",")
      *
-     * @var string
+     * @var string|null
      */
     protected $replyTo;
 
@@ -143,7 +143,7 @@ class Log extends Model\AbstractModel
     /**
      * Error log, when mail send resulted in failure - empty if successfully sent
      *
-     * @var ?string
+     * @var string|null
      */
     protected $error;
 
@@ -184,7 +184,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the email log id
      *
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -260,7 +260,7 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * @param array $params
+     * @param array|string $params
      *
      * @return $this
      */
@@ -331,6 +331,8 @@ class Log extends Model\AbstractModel
 
     /**
      *  Checks if a html log file exits and sets $this->emailLogExistsHtml to 0 or 1
+     *
+     * @return $this
      */
     public function setEmailLogExistsHtml()
     {
@@ -353,6 +355,8 @@ class Log extends Model\AbstractModel
 
     /**
      * Checks if a text log file exits and sets $this->emailLogExistsText to 0 or 1
+     *
+     * @return $this
      */
     public function setEmailLogExistsText()
     {
@@ -396,7 +400,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the content of the html log file
      *
-     * @return string | false
+     * @return string|false
      */
     public function getHtmlLog()
     {
@@ -412,7 +416,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the content of the text log file
      *
-     * @return string | false
+     * @return string|false
      */
     public function getTextLog()
     {
@@ -562,7 +566,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the "replyTo" email address
      *
-     * @return string
+     * @return string|null
      */
     public function getReplyTo()
     {
@@ -584,7 +588,7 @@ class Log extends Model\AbstractModel
     /**
      * returns the html content of the email
      *
-     * @return string | null
+     * @return string|null
      */
     public function getBodyHtml()
     {

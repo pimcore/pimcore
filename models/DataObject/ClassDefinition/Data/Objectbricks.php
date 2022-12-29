@@ -96,7 +96,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Objectbrick|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
@@ -285,9 +285,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string|array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return Objectbrick\Data\AbstractData
      */
@@ -346,9 +346,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * @see Data::getVersionPreview
      *
-     * @param Objectbrick\Data\AbstractData|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */
@@ -467,7 +467,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
     {
@@ -479,7 +479,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * @param Objectbrick|null $data
+     * @param mixed $data
      *
      * @return array
      */
@@ -664,8 +664,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
     /**
      * @param Objectbrick|null $data
-     * @param DataObject\Concrete $object
-     * @param mixed $params
+     * @param DataObject\Concrete|null $object
+     * @param array $params
      *
      * @return string
      */
@@ -757,7 +757,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /** See parent class.
      * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
      */
@@ -786,7 +786,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return mixed
      */
@@ -903,11 +903,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     foreach ($fieldDefinition as $fd) {
                         //TODO Pimcore 11 remove method_exists call
-                        if (method_exists($fd, 'classSaved')) {
-                            // defer creation
-                            if (!$fd instanceof DataContainerAwareInterface) {
-                                $fd->classSaved($class);
+                        if (!$fd instanceof DataContainerAwareInterface && ($fd instanceof ClassSavedInterface || method_exists($fd, 'classSaved'))) {
+                            if (!$fd instanceof ClassSavedInterface) {
+                                trigger_deprecation('pimcore/pimcore', '10.6',
+                                    sprintf('Usage of method_exists is deprecated since version 10.6 and will be removed in Pimcore 11.' .
+                                    'Implement the %s interface instead.', ClassSavedInterface::class));
                             }
+                            // defer creation
+                            $fd->classSaved($class, $params);
                         }
                     }
 

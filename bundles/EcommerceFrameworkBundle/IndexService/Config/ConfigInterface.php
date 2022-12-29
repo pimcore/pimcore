@@ -49,7 +49,7 @@ interface ConfigInterface
     /**
      * return all supported filter types for product index
      *
-     * @return array
+     * @return array|null
      */
     public function getFilterTypeConfig();
 

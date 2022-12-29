@@ -464,17 +464,6 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
-    {
-        return $oldValue === $newValue;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getForCsvExport($object, $params = [])
