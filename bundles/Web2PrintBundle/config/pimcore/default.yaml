@@ -1,5 +1,12 @@
 pimcore:
-    models:
-        class_overrides:
-            Pimcore\Model\Document\Printcontainer: Pimcore\Bundle\Web2PrintBundle\Model\Document\Printcontainer
-            Pimcore\Model\Document\Printpage: Pimcore\Bundle\Web2PrintBundle\Model\Document\Printpage
+    documents:
+        class_definitions:
+            data:
+                map:
+                    printpage: Pimcore\Bundle\Web2PrintBundle\Model\Document\Printpage
+                    printcontainer: Pimcore\Bundle\Web2PrintBundle\Model\Document\Printcontainer
+
+        types: ['printpage', 'printcontainer']
+
+        routing:
+            direct_route_document_types: ['printpage', 'printcontainer']

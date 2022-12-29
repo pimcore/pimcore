@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-class Web2PrintExtension extends Extension implements PrependExtensionInterface
+class PimcoreWeb2PrintExtension extends Extension
 {
 
     public function load(array $configs, ContainerBuilder $container)
@@ -36,10 +36,5 @@ class Web2PrintExtension extends Extension implements PrependExtensionInterface
         );
 
         $loader->load('services.yaml');
-    }
-
-    public function prepend(\Symfony\Component\DependencyInjection\ContainerBuilder $container)
-    {
-        // nothing to do here for now
     }
 }

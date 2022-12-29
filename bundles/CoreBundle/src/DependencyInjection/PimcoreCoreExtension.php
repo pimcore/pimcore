@@ -186,6 +186,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
                 'config' => $config['assets']['metadata']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class,
             ],
+            //'pimcore.implementation_loader.document.data' => [
+            //    'config' => $config['documents']['class_definitions']['data'],
+            //    'prefixLoader' => PrefixLoader::class,
+            //],
         ];
 
         // read config and add map/prefix loaders if configured - makes sure only needed objects are built

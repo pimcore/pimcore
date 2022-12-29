@@ -10,7 +10,7 @@ services:
     Pimcore\Bundle\Web2PrintBundle\Installer:
         public: true
         arguments:
-            $bundle: "@=service('kernel').getBundle('Web2PrintBundle')"
+            $bundle: "@=service('kernel').getBundle('PimcoreWeb2PrintBundle')"
 
     #
     # CONTROLLERS

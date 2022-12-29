@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\Web2PrintBundle;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class Web2PrintBundle extends AbstractPimcoreBundle
+class PimcoreWeb2PrintBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
@@ -33,12 +33,12 @@ class Web2PrintBundle extends AbstractPimcoreBundle
     public function getJsPaths(): array
     {
         return [
-            '/bundles/web2print/js/startup.js',
-            '/bundles/web2print/js/web2print.js',
-            '/bundles/web2print/js/document/printabstract.js',
-            '/bundles/web2print/js/document/printcontainer.js',
-            '/bundles/web2print/js/document/printpage.js',
-            "/bundles/web2print/js/document/printpages/pdf_preview.js",
+            '/bundles/pimcoreweb2print/js/startup.js',
+            '/bundles/pimcoreweb2print/js/web2print.js',
+            '/bundles/pimcoreweb2print/js/document/printabstract.js',
+            '/bundles/pimcoreweb2print/js/document/printcontainer.js',
+            '/bundles/pimcoreweb2print/js/document/printpage.js',
+            "/bundles/pimcoreweb2print/js/document/printpages/pdf_preview.js",
         ];
     }
 

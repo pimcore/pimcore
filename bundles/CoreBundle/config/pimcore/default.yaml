@@ -187,6 +187,11 @@ pimcore:
                     - \Object_Class_Layout_
 
     documents:
+        class_definitions:
+            data:
+                map:
+                    page: Pimcore\Model\Document\Page
+
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\

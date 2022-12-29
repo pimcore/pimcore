@@ -23,6 +23,11 @@ services:
         class: Pimcore\Model\Asset\Metadata\Loader\DataLoader
         public: true
 
+    # document data loader
+    pimcore.implementation_loader.document.data:
+        class: Pimcore\Model\Document\ClassDefinition\Loader\DataLoader
+        public: true
+
     # object layout loader
     pimcore.implementation_loader.object.layout:
         class: Pimcore\Model\DataObject\ClassDefinition\Loader\LayoutLoader

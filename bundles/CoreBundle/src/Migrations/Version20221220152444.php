@@ -15,10 +15,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\Web2PrintBundle\Migrations;
+namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore\Bundle\Web2PrintBundle\PimcoreWeb2PrintBundle;
 use Pimcore\Model\Tool\SettingsStore;
 
 /**
@@ -33,14 +34,14 @@ final class Version20221220152444 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if(!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\Web2PrintBundle\\Web2PrintBundle', 'pimcore')) {
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\Web2PrintBundle\\Web2PrintBundle', true, 'bool', 'pimcore');
+        if(!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\Web2PrintBundle\\PimcoreWeb2PrintBundle', 'pimcore')) {
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\Web2PrintBundle\\PimcoreWeb2PrintBundle', true, 'bool', 'pimcore');
         }
 
-    }
+        $this->warnIf(
+            null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\StaticRoutesBundle', 'pimcore'),
+            sprintf('Please make sure to enable the %s manually in config/bundles.php', PimcoreWeb2PrintBundle::class)
+        );
 
-    public function down(Schema $schema): void
-    {
-        // nothing to do here
     }
 }
