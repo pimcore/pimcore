@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Model\DataObject;
+use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class AbstractConfig implements ConfigInterface
 {
@@ -85,11 +86,8 @@ abstract class AbstractConfig implements ConfigInterface
      * signature in Pimcore 10.
      *
      * TODO Pimcore 10 add to constructor signature.
-     *
-     * @required
-     *
-     * @param AttributeFactory $attributeFactory
      */
+    #[Required]
     public function setAttributeFactory(AttributeFactory $attributeFactory): void
     {
         if (null !== $this->attributeFactory) {

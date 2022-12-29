@@ -297,16 +297,15 @@ final class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $name
      * @param array $parameters
      * @param string|null $media
      *
      * @return bool
-     *
-     *@internal
-     *
      */
-    public function addItem(string $name, array $parameters, string $media = null): bool
+    public function addItem(string $name, array $parameters, ?string $media = null): bool
     {
         $item = [
             'method' => $name,
@@ -325,17 +324,16 @@ final class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param int $position
      * @param string $name
      * @param array $parameters
      * @param string|null $media
      *
      * @return bool
-     *
-     *@internal
-     *
      */
-    public function addItemAt(int $position, string $name, array $parameters, string $media = null): bool
+    public function addItemAt(int $position, string $name, array $parameters, ?string $media = null): bool
     {
         if (!$media || $media == 'default') {
             $itemContainer = &$this->items;

@@ -165,6 +165,8 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
     public function setDataFromResource(mixed $data): static
     {
@@ -181,6 +183,8 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
     public function setDataFromEditmode(mixed $data): static
     {
@@ -316,6 +320,9 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return (int) $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setO(DataObject|Asset|Document|null $o): static
     {
         $this->o = $o;
@@ -328,6 +335,9 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $this->o;
     }
 
+    /**
+     * @return $this
+     */
     public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
@@ -341,7 +351,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function rewriteIds(array $idMapping): void
     {
