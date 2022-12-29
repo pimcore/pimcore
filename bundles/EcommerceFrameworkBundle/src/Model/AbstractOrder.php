@@ -17,11 +17,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Carbon\Carbon;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\Customer;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Objectbrick;
-use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 
 /**
@@ -91,9 +90,9 @@ abstract class AbstractOrder extends Concrete
      */
     abstract public function setGiftItems(?array $giftItems): static;
 
-    abstract public function getCustomer(): ?Customer;
+    abstract public function getCustomer(): ?AbstractObject;
 
-    abstract public function setCustomer(?Customer $customer): static;
+    abstract public function setCustomer(?AbstractObject $customer): static;
 
     abstract public function getPriceModifications(): ?Fieldcollection;
 
@@ -246,9 +245,9 @@ abstract class AbstractOrder extends Concrete
     /**
      * Set successorOrder - Successor Order
      *
-     * @param OnlineShopOrder|null $successorOrder
+     * @param AbstractOrder|null $successorOrder
      *
      * @return $this
      */
-    abstract public function setSuccessorOrder(?OnlineShopOrder $successorOrder): static;
+    abstract public function setSuccessorOrder(?AbstractObject $successorOrder): static;
 }
