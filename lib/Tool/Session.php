@@ -34,7 +34,7 @@ final class Session
      * @desc This is for forward compatibility, the custom Session implementation is not being used anymore in Pimcore 11.
      * @desc For forward compatibility, you can use this class and pass the SessionInterface from the request, in Pimcore 10.6, the Admin Session will be used instead
      *
-     * @param SessionInterface $session Session being used is the Admin Session, Varaible is not used here since the dedicated Admin Session is used. Please pass the Request SessionInterface here for forward compatibility
+     * @param SessionInterface $session Parameter is not used here since the dedicated Admin Session is used. Please pass the Request SessionInterface here for forward compatibility
      *
      * @param callable(AttributeBagInterface, SessionInterface):mixed $func
      *
@@ -48,7 +48,7 @@ final class Session
      * @desc This is for forward compatibility, the custom Session implementation is not being used anymore in Pimcore 11.
      * @desc For forward compatibility, you can use this class and pass the SessionInterface from the request, in Pimcore 10.6, the Admin Session will be used instead
      *
-     * @param SessionInterface $session Session being used is the Admin Session, you can safely pass nothing here
+     * @param SessionInterface $session Parameter is not used here since the dedicated Admin Session is used. Please pass the Request SessionInterface here for forward compatibility
      *
      * @param string $namespace
      *
