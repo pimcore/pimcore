@@ -20,7 +20,7 @@ use DateInterval;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Pimcore\Config;
-use Pimcore\Log\Handler\ApplicationLoggerDb;
+use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;

@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle;
 
 use Monolog\Level;
 use Monolog\Logger;
-use Pimcore\Log\Handler\ApplicationLoggerDb;
+use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Psr\Log\InvalidArgumentException;
@@ -78,7 +78,7 @@ class ApplicationLogger implements LoggerInterface
     }
 
     /**
-     * @param \Pimcore\Log\FileObject|string $fileObject
+     * @param FileObject|string $fileObject
      *
      * @deprecated
      *

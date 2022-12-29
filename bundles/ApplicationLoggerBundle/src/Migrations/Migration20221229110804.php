@@ -24,18 +24,18 @@ final class Migration20221229110804 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if ($this->isInstalled()) {
+        if ($this->isInstalled($schema)) {
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', true, 'bool', 'pimcore');
         }
 
         $this->warnIf(
-            $this->isInstalled(),
+            $this->isInstalled($schema),
             sprintf('Please make sure to enable the %s manually in config/bundles.php', PimcoreApplicationLoggerBundle::class)
         );
     }
 
     public function down(Schema $schema): void
     {
-        $this->write(sprintf('Please deactivate the %s manually in config/bundles.php', PimcoreCustomReportsBundle::class));
+        $this->write(sprintf('Please deactivate the %s manually in config/bundles.php', PimcoreApplicationLoggerBundle::class));
     }
 }
