@@ -2790,13 +2790,6 @@ pimcore.helpers.notesEvents = function() {
     }
 };
 
-pimcore.helpers.applicationLogger = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("application_logging")) {
-        pimcore.layout.toolbar.prototype.logAdmin();
-    }
-};
-
 pimcore.helpers.reports = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("reports")) {

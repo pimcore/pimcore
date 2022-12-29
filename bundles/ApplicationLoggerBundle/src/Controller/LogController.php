@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
@@ -44,7 +44,7 @@ class LogController extends AdminController implements KernelControllerEventInte
     }
 
     /**
-     * @Route("/log/show", name="pimcore_admin_log_show", methods={"GET", "POST"})
+     * @Route("/log/show", name="pimcore_admin_applicationlogger_log_show", methods={"GET", "POST"})
      *
      *
      */
@@ -171,7 +171,7 @@ class LogController extends AdminController implements KernelControllerEventInte
     }
 
     /**
-     * @Route("/log/priority-json", name="pimcore_admin_log_priorityjson", methods={"GET"})
+     * @Route("/log/priority-json", name="pimcore_admin_applicationlogger_log_priorityjson", methods={"GET"})
      *
      * @param Request $request
      *
@@ -188,7 +188,7 @@ class LogController extends AdminController implements KernelControllerEventInte
     }
 
     /**
-     * @Route("/log/component-json", name="pimcore_admin_log_componentjson", methods={"GET"})
+     * @Route("/log/component-json", name="pimcore_admin_applicationlogger_log_componentjson", methods={"GET"})
      *
      * @param Request $request
      *
@@ -205,7 +205,7 @@ class LogController extends AdminController implements KernelControllerEventInte
     }
 
     /**
-     * @Route("/log/show-file-object", name="pimcore_admin_log_showfileobject", methods={"GET"})
+     * @Route("/log/show-file-object", name="pimcore_admin_applicationlogger_log_showfileobject", methods={"GET"})
      *
      * @param Request $request
      *

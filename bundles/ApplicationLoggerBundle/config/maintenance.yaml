@@ -1,0 +1,6 @@
+services:
+    Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogArchiveTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: archiveLogEntries }

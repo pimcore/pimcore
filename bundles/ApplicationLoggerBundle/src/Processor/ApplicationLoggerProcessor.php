@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Log\Processor;
+namespace Pimcore\Bundle\ApplicationLoggerBundle\Processor;
 
 use Monolog\LogRecord;
 use Pimcore\Log\FileObject;
