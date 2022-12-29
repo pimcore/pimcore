@@ -558,28 +558,16 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             $types[] = '\\' . Page::class;
             $types[] = '\\' . Snippet::class;
             $types[] = '\\' . Document::class;
-
-            foreach ($this->getDocumentTypes() as $item) {
-                $types[] = sprintf('\Pimcore\Model\Document\%s', ucfirst($item['documentTypes']));
-            }
         }
 
         // add assets
         if ($this->getAssetsAllowed()) {
             $types[] = '\\' . Asset::class;
-
-            foreach ($this->getAssetTypes() as $item) {
-                $types[] = sprintf('\Pimcore\Model\Asset\%s', ucfirst($item['assetTypes']));
-            }
         }
 
         // add objects
         if ($this->getObjectsAllowed()) {
             $types[] = '\\' . AbstractObject::class;
-
-            foreach ($this->getClasses() as $item) {
-                $types[] = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes']));
-            }
         }
 
         return implode('|', $types) . '|null';
