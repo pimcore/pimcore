@@ -478,16 +478,15 @@
                      });
                  }
              }
- 
- 
-             if (extrasItems.length > 0) {
-                 menu.extras = {
-                     items: extrasItems,
-                     shadow: false,
-                     listeners: true,
-                     cls: "pimcore_navigation_flyout"
-                 };
-             }
+
+             // adding menu even though extraItems can be empty
+             // items can be added via event later
+             menu.extras = {
+                 items: extrasItems,
+                 shadow: false,
+                 listeners: true,
+                 cls: "pimcore_navigation_flyout"
+             };
          }
  
          if (perspectiveCfg.inToolbar("marketing")) {
@@ -600,7 +599,7 @@
                      });
                  }
              }
- 
+
              if (marketingItems.length > 0) {
                  menu.marketing = {
                      items: marketingItems,
@@ -1158,26 +1157,33 @@
          if(Object.keys(menu).length !== 0) {
              Object.keys(menu).forEach(key => {
                  // Building all submenus
-                 pimcore.helpers.buildMenu(menu[key].items);
-                 let menuItem = {
-                     items: menu[key].items,
-                     shadow: menu[key].shadow,
-                     cls: "pimcore_navigation_flyout",
-                 }
+                 // menu[key].items can be empty
+                 // menu items can be added via event after the inital setup
+                 // if items are empty do not build submenus or main menu item
 
-                 if(menu[key].listeners === true) {
-                     menuItem.listeners = {
-                         "show": function (e) {
-                             Ext.get('pimcore_menu_' + key).addCls('active');
-                         },
-                         "hide": function (e) {
-                             Ext.get('pimcore_menu_' + key).removeCls('active');
+                 if(menu[key].items.length > 0) {
+                     pimcore.helpers.buildMenu(menu[key].items);
+
+                     let menuItem = {
+                         items: menu[key].items,
+                         shadow: menu[key].shadow,
+                         cls: "pimcore_navigation_flyout",
+                     }
+
+                     if(menu[key].listeners === true) {
+                         menuItem.listeners = {
+                             "show": function (e) {
+                                 Ext.get('pimcore_menu_' + key).addCls('active');
+                             },
+                             "hide": function (e) {
+                                 Ext.get('pimcore_menu_' + key).removeCls('active');
+                             },
                          }
                      }
-                 }
 
-                 // Adding single main menu item
-                 this[key + 'Menu'] = pimcore.helpers.createMenu(menuItem);
+                     // Adding single main menu item
+                     this[key + 'Menu'] = pimcore.helpers.createMenu(menuItem);
+                 }
              });
          }
  
