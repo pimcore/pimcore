@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 10.6.0
+- [Classification Store] Deleting the data from deleted groups and keys. 
+
 ## 10.5.10
 - [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.
 
