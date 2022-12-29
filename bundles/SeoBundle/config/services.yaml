@@ -10,7 +10,7 @@ services:
     Pimcore\Bundle\SeoBundle\Installer:
         public: true
         arguments:
-            $bundle: "@=service('kernel').getBundle('SeoBundle')"
+            $bundle: "@=service('kernel').getBundle('PimcoreSeoBundle')"
 
     #
     # CONTROLLERS

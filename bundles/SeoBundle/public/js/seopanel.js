@@ -21,7 +21,6 @@ pimcore.document.seopanel = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        console.log(tabPanel);
         tabPanel.setActiveItem("pimcore_document_seopanel");
     },
 

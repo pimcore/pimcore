@@ -1,5 +1,5 @@
 _pimcore_seo_backend:
-    resource: "@SeoBundle/src/Controller/"
+    resource: "../../src/Controller/"
     type:     annotation
     prefix:   /admin/seo
     options:

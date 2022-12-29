@@ -5,7 +5,7 @@ return [
     "Pimcore\\Bundle\\EcommerceFrameworkBundle\\PimcoreEcommerceFrameworkBundle" => [
         "all" => TRUE
     ],
-    "Pimcore\\Bundle\\SeoBundle\\SeoBundle" => [
+    "Pimcore\\Bundle\\SeoBundle\\PimcoreSeoBundle" => [
         "all" => TRUE
     ],
 ];

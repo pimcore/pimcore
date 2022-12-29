@@ -18,24 +18,24 @@ namespace Pimcore\Bundle\SeoBundle;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class SeoBundle extends AbstractPimcoreBundle
+class PimcoreSeoBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
     public function getCssPaths(): array
     {
         return [
-            '/bundles/seo/css/icons.css'
+            '/bundles/pimcoreseo/css/icons.css'
         ];
     }
 
     public function getJsPaths(): array
     {
         return [
-            '/bundles/seo/js/startup.js',
-            '/bundles/seo/js/httpErrorLog.js',
-            '/bundles/seo/js/robotstxt.js',
-            '/bundles/seo/js/seopanel.js',
+            '/bundles/pimcoreseo/js/startup.js',
+            '/bundles/pimcoreseo/js/httpErrorLog.js',
+            '/bundles/pimcoreseo/js/robotstxt.js',
+            '/bundles/pimcoreseo/js/seopanel.js',
         ];
     }
 
