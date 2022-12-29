@@ -48,7 +48,7 @@ final class Version20221222181745 extends AbstractMigration
             LEFT JOIN `$theTableGroups` ON object_classificationstore_data_{$tableNumber}.o_id = $theTableGroups.o_id AND
             object_classificationstore_data_{$tableNumber}.fieldname = $theTableGroups.fieldname AND
             object_classificationstore_data_{$tableNumber}.groupId = $theTableGroups.groupId
-            WHERE $theTableGroups.o_id = NULL AND  $theTableGroups.fieldname = NULL AND $theTableGroups.groupId = NULL;");
+            WHERE $theTableGroups.o_id IS NULL AND  $theTableGroups.fieldname IS NULL AND $theTableGroups.groupId IS NULL;");
 
             $this->addSql("ALTER TABLE `$theTableGroups` MODIFY COLUMN groupId INT(11) UNSIGNED NOT NULL;");
             $this->addSql("ALTER TABLE `$theTableGroups`
