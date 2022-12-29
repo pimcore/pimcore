@@ -3,7 +3,7 @@
 The GDPR Data Extractor is a tool that helps the user to full fill the *right of access by the data subject* and helps to
 export data that is stored for a specific person in different data sources like `data objects`, `sent mails`, `Pimcore backend 
 user`, etc. For details on the usage see our user docs chapter 
-[Data Protection and GDPR](../../User_Documentation/10_Administration_of_Pimcore/01_Data_Protection_and_GDPR.md).
+[Data Protection and GDPR](../../User_Documentation/13_Administration_of_Pimcore/01_Data_Protection_and_GDPR.md).
 
 ![GDPR Data Extractor](../img/gdpr-data-extractor.jpg)
 
