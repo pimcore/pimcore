@@ -20,11 +20,14 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Page;
+use Pimcore\Model\Document\Snippet;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -548,7 +551,38 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return $this->getPhpdocReturnType();
+        $types = [];
+
+        // add documents
+        if ($this->getDocumentsAllowed()) {
+            $types[] = '\\' . Page::class;
+            $types[] = '\\' . Snippet::class;
+            $types[] = '\\' . Document::class;
+
+            foreach ($this->getDocumentTypes() as $item) {
+                $types[] = sprintf('\Pimcore\Model\Document\%s', ucfirst($item['documentTypes']));
+            }
+        }
+
+        // add assets
+        if ($this->getAssetsAllowed()) {
+            $types[] = '\\' . Asset::class;
+
+            foreach ($this->getAssetTypes() as $item) {
+                $types[] = sprintf('\Pimcore\Model\Asset\%s', ucfirst($item['assetTypes']));
+            }
+        }
+
+        // add objects
+        if ($this->getObjectsAllowed()) {
+            $types[] = '\\' . AbstractObject::class;
+
+            foreach ($this->getClasses() as $item) {
+                $types[] = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes']));
+            }
+        }
+
+        return implode('|', $types) . '|null';
     }
 
     public function getReturnTypeDeclaration(): ?string
