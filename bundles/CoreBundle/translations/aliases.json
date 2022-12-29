@@ -119,7 +119,6 @@
   "cols": "columns",
   "log_reset_search": "reset",
   "keybinding_showElementHistory": "element_history",
-  "keybinding_quickSearch": "quicksearch",
   "keybinding_httpErrorLog": "http_errors",
   "keybinding_notesEvents": "notes_events",
   "keybinding_searchAsset": "asset_search",

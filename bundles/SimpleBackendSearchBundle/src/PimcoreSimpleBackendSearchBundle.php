@@ -32,6 +32,10 @@ class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/pimcoresimplebackendsearch/js/pimcore/startup.js',
+
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/layout/toolbar.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/layout/quickSearch.js',
+
             '/bundles/pimcoresimplebackendsearch/js/pimcore/selector/abstract.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/selector/asset.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/selector/document.js',

@@ -698,7 +698,6 @@
     "setup_two_factor": "Configuration de l'authentification à deux facteurs",
     "2fa_setup_message": "L'authentification à deux facteurs est requise pour votre compte ! Vous devez le configurer dans les paramètres de votre profil, sinon vous ne pourrez plus vous reconnecter.",
     "set_focal_point": "Définir le point focal",
-    "quicksearch": "Recherche rapide (appuyez 2x Ctrl)",
     "standard_preview": "Aperçu Standard",
     "upload_new_version": "Importer une nouvelle version",
     "360_viewer": "Visionneuse à 360°",
