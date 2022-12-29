@@ -13,15 +13,15 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\StaticRoutesBundle\Migrations;
+namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Bundle\StaticRoutesBundle\StaticRoutesBundle;
+use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
 use Pimcore\Model\Tool\SettingsStore;
 
 /**
- * Staticroutes will be enabled by default
+ * Staticroutes will be installed by default
  */
 final class Version20221222134837 extends AbstractMigration
 {
@@ -32,13 +32,13 @@ final class Version20221222134837 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if(!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\StaticRoutesBundle', 'pimcore')) {
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\StaticRoutesBundle', true, 'bool', 'pimcore');
+        if(!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle', 'pimcore')) {
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle', true, 'bool', 'pimcore');
         }
 
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\StaticRoutesBundle', 'pimcore'),
-            sprintf('Please make sure to enable the %s manually in config/bundles.php', StaticRoutesBundle::class)
+            sprintf('Please make sure to enable the %s manually in config/bundles.php', PimcoreStaticRoutesBundle::class)
         );
     }
 }

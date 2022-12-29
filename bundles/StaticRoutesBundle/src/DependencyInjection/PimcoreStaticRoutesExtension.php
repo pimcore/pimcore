@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-final class StaticRoutesExtension extends Extension
+final class PimcoreStaticRoutesExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {

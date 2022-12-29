@@ -19,22 +19,22 @@ namespace Pimcore\Bundle\StaticRoutesBundle;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class StaticRoutesBundle extends AbstractPimcoreBundle
+class PimcoreStaticRoutesBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
     public function getCssPaths(): array
     {
         return [
-            '/bundles/staticroutes/css/icons.css',
+            '/bundles/pimcorestaticroutes/css/icons.css',
         ];
     }
 
     public function getJsPaths(): array
     {
         return [
-            '/bundles/staticroutes/js/startup.js',
-            '/bundles/staticroutes/js/staticroutes.js',
+            '/bundles/pimcorestaticroutes/js/startup.js',
+            '/bundles/pimcorestaticroutes/js/staticroutes.js',
         ];
     }
 

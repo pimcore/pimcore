@@ -1,5 +1,5 @@
 _pimcore_staticroutes_backend:
-    resource: "@StaticRoutesBundle/src/Controller/"
+    resource: "../../src/Controller/"
     type:     annotation
     prefix:   /admin/staticroutes
     options:
