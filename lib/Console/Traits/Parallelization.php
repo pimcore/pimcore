@@ -34,6 +34,9 @@ trait Parallelization
         WebmozartParallelization::configureParallelization as parentConfigureParallelization;
     }
 
+    /**
+     * @deprecated Deprecated since webmozarts/console-parallelization 2.0.0 and will be removed in Pimcore 11.
+     */
     protected static function configureParallelization(Command $command): void
     {
         // we need to override WebmozartParallelization::configureParallelization here
@@ -81,6 +84,32 @@ trait Parallelization
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
+        // unfortunately the InputInterface does not supply the shortcuts so have to get a bit hacky here
+        // trying to trigger a deprecation warning for the p shortcut if it is not used with the processes option
+        // TODO Remove in Pimcore 11
+        try {
+            $reflectionDefinition = new \ReflectionProperty($input, 'definition');
+            $reflectionDefinition->setAccessible(true);
+
+            $definition = $reflectionDefinition->getValue($input);
+
+            $reflectionShortCuts = new \ReflectionProperty($definition, 'shortcuts');
+            $reflectionShortCuts->setAccessible(true);
+
+            $shortcuts = $reflectionShortCuts->getValue($definition);
+
+            if (!empty($shortcuts) && array_key_exists('p', $shortcuts) && $shortcuts['p'] !== 'processes') {
+                $output->writeln([
+                    "<comment>=================================================================</>",
+                    "<comment>You are using the shortcut p with another option than processes</>",
+                    "<comment>This will be removed with Pimcore 11. Please replace the shortcut</>",
+                    "<comment>=================================================================</>"
+                ]);
+            }
+        } catch (\ReflectionException $ex) {
+            // nothing to do here, if reflection does not work, we do have other problems to figure out
+        }
+
         if (!$this->lock()) {
             $this->writeError('The command is already running.');
             exit(1);
