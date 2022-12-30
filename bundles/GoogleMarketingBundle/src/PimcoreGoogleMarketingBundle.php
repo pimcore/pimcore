@@ -2,12 +2,12 @@
 
 namespace Pimcore\Bundle\GoogleMarketingBundle;
 
-use Pimcore\Bundle\GoogleMarketingBundle\DependencyInjection\GoogleMarketingExtension;
+use Pimcore\Bundle\GoogleMarketingBundle\DependencyInjection\PimcoreGoogleMarketingExtension;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
-class GoogleMarketingBundle extends AbstractPimcoreBundle
+class PimcoreGoogleMarketingBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
@@ -39,7 +39,7 @@ class GoogleMarketingBundle extends AbstractPimcoreBundle
 
     public function getContainerExtension(): ?ExtensionInterface
     {
-        return new GoogleMarketingExtension();
+        return new PimcoreGoogleMarketingExtension();
     }
 
 }
