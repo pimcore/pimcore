@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * @internal
@@ -51,12 +52,8 @@ class ClassesRebuildCommand extends AbstractCommand
             );
     }
 
-    /**
-     * @param ClassDefinitionManager $classDefinitionManager
-     *
-     * @required
-     */
-    public function setClassDefinitionManager(ClassDefinitionManager $classDefinitionManager)
+    #[Required]
+    public function setClassDefinitionManager(ClassDefinitionManager $classDefinitionManager): void
     {
         $this->classDefinitionManager = $classDefinitionManager;
     }

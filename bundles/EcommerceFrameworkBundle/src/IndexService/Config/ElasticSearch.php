@@ -26,6 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * Default configuration for elastic search as product index implementation.
@@ -338,12 +339,8 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         return $product ? $product : null;
     }
 
-    /**
-     * @required
-     *
-     * @param EnvironmentInterface $environment
-     */
-    public function setEnvironment(EnvironmentInterface $environment)
+    #[Required]
+    public function setEnvironment(EnvironmentInterface $environment): void
     {
         $this->environment = $environment;
     }

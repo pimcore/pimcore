@@ -125,7 +125,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param ?\stdClass $configuration
+     * @param \stdClass|null $configuration
      * @param Config|null $fullConfig
      *
      * @return Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface

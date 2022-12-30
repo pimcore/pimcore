@@ -232,10 +232,18 @@ pimcore.element.tag.tree = Class.create({
         var user = pimcore.globalmanager.get("user");
 
         var menu = new Ext.menu.Menu();
-        var hasEntries = false;
+
+        if(index === 0) {
+            menu.add(new Ext.menu.Item({
+                text: t('reload'),
+                iconCls: "pimcore_icon_reload",
+                handler: function (tree) {
+                    this.tree.getStore().reload();
+                }.bind(this)
+            }));
+        }
 
         if (this.allowAdd && user.isAllowed("tags_configuration")) {
-            hasEntries = true;
             menu.add(new Ext.menu.Item({
                 text: t('add'),
                 iconCls: "pimcore_icon_add",
@@ -246,7 +254,6 @@ pimcore.element.tag.tree = Class.create({
         }
 
         if (this.allowDelete && user.isAllowed("tags_configuration") && index !== 0) {
-            hasEntries = true;
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
@@ -270,7 +277,6 @@ pimcore.element.tag.tree = Class.create({
         }
 
         if (this.allowRename && user.isAllowed("tags_configuration") && index !== 0) {
-            hasEntries = true;
             menu.add(new Ext.menu.Item({
                 text: t('rename'),
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
@@ -310,7 +316,7 @@ pimcore.element.tag.tree = Class.create({
             }));
         }
 
-        if (hasEntries) {
+        if (menu.items.getCount() > 0) {
             menu.showAt(e.pageX, e.pageY);
         }
 
