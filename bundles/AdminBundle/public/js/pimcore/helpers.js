@@ -2867,47 +2867,6 @@ pimcore.helpers.clearDataCache = function() {
     }
 };
 
-pimcore.helpers.showQuickSearch = function () {
-
-    // close all windows, tooltips and previews
-    // we use each() because .hideAll() doesn't hide the modal (seems to be an ExtJS bug)
-    Ext.WindowManager.each(function (win) {
-        win.close();
-    });
-    pimcore.helpers.treeNodeThumbnailPreviewHide();
-    pimcore.helpers.treeToolTipHide();
-
-    var quicksearchContainer = Ext.get('pimcore_quicksearch');
-    quicksearchContainer.show();
-    quicksearchContainer.removeCls('filled');
-
-    var combo = Ext.getCmp('quickSearchCombo');
-    combo.reset();
-    combo.focus();
-
-    Ext.get('pimcore_body').addCls('blurry');
-    Ext.get('pimcore_sidebar').addCls('blurry');
-    var elem = document.createElement('div');
-    elem.id = 'pimcore_quickSearch_overlay';
-    elem.style.cssText = 'position:absolute;width:100vw;height:100vh;z-index:100;top:0;left:0;opacity:0';
-    elem.addEventListener('click', function(e) {
-        document.body.removeChild(elem);
-        pimcore.helpers.hideQuickSearch();
-    });
-    document.body.appendChild(elem);
-};
-
-pimcore.helpers.hideQuickSearch = function () {
-    var quicksearchContainer = Ext.get('pimcore_quicksearch');
-    quicksearchContainer.hide();
-    Ext.get('pimcore_body').removeCls('blurry');
-    Ext.get('pimcore_sidebar').removeCls('blurry');
-    if (Ext.get('pimcore_quickSearch_overlay')) {
-        Ext.get('pimcore_quickSearch_overlay').remove();
-    }
-};
-
-
 // HAS TO BE THE VERY LAST ENTRY !!!
 pimcore.helpers.keyBindingMapping = {
     "save": pimcore.helpers.handleCtrlS,
@@ -2921,9 +2880,6 @@ pimcore.helpers.keyBindingMapping = {
     "openClassEditor": pimcore.helpers.openClassEditor,
     "openInTree": pimcore.helpers.openInTree,
     "showMetaInfo": pimcore.helpers.showMetaInfo,
-    "searchDocument": pimcore.helpers.searchAction.bind(this, "document"),
-    "searchAsset": pimcore.helpers.searchAction.bind(this, "asset"),
-    "searchObject": pimcore.helpers.searchAction.bind(this, "object"),
     "showElementHistory": pimcore.helpers.showElementHistory,
     "closeAllTabs": pimcore.helpers.closeAllTabs,
     "searchAndReplaceAssignments": pimcore.helpers.searchAndReplaceAssignments,
@@ -2943,8 +2899,7 @@ pimcore.helpers.keyBindingMapping = {
     "users": pimcore.helpers.users,
     "roles": pimcore.helpers.roles,
     "clearAllCaches": pimcore.helpers.clearAllCaches,
-    "clearDataCache": pimcore.helpers.clearDataCache,
-    "quickSearch": pimcore.helpers.showQuickSearch
+    "clearDataCache": pimcore.helpers.clearDataCache
 };
 
 pimcore.helpers.showPermissionError = function(permission) {
