@@ -1,0 +1,12 @@
+
+pimcore_admin:
+    user:
+        default_key_bindings:
+            reports:
+                key: 'M'
+                alt: true
+                shift: true
+            customReports:
+                key: 'C'
+                alt: true
+                shift: true

@@ -4,6 +4,7 @@ pimcore.registerNS("pimcore.customReports");
 pimcore.customReports = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
+        document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
     },
 
     pimcoreReady: function (e) {
@@ -65,6 +66,16 @@ pimcore.customReports = Class.create({
 
     registerKeyBinding: function(e) {
         const user = pimcore.globalmanager.get('user');
+        if (user.isAllowed("reports_config")) {
+            pimcore.helpers.keyBindingMapping.customReports = function() {
+                glossary.showCustomReports();
+            }
+        }
+        if (user.isAllowed("reports")) {
+            pimcore.helpers.keyBindingMapping.reports = function() {
+                glossary.showCustomReports();
+            }
+        }
     }
 })
 
