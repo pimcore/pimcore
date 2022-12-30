@@ -74,7 +74,11 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
 
     private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo): void
     {
-        if (!$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
+        if (!$document instanceof Document\Page) {
+            return;
+        }
+
+        if(class_exists('Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute') && null !== Staticroute::getCurrentRoute()) {
             return;
         }
 

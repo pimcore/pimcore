@@ -159,7 +159,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     protected function applyTargetGroups(Request $request, Document $document)
     {
-        if (!$document instanceof Document\Targeting\TargetingDocumentInterface || null !== Staticroute::getCurrentRoute()) {
+        if (!$document instanceof Document\Targeting\TargetingDocumentInterface) {
+            return;
+        }
+
+        if(class_exists('Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute') && null !== Staticroute::getCurrentRoute()) {
             return;
         }
 
