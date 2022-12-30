@@ -66,7 +66,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     {
         parent::configure();
 
-        self::configureParallelization($this);
+        $this->configureCommand($this);
         self::configureTimeout($this);
 
         $this

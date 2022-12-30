@@ -33,55 +33,6 @@ trait Parallelization
 
     use ParallelizationBase;
 
-    /**
-     * @deprecated Deprecated since webmozarts/console-parallelization 2.0.0 and will be removed in webmozarts/console-parallelization 3.0.0. Use ParallelizationInput::configureCommand() instead.
-     *
-     */
-    protected static function configureParallelization(Command $command): void
-    {
-        // we need to override WebmozartParallelization::configureParallelization here
-        // because some existing commands are already using the `p` option, and would therefore
-        // causes collisions
-        $command
-            ->addArgument(
-                'item',
-                InputArgument::OPTIONAL,
-                'The item to process. Can be used in commands where simple IDs are processed. Otherwise it is for internal use.'
-            )
-            ->addOption(
-                'processes',
-                null,
-                //'p', avoid collisions with already existing Pimcore command options
-                InputOption::VALUE_OPTIONAL,
-                'The number of parallel processes to run',
-                '1'
-            )
-            ->addOption(
-                'main-process',
-                'm',
-                InputOption::VALUE_NONE,
-                'To execute the processing in the main process (no child processes will be spawned).',
-            )
-            ->addOption(
-                'child',
-                null,
-                InputOption::VALUE_NONE,
-                'Set on child processes. For internal use only.'
-            )
-            ->addOption(
-                'batch-size',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Sets the number of items to process per child process or in a batch',
-            )
-            ->addOption(
-                'segment-size',
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Set the segment size.',
-            );
-    }
-
     protected function getParallelExecutableFactory(
         callable $fetchItems,
         callable $runSingleCommand,
