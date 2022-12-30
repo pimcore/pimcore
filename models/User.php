@@ -748,12 +748,6 @@ final class User extends User\UserRole
                     'alt' => true,
                 ],
                 [
-                    'action' => 'reports',
-                    'key' => ord('M'),
-                    'ctrl' => true,
-                    'alt' => true,
-                ],
-                [
                     'action' => 'tagManager',
                     'key' => ord('H'),
                     'ctrl' => true,
@@ -774,12 +768,6 @@ final class User extends User\UserRole
                 [
                     'action' => 'httpErrorLog',
                     'key' => ord('O'),
-                    'ctrl' => true,
-                    'alt' => true,
-                ],
-                [
-                    'action' => 'customReports',
-                    'key' => ord('C'),
                     'ctrl' => true,
                     'alt' => true,
                 ],
