@@ -611,17 +611,6 @@
                  }
              }
  
-             if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
-                 if (perspectiveCfg.inToolbar("settings.marketingReports")) {
-                     marketingItems.push({
-                         text: t("marketing_settings"),
-                         iconCls: "pimcore_nav_icon_marketing_settings",
-                         itemId: 'pimcore_menu_marketing_settings',
-                         handler: this.reportSettings
-                     });
-                 }
-             }
- 
              if (marketingItems.length > 0) {
                  this.marketingMenu = new Ext.menu.Menu({
                      items: marketingItems,
@@ -1493,16 +1482,6 @@
          }
          catch (e) {
              pimcore.globalmanager.add("settings_website", new pimcore.settings.website());
-         }
-     },
- 
-     reportSettings: function () {
- 
-         try {
-             pimcore.globalmanager.get("reports_settings").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("reports_settings", new pimcore.report.settings());
          }
      },
  

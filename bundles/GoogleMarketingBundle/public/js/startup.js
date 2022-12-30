@@ -2,16 +2,29 @@ pimcore.registerNS('pimcore.bundle.googleMarketing');
 
 pimcore.bundle.googleMarketing = Class.create({
     initialize: function () {
-        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
+        document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
 
-    pimcoreReady: function (event) {
-        var user = pimcore.globalmanager.get("user");
-        var toolbar = Ext.getCmp("pimcore_panel_toolbar");
-        var perspectiveCfg = pimcore.globalmanager.get("perspective");
+    preMenuBuild: function (event) {
+        let menu = event.detail.menu;
+        const user = pimcore.globalmanager.get('user');
+        const perspectiveCfg = pimcore.globalmanager.get("perspective");
 
-        if (perspectiveCfg.inToolbar('marketing') && user.isAllowed("reports") && user.isAllowed("system_settings")) {
-            console.log(pimcore.globalmanager.get('layout.toolbar'));
+        if (menu.marketing && perspectiveCfg.inToolbar('marketing') && user.isAllowed("reports") && user.isAllowed("system_settings")) {
+            menu.marketing.items.push({
+                text: t("marketing_settings"),
+                iconCls: "pimcore_nav_icon_marketing_settings",
+                itemId: 'pimcore_menu_marketing_settings',
+                handler: this.reportSettings
+            });
+        }
+    },
+    reportSettings: function () {
+        try {
+            pimcore.globalmanager.get("reports_settings").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("reports_settings", new pimcore.report.settings());
         }
     }
 });
