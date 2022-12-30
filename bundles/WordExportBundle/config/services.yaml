@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # INSTALLER
+    #
+    Pimcore\Bundle\WordExportBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreWordExportBundle')"
