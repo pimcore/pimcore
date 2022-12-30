@@ -84,21 +84,10 @@ trait Parallelization
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
-        // unfortunately the InputInterface does not supply the shortcuts so have to get a bit hacky here
-        // trying to trigger a deprecation warning for the p shortcut if it is not used with the processes option
+        // checking if the p option is used
         // TODO Remove in Pimcore 11
-        try {
-            $reflectionDefinition = new \ReflectionProperty($input, 'definition');
-            $reflectionDefinition->setAccessible(true);
-
-            $definition = $reflectionDefinition->getValue($input);
-
-            $reflectionShortCuts = new \ReflectionProperty($definition, 'shortcuts');
-            $reflectionShortCuts->setAccessible(true);
-
-            $shortcuts = $reflectionShortCuts->getValue($definition);
-
-            if (!empty($shortcuts) && array_key_exists('p', $shortcuts) && $shortcuts['p'] !== 'processes') {
+        if(isset($_SERVER['argv'])) {
+            if(in_array('-p', $_SERVER['argv'])) {
                 $output->writeln([
                     "<comment>=================================================================</>",
                     "<comment>You are using the shortcut p with another option than processes</>",
@@ -106,8 +95,6 @@ trait Parallelization
                     "<comment>=================================================================</>"
                 ]);
             }
-        } catch (\ReflectionException $ex) {
-            // nothing to do here, if reflection does not work, we do have other problems to figure out
         }
 
         if (!$this->lock()) {
