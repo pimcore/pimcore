@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.fileexplorer.explorer");
-pimcore.fileexplorer.explorer = Class.create({
+pimcore.registerNS("pimcore.settings.fileexplorer.explorer");
+pimcore.settings.fileexplorer.explorer = Class.create({
 
     initialize: function () {
 
@@ -253,7 +253,7 @@ pimcore.fileexplorer.explorer = Class.create({
         if (typeof this.openfiles[path] != "undefined") {
             this.openfiles[path].activate();
         } else {
-            this.openfiles[path] = new pimcore.fileexplorer.file(path, this);
+            this.openfiles[path] = new pimcore.settings.fileexplorer.file(path, this);
         }
     },
 

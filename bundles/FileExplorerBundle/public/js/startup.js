@@ -36,7 +36,7 @@ pimcore.settings.fileexplorer = Class.create({
         try {
             pimcore.globalmanager.get("fileexplorer").activate();
         } catch (e) {
-            pimcore.globalmanager.add("fileexplorer", new pimcore.fileexplorer.explorer());
+            pimcore.globalmanager.add("fileexplorer", new pimcore.settings.fileexplorer.explorer());
         }
     },
 })

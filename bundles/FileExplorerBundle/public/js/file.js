@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.fileexplorer.file");
-pimcore.fileexplorer.file = Class.create({
+pimcore.registerNS("pimcore.settings.fileexplorer.file");
+pimcore.settings.fileexplorer.file = Class.create({
 
     initialize: function (path, explorer) {
         this.path = path;
