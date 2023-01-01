@@ -184,7 +184,9 @@
       "Pimcore\\Bundle\\AdminBundle\\": "bundles/AdminBundle/src/",
       "Pimcore\\Bundle\\InstallBundle\\": "bundles/InstallBundle/src/",
       "Pimcore\\Bundle\\CoreBundle\\": "bundles/CoreBundle/src/",
-      "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/"
+      "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/",
+      "Pimcore\\Bundle\\UuidBundle\\": "bundles/UuidBundle/src/",
+      "Pimcore\\Model\\Tool\\": "bundles/UuidBundle/model/Tool"
     },
     "classmap": [
       "lib/Pimcore.php"
