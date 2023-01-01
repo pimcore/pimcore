@@ -6,7 +6,7 @@ pimcore.bundle.googleMarketing = Class.create({
     },
 
     preMenuBuild: function (event) {
-        let menu = event.detail.menu;
+        const menu = event.detail.menu;
         const user = pimcore.globalmanager.get('user');
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
 
