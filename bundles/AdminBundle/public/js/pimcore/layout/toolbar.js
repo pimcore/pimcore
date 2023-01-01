@@ -411,17 +411,6 @@
                  });
              }
 
-             this.extrasMenu = new Ext.menu.Menu({
-                 cls: "pimcore_navigation_flyout",
-                 listeners: {
-                     "show": function (e) {
-                         Ext.get('pimcore_menu_extras').addCls('active');
-                     },
-                     "hide": function (e) {
-                         Ext.get('pimcore_menu_extras').removeCls('active');
-                     }
-                 }
-             });
              if (user.admin) {
                  if (perspectiveCfg.inToolbar("extras.maintenance")) {
                      extrasItems.push({
@@ -431,11 +420,8 @@
                          handler: this.showMaintenance
                      });
                  }
-
-                 // TODO: Move this part to system info bundle once adminer and file explorer are extracted out to their separate bundles
                  if (perspectiveCfg.inToolbar("extras.systemtools")) {
                      var systemItems = [];
-
                      if (perspectiveCfg.inToolbar("extras.systemtools.database")) {
                          systemItems.push(
                              {
