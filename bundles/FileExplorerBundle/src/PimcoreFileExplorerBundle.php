@@ -4,10 +4,10 @@ namespace Pimcore\Bundle\FileExplorerBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
-use Pimcore\Bundle\FileExplorerBundle\DependencyInjection\FileExplorerExtension;
+use Pimcore\Bundle\FileExplorerBundle\DependencyInjection\PimcoreFileExplorerExtension;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
-class FileExplorerBundle extends AbstractPimcoreBundle
+class PimcoreFileExplorerBundle extends AbstractPimcoreBundle
 {
 
     use PackageVersionTrait;
@@ -25,15 +25,15 @@ class FileExplorerBundle extends AbstractPimcoreBundle
     public function getJsPaths(): array
     {
         return [
-            '/bundles/fileexplorer/js/startup.js',
-            '/bundles/fileexplorer/js/explorer.js',
-            '/bundles/fileexplorer/js/file.js',
+            '/bundles/pimcorefileexplorer/js/startup.js',
+            '/bundles/pimcorefileexplorer/js/explorer.js',
+            '/bundles/pimcorefileexplorer/js/file.js',
         ];
     }
 
     public function getContainerExtension(): ?ExtensionInterface
     {
-        return new FileExplorerExtension();
+        return new PimcoreFileExplorerExtension();
     }
 
     public function getPath(): string

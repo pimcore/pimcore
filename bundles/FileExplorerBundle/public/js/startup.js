@@ -1,9 +1,10 @@
-pimcore.registerNS("pimcore.fileexplorer");
+pimcore.registerNS("pimcore.settings.fileexplorer");
 
-pimcore.fileexplorer = Class.create({
+pimcore.settings.fileexplorer = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
     },
+
 
     pimcoreReady: function(e) {
         const user = pimcore.globalmanager.get('user');
@@ -40,4 +41,4 @@ pimcore.fileexplorer = Class.create({
     },
 })
 
-const fileexplorer = new pimcore.fileexplorer();
+const fileexplorer = new pimcore.settings.fileexplorer();

@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-class FileExplorerExtension extends Extension
+class PimcoreFileExplorerExtension extends Extension
 {
 
     public function load(array $configs, ContainerBuilder $container)
