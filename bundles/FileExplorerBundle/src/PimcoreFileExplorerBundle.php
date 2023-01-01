@@ -19,7 +19,9 @@ class PimcoreFileExplorerBundle extends AbstractPimcoreBundle
 
     public function getCssPaths(): array
     {
-        return [];
+        return [
+            '/bundles/pimcorefileexplorer/css/file-explorer.css'
+        ];
     }
 
     public function getJsPaths(): array
