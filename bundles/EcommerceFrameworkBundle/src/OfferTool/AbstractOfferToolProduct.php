@@ -121,9 +121,9 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      *
      * @param int $quantityScale
      *
-     * @return PriceInfoInterface|AbstractPriceInfo
+     * @return PriceInfoInterface
      */
-    public function getOSPriceInfo(int $quantityScale = 1): ?PriceInfoInterface
+    public function getOSPriceInfo(int $quantityScale = 1): PriceInfoInterface
     {
         return $this->getPriceSystemImplementation()->getPriceInfo($this, $quantityScale);
     }

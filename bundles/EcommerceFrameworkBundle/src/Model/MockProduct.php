@@ -54,7 +54,7 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return null;
     }
 
-    public function getOSPriceInfo(int $quantityScale = 1): ?PriceInfoInterface
+    public function getOSPriceInfo(int $quantityScale = 1): PriceInfoInterface
     {
         return $this->getPriceSystemImplementation()->getPriceInfo($this, 0);
     }

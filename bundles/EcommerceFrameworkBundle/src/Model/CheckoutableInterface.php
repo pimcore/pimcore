@@ -70,9 +70,9 @@ interface CheckoutableInterface extends ProductInterface
      *
      * @param int $quantityScale
      *
-     * @return PriceInterface|null
+     * @return PriceInterface
      */
-    public function getOSPrice(int $quantityScale = 1): ?PriceInterface;
+    public function getOSPrice(int $quantityScale = 1): PriceInterface;
 
     /**
      * returns price info for given quantity scale.
@@ -80,16 +80,16 @@ interface CheckoutableInterface extends ProductInterface
      *
      * @param int $quantityScale
      *
-     * @return PriceInfoInterface|null
+     * @return PriceInfoInterface
      */
-    public function getOSPriceInfo(int $quantityScale = 1): ?PriceInfoInterface;
+    public function getOSPriceInfo(int $quantityScale = 1): PriceInfoInterface;
 
     /**
      * returns availability info based on given quantity
      *
      * @param int|null $quantity
      *
-     * @return AvailabilityInterface|null
+     * @return AvailabilityInterface
      */
-    public function getOSAvailabilityInfo(int $quantity = null): ?AvailabilityInterface;
+    public function getOSAvailabilityInfo(int $quantity = null): AvailabilityInterface;
 }
