@@ -24,14 +24,14 @@ class PimcoreGoogleMarketingBundle extends AbstractPimcoreBundle
     public function getCssPaths(): array
     {
         return [
-            '/bundles/googlemarketing/css/googlemarketing.css',
+            '/bundles/pimcoregooglemarketing/css/googlemarketing.css',
         ];
     }
 
     public function getJsPaths(): array
     {
         return [
-            '/bundles/googlemarketing/js/startup.js',
+            '/bundles/pimcoregooglemarketing/js/startup.js',
         ];
     }
 
