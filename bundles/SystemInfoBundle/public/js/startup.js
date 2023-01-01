@@ -4,21 +4,30 @@ pimcore.bundle.SystemInfo = Class.create({
     user: null,
     toolbar: null,
     perspectiveConfig: null,
+
     initialize: function(){
-        document.addEventListener(pimcore.events.pimcoreReady, this.onReady.bind(this));
+        document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
 
-    onReady: function () {
+    preMenuBuild: function (event) {
+        const menu = event.detail.menu;
         this.user = pimcore.globalmanager.get('user');
         this.toolbar = pimcore.globalmanager.get('layout_toolbar');
         this.perspectiveConfig = pimcore.globalmanager.get('perspective');
 
-        this.addSystemInfoMenu();
+        const menus = this.getSystemInfoMenu();
+
+        if (menus.length > 0 && menu.extras) {
+            menus.map(function(item) {
+                menu.extras.items.push(item);
+            });
+        }
     },
 
-    addSystemInfoMenu: function () {
+    getSystemInfoMenu: function () {
+        const items = [];
+
         if (this.user.admin && this.perspectiveConfig.inToolbar('extras.systemtools')) {
-            var items = [];
 
             if (this.perspectiveConfig.inToolbar('extras.systemtools.phpinfo')) {
                 items.push(
@@ -52,15 +61,9 @@ pimcore.bundle.SystemInfo = Class.create({
                     }
                 );
             }
-
-            let extrasMenu = pimcore.globalmanager.get('toolbar.extrasMenu');
-
-            let systemInfoMenu = extrasMenu.items.items[extrasMenu.items.indexMap['pimcore_menu_extras_system_info']];
-
-            items.map(function(item) {
-                systemInfoMenu.menu.add(item);
-            });
         }
+
+        return items;
     },
 
     showPhpInfo: function () {

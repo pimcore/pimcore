@@ -2,12 +2,12 @@
 
 namespace Pimcore\Bundle\SystemInfoBundle;
 
-use Pimcore\Bundle\SystemInfoBundle\DependencyInjection\SystemInfoExtension;
+use Pimcore\Bundle\SystemInfoBundle\DependencyInjection\PimcoreSystemInfoExtension;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
-class SystemInfoBundle extends AbstractPimcoreBundle
+class PimcoreSystemInfoBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
@@ -19,20 +19,20 @@ class SystemInfoBundle extends AbstractPimcoreBundle
     public function getCssPaths(): array
     {
         return [
-            '/bundles/systeminfo/css/system-info.css'
+            '/bundles/pimcoresysteminfo/css/system-info.css'
         ];
     }
 
     public function getJsPaths(): array
     {
         return [
-            '/bundles/systeminfo/js/startup.js'
+            '/bundles/pimcoresysteminfo/js/startup.js'
         ];
     }
 
     public function getContainerExtension(): ?ExtensionInterface
     {
-        return new SystemInfoExtension();
+        return new PimcoreSystemInfoExtension();
     }
 
     public function getPath(): string
