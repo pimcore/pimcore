@@ -111,16 +111,6 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\InternalWysiwygHtmlAttributeFilterListener: ~
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener:
-        public: true
-        tags:
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
-
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleTagManagerListener:
-        public: true
-        tags:
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -108 }
-
     Pimcore\Cache\FullPage\SessionStatus:
         arguments:
             $symfonyMetadataStorageKey: '%session.metadata.storage_key%'

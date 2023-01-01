@@ -3,3 +3,13 @@ services:
         autowire: true
         autoconfigure: true
         public: false
+    #
+    # GOOGLE TAG MANAGER
+    #
+    Pimcore\Analytics\GoogleTagManager\EventSubscriber\TrackingCodeSubscriber: ~
+    # fallback locator which is used from the deprecated Pimcore\Google\Analytics class
+    pimcore.analytics.google.fallback_service_locator:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        public: true
+        tags:
+            - { name: container.service_locator }

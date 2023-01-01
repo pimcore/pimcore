@@ -78,7 +78,7 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
                 $block = $event->getBlock(Tracker::BLOCK_BEFORE_SCRIPT_TAG);
 
                 $code = $this->twig->render(
-                    '@PimcoreCore/Analytics/Tracking/GoogleTagManager/dataLayer.html.twig',
+                    '@PimcoreGoogleMarketingBundle/Analytics/Tracking/GoogleTagManager/dataLayer.html.twig',
                     ['trackedCodes' => $trackedCodes]
                 );
 

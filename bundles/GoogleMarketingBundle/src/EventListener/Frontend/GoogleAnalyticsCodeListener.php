@@ -14,8 +14,7 @@ declare(strict_types=1);
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
-namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
+namespace Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend;
 
 use Pimcore\Analytics\Google\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
@@ -77,6 +76,7 @@ class GoogleAnalyticsCodeListener
         if (empty($code)) {
             return;
         }
+
 
         $this->injectBeforeHeadEnd($response, $code);
     }

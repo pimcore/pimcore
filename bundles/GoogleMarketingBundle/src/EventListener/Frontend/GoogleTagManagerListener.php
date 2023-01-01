@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
+namespace Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend;
 
 use Pimcore\Analytics\Code\CodeBlock;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
@@ -111,7 +111,7 @@ class GoogleTagManagerListener
 
         $codeHead = $this->generateCode(
             GoogleTagManagerEvents::CODE_HEAD,
-            '@PimcoreCore/Google/TagManager/codeHead.html.twig',
+            '@PimcoreGoogleMarketingBundle/Analytics/Tracking/GoogleTagManager/codeHead.html.twig',
             $this->headBlocks,
             [
                 'containerId' => $containerId,
@@ -120,7 +120,7 @@ class GoogleTagManagerListener
 
         $codeBody = $this->generateCode(
             GoogleTagManagerEvents::CODE_BODY,
-            '@PimcoreCore/Google/TagManager/codeBody.html.twig',
+            '@PimcoreGoogleMarketingBundle/Analytics/Tracking/GoogleTagManager/codeBody.html.twig',
             $this->bodyBlocks,
             [
                 'containerId' => $containerId,

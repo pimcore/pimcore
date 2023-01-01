@@ -32,9 +32,3 @@ services:
         arguments:
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
 
-
-    #
-    # GOOGLE TAG MANAGER
-    #
-
-    Pimcore\Analytics\GoogleTagManager\EventSubscriber\TrackingCodeSubscriber: ~

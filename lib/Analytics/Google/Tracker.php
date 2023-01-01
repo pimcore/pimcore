@@ -144,15 +144,15 @@ class Tracker extends AbstractTracker
         ];
 
         if ($siteConfig['gtagcode']) {
-            $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/gtagTrackingCode.html.twig';
+            $template = '@PimcoreGoogleMarketingBundle/Analytics/Tracking/Google/Analytics/gtagTrackingCode.html.twig';
 
             $data['gtagConfig'] = $this->getTrackerConfigurationFromJson($siteConfig['universal_configuration'] ?? null, [
                 'anonymize_ip' => true,
             ]);
         } elseif (isset($siteConfig['asynchronouscode']) || isset($siteConfig['retargetingcode'])) {
-            $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/asynchronousTrackingCode.html.twig';
+            $template = '@PimcoreGoogleMarketing/Analytics/Tracking/Google/Analytics/asynchronousTrackingCode.html.twig';
         } else {
-            $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig';
+            $template = '@PimcoreGoogleMarketing/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig';
         }
 
         $blocks = $this->buildCodeBlocks($siteId, $siteConfig);
