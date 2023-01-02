@@ -82,8 +82,6 @@ final class Session
         return self::getSessionHandler();
     }
 
-    public static function setHandler(AdminSessionHandlerInterface $handler): void
-
     /**
      * @deprecated
      */
