@@ -16,11 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Snippet;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Document\Snippet;
 
 trait Relation
 {
@@ -67,7 +67,7 @@ trait Relation
         }
 
         if ($asArray) {
-            $types = array_map(static fn(string $type): string => $type . '[]', $types);
+            $types = array_map(static fn (string $type): string => $type . '[]', $types);
         }
 
         return implode('|', $types);
