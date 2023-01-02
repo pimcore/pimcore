@@ -1493,7 +1493,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      */
-    public static function removeElementFromSession(string $type, int $elementId, string $sessionId, string $postfix = '')
+    public static function removeElementFromSession(string $type, int $elementId, string $sessionId, string $postfix = ''): void
     {
         $tmpStoreKey = self::getSessionKey($type, $elementId, $sessionId, $postfix);
         TmpStore::delete($tmpStoreKey);
