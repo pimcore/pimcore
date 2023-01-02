@@ -87,7 +87,7 @@ class Authentication
         return null;
     }
 
-    protected static function safelyUnserialize(string $serializedToken)
+    protected static function safelyUnserialize(string $serializedToken): mixed
     {
         $token = null;
         $prevUnserializeHandler = ini_set('unserialize_callback_func', __CLASS__.'::handleUnserializeCallback');
