@@ -111,7 +111,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         $definitions = [];
         $items = $this->getItems();
         foreach ($items as $key => $item) {
-            if($item == null) {
+            if ($item === null) {
                 unset($items[$key]);
             } else {
                 $definitions[$item->getType()] = $item->getDefinition();
