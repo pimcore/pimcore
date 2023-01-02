@@ -439,7 +439,7 @@ final class Configuration implements ConfigurationInterface
                     ->prototype('array')
                         ->children()
                             ->scalarNode('key')->isRequired()->end()
-                            ->scalarNode('method')->isRequired()->end()
+                            ->scalarNode('action')->isRequired()->end()
                             ->scalarNode('alt')->end()
                             ->scalarNode('ctrl')->end()
                             ->scalarNode('shift')->end()

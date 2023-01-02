@@ -10,6 +10,6 @@ pimcore_admin:
         default_key_bindings:
             glossary:
                 key: 'G'
-                method: glossary
+                action: glossary
                 alt: true
                 shift: true

@@ -27,7 +27,7 @@ final class Version20221215071650 extends AbstractMigration
 
         $this->warnIf(
             $schema->hasTable('glossary'),
-            sprintf('Please make sure to enable the %s manually in config/bundles.php', PimcoreGlossaryBundle::class)
+          'Please make sure to enable the Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle manually in config/bundles.php'
         );
     }
 }
