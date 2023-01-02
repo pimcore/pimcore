@@ -250,7 +250,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
