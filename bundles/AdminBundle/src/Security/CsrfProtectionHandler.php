@@ -44,7 +44,7 @@ class CsrfProtectionHandler implements LoggerAwareInterface
         $this->twig = $twig;
     }
 
-    public function checkCsrfToken(Request $request)
+    public function checkCsrfToken(Request $request): void
     {
         $csrfToken = $this->getCsrfToken($request->getSession());
         $requestCsrfToken = $request->headers->get('x_pimcore_csrf_token');
