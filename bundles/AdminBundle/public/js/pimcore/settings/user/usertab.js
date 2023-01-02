@@ -12,6 +12,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.user.usertab");
 pimcore.settings.user.usertab = Class.create({
 

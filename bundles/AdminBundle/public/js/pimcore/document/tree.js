@@ -23,6 +23,9 @@
     }]
 });
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 

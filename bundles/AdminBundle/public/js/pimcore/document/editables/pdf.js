@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.document.editables.pdf");
 pimcore.document.editables.pdf = Class.create(pimcore.document.editable, {
 

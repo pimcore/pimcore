@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.asset.gridexport.csv");
 pimcore.asset.gridexport.csv = Class.create(pimcore.element.gridexport.abstract, {
     name: "csv",

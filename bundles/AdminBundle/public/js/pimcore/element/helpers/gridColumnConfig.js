@@ -11,7 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.element.helpers.gridColumnConfig");
 pimcore.element.helpers.gridColumnConfig = {
 

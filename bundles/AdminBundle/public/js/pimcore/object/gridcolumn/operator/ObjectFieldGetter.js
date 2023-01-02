@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.objectfieldgetter");
 
 pimcore.object.gridcolumn.operator.objectfieldgetter = Class.create(pimcore.object.gridcolumn.Abstract, {

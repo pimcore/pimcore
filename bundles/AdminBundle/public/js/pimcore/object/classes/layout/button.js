@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.classes.layout.button");
 pimcore.object.classes.layout.button = Class.create(pimcore.object.classes.layout.layout, {
 

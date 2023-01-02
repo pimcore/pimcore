@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.classes.data.urlSlug");
 pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.data, {
 

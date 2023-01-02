@@ -17,6 +17,9 @@
  * pimcore.object.tags.localizedfields
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.helpers.optionEditor");
 pimcore.object.helpers.optionEditor = Class.create({
 

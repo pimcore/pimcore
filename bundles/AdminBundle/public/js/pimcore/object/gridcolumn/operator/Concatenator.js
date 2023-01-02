@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.concatenator");
 
 pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gridcolumn.operator.text, {

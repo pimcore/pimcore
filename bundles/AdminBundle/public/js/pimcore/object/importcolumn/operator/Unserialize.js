@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.importcolumn.operator.unserialize");
 
 pimcore.object.importcolumn.operator.unserialize = Class.create(pimcore.object.gridcolumn.operator.text, {

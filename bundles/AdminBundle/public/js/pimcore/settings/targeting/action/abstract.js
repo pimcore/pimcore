@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.targeting.action.abstract");
 pimcore.settings.targeting.action.abstract = Class.create({
     getName: function () {

@@ -10,7 +10,12 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-/*global google */
+
+/**
+ * @internal
+ *
+ * global google
+ */
 pimcore.registerNS('pimcore.object.tags.geobounds');
 pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
 

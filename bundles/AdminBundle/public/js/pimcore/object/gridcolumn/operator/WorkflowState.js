@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.workflowstate");
 
 pimcore.object.gridcolumn.operator.workflowstate = Class.create(pimcore.object.gridcolumn.Abstract, {

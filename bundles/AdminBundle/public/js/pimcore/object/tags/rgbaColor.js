@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.tags.rgbaColor");
 pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
 

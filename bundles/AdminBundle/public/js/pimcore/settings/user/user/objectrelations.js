@@ -12,6 +12,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.user.user.objectrelations");
 pimcore.settings.user.user.objectrelations = Class.create({
 

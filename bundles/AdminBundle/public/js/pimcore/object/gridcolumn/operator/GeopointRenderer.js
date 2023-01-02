@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.geopointrenderer");
 
 pimcore.object.gridcolumn.operator.geopointrenderer = Class.create(pimcore.object.gridcolumn.Abstract, {

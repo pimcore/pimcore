@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.substring");
 
 pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridcolumn.Abstract, {

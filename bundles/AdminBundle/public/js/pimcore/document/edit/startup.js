@@ -11,6 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
+
 // debug
 if (!console) {
     if (!parent.console) {

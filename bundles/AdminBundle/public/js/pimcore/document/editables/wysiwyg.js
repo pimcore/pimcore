@@ -11,7 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/*global CKEDITOR*/
+/**
+ * @internal
+ *
+ * global CKEDITOR
+ */
 pimcore.registerNS("pimcore.document.editables.wysiwyg");
 pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 

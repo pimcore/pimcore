@@ -11,6 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.asset.helpers.gridConfigDialog");
 pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gridConfigDialog, {
 

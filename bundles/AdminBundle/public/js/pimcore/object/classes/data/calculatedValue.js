@@ -1,4 +1,7 @@
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.classes.data.calculatedValue");
 pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classes.data.data, {
 

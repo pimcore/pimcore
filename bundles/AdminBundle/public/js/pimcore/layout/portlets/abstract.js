@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.layout.portlets.abstract");
 pimcore.layout.portlets.abstract = Class.create({
     /**

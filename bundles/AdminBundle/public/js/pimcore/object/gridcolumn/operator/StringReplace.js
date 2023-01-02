@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.stringreplace");
 
 pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.gridcolumn.Abstract, {

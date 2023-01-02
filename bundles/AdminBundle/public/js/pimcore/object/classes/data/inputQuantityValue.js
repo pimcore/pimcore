@@ -1,4 +1,7 @@
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.classes.data.inputQuantityValue");
 pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.classes.data.data, {
 

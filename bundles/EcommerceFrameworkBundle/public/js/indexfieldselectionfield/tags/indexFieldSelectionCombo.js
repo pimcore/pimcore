@@ -11,7 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.tags.indexFieldSelectionCombo");
 pimcore.object.tags.indexFieldSelectionCombo = Class.create(pimcore.object.tags.select, {
 

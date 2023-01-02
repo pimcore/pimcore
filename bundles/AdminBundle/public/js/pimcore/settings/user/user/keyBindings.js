@@ -12,6 +12,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.user.user.keyBindings");
 pimcore.settings.user.user.keyBindings = Class.create({
 

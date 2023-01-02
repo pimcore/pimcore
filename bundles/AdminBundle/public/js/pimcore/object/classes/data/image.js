@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.classes.data.image");
 pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.data, {
 

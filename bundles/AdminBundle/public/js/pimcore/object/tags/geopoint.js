@@ -11,7 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/*global google */
+/**
+ * @internal
+ *
+ * global google
+ */
 pimcore.registerNS('pimcore.object.tags.geopoint');
 pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 

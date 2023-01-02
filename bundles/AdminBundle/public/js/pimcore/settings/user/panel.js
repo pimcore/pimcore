@@ -12,6 +12,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.user.panel");
 pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract, {
 

@@ -14,6 +14,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.text");
 
 pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn.Abstract, {

@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.caseconverter");
 
 pimcore.object.gridcolumn.operator.caseconverter = Class.create(pimcore.object.gridcolumn.operator.text, {

@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.document.printpages.pdfpreview");
 pimcore.document.printpages.pdfpreview = Class.create({
 

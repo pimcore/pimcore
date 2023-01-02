@@ -12,6 +12,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.profile.twoFactorSettings");
 pimcore.settings.profile.twoFactorSettings = Class.create({
 

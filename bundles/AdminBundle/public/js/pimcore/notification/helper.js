@@ -10,6 +10,10 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
+
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.notification.helper.x");
 
 pimcore.notification.helper.updateCount = function (count) {

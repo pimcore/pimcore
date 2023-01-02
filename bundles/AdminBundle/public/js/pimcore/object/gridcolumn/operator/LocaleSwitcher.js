@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.localeswitcher");
 
 pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.gridcolumn.Abstract, {

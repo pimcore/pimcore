@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.fileexplorer.file");
 pimcore.settings.fileexplorer.file = Class.create({
 

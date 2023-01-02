@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.isequal");
 
 pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcolumn.Abstract, {

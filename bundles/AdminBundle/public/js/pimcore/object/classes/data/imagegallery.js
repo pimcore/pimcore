@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.classes.data.imageGallery");
 pimcore.object.classes.data.imageGallery = Class.create(pimcore.object.classes.data.hotspotimage, {
 

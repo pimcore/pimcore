@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.report.analytics.elementexplorer");
 pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract, {
 

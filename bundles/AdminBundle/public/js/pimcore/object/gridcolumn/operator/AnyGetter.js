@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.anygetter");
 
 pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridcolumn.Abstract, {

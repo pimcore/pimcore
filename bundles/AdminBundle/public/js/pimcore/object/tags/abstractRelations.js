@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.tags.abstractRelations");
 pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstract, {
 

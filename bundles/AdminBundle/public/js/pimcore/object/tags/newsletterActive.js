@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.tags.newsletterActive");
 pimcore.object.tags.newsletterActive = Class.create(pimcore.object.tags.checkbox, {
 

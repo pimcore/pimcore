@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.log.detailwindow");
 pimcore.log.detailwindow = Class.create({
     getClassName: function (){

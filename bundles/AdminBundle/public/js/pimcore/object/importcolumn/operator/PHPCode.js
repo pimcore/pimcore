@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.importcolumn.operator.phpcode");
 
 pimcore.object.importcolumn.operator.phpcode = Class.create(pimcore.object.gridcolumn.Abstract, {

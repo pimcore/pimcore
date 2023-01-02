@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.asset.unknown");
 pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
 

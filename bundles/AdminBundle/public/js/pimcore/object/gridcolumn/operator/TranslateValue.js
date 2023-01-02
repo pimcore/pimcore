@@ -14,6 +14,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.translatevalue");
 
 pimcore.object.gridcolumn.operator.translatevalue = Class.create(pimcore.object.gridcolumn.Abstract, {

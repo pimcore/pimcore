@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.asset.metadata.tags.date");
 pimcore.asset.metadata.tags.date = Class.create(pimcore.asset.metadata.tags.abstract, {
 

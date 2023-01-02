@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.asset.metadata.data.input");
 pimcore.asset.metadata.data.input = Class.create(pimcore.asset.metadata.data.data, {
 

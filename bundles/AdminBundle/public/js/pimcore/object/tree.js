@@ -11,7 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
- pimcore.registerNS("pimcore.object.tree");
+ /**
+ * @internal
+ */
+pimcore.registerNS("pimcore.object.tree");
  pimcore.object.tree = Class.create({
  
      treeDataUrl: null,

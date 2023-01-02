@@ -11,7 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/*global google */
+/**
+ * @internal
+ *
+ * global google
+ */
 pimcore.registerNS("pimcore.settings.targeting.targetGroups.item");
 pimcore.settings.targeting.targetGroups.item = Class.create({
 

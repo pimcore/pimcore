@@ -1,3 +1,6 @@
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.treenodelocator");
 
 pimcore.treenodelocator = function()

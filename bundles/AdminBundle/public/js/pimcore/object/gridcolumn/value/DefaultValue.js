@@ -14,7 +14,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.value.defaultvalue");
 
 pimcore.object.gridcolumn.value.defaultvalue = Class.create(pimcore.object.gridcolumn.Abstract, {

@@ -1,3 +1,6 @@
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.error.ValidationException");
 
 pimcore.error.ValidationException = function (message) {

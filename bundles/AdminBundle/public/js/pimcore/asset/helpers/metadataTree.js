@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.asset.helpers.metadataTree");
 pimcore.asset.helpers.metadataTree = Class.create({
 

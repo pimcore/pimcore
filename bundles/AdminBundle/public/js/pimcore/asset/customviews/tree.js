@@ -11,6 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.asset.customviews.tree");
 pimcore.asset.customviews.tree = Class.create(pimcore.asset.tree, {
 

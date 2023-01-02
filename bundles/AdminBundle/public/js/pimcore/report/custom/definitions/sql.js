@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.report.custom.definition.sql");
 pimcore.report.custom.definition.sql = Class.create({
 

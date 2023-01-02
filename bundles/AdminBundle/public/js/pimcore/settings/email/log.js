@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS('pimcore.settings.email.log');
 pimcore.settings.email.log = Class.create({
 

@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.requiredby");
 
 pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.gridcolumn.Abstract, {

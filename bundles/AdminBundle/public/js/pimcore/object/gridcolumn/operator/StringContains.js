@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.stringcontains");
 
 pimcore.object.gridcolumn.operator.stringcontains = Class.create(pimcore.object.gridcolumn.Abstract, {

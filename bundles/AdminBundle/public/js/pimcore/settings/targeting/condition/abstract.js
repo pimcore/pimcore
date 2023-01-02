@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.targeting.condition.abstract");
 pimcore.settings.targeting.condition.abstract = Class.create({
     matchesScope: function (scope) {

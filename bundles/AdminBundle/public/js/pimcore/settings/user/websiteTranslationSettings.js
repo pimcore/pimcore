@@ -12,6 +12,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.user.websiteTranslationSettings");
 pimcore.settings.user.websiteTranslationSettings = Class.create({
 

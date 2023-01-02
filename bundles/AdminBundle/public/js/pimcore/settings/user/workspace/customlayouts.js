@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.user.workspace.customlayouts");
 
 pimcore.settings.user.workspace.customlayouts = Class.create({

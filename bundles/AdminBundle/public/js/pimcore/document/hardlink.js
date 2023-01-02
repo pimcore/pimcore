@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.document.hardlink");
 pimcore.document.hardlink = Class.create(pimcore.document.document, {
 

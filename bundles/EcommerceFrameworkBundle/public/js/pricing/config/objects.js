@@ -11,7 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.bundle.EcommerceFramework.pricing.config.objects");
 pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
 

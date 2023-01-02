@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.videothumbnail.item");
 pimcore.settings.videothumbnail.item = Class.create({
 
@@ -304,8 +307,11 @@ pimcore.settings.videothumbnail.item = Class.create({
 });
 
 
-/** ITEM TYPES **/
-
+/**
+ * @internal
+ *
+ * ITEM TYPES
+ */
 pimcore.registerNS("pimcore.settings.videothumbnail.items");
 
 pimcore.settings.videothumbnail.items = {

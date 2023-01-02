@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.fieldcollections.field");
 pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klass, {
 

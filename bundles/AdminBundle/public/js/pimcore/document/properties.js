@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.document.properties");
 pimcore.document.properties = Class.create(pimcore.element.properties, {
     showNavigationProperties: false,

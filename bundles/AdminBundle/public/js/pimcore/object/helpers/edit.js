@@ -17,6 +17,9 @@
  * pimcore.object.tags.localizedfields
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.helpers.edit");
 pimcore.object.helpers.edit = {
 

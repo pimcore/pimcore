@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.asset.helpers.gridTabAbstract");
 pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gridTabAbstract, {
 

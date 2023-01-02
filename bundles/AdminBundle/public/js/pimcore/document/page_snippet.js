@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.document.page_snippet");
 pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 

@@ -11,8 +11,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/* CONDITION TYPES */
 
+/**
+ * @internal
+ *
+ * CONDITION TYPES
+ */
 pimcore.registerNS("pimcore.settings.targeting.conditions");
 
 pimcore.settings.targeting.conditions = (function () {

@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.merge");
 
 pimcore.object.gridcolumn.operator.merge = Class.create(pimcore.object.gridcolumn.Abstract, {

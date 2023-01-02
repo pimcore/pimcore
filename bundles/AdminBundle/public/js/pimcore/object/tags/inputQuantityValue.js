@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.tags.inputQuantityValue");
 pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstract, {
 

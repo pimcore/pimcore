@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.bulkimport");
 pimcore.object.bulkimport = Class.create(pimcore.object.bulkbase, {
     initialize: function () {

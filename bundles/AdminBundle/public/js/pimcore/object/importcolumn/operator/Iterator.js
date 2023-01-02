@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.importcolumn.operator.iterator");
 
 pimcore.object.importcolumn.operator.iterator = Class.create(pimcore.object.gridcolumn.Abstract, {

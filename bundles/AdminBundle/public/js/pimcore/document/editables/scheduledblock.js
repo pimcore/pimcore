@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.document.editables.scheduledblock");
 pimcore.document.editables.scheduledblock = Class.create(pimcore.document.editables.block, {
 

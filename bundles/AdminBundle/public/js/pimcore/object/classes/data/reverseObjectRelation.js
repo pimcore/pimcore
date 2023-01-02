@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.classes.data.reverseObjectRelation");
 pimcore.object.classes.data.reverseObjectRelation = Class.create(pimcore.object.classes.data.data, {
 

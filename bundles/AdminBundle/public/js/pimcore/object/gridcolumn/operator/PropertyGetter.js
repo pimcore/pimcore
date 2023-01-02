@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.propertygetter");
 
 pimcore.object.gridcolumn.operator.propertygetter = Class.create(pimcore.object.gridcolumn.Abstract, {

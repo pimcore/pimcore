@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.helpers.colorpicker = {
     initOverrides: function () {
         Ext.define('pimcore.colorpick.Field', {

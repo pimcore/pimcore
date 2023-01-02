@@ -11,8 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/* ACTION TYPES */
-
+/**
+ * @internal
+ *
+ * ACTION TYPES
+ */
 pimcore.registerNS("pimcore.settings.targeting.actions");
 pimcore.settings.targeting.actions = (function () {
     var actions = {

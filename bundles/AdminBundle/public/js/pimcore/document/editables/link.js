@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.document.editables.link");
 pimcore.document.editables.link = Class.create(pimcore.document.editable, {
 

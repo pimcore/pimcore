@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.base64");
 
 pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolumn.Abstract, {

@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.assetmetadatagetter");
 
 pimcore.object.gridcolumn.operator.assetmetadatagetter = Class.create(pimcore.object.gridcolumn.Abstract, {

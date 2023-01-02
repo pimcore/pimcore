@@ -12,6 +12,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.user.workspace.asset");
 pimcore.settings.user.workspace.asset = Class.create({
 

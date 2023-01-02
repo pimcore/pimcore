@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.document.editables.multiselect");
 pimcore.document.editables.multiselect = Class.create(pimcore.document.editable, {
 

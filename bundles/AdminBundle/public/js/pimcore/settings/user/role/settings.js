@@ -12,6 +12,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.settings.user.role.settings");
 pimcore.settings.user.role.settings = Class.create({
 

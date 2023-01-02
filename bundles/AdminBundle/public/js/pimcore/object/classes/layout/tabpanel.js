@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.classes.layout.tabpanel");
 pimcore.object.classes.layout.tabpanel = Class.create(pimcore.object.classes.layout.layout, {
 

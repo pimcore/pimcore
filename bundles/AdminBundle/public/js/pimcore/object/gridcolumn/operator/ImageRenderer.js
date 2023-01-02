@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.imagerenderer");
 
 pimcore.object.gridcolumn.operator.imagerenderer = Class.create(pimcore.object.gridcolumn.Abstract, {

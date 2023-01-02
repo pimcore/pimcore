@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.charcounter");
 
 pimcore.object.gridcolumn.operator.charcounter = Class.create(pimcore.object.gridcolumn.Abstract, {

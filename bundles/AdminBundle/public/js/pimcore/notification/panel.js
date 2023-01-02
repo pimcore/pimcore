@@ -10,6 +10,10 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
+
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.notification.panel");
 
 pimcore.notification.panel = Class.create({

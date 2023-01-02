@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.Abstract");
 
 pimcore.object.gridcolumn.Abstract = Class.create({

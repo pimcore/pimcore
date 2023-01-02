@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.hotspotimagerenderer");
 
 pimcore.object.gridcolumn.operator.hotspotimagerenderer = Class.create(pimcore.object.gridcolumn.Abstract, {

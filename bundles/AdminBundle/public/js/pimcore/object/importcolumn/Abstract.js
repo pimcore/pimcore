@@ -15,6 +15,9 @@
  */
 
 
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.object.importcolumn.Abstract");
 
 pimcore.object.importcolumn.Abstract = Class.create({
