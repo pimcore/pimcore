@@ -1182,7 +1182,7 @@
                      }
 
                      // Adding single main menu item
-                     this[key + 'Menu'] = pimcore.helpers.createMenu(menuItem);
+                     this[key + 'Menu'] = Ext.create('pimcore.menu.menu', menuItem);
                  }
              });
          }

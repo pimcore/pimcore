@@ -29,7 +29,7 @@ services:
     Pimcore\Bundle\GlossaryBundle\Tool\Processor:
         public: false
         arguments:
-            $blockedTags: '%pimcore.glossary.blocked_tags%'
+            $blockedTags: '%pimcore_glossary.blocked_tags%'
 
 
     # TWIG TEMPLATING

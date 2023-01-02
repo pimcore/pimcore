@@ -3257,16 +3257,6 @@ pimcore.helpers.buildMenu = function(items) {
         }
 
         pimcore.helpers.buildMenu(items[i].menu.items);
-        items[i].menu = pimcore.helpers.createMenu(items[i].menu);
-
+        items[i].menu = Ext.create('pimcore.menu.menu', items[i].menu);
     }
 };
-
-/**
- * Creating menu with sorting function
- * @param menu
- * @returns {pimcore.menu.menu}
- */
-pimcore.helpers.createMenu = function(menu) {
-    return Ext.create('pimcore.menu.menu', menu);
-}

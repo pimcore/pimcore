@@ -19,11 +19,12 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 
-final class PimcoreGlossaryExtension extends Extension
+final class PimcoreGlossaryExtension extends ConfigurableExtension
 {
-    public function load(array $configs, ContainerBuilder $container)
+    public function loadInternal(array $config, ContainerBuilder $container)
     {
         // on container build the shutdown handler shouldn't be called
         // for details please see https://github.com/pimcore/pimcore/issues/4709
@@ -35,5 +36,7 @@ final class PimcoreGlossaryExtension extends Extension
         );
 
         $loader->load('services.yaml');
+
+        $container->setParameter('pimcore_glossary.blocked_tags', $config['blocked_tags']);
     }
 }

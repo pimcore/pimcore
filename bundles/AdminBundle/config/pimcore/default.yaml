@@ -23,128 +23,162 @@ pimcore_admin:
         default_key_bindings:
             save:
                 key: 'S'
+                method: save
                 ctrl: true
             publish:
                 key: 'P'
+                method: publish
                 ctrl: true
                 shift: true
             unpublish:
                 key: 'U'
+                method: unpublish
                 ctrl: true
                 shift: true
             rename:
                 key: 'R'
+                method: rename
                 alt: true
                 shift: true
             refresh:
                 key: 't'
-            openAsset:
+                method: refresh
+            open_asset:
                 key: 'A'
+                method: openAsset
                 ctrl: true
                 shift: true
-            openObject:
+            open_object:
                 key: 'O'
+                method: openObject
                 ctrl: true
                 shift: true
-            openDocument:
+            open_document:
                 key: 'D'
+                method: openDocument
                 ctrl: true
                 shift: true
-            openClassEditor:
+            open_class_editor:
                 key: 'C'
+                method: openClassEditor
                 ctrl: true
                 shift: true
-            openInTree:
+            open_in_tree:
                 key: 'L'
+                method: openInTree
                 ctrl: true
                 shift: true
-            showMetaInfo:
+            show_meta_info:
                 key: 'I'
+                method: showMetaInfo
                 alt: true
-            searchDocument:
+            search_document:
                 key: 'W'
+                method: searchDocument
                 alt: true
-            searchAsset:
+            search_asset:
                 key: 'A'
+                method: searchAsset
                 alt: true
-            searchObject:
+            search_object:
                 key: 'O'
+                method: searchObject
                 alt: true
-            showElementHistory:
+            show_element_history:
                 key: 'H'
+                method: showElementHistory
                 alt: true
-            closeAllTabs:
+            close_all_tabs:
                 key: 'T'
+                method: closeAllTabs
                 alt: true
-            searchAndReplaceAssignments:
+            search_and_replace_assignments:
                 key: 'S'
+                method: searchAndReplaceAssignments
                 alt: true
             redirects:
                 key: 'R'
+                method: redirects
                 ctrl: false
                 alt: true
-            sharedTranslations:
+            shared_translations:
                 key: 'T'
+                method: sharedTranslations
                 ctrl: true
                 alt: true
-            recycleBin:
+            recycle_bin:
                 key: 'R'
+                method: recycleBin
                 ctrl: true
                 alt: true
-            notesEvents:
+            notes_events:
                 key: 'N'
+                method: notesEvents
                 ctrl: true
                 alt: true
-            applicationLogger:
+            application_logger:
                 key: 'L'
+                method: applicationLogger
                 ctrl: true
                 alt: true
             reports:
                 key: 'M'
+                method: reports
                 ctrl: true
                 alt: true
-            tagManager:
+            tag_manager:
                 key: 'H'
+                method: tagManager
                 ctrl: true
                 alt: true
-            seoDocumentEditor:
+            seo_document_editor:
                 key: 'S'
+                method: seoDocumentEditor
                 ctrl: true
                 alt: true
             robots:
                 key: 'J'
+                method: robots
                 ctrl: true
                 alt: true
-            httpErrorLog:
+            http_error_log:
                 key: 'O'
+                method: httpErrorLog
                 ctrl: true
                 alt: true
-            customReports:
+            custom_reports:
                 key: 'C'
+                method: customReports
                 ctrl: true
                 alt: true
-            tagConfiguration:
+            tag_configuration:
                 key: 'N'
+                method: tagConfiguration
                 ctrl: true
                 alt: true
             users:
                 key: 'U'
+                method: users
                 ctrl: true
                 alt: true
             roles:
                 key: 'P'
+                method: roles
                 ctrl: true
                 alt: true
-            clearAllCaches:
+            clear_all_caches:
                 key: 'Q'
+                method: clearAllCaches
                 ctrl: false
                 alt: true
-            clearDataCache:
+            clear_data_cache:
                 key: 'C'
+                method: clearDataCaches
                 ctrl: false
                 alt: true
-            quickSearch:
+            quick_search:
                 key: 'F'
+                method: quickSearch
                 ctrl: true
                 shift: true
 
