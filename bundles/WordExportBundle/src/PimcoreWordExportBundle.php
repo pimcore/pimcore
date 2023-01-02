@@ -23,10 +23,18 @@ class PimcoreWordExportBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
+    public function getCssPaths(): array
+    {
+        return [
+            '/bundles/pimcorewordexport/css/icons.css',
+        ];
+    }
+
     public function getJsPaths(): array
     {
         return [
             '/bundles/pimcorewordexport/js/startup.js',
+            '/bundles/pimcorewordexport/js/word.js',
         ];
     }
 

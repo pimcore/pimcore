@@ -237,9 +237,9 @@ pimcore.settings.translation.word = Class.create({
         for (var i = 0; i < data.items.length; i++) {
             tmData.push(data.items[i].data);
         }
-
+       console.log(tmData);
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_translation_contentexportjobs'),
+            url: Routing.generate('pimcore_wordexport_translation_contentexportjobs'),
             method: 'POST',
             params: {
                 source: this.exportSourceLanguageSelector.getValue(),
@@ -276,7 +276,7 @@ pimcore.settings.translation.word = Class.create({
                         this.exportProgressbar = null;
                         this.exportProgressWin = null;
 
-                        pimcore.helpers.download(Routing.generate('pimcore_admin_translation_wordexportdownload', {id: id}));
+                        pimcore.helpers.download(Routing.generate('pimcore_wordexport_translation_wordexportdownload', {id: id}));
                     }.bind(this, res.id),
                     update: function (currentStep, steps, percent) {
                         if(this.exportProgressbar) {
@@ -287,7 +287,7 @@ pimcore.settings.translation.word = Class.create({
                     failure: function (message) {
                         console.error("Word export: " + message);
                     }.bind(this),
-                    stopOnError: false,
+                    stopOnError: true,
                     jobs: res.jobs
                 });
             }.bind(this)

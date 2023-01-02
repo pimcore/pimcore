@@ -330,11 +330,6 @@
                              iconCls: "pimcore_nav_icon_translations",
                              itemId: 'pimcore_menu_extras_translations_xliff',
                              handler: this.xliffImportExport
-                         }, {
-                             text: "Microsoft® Word " + t("export"),
-                             iconCls: "pimcore_nav_icon_word_export",
-                             itemId: 'pimcore_menu_extras_translations_word_export',
-                             handler: this.wordExport
                          }]
                      }
                  });
@@ -1639,16 +1634,7 @@
              pimcore.globalmanager.add("xliff", new pimcore.settings.translation.xliff());
          }
      },
- 
-     wordExport: function () {
-         try {
-             pimcore.globalmanager.get("word").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("word", new pimcore.settings.translation.word());
-         }
-     },
- 
+
      showPhpInfo: function () {
          pimcore.helpers.openGenericIframeWindow("phpinfo", Routing.generate('pimcore_admin_misc_phpinfo'), "pimcore_icon_php", "PHP Info");
      },
