@@ -1452,7 +1452,7 @@ class Service extends Model\AbstractModel
      *@internal
      *
      */
-    public static function saveElementToSession(ElementInterface $element, string $sessionId, string $postfix = '', bool $clone = true)
+    public static function saveElementToSession(ElementInterface $element, string $sessionId, string $postfix = '', bool $clone = true): void
     {
         if ($clone) {
             $context = [
