@@ -267,16 +267,13 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 $identifier = 'id';
                 $pathCol = 'path';
                 $typeCol = 'type';
+                
+                $keyCol = 'key';
+                $className = '';
                 if ($targetType == 'object') {
-                    $keyCol = 'key';
                     $className = ', className';
-                } else {
-                    if ($targetType == 'asset') {
-                        $keyCol = 'filename';
-                    } else {
-                        $keyCol = '`key`';
-                    }
-                    $className = '';
+                } elseif ($targetType == 'asset') {
+                    $keyCol = 'filename';
                 }
 
                 $result = $db->fetchAllAssociative(
