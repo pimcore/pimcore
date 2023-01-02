@@ -73,7 +73,7 @@ class CsrfProtectionHandler implements LoggerAwareInterface
         return $this->csrfToken;
     }
 
-    public function regenerateCsrfToken(SessionInterface $session, bool $force = true)
+    public function regenerateCsrfToken(SessionInterface $session, bool $force = true): void
     {
         $this->csrfToken = Session::useBag($session, function (AttributeBagInterface $adminSession) use ($force) {
             if ($force || !$adminSession->get('csrfToken')) {
