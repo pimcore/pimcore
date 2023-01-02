@@ -110,7 +110,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      *
      * @throws AccessDeniedHttpException
      */
-    protected function checkPermission(string $permission)
+    protected function checkPermission(string $permission): void
     {
         if (!$this->getAdminUser() || !$this->getAdminUser()->isAllowed($permission)) {
             Logger::error(
@@ -142,7 +142,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * @param string[] $permissions
      */
-    protected function checkPermissionsHasOneOf(array $permissions)
+    protected function checkPermissionsHasOneOf(array $permissions): void
     {
         $allowed = false;
         $permission = null;
@@ -174,7 +174,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @param string $permission
      * @param array $unrestrictedActions
      */
-    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = [])
+    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = []): void
     {
         $actionName = null;
         $controller = $event->getController();
