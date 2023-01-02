@@ -34,7 +34,7 @@ class ThumbnailsImageCommand extends AbstractCommand
     protected function configure()
     {
         parent::configure();
-        $this->configureCommand($this);
+        self::configureCommand($this);
 
         $this
             ->setName('pimcore:thumbnails:image')

@@ -17,9 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Console\Traits;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozarts\Console\Parallelization\Input\ParallelizationInput;
 
@@ -31,7 +29,7 @@ if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
             \Webmozarts\Console\Parallelization\Parallelization::execute as parentExecute;
         }
 
-        protected function configureCommand(Command $command): void
+        protected static function configureCommand(Command $command): void
         {
             ParallelizationInput::configureCommand($command);
         }
@@ -67,46 +65,9 @@ if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
             return 0;
         }
 
-        protected function configureCommand(Command $command): void
+        protected static function configureCommand(Command $command): void
         {
-            $command
-                ->addArgument(
-                    'item',
-                    InputArgument::OPTIONAL,
-                    'The item to process. Can be used in commands where simple IDs are processed. Otherwise it is for internal use.'
-                )
-                ->addOption(
-                    'processes',
-                    null,
-                    //'p', avoid collisions with already existing Pimcore command options
-                    InputOption::VALUE_OPTIONAL,
-                    'The number of parallel processes to run',
-                    '1'
-                )
-                ->addOption(
-                    'main-process',
-                    'm',
-                    InputOption::VALUE_NONE,
-                    'To execute the processing in the main process (no child processes will be spawned).',
-                )
-                ->addOption(
-                    'child',
-                    null,
-                    InputOption::VALUE_NONE,
-                    'Set on child processes. For internal use only.'
-                )
-                ->addOption(
-                    'batch-size',
-                    null,
-                    InputOption::VALUE_OPTIONAL,
-                    'Sets the number of items to process per child process or in a batch',
-                )
-                ->addOption(
-                    'segment-size',
-                    null,
-                    InputOption::VALUE_REQUIRED,
-                    'Set the segment size.',
-                );
+            // nothing to do here since parallelization is disabled
         }
     }
 }
