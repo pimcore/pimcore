@@ -25,7 +25,9 @@ class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle
 
     public function getCssPaths(): array
     {
-        return [];
+        return [
+            '/bundles/pimcoresimplebackendsearch/css/icons.css',
+        ];
     }
 
     public function getJsPaths(): array
