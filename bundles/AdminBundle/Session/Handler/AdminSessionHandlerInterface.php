@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @internal
+ *
  * @deprecated
  */
 interface AdminSessionHandlerInterface
