@@ -52,7 +52,7 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
 
     public function getOSPrice(int $quantityScale = 1): PriceInterface
     {
-        return new Price(Decimal::create(10), new Currency('USD'));
+        return new Price(Decimal::create(0), new Currency('USD'));
     }
 
     public function getOSPriceInfo(int $quantityScale = 1): PriceInfoInterface
