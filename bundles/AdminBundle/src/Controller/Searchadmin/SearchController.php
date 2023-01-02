@@ -506,60 +506,6 @@ class SearchController extends AdminController
         return $this->adminJson($result);
     }
 
-    /**
-     * @Route("/quicksearch-get-by-id", name="pimcore_admin_searchadmin_search_quicksearch_by_id", methods={"GET"})
-     *
-     * @param Request $request
-     * @param Config $config
-     *
-     * @return JsonResponse
-     */
-    public function quicksearchByIdAction(Request $request, Config $config): JsonResponse
-    {
-        $type = $request->get('type');
-        $id = $request->get('id');
-        $db = \Pimcore\Db::get();
-        $searcherList = new Data\Listing();
-
-        $searcherList->addConditionParam('id = :id', ['id' => $id]);
-        $searcherList->addConditionParam('maintype = :type', ['type' => $type]);
-        $searcherList->setLimit(1);
-
-        $hits = $searcherList->load();
-
-        //There will always be one result in hits but load returns array.
-        $data = [];
-        foreach ($hits as $hit) {
-            $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
-            if ($element->isAllowed('list')) {
-                $data = [
-                    'id' => $element->getId(),
-                    'type' => $hit->getId()->getType(),
-                    'subtype' => $element->getType(),
-                    'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
-                    'fullpath' => htmlspecialchars($element->getRealFullPath()),
-                    'fullpathList' => htmlspecialchars($this->shortenPath($element->getRealFullPath())),
-                    'iconCls' => 'pimcore_icon_asset_default',
-                ];
-
-                $this->addAdminStyle($element, ElementAdminStyleEvent::CONTEXT_SEARCH, $data);
-
-                $validLanguages = \Pimcore\Tool::getValidLanguages();
-
-                $data['preview'] = $this->renderView(
-                    '@PimcoreAdmin/searchadmin/search/quicksearch/' . $hit->getId()->getType() . '.html.twig', [
-                        'element' => $element,
-                        'iconCls' => $data['iconCls'],
-                        'config' => $config,
-                        'validLanguages' => $validLanguages,
-                    ]
-                );
-            }
-        }
-
-        return $this->adminJson($data);
-    }
-
     protected function shortenPath(string $path): string
     {
         $parts = explode('/', trim($path, '/'));

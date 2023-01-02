@@ -27,7 +27,7 @@ Ext.define('pimcore.simpleBackendSearch.layout.quickSearch', {
                         var record = quickSearchStore.getAt(node.dataset.recordindex);
                         if (!record.get('preview')) {
                             Ext.Ajax.request({
-                                url: Routing.generate('pimcore_admin_searchadmin_search_quicksearch_by_id'),
+                                url: Routing.generate('pimcore_search_quicksearch_by_id#'),
                                 method: 'GET',
                                 params: {
                                     "id": record.get('id'),
