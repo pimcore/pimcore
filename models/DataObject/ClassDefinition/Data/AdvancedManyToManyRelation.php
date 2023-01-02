@@ -267,7 +267,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 $identifier = 'id';
                 $pathCol = 'path';
                 $typeCol = 'type';
-                
+
                 $keyCol = 'key';
                 $className = '';
                 if ($targetType == 'object') {
