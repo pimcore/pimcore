@@ -46,14 +46,6 @@ class Chromium
     }
 
     /**
-     * @param string $url
-     * @param string $outputFile
-     * @param string $sessionId
-     * @param string $sessionName
-     * @param string $windowSize
-     *
-     * @return bool
-     *
      * @throws \Exception
      */
     public static function convert(string $url, string $outputFile, ?string $sessionId = null, ?string $sessionName = null, string $windowSize = '1280,1024'): bool
