@@ -35,7 +35,6 @@ final class Session
      * @desc For forward compatibility, you can use this class and pass the SessionInterface from the request, in Pimcore 10.6, the Admin Session will be used instead
      *
      * @param SessionInterface $session Parameter is not used here since the dedicated Admin Session is used. Please pass the Request SessionInterface here for forward compatibility
-     *
      * @param callable(AttributeBagInterface, SessionInterface):mixed $func
      *
      */
@@ -49,7 +48,6 @@ final class Session
      * @desc For forward compatibility, you can use this class and pass the SessionInterface from the request, in Pimcore 10.6, the Admin Session will be used instead
      *
      * @param SessionInterface $session Parameter is not used here since the dedicated Admin Session is used. Please pass the Request SessionInterface here for forward compatibility
-     *
      * @param string $namespace
      *
      */
@@ -57,7 +55,6 @@ final class Session
         SessionInterface $session,
         string $namespace = 'pimcore_admin'
     ): ?AttributeBagInterface {
-
         $bag = self::getSessionHandler()->loadAttributeBag($namespace);
         if ($bag instanceof AttributeBagInterface) {
             return $bag;
