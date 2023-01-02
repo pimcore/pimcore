@@ -108,9 +108,9 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      *
      * @param int $quantityScale
      *
-     * @return PriceInterface|null
+     * @return PriceInterface
      */
-    public function getOSPrice(int $quantityScale = 1): ?PriceInterface
+    public function getOSPrice(int $quantityScale = 1): PriceInterface
     {
         return $this->getOSPriceInfo($quantityScale)->getPrice();
     }
@@ -133,9 +133,9 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      *
      * @param int|null $quantity
      *
-     * @return AvailabilityInterface|null
+     * @return AvailabilityInterface
      */
-    public function getOSAvailabilityInfo(int $quantity = null): ?AvailabilityInterface
+    public function getOSAvailabilityInfo(int $quantity = null): AvailabilityInterface
     {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);
     }
