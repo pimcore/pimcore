@@ -628,9 +628,7 @@ final class User extends User\UserRole
             $defaultKeyBindings = [];
             if(!empty($defaultKeyBindingsConfig)) {
                 foreach($defaultKeyBindingsConfig as $keys) {
-
-
-
+                    $defaultKeyBinding = [];
                     // we do not check if the keys are empty because key is required
                     foreach($keys as $index => $value) {
                         if($index === 'key') {

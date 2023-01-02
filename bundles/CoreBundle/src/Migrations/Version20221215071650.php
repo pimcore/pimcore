@@ -6,7 +6,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
 use Pimcore\Model\Tool\SettingsStore;
 
 /**
