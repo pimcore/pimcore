@@ -86,7 +86,7 @@ class CsrfProtectionHandler implements LoggerAwareInterface
         $this->twig->addGlobal('csrfToken', $this->csrfToken);
     }
 
-    public function generateCsrfToken(SessionInterface $session)
+    public function generateCsrfToken(SessionInterface $session): void
     {
         $this->twig->addGlobal('csrfToken', $this->getCsrfToken($session));
     }
