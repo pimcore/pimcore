@@ -396,7 +396,7 @@
                      }
                  });
              }
-
+ 
              if (user.admin) {
                  if (perspectiveCfg.inToolbar("extras.maintenance")) {
                      extrasItems.push({
@@ -406,6 +406,7 @@
                          handler: this.showMaintenance
                      });
                  }
+ 
                  if (perspectiveCfg.inToolbar("extras.systemtools")) {
                      var systemItems = [];
                      if (perspectiveCfg.inToolbar("extras.systemtools.database")) {
@@ -418,7 +419,7 @@
                              }
                          );
                      }
- 
+
                      if (perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")) {
                          systemItems.push(
                              {
@@ -441,11 +442,6 @@
                              items: systemItems
                          }
                      });
-
-                     extrasItems.map(function(item) {
-                         this.extrasMenu.add(item)
-                     }.bind(this));
-                     pimcore.globalmanager.add('toolbar.extrasMenu', this.extrasMenu);
                  }
              }
 
