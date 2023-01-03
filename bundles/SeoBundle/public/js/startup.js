@@ -3,17 +3,17 @@ pimcore.registerNS("pimcore.seo");
 
 pimcore.seo = Class.create({
     initialize: function () {
-        // TODO mattamon add key event once the new event is merged
-        //document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
-        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
+        document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
+        document.addEventListener(pimcore.events.preMenuBuild, this.pimcoreReady.bind(this));
     },
 
     pimcoreReady: function (e) {
+        let menu = e.detail.menu;
         const user = pimcore.globalmanager.get('user');
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
 
         if (perspectiveCfg.inToolbar("marketing") && perspectiveCfg.inToolbar("marketing.seo")) {
-            var seoMenu = [];
+            let seoMenu = [];
 
             if (user.isAllowed("documents") && user.isAllowed("seo_document_editor") && perspectiveCfg.inToolbar("marketing.seo.documents")) {
                 seoMenu.push({
@@ -44,11 +44,10 @@ pimcore.seo = Class.create({
 
             // get index of marketing.targeting
             if (seoMenu.length > 0) {
-                const toolbar = pimcore.globalmanager.get('layout_toolbar');
-
-                toolbar.marketingMenu.add({
+                menu.marketing.items.push({
                     text: t("search_engine_optimization"),
                     iconCls: "pimcore_nav_icon_seo",
+                    priority: 25,
                     itemId: 'pimcore_menu_marketing_seo',
                     hideOnClick: false,
                     menu: {
@@ -90,6 +89,25 @@ pimcore.seo = Class.create({
 
     registerKeyBinding: function(e) {
         const user = pimcore.globalmanager.get('user');
+
+        if (user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
+            pimcore.helpers.keyBindingMapping.seoDocumentEditor = function() {
+                seo.showDocumentSeo();
+            }
+        }
+
+        if (user.isAllowed("robots.txt")) {
+            pimcore.helpers.keyBindingMapping.robots = function() {
+                seo.showRobotsTxt();
+            }
+        }
+
+        if (user.isAllowed("http_errors")) {
+            pimcore.helpers.keyBindingMapping.httpErrorLog = function() {
+                seo.showHttpErrorLog();
+            }
+        }
+
     }
 })
 

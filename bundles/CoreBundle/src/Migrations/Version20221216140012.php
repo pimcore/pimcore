@@ -38,7 +38,7 @@ final class Version20221216140012 extends AbstractMigration
 
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\SeoBundle\\PimcoreSeoBundle', 'pimcore'),
-            sprintf('Please make sure to enable the %s manually in config/bundles.php', PimcoreSeoBundle::class)
+            'Please make sure to enable the Pimcore\\Bundle\\SeoBundle\\PimcoreSeoBundle manually in config/bundles.php'
         );
     }
 }

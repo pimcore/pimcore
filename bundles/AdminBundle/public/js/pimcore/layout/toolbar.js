@@ -555,14 +555,12 @@
                  }
              }
 
-             if (marketingItems.length > 0) {
-                 menu.marketing = {
-                     items: marketingItems,
-                     shadow: false,
-                     listeners: true,
-                     cls: "pimcore_navigation_flyout"
-                 };
-             }
+             menu.marketing = {
+                 items: marketingItems,
+                 shadow: false,
+                 listeners: true,
+                 cls: "pimcore_navigation_flyout"
+             };
          }
  
          if (perspectiveCfg.inToolbar("settings")) {
