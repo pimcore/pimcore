@@ -23,8 +23,6 @@ services:
 
     Pimcore\Twig\Extension\NavigationExtension: ~
 
-    Pimcore\Twig\Extension\GlossaryExtension: ~
-
     Pimcore\Twig\Extension\HeaderExtension: ~
 
     Pimcore\Twig\Extension\AssetCompressExtension: ~

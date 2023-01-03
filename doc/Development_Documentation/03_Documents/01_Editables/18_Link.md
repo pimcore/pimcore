@@ -14,7 +14,7 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 | `reload` | boolean  | Set to true to reload the page in editmode after changing the state.    |
 | `textPrefix` | string  | Add an icon or something else before Text    |
 | `textSuffix` | string  | Add an icon or something else after Text    |
-| `noText` | boolean  | If you need only the <a> tag without text (or only with an textSuffix/TextPrefix)    |
+| `noText` | boolean  | If you need only the `<a>` tag without text (or only with an textSuffix/TextPrefix)    |
 | `required` | boolean/string  | (default: false) set to true to make link and text required for publish, set to "linkonly" to make only the link required for publish    |
 
 ## Methods
