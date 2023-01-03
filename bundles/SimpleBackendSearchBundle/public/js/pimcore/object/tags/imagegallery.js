@@ -1,9 +1,9 @@
 /**
  * @internal
  */
-pimcore.registerNS('pimcore.simpleBackendSearch.object.tags.imagegallery');
+pimcore.registerNS('pimcore.simpleBackendSearch.object.tags.imageGallery');
 
-pimcore.simpleBackendSearch.object.tags.imagegallery = Class.create(pimcore.simpleBackendSearch.object.tags.image, {
+pimcore.simpleBackendSearch.object.tags.imageGallery = Class.create(pimcore.simpleBackendSearch.object.tags.image, {
 });
 
-const backendSearchImageGallery = new pimcore.simpleBackendSearch.object.tags.imagegallery();
+const backendSearchImageGallery = new pimcore.simpleBackendSearch.object.tags.imageGallery();

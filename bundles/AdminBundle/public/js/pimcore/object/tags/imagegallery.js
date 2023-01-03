@@ -221,7 +221,8 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                 //dispatch openSearchDialog event
                 document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
                     detail: {
-                        class: this
+                        class: this,
+                        type: this.fieldConfig.fieldtype
                     }
                 }));
             }.bind(this)

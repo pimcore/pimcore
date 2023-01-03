@@ -372,15 +372,6 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
         if (!this.fieldConfig.noteditable) {
             menu.add(new Ext.menu.Item({
-                text: t('search'),
-                iconCls: "pimcore_icon_search",
-                handler: function (item) {
-                    item.parentMenu.destroy();
-                    this.openSearchEditor();
-                }.bind(this)
-            }));
-
-            menu.add(new Ext.menu.Item({
                 text: t('upload'),
                 cls: "pimcore_inline_upload",
                 iconCls: "pimcore_icon_upload",

@@ -5,7 +5,7 @@ pimcore.registerNS('pimcore.simpleBackendSearch.object.tags.image');
 
 pimcore.simpleBackendSearch.object.tags.image = Class.create({
     openSearchEditor: function (classScope) {
-        pimcore.helpers.itemselector(false, classScope.addDataFromSelector.bind(this), {
+        pimcore.helpers.itemselector(false, classScope.addDataFromSelector.bind(classScope), {
             type: ["asset"],
             subtype: {
                 asset: ["image"]

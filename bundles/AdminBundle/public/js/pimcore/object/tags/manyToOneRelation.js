@@ -347,7 +347,8 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 //dispatch openSearchDialog event
                 document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
                     detail: {
-                        class: this
+                        class: this,
+                        type: this.fieldConfig.fieldtype
                     }
                 }));
             }.bind(this)

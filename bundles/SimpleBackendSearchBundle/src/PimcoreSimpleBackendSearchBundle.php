@@ -53,10 +53,11 @@ class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle
             '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/manyToManyObjectRelation.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/manyToManyRelation.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/manyToOneRelation.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/hotspotimage.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/image.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/imagegallery.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/hotspotimage.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/link.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/video.js'
         ];
     }
 

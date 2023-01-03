@@ -261,10 +261,11 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 //dispatch openSearchDialog event
                 document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
                     detail: {
-                        class: this
+                        class: this,
+                        type: this.fieldConfig.fieldtype
                     }
                 }));
-            }
+            }.bind(this)
         });
 
         items.push({

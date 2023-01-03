@@ -130,10 +130,11 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                             //dispatch openSearchDialog event
                             document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
                                 detail: {
-                                    class: this
+                                    class: this,
+                                    type: this.fieldConfig.fieldtype
                                 }
                             }));
-                        }
+                        }.bind(this)
                     }]
             },
             componentCls: this.getWrapperClassNames(),
@@ -392,7 +393,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                     //dispatch openSearchDialog event
                     document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
                         detail: {
-                            class: this
+                            class: this,
+                            type: this.fieldConfig.fieldtype
                         }
                     }));
                 }.bind(this)

@@ -2101,17 +2101,16 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
     var searchButton = new Ext.Button({
         iconCls: "pimcore_icon_search",
         handler: function () {
-            pimcore.helpers.itemselector(false, function (item) {
-                if (item) {
-                    fieldPath.setValue(item.fullpath);
-                    return true;
+            //dispatch openSearchDialog event
+            document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
+                detail: {
+                    class: this,
+                    type: 'video',
+                    modal: {
+                        fieldPath
+                    }
                 }
-            }, {
-                type: ["asset"],
-                subtype: {
-                    asset: ["video"]
-                }
-            });
+            }));
         }
     });
 
@@ -2126,17 +2125,17 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
     var posterImageSearchButton = new Ext.Button({
         iconCls: "pimcore_icon_search",
         handler: function () {
-            pimcore.helpers.itemselector(false, function (item) {
-                if (item) {
-                    poster.setValue(item.fullpath);
-                    return true;
+            //dispatch openSearchDialog event
+            document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
+                detail: {
+                    class: this,
+                    type: 'video',
+                    method: 'openSearchEditorPoster',
+                    modal: {
+                        poster
+                    }
                 }
-            }, {
-                type: ["asset"],
-                subtype: {
-                    asset: ["image"]
-                }
-            });
+            }));
         }
     });
 
