@@ -22,6 +22,7 @@ interface DynamicTextLabelInterface
 {
     /**
      * @param string $data as provided in the class definition
+     * @param array<string, mixed> $params
      */
     public function renderLayoutText(string $data, ?Concrete $object, array $params): string;
 }
