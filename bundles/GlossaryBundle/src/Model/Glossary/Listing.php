@@ -14,21 +14,23 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Glossary;
+namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 
-use Pimcore\Model;
+
+use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
+use Pimcore\Model\Listing\AbstractListing;
 
 /**
- * @method \Pimcore\Model\Glossary\Listing\Dao getDao()
- * @method Model\Glossary[] load()
- * @method Model\Glossary|false current()
+ * @method Listing\Dao getDao()
+ * @method Glossary[] load()
+ * @method Glossary|false current()
  * @method int getTotalCount()
  * @method array getDataArray()
  */
-class Listing extends Model\Listing\AbstractListing
+class Listing extends AbstractListing
 {
     /**
-     * @return Model\Glossary[]
+     * @return Glossary[]
      */
     public function getGlossary(): array
     {
@@ -36,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param Model\Glossary[]|null $glossary
+     * @param Glossary[]|null $glossary
      *
      * @return $this
      */

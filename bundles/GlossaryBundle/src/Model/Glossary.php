@@ -14,12 +14,15 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model;
+namespace Pimcore\Bundle\GlossaryBundle\Model;
 
+use Pimcore\Bundle\GlossaryBundle\Model\Glossary\Dao;
+use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Site;
 
 /**
- * @method \Pimcore\Model\Glossary\Dao getDao()
+ * @method Dao getDao()
  * @method void delete()
  * @method void save()
  */

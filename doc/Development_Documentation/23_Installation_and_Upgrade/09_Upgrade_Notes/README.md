@@ -55,7 +55,10 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Email] Removed the deprecated methods setBodyHtml(), setBodyText(), createAttachment() and setSubject(). Use html(),
   text(), attach() and subject() instead.
 - [Application Logger] Table names of archive tables are now named with year-month rather than month-year see [#8237](https://github.com/pimcore/pimcore/issues/8237).
-- [Glossary] `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
+- [Glossary] 
+  - `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
+  - Config `pimcore:glossary:` has been removed, please use `pimcore_glossary:` instead.
+    - Make sure to enable the PimcoreGlossaryBundle manually in the `config\bundles.php`
 - [Elements] Passing $force parameter as boolean is not valid anymore in `getById`, `getByPath`, `getElementById` methods. Instead, please pass it as an associative array ( eg.`['force' => true]`).
    For details, please see [#12789](https://github.com/pimcore/pimcore/issues/12789)
 - [DataObjects] Changed default behaviour: getByXXX methods on `Concrete` class now returns objects and variants if nothing else is specified.
@@ -100,7 +103,9 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - Removed support for loading bundles through `extensions.php`.
   - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.
   - Removed commands: `pimcore:bundle:enable`, `pimcore:bundle:disable`.
-  - Removed `dontCheckEnabled` config support from Areablock editable.
+  - Removed `dontCheckEnabled` config support from Areablock editable. 
+  - Functionality that was moved into its own bundle and must be enabled manually in `config/bundles.php`
+    - Glossary has been moved into PimcoreGlossaryBundle
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.

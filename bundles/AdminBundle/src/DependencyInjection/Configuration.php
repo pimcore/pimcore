@@ -43,6 +43,7 @@ final class Configuration implements ConfigurationInterface
         $rootNode->append($this->buildAssetsNode());
         $rootNode->append($this->buildDocumentsNode());
         $rootNode->append($this->addNotificationsNode());
+        $rootNode->append($this->addUserNode());
 
         $rootNode->children()
             ->arrayNode('admin_languages')
@@ -424,5 +425,28 @@ final class Configuration implements ConfigurationInterface
         ;
 
         return $notificationsNode;
+    }
+
+    protected function addUserNode(): ArrayNodeDefinition|NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('user');
+        $userNode = $treeBuilder->getRootNode();
+
+        $userNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('default_key_bindings')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('key')->isRequired()->end()
+                            ->scalarNode('action')->isRequired()->end()
+                            ->scalarNode('alt')->end()
+                            ->scalarNode('ctrl')->end()
+                            ->scalarNode('shift')->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+        return $userNode;
     }
 }
