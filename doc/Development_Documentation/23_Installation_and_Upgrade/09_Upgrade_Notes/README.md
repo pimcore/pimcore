@@ -115,7 +115,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Ecommerce] Elasticsearch 7 support was removed
 - [Ecommerce] Config option `es_client_params` in `index_service` was removed 
 - [ClassSavedInterface] Removed `method_exists` bc layer. Please add the corresponding `ClassSavedInterface` interface to your custom field definitions. For more details check the 10.6.0 patch notes.
-- [UrlSlug] Removed deprecated `allow_processing_unpublished_fallback_document` configuration option and set it as default behaviour. For details, please see [#10005](https://github.com/pimcore/pimcore/issues/10005#issuecomment-907007745)
+- [UrlSlug] Allow processing unpublished fallback document is now default behaviour, removed the related configuration options and usages (`allow_processing_unpublished_fallback_document`, `ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS`). For details, please see [#10005](https://github.com/pimcore/pimcore/issues/10005#issuecomment-907007745)
 
 
 ## 10.6.0
