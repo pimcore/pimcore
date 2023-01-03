@@ -1268,9 +1268,9 @@ class Asset extends Element\AbstractElement
     /**
      * @return $this
      */
-    public function setMimeType(string $mimetype): static
+    public function setMimeType(?string $mimetype): static
     {
-        $this->mimetype = (string)$mimetype;
+        $this->mimetype = $mimetype;
 
         return $this;
     }
