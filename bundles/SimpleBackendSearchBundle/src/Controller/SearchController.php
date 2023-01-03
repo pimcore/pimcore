@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 
 /**
  * @Route("/search")
@@ -23,6 +24,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class SearchController extends AdminController
 {
+    use AdminStyleTrait;
+
     /**
      * @Route("/quicksearch-get-by-id", name="pimcore_search_quicksearch_by_id", methods={"GET"})
      *
@@ -64,7 +67,7 @@ class SearchController extends AdminController
                 $validLanguages = \Pimcore\Tool::getValidLanguages();
 
                 $data['preview'] = $this->renderView(
-                    '@SimpleBackendSearch/quicksearch/' . $hit->getId()->getType() . '.html.twig', [
+                    '@SimpleBackendSearchBundle/quicksearch/' . $hit->getId()->getType() . '.html.twig', [
                         'element' => $element,
                         'iconCls' => $data['iconCls'],
                         'config' => $config,
@@ -148,5 +151,113 @@ class SearchController extends AdminController
         $result = ['data' => $elements, 'success' => true];
 
         return $this->adminJson($result);
+    }
+
+    protected function filterQueryParam(string $query): string
+    {
+        if ($query == '*') {
+            $query = '';
+        }
+
+        $query = str_replace('&quot;', '"', $query);
+        $query = str_replace('%', '*', $query);
+        $query = str_replace('@', '#', $query);
+        $query = preg_replace("@([^ ])\-@", '$1 ', $query);
+
+        $query = str_replace(['<', '>', '(', ')', '~'], ' ', $query);
+
+        // it is not allowed to have * behind another *
+        $query = preg_replace('#[*]+#', '*', $query);
+
+        // no boolean operators at the end of the query
+        $query = rtrim($query, '+- ');
+
+        return $query;
+    }
+
+    /**
+     * @param array $types
+     *
+     * @return string
+     *
+     *@internal
+     *
+     */
+    protected function getPermittedPaths(array $types = ['asset', 'document', 'object']): string
+    {
+        $user = $this->getAdminUser();
+        $db = \Pimcore\Db::get();
+
+        $allowedTypes = [];
+
+        foreach ($types as $type) {
+            if ($user->isAllowed($type . 's')) { //the permissions are just plural
+                $elementPaths = Element\Service::findForbiddenPaths($type, $user);
+
+                $forbiddenPathSql = [];
+                $allowedPathSql = [];
+                foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                    $exceptions = '';
+                    $folderSuffix = '';
+                    if ($allowedPaths) {
+                        $exceptionsConcat = implode("%' OR fullpath LIKE '", $allowedPaths);
+                        $exceptions = " OR (fullpath LIKE '" . $exceptionsConcat . "%')";
+                        $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
+                    }
+                    $forbiddenPathSql[] = ' (fullpath NOT LIKE ' . $db->quote($forbiddenPath . $folderSuffix . '%') . $exceptions . ') ';
+                }
+                foreach ($elementPaths['allowed'] as $allowedPaths) {
+                    $allowedPathSql[] = ' fullpath LIKE ' . $db->quote($allowedPaths  . '%');
+                }
+
+                // this is to avoid query error when implode is empty.
+                // the result would be like `(maintype = type AND ((path1 OR path2) AND (not_path3 AND not_path4)))`
+                $forbiddenAndAllowedSql = '(maintype = \'' . $type . '\'';
+
+                if ($allowedPathSql || $forbiddenPathSql) {
+                    $forbiddenAndAllowedSql .= ' AND (';
+                    $forbiddenAndAllowedSql .= $allowedPathSql ? '( ' . implode(' OR ', $allowedPathSql) . ' )' : '';
+
+                    if ($forbiddenPathSql) {
+                        //if $allowedPathSql "implosion" is present, we need `AND` in between
+                        $forbiddenAndAllowedSql .= $allowedPathSql ? ' AND ' : '';
+                        $forbiddenAndAllowedSql .= implode(' AND ', $forbiddenPathSql);
+                    }
+                    $forbiddenAndAllowedSql .= ' )';
+                }
+
+                $forbiddenAndAllowedSql.= ' )';
+
+                $allowedTypes[] = $forbiddenAndAllowedSql;
+            }
+        }
+
+        //if allowedTypes is still empty after getting the workspaces, it means that there are no any master permissions set
+        // by setting a `false` condition in the query makes sure that nothing would be displayed.
+        if (!$allowedTypes) {
+            $allowedTypes = ['false'];
+        }
+
+        return '('.implode(' OR ', $allowedTypes) .')';
+    }
+
+    protected function shortenPath(string $path): string
+    {
+        $parts = explode('/', trim($path, '/'));
+        $count = count($parts) - 1;
+
+        for ($i = $count; ; $i--) {
+            $shortPath = '/' . implode('/', array_unique($parts));
+            if ($i === 0 || strlen($shortPath) <= 50) {
+                break;
+            }
+            array_splice($parts, $i - 1, 1, '…');
+        }
+
+        if (mb_strlen($shortPath) > 50) {
+            $shortPath = mb_substr($shortPath, 0, 49) . '…';
+        }
+
+        return $shortPath;
     }
 }

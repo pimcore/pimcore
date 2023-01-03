@@ -658,12 +658,16 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                     }.bind(this)
                 });
             }
+
+            // dispatch event to add searchButton
+            document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchButtonInit, {
+                detail: {
+                    items: toolbarItems,
+                    class: this
+                }
+            }));
+
             toolbarItems = toolbarItems.concat([
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                },
                 this.getCreateControl()
             ]);
         }
@@ -758,35 +762,18 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             iconCls: "pimcore_icon_search",
             handler: function (item) {
                 item.parentMenu.destroy();
-                this.openSearchEditor();
+
+                //dispatch openSearchDialog event
+                document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
+                    detail: {
+                        class: this
+                    }
+                }));
             }.bind(this.reference)
         }));
 
         e.stopEvent();
         menu.showAt(e.getXY());
-    },
-
-    openSearchEditor: function () {
-        var allowedClasses;
-        if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
-            allowedClasses = [];
-            for (var i = 0; i < this.fieldConfig.classes.length; i++) {
-                allowedClasses.push(this.fieldConfig.classes[i].classes);
-            }
-        }
-
-        pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
-                type: ["object"],
-                subtype: {
-                    object: ["object", "variant"]
-                },
-                specific: {
-                    classes: allowedClasses
-                }
-            },
-            {
-                context: Ext.apply({scope: "objectEditor"}, this.getContext())
-            });
     },
 
     removeObject: function (index, item) {

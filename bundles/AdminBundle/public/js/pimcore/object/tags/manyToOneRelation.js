@@ -145,12 +145,13 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             });
         }
 
-        items.push({
-            xtype: "button",
-            iconCls: "pimcore_icon_search",
-            style: "margin-left: 5px",
-            handler: this.openSearchEditor.bind(this)
-        });
+        // dispatch event to add searchButton
+        document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchButtonInit, {
+            detail: {
+                items,
+                class: this
+            }
+        }));
 
         // add upload button when assets are allowed
         if (this.fieldConfig.assetsAllowed) {
@@ -341,7 +342,13 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             iconCls: "pimcore_icon_search",
             handler: function (item) {
                 item.parentMenu.destroy();
-                this.openSearchEditor();
+
+                //dispatch openSearchDialog event
+                document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
+                    detail: {
+                        class: this
+                    }
+                }));
             }.bind(this)
         }));
 
@@ -361,59 +368,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         menu.showAt(e.getXY());
 
         e.stopEvent();
-    },
-
-    openSearchEditor: function () {
-        var allowedTypes = [];
-        var allowedSpecific = {};
-        var allowedSubtypes = {};
-        var i;
-
-        if (this.fieldConfig.objectsAllowed) {
-            allowedTypes.push("object");
-            allowedSubtypes.object = [];
-            if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
-                allowedSpecific.classes = [];
-                allowedSubtypes.object.push("object", "variant");
-                for (i = 0; i < this.fieldConfig.classes.length; i++) {
-                    allowedSpecific.classes.push(this.fieldConfig.classes[i].classes);
-
-                }
-            }
-            if(this.dataObjectFolderAllowed) {
-                allowedSubtypes.object.push("folder");
-            }
-
-            if(allowedSubtypes.length == 0) {
-                allowedSubtypes.object = ["object", "folder", "variant"];
-            }
-        }
-        if (this.fieldConfig.assetsAllowed) {
-            allowedTypes.push("asset");
-            if (this.fieldConfig.assetTypes != null && this.fieldConfig.assetTypes.length > 0) {
-                allowedSubtypes.asset = [];
-                for (i = 0; i < this.fieldConfig.assetTypes.length; i++) {
-                    allowedSubtypes.asset.push(this.fieldConfig.assetTypes[i].assetTypes);
-                }
-            }
-        }
-        if (this.fieldConfig.documentsAllowed) {
-            allowedTypes.push("document");
-            if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
-                allowedSubtypes.document = [];
-                for (i = 0; i < this.fieldConfig.documentTypes.length; i++) {
-                    allowedSubtypes.document.push(this.fieldConfig.documentTypes[i].documentTypes);
-                }
-            }
-        }
-
-        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
-            type: allowedTypes,
-            subtype: allowedSubtypes,
-            specific: allowedSpecific
-        }, {
-            context: Ext.apply({scope: "objectEditor"}, this.getContext())
-        });
     },
 
     addDataFromSelector: function (data) {

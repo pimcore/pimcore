@@ -33,16 +33,26 @@ class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle
     public function getJsPaths(): array
     {
         return [
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/events.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/startup.js',
 
             '/bundles/pimcoresimplebackendsearch/js/pimcore/layout/toolbar.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/layout/quickSearch.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/layout/searchModal.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/layout/searchButton.js',
 
             '/bundles/pimcoresimplebackendsearch/js/pimcore/selector/abstract.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/selector/asset.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/selector/document.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/selector/object.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/selector/selector.js',
+
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/abstractRelations.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/advancedManyToManyObjectRelation.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/advancedManyToManyRelation.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/manyToManyObjectRelation.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/manyToManyRelation.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/manyToOneRelation.js',
         ];
     }
 

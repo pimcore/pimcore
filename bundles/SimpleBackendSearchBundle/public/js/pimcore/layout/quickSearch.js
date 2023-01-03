@@ -1,3 +1,6 @@
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.simpleBackendSearch.layout.quickSearch");
 
 Ext.define('pimcore.simpleBackendSearch.layout.quickSearch', {

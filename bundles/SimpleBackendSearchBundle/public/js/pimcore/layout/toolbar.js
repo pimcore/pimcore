@@ -1,3 +1,6 @@
+/**
+ * @internal
+ */
 pimcore.registerNS("pimcore.simpleBackendSearch.layout.toolbar");
 
 pimcore.simpleBackendSearch.layout.toolbar = Class.create({

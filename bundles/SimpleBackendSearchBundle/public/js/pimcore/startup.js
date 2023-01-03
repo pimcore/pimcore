@@ -1,6 +1,8 @@
 pimcore.registerNS("pimcore.simpleBackendSearch");
 
 pimcore.simpleBackendSearch = Class.create({
+
+
     initialize: function () {
         //TODO cfeldkirchner enable `registerKeyBinding` event once the new event is merged
         //document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
