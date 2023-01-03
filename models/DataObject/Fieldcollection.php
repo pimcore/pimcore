@@ -34,7 +34,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @internal
      *
-     * @var TItem[]
+     * @var array<TItem|\__PHP_Incomplete_Class>
      */
     protected $items = [];
 
