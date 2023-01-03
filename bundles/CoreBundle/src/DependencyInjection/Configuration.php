@@ -173,7 +173,6 @@ final class Configuration implements ConfigurationInterface
         $this->addStaticRoutesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
-        $this->addGlossaryNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
 
@@ -2092,18 +2091,6 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
-    }
-
-    private function addGlossaryNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('glossary')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('blocked_tags')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar');
     }
 
     private function addTemplatingEngineNode(ArrayNodeDefinition $rootNode): void

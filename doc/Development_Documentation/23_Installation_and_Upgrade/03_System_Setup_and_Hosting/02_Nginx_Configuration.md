@@ -108,8 +108,8 @@ server {
     }
 
     # Some Admin Modules need this:
-    # Database Admin, Server Info
-    location ~* ^/admin/(adminer|external) {
+    # Server Info, Opcache
+    location ~* ^/admin/external {
         rewrite .* /index.php$is_args$args last;
     }
     
@@ -392,8 +392,8 @@ server {
     }
 
     # Some Admin Modules need this:
-    # Database Admin, Server Info
-    location ~* ^/admin/(adminer|external) {
+    # Server Info, Opcache
+    location ~* ^/admin/external {
         rewrite .* /index.php$is_args$args last;
     }
     
