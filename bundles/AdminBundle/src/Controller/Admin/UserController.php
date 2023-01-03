@@ -464,7 +464,7 @@ class UserController extends AdminController implements KernelControllerEventInt
 
         // unset confidential informations
         $userData = $user->getObjectVars();
-        $userData['roles'] =  array_map('intval', $user->getRoles());
+        $userData['roles'] =  $user->getRoles();
         $userData['docTypes'] =  $user->getDocTypes();
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;

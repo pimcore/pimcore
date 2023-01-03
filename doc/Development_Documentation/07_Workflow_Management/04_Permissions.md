@@ -1,6 +1,6 @@
 # Modifying Pimcore Permissions Based On Workflow Places
 
-As listed in the [configuration details section](./01_Configuration_Details.md) it's possible to modify the Pimcore 
+As listed in the [configuration details section](./01_Configuration_Details/README.md) it's possible to modify the Pimcore 
 element permissions based on the current workflow place.
 
 It's possible to add multiple permission configurations based on conditions. The first entry where the condition is 

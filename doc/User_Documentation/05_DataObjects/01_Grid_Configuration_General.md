@@ -7,7 +7,7 @@ The chosen column configuration will also be applied for the CSV Export.
 ![Configurator Button](../img/gridconfig/configurator_button.png)
 
 For experienced users there is an option to assemble custom columns using special operators as described in detail in 
-* [Grid Configuration Operators](./02_Grid_Configuration_Operators.md)
+* [Grid Configuration Operators](./01_Grid_Configuration_Operators/README.md)
 
 ## Saving & Sharing
 

@@ -14,13 +14,29 @@ pimcore.bundle.SystemInfo = Class.create({
         this.user = pimcore.globalmanager.get('user');
         this.toolbar = pimcore.globalmanager.get('layout_toolbar');
         this.perspectiveConfig = pimcore.globalmanager.get('perspective');
+        const systemInfoMenuItems = this.getSystemInfoMenu();
 
-        const menus = this.getSystemInfoMenu();
+        const filteredMenu = menu.extras.items.filter(function (item) {
+            return item.itemId === 'pimcore_menu_extras_system_info';
+        });
 
-        if (menus.length > 0 && menu.extras) {
-            menus.map(function(item) {
-                menu.extras.items.push(item);
+        if (filteredMenu.length > 0) {
+            const systemInfoMenu = filteredMenu.shift();
+            systemInfoMenuItems.map(function(item) {
+                systemInfoMenu.menu.items.push(item);
             });
+        } else {
+            menu.extras.items.push({
+                text: t("system_infos_and_tools"),
+                iconCls: "pimcore_nav_icon_info",
+                hideOnClick: false,
+                itemId: 'pimcore_menu_extras_system_info',
+                menu: {
+                    cls: "pimcore_navigation_flyout",
+                    shadow: false,
+                    items: systemInfoMenuItems
+                }
+            })
         }
     },
 
