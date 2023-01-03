@@ -27,7 +27,7 @@ pimcore.glossary = Class.create({
         try {
             pimcore.globalmanager.get("glossary").activate();
         } catch (e) {
-            pimcore.globalmanager.add("glossary", new pimcore.settings.glossary());
+            pimcore.globalmanager.add("glossary", new pimcore.bundle.glossary());
         }
     },
 
