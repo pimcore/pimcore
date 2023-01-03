@@ -389,7 +389,7 @@ final class Version extends AbstractModel
         return $this;
     }
 
-    public function setUserId(?int $userId): static
+    public function setUserId(int $userId): static
     {
         if (is_numeric($userId)) {
             if ($user = User::getById($userId)) {
