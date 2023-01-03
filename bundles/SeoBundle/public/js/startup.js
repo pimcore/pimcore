@@ -62,28 +62,28 @@ pimcore.seo = Class.create({
 
     showDocumentSeo: function () {
         try {
-            pimcore.globalmanager.get("seo_seopanel").activate();
+            pimcore.globalmanager.get("bundle_seo_seo_seopanel").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("seo_seopanel", new pimcore.document.seopanel());
+            pimcore.globalmanager.add("bundle_seo_seo_seopanel", new pimcore.bundle.seo.seopanel());
         }
     },
 
     showRobotsTxt: function () {
         try {
-            pimcore.globalmanager.get("robotstxt").activate();
+            pimcore.globalmanager.get("bundle_seo_robotstxt").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("robotstxt", new pimcore.settings.robotstxt());
+            pimcore.globalmanager.add("bundle_seo_robotstxt", new pimcore.bundle.seo.robotstxt());
         }
     },
 
     showHttpErrorLog: function () {
         try {
-            pimcore.globalmanager.get("http_error_log").activate();
+            pimcore.globalmanager.get("bundle_seo_http_error_log").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("http_error_log", new pimcore.settings.httpErrorLog());
+            pimcore.globalmanager.add("bundle_seo_http_error_log", new pimcore.bundle.seo.httpErrorLog());
         }
     },
 

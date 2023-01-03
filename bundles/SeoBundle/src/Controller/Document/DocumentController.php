@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\SeoBundle\Controller\Admin\Document;
+namespace Pimcore\Bundle\SeoBundle\Controller\Document;
 
 
 
@@ -42,7 +42,7 @@ class DocumentController extends ElementControllerBase
     final const DOCUMENT_ROOT_ID = 1;
 
     /**
-     * @Route("/seopanel-tree-root", name="pimcore_seo_document_document_seopaneltreeroot", methods={"GET"})
+     * @Route("/seopanel-tree-root", name="pimcore_bundle_seo_document_document_seopaneltreeroot", methods={"GET"})
      *
      * @param DocumentRouteHandler $documentRouteHandler
      *
@@ -67,7 +67,7 @@ class DocumentController extends ElementControllerBase
     }
 
     /**
-     * @Route("/seopanel-tree", name="pimcore_seo_document_document_seopaneltree", methods={"GET"})
+     * @Route("/seopanel-tree", name="pimcore_bundle_seo_document_document_seopaneltree", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher

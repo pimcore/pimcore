@@ -1,6 +1,6 @@
-_pimcore_seo_backend:
+_pimcore_bundle_seo_backend:
     resource: "../../src/Controller/"
     type:     annotation
-    prefix:   /admin/seo
+    prefix:   /admin/bundle/seo
     options:
         expose: true

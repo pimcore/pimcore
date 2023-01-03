@@ -21,3 +21,10 @@ services:
         resource: '../src/Controller'
         public: true
         tags: ['controller.service_arguments']
+
+
+    #
+    # EVENTLISTENER
+    #
+
+    Pimcore\Bundle\SeoBundle\EventListener\ResponseExceptionListener: ~
