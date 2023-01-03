@@ -35,7 +35,7 @@ trait Parallelization
     }
 
     /**
-     * @deprecated Deprecated since webmozarts/console-parallelization 2.0.0 and will be removed in Pimcore 11.
+     * @deprecated Deprecated since webmozarts/console-parallelization 2.0.0 and will be removed in Pimcore 11. Please use configureCommand instead.
      */
     protected static function configureParallelization(Command $command): void
     {
@@ -69,6 +69,15 @@ trait Parallelization
                 '50'
             )
         ;
+    }
+
+    /**
+     * @param Command $command
+     * @return void
+     */
+    protected static function configureCommand(Command $command)
+    {
+        self::configureParallelization($command);
     }
 
     /**
