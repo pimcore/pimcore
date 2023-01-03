@@ -40,7 +40,7 @@ final class User extends User\UserRole
 
     protected ?string $email = null;
 
-    protected string $language = 'en';
+    protected ?string $language = 'en';
 
     protected bool $admin = false;
 
@@ -174,7 +174,7 @@ final class User extends User\UserRole
         return $this;
     }
 
-    public function getLanguage(): string
+    public function getLanguage(): ?string
     {
         return $this->language;
     }
@@ -182,7 +182,7 @@ final class User extends User\UserRole
     /**
      * @return $this
      */
-    public function setLanguage(string $language): static
+    public function setLanguage(?string $language): static
     {
         if ($language) {
             $this->language = $language;
@@ -303,7 +303,7 @@ final class User extends User\UserRole
      *
      * @return $this
      */
-    public function setRoles(array|string $roles): static
+    public function setRoles(array|string|null $roles): static
     {
         if (is_string($roles) && $roles !== '') {
             $this->roles = array_map('intval', explode(',', $roles));
@@ -327,7 +327,7 @@ final class User extends User\UserRole
     /**
      * @return $this
      */
-    public function setWelcomescreen(bool $welcomescreen): static
+    public function setWelcomescreen(?bool $welcomescreen): static
     {
         $this->welcomescreen = (bool)$welcomescreen;
 
@@ -342,9 +342,9 @@ final class User extends User\UserRole
     /**
      * @return $this
      */
-    public function setCloseWarning(bool $closeWarning): static
+    public function setCloseWarning(?bool $closeWarning): static
     {
-        $this->closeWarning = $closeWarning;
+        $this->closeWarning = (bool) $closeWarning;
 
         return $this;
     }
@@ -357,9 +357,9 @@ final class User extends User\UserRole
     /**
      * @return $this
      */
-    public function setMemorizeTabs(bool $memorizeTabs): static
+    public function setMemorizeTabs(?bool $memorizeTabs): static
     {
-        $this->memorizeTabs = $memorizeTabs;
+        $this->memorizeTabs = (bool) $memorizeTabs;
 
         return $this;
     }
@@ -372,9 +372,9 @@ final class User extends User\UserRole
     /**
      * @return $this
      */
-    public function setAllowDirtyClose(bool $allowDirtyClose): static
+    public function setAllowDirtyClose(?bool $allowDirtyClose): static
     {
-        $this->allowDirtyClose = $allowDirtyClose;
+        $this->allowDirtyClose = (bool) $allowDirtyClose;
 
         return $this;
     }
@@ -624,9 +624,9 @@ final class User extends User\UserRole
     /**
      * @return $this
      */
-    public function setLastLogin(int $lastLogin): static
+    public function setLastLogin(?int $lastLogin): static
     {
-        $this->lastLogin = $lastLogin;
+        $this->lastLogin = (int) $lastLogin;
 
         return $this;
     }
@@ -899,7 +899,7 @@ final class User extends User\UserRole
      *
      * @param array<string, mixed>|string $key
      */
-    public function setTwoFactorAuthentication(array|string $key, mixed $value = null): void
+    public function setTwoFactorAuthentication(array|string|null $key, mixed $value = null): void
     {
         if (is_string($key) && $value === null && strlen($key) > 3) {
             $this->twoFactorAuthentication = json_decode($key, true);

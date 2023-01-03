@@ -179,12 +179,14 @@ class UserRole extends AbstractUser
         return $permissionInfo;
     }
 
-    public function setPermissions(array|string $permissions): static
+    public function setPermissions(array|string|null $permissions): static
     {
         if (is_string($permissions)) {
             $this->permissions = explode(',', $permissions);
         } elseif (is_array($permissions)) {
             $this->permissions = $permissions;
+        } else {
+            $this->permissions = [];
         }
 
         return $this;
@@ -250,7 +252,7 @@ class UserRole extends AbstractUser
         return $this->workspacesObject;
     }
 
-    public function setClasses(array|string $classes): static
+    public function setClasses(array|string|null $classes): static
     {
         $classes = $this->prepareArray($classes);
 
@@ -264,7 +266,7 @@ class UserRole extends AbstractUser
         return $this->classes;
     }
 
-    public function setDocTypes(array|string $docTypes): static
+    public function setDocTypes(array|string|null $docTypes): static
     {
         $docTypes = $this->prepareArray($docTypes);
 
@@ -283,7 +285,7 @@ class UserRole extends AbstractUser
         return $this->perspectives;
     }
 
-    public function setPerspectives(array|string $perspectives): static
+    public function setPerspectives(array|string|null $perspectives): static
     {
         $perspectives = $this->prepareArray($perspectives);
 
@@ -297,7 +299,7 @@ class UserRole extends AbstractUser
         return $this->websiteTranslationLanguagesView;
     }
 
-    public function setWebsiteTranslationLanguagesView(array|string $websiteTranslationLanguagesView): static
+    public function setWebsiteTranslationLanguagesView(array|string|null $websiteTranslationLanguagesView): static
     {
         $websiteTranslationLanguagesView = $this->prepareArray($websiteTranslationLanguagesView);
 
@@ -311,7 +313,7 @@ class UserRole extends AbstractUser
         return $this->websiteTranslationLanguagesEdit;
     }
 
-    public function setWebsiteTranslationLanguagesEdit(array|string $websiteTranslationLanguagesEdit): static
+    public function setWebsiteTranslationLanguagesEdit(array|string|null $websiteTranslationLanguagesEdit): static
     {
         $websiteTranslationLanguagesEdit = $this->prepareArray($websiteTranslationLanguagesEdit);
 
@@ -330,7 +332,7 @@ class UserRole extends AbstractUser
      *
      * @internal
      */
-    protected function prepareArray(array|string $array): array|string
+    protected function prepareArray(array|string|null $array): array|string
     {
         if (is_string($array) && strlen($array)) {
             $array = explode(',', $array);
