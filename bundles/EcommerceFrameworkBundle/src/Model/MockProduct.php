@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
@@ -52,7 +53,9 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
 
     public function getOSPrice(int $quantityScale = 1): PriceInterface
     {
-        return new Price(Decimal::create(0), new Currency('USD'));
+        /** @var EnvironmentInterface $environment */
+        $environment = \Pimcore::getKernel()->getContainer()->get(EnvironmentInterface::class);
+        return new Price(Decimal::create(0), $environment->getDefaultCurrency());
     }
 
     public function getOSPriceInfo(int $quantityScale = 1): PriceInfoInterface

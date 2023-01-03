@@ -159,7 +159,8 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      */
     public function getOSIsBookable($quantityScale = 1): bool
     {
-        return $this->isActive();
+        $price = $this->getOSPrice($quantityScale);
+        return $this->isActive() && $price->getAmount() >= 0;
     }
 
     /**
