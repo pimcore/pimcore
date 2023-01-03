@@ -359,8 +359,12 @@ class Multiselect extends Data implements
         return $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDiffDataFromEditmode($data, $object = null, $params = []): ?array
     {
+        $data = $data[0]['data'];
         if (is_string($data) && strlen($data)) {
             return explode(',', $data);
         }
