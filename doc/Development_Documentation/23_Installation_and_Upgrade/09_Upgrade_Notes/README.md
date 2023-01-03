@@ -120,6 +120,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Ecommerce] Elasticsearch 7 support was removed
 - [Ecommerce] Config option `es_client_params` in `index_service` was removed 
 - [ClassSavedInterface] Removed `method_exists` bc layer. Please add the corresponding `ClassSavedInterface` interface to your custom field definitions. For more details check the 10.6.0 patch notes.
+- [DataObjects\Documents] **BC Break**: Calling `getChildren/getSiblings` on `AbstractObject` or `Document` now returns unloaded listing. If the list is not traveresed immediately, then it is required to call `load()` explicitily.
+  Also, `setChildren` now accepts `Listing` as first parameter instead of array.
 - [Admin] Removed `adminer` as built-in database management tool.
 
 ## 10.6.0

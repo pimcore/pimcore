@@ -290,11 +290,9 @@ class Item extends Model\AbstractModel
             } else {
                 $children = $element->getChildren();
             }
-            if (is_array($children)) {
-                foreach ($children as $child) {
-                    $child->setParentId($element->getId());
-                    $this->doRecursiveRestore($child);
-                }
+            foreach ($children as $child) {
+                $child->setParentId($element->getId());
+                $this->doRecursiveRestore($child);
             }
         }
     }

@@ -671,7 +671,9 @@ class Service extends Model\AbstractModel
         }
         if (!$found) {
             $newElement = Element\Service::getElementById($new->getType(), $new->getId());
-            $target->setChildren(array_merge($target->getChildren(), [$newElement]));
+            $listing = $target->getChildren();
+            $listing->setData(array_merge($listing->getData(), [$newElement]));
+            $target->setChildren($listing);
         }
     }
 
