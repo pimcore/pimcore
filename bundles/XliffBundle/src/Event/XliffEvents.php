@@ -16,34 +16,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Event;
 
-final class TranslationEvents
+final class XliffEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\TranslationEvent")
+     * @Event("Pimcore\Event\Model\TranslationXliffEvent")
      *
      * @var string
      */
-    const PRE_SAVE = 'pimcore.translation.preSave';
+    const XLIFF_ATTRIBUTE_SET_EXPORT = 'pimcore.translation.xliff.attribute_set_export';
 
     /**
-     * @Event("Pimcore\Event\Model\TranslationEvent")
+     * @Event("Pimcore\Event\Model\TranslationXliffEvent")
      *
      * @var string
      */
-    const POST_SAVE = 'pimcore.translation.postSave';
-
-    /**
-     * @Event("Pimcore\Event\Model\TranslationEvent")
-     *
-     * @var string
-     */
-    const PRE_DELETE = 'pimcore.translation.preDelete';
-
-    /**
-     * @Event("Pimcore\Event\Model\TranslationEvent")
-     *
-     * @var string
-     */
-    const POST_DELETE = 'pimcore.translation.postDelete';
-
+    const XLIFF_ATTRIBUTE_SET_IMPORT = 'pimcore.translation.xliff.attribute_set_import';
 }

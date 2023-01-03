@@ -324,17 +324,14 @@
                              text: t("translations"),
                              iconCls: "pimcore_nav_icon_translations",
                              itemId: 'pimcore_menu_extras_translations_shared_translations',
-                             handler: this.editTranslations.bind(this, 'messages')
-                         }, {
-                             text: "XLIFF " + t("export") + "/" + t("import"),
-                             iconCls: "pimcore_nav_icon_translations",
-                             itemId: 'pimcore_menu_extras_translations_xliff',
-                             handler: this.xliffImportExport
+                             handler: this.editTranslations.bind(this, 'messages'),
+                             priority: 10
                          }, {
                              text: "Microsoft® Word " + t("export"),
                              iconCls: "pimcore_nav_icon_word_export",
                              itemId: 'pimcore_menu_extras_translations_word_export',
                              handler: this.wordExport
+                             priority: 30
                          }]
                      }
                  });
