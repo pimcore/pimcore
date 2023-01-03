@@ -6,6 +6,7 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Pimcore\Bundle\FileExplorerBundle\DependencyInjection\PimcoreFileExplorerExtension;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use function dirname;
 
 class PimcoreFileExplorerBundle extends AbstractPimcoreBundle
 {
@@ -40,7 +41,14 @@ class PimcoreFileExplorerBundle extends AbstractPimcoreBundle
 
     public function getPath(): string
     {
-        return \dirname(__DIR__);
+        return dirname(__DIR__);
+    }
+
+    public function getInstaller(): Installer
+    {
+        /** @var $installer Installer */
+        $installer = $this->container->get(Installer::class);
+        return $installer;
     }
 
 }
