@@ -78,7 +78,7 @@ class ListCommand extends AbstractBundleCommand
             try {
                 $bundle = $this->bundleManager->getActiveBundle($bundleClass, false);
                 if ($details) {
-                    $row[] = substr($bundle->getDescription(), 0, 30) . (strlen($bundle->getDescription()) > 50 ? '...' : '');
+                    $row[] = substr($bundle->getDescription(), 0, 30) . (strlen($bundle->getDescription()) > 30 ? '...' : '');
                     $row[] = $bundle->getVersion();
                 }
                 $row[] = true;
