@@ -471,8 +471,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function getChildren(
         array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
         bool $includingUnpublished = false
-    ): Listing
-    {
+    ): Listing {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->children[$cacheKey])) {
@@ -502,8 +501,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function hasChildren(
         array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
         bool $includingUnpublished = null
-    ): bool
-    {
+    ): bool {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (isset($this->hasChildren[$cacheKey])) {
@@ -519,8 +517,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function getSiblings(
         array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
         bool $includingUnpublished = false
-    ): Listing
-    {
+    ): Listing {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->siblings[$cacheKey])) {
@@ -553,8 +550,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function hasSiblings(
         array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
         bool $includingUnpublished = null
-    ): bool
-    {
+    ): bool {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (isset($this->hasSiblings[$cacheKey])) {
@@ -1015,8 +1011,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         ?Listing $children,
         array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
         bool $includingUnpublished = false
-    ): static
-    {
+    ): static {
         if ($children === null) {
             // unset all cached children
             $this->children = [];
