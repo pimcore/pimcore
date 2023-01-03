@@ -277,6 +277,17 @@ class Multiselect extends Data implements
         return $data;
     }
 
+
+    public function getDiffDataFromEditmode(mixed $data, Concrete $object = null, array $params = []): ?array
+    {
+        $data = $data[0]['data'];
+        if (is_string($data) && strlen($data)) {
+            return explode(',', $data);
+        }
+
+        return null;
+    }
+
     /**
      * @param mixed $data
      * @param null|DataObject\Concrete $object
