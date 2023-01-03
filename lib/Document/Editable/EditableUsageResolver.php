@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document;

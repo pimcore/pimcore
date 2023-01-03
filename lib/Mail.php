@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use League\HTMLToMarkdown\HtmlConverter;
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;

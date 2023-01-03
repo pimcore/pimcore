@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Routing\Dynamic;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
-use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\DataObject;
 use Pimcore\Routing\DataObjectRoute;
