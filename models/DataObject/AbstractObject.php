@@ -535,7 +535,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $list->setObjectTypes($objectTypes);
                 $list->setOrder('asc');
                 $this->siblings[$cacheKey] = $list;
-                $this->hasSiblings[$cacheKey] = (bool) $list->count();
             } else {
                 $list = new Listing();
                 $list->setObjects([]);

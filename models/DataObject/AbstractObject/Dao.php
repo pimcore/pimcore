@@ -366,7 +366,11 @@ class Dao extends Model\Element\Dao
             $sql .= ' AND published = 1';
         }
 
-        $sql .= " AND `type` IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
+        if (!empty($objectTypes)) {
+            $sql .= " AND `type` IN ('" . implode("','", $objectTypes) . "')";
+        }
+
+        $sql .= ' LIMIT 1';
 
         $c = $this->db->fetchOne($sql, $params);
 
