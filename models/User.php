@@ -640,15 +640,15 @@ final class User extends User\UserRole
     {
         $userConfig = \Pimcore\Config::getSystemConfiguration('user');
         // make sure the default key binding node is in the config
-        if(is_array($userConfig) && array_key_exists(self::DEFAULT_KEY_BINDINGS, $userConfig)) {
+        if (is_array($userConfig) && array_key_exists(self::DEFAULT_KEY_BINDINGS, $userConfig)) {
             $defaultKeyBindingsConfig = $userConfig[self::DEFAULT_KEY_BINDINGS];
             $defaultKeyBindings = [];
-            if(!empty($defaultKeyBindingsConfig)) {
-                foreach($defaultKeyBindingsConfig as $keys) {
+            if (!empty($defaultKeyBindingsConfig)) {
+                foreach ($defaultKeyBindingsConfig as $keys) {
                     $defaultKeyBinding = [];
                     // we do not check if the keys are empty because key is required
-                    foreach($keys as $index => $value) {
-                        if($index === 'key') {
+                    foreach ($keys as $index => $value) {
+                        if ($index === 'key') {
                             $value = ord($value);
                         }
                         $defaultKeyBinding[$index] = $value;
@@ -658,7 +658,7 @@ final class User extends User\UserRole
             }
         }
 
-        if(!empty($defaultKeyBindings)) {
+        if (!empty($defaultKeyBindings)) {
             return json_encode($defaultKeyBindings);
         }
 

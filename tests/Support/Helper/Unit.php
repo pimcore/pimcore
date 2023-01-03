@@ -20,7 +20,6 @@ namespace Pimcore\Tests\Support\Helper;
 // all public methods declared in helper class will be available in $I
 
 use Codeception\Lib\ModuleContainer;
-use Codeception\Module;
 use Pimcore\Bundle\GlossaryBundle\Installer;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Tests\Support\Util\Autoloader;
@@ -35,12 +34,14 @@ class Unit extends \Codeception\Module
 
         parent::__construct($moduleContainer, $config);
     }
+
     public function _beforeSuite(array $settings = [])
     {
         $this->installPimcoreGlossaryBundle();
     }
 
-    private function installPimcoreGlossaryBundle() {
+    private function installPimcoreGlossaryBundle()
+    {
         if ($this->config['run_installer']) {
             /** @var Pimcore $pimcoreModule */
             $pimcoreModule = $this->getModule('\\' . Pimcore::class);

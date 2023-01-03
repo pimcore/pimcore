@@ -22,7 +22,6 @@ use Pimcore\Bundle\GlossaryBundle\Tool\Processor;
 use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\TestCase;
 
-
 class GlossaryTest extends TestCase
 {
     protected Processor $processor;

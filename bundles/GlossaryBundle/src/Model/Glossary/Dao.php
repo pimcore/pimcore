@@ -15,7 +15,6 @@
 
 namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 
-
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Exception\NotFoundException;

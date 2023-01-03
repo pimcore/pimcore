@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GlossaryBundle\Controller;
 
-
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Cache;

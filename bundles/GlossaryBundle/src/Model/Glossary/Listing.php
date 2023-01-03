@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 
-
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Model\Listing\AbstractListing;
 

@@ -24,7 +24,7 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const USER_PERMISSIONS = [
-        'glossary'
+        'glossary',
     ];
 
     public function install(): void
