@@ -36,7 +36,7 @@
     "add_data": "Přidat data",
     "add_hotspot": "Přidat hotspot",
     "add_marker_or_hotspots": "Přidat marker nebo hotspot",
-
+    "custom_reports": "Vlastní reporty",
     "start_date": "Počáteční datum",
     "start_date_relative": "Počáteční datum (relativní k dnešku)",
     "end_date": "Konečné datum",
@@ -109,6 +109,7 @@
     "new_password": "Nové heslo",
     "retype_password": "Zopakujte nové heslo",
     "seo_document_editor": "Dokumentový SEO editor",
+    "reports": "Reporty",
     "roles": "Role",
     "Password": "Heslo",
     "Forgot your password": "Zapomenuté heslo",
