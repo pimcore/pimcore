@@ -1329,10 +1329,14 @@
              detail: {
                  translation: this,
                  domain: domain ?? "website"
-             }
+             },
+             cancelable: true
          });
  
-         document.dispatchEvent(preEditTranslations);
+         const isAllowed = document.dispatchEvent(preEditTranslations);
+         if (!isAllowed){
+             return;
+         }
  
          try {
              pimcore.globalmanager.get("translationdomainmanager").activate();
