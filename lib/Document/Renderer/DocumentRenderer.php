@@ -28,6 +28,7 @@ use Pimcore\Templating\Renderer\ActionRenderer;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class DocumentRenderer implements DocumentRendererInterface
 {
@@ -63,12 +64,8 @@ class DocumentRenderer implements DocumentRendererInterface
         $this->localeService = $localeService;
     }
 
-    /**
-     * @required
-     *
-     * @param ContainerService $containerService
-     */
-    public function setContainerService(ContainerService $containerService)
+    #[Required]
+    public function setContainerService(ContainerService $containerService): void
     {
         // we have to ensure that the ContainerService was initialized at the time this service is created
         // this is necessary, since the ContainerService registers a listener for DocumentEvents::RENDERER_PRE_RENDER

@@ -75,8 +75,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             $domain = Translation::DOMAIN_DEFAULT;
         }
 
-        $id = (string) $id;
-
         if ($domain === Translation::DOMAIN_ADMIN && !empty($this->adminTranslationMapping)) {
             if (null === $locale) {
                 $locale = $this->getLocale();

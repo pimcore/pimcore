@@ -65,14 +65,13 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public ?array $availableSites = null;
 
     /**
+     * @see Data::getDataForEditmode
+     *
      * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return array
-     *
-     * @see Data::getDataForEditmode
-     *
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -107,8 +106,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @param array $params
      *
      * @return Model\DataObject\Data\UrlSlug[]
-     *
-     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -117,7 +114,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             foreach ($data as $siteId => $item) {
                 $siteId = $item[0];
                 $slug = $item[1];
-                $slug = new Model\DataObject\Data\UrlSlug($slug, $siteId);
+                $slug = new Model\DataObject\Data\UrlSlug($slug, (int) $siteId);
 
                 if ($item[2]) {
                     $slug->setPreviousSlug($item[2]);

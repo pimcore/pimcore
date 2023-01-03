@@ -54,7 +54,7 @@ class CustomLayout extends Model\AbstractModel
 
     protected ?Layout $layoutDefinitions = null;
 
-    protected int $default = 0;
+    protected bool $default = false;
 
     public static function getById(string $id): ?CustomLayout
     {
@@ -220,11 +220,12 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $classId
      *
      * @return UuidV4|null
      *
-     *@internal
      *
      */
     public static function getIdentifier(string $classId): ?UuidV4
@@ -311,14 +312,17 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
-    public function getDefault(): int
+    public function getDefault(): bool
     {
         return $this->default;
     }
 
-    public function setDefault(int $default): static
+    /**
+     * @return $this
+     */
+    public function setDefault(bool $default): static
     {
-        $this->default = (int)$default;
+        $this->default = $default;
 
         return $this;
     }

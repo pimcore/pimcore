@@ -117,11 +117,14 @@ class NewsletterController extends DocumentControllerBase
                 'treeData' => $treeData,
             ]);
         } else {
-            $draftData = [
-                'id' => $version->getId(),
-                'modificationDate' => $version->getDate(),
-                'isAutoSave' => $version->isAutoSave(),
-            ];
+            $draftData = [];
+            if ($version) {
+                $draftData = [
+                    'id' => $version->getId(),
+                    'modificationDate' => $version->getDate(),
+                    'isAutoSave' => $version->isAutoSave(),
+                ];
+            }
 
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
         }

@@ -216,7 +216,7 @@ class IndexUpdateService
 
                 $qb->setParameter('triggerInfo', $triggerInfo);
                 $ids = implode(',', $idList);
-                $qb->where(sprintf('o_id in (%s)', $ids));
+                $qb->where(sprintf('id in (%s)', $ids));
 
                 $qb->executeQuery();
             }
@@ -235,7 +235,7 @@ class IndexUpdateService
     {
         $qb = Db::get()->createQueryBuilder();
         $qb
-            ->select('o_id as id')
+            ->select('id as id')
             ->addSelect('group_concat(tenant) as tenants')
             ->addSelect('count(tenant) as numTenants')
             ->from($storeTableName, 'storeTable')
@@ -249,7 +249,7 @@ class IndexUpdateService
             ));
         }
 
-        $qb->groupBy('o_id')
+        $qb->groupBy('id')
             ->orderBy('numTenants', 'desc')
         ;
 

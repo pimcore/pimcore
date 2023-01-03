@@ -47,7 +47,7 @@ class LowQualityImagePreviewTask implements TaskInterface
             $this->logger->debug('Execute low quality image preview generation');
 
             $listing = new Asset\Listing();
-            $listing->setCondition("type = 'image'");
+            $listing->setCondition("`type` = 'image'");
             $listing->setOrderKey('id');
             $listing->setOrder('DESC');
 

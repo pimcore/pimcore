@@ -9,9 +9,6 @@ Depending on their priority, Redirects come second (priority 99) or fifth (all o
 
 ## Setting up Redirects
 Redirects are configured in the Redirects editor, accessible via the Tools menu. 
- 
- ![Configure Redirects](../../img/redirects.png)
-
 
 #### Regular Expression and Back-Reference Syntax
 

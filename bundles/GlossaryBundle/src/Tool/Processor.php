@@ -14,14 +14,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tool\Glossary;
+namespace Pimcore\Bundle\GlossaryBundle\Tool;
 
+use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Cache;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
-use Pimcore\Model\Glossary;
 use Pimcore\Model\Site;
 use Pimcore\Tool\DomCrawler;
 

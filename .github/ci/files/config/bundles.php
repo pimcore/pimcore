@@ -5,5 +5,10 @@ return [
     "Pimcore\\Bundle\\EcommerceFrameworkBundle\\PimcoreEcommerceFrameworkBundle" => [
         "all" => TRUE
     ],
-    "Pimcore\\Bundle\\FileExplorerBundle\\PimcoreFileExplorerBundle" => ['all' => true]
+    "Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle" => [
+        "all" => TRUE
+    ],
+    "Pimcore\\Bundle\\FileExplorerBundle\\PimcoreFileExplorerBundle" => [
+        "all" => TRUE
+    ]
 ];

@@ -30,6 +30,7 @@ use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Authentication;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -67,8 +68,8 @@ class LoginController extends AdminController implements KernelControllerEventIn
             }
         }
 
-        if ($this->getTranslator() instanceof LocaleAwareInterface) {
-            $this->getTranslator()->setLocale($locale);
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($locale);
         }
     }
 
@@ -83,8 +84,12 @@ class LoginController extends AdminController implements KernelControllerEventIn
      * @Route("/login", name="pimcore_admin_login")
      * @Route("/login/", name="pimcore_admin_login_fallback")
      */
-    public function loginAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config): RedirectResponse|Response
-    {
+    public function loginAction(
+        Request $request,
+        CsrfProtectionHandler $csrfProtection,
+        Config $config,
+        EventDispatcherInterface $eventDispatcher
+    ): RedirectResponse|Response {
         if ($request->get('_route') === 'pimcore_admin_login_fallback') {
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
         }
@@ -117,6 +122,15 @@ class LoginController extends AdminController implements KernelControllerEventIn
 
         $params['browserSupported'] = $this->detectBrowser();
         $params['debug'] = \Pimcore::inDebugMode();
+
+        $params['includeTemplates'] = [];
+        $event = new GenericEvent($this, [
+            'parameters' => $params,
+            'config' => $config,
+            'request' => $request,
+        ]);
+        $eventDispatcher->dispatch($event, AdminEvents::LOGIN_BEFORE_RENDER);
+        $params = $event->getArgument('parameters');
 
         return $this->render('@PimcoreAdmin/admin/login/login.html.twig', $params);
     }
@@ -233,7 +247,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
 
         if (preg_match('/(document|asset|object)_([0-9]+)_([a-z]+)/', $queryString, $deeplink)) {
             $deeplink = $deeplink[0];
-            $perspective = strip_tags($request->get('perspective'));
+            $perspective = strip_tags($request->get('perspective', ''));
 
             if (strpos($queryString, 'token')) {
                 $event = new LoginRedirectEvent('pimcore_admin_login', [
@@ -265,7 +279,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     {
         return [
             'config' => $config,
-            'pluginCssPaths' => $this->getBundleManager()->getCssPaths(),
+            'pluginCssPaths' => $this->bundleManager->getCssPaths(),
         ];
     }
 

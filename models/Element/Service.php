@@ -335,21 +335,7 @@ class Service extends Model\AbstractModel
             // now do the query;
             foreach ($mapping as $elementType => $idList) {
                 $idList = array_keys($mapping[$elementType]);
-                switch ($elementType) {
-                    case 'document':
-                        $idColumn = 'id';
-                        $publishedColumn = 'published';
-
-                        break;
-                    case 'object':
-                        $idColumn = 'o_id';
-                        $publishedColumn = 'o_published';
-
-                        break;
-                    default:
-                        throw new \Exception('unknown type');
-                }
-                $query = 'SELECT ' . $idColumn . ' FROM ' . $elementType . 's WHERE ' . $publishedColumn . '=1 AND ' . $idColumn . ' IN (' . implode(',', $idList) . ');';
+                $query = 'SELECT id FROM ' . $elementType . 's WHERE published=1 AND id IN (' . implode(',', $idList) . ');';
                 $publishedIds = $db->fetchFirstColumn($query);
                 $publishedMapping[$elementType] = $publishedIds;
             }
@@ -625,13 +611,9 @@ class Service extends Model\AbstractModel
             //$p = object2array($p);
             $allowedProperties = [
                 'key',
-                'o_key',
                 'filename',
                 'path',
-                'o_path',
                 'id',
-                'o_id',
-                'o_type',
                 'type',
             ];
 
@@ -1088,38 +1070,30 @@ class Service extends Model\AbstractModel
             'type' => $type,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, SystemEvents::SERVICE_PRE_GET_VALID_KEY);
-        $key = $event->getArgument('key');
-        $key = trim($key);
+        $key = trim($event->getArgument('key'));
 
-        // replace all control/unassigned and invalid characters
-        $key = preg_replace('/[^\PCc^\PCn^\PCs]/u', '', $key);
-        // replace all 4 byte unicode characters
-        $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
+        // replace all control/format/private/surrogate/unassigned and 4 byte unicode characters
+        $key = preg_replace(['/\p{C}/u', '/[\x{10000}-\x{10FFFF}]/u'], ['', '-'], $key);
         // replace slashes with a hyphen
         $key = str_replace('/', '-', $key);
-
-        // replace some other special characters
-        $key = preg_replace('/[\t\n\r\f\v]/', '', $key);
 
         if ($type === 'object') {
             $key = preg_replace('/[<>]/', '-', $key);
         } elseif ($type === 'document') {
             // replace URL reserved characters with a hyphen
-            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;\+]/', '-', $key);
+            $key = preg_replace('/[#?*:\\\\<>|"%&@=;+]/', '-', $key);
         } elseif ($type === 'asset') {
             // keys shouldn't start with a "." (=hidden file) *nix operating systems
             // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
             $key = trim($key, '. ');
 
             // windows forbidden filenames + URL reserved characters (at least the ones which are problematic)
-            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%\+]/', '-', $key);
+            $key = preg_replace('/[#?*:\\\\<>|"%+]/', '-', $key);
         } else {
             $key = ltrim($key, '. ');
         }
 
-        $key = mb_substr($key, 0, 255);
-
-        return $key;
+        return mb_substr($key, 0, 255);
     }
 
     public static function isValidKey(string $key, string $type): bool

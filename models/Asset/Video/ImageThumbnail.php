@@ -137,7 +137,7 @@ final class ImageThumbnail
                         $tempFile = File::getLocalTempFilePath('png');
                         $converter = \Pimcore\Video::getInstance();
                         $converter->load($this->asset->getLocalFile());
-                        $converter->saveImage($tempFile, $timeOffset);
+                        $converter->saveImage($tempFile, (int) $timeOffset);
                         $generated = true;
                         $storage->write($cacheFilePath, file_get_contents($tempFile));
                         unlink($tempFile);
@@ -155,7 +155,7 @@ final class ImageThumbnail
                         $this->pathReference = Image\Thumbnail\Processor::process(
                             $this->asset,
                             $this->getConfig(),
-                            (string)$cacheFileStream,
+                            $cacheFileStream,
                             $deferred,
                             $generated
                         );

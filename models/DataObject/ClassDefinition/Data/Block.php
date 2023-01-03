@@ -123,14 +123,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public ?array $fieldDefinitionsCache = null;
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string
-     *
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -188,14 +187,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array|null
-     *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -282,14 +280,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see Data::getDataForEditmode
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
-     *
-     * @see Data::getDataForEditmode
-     *
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -331,14 +328,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see Data::getDataFromEditmode
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
-     *
-     * @see Data::getDataFromEditmode
-     *
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -468,14 +464,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see Data::getVersionPreview
+     *
      * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return string
-     *
-     * @see Data::getVersionPreview
-     *
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -555,6 +550,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->collapsed = $masterDefinition->collapsed;
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return bool
+     */
     public function isEmpty(mixed $data): bool
     {
         return is_null($data) || count($data) === 0;
@@ -862,7 +862,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
@@ -929,7 +929,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $brickField = $context['brickField'];
             $fieldname = $context['fieldname'];
             $query = 'select ' . $db->quoteIdentifier($brickField) . ' from object_brick_store_' . $brickType . '_' . $object->getClassId()
-                . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fieldname);
+                . ' where  id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fieldname);
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
@@ -941,7 +941,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             //TODO index!!!!!!!!!!!!!!
 
             $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $collectionType . '_' . $object->getClassId()
-                . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fcField) . ' and `index` = ' . $context['index'];
+                . ' where  id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fcField) . ' and `index` = ' . $context['index'];
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
         }
@@ -1146,7 +1146,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return '\\' .DataObject\Data\BlockElement::class . '[][]';
     }
 
-    public function normalize(mixed $value, array $params = []): array
+    public function normalize(mixed $value, array $params = []): ?array
     {
         $result = null;
         if ($value) {

@@ -126,7 +126,7 @@ class UserController extends AdminController implements KernelControllerEventInt
             ]);
 
             if ($request->get('rid')) {
-                $rid = $request->get('rid');
+                $rid = (int)$request->get('rid');
                 $rObject = $className::getById($rid);
                 if ($rObject) {
                     if ($type == 'user' || $type == 'role') {
@@ -464,7 +464,7 @@ class UserController extends AdminController implements KernelControllerEventInt
 
         // unset confidential informations
         $userData = $user->getObjectVars();
-        $userData['roles'] =  array_map('intval', $user->getRoles());
+        $userData['roles'] =  $user->getRoles();
         $userData['docTypes'] =  $user->getDocTypes();
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
@@ -1107,7 +1107,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         $roles = [];
         $list = new User\Role\Listing();
 
-        $list->setCondition('type = "role"');
+        $list->setCondition('`type` = "role"');
         $list->load();
         $roleList = $list->getRoles();
 

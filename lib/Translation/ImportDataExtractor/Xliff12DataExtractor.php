@@ -46,7 +46,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         $target = $file['target-language'];
 
         // see https://en.wikipedia.org/wiki/IETF_language_tag
-        $target = str_replace('-', '_', $target);
+        $target = str_replace('-', '_', (string)$target);
         if (!Tool::isValidLanguage($target)) {
             $target = \Locale::getPrimaryLanguage($target);
         }

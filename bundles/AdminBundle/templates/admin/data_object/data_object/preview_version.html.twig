@@ -18,17 +18,17 @@
     </tr>
     <tr class="system">
         <td>Date</td>
-        <td>o_modificationDate</td>
+        <td>modificationDate</td>
         <td>{{ object.getModificationDate()|date('Y-m-d H:i:s') }}</td>
     </tr>
     <tr class="system">
         <td>Path</td>
-        <td>o_path</td>
+        <td>path</td>
         <td>{{ object.getRealFullPath() }}</td>
     </tr>
     <tr class="system">
         <td>Published</td>
-        <td>o_published</td>
+        <td>published</td>
         <td>{{ object.getPublished() ? 'true' : 'false' }}</td>
     </tr>
     {% if versionNote %}

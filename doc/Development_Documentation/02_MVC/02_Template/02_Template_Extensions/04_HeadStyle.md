@@ -2,10 +2,10 @@
 
 > The HeadStyle templating extension extends [Placeholder Templating Extension](./00_Placeholder.md)
 
-The HTML `<style>` element is used to include CSS stylesheets inline in the HTML <head> element.
+The HTML `<style>` element is used to include CSS stylesheets inline in the HTML `<head>` element.
 
 > **Note**: Use HeadLink to link CSS files
-HeadLink should be used to create <link> elements for including external stylesheets. HeadStyle is used when you wish to define your stylesheets inline. 
+HeadLink should be used to create `<link>` elements for including external stylesheets. HeadStyle is used when you wish to define your stylesheets inline. 
 The HeadStyle helper supports the following methods for setting and adding stylesheet declarations:
 
 - `appendStyle($content, $attributes = [])`

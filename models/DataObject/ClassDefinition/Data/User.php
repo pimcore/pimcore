@@ -54,14 +54,13 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      * @param mixed $data
-     * @param Concrete|null $object
+     * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
-     *
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
      */
     public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?string
     {
@@ -73,18 +72,17 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
             }
         }
 
-        return $data;
+        return $data ? (string) $data : null;
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      * @param mixed $data
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return null|string
-     *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -160,7 +158,10 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     public static function __set_state($data)
     {
         $obj = parent::__set_state($data);
-        $obj->configureOptions();
+
+        if (\Pimcore::inAdmin()) {
+            $obj->configureOptions();
+        }
 
         return $obj;
     }

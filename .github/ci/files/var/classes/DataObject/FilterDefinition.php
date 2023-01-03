@@ -46,8 +46,8 @@ use Pimcore\Model\Element\AbstractElement;
 
 class FilterDefinition extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinition
 {
-protected $o_classId = "EF_FD";
-protected $o_className = "FilterDefinition";
+protected $classId = "EF_FD";
+protected $className = "FilterDefinition";
 protected ?float $pageLimit = null;
 protected ?string $defaultOrderByInheritance = null;
 protected ?Fieldcollection $defaultOrderBy = null;

@@ -38,7 +38,7 @@ class Unit extends Model\AbstractModel
 
     protected string $longname;
 
-    protected string $baseunit;
+    protected ?string $baseunit = null;
 
     protected string $reference;
 
@@ -167,7 +167,7 @@ class Unit extends Model\AbstractModel
         return $this->abbreviation;
     }
 
-    public function setBaseunit(Unit|int $baseunit): static
+    public function setBaseunit(Unit|string|null $baseunit): static
     {
         if ($baseunit instanceof self) {
             $baseunit = $baseunit->getId();

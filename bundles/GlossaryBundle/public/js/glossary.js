@@ -57,7 +57,7 @@ pimcore.settings.glossary = Class.create({
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         this.store = pimcore.helpers.grid.buildDefaultStore(
-            Routing.generate('pimcore_admin_settings_glossary'),
+            Routing.generate('pimcore_glossary_settings_glossary'),
             [
                 'id', {name: 'text', allowBlank: false}, 'language', 'casesensitive', 'exactmatch',
                 'site', 'link', 'abbr', 'creationDate', 'modificationDate'
@@ -113,26 +113,26 @@ pimcore.settings.glossary = Class.create({
             },
             {text: t("abbr"), flex: 200, sortable: true, dataIndex: 'abbr', editor: new Ext.form.TextField({})},
             {text: t("language"), flex: 50, sortable: true, dataIndex: 'language', editor: new Ext.form.ComboBox({
-                store: this.languages,
-                mode: "local",
-                editable: false,
-                triggerAction: "all"
-            })},
+                    store: this.languages,
+                    mode: "local",
+                    editable: false,
+                    triggerAction: "all"
+                })},
             casesensitiveCheck,
             exactmatchCheck,
             {text: t("site"), flex: 200, sortable:true, dataIndex: "site", editor: new Ext.form.ComboBox({
-                store: pimcore.globalmanager.get("sites"),
-                valueField: "id",
-                displayField: "domain",
-                editable: false,
-                triggerAction: "all"
-            }), renderer: function (siteId) {
-                var store = pimcore.globalmanager.get("sites");
-                var pos = store.findExact("id", siteId);
-                if(pos >= 0) {
-                    return store.getAt(pos).get("domain");
-                }
-            }},
+                    store: pimcore.globalmanager.get("sites"),
+                    valueField: "id",
+                    displayField: "domain",
+                    editable: false,
+                    triggerAction: "all"
+                }), renderer: function (siteId) {
+                    var store = pimcore.globalmanager.get("sites");
+                    var pos = store.findExact("id", siteId);
+                    if(pos >= 0) {
+                        return store.getAt(pos).get("domain");
+                    }
+                }},
             {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {

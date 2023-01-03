@@ -55,17 +55,17 @@ class Service extends Model\Element\Service
      *
      * @var array
      */
-    protected static array $systemFields = ['o_path', 'o_key', 'o_id', 'o_published', 'o_creationDate', 'o_modificationDate', 'o_fullpath'];
+    protected static array $systemFields = ['path', 'key', 'id', 'published', 'creationDate', 'modificationDate', 'fullpath'];
 
     /**
      * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
      *
      * @var string[]
      */
-    private const BC_VERSION_DEPENDENT_DATABASE_COLUMNS = ['id', 'parentId', 'type', 'key', 'path', 'index', 'published',
-                                                                'creationDate', 'modificationDate', 'userOwner', 'userModification',
-                                                                'classId', 'childrenSortBy', 'className', 'childrenSortOrder',
-                                                                'versionCount', ];
+    private const BC_VERSION_DEPENDENT_DATABASE_COLUMNS = ['id', 'parentid', 'type', 'key', 'path', 'index', 'published',
+                                                                'creationdate', 'modificationdate', 'userowner', 'usermodification',
+                                                                'classid', 'childrensortby', 'classname', 'childrensortorder',
+                                                                'versioncount', ];
 
     /**
      * @param Model\User|null $user
@@ -1352,9 +1352,9 @@ class Service extends Model\Element\Service
         }
 
         if (!$element->getId()) {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? ', [$parent->getId(), $key]);
+            $list->setCondition('parentId = ? AND `key` = ? ', [$parent->getId(), $key]);
         } else {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? AND o_id != ? ', [$parent->getId(), $key, $element->getId()]);
+            $list->setCondition('parentId = ? AND `key` = ? AND id != ? ', [$parent->getId(), $key, $element->getId()]);
         }
         $check = $list->loadIdList();
         if (!empty($check)) {
@@ -1948,6 +1948,10 @@ class Service extends Model\Element\Service
                                 if ($brickDescriptor) {
                                     $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                                     $value = $brick->{'get' . ucfirst($innerContainer)}();
+
+                                    if ($value instanceof Localizedfield) {
+                                        $params['language'] = $requestedLanguage;
+                                    }
                                 }
 
                                 return $fieldDefinition->getForCsvExport($value, $params);
@@ -1986,21 +1990,13 @@ class Service extends Model\Element\Service
      */
     public static function getVersionDependentDatabaseColumnName(string $fieldName): string
     {
-        $currentVersion = \Pimcore\Version::getVersion();
+        $newFieldName = $fieldName;
+        if (str_starts_with($newFieldName, 'o_')) {
+            $newFieldName = substr($newFieldName, 2);
+        }
 
-        if (str_starts_with($currentVersion, '11.')) {
-            $newFieldName = $fieldName;
-            if (str_starts_with($newFieldName, 'o_')) {
-                $newFieldName = substr($newFieldName, 2);
-            }
-            if (in_array($newFieldName, self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
-                return $newFieldName;
-            }
-        } else {
-            if (!str_starts_with($fieldName, 'o_')
-                && in_array($fieldName, self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
-                return 'o_' . $fieldName;
-            }
+        if (in_array(strtolower($newFieldName), self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
+            return $newFieldName;
         }
 
         return $fieldName;
