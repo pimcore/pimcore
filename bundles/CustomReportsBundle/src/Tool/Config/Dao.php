@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\CustomReport\Config;
+namespace Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 
 use Pimcore\Model;
 

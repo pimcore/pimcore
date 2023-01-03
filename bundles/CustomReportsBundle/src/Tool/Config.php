@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\CustomReport;
+namespace Pimcore\Bundle\CustomReportsBundle\Tool;
 
 use Pimcore\Model;
 

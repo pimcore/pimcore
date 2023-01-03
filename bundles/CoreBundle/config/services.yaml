@@ -108,23 +108,6 @@ services:
         tags: ['container.service_locator']
 
 
-    # CustomReport Adapter
-    pimcore.custom_report.adapter.factory.sql:
-      class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
-      arguments:
-        - 'Pimcore\Model\Tool\CustomReport\Adapter\Sql'
-
-    pimcore.custom_report.adapter.factory.analytics:
-      class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
-      arguments:
-        - 'Pimcore\Model\Tool\CustomReport\Adapter\Analytics'
-
-    pimcore.custom_report.adapter.factories:
-        class: Symfony\Component\DependencyInjection\ServiceLocator
-        public: true
-        tags: ['container.service_locator']
-
-
     # DataObject Consent Service
     Pimcore\DataObject\Consent\Service:
         public: true

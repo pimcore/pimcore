@@ -13,3 +13,13 @@ services:
         resource: '../src/Controller'
         public: true
         tags: ['controller.service_arguments']
+
+    pimcore.custom_report.adapter.factory.sql:
+        class: Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\DefaultCustomReportAdapterFactory
+        arguments:
+            - 'Pimcore\Model\Tool\CustomReport\Adapter\Sql'
+
+    pimcore.custom_report.adapter.factories:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        public: true
+        tags: [ 'container.service_locator' ]

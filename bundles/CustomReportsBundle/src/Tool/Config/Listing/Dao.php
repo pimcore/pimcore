@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\CustomReport\Config\Listing;
+namespace Pimcore\Bundle\CustomReportsBundle\Tool\Config\Listing;
 
 use Pimcore\Model;
 use Pimcore\Model\Tool\CustomReport\Config;
@@ -23,7 +23,7 @@ use Pimcore\Model\Tool\CustomReport\Config;
  *
  * @property \Pimcore\Model\Tool\CustomReport\Config\Listing $model
  */
-class Dao extends \Pimcore\Model\Tool\CustomReport\Config\Dao
+class Dao extends \Pimcore\Bundle\CustomReportsBundle\Tool\Config\Dao
 {
     /**
      * @return Config[]

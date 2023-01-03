@@ -877,7 +877,6 @@
     "duration": "Duration",
     "custom_metadata": "Custom Metadata",
     "group_icon_class": "Group Icon Class",
-    "custom_report_permissions": "Permission",
     "visible_to_users": "Visible To Users",
     "visible_to_roles": "Visible To Roles",
     "open_url": "Open URL",
