@@ -205,7 +205,10 @@ class NotesSubscriber implements EventSubscriberInterface
         $this->additionalData = $additionalData;
     }
 
-    private function getAdditionalDataForField(array $fieldConfig)
+    /**
+     * @param array<string, mixed> $fieldConfig
+     */
+    private function getAdditionalDataForField(array $fieldConfig): mixed
     {
         $additional = $this->getAdditionalFields();
 

@@ -88,7 +88,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface, In
         return $this->id;
     }
 
-    public function getRelationAttribute(string $attributeName)
+    public function getRelationAttribute(string $attributeName): mixed
     {
         $relationObjectArray = [];
         if ($this->relations[$attributeName]) {

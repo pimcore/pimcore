@@ -71,32 +71,32 @@ class PimcoreTargetingDataCollector extends DataCollector implements ResetInterf
         $this->data = [];
     }
 
-    public function getVisitorInfo()
+    public function getVisitorInfo(): array
     {
         return $this->data['visitor_info'];
     }
 
-    public function getStorage()
+    public function getStorage(): array
     {
         return $this->data['storage'];
     }
 
-    public function getRules()
+    public function getRules(): array
     {
         return $this->data['rules'];
     }
 
-    public function getTargetGroups()
+    public function getTargetGroups(): array
     {
         return $this->data['target_groups'];
     }
 
-    public function getDocumentTargetGroup()
+    public function getDocumentTargetGroup(): ?array
     {
         return $this->data['document_target_group'];
     }
 
-    public function getDocumentTargetGroups()
+    public function getDocumentTargetGroups(): array
     {
         return $this->data['document_target_groups'];
     }

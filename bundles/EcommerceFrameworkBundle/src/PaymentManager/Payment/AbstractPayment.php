@@ -50,12 +50,12 @@ abstract class AbstractPayment implements PaymentInterface
 
     public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, object $paymentBrick): void
     {
-        throw new \RuntimeException('getRecurringPaymentDataProperties not implemented for ' . get_class($this));
+        throw new \RuntimeException('setRecurringPaymentSourceOrderData not implemented for ' . get_class($this));
     }
 
     public function applyRecurringPaymentCondition(Concrete $orderListing, array $additionalParameters = []): void
     {
-        throw new \RuntimeException('getRecurringPaymentDataProperties not implemented for ' . get_class($this));
+        throw new \RuntimeException('applyRecurringPaymentCondition not implemented for ' . get_class($this));
     }
 
     /**

@@ -208,7 +208,7 @@ class Dao
         return is_int($result) ? $result : 0;
     }
 
-    public function quote(mixed $value)
+    public function quote(mixed $value): mixed
     {
         return $this->db->quote($value);
     }

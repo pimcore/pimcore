@@ -477,7 +477,7 @@ class OrderManager implements OrderManagerInterface
         return $event->getOrderItem();
     }
 
-    protected function buildOrderItemKey(CartItemInterface $item, bool $isGiftItem = false)
+    protected function buildOrderItemKey(CartItemInterface $item, bool $isGiftItem = false): string
     {
         $itemKey = File::getValidFilename(sprintf(
             '%s_%s%s',
@@ -492,7 +492,7 @@ class OrderManager implements OrderManagerInterface
         return $event->getArgument('itemKey');
     }
 
-    protected function buildModelClass(string $className, array $params = [])
+    protected function buildModelClass(string $className, array $params = []): mixed
     {
         if (null === $this->modelFactory) {
             throw new \RuntimeException('Model factory is not set. Please either configure the order manager service to be autowired or add a call to setModelFactory');

@@ -63,12 +63,12 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         return $reservation !== null;
     }
 
-    public function getTokenUsages(string $code): int|bool
+    public function getTokenUsages(string $code): ?int
     {
         try {
             return (int) $this->db->fetchOne('SELECT usages FROM ' . self::TABLE_NAME . ' WHERE token = ?', [$code]);
         } catch (\Exception $e) {
-            return false;
+            return null;
         }
     }
 

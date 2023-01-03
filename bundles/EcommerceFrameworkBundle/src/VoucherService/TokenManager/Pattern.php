@@ -44,6 +44,9 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
 
     protected string $template;
 
+    /**
+     * @var array<string, string>
+     */
     protected array $characterPools = [
         'alphaNumeric' => '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
         'numeric' => '123456789',
@@ -638,29 +641,33 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $this->configuration = $configuration;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getCharacterPools(): array
     {
         return $this->characterPools;
     }
 
-    public function getCharacterPool()
+    public function getCharacterPool(): string
     {
         return $this->characterPools[$this->configuration->getCharacterType()];
     }
 
+    /**
+     * @param array<string, string> $characterPools
+     */
     public function setCharacterPools(array $characterPools): void
     {
         $this->characterPools = $characterPools;
     }
 
     /**
-     * @param array $pool Associative Array - the key represents the name, the value the characters of the character-pool. i.e.:"['numeric'=>'12345']"
+     * @param array<string, string> $pool Associative Array - the key represents the name, the value the characters of the character-pool. i.e.:"['numeric'=>'12345']"
      */
     public function addCharacterPool(array $pool): void
     {
-        if (is_array($pool)) {
-            $this->characterPools[] = $pool;
-        }
+        $this->characterPools = array_merge($this->characterPools, $pool);
     }
 
     public function setTemplate(string $template): void

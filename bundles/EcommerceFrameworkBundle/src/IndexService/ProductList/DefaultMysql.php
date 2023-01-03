@@ -633,7 +633,7 @@ class DefaultMysql implements ProductListInterface
         return null;
     }
 
-    public function quote(mixed $value)
+    public function quote(mixed $value): mixed
     {
         return $this->resource->quote($value);
     }

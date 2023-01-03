@@ -22,7 +22,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 
 interface CustomResourcePersistingInterface
 {
-    public function save(Localizedfield|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData|AbstractData|Concrete $object, array $params = []);
+    public function save(Localizedfield|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData|AbstractData|Concrete $object, array $params = []): void;
 
     public function load(Localizedfield|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData|AbstractData|Concrete $object, array $params = []): mixed;
 

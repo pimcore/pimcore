@@ -148,11 +148,17 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         }
     }
 
-    protected function getValidTableColumns(string $table)
+    /**
+     * @return string[]
+     */
+    protected function getValidTableColumns(string $table): array
     {
         return $this->mySqlHelper->getValidTableColumns($table);
     }
 
+    /**
+     * @return string[]
+     */
     protected function getSystemAttributes(): array
     {
         return $this->mySqlHelper->getSystemAttributes();

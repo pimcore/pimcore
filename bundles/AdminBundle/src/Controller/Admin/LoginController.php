@@ -240,7 +240,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     /**
      * @Route("/login/deeplink", name="pimcore_admin_login_deeplink")
      */
-    public function deeplinkAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function deeplinkAction(Request $request, EventDispatcherInterface $eventDispatcher): Response
     {
         // check for deeplink
         $queryString = $_SERVER['QUERY_STRING'];
@@ -273,6 +273,8 @@ class LoginController extends AdminController implements KernelControllerEventIn
                 ]);
             }
         }
+
+        throw $this->createNotFoundException();
     }
 
     protected function buildLoginPageViewParams(Config $config): array

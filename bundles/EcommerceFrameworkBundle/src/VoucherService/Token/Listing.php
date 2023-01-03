@@ -159,7 +159,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         return $codes;
     }
 
-    public static function getCountByUsages(int $usages = 1, ?int $seriesId = null)
+    public static function getCountByUsages(int $usages = 1, ?int $seriesId = null): int|false
     {
         $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE usages >= ? ';
         $params[] = $usages;
@@ -171,13 +171,13 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         $db = \Pimcore\Db::get();
 
         try {
-            return $db->fetchOne($query, $params);
+            return (int) $db->fetchOne($query, $params);
         } catch (\Exception $e) {
             return false;
         }
     }
 
-    public static function getCountBySeriesId(int $seriesId)
+    public static function getCountBySeriesId(int $seriesId): ?int
     {
         $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE voucherSeriesId = ?';
         $params[] = $seriesId;
@@ -185,13 +185,13 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         $db = \Pimcore\Db::get();
 
         try {
-            return $db->fetchOne($query, $params);
+            return (int) $db->fetchOne($query, $params);
         } catch (\Exception $e) {
-            return false;
+            return null;
         }
     }
 
-    public static function getCountByReservation(?int $seriesId = null)
+    public static function getCountByReservation(?int $seriesId = null): ?int
     {
         $query = 'SELECT COUNT(t.id) FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' as t
             INNER JOIN ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' as r ON t.token = r.token';
@@ -205,9 +205,9 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         $db = \Pimcore\Db::get();
 
         try {
-            return $db->fetchOne($query, $params);
+            return (int) $db->fetchOne($query, $params);
         } catch (\Exception $e) {
-            return false;
+            return null;
         }
     }
 

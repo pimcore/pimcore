@@ -232,11 +232,17 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
         $this->doCleanupOldZombieData($object, $subObjectIds);
     }
 
-    protected function getValidTableColumns(string $table)
+    /**
+     * @return string[]
+     */
+    protected function getValidTableColumns(string $table): array
     {
         return $this->mySqlHelper->getValidTableColumns($table);
     }
 
+    /**
+     * @return string[]
+     */
     protected function getSystemAttributes(): array
     {
         return $this->mySqlHelper->getSystemAttributes();

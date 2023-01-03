@@ -40,7 +40,10 @@ class MySql
         $this->db = $db;
     }
 
-    public function getValidTableColumns(string $table)
+    /**
+     * @return string[]
+     */
+    public function getValidTableColumns(string $table): array
     {
         $cacheKey = 'plugin_ecommerce_productindex_columns_' . $table;
 
@@ -69,6 +72,9 @@ class MySql
         Helper::insertOrUpdate($this->db, $this->tenantConfig->getTablename(), $data);
     }
 
+    /**
+     * @return string[]
+     */
     public function getSystemAttributes(): array
     {
         return ['id', 'classId', 'parentId', 'virtualProductId', 'virtualProductActive', 'type', 'categoryIds', 'parentCategoryIds', 'priceSystemName', 'active', 'inProductList'];
