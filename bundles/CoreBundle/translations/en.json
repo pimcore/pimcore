@@ -1003,5 +1003,6 @@
     "postal_code_format_error": "Postal code format, e.g. use \"5020 Salzburg, Söllheimer Straße 16\" instead of \"A-5020 Salzburg, Söllheimer Straße 16\"",
     "display_mode": "Display Mode",
     "display_mode_grid": "Grid view",
-    "display_mode_combo": "Tag field"
+    "display_mode_combo": "Tag field",
+    "batch_confirmation": "You are about to update %s dataObjects. Do you want to continue ?"
 }
