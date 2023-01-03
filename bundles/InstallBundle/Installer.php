@@ -635,10 +635,9 @@ class Installer
 
         $db->executeQuery('SET FOREIGN_KEY_CHECKS=1;');
 
-        // close connections and wait a bit for closing them ... in order to avoid too many connections error
+        // close connections and collection garbage ... in order to avoid too many connections error
         // when installing demos
-        $db->close();
-        sleep(20);
+        \Pimcore::collectGarbage();
 
         return $errors;
     }
