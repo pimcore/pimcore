@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\DependencyInjection;
 
+use Pimcore\Bundle\XliffBundle\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -36,6 +37,11 @@ final class PimcoreXliffExtension extends ConfigurableExtension
         );
 
         $loader->load('services.yaml');
+
+        if (!empty($config['data_object']['translation_extractor']['attributes'])) {
+            $definition = $container->getDefinition(DataObjectDataExtractor::class);
+            $definition->setArgument('$exportAttributes', $config['data_object']['translation_extractor']['attributes']);
+        }
     }
 
 }

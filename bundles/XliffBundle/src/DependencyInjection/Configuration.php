@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -27,35 +28,36 @@ final class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('pimcore_install');
-//
-//        $rootNode = $treeBuilder->getRootNode();
-//        $rootNode->addDefaultsIfNotSet();
-//
-//        $rootNode
-//            ->children()
-//                ->scalarNode('info_message')
-//                    ->info('Shows an info message on the installation screen')
-//                    ->defaultNull()
-//                ->end()
-//                ->arrayNode('parameters')
-//                    ->addDefaultsIfNotSet()
-//                    ->children()
-//                        ->arrayNode('database_credentials')
-//                            ->addDefaultsIfNotSet()
-//                            ->children()
-//                                ->scalarNode('user')->end()
-//                                ->scalarNode('password')->end()
-//                                ->scalarNode('dbname')->end()
-//                                ->scalarNode('host')->end()
-//                                ->scalarNode('port')->end()
-//                                ->scalarNode('unix_socket')->end()
-//                            ->end()
-//                        ->end()
-//                    ->end()
-//                ->end()
-//            ->end();
-//
+        $treeBuilder = new TreeBuilder('pimcore_xliff');
+
+        /** @var ArrayNodeDefinition $rootNode */
+        $rootNode = $treeBuilder->getRootNode();
+        $rootNode->addDefaultsIfNotSet();
+
+        $rootNode
+            ->children()
+            ->arrayNode('data_object')
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('translation_extractor')
+                    ->children()
+                        ->arrayNode('attributes')
+                            ->info('Can be used to restrict the extracted localized fields (e.g. used by XLIFF exporter in the Pimcore backend)')
+                            ->prototype('array')
+                                ->prototype('scalar')->end()
+                            ->end()
+                            ->example(
+                                [
+                                    'Product' => ['name', 'description'],
+                                    'Brand' => ['name'],
+                                ]
+                            )
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+
         return $treeBuilder;
     }
 }
