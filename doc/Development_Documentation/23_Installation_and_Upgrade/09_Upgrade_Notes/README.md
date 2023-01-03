@@ -120,7 +120,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Ecommerce] Elasticsearch 7 support was removed
 - [Ecommerce] Config option `es_client_params` in `index_service` was removed 
 - [ClassSavedInterface] Removed `method_exists` bc layer. Please add the corresponding `ClassSavedInterface` interface to your custom field definitions. For more details check the 10.6.0 patch notes.
- 
+- [Admin] Removed `adminer` as built-in database management tool.
+
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
 - [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isBrickEnabled()` method which is also deprecated.

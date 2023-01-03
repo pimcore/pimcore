@@ -442,18 +442,7 @@
                              }
                          );
                      }
- 
-                     if (perspectiveCfg.inToolbar("extras.systemtools.database")) {
-                         systemItems.push(
-                             {
-                                 text: t("database_administration"),
-                                 iconCls: "pimcore_nav_icon_mysql",
-                                 itemId: 'pimcore_menu_extras_system_info_database_administration',
-                                 handler: this.showAdminer
-                             }
-                         );
-                     }
- 
+
                      if (perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")) {
                          systemItems.push(
                              {
@@ -1654,11 +1643,7 @@
      showSystemRequirementsCheck: function () {
          pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_admin_install_check'), "pimcore_icon_systemrequirements", "System-Requirements Check");
      },
- 
-     showAdminer: function () {
-         pimcore.helpers.openGenericIframeWindow("adminer", Routing.generate('pimcore_admin_external_adminer_adminer'), "pimcore_icon_mysql", "Database Admin");
-     },
- 
+
      showElementHistory: function() {
          try {
              pimcore.globalmanager.get("element_history").activate();
