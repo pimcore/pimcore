@@ -34,19 +34,19 @@ class Unit extends Model\AbstractModel
 
     protected string $abbreviation;
 
-    protected ?string $group = null;
+    protected string $group;
 
-    protected ?string $longname = null;
+    protected string $longname;
 
     protected ?string $baseunit = null;
 
-    protected ?string $reference = null;
+    protected string $reference;
 
     protected ?float $factor = null;
 
     protected ?float $conversionOffset = null;
 
-    protected ?string $converter = null;
+    protected string $converter;
 
     public static function getByAbbreviation(string $abbreviation): ?Unit
     {
@@ -186,7 +186,7 @@ class Unit extends Model\AbstractModel
         return null;
     }
 
-    public function setFactor(?float $factor): static
+    public function setFactor(float $factor): static
     {
         $this->factor = $factor;
 
@@ -198,14 +198,14 @@ class Unit extends Model\AbstractModel
         return $this->factor;
     }
 
-    public function setGroup(?string $group): static
+    public function setGroup(string $group): static
     {
         $this->group = $group;
 
         return $this;
     }
 
-    public function getGroup(): ?string
+    public function getGroup(): string
     {
         return $this->group;
     }
@@ -222,24 +222,24 @@ class Unit extends Model\AbstractModel
         return (string) $this->id;
     }
 
-    public function setLongname(?string $longname): static
+    public function setLongname(string $longname): static
     {
         $this->longname = $longname;
 
         return $this;
     }
 
-    public function getLongname(): ?string
+    public function getLongname(): string
     {
         return $this->longname;
     }
 
-    public function getReference(): ?string
+    public function getReference(): string
     {
         return $this->reference;
     }
 
-    public function setReference(?string $reference): static
+    public function setReference(string $reference): static
     {
         $this->reference = $reference;
 
@@ -251,21 +251,21 @@ class Unit extends Model\AbstractModel
         return $this->conversionOffset;
     }
 
-    public function setConversionOffset(?float $conversionOffset): static
+    public function setConversionOffset(float $conversionOffset): static
     {
         $this->conversionOffset = $conversionOffset;
 
         return $this;
     }
 
-    public function getConverter(): ?string
+    public function getConverter(): string
     {
         return $this->converter;
     }
 
-    public function setConverter(?string $converter): static
+    public function setConverter(string $converter): static
     {
-        $this->converter = $converter;
+        $this->converter = (string)$converter;
 
         return $this;
     }
