@@ -392,7 +392,7 @@ server {
     }
 
     # Some Admin Modules need this:
-    # Database Admin, Server Info
+    # Server Info, Opcache
     location ~* ^/admin/external {
         rewrite .* /index.php$is_args$args last;
     }
