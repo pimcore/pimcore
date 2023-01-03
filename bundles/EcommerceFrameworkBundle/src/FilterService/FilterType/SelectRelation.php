@@ -68,11 +68,17 @@ class SelectRelation extends AbstractFilterType
         ];
     }
 
+    /**
+     * @param DataObject\AbstractObject[] $availableRelations
+     * @param array<int, true> $availableRelationsArray
+     *
+     * @return array<int, true>
+     */
     protected function loadAllAvailableRelations(array $availableRelations, array $availableRelationsArray = []): array
     {
         foreach ($availableRelations as $rel) {
             if ($rel instanceof Folder) {
-                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChildren(), $availableRelationsArray);
+                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChildren()->load(), $availableRelationsArray);
             } else {
                 $availableRelationsArray[$rel->getId()] = true;
             }

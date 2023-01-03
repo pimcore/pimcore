@@ -575,10 +575,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         // delete children
         $children = $this->getChildren(self::$types, true);
-        if (count($children) > 0) {
-            foreach ($children as $child) {
-                $child->delete();
-            }
+        foreach ($children as $child) {
+            $child->delete();
         }
 
         // remove dependencies
