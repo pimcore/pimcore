@@ -725,7 +725,6 @@ class Installer
             'documents',
             'emails',
             'gdpr_data_extractor',
-            'glossary',
             'http_errors',
             'notes_events',
             'objects',

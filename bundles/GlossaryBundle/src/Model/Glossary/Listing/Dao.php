@@ -13,14 +13,16 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Glossary\Listing;
+namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary\Listing;
 
+use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
+use Pimcore\Bundle\GlossaryBundle\Model\Glossary\Listing;
 use Pimcore\Model;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Glossary\Listing $model
+ * @property Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
@@ -35,7 +37,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         $glossary = [];
         foreach ($glossarysData as $glossaryData) {
-            $glossary[] = Model\Glossary::getById($glossaryData);
+            $glossary[] = Glossary::getById($glossaryData);
         }
 
         $this->model->setGlossary($glossary);
