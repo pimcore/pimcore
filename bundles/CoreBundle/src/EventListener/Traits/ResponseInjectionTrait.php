@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Traits;
 
 use Pimcore\Http\ResponseHelper;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * @internal
@@ -27,11 +28,7 @@ trait ResponseInjectionTrait
 {
     private ResponseHelper $responseHelper;
 
-    /**
-     * @required
-     *
-     * @param ResponseHelper $responseHelper
-     */
+    #[Required]
     public function setResponseHelper(ResponseHelper $responseHelper): void
     {
         $this->responseHelper = $responseHelper;

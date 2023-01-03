@@ -103,7 +103,10 @@ pimcore.element.selector.abstract = Class.create({
                 items: [tree.getLayout()],
                 title: t('filter_tags'),
                 tbar: [considerAllChildTags],
-                iconCls: "pimcore_icon_element_tags"
+                iconCls: "pimcore_icon_element_tags",
+                resizable: {
+                    dynamic: true
+                }
             });
         }
 

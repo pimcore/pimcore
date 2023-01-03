@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Traits;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * @internal
@@ -27,11 +28,7 @@ trait PimcoreContextAwareTrait
 {
     private ?PimcoreContextResolver $pimcoreContextResolver = null;
 
-    /**
-     * @required
-     *
-     * @param PimcoreContextResolver $contextResolver
-     */
+    #[Required]
     public function setPimcoreContextResolver(PimcoreContextResolver $contextResolver): void
     {
         $this->pimcoreContextResolver = $contextResolver;

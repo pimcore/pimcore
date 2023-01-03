@@ -63,6 +63,11 @@ final class DynamicRouteProvider implements RouteProviderInterface
     public function getRouteCollectionForRequest(Request $request): RouteCollection
     {
         $collection = new RouteCollection();
+
+        if ($request->attributes->has('_controller')) {
+            return $collection;
+        }
+
         $path = $originalPath = urldecode($request->getPathInfo());
 
         // site path handled by FrontendRoutingListener which runs before routing is started

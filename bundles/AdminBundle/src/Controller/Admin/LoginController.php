@@ -68,8 +68,8 @@ class LoginController extends AdminController implements KernelControllerEventIn
             }
         }
 
-        if ($this->getTranslator() instanceof LocaleAwareInterface) {
-            $this->getTranslator()->setLocale($locale);
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($locale);
         }
     }
 
@@ -279,7 +279,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     {
         return [
             'config' => $config,
-            'pluginCssPaths' => $this->getBundleManager()->getCssPaths(),
+            'pluginCssPaths' => $this->bundleManager->getCssPaths(),
         ];
     }
 

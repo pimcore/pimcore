@@ -32,7 +32,7 @@ special permissions (e.g. finished elements cannot be modified anymore).
 
 **Marking Store**
 The marking store stores the current place(s) for each element. Pimcore ships with a couple of stores that can be configured
-in [workflow configuration](./01_Configuration_Details.md). 
+in [workflow configuration](./01_Configuration_Details/README.md). 
 
 **Transition**
 A transition describes the action to get from one place to another. Transitions are allowed (or not) depending on additional
@@ -49,7 +49,7 @@ Besides that, they are very similar to transitions.
 ## Configuration
 The workflow configuration takes place in the Symfony configuration tree in the Pimcore namespace. For details of 
 configuration options see inline comments and documentation (call command `bin/console config:dump-reference PimcoreCoreBundle`)
-or [Configuration Details](./01_Configuration_Details.md).
+or [Configuration Details](./01_Configuration_Details/README.md).
 
 
 ## Events

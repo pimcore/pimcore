@@ -220,11 +220,12 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $classId
      *
      * @return UuidV4|null
      *
-     *@internal
      *
      */
     public static function getIdentifier(string $classId): ?UuidV4

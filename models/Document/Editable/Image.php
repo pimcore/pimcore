@@ -441,6 +441,10 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this;
     }
 
+    /**
+     *
+     * @return $this
+     */
     public function setId(int $id): static
     {
         $this->id = $id;
@@ -668,7 +672,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function rewriteIds(array $idMapping): void
     {
