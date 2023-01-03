@@ -559,18 +559,18 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
-     * @param Document[]|null $children
+     * @param listing|null $children
      * @param bool $includingUnpublished
      *
      * @return $this
      */
-    public function setChildren(?array $children, bool $includingUnpublished = false): static
+    public function setChildren(?listing $children, bool $includingUnpublished = false): static
     {
         if ($children === null) {
             // unset all cached children
             $this->hasChildren = [];
             $this->children = [];
-        } elseif (is_array($children)) {
+        } else {
             $cacheKey = $this->getListingCacheKey([$includingUnpublished]);
             $this->children[$cacheKey] = $children;
             $this->hasChildren[$cacheKey] = (bool) count($children);
@@ -582,11 +582,8 @@ class Document extends Element\AbstractElement
     /**
      * Get a list of the children (not recursivly)
      *
-     * @param bool $includingUnpublished
-     *
-     * @return self[]
      */
-    public function getChildren(bool $includingUnpublished = false): array
+    public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -597,7 +594,7 @@ class Document extends Element\AbstractElement
                 $list->setCondition('parentId = ?', $this->getId());
                 $list->setOrderKey('index');
                 $list->setOrder('asc');
-                $this->children[$cacheKey] = $list->load();
+                $this->children[$cacheKey] = $list;
             } else {
                 $this->children[$cacheKey] = [];
             }
