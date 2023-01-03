@@ -500,7 +500,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     protected function getPhpdocType(): string
     {
-        return implode(' | ', $this->getPhpDocClassString(false));
+        return $this->getPhpDocClassString(false);
     }
 
     public function normalize(mixed $value, array $params = []): ?array

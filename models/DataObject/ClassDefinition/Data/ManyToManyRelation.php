@@ -652,7 +652,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      */
     protected function getPhpdocType(): string
     {
-        return implode(' | ', $this->getPhpDocClassString(true));
+        return $this->getPhpDocClassString(true);
     }
 
     public function normalize(mixed $value, array $params = []): ?array
