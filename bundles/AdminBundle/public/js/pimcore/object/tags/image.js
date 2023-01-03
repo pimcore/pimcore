@@ -126,7 +126,14 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                         xtype: "button",
                         iconCls: "pimcore_icon_search",
                         overflowText: t("search"),
-                        handler: this.openSearchEditor.bind(this)
+                        handler: function () {
+                            //dispatch openSearchDialog event
+                            document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
+                                detail: {
+                                    class: this
+                                }
+                            }));
+                        }
                     }]
             },
             componentCls: this.getWrapperClassNames(),
@@ -237,18 +244,6 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         }
 
         return false;
-    },
-
-    openSearchEditor: function () {
-        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
-                type: ["asset"],
-                subtype: {
-                    asset: ["image"]
-                }
-            },
-            {
-                context: Ext.apply({scope: "objectEditor"}, this.getContext())
-            });
     },
 
     uploadDialog: function () {
@@ -393,7 +388,13 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 iconCls: "pimcore_icon_search",
                 handler: function (item) {
                     item.parentMenu.destroy();
-                    this.openSearchEditor();
+
+                    //dispatch openSearchDialog event
+                    document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
+                        detail: {
+                            class: this
+                        }
+                    }));
                 }.bind(this)
             }));
 

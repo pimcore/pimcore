@@ -257,7 +257,14 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             xtype: "button",
             iconCls: "pimcore_icon_search",
             overflowText: t('search'),
-            handler: this.openSearchEditor.bind(this)
+            handler: function () {
+                //dispatch openSearchDialog event
+                document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
+                    detail: {
+                        class: this
+                    }
+                }));
+            }
         });
 
         items.push({

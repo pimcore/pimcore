@@ -47,12 +47,15 @@ class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle
             '/bundles/pimcoresimplebackendsearch/js/pimcore/selector/object.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/selector/selector.js',
 
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/abstractRelations.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/advancedManyToManyObjectRelation.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/advancedManyToManyRelation.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/manyToManyObjectRelation.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/manyToManyRelation.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/relation/manyToOneRelation.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/abstractRelations.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/advancedManyToManyObjectRelation.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/advancedManyToManyRelation.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/manyToManyObjectRelation.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/manyToManyRelation.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/manyToOneRelation.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/hotspotimage.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/image.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/object/tags/imagegallery.js',
         ];
     }
 

@@ -218,7 +218,12 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             xtype: "button",
             iconCls: "pimcore_icon_search",
             handler: function () {
-                this.openSearchEditor();
+                //dispatch openSearchDialog event
+                document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
+                    detail: {
+                        class: this
+                    }
+                }));
             }.bind(this)
         });
         toolBarItems.push({
@@ -432,18 +437,5 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
 
     markDirty: function() {
         this.dirty = true;
-    },
-
-    openSearchEditor: function () {
-        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
-                type: ["asset"],
-                subtype: {
-                    asset: ["image"]
-                }
-            },
-            {
-                context: Ext.apply({scope: "objectEditor"}, this.getContext())
-            });
     }
-
 });
