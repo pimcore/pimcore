@@ -15,8 +15,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle;
 
+use Pimcore\Bundle\XliffBundle\DependencyInjection\Compiler\TranslationServicesPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class PimcoreXliffBundle extends AbstractPimcoreBundle
 {
@@ -37,14 +39,10 @@ class PimcoreXliffBundle extends AbstractPimcoreBundle
         ];
     }
 
-//    /**
-//     * @return Installer
-//     */
-//    public function getInstaller(): Installer
-//    {
-//        return $this->container->get(Installer::class);
-//    }
-
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new TranslationServicesPass());
+    }
 
     public function getPath(): string
     {

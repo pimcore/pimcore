@@ -2,6 +2,15 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
+        public: false
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\XliffBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    Pimcore\Bundle\XliffBundle\Controller\XliffTranslationController: ~
 
     Pimcore\Bundle\XliffBundle\ExportDataExtractorService\ExportDataExtractorServiceInterface:
         class:  Pimcore\Bundle\XliffBundle\ExportDataExtractorService\ExportDataExtractorService

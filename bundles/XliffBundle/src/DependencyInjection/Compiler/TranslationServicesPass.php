@@ -15,10 +15,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler;
+namespace Pimcore\Bundle\XliffBundle\DependencyInjection\Compiler;
 
-use Pimcore\Translation\ExportDataExtractorService\ExportDataExtractorServiceInterface;
-use Pimcore\Translation\ImporterService\ImporterServiceInterface;
+use Pimcore\Bundle\XliffBundle\ExportDataExtractorService\ExportDataExtractorServiceInterface;
+use Pimcore\Bundle\XliffBundle\ImporterService\ImporterServiceInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;

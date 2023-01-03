@@ -316,7 +316,7 @@
                              text: "Microsoft® Word " + t("export"),
                              iconCls: "pimcore_nav_icon_word_export",
                              itemId: 'pimcore_menu_extras_translations_word_export',
-                             handler: this.wordExport
+                             handler: this.wordExport,
                              priority: 30
                          }]
                      }

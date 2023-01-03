@@ -15,26 +15,8 @@ pimcore.registerNS("pimcore.settings.translation.xliff");
 pimcore.settings.translation.xliff = Class.create({
 
     initialize: function () {
-        document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
         this.getTabPanel();
 
-    },
-
-    preMenuBuild: function (e) {
-        let menu = e.detail.menu;
-        const user = pimcore.globalmanager.get('user');
-        const perspectiveCfg = pimcore.globalmanager.get("perspective");
-
-        if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
-            console.log(menu);
-            menu.extras.items.push({
-                text: "XLIFF " + t("export") + "/" + t("import"),
-                iconCls: "pimcore_nav_icon_translations",
-                itemId: 'pimcore_menu_extras_translations_xliff',
-                handler: this.xliffImportExport,
-                priority: 20,
-            });
-        }
     },
 
     activate: function () {
@@ -342,7 +324,7 @@ pimcore.settings.translation.xliff = Class.create({
                         this.exportProgressbar = null;
                         this.exportProgressWin = null;
 
-                        pimcore.helpers.download(Routing.generate('pimcore_admin_translation_xliffexportdownload', {id: id}));
+                        pimcore.helpers.download(Routing.generate('pimcore_xliff_exportdownload', {id: id}));
                     }.bind(this, res.id),
                     update: function (currentStep, steps, percent) {
                         if(this.exportProgressbar) {
@@ -371,7 +353,7 @@ pimcore.settings.translation.xliff = Class.create({
                 text: t("select_a_file") + " (.xlf / .xliff)",
                 iconCls: "pimcore_icon_file pimcore_icon_overlay_add",
                 handler: function () {
-                    pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_translation_xliffimportupload'), "file", function(res) {
+                    pimcore.helpers.uploadDialog(Routing.generate('pimcore_xliff_translation_xliffimportupload'), "file", function(res) {
 
                         var res = Ext.decode(res["response"]["responseText"]);
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -13,22 +14,23 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\XliffBundle\Event\Model;
+namespace Pimcore\Bundle\XliffBundle;
 
-use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
-use Symfony\Contracts\EventDispatcher\Event;
+use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 
-class TranslationXliffEvent extends Event
+/**
+ * @internal
+ */
+class Installer extends SettingsStoreAwareInstaller
 {
-    protected AttributeSet $attributeSet;
-
-    public function __construct(AttributeSet $attributeSet)
+    public function install(): void
     {
-        $this->attributeSet = $attributeSet;
+        parent::install();
     }
 
-    public function getAttributeSet(): AttributeSet
+    public function uninstall(): void
     {
-        return $this->attributeSet;
+        parent::uninstall();
     }
+
 }

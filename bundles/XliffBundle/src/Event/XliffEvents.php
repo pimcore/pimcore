@@ -14,19 +14,19 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event;
+namespace Pimcore\Bundle\XliffBundle\Event;
 
 final class XliffEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\TranslationXliffEvent")
+     * @Event("Pimcore\Bundle\XliffBundle\Event\Model\TranslationXliffEvent")
      *
      * @var string
      */
     const XLIFF_ATTRIBUTE_SET_EXPORT = 'pimcore.translation.xliff.attribute_set_export';
 
     /**
-     * @Event("Pimcore\Event\Model\TranslationXliffEvent")
+     * @Event("Pimcore\Bundle\XliffBundle\Event\Model\TranslationXliffEvent")
      *
      * @var string
      */
