@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Cache\RuntimeCache;
-use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -48,15 +47,12 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
-    public const FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS = '_force_allow_processing_unpublished_elements';
-
     public function __construct(
         protected DocumentResolver $documentResolver,
         protected EditmodeResolver $editmodeResolver,
         protected RequestHelper $requestHelper,
         protected UserLoader $userLoader,
-        private DocumentTargetingConfigurator $targetingConfigurator,
-        private Config $config
+        private DocumentTargetingConfigurator $targetingConfigurator
     ) {
     }
 
@@ -90,30 +86,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             $user = null;
             if ($adminRequest) {
                 $user = $this->userLoader->getUser();
-            }
-
-            if ($document && !$document->isPublished() && !$user && !$request->attributes->get(self::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS)) {
-                $this->logger->warning('Denying access to document {document} as it is unpublished and there is no user in the session.', [
-                    $document->getFullPath(),
-                ]);
-
-                if (
-                    (
-                        ($request->get('object') && $request->get('urlSlug')) ||
-                        $request->get('pimcore_request_source') == 'staticroute'
-                    ) &&
-                    !$this->config['routing']['allow_processing_unpublished_fallback_document']
-                ) {
-                    trigger_deprecation(
-                        'pimcore/pimcore',
-                        '10.2',
-                        'Blocking routes where the underlying fallback document is unpublished is deprecated and will be
-                        removed in Pimcore 11. If you rely on this behavior please change your controllers accordingly and
-                        set the config option `pimcore.routing.allow_processing_unpublished_fallback_document=true`'
-                    );
-                }
-
-                throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
             }
 
             // editmode, pimcore_preview & pimcore_version

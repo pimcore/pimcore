@@ -675,7 +675,6 @@ class Mail extends Email
             // render document
             if ($this->getDocument() instanceof Model\Document) {
                 $attributes = $this->getParams();
-                $attributes[ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS] = true;
 
                 $html = Model\Document\Service::render($this->getDocument(), $attributes);
             }

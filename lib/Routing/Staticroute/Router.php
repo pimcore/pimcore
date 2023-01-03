@@ -245,7 +245,6 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
                 // to determine if a call to an action was made through a staticroute or not
                 // more on that infos see Pimcore_Controller_Action_Frontend::getRenderScript()
                 $routeParams['pimcore_request_source'] = 'staticroute';
-                $routeParams[ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS] = $this->config['routing']['allow_processing_unpublished_fallback_document'];
                 $routeParams['_route'] = $route->getName();
 
                 $routeParams = $this->processRouteParams($routeParams);
