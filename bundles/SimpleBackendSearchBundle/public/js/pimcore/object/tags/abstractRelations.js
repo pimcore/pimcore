@@ -1,9 +1,9 @@
 /**
  * @internal
  */
-pimcore.registerNS('pimcore.simpleBackendSearch.object.tags.relation.abstractRelations');
+pimcore.registerNS('pimcore.simpleBackendSearch.object.tags.abstractRelations');
 
-pimcore.simpleBackendSearch.object.tags.relation.abstractRelations = Class.create({
+pimcore.simpleBackendSearch.object.tags.abstractRelations = Class.create({
     openSearchEditor: function (classScope) {
         let allowedTypes = [];
         let allowedSpecific = {};

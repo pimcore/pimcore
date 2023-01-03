@@ -1828,6 +1828,20 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         });
     }.bind(this));
 
+    let searchButton = [fieldPath];
+    document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchButtonInit, {
+        detail: {
+            items: searchButton,
+            class: this,
+            type: 'link',
+            modal: {
+                internalTypeField,
+                linkTypeField,
+                fieldPath
+            }
+        }
+    }));
+
     var form = new Ext.FormPanel({
         itemId: "form",
         items: [
@@ -1856,23 +1870,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                 xtype: "fieldcontainer",
                                 layout: 'hbox',
                                 border: false,
-                                items: [fieldPath, {
-                                    xtype: "button",
-                                    iconCls: "pimcore_icon_search",
-                                    style: "margin-left: 5px",
-                                    handler: function () {
-                                        pimcore.helpers.itemselector(false, function (item) {
-                                            if (item) {
-                                                internalTypeField.setValue(item.type);
-                                                linkTypeField.setValue('internal');
-                                                fieldPath.setValue(item.fullpath);
-                                                return true;
-                                            }
-                                        }, {
-                                            type: ["asset", "document", "object"]
-                                        });
-                                    }
-                                }]
+                                items: searchButton
                             },
                             {
                                 xtype: 'fieldset',

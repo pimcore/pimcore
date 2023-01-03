@@ -10,7 +10,7 @@ pimcore.simpleBackendSearch.layout.searchButton = Class.create({
 
     createSearchButton: function (event) {
         let items = event.detail.items;
-        const classScope = event.detail.class ?? {};
+        const modalVariables = event.detail.modal ?? {};
 
         if(items !== undefined) {
             items.push({
@@ -20,7 +20,11 @@ pimcore.simpleBackendSearch.layout.searchButton = Class.create({
                 handler: function () {
                     document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchOpenDialog, {
                         detail: {
-                            class: classScope
+                            class: event.detail.class,
+                            type: event.detail.type,
+                            modal: {
+                                ...modalVariables
+                            }
                         }
                     }));
                 }

@@ -10,11 +10,12 @@ pimcore.simpleBackendSearch.layout.searchModal = Class.create({
 
     openSearchEditorDispatcher: function (event) {
         const classScope = event.detail.class ?? {};
+        const modalVariables = event.detail.modal ?? {};
 
-        let string = `pimcore.simpleBackendSearch.object.tags.${classScope.fieldConfig.fieldtype}`
+        let string = `pimcore.simpleBackendSearch.object.tags.${event.detail.type}`
         console.log('load class: ' +string);
 
-        pimcore.simpleBackendSearch.object.tags[classScope.fieldConfig.fieldtype].prototype.openSearchEditor(classScope);
+        pimcore.simpleBackendSearch.object.tags[event.detail.type].prototype.openSearchEditor(classScope, ...Object.values(modalVariables));
     },
 });
 

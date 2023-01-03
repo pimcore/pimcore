@@ -149,7 +149,8 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchButtonInit, {
             detail: {
                 items,
-                class: this
+                class: this,
+                type: this.fieldConfig.fieldtype
             }
         }));
 

@@ -1,10 +1,10 @@
 /**
  * @internal
  */
-pimcore.registerNS('pimcore.simpleBackendSearch.object.tags.relation.advancedManyToManyRelation');
+pimcore.registerNS('pimcore.simpleBackendSearch.object.tags.advancedManyToManyRelation');
 
-pimcore.simpleBackendSearch.object.tags.relation.advancedManyToManyRelation = Class.create(pimcore.simpleBackendSearch.object.tags.relation.abstractRelations, {
+pimcore.simpleBackendSearch.object.tags.advancedManyToManyRelation = Class.create(pimcore.simpleBackendSearch.object.tags.abstractRelations, {
 
 });
 
-const backendSearchAdvancedManyToManyRelation = new pimcore.simpleBackendSearch.object.tags.relation.advancedManyToManyRelation();
+const backendSearchAdvancedManyToManyRelation = new pimcore.simpleBackendSearch.object.tags.advancedManyToManyRelation();

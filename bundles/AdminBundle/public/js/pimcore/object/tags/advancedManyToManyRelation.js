@@ -598,7 +598,8 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             document.dispatchEvent(new CustomEvent(pimcore.events.onBackendSearchButtonInit, {
                 detail: {
                     items: toolbarItems,
-                    class: this
+                    class: this,
+                    type: this.fieldConfig.fieldtype
                 }
             }));
         }

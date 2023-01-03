@@ -1,9 +1,9 @@
 /**
  * @internal
  */
-pimcore.registerNS('pimcore.simpleBackendSearch.object.tags.relation.manyToManyObjectRelation');
+pimcore.registerNS('pimcore.simpleBackendSearch.object.tags.manyToManyObjectRelation');
 
-pimcore.simpleBackendSearch.object.tags.relation.manyToManyObjectRelation = Class.create({
+pimcore.simpleBackendSearch.object.tags.manyToManyObjectRelation = Class.create({
     openSearchEditor: function (classScope) {
         let allowedClasses;
         if (classScope.fieldConfig.classes != null && classScope.fieldConfig.classes.length > 0) {
@@ -28,4 +28,4 @@ pimcore.simpleBackendSearch.object.tags.relation.manyToManyObjectRelation = Clas
     }
 });
 
-const backendSearchManyToManyObjectRelation = new pimcore.simpleBackendSearch.object.tags.relation.manyToManyObjectRelation();
+const backendSearchManyToManyObjectRelation = new pimcore.simpleBackendSearch.object.tags.manyToManyObjectRelation();
