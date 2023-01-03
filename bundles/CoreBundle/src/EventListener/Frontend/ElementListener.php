@@ -47,8 +47,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
-    public const FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS = '_force_allow_processing_unpublished_elements';
-
     public function __construct(
         protected DocumentResolver $documentResolver,
         protected EditmodeResolver $editmodeResolver,
@@ -88,14 +86,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             $user = null;
             if ($adminRequest) {
                 $user = $this->userLoader->getUser();
-            }
-
-            if ($document && !$document->isPublished() && !$user && !$request->attributes->get(self::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS)) {
-                $this->logger->warning('Denying access to document {document} as it is unpublished and there is no user in the session.', [
-                    $document->getFullPath(),
-                ]);
-
-                throw new AccessDeniedHttpException(sprintf('Access denied for %s', $document->getFullPath()));
             }
 
             // editmode, pimcore_preview & pimcore_version

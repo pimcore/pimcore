@@ -92,8 +92,6 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
             $route->setDefault('_locale', $slug->getPosition());
         }
 
-        $route->setDefault(ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS, true);
-
         return $route;
     }
 }
