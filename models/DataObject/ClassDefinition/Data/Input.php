@@ -167,6 +167,10 @@ class Input extends Data implements
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
+        if($data === '') {
+            return null;
+        }
+
         return $this->getDataFromResource($data, $object, $params);
     }
 

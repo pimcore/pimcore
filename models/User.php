@@ -870,7 +870,7 @@ final class User extends User\UserRole
         return $this->keyBindings ?: self::getDefaultKeyBindings();
     }
 
-    public function setKeyBindings(string $keyBindings): void
+    public function setKeyBindings(?string $keyBindings): void
     {
         $this->keyBindings = $keyBindings;
     }

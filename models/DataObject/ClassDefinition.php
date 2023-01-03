@@ -717,7 +717,7 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    public function setCreationDate(int $creationDate): static
+    public function setCreationDate(?int $creationDate): static
     {
         $this->creationDate = (int)$creationDate;
 
