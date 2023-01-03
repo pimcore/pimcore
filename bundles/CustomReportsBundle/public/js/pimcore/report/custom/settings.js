@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.custom.settings");
-pimcore.report.custom.settings = Class.create({
+pimcore.registerNS("pimcore.bundle.customreports.custom.settings");
+pimcore.bundle.customreports.custom.settings = Class.create({
 
     initialize: function (parent) {
         this.getPanel();
@@ -25,7 +25,7 @@ pimcore.report.custom.settings = Class.create({
 
     getPanel: function () {
 
-        var editor = new pimcore.report.custom.panel();
+        var editor = new pimcore.bundle.customreports.custom.panel();
 
         if (!this.panel) {
             this.panel = new Ext.Panel({

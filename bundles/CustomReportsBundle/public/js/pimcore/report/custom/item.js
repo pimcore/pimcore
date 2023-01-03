@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.custom.item");
-pimcore.report.custom.item = Class.create({
+pimcore.registerNS("pimcore.bundle.customreports.custom.item");
+pimcore.bundle.customreports.custom.item = Class.create({
 
 
     initialize: function (data, parentPanel) {
@@ -722,7 +722,7 @@ pimcore.report.custom.item = Class.create({
 
         if (this.currentElementCount < 1) {
 
-            var definitionNames = Object.keys(pimcore.report.custom.definition);
+            var definitionNames = Object.keys(pimcore.bundle.customreports.custom.definition);
             for(var i = 0; i < definitionNames.length; i++) {
                 classMenu.push(
                     {
@@ -774,7 +774,7 @@ pimcore.report.custom.item = Class.create({
 
         sourceDefinitionData.type = sourceDefinitionData.type ? sourceDefinitionData.type : 'sql';
 
-        var adapter = new pimcore.report.custom.definition[sourceDefinitionData.type](sourceDefinitionData, key, this.getDeleteControl(t("custom_report_adapter_" + sourceDefinitionData.type, ucfirst(sourceDefinitionData.type)), key), this.getColumnSettings.bind(this));
+        var adapter = new pimcore.bundle.customreports.custom.definition[sourceDefinitionData.type](sourceDefinitionData, key, this.getDeleteControl(t("custom_report_adapter_" + sourceDefinitionData.type, ucfirst(sourceDefinitionData.type)), key), this.getColumnSettings.bind(this));
 
 
         this.currentElements.push({key: key, adapter: adapter});
@@ -788,7 +788,7 @@ pimcore.report.custom.item = Class.create({
     getColumnSettings: function () {
         var m = this.getValues();
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_reports_customreport_columnconfig'),
+            url: Routing.generate('pimcore_bundle_customreports_customreport_columnconfig'),
             method: "post",
             params: {
                 configuration: Ext.encode(m.dataSourceConfig),
@@ -920,7 +920,7 @@ pimcore.report.custom.item = Class.create({
         }
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_reports_customreport_update'),
+            url: Routing.generate('pimcore_bundle_customreports_customreport_update'),
             method: "PUT",
             params: {
                 configuration: Ext.encode(m),

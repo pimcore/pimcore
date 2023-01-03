@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.custom.panel");
-pimcore.report.custom.panel = Class.create({
+pimcore.registerNS("pimcore.bundle.customreports.custom.panel");
+pimcore.bundle.customreports.custom.panel = Class.create({
 
     initialize: function () {
     },
@@ -39,7 +39,7 @@ pimcore.report.custom.panel = Class.create({
                 autoSync: true,
                 proxy: {
                     type: 'ajax',
-                    url: Routing.generate('pimcore_reports_customreport_tree'),
+                    url: Routing.generate('pimcore_bundle_customreports_customreport_tree'),
                     reader: {
                         type: 'json'
                     }
@@ -122,14 +122,14 @@ pimcore.report.custom.panel = Class.create({
         }
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_reports_customreport_get'),
+            url: Routing.generate('pimcore_bundle_customreports_customreport_get'),
             params: {
                 name: id
             },
             success: function (response) {
                 var data = Ext.decode(response.responseText);
 
-                var fieldPanel = new pimcore.report.custom.item(data, this);
+                var fieldPanel = new pimcore.bundle.customreports.custom.item(data, this);
                 pimcore.layout.refresh();
             }.bind(this)
         });
@@ -177,7 +177,7 @@ pimcore.report.custom.panel = Class.create({
             }
 
             Ext.Ajax.request({
-                url: Routing.generate('pimcore_reports_customreport_add'),
+                url: Routing.generate('pimcore_bundle_customreports_customreport_add'),
                 method: 'POST',
                 params: {
                     name: value
@@ -209,7 +209,7 @@ pimcore.report.custom.panel = Class.create({
         Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('portlet_customreport'), record.data.text), function (btn) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
-                    url: Routing.generate('pimcore_reports_customreport_delete'),
+                    url: Routing.generate('pimcore_bundle_customreports_customreport_delete'),
                     method: 'DELETE',
                     params: {
                         name: record.data.id
@@ -231,7 +231,7 @@ pimcore.report.custom.panel = Class.create({
     doCloneField: function (tree, record, button, value) {
         if (button == "ok") {
             Ext.Ajax.request({
-                url: Routing.generate('pimcore_reports_customreport_clone'),
+                url: Routing.generate('pimcore_bundle_customreports_customreport_clone'),
                 method: 'POST',
                 params: {
                     name: record.data.id,

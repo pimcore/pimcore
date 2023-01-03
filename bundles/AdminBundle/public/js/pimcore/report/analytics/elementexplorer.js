@@ -17,7 +17,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
     matchType: function (type) {
         var types = ["document_page","global"];
         if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)
-                                                    && pimcore.settings.google_analytics_enabled) {
+            && pimcore.settings.google_analytics_enabled) {
             return true;
         }
         return false;
@@ -69,7 +69,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_reports_analytics_dataexplorer'),
+                url: Routing.generate('pimcore_admin_reports_analytics_dataexplorer'),
                 extraParams: {
                     type: type,
                     id: id,
@@ -165,7 +165,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                                 autoLoad: true,
                                 proxy: {
                                     type: 'ajax',
-                                    url: Routing.generate('pimcore_reports_analytics_getdimensions'),
+                                    url: Routing.generate('pimcore_admin_reports_analytics_getdimensions'),
                                     reader: {
                                         type: 'json',
                                         rootProperty: "data",
@@ -190,7 +190,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                                 autoLoad: true,
                                 proxy: {
                                     type: 'ajax',
-                                    url: Routing.generate('pimcore_reports_analytics_getmetrics'),
+                                    url: Routing.generate('pimcore_admin_reports_analytics_getmetrics'),
                                     reader: {
                                         type: 'json',
                                         rootProperty: "data",
@@ -257,5 +257,7 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
 });
 
 // add to report broker
-pimcore.report.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
-pimcore.report.broker.addReport(pimcore.report.analytics.elementexplorer, "analytics");
+if(pimcore.bundle && pimcore.bundle.customreports) {
+    pimcore.bundle.customreports.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
+    pimcore.bundle.customreports.broker.addReport(pimcore.report.analytics.elementexplorer, "analytics");
+}

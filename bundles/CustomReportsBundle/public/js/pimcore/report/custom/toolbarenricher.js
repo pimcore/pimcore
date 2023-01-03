@@ -4,7 +4,7 @@ document.addEventListener(pimcore.events.pimcoreReady, (e) => {
 
         // get available reports
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_reports_customreport_getreportconfig'),
+            url: Routing.generate('pimcore_bundle_customreports_customreport_getreportconfig'),
             success: function (response) {
                 const res = Ext.decode(response.responseText);
                 let report;
@@ -32,9 +32,9 @@ document.addEventListener(pimcore.events.pimcoreReady, (e) => {
                             report["groupIconClass"] = "pimcore_nav_icon_custom_report_group_default";
                         }
 
-                        let reportClass = report.reportClass ? report.reportClass : "pimcore.report.custom.report";
-                        pimcore.report.broker.addGroup(report["group"], report["group"], report["groupIconClass"]);
-                        pimcore.report.broker.addReport(reportClass, report["group"], {
+                        let reportClass = report.reportClass ? report.reportClass : "pimcore.bundle.customreports.custom.report";
+                        pimcore.bundle.customreports.broker.addGroup(report["group"], report["group"], report["groupIconClass"]);
+                        pimcore.bundle.customreports.broker.addReport(reportClass, report["group"], {
                             name: report["name"],
                             text: report["niceName"],
                             niceName: report["niceName"],

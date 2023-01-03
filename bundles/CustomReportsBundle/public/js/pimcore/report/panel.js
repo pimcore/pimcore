@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.panel");
-pimcore.report.panel = Class.create({
+pimcore.registerNS("pimcore.bundle.customreports.panel");
+pimcore.bundle.customreports.panel = Class.create({
 
 
     initialize: function(type) {
@@ -79,9 +79,9 @@ pimcore.report.panel = Class.create({
             var reportClass, reportConfig;
             var reportCount;
 
-            for (var i = 0; i < pimcore.report.broker.groups.length; i++) {
+            for (var i = 0; i < pimcore.bundle.customreports.broker.groups.length; i++) {
 
-                group = pimcore.report.broker.groups[i];
+                group = pimcore.bundle.customreports.broker.groups[i];
 
                 var groupIconCls = group.iconCls ? group.iconCls : '';
                 groupIconCls = groupIconCls + ' ' + groupIconCls.replace(/^pimcore_nav_icon_/, 'pimcore_icon_');
@@ -97,12 +97,12 @@ pimcore.report.panel = Class.create({
                 reportCount = 0;
 
                 // add reports to group
-                if (typeof pimcore.report.broker.reports[group.id] == "object") {
-                    for (var r = 0; r < pimcore.report.broker.reports[group.id].length; r++) {
-                        reportClass = pimcore.report.broker.reports[group.id][r]["class"];
+                if (typeof pimcore.bundle.customreports.broker.reports[group.id] == "object") {
+                    for (var r = 0; r < pimcore.bundle.customreports.broker.reports[group.id].length; r++) {
+                        reportClass = pimcore.bundle.customreports.broker.reports[group.id][r]["class"];
                         try {
                             reportClass = stringToFunction(reportClass);
-                            reportConfig = pimcore.report.broker.reports[group.id][r]["config"];
+                            reportConfig = pimcore.bundle.customreports.broker.reports[group.id][r]["config"];
                             if (!reportConfig) {
                                 reportConfig = {};
                             }
@@ -220,14 +220,14 @@ pimcore.report.panel = Class.create({
         var reportCount = 0;
         var reportClass;
 
-        for (var i = 0; i < pimcore.report.broker.groups.length; i++) {
+        for (var i = 0; i < pimcore.bundle.customreports.broker.groups.length; i++) {
 
-            group = pimcore.report.broker.groups[i];
+            group = pimcore.bundle.customreports.broker.groups[i];
 
             // add reports to group
-            if (typeof pimcore.report.broker.reports[group.id] == "object") {
-                for (var r = 0; r < pimcore.report.broker.reports[group.id].length; r++) {
-                    reportClass = pimcore.report.broker.reports[group.id][r]["class"];
+            if (typeof pimcore.bundle.customreports.broker.reports[group.id] == "object") {
+                for (var r = 0; r < pimcore.bundle.customreports.broker.reports[group.id].length; r++) {
+                    reportClass = pimcore.bundle.customreports.broker.reports[group.id][r]["class"];
                     try {
                         reportClass = stringToFunction(reportClass);
 

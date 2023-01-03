@@ -44,7 +44,7 @@ pimcore.report.analytics.settings = Class.create({
                     width: 400,
                     hideLabel: true,
                     value: "&nbsp;<br />" + t("analytics_settings_description") + "<br /><br />"
-                                           + t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
+                        + t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
                     cls: "pimcore_extra_label"
                 },
                 {
@@ -179,7 +179,7 @@ pimcore.report.analytics.settings = Class.create({
                             autoLoad: false,
                             proxy: {
                                 type: 'ajax',
-                                url: Routing.generate('pimcore_reports_analytics_getprofiles'),
+                                url: Routing.generate('pimcore_admin_reports_analytics_getprofiles'),
                                 reader: {
                                     type: 'json',
                                     rootProperty: "data"

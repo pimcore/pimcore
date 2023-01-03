@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.custom.report");
-pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
+pimcore.registerNS("pimcore.bundle.customreports.custom.report");
+pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customreports.abstract, {
 
     drillDownFilters: {},
     drillDownStores: [],
@@ -23,7 +23,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
     matchType: function (type) {
         var types = ["global"];
-        if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)) {
+        if (pimcore.bundle.customreports.abstract.prototype.matchTypeValidate(type, types)) {
             return true;
         }
         return false;
@@ -145,7 +145,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
     createGrid: function() {
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = Routing.generate('pimcore_reports_customreport_data');
+        var url = Routing.generate('pimcore_bundle_customreports_customreport_data');
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url, this.storeFields, itemsPerPage
         );
@@ -259,7 +259,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             });
 
             var drillDownStore = pimcore.helpers.grid.buildDefaultStore(
-                Routing.generate('pimcore_reports_customreport_drilldownoptions'),
+                Routing.generate('pimcore_bundle_customreports_customreport_drilldownoptions'),
                 ['value'],
                 400
             );
@@ -336,7 +336,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             }
 
             this.chartStore = pimcore.helpers.grid.buildDefaultStore(
-                Routing.generate('pimcore_reports_customreport_chart'),
+                Routing.generate('pimcore_bundle_customreports_customreport_chart'),
                 storeFields,
                 400000000
             );
@@ -409,7 +409,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             }
 
             this.chartStore = pimcore.helpers.grid.buildDefaultStore(
-                Routing.generate('pimcore_reports_customreport_chart'),
+                Routing.generate('pimcore_bundle_customreports_customreport_chart'),
                 chartFields,
                 400000000
             );
@@ -504,7 +504,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
 
             Ext.Ajax.request({
-                url: Routing.generate('pimcore_reports_customreport_get'),
+                url: Routing.generate('pimcore_bundle_customreports_customreport_get'),
                 params: {
                     name: this.config.name
                 },
@@ -550,7 +550,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         let proxy = this.store.getProxy();
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_reports_customreport_createcsv'),
+            url: Routing.generate('pimcore_bundle_customreports_customreport_createcsv'),
             params: {
                 exportFile: exportFile,
                 offset: offset,
@@ -564,7 +564,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 if(response["finished"]) {
                     this.progressBar.updateProgress(1,"100%");
                     this.progressWindow.close();
-                    var downloadUrl = Routing.generate('pimcore_reports_customreport_downloadcsv') + '?exportFile=' + response["exportFile"];
+                    var downloadUrl = Routing.generate('pimcore_bundle_customreports_customreport_downloadcsv') + '?exportFile=' + response["exportFile"];
                     pimcore.helpers.download(downloadUrl);
                 }else{
                     this.progressBar.updateProgress(response["progress"],Number.parseFloat(response["progress"]*100).toFixed(0)+"%");

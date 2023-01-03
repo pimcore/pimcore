@@ -1,39 +1,35 @@
-pimcore.registerNS("pimcore.customReports");
+pimcore.registerNS("pimcore.bundle.customreports");
 
 
-pimcore.customReports = Class.create({
+pimcore.bundle.customreports = Class.create({
     initialize: function () {
-        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
         document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
+        document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
 
-    pimcoreReady: function (e) {
+    preMenuBuild: function (e) {
+        let menu = e.detail.menu;
         const user = pimcore.globalmanager.get('user');
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
-        var customReportsMenu = [];
-
-        if (user.isAllowed("reports_config") && perspectiveCfg.inToolbar("settings.customReports")) {
-            customReportsMenu.push({
-                text: t("custom_reports"),
-                iconCls: "pimcore_nav_icon_reports",
-                itemId: 'pimcore_menu_marketing_custom_reports',
-                handler: this.showCustomReports
-            });
-        }
 
         if (user.isAllowed("reports") && perspectiveCfg.inToolbar("marketing.reports")) {
-            customReportsMenu.push({
+            menu.marketing.items.push({
                 text: t("reports"),
+                priority: 5,
                 iconCls: "pimcore_nav_icon_reports",
                 itemId: 'pimcore_menu_marketing_reports',
                 handler: this.showReports.bind(this, null)
             });
         }
 
-        if (customReportsMenu.length > 0) {
-            const toolbar = pimcore.globalmanager.get('layout_toolbar');
-
-            toolbar.marketingMenu.add(customReportsMenu);
+        if (user.isAllowed("reports_config") && perspectiveCfg.inToolbar("settings.customReports")) {
+            menu.marketing.items.push({
+                text: t("custom_reports"),
+                priority: 6,
+                iconCls: "pimcore_nav_icon_reports",
+                itemId: 'pimcore_menu_marketing_custom_reports',
+                handler: this.showCustomReports
+            });
         }
     },
 
@@ -42,7 +38,7 @@ pimcore.customReports = Class.create({
             pimcore.globalmanager.get("custom_reports_settings").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("custom_reports_settings", new pimcore.report.custom.settings());
+            pimcore.globalmanager.add("custom_reports_settings", new pimcore.bundle.customreports.custom.settings());
         }
     },
 
@@ -51,7 +47,7 @@ pimcore.customReports = Class.create({
             pimcore.globalmanager.get("reports").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("reports", new pimcore.report.panel());
+            pimcore.globalmanager.add("reports", new pimcore.bundle.customreports.panel());
         }
 
         // this is for generated/configured reports like the SQL Report
@@ -68,15 +64,15 @@ pimcore.customReports = Class.create({
         const user = pimcore.globalmanager.get('user');
         if (user.isAllowed("reports_config")) {
             pimcore.helpers.keyBindingMapping.customReports = function() {
-                glossary.showCustomReports();
+                customreports.showCustomReports();
             }
         }
         if (user.isAllowed("reports")) {
             pimcore.helpers.keyBindingMapping.reports = function() {
-                glossary.showCustomReports();
+                customreports.showCustomReports();
             }
         }
     }
 })
 
-const customReports = new pimcore.customReports();
+const customreports = new pimcore.bundle.customreports();

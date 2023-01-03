@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CustomReportController extends AdminController
 {
     /**
-     * @Route("/tree", name="pimcore_reports_customreport_tree", methods={"GET", "POST"})
+     * @Route("/tree", name="pimcore_bundle_customreports_customreport_tree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -50,7 +50,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/portlet-report-list", name="pimcore_reports_customreport_portletreportlist", methods={"GET", "POST"})
+     * @Route("/portlet-report-list", name="pimcore_bundle_customreports_customreport_portletreportlist", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -65,7 +65,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/add", name="pimcore_reports_customreport_add", methods={"POST"})
+     * @Route("/add", name="pimcore_bundle_customreports_customreport_add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -95,7 +95,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/delete", name="pimcore_reports_customreport_delete", methods={"DELETE"})
+     * @Route("/delete", name="pimcore_bundle_customreports_customreport_delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -119,7 +119,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/clone", name="pimcore_reports_customreport_clone", methods={"POST"})
+     * @Route("/clone", name="pimcore_bundle_customreports_customreport_clone", methods={"POST"})
      *
      * @param Request $request
      *
@@ -158,7 +158,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/get", name="pimcore_reports_customreport_get", methods={"GET"})
+     * @Route("/get", name="pimcore_bundle_customreports_customreport_get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -179,7 +179,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/update", name="pimcore_reports_customreport_update", methods={"PUT"})
+     * @Route("/update", name="pimcore_bundle_customreports_customreport_update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -216,7 +216,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/column-config", name="pimcore_reports_customreport_columnconfig", methods={"POST"})
+     * @Route("/column-config", name="pimcore_bundle_customreports_customreport_columnconfig", methods={"POST"})
      *
      * @param Request $request
      *
@@ -274,7 +274,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/get-report-config", name="pimcore_reports_customreport_getreportconfig", methods={"GET"})
+     * @Route("/get-report-config", name="pimcore_bundle_customreports_customreport_getreportconfig", methods={"GET"})
      *
      * @param Request $request
      *
@@ -308,7 +308,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/data", name="pimcore_reports_customreport_data", methods={"GET", "POST"})
+     * @Route("/data", name="pimcore_bundle_customreports_customreport_data", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -350,7 +350,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/drill-down-options", name="pimcore_reports_customreport_drilldownoptions", methods={"GET", "POST"})
+     * @Route("/drill-down-options", name="pimcore_bundle_customreports_customreport_drilldownoptions", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -380,7 +380,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/chart", name="pimcore_reports_customreport_chart", methods={"GET", "POST"})
+     * @Route("/chart", name="pimcore_bundle_customreports_customreport_chart", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -413,7 +413,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/create-csv", name="pimcore_reports_customreport_createcsv", methods={"GET"})
+     * @Route("/create-csv", name="pimcore_bundle_customreports_customreport_createcsv", methods={"GET"})
      *
      * @param Request $request
      *
@@ -489,7 +489,7 @@ class CustomReportController extends AdminController
     }
 
     /**
-     * @Route("/download-csv", name="pimcore_reports_customreport_downloadcsv", methods={"GET"})
+     * @Route("/download-csv", name="pimcore_bundle_customreports_customreport_downloadcsv", methods={"GET"})
      *
      * @param Request $request
      *

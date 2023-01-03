@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.broker");
-pimcore.report.broker = {
+pimcore.registerNS("pimcore.bundle.customreports.broker");
+pimcore.bundle.customreports.broker = {
 
     reports: {},
     groups: [
