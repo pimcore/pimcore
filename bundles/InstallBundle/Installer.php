@@ -638,7 +638,7 @@ class Installer
         // close connections and wait a bit for closing them ... in order to avoid too many connections error
         // when installing demos
         $db->close();
-        sleep(10);
+        sleep(20);
 
         return $errors;
     }
