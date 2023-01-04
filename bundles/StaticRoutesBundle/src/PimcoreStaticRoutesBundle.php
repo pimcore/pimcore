@@ -34,7 +34,7 @@ class PimcoreStaticRoutesBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/pimcorestaticroutes/js/startup.js',
-            '/bundles/pimcorestaticroutes/js/staticroutes.js',
+            '/bundles/pimcorestaticroutes/js/settings.js',
         ];
     }
 

@@ -1,7 +1,7 @@
-pimcore.registerNS("pimcore.staticroutes");
+pimcore.registerNS("pimcore.bundle.staticroutes.startup");
 
 
-pimcore.staticroutes = Class.create({
+pimcore.bundle.staticroutes.startup = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
@@ -28,9 +28,9 @@ pimcore.staticroutes = Class.create({
             pimcore.globalmanager.get("bundle_staticroutes").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("bundle_staticroutes", new pimcore.bundle.staticroutes());
+            pimcore.globalmanager.add("bundle_staticroutes", new pimcore.bundle.staticroutes.settings());
         }
     }
 })
 
-const staticroutes = new pimcore.staticroutes();
+const pimcoreBundleStaticroutes = new pimcore.bundle.staticroutes.startup();

@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.bundle.staticroutes");
-pimcore.bundle.staticroutes = Class.create({
+pimcore.registerNS("pimcore.bundle.staticroutes.settings");
+pimcore.bundle.staticroutes.settings = Class.create({
 
     initialize:function () {
 
