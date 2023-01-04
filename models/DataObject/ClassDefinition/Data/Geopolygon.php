@@ -111,8 +111,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      *
      * @return array|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -126,8 +125,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      *
      * @return string
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -170,8 +168,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      *
      * @return DataObject\Data\GeoCoordinates[]|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {

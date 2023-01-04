@@ -166,8 +166,7 @@ class Image extends Model\Asset
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public function generateLowQualityPreview(string $generator = null): bool|string
     {

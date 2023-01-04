@@ -656,8 +656,7 @@ class Decimal
     /**
      * Calculate a discounted amount
      *
-     *@example Decimal::create(100)->discount(15) = 85
-     *
+     * @example Decimal::create(100)->discount(15) = 85
      */
     public function discount(float|int|string|Decimal $discount, int $roundingMode = null): static
     {

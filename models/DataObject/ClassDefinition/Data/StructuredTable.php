@@ -200,8 +200,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -248,8 +247,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      *
      * @return DataObject\Data\StructuredTable
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\StructuredTable
     {

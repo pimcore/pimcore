@@ -768,7 +768,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @return Concrete
      *
-     *@throws \Exception
+     * @throws \Exception
      * @throws ProviderNotFoundException
      */
     public function getRecurringPaymentSourceOrderList(string $customerId, RecurringPaymentInterface $paymentProvider, string $paymentMethod = null, string $orderId = ''): Concrete

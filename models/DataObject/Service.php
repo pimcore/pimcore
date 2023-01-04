@@ -1666,8 +1666,7 @@ class Service extends Model\Element\Service
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildConditionPartsFromDescriptor(array $descriptor): array
     {

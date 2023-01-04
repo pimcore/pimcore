@@ -83,8 +83,7 @@ class Definition extends Model\AbstractModel
      *
      * @return self|null
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     public static function getByKey(string $key): ?Definition
     {
@@ -247,8 +246,7 @@ class Definition extends Model\AbstractModel
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getDefinitionFile(string $key = null): string
     {

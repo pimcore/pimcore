@@ -112,8 +112,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @return string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -154,8 +153,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @return string|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -200,8 +198,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @return Model\DataObject\Data\ExternalImage
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ExternalImage
     {

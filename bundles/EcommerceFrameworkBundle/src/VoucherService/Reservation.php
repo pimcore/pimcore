@@ -76,8 +76,7 @@ class Reservation extends AbstractModel
      *
      * @return bool
      *
-     *@deprecated
-     *
+     * @deprecated
      */
     public function check(int $cart_id): bool
     {

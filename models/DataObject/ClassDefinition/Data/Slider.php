@@ -166,8 +166,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      *
      * @return float|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
@@ -185,8 +184,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      *
      * @return float|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
@@ -204,8 +202,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      *
      * @return float|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {

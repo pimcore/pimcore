@@ -276,8 +276,7 @@ final class Version extends AbstractModel
      *
      * @return mixed
      *
-     *@internal
-     *
+     * @internal
      */
     public function loadData(bool $renewReferences = true): mixed
     {

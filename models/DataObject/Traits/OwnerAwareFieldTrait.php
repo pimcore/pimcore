@@ -35,8 +35,7 @@ trait OwnerAwareFieldTrait
      *
      * @return $this
      *
-     *@internal
-     *
+     * @internal
      */
     public function _setOwner(mixed $owner): static
     {

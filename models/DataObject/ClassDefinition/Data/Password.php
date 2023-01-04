@@ -129,8 +129,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -188,8 +187,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function calculateHash(string $data): string
     {
@@ -224,8 +222,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public function verifyPassword(string $password, DataObject\Concrete $object, bool $updateHash = true): bool
     {
@@ -264,8 +261,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -279,8 +275,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {

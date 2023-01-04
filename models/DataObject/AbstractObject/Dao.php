@@ -158,8 +158,7 @@ class Dao extends Model\Element\Dao
      *
      * @return null|array
      *
-     *@internal
-     *
+     * @internal
      */
     public function updateChildPaths(string $oldPath): ?array
     {

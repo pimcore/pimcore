@@ -534,8 +534,7 @@ class Document extends Element\AbstractElement
     /**
      * @param int $index
      *
-     *@internal
-     *
+     * @internal
      */
     public function saveIndex(int $index): void
     {

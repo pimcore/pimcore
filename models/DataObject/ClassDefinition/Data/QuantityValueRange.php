@@ -144,8 +144,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     /**
      * @param DataObject\Concrete|null $object
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -167,8 +166,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     /**
      * @param DataObject\Concrete|null $object
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
     {
@@ -194,8 +192,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     /**
      * @param DataObject\Concrete|null $object
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {

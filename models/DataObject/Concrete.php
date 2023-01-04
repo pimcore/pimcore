@@ -795,8 +795,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public function retrieveSlugData(array $descriptor): array
     {
@@ -810,8 +809,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public function retrieveRelationData(array $descriptor): array
     {

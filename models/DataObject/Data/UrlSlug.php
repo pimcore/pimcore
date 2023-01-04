@@ -203,8 +203,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return UrlSlug|null
      *
-     *@internal
-     *
+     * @internal
      */
     public static function resolveSlug(string $path, int $siteId = 0): ?UrlSlug
     {
@@ -399,8 +398,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     protected static function getCacheKey(string $path, int $siteId): string
     {

@@ -121,8 +121,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return int|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {

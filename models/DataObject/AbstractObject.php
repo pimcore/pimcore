@@ -881,8 +881,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param int $objectId
      * @param array $additionalTags
      *
-     *@internal
-     *
+     * @internal
      */
     public static function clearDependentCacheByObjectId(int $objectId, array $additionalTags = []): void
     {
@@ -903,8 +902,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param int $index
      *
-     *@internal
-     *
+     * @internal
      */
     public function saveIndex(int $index): void
     {
@@ -1061,8 +1059,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return mixed
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     public function get(string $fieldName, string $language = null): mixed
     {
@@ -1080,8 +1077,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return mixed
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     public function set(string $fieldName, mixed $value, string $language = null): mixed
     {
