@@ -50,7 +50,7 @@ class SelectRelation extends AbstractFilterType
         }
 
         foreach ($values as $v) {
-            if (empty($availableRelations) || $availableRelations[$v['value']] === true) {
+            if (empty($availableRelations) || $availableRelations[$v['value']] ?? false) {
                 $objects[$v['value']] = DataObject::getById($v['value']);
             }
         }
