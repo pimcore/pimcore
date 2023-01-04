@@ -27,7 +27,7 @@ class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/pimcoresimplebackendsearch/js/pimcore/startup.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/service.js',
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/element/service.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/element/selector.js'
         ];
     }

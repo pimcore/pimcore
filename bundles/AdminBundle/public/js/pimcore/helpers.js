@@ -811,7 +811,12 @@ pimcore.helpers.loadingHide = function () {
 };
 
 pimcore.helpers.itemselector = function (multiselect, callback, restrictions, config) {
-    var itemselector = new pimcore.element.selector.selector(multiselect, callback, restrictions, config);
+    pimcore.globalmanager.get('searchImplementationRegistry').openItemSelector(
+        multiselect,
+        callback,
+        restrictions,
+        config
+    );
 };
 
 
