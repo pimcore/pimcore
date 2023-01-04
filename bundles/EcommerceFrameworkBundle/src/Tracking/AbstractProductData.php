@@ -30,7 +30,7 @@ abstract class AbstractProductData extends AbstractData
 
     protected int $position = 0;
 
-    protected float $price;
+    protected ?float $price = null;
 
     public function getTransactionId(): string
     {
@@ -116,7 +116,7 @@ abstract class AbstractProductData extends AbstractData
         return $this;
     }
 
-    public function getPrice(): float
+    public function getPrice(): ?float
     {
         return $this->price;
     }

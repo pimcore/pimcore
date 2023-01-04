@@ -48,7 +48,6 @@ trait Parallelization
     }
 
 
-
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
         if (!$this->lock()) {

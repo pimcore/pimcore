@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,12 +16,12 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
 /**
- *  Use this for ES Version >= 7
+ *  Use this for ES Version = 8
  */
-class DefaultElasticSearch7 extends AbstractElasticSearch
+class DefaultElasticSearch8 extends AbstractElasticSearch
 {
-    public function getProductList(): \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch7
+    public function getProductList(): \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch8
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch7($this->tenantConfig);
+        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch8($this->tenantConfig);
     }
 }

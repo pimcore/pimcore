@@ -29,7 +29,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     },
 
     getLayout: function () {
-        this.selectedClass = this.element.data.general.o_className;
+        this.selectedClass = this.element.data.general.className;
 
         var classStore = pimcore.globalmanager.get("object_types_store");
         var klassIndex = classStore.findExact("text", this.selectedClass);
@@ -306,8 +306,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                 url: Routing.generate('pimcore_admin_dataobject_dataobject_add'),
                 method: 'POST',
                 params: {
-                    className: this.element.data.general.o_className,
-                    classId: this.element.data.general.o_classId,
+                    className: this.element.data.general.className,
+                    classId: this.element.data.general.classId,
                     parentId: this.element.id,
                     objecttype: "variant",
                     key: pimcore.helpers.getValidFilename(value, "object")

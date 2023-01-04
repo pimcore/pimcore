@@ -24,7 +24,7 @@ trait DataHeightTrait
     /**
      * @internal
      */
-    public string|int|null $height = 0;
+    public string|int|null $height = null;
 
     public function getHeight(): int|string|null
     {

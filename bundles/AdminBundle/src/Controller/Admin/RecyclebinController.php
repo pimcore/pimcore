@@ -66,7 +66,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
             $conditionFilters = [];
 
             if ($request->get('filterFullText')) {
-                $conditionFilters[] = 'path LIKE ' . $list->quote('%'. $list->escapeLike($request->get('filterFullText')) .'%');
+                $conditionFilters[] = '`path` LIKE ' . $list->quote('%'. $list->escapeLike($request->get('filterFullText')) .'%');
             }
 
             $filters = $request->get('filter');
@@ -112,7 +112,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
 
                     $field = $db->quoteIdentifier($filterField);
                     if (($filter['field'] ?? false) == 'fullpath') {
-                        $field = 'CONCAT(path,filename)';
+                        $field = 'CONCAT(`path`,filename)';
                     }
 
                     if ($filter['type'] == 'date' && $operator == '=') {
@@ -187,7 +187,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
 
             if ($element) {
                 $list = $element::getList(['unpublished' => true]);
-                $list->setCondition((($request->get('type') === 'object') ? 'o_' : '') . 'path LIKE ' . $list->quote($list->escapeLike($element->getRealFullPath()) . '/%'));
+                $list->setCondition('`path` LIKE ' . $list->quote($list->escapeLike($element->getRealFullPath()) . '/%'));
                 $children = $list->getTotalCount();
 
                 if ($children <= 100) {

@@ -75,8 +75,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             $domain = Translation::DOMAIN_DEFAULT;
         }
 
-        $id = (string) $id;
-
         if ($domain === Translation::DOMAIN_ADMIN && !empty($this->adminTranslationMapping)) {
             if (null === $locale) {
                 $locale = $this->getLocale();
@@ -374,8 +372,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @param string $adminPath
      *
-     *@internal
-     *
+     * @internal
      */
     public function setAdminPath(string $adminPath)
     {
@@ -415,8 +412,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @param Kernel $kernel
      *
-     *@internal
-     *
+     * @internal
      */
     public function setKernel(Kernel $kernel)
     {

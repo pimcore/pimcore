@@ -100,14 +100,14 @@ class ObjectTest extends ModelTestCase
         $firstChild->save();
 
         //without unpublished flag
-        $child = $parent->getChildren();
+        $child = $parent->getChildren()->load();
         $this->assertEquals(0, count($child), 'Expected no child');
 
         $hasChild = $parent->hasChildren();
         $this->assertFalse($hasChild, 'hasChild property should be false');
 
         //with unpublished flag
-        $child = $parent->getChildren([], true);
+        $child = $parent->getChildren([], true)->load();
         $this->assertEquals(1, count($child), 'Expected 1 child');
 
         $hasChild = $parent->hasChildren([], true);
@@ -134,14 +134,14 @@ class ObjectTest extends ModelTestCase
         $secondChild->save();
 
         //without unpublished flag
-        $sibling = $firstChild->getSiblings();
+        $sibling = $firstChild->getSiblings()->load();
         $this->assertEquals(0, count($sibling), 'Expected no sibling');
 
         $hasSibling = $firstChild->hasSiblings();
         $this->assertFalse($hasSibling, 'hasSiblings property should be false');
 
         //with unpublished flag
-        $sibling = $firstChild->getSiblings([], true);
+        $sibling = $firstChild->getSiblings([], true)->load();
         $this->assertEquals(1, count($sibling), 'Expected 1 sibling');
 
         $hasSibling = $firstChild->hasSiblings([], true);
@@ -206,7 +206,7 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
-     * Verifies that when an object gets cloned, the o_* fields references get renewed
+     * Verifies that when an object gets cloned, the fields get copied properly
      */
     public function testCloning()
     {
@@ -218,7 +218,7 @@ class ObjectTest extends ModelTestCase
         $this->assertEquals(null, $clone->getId(), 'Setting ID on original object should have no impact on the cloned object');
 
         $otherClone = clone $object;
-        $this->assertEquals(123, $otherClone->getId(), 'Shallow clone should copy the o_* fields');
+        $this->assertEquals(123, $otherClone->getId(), 'Shallow clone should copy the fields');
     }
 
     /**

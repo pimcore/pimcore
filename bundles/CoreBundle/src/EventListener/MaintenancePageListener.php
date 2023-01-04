@@ -18,14 +18,16 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Tool\Session;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * @internal
  */
-class MaintenancePageListener
+class MaintenancePageListener implements EventSubscriberInterface
 {
     use ResponseInjectionTrait;
 
@@ -33,6 +35,14 @@ class MaintenancePageListener
 
     public function __construct(protected KernelInterface $kernel)
     {
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            //run after Pimcore\Bundle\AdminBundle\EventListener\AdminSessionBagListener
+            KernelEvents::REQUEST => ['onKernelRequest', 126],
+        ];
     }
 
     public function setTemplateCode(string $code): void

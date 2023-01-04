@@ -165,8 +165,7 @@ final class Config extends Model\AbstractModel
      *
      * @return self|null
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getByAutoDetect(array|string|Config $config): ?Config
     {
@@ -297,16 +296,15 @@ final class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $name
      * @param array $parameters
      * @param string|null $media
      *
      * @return bool
-     *
-     *@internal
-     *
      */
-    public function addItem(string $name, array $parameters, string $media = null): bool
+    public function addItem(string $name, array $parameters, ?string $media = null): bool
     {
         $item = [
             'method' => $name,
@@ -325,17 +323,16 @@ final class Config extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param int $position
      * @param string $name
      * @param array $parameters
      * @param string|null $media
      *
      * @return bool
-     *
-     *@internal
-     *
      */
-    public function addItemAt(int $position, string $name, array $parameters, string $media = null): bool
+    public function addItemAt(int $position, string $name, array $parameters, ?string $media = null): bool
     {
         if (!$media || $media == 'default') {
             $itemContainer = &$this->items;
@@ -484,8 +481,7 @@ final class Config extends Model\AbstractModel
      *
      * @return self
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getByArrayConfig(array $config): Config
     {
@@ -519,8 +515,7 @@ final class Config extends Model\AbstractModel
      *
      * @return self
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getByLegacyConfig(array $config): Config
     {
@@ -605,8 +600,7 @@ final class Config extends Model\AbstractModel
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public function getEstimatedDimensions(Model\Asset\Image $asset): array
     {

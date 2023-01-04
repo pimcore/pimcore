@@ -102,7 +102,7 @@ function initializeMenu(toolbar, menuItems) {
 document.addEventListener(pimcore.events.postOpenObject, (e) => {
     if (pimcore.globalmanager.get("user").isAllowed("bundle_ecommerce_pricing_rules")) {
 
-        if (e.detail.type == "object" && e.detail.object.data.general.o_className == "OnlineShopVoucherSeries") {
+        if (e.detail.type == "object" && e.detail.object.data.general.className == "OnlineShopVoucherSeries") {
             const tab = new pimcore.bundle.EcommerceFramework.VoucherSeriesTab(e.detail.object, e.detail.type);
 
             e.detail.object.tab.items.items[1].insert(1, tab.getLayout());
@@ -112,7 +112,7 @@ document.addEventListener(pimcore.events.postOpenObject, (e) => {
     }
     if (pimcore.globalmanager.get("user").isAllowed("bundle_ecommerce_back-office_order")) {
 
-        if (e.detail.type == "object" && e.detail.object.data.general.o_className == "OnlineShopOrder") {
+        if (e.detail.type == "object" && e.detail.object.data.general.className == "OnlineShopOrder") {
             const tab = new pimcore.bundle.EcommerceFramework.OrderTab(e.detail.object, e.detail.type);
             e.detail.object.tab.items.items[1].insert(0, tab.getLayout());
             e.detail.object.tab.items.items[1].updateLayout();

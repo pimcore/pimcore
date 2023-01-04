@@ -24,10 +24,7 @@ use Symfony\Component\Process\Process;
 
 final class Console
 {
-    /**
-     * @var string system environment
-     */
-    private static string $systemEnvironment;
+    private static ?string $systemEnvironment = null;
 
     protected static array $executableCache = [];
 
@@ -245,8 +242,7 @@ final class Console
      *
      * @return int
      *
-     *@deprecated since v6.9. For long running background tasks switch to a queue implementation.
-     *
+     * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
      */
     public static function runPhpScriptInBackground(string $script, array $arguments = [], string $outputFile = null): int
     {
@@ -263,10 +259,9 @@ final class Console
      *
      * @return int
      *
-     *@deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
+     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
      *
      * @static
-     *
      */
     public static function execInBackground(string $cmd, string $outputFile = null): int
     {
@@ -282,17 +277,16 @@ final class Console
 
     /**
      * @param string $cmd
-     * @param string $outputFile
+     * @param ?string $outputFile
      * @param bool $useNohup
      *
      * @return int
      *
-     *@deprecated since v.6.9. For long running background tasks use queues.
+     * @deprecated since v.6.9. For long running background tasks use queues.
      *
      * @static
-     *
      */
-    protected static function execInBackgroundUnix(string $cmd, string $outputFile, bool $useNohup = true): int
+    protected static function execInBackgroundUnix(string $cmd, ?string $outputFile, bool $useNohup = true): int
     {
         if (!$outputFile) {
             $outputFile = '/dev/null';
@@ -338,10 +332,9 @@ final class Console
      *
      * @return int
      *
-     *@deprecated since v.6.9. For long running background tasks use queues.
+     * @deprecated since v.6.9. For long-running background tasks use queues.
      *
      * @static
-     *
      */
     protected static function execInBackgroundWindows(string $cmd, string $outputFile): int
     {
@@ -364,8 +357,7 @@ final class Console
      *
      * @return void
      *
-     *@internal
-     *
+     * @internal
      */
     public static function addLowProcessPriority(array|string &$cmd): void
     {

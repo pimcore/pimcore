@@ -125,7 +125,7 @@ class Folder extends Model\Asset
 
         $limit = 42;
         $db = \Pimcore\Db::get();
-        $condition = "path LIKE :path AND type IN ('image', 'video', 'document')";
+        $condition = "`path` LIKE :path AND `type` IN ('image', 'video', 'document')";
         $conditionParams = [
             'path' => Helper::escapeLike($this->getRealFullPath()) . '/%',
         ];
@@ -181,7 +181,13 @@ class Folder extends Model\Asset
                         break;
                     }
 
-                    $tile = imagecreatefromstring(stream_get_contents($tileThumb->getStream()));
+                    $stream = $tileThumb->getStream();
+
+                    if (null === $stream) {
+                        break;
+                    }
+
+                    $tile = imagecreatefromstring(stream_get_contents($stream));
                     imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $tileThumb->getWidth(), $tileThumb->getHeight());
 
                     $count++;

@@ -409,7 +409,7 @@ class OrderManager implements OrderManagerInterface
         $key = $this->buildOrderItemKey($item, $isGiftItem);
 
         $orderItemList = $this->buildOrderItemList();
-        $orderItemList->setCondition('o_parentId = ? AND o_key = ?', [$parent->getId(), $key]);
+        $orderItemList->setCondition('parentId = ? AND `key` = ?', [$parent->getId(), $key]);
 
         /** @var AbstractOrderItem[] $orderItems */
         $orderItems = $orderItemList->load();
@@ -626,7 +626,7 @@ class OrderManager implements OrderManagerInterface
         }
 
         $orderItemChildren = $order->getChildren();
-        foreach ($orderItemChildren ?: [] as $orderItemChild) {
+        foreach ($orderItemChildren as $orderItemChild) {
             if ($orderItemChild instanceof AbstractOrderItem) {
                 if (!in_array($orderItemChild->getId(), $validItemIds)) {
                     if (!$orderItemChild->getDependencies()->getRequiredBy(null, 1)) {
@@ -768,7 +768,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @return Concrete
      *
-     *@throws \Exception
+     * @throws \Exception
      * @throws ProviderNotFoundException
      */
     public function getRecurringPaymentSourceOrderList(string $customerId, RecurringPaymentInterface $paymentProvider, string $paymentMethod = null, string $orderId = ''): Concrete
@@ -789,7 +789,7 @@ class OrderManager implements OrderManagerInterface
         $paymentProvider->applyRecurringPaymentCondition($orders, ['paymentMethod' => $paymentMethod]);
 
         if (empty($orders->getOrderKey())) {
-            $orders->setOrderKey('o_creationDate');
+            $orders->setOrderKey('creationDate');
             $orders->setOrder('DESC');
         }
 

@@ -454,7 +454,7 @@ $list = new Pimcore\Model\DataObject\News\Listing();
 $list->onCreateQueryBuilder(
     function (\Doctrine\DBAL\Query\QueryBuilder $queryBuilder) use ($list) {
         $queryBuilder->join('orderItem', 'objects', 'orderItemObjects',
-                    'orderItemObjects.o_id = orderItem.product__id');
+                    'orderItemObjects.id = orderItem.product__id');
     }
 );
 ```

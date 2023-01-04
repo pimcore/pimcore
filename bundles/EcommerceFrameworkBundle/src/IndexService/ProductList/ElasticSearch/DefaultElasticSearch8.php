@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +15,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
-class DefaultElasticSearch7 extends AbstractElasticSearch
+class DefaultElasticSearch8 extends AbstractElasticSearch
 {
 }

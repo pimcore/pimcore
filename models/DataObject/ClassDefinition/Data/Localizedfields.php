@@ -272,8 +272,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @return DataObject\Localizedfield
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Localizedfield
     {
@@ -500,8 +499,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $localizedFields->createUpdateTable($params);
 
         foreach ($this->getFieldDefinitions() as $fd) {
-            //TODO Pimcore 11 remove method_exists call
-            if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
+            if ($fd instanceof ClassSavedInterface) {
                 $fd->classSaved($class, $params);
             }
         }

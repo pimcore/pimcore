@@ -95,7 +95,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             pimcore.elementservice.setElementPublishedState({
                 elementType: "object",
                 id: this.id,
-                published: this.data.general.o_published
+                published: this.data.general.published
             });
 
         }
@@ -188,12 +188,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var tabId = "object_" + this.id;
         this.tab = new Ext.Panel({
             id: tabId,
-            title: htmlspecialchars(this.data.general.o_key),
+            title: htmlspecialchars(this.data.general.key),
             closable: true,
             layout: "border",
             items: [this.getLayoutToolbar(), this.getTabPanel()],
             object: this,
-            cls: "pimcore_class_" + this.data.general.o_className,
+            cls: "pimcore_class_" + this.data.general.className,
             iconCls: iconClass
         });
 
@@ -390,7 +390,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         text: t('save_only_scheduled_tasks'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this, "scheduler", "scheduler"),
-                        hidden: !this.isAllowed("settings") || this.data.general.o_published
+                        hidden: !this.isAllowed("settings") || this.data.general.published
                     }
                 ]
             });
@@ -411,13 +411,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         text: t('save_draft'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this, "version"),
-                        hidden: !this.isAllowed("save") || !this.data.general.o_published
+                        hidden: !this.isAllowed("save") || !this.data.general.published
                     },
                     {
                         text: t('save_only_scheduled_tasks'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this, "scheduler", "scheduler"),
-                        hidden: !this.isAllowed("settings") || !this.data.general.o_published
+                        hidden: !this.isAllowed("settings") || !this.data.general.published
                     }
                 ]
             });
@@ -449,16 +449,16 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             if (this.isAllowed("publish")) {
                 buttons.push(this.toolbarButtons.publish);
             }
-            if (this.isAllowed("unpublish") && !this.data.general.o_locked) {
+            if (this.isAllowed("unpublish") && !this.data.general.locked) {
                 buttons.push(this.toolbarButtons.unpublish);
             }
 
             buttons.push("-");
 
-            if (this.isAllowed("delete") && !this.data.general.o_locked) {
+            if (this.isAllowed("delete") && !this.data.general.locked) {
                 buttons.push(this.toolbarButtons.remove);
             }
-            if (this.isAllowed("rename") && !this.data.general.o_locked) {
+            if (this.isAllowed("rename") && !this.data.general.locked) {
                 buttons.push(this.toolbarButtons.rename);
             }
 
@@ -496,12 +496,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push(reloadConfig);
 
             if (pimcore.elementservice.showLocateInTreeButton("object")) {
-                if (this.data.general.o_type != "variant" || this.data.general.showVariants) {
+                if (this.data.general.type != "variant" || this.data.general.showVariants) {
                     buttons.push({
                         tooltip: t('show_in_tree'),
                         iconCls: "pimcore_material_icon_locate pimcore_material_icon",
                         scale: "medium",
-                        handler: this.selectInTree.bind(this, this.data.general.o_type)
+                        handler: this.selectInTree.bind(this, this.data.general.type)
                     });
                 }
             }
@@ -524,7 +524,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     handler: function() {
                         var object = this.edit.object;
                         var config = {
-                            classid: object.data.general.o_classId
+                            classid: object.data.general.classId
                         }
                         var dialog = new pimcore.object.fieldlookup.filterdialog(config, null, object);
                         dialog.show();
@@ -541,7 +541,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     scale: "medium",
                     handler: function () {
                         var date = new Date();
-                        var path = Routing.generate('pimcore_admin_dataobject_dataobject_preview', {id: this.data.general.o_id, time: date.getTime()});
+                        var path = Routing.generate('pimcore_admin_dataobject_dataobject_preview', {id: this.data.general.id, time: date.getTime()});
                         this.saveToSession(function () {
                             window.open(path);
                         });
@@ -561,14 +561,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: t("id") + " " + this.data.general.o_id,
+                text: t("id") + " " + this.data.general.id,
                 scale: "medium"
             });
 
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: t(this.data.general.o_title),
+                text: t(this.data.general.classTitle),
                 scale: "medium"
             });
 
@@ -598,7 +598,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 overflowHandler: 'scroller'
             });
 
-            if (!this.data.general.o_published) {
+            if (!this.data.general.published) {
                 this.toolbarButtons.unpublish.hide();
             } else if (this.isAllowed("publish")) {
                 this.toolbarButtons.save.hide();
@@ -650,12 +650,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         try {
             data.general = Ext.apply({}, this.data.general);
             // object shouldn't be relocated, renamed, or anything else that is evil
-            delete data.general["o_parentId"];
-            delete data.general["o_type"];
-            delete data.general["o_key"];
-            delete data.general["o_locked"];
-            delete data.general["o_classId"];
-            delete data.general["o_modificationDate"];
+            delete data.general["parentId"];
+            delete data.general["type"];
+            delete data.general["key"];
+            delete data.general["locked"];
+            delete data.general["classId"];
+            delete data.general["modificationDate"];
 
             data.general = Ext.encode(data.general);
         }
@@ -693,7 +693,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         return this.save("publish", only, callback, function (rdata) {
             if (rdata && rdata.success) {
                 //set the object as published only if in the response error doesn't exist
-                this.data.general.o_published = true;
+                this.data.general.published = true;
                 // toggle buttons
                 this.toolbarButtons.unpublish.show();
                 this.toolbarButtons.save.hide();
@@ -710,7 +710,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     unpublish: function (only, callback) {
         this.save("unpublish", only, callback, function (rdata) {
             if (rdata && rdata.success) {
-                this.data.general.o_published = false;
+                this.data.general.published = false;
 
                 // toggle buttons
                 this.toolbarButtons.unpublish.hide();
@@ -903,18 +903,18 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     getMetaInfo: function() {
         return {
-            id: this.data.general.o_id,
+            id: this.data.general.id,
             path: this.data.general.fullpath,
-            parentid: this.data.general.o_parentId,
-            classid: this.data.general.o_classId,
-            "class": this.data.general.o_className,
-            modificationdate: this.data.general.o_modificationDate,
-            creationdate: this.data.general.o_creationDate,
-            usermodification: this.data.general.o_userModification,
-            usermodification_name: this.data.general.o_userModificationFullname,
-            userowner: this.data.general.o_userOwner,
-            userowner_name: this.data.general.o_userOwnerFullname,
-            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "object")
+            parentid: this.data.general.parentId,
+            classid: this.data.general.classId,
+            "class": this.data.general.className,
+            modificationdate: this.data.general.modificationDate,
+            creationdate: this.data.general.creationDate,
+            usermodification: this.data.general.userModification,
+            usermodification_name: this.data.general.userModificationFullname,
+            userowner: this.data.general.userOwner,
+            userowner_name: this.data.general.userOwnerFullname,
+            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, "object")
         };
     },
 
@@ -962,12 +962,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     rename: function () {
-        if (this.isAllowed("rename") && !this.data.general.o_locked) {
+        if (this.isAllowed("rename") && !this.data.general.locked) {
             var options = {
                 elementType: "object",
-                elementSubType: this.data.general.o_type,
+                elementSubType: this.data.general.type,
                 id: this.id,
-                default: this.data.general.o_key
+                default: this.data.general.key
             };
             pimcore.elementservice.editElementKey(options);
         }
@@ -1015,7 +1015,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             var elementData = {
                 id:this.id,
                 type:'object',
-                published:this.data.general.o_published,
+                published:this.data.general.published,
                 path:this.data.general.fullpath
             };
             if (pimcore.globalmanager.get("new_notifications")) {
