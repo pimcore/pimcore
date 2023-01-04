@@ -821,12 +821,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        //TODO Pimcore 11 remove method_exists call
-                        if (method_exists($fd, 'classSaved')) {
+                        if ($fd instanceof ClassSavedInterface) {
                             // defer creation
-                            if (!$fd instanceof DataContainerAwareInterface) {
-                                $fd->classSaved($class);
-                            }
+                            $fd->classSaved($class, $params);
                         }
                     }
 
