@@ -33,43 +33,6 @@ trait Parallelization
 
     use ParallelizationBase;
 
-    /**
-     * @deprecated and will be removed in Pimcore 11. Please use configureCommand instead.
-     */
-    protected static function configureParallelization(Command $command): void
-    {
-        // we need to override WebmozartParallelization::configureParallelization here
-        // because some existing commands are already using the `p` option, and would therefore
-        // causes collisions
-        $command
-            ->addArgument(
-                'item',
-                InputArgument::OPTIONAL,
-                'The item to process. Can be used in commands where simple IDs are processed. Otherwise it is for internal use.'
-            )
-            ->addOption(
-                'processes',
-                null,
-                //'p', avoid collisions with already existing Pimcore command options
-                InputOption::VALUE_OPTIONAL,
-                'The number of parallel processes to run',
-                '1'
-            )
-            ->addOption(
-                'child',
-                null,
-                InputOption::VALUE_NONE,
-                'Set on child processes. For internal use only.'
-            )->addOption(
-                'batch-size',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Sets the number of items to process per child process or in a batch',
-                '50'
-            )
-        ;
-    }
-
     protected function getParallelExecutableFactory(
         callable $fetchItems,
         callable $runSingleCommand,
@@ -79,46 +42,14 @@ trait Parallelization
         ErrorHandler $errorHandler
     ): ParallelExecutorFactory {
         return ParallelExecutorFactory::create(...func_get_args())
-            ->withSegmentSize($this->getSegmentSize())
-            ->withScriptPath($this->getConsolePath())
             ->withRunBeforeFirstCommand($this->runBeforeFirstCommand(...))
             ->withRunAfterLastCommand($this->runAfterLastCommand(...))
             ->withRunAfterBatch($this->runAfterBatch(...));
     }
 
-    /**
-     * @param Command $command
-     *
-     * @return void
-     */
-    protected static function configureCommand(Command $command)
-    {
-        self::configureParallelization($command);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getSegmentSize(): int
-    {
-        return (int)$this->input->getOption('batch-size');
-    }
 
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
-        // checking if the p option is used
-        // TODO Remove in Pimcore 11
-        if (isset($_SERVER['argv'])) {
-            if (in_array('-p', $_SERVER['argv'])) {
-                $output->writeln([
-                    '<comment>=================================================================</>',
-                    '<comment>You are using the shortcut p with another option than processes</>',
-                    '<comment>This will be removed with Pimcore 11. Please replace the shortcut</>',
-                    '<comment>=================================================================</>',
-                ]);
-            }
-        }
-
         if (!$this->lock()) {
             $this->writeError('The command is already running.');
             exit(1);
@@ -170,10 +101,5 @@ trait Parallelization
             $this->lock->release();
             $this->lock = null;
         }
-    }
-
-    public function getConsolePath(): string
-    {
-        return PIMCORE_PROJECT_ROOT . '/bin/console';
     }
 }
