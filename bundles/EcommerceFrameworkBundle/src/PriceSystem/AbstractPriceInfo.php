@@ -33,7 +33,7 @@ class AbstractPriceInfo implements PriceInfoInterface
      */
     protected array $products;
 
-    public static function getInstance(): AbstractPriceInfo
+    public static function getInstance(): static
     {
         return new static(func_get_args());
     }

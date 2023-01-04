@@ -84,7 +84,7 @@ class VisitorInfo implements \IteratorAggregate
         $this->sessionId = $sessionId;
     }
 
-    public static function fromRequest(Request $request): self
+    public static function fromRequest(Request $request): static
     {
         $visitorId = $request->cookies->get(self::VISITOR_ID_COOKIE_NAME);
         if (!empty($visitorId)) {
