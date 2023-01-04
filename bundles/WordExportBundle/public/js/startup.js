@@ -32,6 +32,7 @@ pimcore.bundle.wordexport.startup = Class.create({
                     menu.extras.items[index].menu.items.push({
                         text: "Microsoft® Word " + t("export"),
                         iconCls: "pimcore_nav_icon_word_export",
+                        priority: 25,
                         itemId: 'pimcore_menu_extras_translations_word_export',
                         handler: that.wordExport
                     });
@@ -51,4 +52,4 @@ pimcore.bundle.wordexport.startup = Class.create({
     }
 })
 
-const pimcoreBundleWordexport = new pimcore.bundle.wordexport.startup();
+const pimcoreBundleWordExport = new pimcore.bundle.wordexport.startup();
