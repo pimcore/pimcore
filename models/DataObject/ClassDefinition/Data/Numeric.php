@@ -327,8 +327,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return float|int|string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
@@ -384,8 +383,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return float|int|string|null
      *
-     *@see Data::getDataForEditmode
-     *
+     * @see Data::getDataForEditmode
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
@@ -399,8 +397,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return float|int|string|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
@@ -414,8 +411,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return string
      *
-     *@see Data::getVersionPreview
-     *
+     * @see Data::getVersionPreview
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {

@@ -125,8 +125,7 @@ final class Config implements ArrayAccess
      * @param array|null $configuration
      * @param string|null $offset
      *
-     *@internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
-     *
+     * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
      */
     public static function setSystemConfiguration(?array $configuration, string $offset = null)
     {
@@ -143,8 +142,7 @@ final class Config implements ArrayAccess
      *
      * @return null|array
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getSystemConfiguration(string $offset = null): ?array
     {
@@ -167,8 +165,7 @@ final class Config implements ArrayAccess
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getWebsiteConfigRuntimeCacheKey(string $languange = null): string
     {
@@ -296,8 +293,7 @@ final class Config implements ArrayAccess
      * @param array|null $config
      * @param string|null $language
      *
-     *@internal
-     *
+     * @internal
      */
     public static function setWebsiteConfig(?array $config, string $language = null)
     {
@@ -460,8 +456,7 @@ final class Config implements ArrayAccess
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public static function inPerspective(array $runtimeConfig, string $key): bool
     {
@@ -509,8 +504,7 @@ final class Config implements ArrayAccess
      *
      * @throws Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getConfigInstance(string $file): array
     {

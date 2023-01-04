@@ -838,8 +838,7 @@ class Mail extends Email
     /**
      * @param array|null $originalData
      *
-     *@internal
-     *
+     * @internal
      */
     public function setOriginalData(?array $originalData)
     {

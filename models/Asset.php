@@ -397,8 +397,7 @@ class Asset extends Element\AbstractElement
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getTypeFromMimeMapping(string $mimeType, string $filename): string
     {
@@ -648,8 +647,7 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception
      *
-     *@internal
-     *
+     * @internal
      */
     protected function update(array $params = [])
     {

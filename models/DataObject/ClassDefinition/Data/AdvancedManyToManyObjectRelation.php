@@ -958,8 +958,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     protected function buildUniqueKeyForAppending(ElementInterface $item): string
     {
