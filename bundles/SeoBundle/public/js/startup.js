@@ -4,10 +4,10 @@ pimcore.registerNS("pimcore.seo");
 pimcore.seo = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
-        document.addEventListener(pimcore.events.preMenuBuild, this.pimcoreReady.bind(this));
+        document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
 
-    pimcoreReady: function (e) {
+    preMenuBuild: function (e) {
         let menu = e.detail.menu;
         const user = pimcore.globalmanager.get('user');
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
