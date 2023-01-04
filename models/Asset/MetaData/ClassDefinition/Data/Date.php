@@ -34,6 +34,6 @@ class Date extends Data
 
     public function getVersionPreview(mixed $value, array $params = []): string
     {
-        return (string)date('m/d/Y', $value);
+        return (string)date('m/d/Y', (int) $value);
     }
 }

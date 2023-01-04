@@ -24,7 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
- * @method \Pimcore\Model\Site\Dao getDao()
+ * @method Site\Dao getDao()
  */
 final class Site extends AbstractModel
 {
@@ -38,8 +38,6 @@ final class Site extends AbstractModel
 
     /**
      * Contains the ID to the Root-Document
-     *
-     * @var int
      */
     protected int $rootId;
 
@@ -60,13 +58,9 @@ final class Site extends AbstractModel
     protected ?int $modificationDate = null;
 
     /**
-     * @param int $id
-     *
-     * @return Site|string|null
-     *
      * @throws \Exception
      */
-    public static function getById(int $id): Site|string|null
+    public static function getById(int $id): ?Site
     {
         $cacheKey = 'site_id_'. $id;
 
@@ -75,7 +69,7 @@ final class Site extends AbstractModel
         } elseif (!$site = \Pimcore\Cache::load($cacheKey)) {
             try {
                 $site = new self();
-                $site->getDao()->getById((int)$id);
+                $site->getDao()->getById($id);
             } catch (NotFoundException $e) {
                 $site = 'failed';
             }
@@ -96,7 +90,7 @@ final class Site extends AbstractModel
     {
         try {
             $site = new self();
-            $site->getDao()->getByRootId((int)$id);
+            $site->getDao()->getByRootId($id);
 
             return $site;
         } catch (NotFoundException $e) {
@@ -105,13 +99,9 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @param string $domain
-     *
-     * @return Site|string|null
-     *
      * @throws \Exception
      */
-    public static function getByDomain(string $domain): Site|string|null
+    public static function getByDomain(string $domain): ?Site
     {
         // cached because this is called in the route
         $cacheKey = 'site_domain_'. md5($domain);
@@ -139,13 +129,9 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @param mixed $mixed
-     *
-     * @return Site|string|null
-     *
      * @throws \Exception
      */
-    public static function getBy(mixed $mixed): Site|string|null
+    public static function getBy(mixed $mixed): ?Site
     {
         $site = null;
 
@@ -171,8 +157,6 @@ final class Site extends AbstractModel
 
     /**
      * returns true if the current process/request is inside a site
-     *
-     * @return bool
      */
     public static function isSiteRequest(): bool
     {
@@ -184,8 +168,6 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @return Site
-     *
      * @throws \Exception
      */
     public static function getCurrentSite(): Site
@@ -199,8 +181,6 @@ final class Site extends AbstractModel
 
     /**
      * Register the current site
-     *
-     * @param Site $site
      */
     public static function setCurrentSite(Site $site): void
     {
@@ -227,13 +207,19 @@ final class Site extends AbstractModel
         return $this->rootDocument;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDomains(mixed $domains): static
     {
         if (is_string($domains)) {
@@ -244,9 +230,12 @@ final class Site extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setRootId(int $rootId): static
     {
-        $this->rootId = (int) $rootId;
+        $this->rootId = $rootId;
 
         $rd = Document\Page::getById($this->rootId);
         $this->setRootDocument($rd);
@@ -254,6 +243,9 @@ final class Site extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setRootDocument(?Document\Page $rootDocument): static
     {
         $this->rootDocument = $rootDocument;
@@ -261,6 +253,9 @@ final class Site extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setRootPath(?string $path): static
     {
         $this->rootPath = $path;
@@ -277,7 +272,7 @@ final class Site extends AbstractModel
         return $this->rootPath;
     }
 
-    public function setErrorDocument(string $errorDocument)
+    public function setErrorDocument(string $errorDocument): void
     {
         $this->errorDocument = $errorDocument;
     }
@@ -287,6 +282,9 @@ final class Site extends AbstractModel
         return $this->errorDocument;
     }
 
+    /**
+     * @return $this
+     */
     public function setLocalizedErrorDocuments(mixed $localizedErrorDocuments): static
     {
         if (is_string($localizedErrorDocuments)) {
@@ -302,7 +300,7 @@ final class Site extends AbstractModel
         return $this->localizedErrorDocuments;
     }
 
-    public function setMainDomain(string $mainDomain)
+    public function setMainDomain(string $mainDomain): void
     {
         $this->mainDomain = $mainDomain;
     }
@@ -312,9 +310,9 @@ final class Site extends AbstractModel
         return $this->mainDomain;
     }
 
-    public function setRedirectToMainDomain(bool $redirectToMainDomain)
+    public function setRedirectToMainDomain(bool $redirectToMainDomain): void
     {
-        $this->redirectToMainDomain = (bool) $redirectToMainDomain;
+        $this->redirectToMainDomain = $redirectToMainDomain;
     }
 
     public function getRedirectToMainDomain(): bool
@@ -325,7 +323,7 @@ final class Site extends AbstractModel
     /**
      * @internal
      */
-    public function clearDependentCache()
+    public function clearDependentCache(): void
     {
         // this is mostly called in Site\Dao not here
         try {
@@ -335,9 +333,12 @@ final class Site extends AbstractModel
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -347,9 +348,12 @@ final class Site extends AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }

@@ -1005,5 +1005,6 @@
     "display_mode_grid": "Grid view",
     "display_mode_combo": "Tag field",
     "display_mode_display": "Display path reference",
-    "display_mode_inline_search": "Inline Search"
+    "display_mode_inline_search": "Inline Search",
+    "batch_confirmation": "You are about to update %s dataObjects. Do you want to continue ?"
 }

@@ -65,9 +65,7 @@ abstract class AbstractRelations extends Data implements
     public ?string $pathFormatterClass = null;
 
     /**
-     * @return array[
-     *  'classes' => string,
-     * ]
+     * @return array<array{classes: string}>
      */
     public function getClasses(): array
     {
