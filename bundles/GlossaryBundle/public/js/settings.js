@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.bundle.glossary");
-pimcore.bundle.glossary = Class.create({
+pimcore.registerNS("pimcore.bundle.glossary.settings");
+pimcore.bundle.glossary.settings = Class.create({
 
     initialize: function () {
         this.languages = pimcore.settings.websiteLanguages;
@@ -44,7 +44,7 @@ pimcore.bundle.glossary = Class.create({
 
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("glossary");
+                pimcore.globalmanager.remove("bundle_glossary");
             }.bind(this));
 
             pimcore.layout.refresh();
