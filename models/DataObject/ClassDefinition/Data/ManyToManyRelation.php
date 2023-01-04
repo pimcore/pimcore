@@ -27,7 +27,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
