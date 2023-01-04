@@ -32,7 +32,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SettingsController extends AdminController
 {
     /**
-     * @Route("/glossary", name="pimcore_glossary_settings_glossary", methods={"POST"})
+     * @Route("/glossary", name="pimcore_bundle_glossary_settings_glossary", methods={"POST"})
      *
      * @param Request $request
      *
