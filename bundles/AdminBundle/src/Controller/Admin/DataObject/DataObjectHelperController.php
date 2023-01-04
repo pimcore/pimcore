@@ -373,7 +373,7 @@ class DataObjectHelperController extends AdminController
                 $request->get('no_system_columns', false),
                 $class,
                 $gridType,
-                $request->get('no_brick_columns', false),
+                $request->get('no_brick_columns', false) === 'true',
                 $fields,
                 $context,
                 $objectId,
@@ -568,7 +568,7 @@ class DataObjectHelperController extends AdminController
      *
      * @return array
      */
-    public function getDefaultGridFields(bool $noSystemColumns, ?DataObject\ClassDefinition $class, string $gridType, bool $noBrickColumns, array $fields, array $context, int $objectId, array $types = []): array
+    public function getDefaultGridFields(bool $noSystemColumns, ?DataObject\ClassDefinition $class, string $gridType, bool $noBrickColumns, ?array $fields, array $context, int $objectId, array $types = []): array
     {
         $count = 0;
         $availableFields = [];
