@@ -51,7 +51,7 @@ class SelectCategory extends AbstractFilterType
             $explode = explode(',', $v['value']);
             /** @var int $e */
             foreach ($explode as $e) {
-                if (!empty($e) && (empty($availableRelations) || $availableRelations[$e] ?? false)) {
+                if (!empty($e) && (empty($availableRelations) || ($availableRelations[$e] ?? false))) {
                     if (!empty($values[$e])) {
                         $count = $values[$e]['count'] + $v['count'];
                     } else {

@@ -36,11 +36,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/src/FilterService/FilterType/Findologic/NumberRangeSelection.php
 
 		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/FilterService/FilterType/SelectCategory.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/FilterService/ListHelper.php
