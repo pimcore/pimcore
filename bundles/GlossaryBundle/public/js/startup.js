@@ -48,12 +48,12 @@ pimcore.bundle.glossary.startup = Class.create({
         const user = pimcore.globalmanager.get('user');
         if (user.isAllowed("glossary")) {
             pimcore.helpers.keyBindingMapping.glossary = function() {
-                bundle_glossary.editGlossary();
+                pimcoreBundleGlossary.editGlossary();
             }
         }
     }
 })
 
-const bundle_glossary = new pimcore.bundle.glossary.startup();
+const pimcoreBundleGlossary = new pimcore.bundle.glossary.startup();
 
 
