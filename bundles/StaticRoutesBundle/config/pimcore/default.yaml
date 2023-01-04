@@ -1,2 +1,2 @@
-pimcore:
-    staticroutes:
+pimcore_static_routes:
+    definitions:

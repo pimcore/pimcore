@@ -3,20 +3,19 @@ pimcore.registerNS("pimcore.staticroutes");
 
 pimcore.staticroutes = Class.create({
     initialize: function () {
-        //document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
-        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
+        document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
 
-    pimcoreReady: function (e) {
+    preMenuBuild: function (e) {
+        let menu = e.detail.menu;
         const user = pimcore.globalmanager.get('user');
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
 
-        const toolbar = pimcore.globalmanager.get('layout_toolbar');
-
         if (user.isAllowed("routes") && perspectiveCfg.inToolbar("settings.routes")) {
-            toolbar.settingsMenu.add({
+            menu.settings.items.push({
                 text: t("static_routes"),
                 iconCls: "pimcore_nav_icon_routes",
+                priority: 95,
                 itemId: 'pimcore_menu_settings_static_routes',
                 handler: this.editRoutes
             });
@@ -26,19 +25,10 @@ pimcore.staticroutes = Class.create({
     editRoutes: function () {
 
         try {
-            pimcore.globalmanager.get("staticroutes").activate();
+            pimcore.globalmanager.get("bundle_staticroutes").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("staticroutes", new pimcore.settings.staticroutes());
-        }
-    },
-
-
-
-    registerKeyBinding: function(e) {
-        const user = pimcore.globalmanager.get('user');
-        if (user.isAllowed("glossary")) {
-
+            pimcore.globalmanager.add("bundle_staticroutes", new pimcore.bundle.staticroutes());
         }
     }
 })

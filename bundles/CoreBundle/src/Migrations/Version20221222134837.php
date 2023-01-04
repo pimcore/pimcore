@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
 use Pimcore\Model\Tool\SettingsStore;
 
 /**
@@ -38,7 +37,7 @@ final class Version20221222134837 extends AbstractMigration
 
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\StaticRoutesBundle', 'pimcore'),
-            sprintf('Please make sure to enable the %s manually in config/bundles.php', PimcoreStaticRoutesBundle::class)
+            'Please make sure to enable the Pimcore\\Bundle\\StaticRoutesBundle\\StaticRoutesBundle manually in config/bundles.php'
         );
     }
 }

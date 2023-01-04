@@ -25,7 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SettingsController extends AdminController
 {
     /**
-     * @Route("/staticroutes", name="pimcore_staticroutes_settings_staticroutes", methods={"POST"})
+     * @Route("/staticroutes", name="pimcore_bundle_staticroutes_settings_staticroutes", methods={"POST"})
      *
      * @param Request $request
      *

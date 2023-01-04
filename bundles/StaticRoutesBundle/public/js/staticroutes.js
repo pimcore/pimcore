@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.staticroutes");
-pimcore.settings.staticroutes = Class.create({
+pimcore.registerNS("pimcore.bundle.staticroutes");
+pimcore.bundle.staticroutes = Class.create({
 
     initialize:function () {
 
@@ -43,7 +43,7 @@ pimcore.settings.staticroutes = Class.create({
 
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("staticroutes");
+                pimcore.globalmanager.remove("bundle_staticroutes");
             }.bind(this));
 
             pimcore.layout.refresh();
@@ -54,7 +54,7 @@ pimcore.settings.staticroutes = Class.create({
 
     getRowEditor:function () {
 
-        var url = Routing.generate('pimcore_staticroutes_settings_staticroutes');
+        var url = Routing.generate('pimcore_bundle_staticroutes_settings_staticroutes');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,

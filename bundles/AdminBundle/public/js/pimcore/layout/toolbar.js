@@ -972,16 +972,13 @@
              }
  
              // help menu
-             if (settingsItems.length > 0) {
-                menu.settings = {
-                    items: settingsItems,
-                    shadow: false,
-                    listeners: true,
-                    cls: "pimcore_navigation_flyout"
-                };
-             }
+            menu.settings = {
+                items: settingsItems,
+                shadow: false,
+                listeners: true,
+                cls: "pimcore_navigation_flyout"
+            };
          }
- 
  
          // search menu
  
