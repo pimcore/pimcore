@@ -5,6 +5,9 @@ return [
     "Pimcore\\Bundle\\EcommerceFrameworkBundle\\PimcoreEcommerceFrameworkBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle" => [
+        "all" => TRUE
+    ],
     "Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle" => [
         "all" => TRUE
     ],
