@@ -126,6 +126,9 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [DataObjects\Documents] **BC Break**: Calling `getChildren/getSiblings` on `AbstractObject` or `Document` now returns unloaded listing. If the list is not traveresed immediately, then it is required to call `load()` explicitily.
   Also, `setChildren` now accepts `Listing` as first parameter instead of array.
 - [Admin] Removed `adminer` as built-in database management tool.
+- [Asset] Asset/Asset Thumbnail Update messages are now routed to different queue
+  instead of `pimcore_core`. please add option `pimcore_asset_update` to command `bin/console messenger:consume pimcore_core... pimcore_asset_update` to post process assets on update.
+  Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
 
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
