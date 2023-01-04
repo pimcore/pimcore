@@ -284,7 +284,7 @@ pimcore.bundle.wordexport.word = Class.create({
                     failure: function (message) {
                         console.error("Word export: " + message);
                     }.bind(this),
-                    stopOnError: true,
+                    stopOnError: false,
                     jobs: res.jobs
                 });
             }.bind(this)
