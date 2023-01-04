@@ -374,8 +374,7 @@ class Service
      * @param array $tableDefinitions
      * @param array $tableNames
      *
-     *@internal
-     *
+     * @internal
      */
     public static function updateTableDefinitions(array &$tableDefinitions, array $tableNames): void
     {
@@ -412,8 +411,7 @@ class Service
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public static function skipColumn(array $tableDefinitions, string $table, string $colName, string $type, string $default, string $null): bool
     {
@@ -444,8 +442,7 @@ class Service
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildImplementsInterfacesCode(array $implementsParts, ?string $newInterfaces): string
     {
@@ -476,8 +473,7 @@ class Service
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildUseTraitsCode(array $useParts, ?string $newTraits): string
     {
@@ -507,8 +503,7 @@ class Service
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildUseCode(array $useParts): string
     {

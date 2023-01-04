@@ -201,8 +201,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return mixed
      *
-     *@internal
-     *
+     * @internal
      */
     abstract protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed;
 
@@ -237,8 +236,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     protected function rewriteIdsService(mixed $data, array $idMapping): array
     {
@@ -332,8 +330,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     protected function buildUniqueKeyForAppending(Element\ElementInterface $item): string
     {
@@ -429,8 +426,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @throws Element\ValidationException
      *
-     *@internal
-     *
+     * @internal
      */
     public function performMultipleAssignmentCheck(?array $data)
     {

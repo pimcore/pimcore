@@ -223,8 +223,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -288,8 +287,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @return DataObject\Data\Hotspotimage
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\Hotspotimage
     {

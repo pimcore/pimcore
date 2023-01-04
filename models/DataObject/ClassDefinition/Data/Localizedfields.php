@@ -272,8 +272,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @return DataObject\Localizedfield
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Localizedfield
     {

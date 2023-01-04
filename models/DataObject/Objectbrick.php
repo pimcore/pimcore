@@ -310,8 +310,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public function loadLazyField(string $brick, string $brickField, string $field)
     {
