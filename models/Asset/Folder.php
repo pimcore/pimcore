@@ -183,7 +183,13 @@ class Folder extends Model\Asset
                         break;
                     }
 
-                    $tile = imagecreatefromstring(stream_get_contents($tileThumb->getStream()));
+                    $stream = $tileThumb->getStream();
+
+                    if (null === $stream) {
+                        break;
+                    }
+
+                    $tile = imagecreatefromstring(stream_get_contents($stream));
                     imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $tileThumb->getWidth(), $tileThumb->getHeight());
 
                     $count++;
