@@ -73,6 +73,7 @@ trait Parallelization
 
     /**
      * @param Command $command
+     *
      * @return void
      */
     protected static function configureCommand(Command $command)
@@ -95,13 +96,13 @@ trait Parallelization
     {
         // checking if the p option is used
         // TODO Remove in Pimcore 11
-        if(isset($_SERVER['argv'])) {
-            if(in_array('-p', $_SERVER['argv'])) {
+        if (isset($_SERVER['argv'])) {
+            if (in_array('-p', $_SERVER['argv'])) {
                 $output->writeln([
-                    "<comment>=================================================================</>",
-                    "<comment>You are using the shortcut p with another option than processes</>",
-                    "<comment>This will be removed with Pimcore 11. Please replace the shortcut</>",
-                    "<comment>=================================================================</>"
+                    '<comment>=================================================================</>',
+                    '<comment>You are using the shortcut p with another option than processes</>',
+                    '<comment>This will be removed with Pimcore 11. Please replace the shortcut</>',
+                    '<comment>=================================================================</>',
                 ]);
             }
         }
