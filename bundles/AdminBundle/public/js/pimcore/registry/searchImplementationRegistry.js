@@ -26,11 +26,11 @@ pimcore.registry.searchImplementationRegistry = new Class.create({
         this.getRegistry().searchClass = searchClass;
     },
 
-    openItemSelector: function () {
+    openItemSelector: function (multiselect, callback, restrictions, config) {
         if(this.hasImplementation()){
             //call implementation
             try {
-                this.getImplementation().openItemSelector({}); //TODO: define config object
+                this.getImplementation(multiselect, callback, restrictions, config); //TODO: define config object
             }
             catch (e) {
                 //TODO: handle error
