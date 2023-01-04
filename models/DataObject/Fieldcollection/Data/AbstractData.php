@@ -167,7 +167,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $finalVars;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->object) {
             $this->objectId = $this->object->getId();

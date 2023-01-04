@@ -154,7 +154,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         return $this->name . '; ' . $this->type;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->needsRenewReferences = true;
 

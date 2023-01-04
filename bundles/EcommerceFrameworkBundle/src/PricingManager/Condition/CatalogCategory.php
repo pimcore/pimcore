@@ -106,7 +106,7 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
      *
      * @internal
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->handleWakeup('categories', 'categoryIds');
     }

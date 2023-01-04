@@ -261,7 +261,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * If object was serialized, set cached elements to null
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         parent::__wakeup();
         $this->cachedCurrentElement = null;

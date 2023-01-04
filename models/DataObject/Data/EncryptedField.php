@@ -102,7 +102,7 @@ class EncryptedField implements OwnerAwareFieldInterface
     /**
      * @throws \Exception
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->encrypted) {
             try {

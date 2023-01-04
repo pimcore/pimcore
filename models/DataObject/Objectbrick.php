@@ -265,7 +265,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $finalVars;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $brickGetter = null;
 

@@ -256,6 +256,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -263,6 +266,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDocumentId(int $id): static
     {
         $this->documentId = (int) $id;
@@ -279,6 +285,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->documentId;
     }
 
+    /**
+     * @return $this
+     */
     public function setDocument(Document\PageSnippet $document): static
     {
         $this->document = $document;
@@ -301,6 +310,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->config;
     }
 
+    /**
+     * @return $this
+     */
     public function setConfig(array $config): static
     {
         $this->config = $config;

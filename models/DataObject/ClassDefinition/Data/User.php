@@ -169,7 +169,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return array_keys($vars);
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         //loads select list options
         $this->init();

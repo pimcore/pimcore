@@ -752,7 +752,7 @@ class DefaultMysql implements ProductListInterface
     /**
      * @internal
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if (empty($this->resource)) {
             $this->resource = new DefaultMysql\Dao($this, $this->logger);

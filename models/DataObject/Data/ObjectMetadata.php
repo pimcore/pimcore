@@ -196,7 +196,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         $this->objectId = $objectId;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->object) {
             $this->objectId = $this->object->getId();

@@ -55,7 +55,7 @@ class TargetGroup implements ConditionInterface
     /**
      * @internal
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->targetGroupId) {
             $this->targetGroup = \Pimcore\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);

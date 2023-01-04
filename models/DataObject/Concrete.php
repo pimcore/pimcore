@@ -741,7 +741,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $finalVars;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         parent::__wakeup();
 

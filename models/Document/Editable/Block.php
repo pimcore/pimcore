@@ -388,7 +388,7 @@ EOT;
     /**
      * If object was serialized, set the counter back to 0
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->current = 0;
     }

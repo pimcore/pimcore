@@ -678,7 +678,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return array_diff(parent::__sleep(), $this->getBlockedVars());
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->isInDumpState()) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )

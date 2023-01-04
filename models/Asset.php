@@ -1519,7 +1519,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->isInDumpState()) {
             // set current parent and path, this is necessary because the serialized data can have a different path than the original element (element was moved)

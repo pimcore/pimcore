@@ -156,7 +156,7 @@ class SessionCart extends AbstractCart implements CartInterface
      *
      * @internal
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $timestampBackup = $this->getModificationDate();
 

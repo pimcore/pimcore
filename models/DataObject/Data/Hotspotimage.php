@@ -211,7 +211,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
         return '';
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->image instanceof ElementDescriptor) {
             $image = Service::getElementById($this->image->getType(), $this->image->getId());
