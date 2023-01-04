@@ -21,7 +21,6 @@ use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool;
 use Pimcore\Tool\HtmlUtils;
@@ -406,7 +405,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function blockStart(?Info $info = null): array
+    public function blockStart(Area\Info $info = null): array
     {
         $this->blockStarted = true;
         $attributes = [
