@@ -1,7 +1,7 @@
-pimcore.registerNS("pimcore.seo");
+pimcore.registerNS("pimcore.bundle.seo.startup");
 
 
-pimcore.seo = Class.create({
+pimcore.bundle.seo.startup = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
@@ -92,23 +92,23 @@ pimcore.seo = Class.create({
 
         if (user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
             pimcore.helpers.keyBindingMapping.seoDocumentEditor = function() {
-                seo.showDocumentSeo();
+                pimcoreBundleSeo.showDocumentSeo();
             }
         }
 
         if (user.isAllowed("robots.txt")) {
             pimcore.helpers.keyBindingMapping.robots = function() {
-                seo.showRobotsTxt();
+                pimcoreBundleSeo.showRobotsTxt();
             }
         }
 
         if (user.isAllowed("http_errors")) {
             pimcore.helpers.keyBindingMapping.httpErrorLog = function() {
-                seo.showHttpErrorLog();
+                pimcoreBundleSeo.showHttpErrorLog();
             }
         }
 
     }
 })
 
-const seo = new pimcore.seo();
+const pimcoreBundleSeo = new pimcore.bundle.seo.startup();
