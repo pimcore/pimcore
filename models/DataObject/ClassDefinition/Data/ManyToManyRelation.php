@@ -952,6 +952,10 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {
+        if ($data === null) {
+            return $listing;
+        }
+
         if ($data instanceof Element\ElementInterface) {
             $data = [
                 'id' => $data->getId(),
