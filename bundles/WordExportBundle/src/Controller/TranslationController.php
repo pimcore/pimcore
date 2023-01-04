@@ -368,7 +368,7 @@ class TranslationController extends AdminController
         $elements = array_chunk($elements, $elementsPerJob);
         foreach ($elements as $chunk) {
             $jobs[] = [[
-                'url' => $router->generate('pimcore_wordexport_translation_wordexport'),
+                'url' => $router->generate('pimcore_bundle_wordexport_translation_wordexport'),
                 'method' => 'POST',
                 'params' => [
                     'id' => $exportId,
