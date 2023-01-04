@@ -34,6 +34,9 @@ trait Parallelization
         WebmozartParallelization::configureParallelization as parentConfigureParallelization;
     }
 
+    /**
+     * @deprecated and will be removed in Pimcore 11. Please use configureCommand instead.
+     */
     protected static function configureParallelization(Command $command): void
     {
         // we need to override WebmozartParallelization::configureParallelization here
@@ -69,6 +72,15 @@ trait Parallelization
     }
 
     /**
+     * @param Command $command
+     * @return void
+     */
+    protected static function configureCommand(Command $command)
+    {
+        self::configureParallelization($command);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getSegmentSize(): int
@@ -81,6 +93,19 @@ trait Parallelization
      */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
+        // checking if the p option is used
+        // TODO Remove in Pimcore 11
+        if(isset($_SERVER['argv'])) {
+            if(in_array('-p', $_SERVER['argv'])) {
+                $output->writeln([
+                    "<comment>=================================================================</>",
+                    "<comment>You are using the shortcut p with another option than processes</>",
+                    "<comment>This will be removed with Pimcore 11. Please replace the shortcut</>",
+                    "<comment>=================================================================</>"
+                ]);
+            }
+        }
+
         if (!$this->lock()) {
             $this->writeError('The command is already running.');
             exit(1);
