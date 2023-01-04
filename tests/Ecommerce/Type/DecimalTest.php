@@ -73,7 +73,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider createDataProvider
      */
-    public function testCreate($input, string $expected): void
+    public function testCreate(float|int|string|Decimal $input, string $expected): void
     {
         $value = Decimal::create($input);
 
@@ -83,7 +83,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider createZeroScaleDataProvider
      */
-    public function testZeroScale($input): void
+    public function testZeroScale(float|int|string|Decimal $input): void
     {
         $val = Decimal::create($input, 0);
 
@@ -105,7 +105,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider invalidValueCreateProvider
      */
-    public function testErrorOnInvalidCreateArgument($value): void
+    public function testErrorOnInvalidCreateArgument(mixed $value): void
     {
         $this->expectException(\TypeError::class);
         Decimal::create($value);
@@ -394,7 +394,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider addDataProvider
      */
-    public function testAdd($a, $b, $expected): void
+    public function testAdd(float|int|string|Decimal $a, float|int|string|Decimal $b, float|int $expected): void
     {
         $valA = Decimal::create($a);
 
@@ -404,7 +404,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider subDataProvider
      */
-    public function testSub($a, $b, $expected): void
+    public function testSub(float|int|string|Decimal $a, float|int|string|Decimal $b, float|int $expected): void
     {
         $valA = Decimal::create($a);
 
@@ -414,7 +414,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider mulDataProvider
      */
-    public function testMul($a, $b, $expected): void
+    public function testMul(float|int|string|Decimal $a, float|int|string|Decimal $b, float|int $expected): void
     {
         $valA = Decimal::create($a);
 
@@ -424,7 +424,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider divDataProvider
      */
-    public function testDiv($a, $b, $expected): void
+    public function testDiv(float|int|string|Decimal $a, float|int|string|Decimal $b, float|int $expected): void
     {
         $val = Decimal::create($a);
 
@@ -434,7 +434,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider zeroDataProvider
      */
-    public function testExceptionOnDivisionByZero($val): void
+    public function testExceptionOnDivisionByZero(float|int|string|Decimal $val): void
     {
         $this->expectException(\DivisionByZeroError::class);
         $valA = Decimal::fromRawValue(159900, 4);

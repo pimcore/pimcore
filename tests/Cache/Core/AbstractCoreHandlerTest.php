@@ -624,7 +624,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertEquals(['tag_a' => true, 'tag_b' => true, 'output' => true], $this->getHandlerPropertyValue('clearedTags'));
     }
 
-    protected function handleShutdownTagListProcessing($shutdown = false): void
+    protected function handleShutdownTagListProcessing(bool $shutdown = false): void
     {
         $this->assertEmpty($this->getHandlerPropertyValue('clearedTags'));
         $this->assertEmpty($this->getHandlerPropertyValue('tagsClearedOnShutdown'));

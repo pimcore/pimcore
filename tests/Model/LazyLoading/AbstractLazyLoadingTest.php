@@ -124,7 +124,10 @@ class AbstractLazyLoadingTest extends ModelTestCase
         $this->checkSerializedStringForNeedle($serializedString, 'someAttribute";s:14:"Some content', $contentShouldBeIncluded, $messagePrefix);
     }
 
-    protected function checkSerializedStringForNeedle(string $string, $needle, bool $expected, string $messagePrefix = null): void
+    /**
+     * @param string[]|string $needle
+     */
+    protected function checkSerializedStringForNeedle(string $string, array|string $needle, bool $expected, string $messagePrefix = null): void
     {
         if (!is_array($needle)) {
             $needle = [$needle];
@@ -135,7 +138,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
         }
     }
 
-    protected function forceSavingAndLoadingFromCache(Concrete $object, $callback): void
+    protected function forceSavingAndLoadingFromCache(Concrete $object, callable $callback): void
     {
         //enable cache
         $cacheEnabled = Cache::isEnabled();

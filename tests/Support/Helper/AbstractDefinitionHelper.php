@@ -76,7 +76,7 @@ abstract class AbstractDefinitionHelper extends Module
         return $child;
     }
 
-    abstract public function initializeDefinitions();
+    abstract public function initializeDefinitions(): void;
 }
 
 @class_alias(AbstractDefinitionHelper::class, 'Pimcore\Tests\Support\Helper\AbstractDefinitionHelper');

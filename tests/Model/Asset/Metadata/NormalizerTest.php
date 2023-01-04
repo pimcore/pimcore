@@ -52,7 +52,7 @@ class NormalizerTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function doCompare(int $assetId, string $metaDataName, $originalData): void
+    protected function doCompare(int $assetId, string $metaDataName, mixed $originalData): void
     {
         $asset = Asset::getById($assetId, ['force' => true]);
         $metaDataArray = $asset->getMetadata($metaDataName, null, false, true);

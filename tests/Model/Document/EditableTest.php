@@ -154,7 +154,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertScheduledblock($this->testPage, 'scheduledblock', $this->seed);
     }
 
-    protected function createTestPage($fields = [], &$returnData = []): Page|\Pimcore\Model\Document
+    protected function createTestPage(array|string $fields = [], array &$returnData = []): Page|\Pimcore\Model\Document
     {
         $this->testPage = TestHelper::createEmptyDocumentPage();
         $this->assertInstanceOf(Page::class, $this->testPage);

@@ -40,7 +40,7 @@ use Pimcore\Tests\Support\Test\EcommerceTestCase;
 
 class CartTaxManagementTest extends EcommerceTestCase
 {
-    private function buildTaxClass(array $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): OnlineShopTaxClass
+    private function buildTaxClass(array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): OnlineShopTaxClass
     {
         $taxClass = new OnlineShopTaxClass();
         $taxClass->setId((int)md5(serialize($taxes)));
@@ -59,7 +59,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         return $taxClass;
     }
 
-    private function setUpProduct($grossPrice, array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
+    private function setUpProduct(int $grossPrice, array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
     {
         $taxClass = $this->buildTaxClass($taxes, $combinationType);
 

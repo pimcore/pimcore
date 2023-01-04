@@ -585,13 +585,8 @@ class Decimal
      * Multiplies by the given factor. This does NOT have to be a price amount, but can be
      * a simple scalar factor (e.g. 2) as multiplying prices is rarely needed. However, if
      * a Decimal is passed, its float representation will be used for calculations.
-     *
-     * @param float|int|Decimal $other
-     * @param int|null $roundingMode
-     *
-     * @return Decimal
      */
-    public function mul(float|int|Decimal $other, int $roundingMode = null): self
+    public function mul(float|int|string|Decimal $other, int $roundingMode = null): static
     {
         $operand = $this->getScalarOperand($other);
 
@@ -608,14 +603,9 @@ class Decimal
      * a simple scalar factor (e.g. 2) as dividing prices is rarely needed. However, if
      * a Decimal is passed, its float representation will be used for calculations.
      *
-     * @param float|int|Decimal $other
-     * @param int|null $roundingMode
-     *
-     * @return Decimal
-     *
      * @throws \DivisionByZeroError
      */
-    public function div(float|int|Decimal $other, int $roundingMode = null): self
+    public function div(float|int|string|Decimal $other, int $roundingMode = null): static
     {
         $operand = $this->getScalarOperand($other);
         $epsilon = pow(10, -1 * $this->scale);
@@ -666,15 +656,10 @@ class Decimal
     /**
      * Calculate a discounted amount
      *
-     * @param float|int|Decimal $discount
-     * @param int|null $roundingMode
-     *
-     * @return Decimal
-     *
      *@example Decimal::create(100)->discount(15) = 85
      *
      */
-    public function discount(float|int|Decimal $discount, int $roundingMode = null): self
+    public function discount(float|int|string|Decimal $discount, int $roundingMode = null): static
     {
         $discount = $this->getScalarOperand($discount);
 

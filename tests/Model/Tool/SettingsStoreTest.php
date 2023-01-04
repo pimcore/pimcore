@@ -22,7 +22,7 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class SettingsStoreTest extends ModelTestCase
 {
-    protected function doTest($data, $scope, $type): void
+    protected function doTest(float|bool|int|string $data, ?string $scope, string $type): void
     {
         $db = Db::get();
 

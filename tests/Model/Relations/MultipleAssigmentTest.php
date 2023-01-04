@@ -97,7 +97,7 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    protected function checkMultipleAssignmentsOnSingleManyToMany(array $metaDataList, $positionMessage = ''): void
+    protected function checkMultipleAssignmentsOnSingleManyToMany(array $metaDataList, string $positionMessage = ''): void
     {
         $this->assertEquals(5, count($metaDataList), "Relation count $positionMessage.");
         foreach ($metaDataList as $i => $metadata) {
@@ -136,7 +136,7 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    protected function checkMultipleAssignmentsOnMultipleManyToMany(array $metaDataList, $positionMessage = ''): void
+    protected function checkMultipleAssignmentsOnMultipleManyToMany(array $metaDataList, string $positionMessage = ''): void
     {
         $this->assertEquals(10, count($metaDataList), "Relation count $positionMessage.");
         $number = 0;
