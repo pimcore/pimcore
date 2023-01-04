@@ -196,11 +196,6 @@ parameters:
 			path: lib/Tool/Serialize.php
 
 		-
-			message: "#^Parameter \\#1 \\$separator of function explode expects non\\-empty\\-string, string given\\.$#"
-			count: 1
-			path: lib/Tool/Text/Csv.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: models/Asset/Video/ImageThumbnail.php

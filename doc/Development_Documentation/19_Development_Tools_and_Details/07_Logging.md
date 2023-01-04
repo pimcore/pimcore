@@ -3,13 +3,13 @@
 There are several different kinds of logs in Pimcore. All of them are located under `/var/log` and get rotated
 as well as compressed automatically on every day (7 days retention) by the maintenance command. 
  
-## <env>.log
+## `<env>.log`
 This is definitely one of the most important logs and also the default logging location. 
 
 Pimcore uses Symfony default monolog logging with following channels: `pimcore`, `pimcore_api`, `session`. 
 For details see [Symfonys monolog docs](https://symfony.com/doc/5.2/logging.html).
 
-## php.log
+## `php.log`
 By default Pimcore writes PHP-Engine Log Messages to the file `php.log`.
 You can change this using constant `PIMCORE_PHP_ERROR_LOG` that is used to set PHP's [error_log Configuration](http://php.net/manual/en/errorfunc.configuration.php#ini.error-log).
 
