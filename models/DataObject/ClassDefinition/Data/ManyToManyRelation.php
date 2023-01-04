@@ -251,10 +251,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @return string|null
      *
-     *@throws \Exception
+     * @throws \Exception
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {

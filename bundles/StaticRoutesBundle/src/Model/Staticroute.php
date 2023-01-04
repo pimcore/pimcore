@@ -337,8 +337,7 @@ final class Staticroute extends AbstractModel
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function assemble(array $urlOptions = [], bool $encode = true): string
     {
@@ -438,8 +437,7 @@ final class Staticroute extends AbstractModel
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public function match(string $path, array $params = []): bool|array
     {

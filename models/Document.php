@@ -481,8 +481,7 @@ class Document extends Element\AbstractElement
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     protected function update(array $params = [])
     {
@@ -535,8 +534,7 @@ class Document extends Element\AbstractElement
     /**
      * @param int $index
      *
-     *@internal
-     *
+     * @internal
      */
     public function saveIndex(int $index)
     {

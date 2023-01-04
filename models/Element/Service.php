@@ -150,8 +150,7 @@ class Service extends Model\AbstractModel
      *
      * @return int[]
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getIdList(Model\Listing\AbstractListing|array $list, string $idGetter = 'getId'): array
     {
@@ -273,8 +272,7 @@ class Service extends Model\AbstractModel
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public static function isPublished(ElementInterface $element = null): bool
     {
@@ -296,8 +294,7 @@ class Service extends Model\AbstractModel
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function filterUnpublishedAdvancedElements(?array $data): array
     {
@@ -387,8 +384,7 @@ class Service extends Model\AbstractModel
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getBaseClassNameForElement(string|ElementInterface $element): string
     {
@@ -415,8 +411,7 @@ class Service extends Model\AbstractModel
      *
      * @return string
      *
-     *@deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
-     *
+     * @deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
      */
     public static function getSaveCopyName(string $type, string $sourceKey, ElementInterface $target): string
     {
@@ -601,8 +596,7 @@ class Service extends Model\AbstractModel
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public static function minimizePropertiesForEditmode(array $props): array
     {
@@ -655,8 +649,7 @@ class Service extends Model\AbstractModel
      * @param DataObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
      *
-     *@internal
-     *
+     * @internal
      */
     protected function updateChildren(DataObject|Document|Asset\Folder $target, ElementInterface $new)
     {
@@ -714,8 +707,7 @@ class Service extends Model\AbstractModel
      *
      * @return array{forbidden: array, allowed: array}
      *
-     *@internal
-     *
+     * @internal
      */
     public static function findForbiddenPaths(string $type, Model\User $user): array
     {
@@ -792,8 +784,7 @@ class Service extends Model\AbstractModel
      *
      * @return mixed
      *
-     *@internal
-     *
+     * @internal
      */
     public static function renewReferences(mixed $data, bool $initial = true, string $key = null): mixed
     {
@@ -1048,8 +1039,7 @@ class Service extends Model\AbstractModel
      *
      * @return array|null
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getCustomViewById(string $id): ?array
     {
@@ -1148,8 +1138,7 @@ class Service extends Model\AbstractModel
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public static function fixAllowedTypes(array $data, string $type): array
     {
@@ -1190,8 +1179,7 @@ class Service extends Model\AbstractModel
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getSafeVersionInfo(array $versions): array
     {
@@ -1388,8 +1376,7 @@ class Service extends Model\AbstractModel
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getSessionKey(string $type, int $elementId, ?string $postfix = ''): string
     {
@@ -1444,8 +1431,7 @@ class Service extends Model\AbstractModel
      * @param string $postfix
      * @param bool $clone save a copy
      *
-     *@internal
-     *
+     * @internal
      */
     public static function saveElementToSession(ElementInterface $element, string $postfix = '', bool $clone = true)
     {
@@ -1490,8 +1476,7 @@ class Service extends Model\AbstractModel
      * @param int $elementId
      * @param string $postfix
      *
-     *@internal
-     *
+     * @internal
      */
     public static function removeElementFromSession(string $type, int $elementId, string $postfix = '')
     {
@@ -1590,8 +1575,7 @@ class Service extends Model\AbstractModel
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getElementCacheTag(string $type, int|string|null $id): string
     {
