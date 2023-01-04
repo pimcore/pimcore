@@ -5,33 +5,32 @@ pimcore.registry.searchImplementationRegistry = new Class.create({
     searchClass: null,
 
     initialize: function () {
-        try {
-            pimcore.globalmanager.get(this.name);
-        }
-        catch (e) {
+        if(!pimcore.globalmanager.get(this.name)) {
             pimcore.globalmanager.add(this.name, this);
         }
     },
 
-    getImplementation: function () {
+    getRegistry: function () {
         return pimcore.globalmanager.get(this.name);
     },
 
+    getImplementation: function () {
+        return this.getRegistry().searchClass
+    },
+
     hasImplementation: function () {
-        return this.getImplementation().searchClass !== undefined;
+        return this.getImplementation() !== undefined;
     },
 
     registerImplementation: function (searchClass) {
-        this.getImplementation().searchClass = searchClass;
+        this.getRegistry().searchClass = searchClass;
     },
 
     openItemSelector: function () {
         if(this.hasImplementation()){
-            const implementationClass = this.getImplementation().searchClass;
-
             //call implementation
             try {
-                implementationClass.openItemSelector({}); //TODO: define config object
+                this.getImplementation().openItemSelector({}); //TODO: define config object
             }
             catch (e) {
                 //TODO: handle error
