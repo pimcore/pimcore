@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Model\Tool\SettingsStore;
 
 /**
