@@ -25,7 +25,7 @@ use Symfony\Component\Routing\RouterInterface;
 class TranslationController extends AdminController
 {
     /**
-     * @Route("/word-export", name="pimcore_wordexport_translation_wordexport", methods={"POST"})
+     * @Route("/word-export", name="pimcore_bundle_wordexport_translation_wordexport", methods={"POST"})
      *
      * @param Request $request
      *
@@ -234,7 +234,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/word-export-download", name="pimcore_wordexport_translation_wordexportdownload", methods={"GET"})
+     * @Route("/word-export-download", name="pimcore_bundle_wordexport_translation_wordexportdownload", methods={"GET"})
      *
      * @param Request $request
      *
@@ -276,7 +276,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/content-export-jobs", name="pimcore_wordexport_translation_contentexportjobs", methods={"POST"})
+     * @Route("/content-export-jobs", name="pimcore_bundle_wordexport_translation_contentexportjobs", methods={"POST"})
      *
      * @param Request $request
      *

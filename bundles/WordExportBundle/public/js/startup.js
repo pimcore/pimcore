@@ -1,28 +1,43 @@
-pimcore.registerNS("pimcore.wordexport");
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
+pimcore.registerNS("pimcore.bundle.wordexport.startup");
 
 
-pimcore.wordexport = Class.create({
+pimcore.bundle.wordexport.startup = Class.create({
     initialize: function () {
-        //document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
-        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
+        document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
 
-    pimcoreReady: function (e) {
+    preMenuBuild: function (e) {
+
+        let menu = e.detail.menu;
+        let that = this;
         const user = pimcore.globalmanager.get('user');
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
 
-        const toolbar = pimcore.globalmanager.get('layout_toolbar');
-
         if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
-            let index = toolbar.extrasMenu.items.keys.indexOf('pimcore_menu_extras_translations');
-            toolbar.extrasMenu.items.items[index].menu.add({
-                text: "Microsoft® Word " + t("export"),
-                iconCls: "pimcore_nav_icon_word_export",
-                itemId: 'pimcore_menu_extras_translations_word_export',
-                handler: this.wordExport
+            menu.extras.items.some(function(item, index) {
+                if (item.itemId === 'pimcore_menu_extras_translations'){
+                    menu.extras.items[index].menu.items.push({
+                        text: "Microsoft® Word " + t("export"),
+                        iconCls: "pimcore_nav_icon_word_export",
+                        itemId: 'pimcore_menu_extras_translations_word_export',
+                        handler: that.wordExport
+                    });
+                    return true;
+                }
             });
-
-
         }
     },
 
@@ -31,16 +46,9 @@ pimcore.wordexport = Class.create({
             pimcore.globalmanager.get("word").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("word", new pimcore.settings.translation.word());
-        }
-    },
-
-    registerKeyBinding: function(e) {
-        const user = pimcore.globalmanager.get('user');
-        if (user.isAllowed("glossary")) {
-
+            pimcore.globalmanager.add("word", new pimcore.bundle.wordexport.word());
         }
     }
 })
 
-const wordexport = new pimcore.wordexport();
+const pimcoreBundleWordexport = new pimcore.bundle.wordexport.startup();

@@ -390,8 +390,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     protected static function getCacheKey(int|string $id): string
     {
@@ -707,8 +706,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @param int|null $userId
      *
-     *@internal
-     *
+     * @internal
      */
     public function deleteAutoSaveVersions(int $userId = null)
     {

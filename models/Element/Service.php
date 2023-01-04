@@ -150,8 +150,7 @@ class Service extends Model\AbstractModel
      *
      * @return int[]
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getIdList(Model\Listing\AbstractListing|array $list, string $idGetter = 'getId'): array
     {
@@ -273,8 +272,7 @@ class Service extends Model\AbstractModel
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public static function isPublished(ElementInterface $element = null): bool
     {
@@ -296,8 +294,7 @@ class Service extends Model\AbstractModel
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function filterUnpublishedAdvancedElements(?array $data): array
     {
@@ -387,8 +384,7 @@ class Service extends Model\AbstractModel
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getBaseClassNameForElement(string|ElementInterface $element): string
     {
@@ -415,8 +411,7 @@ class Service extends Model\AbstractModel
      *
      * @return string
      *
-     *@deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
-     *
+     * @deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
      */
     public static function getSaveCopyName(string $type, string $sourceKey, ElementInterface $target): string
     {
@@ -601,8 +596,7 @@ class Service extends Model\AbstractModel
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public static function minimizePropertiesForEditmode(array $props): array
     {
@@ -655,8 +649,7 @@ class Service extends Model\AbstractModel
      * @param DataObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
      *
-     *@internal
-     *
+     * @internal
      */
     protected function updateChildren(DataObject|Document|Asset\Folder $target, ElementInterface $new)
     {
@@ -671,7 +664,9 @@ class Service extends Model\AbstractModel
         }
         if (!$found) {
             $newElement = Element\Service::getElementById($new->getType(), $new->getId());
-            $target->setChildren(array_merge($target->getChildren(), [$newElement]));
+            $listing = $target->getChildren();
+            $listing->setData(array_merge($listing->getData(), [$newElement]));
+            $target->setChildren($listing);
         }
     }
 
@@ -712,8 +707,7 @@ class Service extends Model\AbstractModel
      *
      * @return array{forbidden: array, allowed: array}
      *
-     *@internal
-     *
+     * @internal
      */
     public static function findForbiddenPaths(string $type, Model\User $user): array
     {
@@ -790,8 +784,7 @@ class Service extends Model\AbstractModel
      *
      * @return mixed
      *
-     *@internal
-     *
+     * @internal
      */
     public static function renewReferences(mixed $data, bool $initial = true, string $key = null): mixed
     {
@@ -1046,8 +1039,7 @@ class Service extends Model\AbstractModel
      *
      * @return array|null
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getCustomViewById(string $id): ?array
     {
@@ -1070,40 +1062,30 @@ class Service extends Model\AbstractModel
             'type' => $type,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, SystemEvents::SERVICE_PRE_GET_VALID_KEY);
-        $key = $event->getArgument('key');
-        $key = trim($key);
+        $key = trim($event->getArgument('key'));
 
-        // replace all control/unassigned and invalid characters
-        $key = preg_replace('/[^\PCc^\PCn^\PCs]/u', '', $key);
-        // replace all 4 byte unicode characters
-        $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
-        // replace left to right marker characters ( lrm )
-        $key = preg_replace('/(\x{200e}|\x{200f})/u', '-', $key);
+        // replace all control/format/private/surrogate/unassigned and 4 byte unicode characters
+        $key = preg_replace(['/\p{C}/u', '/[\x{10000}-\x{10FFFF}]/u'], ['', '-'], $key);
         // replace slashes with a hyphen
         $key = str_replace('/', '-', $key);
-
-        // replace some other special characters
-        $key = preg_replace('/[\t\n\r\f\v]/', '', $key);
 
         if ($type === 'object') {
             $key = preg_replace('/[<>]/', '-', $key);
         } elseif ($type === 'document') {
             // replace URL reserved characters with a hyphen
-            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;\+]/', '-', $key);
+            $key = preg_replace('/[#?*:\\\\<>|"%&@=;+]/', '-', $key);
         } elseif ($type === 'asset') {
             // keys shouldn't start with a "." (=hidden file) *nix operating systems
             // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
             $key = trim($key, '. ');
 
             // windows forbidden filenames + URL reserved characters (at least the ones which are problematic)
-            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%\+]/', '-', $key);
+            $key = preg_replace('/[#?*:\\\\<>|"%+]/', '-', $key);
         } else {
             $key = ltrim($key, '. ');
         }
 
-        $key = mb_substr($key, 0, 255);
-
-        return $key;
+        return mb_substr($key, 0, 255);
     }
 
     public static function isValidKey(string $key, string $type): bool
@@ -1156,8 +1138,7 @@ class Service extends Model\AbstractModel
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public static function fixAllowedTypes(array $data, string $type): array
     {
@@ -1198,8 +1179,7 @@ class Service extends Model\AbstractModel
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getSafeVersionInfo(array $versions): array
     {
@@ -1396,8 +1376,7 @@ class Service extends Model\AbstractModel
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getSessionKey(string $type, int $elementId, ?string $postfix = ''): string
     {
@@ -1452,8 +1431,7 @@ class Service extends Model\AbstractModel
      * @param string $postfix
      * @param bool $clone save a copy
      *
-     *@internal
-     *
+     * @internal
      */
     public static function saveElementToSession(ElementInterface $element, string $postfix = '', bool $clone = true)
     {
@@ -1498,8 +1476,7 @@ class Service extends Model\AbstractModel
      * @param int $elementId
      * @param string $postfix
      *
-     *@internal
-     *
+     * @internal
      */
     public static function removeElementFromSession(string $type, int $elementId, string $postfix = '')
     {
@@ -1598,8 +1575,7 @@ class Service extends Model\AbstractModel
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getElementCacheTag(string $type, int|string|null $id): string
     {

@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.translation.word");
-pimcore.settings.translation.word = Class.create({
+pimcore.registerNS("pimcore.bundle.wordexport.word");
+pimcore.bundle.wordexport.word = Class.create({
 
     initialize: function () {
         this.getTabPanel();
@@ -134,8 +134,6 @@ pimcore.settings.translation.word = Class.create({
             ]
         });
 
-        //this.component.on("rowcontextmenu", this.onRowContextmenu);
-
         this.component.on("afterrender", function () {
 
             var dropTargetEl = this.component.getEl();
@@ -143,7 +141,6 @@ pimcore.settings.translation.word = Class.create({
                 ddGroup    : 'element',
                 getTargetFromEvent: function(e) {
                     return this.component.getEl().dom;
-                    //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
 
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
@@ -237,9 +234,9 @@ pimcore.settings.translation.word = Class.create({
         for (var i = 0; i < data.items.length; i++) {
             tmData.push(data.items[i].data);
         }
-       console.log(tmData);
+
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_wordexport_translation_contentexportjobs'),
+            url: Routing.generate('pimcore_bundle_wordexport_translation_contentexportjobs'),
             method: 'POST',
             params: {
                 source: this.exportSourceLanguageSelector.getValue(),
@@ -276,7 +273,7 @@ pimcore.settings.translation.word = Class.create({
                         this.exportProgressbar = null;
                         this.exportProgressWin = null;
 
-                        pimcore.helpers.download(Routing.generate('pimcore_wordexport_translation_wordexportdownload', {id: id}));
+                        pimcore.helpers.download(Routing.generate('pimcore_bundle_wordexport_translation_wordexportdownload', {id: id}));
                     }.bind(this, res.id),
                     update: function (currentStep, steps, percent) {
                         if(this.exportProgressbar) {

@@ -1,6 +1,6 @@
 _pimcore_wordexport_backend:
     resource: "../../src/Controller/"
     type:     annotation
-    prefix:   /admin/wordexport
+    prefix:   /admin/bundle/wordexport
     options:
         expose: true

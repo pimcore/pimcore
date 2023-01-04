@@ -350,8 +350,7 @@ class SearchController extends AdminController
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     protected function getPermittedPaths(array $types = ['asset', 'document', 'object']): string
     {

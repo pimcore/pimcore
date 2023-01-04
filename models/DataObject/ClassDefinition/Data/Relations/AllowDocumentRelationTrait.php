@@ -31,8 +31,7 @@ trait AllowDocumentRelationTrait
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     protected function allowDocumentRelation(Document $document): bool
     {
