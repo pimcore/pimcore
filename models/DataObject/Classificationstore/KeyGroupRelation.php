@@ -30,36 +30,30 @@ final class KeyGroupRelation extends Model\AbstractModel
 
     protected int $groupId;
 
-    /** The key
-     * @var string
+    /**
+     * The key
      */
     protected string $name;
 
     /**
      * The key description.
-     *
-     * @var string
      */
     protected string $description = '';
 
     /**
      * Field definition
-     *
-     * @var string
      */
     protected string $definition;
 
     /**
      * Field type
-     *
-     * @var string
      */
     protected string $type;
 
     protected int $sorter;
 
-    /** The group name
-     * @var string
+    /**
+     * The group name
      */
     protected string $groupName;
 
@@ -67,7 +61,7 @@ final class KeyGroupRelation extends Model\AbstractModel
 
     protected bool $enabled;
 
-    public static function create(): KeyGroupRelation
+    public static function create(): self
     {
         return new self();
     }

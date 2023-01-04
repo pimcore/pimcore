@@ -30,32 +30,24 @@ final class CollectionGroupRelation extends Model\AbstractModel
 
     protected int $groupId;
 
-    /** The key
-     * @var string
+    /**
+     * The key
      */
     protected string $name;
 
     /**
      * The key description.
-     *
-     * @var string
      */
     protected string $description = '';
 
     protected int $sorter;
 
-    public static function create(): CollectionGroupRelation
+    public static function create(): self
     {
         return new self();
     }
 
-    /**
-     * @param int|null $groupId
-     * @param int|null $colId
-     *
-     * @return self|null
-     */
-    public static function getByGroupAndColId(int $groupId = null, int $colId = null): ?CollectionGroupRelation
+    public static function getByGroupAndColId(int $groupId = null, int $colId = null): ?self
     {
         try {
             $config = new self();

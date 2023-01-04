@@ -38,12 +38,12 @@ class SiteId
         $this->site = $site;
     }
 
-    public static function forMainDomain(): SiteId
+    public static function forMainDomain(): self
     {
         return new self(self::CONFIG_KEY_MAIN_DOMAIN);
     }
 
-    public static function forSite(Site $site): SiteId
+    public static function forSite(Site $site): self
     {
         $configKey = sprintf('site_%s', $site->getId());
 
