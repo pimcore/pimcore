@@ -1882,7 +1882,7 @@ class Service extends Model\Element\Service
                     $tmp = [];
                     $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, true, $context);
                     foreach ($mapped as $columns) {
-                        $tmp[] = '"' . $columns["fieldName"] . '"';
+                        $tmp[] = '"' . $columns['fieldName'] . '"';
                     }
                     $data[] = $tmp;
                 }
