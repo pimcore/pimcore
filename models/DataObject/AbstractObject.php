@@ -466,13 +466,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array $objectTypes
-     * @param bool $includingUnpublished
-     *
-     * @return DataObject[]
+     * Returns a list of the children objects
      */
-    public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = false): array
-    {
+    public function getChildren(
+        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        bool $includingUnpublished = false
+    ): Listing {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->children[$cacheKey])) {
@@ -483,10 +482,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $list->setOrderKey($this->getChildrenSortBy());
                 $list->setOrder($this->getChildrenSortOrder());
                 $list->setObjectTypes($objectTypes);
-                $this->children[$cacheKey] = $list->load();
-                $this->hasChildren[$cacheKey] = (bool) count($this->children[$cacheKey]);
+                $this->children[$cacheKey] = $list;
             } else {
-                $this->children[$cacheKey] = [];
+                $list = new Listing();
+                $list->setObjects([]);
+                $this->children[$cacheKey] = $list;
                 $this->hasChildren[$cacheKey] = false;
             }
         }
@@ -497,13 +497,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Quick test if there are children
      *
-     * @param array $objectTypes
-     * @param bool|null $includingUnpublished
-     *
-     * @return bool
      */
-    public function hasChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null): bool
-    {
+    public function hasChildren(
+        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        bool $includingUnpublished = null
+    ): bool {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (isset($this->hasChildren[$cacheKey])) {
@@ -514,15 +512,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * Get a list of the sibling documents
-     *
-     * @param array $objectTypes
-     * @param bool $includingUnpublished
-     *
-     * @return array
+     * Get a list of the sibling objects
      */
-    public function getSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = false): array
-    {
+    public function getSiblings(
+        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        bool $includingUnpublished = false
+    ): Listing {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->siblings[$cacheKey])) {
@@ -536,10 +531,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $list->setOrderKey('key');
                 $list->setObjectTypes($objectTypes);
                 $list->setOrder('asc');
-                $this->siblings[$cacheKey] = $list->load();
-                $this->hasSiblings[$cacheKey] = (bool) count($this->siblings[$cacheKey]);
+                $this->siblings[$cacheKey] = $list;
             } else {
-                $this->siblings[$cacheKey] = [];
+                $list = new Listing();
+                $list->setObjects([]);
+                $this->siblings[$cacheKey] = $list;
                 $this->hasSiblings[$cacheKey] = false;
             }
         }
@@ -550,13 +546,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Returns true if the object has at least one sibling
      *
-     * @param array $objectTypes
-     * @param bool|null $includingUnpublished
-     *
-     * @return bool
      */
-    public function hasSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null): bool
-    {
+    public function hasSiblings(
+        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        bool $includingUnpublished = null
+    ): bool {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (isset($this->hasSiblings[$cacheKey])) {
@@ -1008,23 +1002,22 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param DataObject[]|null $children
-     * @param array $objectTypes
-     * @param bool $includingUnpublished
-     *
      * @return $this
      */
-    public function setChildren(?array $children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = false): static
-    {
+    public function setChildren(
+        ?Listing $children,
+        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        bool $includingUnpublished = false
+    ): static {
         if ($children === null) {
             // unset all cached children
             $this->children = [];
             $this->hasChildren = [];
-        } elseif (is_array($children)) {
+        } else {
             //default cache key
             $cacheKey = $this->getListingCacheKey([$objectTypes, $includingUnpublished]);
             $this->children[$cacheKey] = $children;
-            $this->hasChildren[$cacheKey] = (bool) count($children);
+            $this->hasChildren[$cacheKey] = (bool) $children->count();
         }
 
         return $this;
