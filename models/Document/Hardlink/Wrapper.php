@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Hardlink;
 
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Listing;
 
 /**
  * @internal
@@ -127,9 +128,9 @@ trait Wrapper
     /**
      * @param bool $includingUnpublished
      *
-     * @return Document[]
+     * @return listing
      */
-    public function getChildren(bool $includingUnpublished = false): array
+    public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
         if (!isset($this->children[$cacheKey])) {
@@ -147,7 +148,9 @@ trait Wrapper
                 }
             }
 
-            $this->setChildren($children, $includingUnpublished);
+            $listing = new Listing;
+            $listing->setData($children);
+            $this->setChildren($listing, $includingUnpublished);
         }
 
         return $this->children[$cacheKey];

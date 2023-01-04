@@ -19,6 +19,169 @@ pimcore_admin:
     translations:
         path: "@PimcoreCoreBundle/translations"
 
+    user:
+        default_key_bindings:
+            save:
+                key: 'S'
+                action: save
+                ctrl: true
+            publish:
+                key: 'P'
+                action: publish
+                ctrl: true
+                shift: true
+            unpublish:
+                key: 'U'
+                action: unpublish
+                ctrl: true
+                shift: true
+            rename:
+                key: 'R'
+                action: rename
+                alt: true
+                shift: true
+            refresh:
+                key: 't'
+                action: refresh
+            open_asset:
+                key: 'A'
+                action: openAsset
+                ctrl: true
+                shift: true
+            open_object:
+                key: 'O'
+                action: openObject
+                ctrl: true
+                shift: true
+            open_document:
+                key: 'D'
+                action: openDocument
+                ctrl: true
+                shift: true
+            open_class_editor:
+                key: 'C'
+                action: openClassEditor
+                ctrl: true
+                shift: true
+            open_in_tree:
+                key: 'L'
+                action: openInTree
+                ctrl: true
+                shift: true
+            show_meta_info:
+                key: 'I'
+                action: showMetaInfo
+                alt: true
+            search_document:
+                key: 'W'
+                action: searchDocument
+                alt: true
+            search_asset:
+                key: 'A'
+                action: searchAsset
+                alt: true
+            search_object:
+                key: 'O'
+                action: searchObject
+                alt: true
+            show_element_history:
+                key: 'H'
+                action: showElementHistory
+                alt: true
+            close_all_tabs:
+                key: 'T'
+                action: closeAllTabs
+                alt: true
+            search_and_replace_assignments:
+                key: 'S'
+                action: searchAndReplaceAssignments
+                alt: true
+            redirects:
+                key: 'R'
+                action: redirects
+                ctrl: false
+                alt: true
+            shared_translations:
+                key: 'T'
+                action: sharedTranslations
+                ctrl: true
+                alt: true
+            recycle_bin:
+                key: 'R'
+                action: recycleBin
+                ctrl: true
+                alt: true
+            notes_events:
+                key: 'N'
+                action: notesEvents
+                ctrl: true
+                alt: true
+            application_logger:
+                key: 'L'
+                action: applicationLogger
+                ctrl: true
+                alt: true
+            reports:
+                key: 'M'
+                action: reports
+                ctrl: true
+                alt: true
+            tag_manager:
+                key: 'H'
+                action: tagManager
+                ctrl: true
+                alt: true
+            seo_document_editor:
+                key: 'S'
+                action: seoDocumentEditor
+                ctrl: true
+                alt: true
+            robots:
+                key: 'J'
+                action: robots
+                ctrl: true
+                alt: true
+            http_error_log:
+                key: 'O'
+                action: httpErrorLog
+                ctrl: true
+                alt: true
+            custom_reports:
+                key: 'C'
+                action: customReports
+                ctrl: true
+                alt: true
+            tag_configuration:
+                key: 'N'
+                action: tagConfiguration
+                ctrl: true
+                alt: true
+            users:
+                key: 'U'
+                action: users
+                ctrl: true
+                alt: true
+            roles:
+                key: 'P'
+                action: roles
+                ctrl: true
+                alt: true
+            clear_all_caches:
+                key: 'Q'
+                action: clearAllCaches
+                ctrl: false
+                alt: true
+            clear_data_cache:
+                key: 'C'
+                action: clearDataCache
+                ctrl: false
+                alt: true
+            quick_search:
+                key: 'F'
+                action: quickSearch
+                ctrl: true
+                shift: true
+
 # adds support for admin related routes that will be used to determine the request context in PimcoreContextGuesser
 pimcore:
     web_profiler:
