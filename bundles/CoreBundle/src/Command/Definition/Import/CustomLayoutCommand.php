@@ -73,8 +73,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
      *
      * @return null|AbstractModel
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     protected function loadDefinition(string $name): ?AbstractModel
     {

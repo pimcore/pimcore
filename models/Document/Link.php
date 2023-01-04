@@ -308,8 +308,7 @@ class Link extends Model\Document
      *
      * @return $this
      *
-     *@deprecated use getElement() instead, will be removed in Pimcore 11
-     *
+     * @deprecated use getElement() instead, will be removed in Pimcore 11
      */
     public function setObject(Model\Element\ElementInterface $object): static
     {

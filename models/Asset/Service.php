@@ -367,8 +367,7 @@ class Service extends Model\Element\Service
      *
      * @return Asset
      *
-     *@internal
-     *
+     * @internal
      */
     public static function rewriteIds(Asset $asset, array $rewriteConfig): Asset
     {
@@ -388,8 +387,7 @@ class Service extends Model\Element\Service
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public static function minimizeMetadata(array $metadata, string $mode): array
     {
