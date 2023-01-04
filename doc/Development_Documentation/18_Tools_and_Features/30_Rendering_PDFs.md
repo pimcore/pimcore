@@ -19,7 +19,7 @@ class BlogController extends FrontendController
         //your custom code....
 
         //return the pdf
-        $html = $this->renderView(':Blog:index.html.php', [
+        $html = $this->renderView('blog/index.html.twig', [
             'document' => $this->document,
             'editmode' => $this->editmode,
         ]);
@@ -47,7 +47,7 @@ class BlogController extends FrontendController
                   'editmode' => $this->editmode,
               ];
             $params['testPlaceholder'] = ' :-)';
-            $html = $this->renderView(':Blog:index.html.php', $params);
+            $html = $this->renderView('blog/index.html.twig', $params);
 
             $adapter = \Pimcore\Web2Print\Processor::getInstance();
             //add custom settings if necessary
