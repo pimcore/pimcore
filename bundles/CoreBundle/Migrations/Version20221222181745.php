@@ -34,7 +34,7 @@ final class Version20221222181745 extends AbstractMigration
             $theTableGroups = current($tableGroups);
             $tableArray = explode('_', $theTableGroups);
             $tableNumber = end($tableArray);
-            if(!is_numeric($tableNumber)){
+            if (!is_numeric($tableNumber)) {
                 continue;
             }
 
@@ -73,7 +73,7 @@ final class Version20221222181745 extends AbstractMigration
             $theTableGroups = current($theTableGroups);
             $tableArray = explode('_', $theTableGroups);
             $tableNumber = end($tableArray);
-            if(!is_numeric($tableNumber)){
+            if (!is_numeric($tableNumber)) {
                 continue;
             }
 
@@ -85,8 +85,6 @@ final class Version20221222181745 extends AbstractMigration
 
             $this->addSql("ALTER TABLE `$theTableData` MODIFY COLUMN groupId BIGINT(20) NOT NULL;");
             $this->addSql("ALTER TABLE `$theTableGroups` MODIFY COLUMN groupId BIGINT(20) NOT NULL;");
-
         }
     }
-
 }
