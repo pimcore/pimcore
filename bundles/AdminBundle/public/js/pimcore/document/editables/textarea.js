@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.textarea");
+/**
+ * @private
+ */
 pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
 
     initialize: function($super, id, name, config, data, inherited) {

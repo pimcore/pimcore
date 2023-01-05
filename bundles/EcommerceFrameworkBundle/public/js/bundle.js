@@ -11,7 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
+/**
+ * @private
+ */
 document.addEventListener(pimcore.events.pimcoreReady, (e) => {
     const perspectiveCfg = pimcore.globalmanager.get("perspective");
 

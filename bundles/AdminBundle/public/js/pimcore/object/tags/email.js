@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.email");
+/**
+ * @private
+ */
 pimcore.object.tags.email = Class.create(pimcore.object.tags.input, {
 
     type: "email"

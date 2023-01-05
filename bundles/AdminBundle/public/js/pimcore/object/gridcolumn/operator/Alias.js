@@ -16,7 +16,9 @@
 
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.alias");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.alias = Class.create(pimcore.object.gridcolumn.operator.text, {
     type: "operator",
     operatorGroup: null, 

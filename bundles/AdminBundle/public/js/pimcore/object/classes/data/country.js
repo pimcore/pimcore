@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.country");
+/**
+ * @private
+ */
 pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.data, {
 
     type: "country",

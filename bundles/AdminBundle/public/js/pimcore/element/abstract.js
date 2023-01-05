@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.abstract");
+/**
+ * @private
+ */
 pimcore.element.abstract = Class.create({
 
     dirty: false,
