@@ -292,7 +292,8 @@ pimcore.bundle.xliff.settings = Class.create({
                 source: this.exportSourceLanguageSelector.getValue(),
                 target: this.exportTargetLanguageSelector.getValue(),
                 data: Ext.encode(tmData),
-                type: "xliff"
+                type: "xliff",
+                job_url: Routing.generate('pimcore_bundle_xliff_translation_xliffexport')
             },
             success: function(response) {
                 var res = Ext.decode(response.responseText);
@@ -324,7 +325,7 @@ pimcore.bundle.xliff.settings = Class.create({
                         this.exportProgressbar = null;
                         this.exportProgressWin = null;
 
-                        pimcore.helpers.download(Routing.generate('pimcore_xliff_exportdownload', {id: id}));
+                        pimcore.helpers.download(Routing.generate('pimcore_bundle_xliff_exportdownload', {id: id}));
                     }.bind(this, res.id),
                     update: function (currentStep, steps, percent) {
                         if(this.exportProgressbar) {
@@ -353,7 +354,7 @@ pimcore.bundle.xliff.settings = Class.create({
                 text: t("select_a_file") + " (.xlf / .xliff)",
                 iconCls: "pimcore_icon_file pimcore_icon_overlay_add",
                 handler: function () {
-                    pimcore.helpers.uploadDialog(Routing.generate('pimcore_xliff_translation_xliffimportupload'), "file", function(res) {
+                    pimcore.helpers.uploadDialog(Routing.generate('pimcore_bundle_xliff_translation_xliffimportupload'), "file", function(res) {
 
                         var res = Ext.decode(res["response"]["responseText"]);
 

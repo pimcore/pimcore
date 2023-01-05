@@ -24,13 +24,6 @@ class PimcoreXliffBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
-    public function getCssPaths(): array
-    {
-        return [
-            '/bundles/pimcorexliff/css/icons.css'
-        ];
-    }
-
     public function getJsPaths(): array
     {
         return [

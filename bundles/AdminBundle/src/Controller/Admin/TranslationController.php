@@ -688,6 +688,7 @@ class TranslationController extends AdminController
         $source = $request->get('source', '');
         $target = $request->get('target', '');
         $type = $request->get('type');
+        $jobUrl = $request->get('job_url', $request->getBaseUrl() . '/admin/translation/' . $type . '-export');
 
         $source = str_replace('_', '-', $source);
         $target = str_replace('_', '-', $target);
@@ -769,7 +770,7 @@ class TranslationController extends AdminController
         $elements = array_chunk($elements, $elementsPerJob);
         foreach ($elements as $chunk) {
             $jobs[] = [[
-                'url' => $request->getBaseUrl() . '/admin/translation/' . $type . '-export',
+                'url' => $jobUrl,
                 'method' => 'POST',
                 'params' => [
                     'id' => $exportId,

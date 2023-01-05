@@ -33,7 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class XliffTranslationController extends TranslationController
 {
     /**
-     * @Route("/xliff-export", name="pimcore_xliff_translation_xliffexport", methods={"POST"})
+     * @Route("/xliff-export", name="pimcore_bundle_xliff_translation_xliffexport", methods={"POST"})
      *
      * @param Request $request
      * @param ExportServiceInterface $exportService
@@ -64,7 +64,7 @@ class XliffTranslationController extends TranslationController
     }
 
     /**
-     * @Route("/xliff-export-download", name="pimcore_xliff_exportdownload", methods={"GET"})
+     * @Route("/xliff-export-download", name="pimcore_bundle_xliff_exportdownload", methods={"GET"})
      *
      *
      */
@@ -82,7 +82,7 @@ class XliffTranslationController extends TranslationController
     }
 
     /**
-     * @Route("/xliff-import-upload", name="pimcore_xliff_translation_xliffimportupload", methods={"POST"})
+     * @Route("/xliff-import-upload", name="pimcore_bundle_xliff_translation_xliffimportupload", methods={"POST"})
      *
      * @param Request $request
      * @param ImportDataExtractorInterface $importDataExtractor
@@ -102,7 +102,7 @@ class XliffTranslationController extends TranslationController
 
         for ($i = 0; $i < $steps; $i++) {
             $jobs[] = [[
-                'url' => $this->generateUrl('pimcore_xliff_translation_xliffimportelement'),
+                'url' => $this->generateUrl('pimcore_bundle_xliff_translation_xliffimportelement'),
                 'method' => 'POST',
                 'params' => [
                     'id' => $id,
@@ -124,7 +124,7 @@ class XliffTranslationController extends TranslationController
     }
 
     /**
-     * @Route("/xliff-import-element", name="pimcore_xliff_translation_xliffimportelement", methods={"POST"})
+     * @Route("/xliff-import-element", name="pimcore_bundle_xliff_translation_xliffimportelement", methods={"POST"})
      *
      * @param Request $request
      * @param ImportDataExtractorInterface $importDataExtractor
