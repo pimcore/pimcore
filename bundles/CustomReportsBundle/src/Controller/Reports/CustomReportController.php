@@ -80,7 +80,7 @@ class CustomReportController extends AdminController
         $report = Tool\Config::getByName($request->get('name'));
 
         if (!$report) {
-            $report = new CustomReport\Config();
+            $report = new Tool\Config();
             if (!$report->isWriteable()) {
                 throw new ConfigWriteException();
             }

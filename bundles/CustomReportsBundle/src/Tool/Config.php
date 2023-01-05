@@ -86,7 +86,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         try {
             $report = new self();
 
-            /** @var Model\Tool\CustomReport\Config\Dao $dao */
+            /** @var \Pimcore\Bundle\CustomReportsBundle\Tool\Config\Dao $dao */
             $dao = $report->getDao();
             $dao->getByName($name);
 
@@ -125,11 +125,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param \stdClass|null $configuration
-     * @param Config|null $fullConfig
-     *
-     * @return Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface
-     *
      * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      */
     public static function getAdapter(?\stdClass $configuration, Config $fullConfig = null): Adapter\CustomReportAdapterInterface
@@ -145,7 +140,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
             throw new \RuntimeException(sprintf('Could not find Custom Report Adapter with type %s', $type));
         }
 
-        /** @var Model\Tool\CustomReport\Adapter\CustomReportAdapterFactoryInterface $factory */
+        /** @var \Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\CustomReportAdapterFactoryInterface $factory */
         $factory = $serviceLocator->get($type);
 
         return $factory->create($configuration, $fullConfig);

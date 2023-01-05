@@ -16,10 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
-use Pimcore\Document\Newsletter\AddressSourceAdapter\ReportAdapter;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\ReportAdapter;
 use Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\CustomReportAdapterFactoryInterface;
 use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Symfony\Component\DependencyInjection\ServiceLocator;
+use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
+use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 
 /**
  * @internal

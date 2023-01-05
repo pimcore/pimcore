@@ -34,12 +34,12 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     use OrderListingTrait;
 
     /**
-     * @var Model\Tool\CustomReport\Config[]|null
+     * @var \Pimcore\Bundle\CustomReportsBundle\Tool\Config[]|null
      */
     protected ?array $reports = null;
 
     /**
-     * @return Model\Tool\CustomReport\Config[]
+     * @return \Pimcore\Bundle\CustomReportsBundle\Tool\Config[]
      */
     public function getReports(): array
     {
@@ -51,7 +51,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     }
 
     /**
-     * @param Model\Tool\CustomReport\Config[]|null $reports
+     * @param \Pimcore\Bundle\CustomReportsBundle\Tool\Config[]|null $reports
      *
      * @return $this
      */
