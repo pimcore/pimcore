@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.glossary");
+/**
+ * @private
+ */
 pimcore.settings.glossary = Class.create({
 
     initialize: function () {

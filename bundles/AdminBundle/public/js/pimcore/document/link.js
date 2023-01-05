@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.link");
+/**
+ * @private
+ */
 pimcore.document.link = Class.create(pimcore.document.document, {
 
     initialize: function (id, options) {

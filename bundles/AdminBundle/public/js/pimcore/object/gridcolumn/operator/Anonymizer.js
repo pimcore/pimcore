@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.anonymizer");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.gridcolumn.operator.text, {
     operatorGroup: "transformer",
     type: "operator",

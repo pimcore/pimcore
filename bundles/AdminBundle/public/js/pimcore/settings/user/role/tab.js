@@ -12,10 +12,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.user.role.tab");
+/**
+ * @private
+ */
 pimcore.settings.user.role.tab = Class.create({
 
     initialize: function (parentPanel, id) {

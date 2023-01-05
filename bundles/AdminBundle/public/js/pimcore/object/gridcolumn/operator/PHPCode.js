@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.phpcode");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.phpcode = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "PHPCode",

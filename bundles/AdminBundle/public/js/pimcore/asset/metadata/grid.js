@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.asset.metadata.grid");
+/**
+ * @private
+ */
 pimcore.asset.metadata.grid = Class.create({
 
     initialize: function (config) {

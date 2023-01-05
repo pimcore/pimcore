@@ -14,11 +14,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.text");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "formatter",
     type: "operator",

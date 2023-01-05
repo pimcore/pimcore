@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.tags.gender");
+/**
+ * @private
+ */
 pimcore.object.tags.gender = Class.create(pimcore.object.tags.select, {
 
     type: "gender"

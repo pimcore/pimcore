@@ -13,7 +13,7 @@
 
 
  /**
-  * @internal
+  * @private
   */
 pimcore.edithelpers = {};
 

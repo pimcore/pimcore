@@ -1,6 +1,8 @@
 pimcore.registerNS("pimcore.glossary");
 
-
+/**
+ * @private
+ */
 pimcore.glossary = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));

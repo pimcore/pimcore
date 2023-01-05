@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.editables.areablock");
+/**
+ * @private
+ */
 pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstract, {
 
     dialogBoxes: {},

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.translation.domain");
+/**
+ * @private
+ */
 pimcore.settings.translation.domain = Class.create({
     filterField: null,
     preconfiguredFilter: "",

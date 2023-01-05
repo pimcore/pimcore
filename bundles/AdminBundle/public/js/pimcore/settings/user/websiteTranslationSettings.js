@@ -12,10 +12,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.user.websiteTranslationSettings");
+/**
+ * @private
+ */
 pimcore.settings.user.websiteTranslationSettings = Class.create({
 
     initialize:function (panel, validLanguages, userRole) {

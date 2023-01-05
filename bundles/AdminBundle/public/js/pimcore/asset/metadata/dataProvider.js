@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.asset.metadata.dataProvider");
+/**
+ * @private
+ */
 pimcore.asset.metadata.dataProvider = Class.create({
 
     initialize: function (config) {

@@ -17,10 +17,10 @@
  * pimcore.object.tags.localizedfields
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.helpers.edit");
+/**
+ * @private
+ */
 pimcore.object.helpers.edit = {
 
     getRecursiveLayout: function (l, noteditable, context, skipLayoutChildren, onlyLayoutChildren, dataProvider, disableLazyRendering) {

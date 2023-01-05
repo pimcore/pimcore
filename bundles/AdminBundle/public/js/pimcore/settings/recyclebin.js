@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.recyclebin");
+/**
+ * @private
+ */
 pimcore.settings.recyclebin = Class.create({
 
     initialize: function () {

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classificationstore.groupsPanel");
+/**
+ * @private
+ */
 pimcore.object.classificationstore.groupsPanel = Class.create({
 
     initialize: function (storeConfig, container, propertiesPanel) {

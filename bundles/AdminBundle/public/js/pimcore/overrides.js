@@ -12,7 +12,7 @@
  */
 
 /**
- * @internal
+ * @private
  */
 
 Ext.setVersion("ext", "7.0.0.159");

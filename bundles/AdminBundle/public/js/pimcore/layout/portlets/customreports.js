@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.layout.portlets.customreports");
+/**
+ * @private
+ */
 pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abstract, {
 
     getType: function () {

@@ -14,11 +14,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.dateformatter");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.gridcolumn.Abstract, {
 
     operatorGroup: "formatter",

@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.requiredby");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "extractor",
     type: "operator",

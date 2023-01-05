@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.Abstract");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.Abstract = Class.create({
     type: null,
     class: null,

@@ -12,11 +12,12 @@
  */
 
 /**
- * @internal
- *
  * global google
  */
 pimcore.registerNS('pimcore.object.tags.geopoint');
+/**
+ * @private
+ */
 pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     type: 'geopoint',

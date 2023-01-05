@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.fieldlookup.helper");
+/**
+ * @private
+ */
 pimcore.object.fieldlookup.helper = Class.create(pimcore.object.helpers.classTree, {
 
     showFieldName: false,

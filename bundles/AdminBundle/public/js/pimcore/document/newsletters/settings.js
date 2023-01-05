@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.newsletters.settings");
+/**
+ * @private
+ */
 pimcore.document.newsletters.settings = Class.create(pimcore.document.settings_abstract, {
 
     getLayout: function () {

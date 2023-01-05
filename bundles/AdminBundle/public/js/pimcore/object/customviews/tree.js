@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.customviews.tree");
+/**
+ * @private
+ */
 pimcore.object.customviews.tree = Class.create(pimcore.object.tree, {
 
     initialize: function($super, initConfig, perspectiveCfg) {

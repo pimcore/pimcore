@@ -12,10 +12,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.asset.helpers.gridConfigDialog");
+/**
+ * @private
+ */
 pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gridConfigDialog, {
 
     getLeftPanel: function () {

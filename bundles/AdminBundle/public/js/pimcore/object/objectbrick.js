@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.objectbrick");
+/**
+ * @private
+ */
 pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
     forbiddenNames: [

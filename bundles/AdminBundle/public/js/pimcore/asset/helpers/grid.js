@@ -18,10 +18,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.asset.helpers.grid");
+/**
+ * @private
+ */
 pimcore.asset.helpers.grid = Class.create({
 
     baseParams: {},

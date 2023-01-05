@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS('pimcore.object.classes.data.geobounds');
+/**
+ * @private
+ */
 pimcore.object.classes.data.geobounds = Class.create(pimcore.object.classes.data.geo.abstract, {
 
     type: "geobounds",

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.helpers.classTree");
+/**
+ * @private
+ */
 pimcore.object.helpers.classTree = Class.create({
 
     showFieldName: false,

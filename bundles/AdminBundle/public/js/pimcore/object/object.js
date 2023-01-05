@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.object");
+/**
+ * @private
+ */
 pimcore.object.object = Class.create(pimcore.object.abstract, {
     willClose: false,
     initialize: function (id, options) {

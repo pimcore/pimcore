@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.report.custom.item");
+/**
+ * @private
+ */
 pimcore.report.custom.item = Class.create({
 
 

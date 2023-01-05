@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.notification.panel");
 
+/**
+ * @private
+ */
 pimcore.notification.panel = Class.create({
 
     initialize: function () {

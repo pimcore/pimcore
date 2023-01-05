@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.bundle.EcommerceFramework.pricing.config.item");
+/**
+ * @private
+ */
 pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
 
     /**

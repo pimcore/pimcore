@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classes.data.select");
+/**
+ * @private
+ */
 pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.data, {
 
     type: "select",

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.report.analytics.overview");
+/**
+ * @private
+ */
 pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
 
     matchType: function (type) {

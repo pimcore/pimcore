@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.tool.genericiframewindow");
+/**
+ * @private
+ */
 pimcore.tool.genericiframewindow = Class.create({
 
     initialize: function (id, src, iconCls, title) {

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.fileexplorer.explorer");
+/**
+ * @private
+ */
 pimcore.settings.fileexplorer.explorer = Class.create({
 
     initialize: function () {

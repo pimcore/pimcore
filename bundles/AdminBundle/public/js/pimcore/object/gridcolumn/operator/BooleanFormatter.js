@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.booleanformatter");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "formatter",
     type: "operator",

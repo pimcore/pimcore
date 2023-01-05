@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.gdpr.dataproviders.pimcoreUsers");
+/**
+ * @private
+ */
 pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
 
     searchParams: [],

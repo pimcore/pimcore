@@ -11,11 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.user.workspace.customlayouts");
-
+/**
+ * @private
+ */
 pimcore.settings.user.workspace.customlayouts = Class.create({
 
     initialize: function (type, data, allLayouts) {

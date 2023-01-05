@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.asset.metadata.tags.asset");
+/**
+ * @private
+ */
 pimcore.asset.metadata.tags.asset = Class.create(pimcore.asset.metadata.tags.manyToOneRelation, {
 
     type: "asset",

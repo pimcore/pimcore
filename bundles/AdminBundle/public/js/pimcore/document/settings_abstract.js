@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.settings_abstract");
+/**
+ * @private
+ */
 pimcore.document.settings_abstract = Class.create({
 
     initialize: function(document) {

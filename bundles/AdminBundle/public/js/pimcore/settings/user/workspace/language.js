@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.user.workspace.language");
 
+/**
+ * @private
+ */
 pimcore.settings.user.workspace.language = Class.create({
 
     initialize: function (type, data) {

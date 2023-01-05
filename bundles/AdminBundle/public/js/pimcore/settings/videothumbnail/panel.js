@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.videothumbnail.panel");
+/**
+ * @private
+ */
 pimcore.settings.videothumbnail.panel = Class.create({
 
     initialize: function () {

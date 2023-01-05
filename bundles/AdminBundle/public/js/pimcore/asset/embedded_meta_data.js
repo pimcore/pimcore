@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.asset.embedded_meta_data");
+/**
+ * @private
+ */
 pimcore.asset.embedded_meta_data = Class.create({
     initialize: function(asset) {
         this.asset = asset;

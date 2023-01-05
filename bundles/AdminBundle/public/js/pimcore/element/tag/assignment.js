@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.element.tag.assignment");
+/**
+ * @private
+ */
 pimcore.element.tag.assignment = Class.create({
 
     initialize: function(element, elementType) {

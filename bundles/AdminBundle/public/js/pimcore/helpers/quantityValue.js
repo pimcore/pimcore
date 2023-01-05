@@ -12,7 +12,7 @@
  */
 
 /**
- * @internal
+ * @private
  *
  * some global helper functions
  */

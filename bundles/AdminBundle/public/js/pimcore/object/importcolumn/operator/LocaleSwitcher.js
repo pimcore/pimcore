@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.importcolumn.operator.localeswitcher");
-
+/**
+ * @private
+ */
 pimcore.object.importcolumn.operator.localeswitcher = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "LocaleSwitcher",

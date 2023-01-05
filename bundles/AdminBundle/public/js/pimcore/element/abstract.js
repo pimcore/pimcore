@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.element.abstract");
+/**
+ * @private
+ */
 pimcore.element.abstract = Class.create({
 
     dirty: false,

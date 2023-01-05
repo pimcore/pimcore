@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.helpers.gridConfigDialog");
+/**
+ * @private
+ */
 pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gridConfigDialog, {
 
     brickKeys: [],

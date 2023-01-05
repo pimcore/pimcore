@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classes.data.newsletterConfirmed");
+/**
+ * @private
+ */
 pimcore.object.classes.data.newsletterConfirmed = Class.create(pimcore.object.classes.data.data, {
 
     type: "newsletterConfirmed",

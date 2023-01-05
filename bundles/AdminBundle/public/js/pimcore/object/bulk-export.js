@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.bulkexport");
+/**
+ * @private
+ */
 pimcore.object.bulkexport = Class.create(pimcore.object.bulkbase, {
 
     initialize: function () {

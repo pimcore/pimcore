@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.bundle.EcommerceFramework.VoucherSeriesTab");
 
+/**
+ * @private
+ */
 pimcore.bundle.EcommerceFramework.VoucherSeriesTab = Class.create({
 
     title: t('bundle_ecommerce_vouchertoolkit_tab'),

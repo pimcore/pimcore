@@ -1,5 +1,5 @@
 /**
- * @internal
+ * @private
  */
 Ext.define('Ext.pimcore.slider.Milestone', {
     extend: 'Ext.slider.Multi',

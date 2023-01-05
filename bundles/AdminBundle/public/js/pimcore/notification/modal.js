@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.notification.modal");
 
+/**
+ * @private
+ */
 pimcore.notification.modal = Class.create({
 
     initialize: function (elementData) {

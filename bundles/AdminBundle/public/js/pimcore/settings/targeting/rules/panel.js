@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.targeting.rules.panel");
+/**
+ * @private
+ */
 pimcore.settings.targeting.rules.panel= Class.create({
 
     initialize: function() {

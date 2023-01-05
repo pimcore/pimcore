@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.tags.fieldcollections");
+/**
+ * @private
+ */
 pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract, {
 
     type: "fieldcollections",

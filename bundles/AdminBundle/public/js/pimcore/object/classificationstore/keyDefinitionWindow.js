@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classificationstore.keyDefinitionWindow");
+/**
+ * @private
+ */
 pimcore.object.classificationstore.keyDefinitionWindow = Class.create({
 
     initialize: function (data, keyid, parentPanel) {

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.translation.word");
+/**
+ * @private
+ */
 pimcore.settings.translation.word = Class.create({
 
     initialize: function () {

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.helpers.customLayoutEditor");
+/**
+ * @private
+ */
 pimcore.object.helpers.customLayoutEditor = Class.create({
 
     uploadRoute: 'pimcore_admin_dataobject_class_importcustomlayoutdefinition',

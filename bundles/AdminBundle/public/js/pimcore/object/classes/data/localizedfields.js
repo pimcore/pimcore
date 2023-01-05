@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classes.data.localizedfields");
+/**
+ * @private
+ */
 pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classes.data.data, {
 
     type: "localizedfields",

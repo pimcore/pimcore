@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.thumbnail.item");
+/**
+ * @private
+ */
 pimcore.settings.thumbnail.item = Class.create({
 
 
@@ -343,12 +343,12 @@ pimcore.settings.thumbnail.item = Class.create({
 
 
 /**
- * @internal
- *
  * ITEM TYPES
  */
 pimcore.registerNS("pimcore.settings.thumbnail.items");
-
+/**
+ * @private
+ */
 pimcore.settings.thumbnail.items = {
     getTopBar: function (name, index, parent) {
         return [{

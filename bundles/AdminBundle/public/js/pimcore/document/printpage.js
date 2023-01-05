@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.printpage");
+/**
+ * @private
+ */
 pimcore.document.printpage = Class.create(pimcore.document.printabstract, {
     type: "printpage",
 

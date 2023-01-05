@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.workflowmanagement.actionPanel");
+/**
+ * @private
+ */
 pimcore.workflowmanagement.actionPanel = Class.create({
 
     getClassName: function ()

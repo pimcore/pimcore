@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.profile.panel");
+/**
+ * @private
+ */
 pimcore.settings.profile.panel = Class.create({
 
     initialize: function () {

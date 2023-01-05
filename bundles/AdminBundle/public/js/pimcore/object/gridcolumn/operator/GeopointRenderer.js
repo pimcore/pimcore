@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.geopointrenderer");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.geopointrenderer = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "renderer",
     type: "operator",

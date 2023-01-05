@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.tool.paralleljobs");
+/**
+ * @private
+ */
 pimcore.tool.paralleljobs = Class.create({
 
     initialize: function (config) {

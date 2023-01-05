@@ -14,11 +14,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.importcolumn.operator.objectbricksetter");
-
+/**
+ * @private
+ */
 pimcore.object.importcolumn.operator.objectbricksetter = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "ObjectBrickSetter",

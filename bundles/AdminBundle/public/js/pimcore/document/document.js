@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.document");
+/**
+ * @private
+ */
 pimcore.document.document = Class.create(pimcore.element.abstract, {
     willClose: false,
     getData: function () {

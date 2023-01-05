@@ -12,7 +12,7 @@
  */
 
 /**
- * @internal
+ * @private
  */
 Ext.define('pimcore.element.helpers.gridCellEditor', {
     extend: 'Ext.grid.CellEditor',

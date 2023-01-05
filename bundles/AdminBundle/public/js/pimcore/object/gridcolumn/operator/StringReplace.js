@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.stringreplace");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "transformer",
     type: "operator",

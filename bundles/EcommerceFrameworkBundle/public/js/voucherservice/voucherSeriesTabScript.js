@@ -12,7 +12,7 @@
  */
 
 /**
- * @internal
+ * @private
  */
 document.addEventListener("DOMContentLoaded", function(event) {
     var cleanupButtons = document.getElementById('cleanupButtons');

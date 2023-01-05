@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.page_snippet");
+/**
+ * @private
+ */
 pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
     addTab: function () {

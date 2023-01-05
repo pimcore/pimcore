@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.versions");
+/**
+ * @private
+ */
 pimcore.document.versions = Class.create({
 
     initialize: function (document) {

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.tags.user");
+/**
+ * @private
+ */
 pimcore.object.tags.user = Class.create(pimcore.object.tags.select, {
 
     type: "user",

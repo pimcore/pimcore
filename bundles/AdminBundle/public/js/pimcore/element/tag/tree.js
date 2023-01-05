@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.element.tag.tree");
+/**
+ * @private
+ */
 pimcore.element.tag.tree = Class.create({
 
     allowDnD: true,

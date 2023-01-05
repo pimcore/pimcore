@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.tags.newsletterConfirmed");
+/**
+ * @private
+ */
 pimcore.object.tags.newsletterConfirmed = Class.create(pimcore.object.tags.checkbox, {
 
     type:"newsletterConfirmed"

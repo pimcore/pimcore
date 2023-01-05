@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.redirects");
+/**
+ * @private
+ */
 pimcore.settings.redirects = Class.create({
 
     initialize: function () {

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.layout.portlets.modifiedAssets");
+/**
+ * @private
+ */
 pimcore.layout.portlets.modifiedAssets = Class.create(pimcore.layout.portlets.abstract, {
 
     getType: function () {

@@ -12,7 +12,7 @@
  */
 
 /**
- * @internal
+ * @private
  */
 Ext.define('pimcore.object.helpers.metadataMultiselectEditor', {
     extend: 'Ext.grid.CellEditor',

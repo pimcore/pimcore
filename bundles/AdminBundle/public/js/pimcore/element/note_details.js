@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.element.note_details");
+/**
+ * @private
+ */
 pimcore.element.note_details = Class.create({
     getClassName: function (){
         return "pimcore.element.note_details";

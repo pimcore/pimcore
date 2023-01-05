@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.report.custom.report");
+/**
+ * @private
+ */
 pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
     drillDownFilters: {},

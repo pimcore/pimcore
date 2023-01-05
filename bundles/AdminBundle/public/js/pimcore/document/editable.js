@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.editable");
+/**
+ * @private
+ */
 pimcore.document.editable = Class.create({
 
     id: null,

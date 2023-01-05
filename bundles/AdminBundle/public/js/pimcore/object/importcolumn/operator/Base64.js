@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.importcolumn.operator.base64");
-
+/**
+ * @private
+ */
 pimcore.object.importcolumn.operator.base64 = Class.create(pimcore.object.gridcolumn.operator.base64, {
 
 });

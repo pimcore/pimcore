@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.newsletter");
+/**
+ * @private
+ */
 pimcore.document.newsletter = Class.create(pimcore.document.page_snippet, {
 
     initialize: function(id, options) {

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classes.layout.fieldset");
+/**
+ * @private
+ */
 pimcore.object.classes.layout.fieldset = Class.create(pimcore.object.classes.layout.layout, {
 
     type: "fieldset",

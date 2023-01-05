@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.newsletters.addressSourceAdapters.report");
+/**
+ * @private
+ */
 pimcore.document.newsletters.addressSourceAdapters.report = Class.create({
 
     initialize: function(document, data) {

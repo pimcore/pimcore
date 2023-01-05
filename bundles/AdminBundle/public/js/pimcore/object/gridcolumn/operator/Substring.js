@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.substring");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "transformer",
     type: "operator",

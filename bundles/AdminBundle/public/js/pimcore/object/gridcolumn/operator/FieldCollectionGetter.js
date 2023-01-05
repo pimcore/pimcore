@@ -14,11 +14,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.fieldcollectiongetter");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "extractor",
     type: "operator",

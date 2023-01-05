@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.user.workspace.special");
 
+/**
+ * @private
+ */
 pimcore.settings.user.workspace.special = Class.create({
 
     initialize: function (callback, data, path) {

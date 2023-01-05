@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.asset.metadata.editor");
+/**
+ * @private
+ */
 pimcore.asset.metadata.editor = Class.create({
 
     initialize: function(asset) {

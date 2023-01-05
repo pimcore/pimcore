@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.workflow.transitionPanel");
+/**
+ * @private
+ */
 pimcore.workflow.transitionPanel = Class.create({
 
     getClassName: function ()

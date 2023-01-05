@@ -11,11 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classificationstore.relationSelectionWindow");
-/*
+/**
+ * @private
  * this is for the grid
  */
 pimcore.object.classificationstore.relationSelectionWindow = Class.create({

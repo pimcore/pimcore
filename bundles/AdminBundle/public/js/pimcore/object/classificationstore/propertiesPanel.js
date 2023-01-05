@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classificationstore.propertiespanel");
+/**
+ * @private
+ */
 pimcore.object.classificationstore.propertiespanel = Class.create({
 
     initialize: function (storeConfig, container) {

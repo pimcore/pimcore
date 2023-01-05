@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.klass");
+/**
+ * @private
+ */
 pimcore.object.klass = Class.create({
 
     forbiddenNames: [

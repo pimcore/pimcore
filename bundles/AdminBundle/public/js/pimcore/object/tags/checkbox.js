@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.tags.checkbox");
+/**
+ * @private
+ */
 pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
     type:"checkbox",

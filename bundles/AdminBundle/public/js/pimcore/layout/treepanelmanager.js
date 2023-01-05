@@ -12,7 +12,7 @@
  */
 
 /**
- * @internal
+ * @private
  */
 pimcore.registerNS("pimcore.layout.treepanelmanager");
 pimcore.layout.treepanelmanager = {

@@ -12,11 +12,12 @@
  */
 
 /**
- * @internal
- *
  * ACTION TYPES
  */
 pimcore.registerNS("pimcore.settings.targeting.actions");
+/**
+ * @private
+ */
 pimcore.settings.targeting.actions = (function () {
     var actions = {
         redirect: Class.create(pimcore.settings.targeting.action.abstract, {

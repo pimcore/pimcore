@@ -13,12 +13,12 @@
 
 
 /**
- * @internal
- *
  * CONDITION TYPES
  */
 pimcore.registerNS("pimcore.settings.targeting.conditions");
-
+/**
+ * @private
+ */
 pimcore.settings.targeting.conditions = (function () {
     var conditions = {
         url: Class.create(pimcore.settings.targeting.condition.abstract, {

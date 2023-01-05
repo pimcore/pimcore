@@ -11,11 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classificationstore.keySelectionWindow");
-/*
+/**
+ * @private
  * this is for the object editor and the add key window in the classification store definition
  */
 pimcore.object.classificationstore.keySelectionWindow = Class.create({

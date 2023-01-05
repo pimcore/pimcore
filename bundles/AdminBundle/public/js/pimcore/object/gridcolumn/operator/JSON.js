@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.json");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.json = Class.create(pimcore.object.gridcolumn.operator.text, {
     operatorGroup: "transformer",
     type: "operator",

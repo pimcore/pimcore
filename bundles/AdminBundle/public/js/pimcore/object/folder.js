@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.folder");
+/**
+ * @private
+ */
 pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     type: "folder",

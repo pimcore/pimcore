@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.lfexpander");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.gridcolumn.operator.text, {
     operatorGroup: "transformer",
     type: "operator",

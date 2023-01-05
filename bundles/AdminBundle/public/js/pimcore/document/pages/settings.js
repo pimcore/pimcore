@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.pages.settings");
+/**
+ * @private
+ */
 pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstract, {
 
     getLayout: function () {

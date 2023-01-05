@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.translation.xliff");
+/**
+ * @private
+ */
 pimcore.settings.translation.xliff = Class.create({
 
     initialize: function () {

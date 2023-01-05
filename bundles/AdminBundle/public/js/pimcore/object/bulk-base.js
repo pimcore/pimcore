@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.bulkbase");
+/**
+ * @private
+ */
 pimcore.object.bulkbase = Class.create({
 
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {

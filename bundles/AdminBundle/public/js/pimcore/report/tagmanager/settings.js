@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.report.tagmanager.settings");
+/**
+ * @private
+ */
 pimcore.report.tagmanager.settings = Class.create({
 
     initialize: function (parent) {

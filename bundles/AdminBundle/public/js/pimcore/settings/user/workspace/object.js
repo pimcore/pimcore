@@ -12,10 +12,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.user.workspace.object");
+/**
+ * @private
+ */
 pimcore.settings.user.workspace.object = Class.create({
 
     initialize: function (parent) {

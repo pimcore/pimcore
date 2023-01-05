@@ -12,10 +12,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.user.role.panel");
+/**
+ * @private
+ */
 pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abstract, {
 
     getTabPanel: function () {

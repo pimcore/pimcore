@@ -17,10 +17,10 @@
  * pimcore.object.tags.localizedfields
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.helpers.grid");
+/**
+ * @private
+ */
 pimcore.object.helpers.grid = Class.create({
 
     baseParams: {},

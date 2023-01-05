@@ -12,10 +12,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.user.editorSettings");
+/**
+ * @private
+ */
 pimcore.settings.user.editorSettings = Class.create({
 
     initialize:function (userPanel, contentLanguages) {

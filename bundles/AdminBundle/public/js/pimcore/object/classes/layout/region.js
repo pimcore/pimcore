@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classes.layout.region");
+/**
+ * @private
+ */
 pimcore.object.classes.layout.region = Class.create(pimcore.object.classes.layout.layout, {
 
     type: "region",

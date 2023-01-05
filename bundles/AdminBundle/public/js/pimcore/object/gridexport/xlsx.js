@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridexport.xlsx");
+/**
+ * @private
+ */
 pimcore.object.gridexport.xlsx = Class.create(pimcore.element.gridexport.abstract, {
     name: "xlsx",
     text: t("export_xlsx"),

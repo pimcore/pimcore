@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.httpErrorLog");
+/**
+ * @private
+ */
 pimcore.settings.httpErrorLog = Class.create({
 
     initialize: function(id) {

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.asset.metadata.data.object");
+/**
+ * @private
+ */
 pimcore.asset.metadata.data.object = Class.create(pimcore.asset.metadata.data.data, {
 
     type: "object"

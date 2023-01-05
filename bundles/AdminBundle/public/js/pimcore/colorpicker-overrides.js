@@ -12,7 +12,7 @@
  */
 
 /**
- * @internal
+ * @private
  */
 pimcore.helpers.colorpicker = {
     initOverrides: function () {

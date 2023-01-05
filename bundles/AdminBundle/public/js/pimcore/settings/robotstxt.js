@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.robotstxt");
+/**
+ * @private
+ */
 pimcore.settings.robotstxt = Class.create({
     onFileSystem: false,
     data: {},

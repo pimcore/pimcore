@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.translation.translationmerger");
+/**
+ * @private
+ */
 pimcore.settings.translation.translationmerger = Class.create({
 
 

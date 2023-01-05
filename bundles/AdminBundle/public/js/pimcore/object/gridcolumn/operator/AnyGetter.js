@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.anygetter");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridcolumn.Abstract, {
         operatorGroup: "extractor",
         type: "operator",

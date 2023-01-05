@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.tags.country");
+/**
+ * @private
+ */
 pimcore.object.tags.country = Class.create(pimcore.object.tags.select, {
 
     type: "country",

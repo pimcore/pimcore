@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.asset.text");
+/**
+ * @private
+ */
 pimcore.asset.text = Class.create(pimcore.asset.asset, {
 
     initialize: function(id, options) {

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.tags.structuredTable");
+/**
+ * @private
+ */
 pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract, {
 
     type: "structuredTable",

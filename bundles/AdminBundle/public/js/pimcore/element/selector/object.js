@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.element.selector.object");
+/**
+ * @private
+ */
 pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract, {
 
     fieldObject: {},

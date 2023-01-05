@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.editables.area");
+/**
+ * @private
+ */
 pimcore.document.editables.area = Class.create(pimcore.document.area_abstract, {
 
     initialize: function($super, id, name, config, data, inherited) {

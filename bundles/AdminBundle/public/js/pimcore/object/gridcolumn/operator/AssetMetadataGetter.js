@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.assetmetadatagetter");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.assetmetadatagetter = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "extractor",
     type: "operator",

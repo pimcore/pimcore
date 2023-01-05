@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.edit.dnd");
+/**
+ * @private
+ */
 pimcore.document.edit.dnd = Class.create({
 
     dndManager: null,

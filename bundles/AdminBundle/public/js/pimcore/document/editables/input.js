@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.editables.input");
+/**
+ * @private
+ */
 pimcore.document.editables.input = Class.create(pimcore.document.editable, {
 
     initialize: function($super, id, name, config, data, inherited) {

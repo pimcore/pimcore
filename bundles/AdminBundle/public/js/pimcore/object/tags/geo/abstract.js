@@ -12,11 +12,12 @@
  */
 
 /**
- * @internal
- *
  * global google
  */
 pimcore.registerNS('pimcore.object.tags.geo.abstract');
+/**
+ * @private
+ */
 pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
 
     initialize: function (data, fieldConfig) {

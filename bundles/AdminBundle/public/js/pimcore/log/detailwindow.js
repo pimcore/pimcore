@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.log.detailwindow");
+/**
+ * @private
+ */
 pimcore.log.detailwindow = Class.create({
     getClassName: function (){
         return "pimcore.plugin.eventscheduler.detailwindow";

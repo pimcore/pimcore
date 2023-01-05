@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.boolean");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.boolean = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "transformer",
     type: "operator",

@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.hotspotimagerenderer");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.hotspotimagerenderer = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "renderer",
     type: "operator",

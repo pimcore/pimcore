@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.report.abstract");
+/**
+ * @private
+ */
 pimcore.report.abstract = Class.create({
 
     initialize: function (reportPanel, type, reference, config) {

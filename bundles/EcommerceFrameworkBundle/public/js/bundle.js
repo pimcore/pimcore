@@ -12,7 +12,7 @@
  */
 
 /**
- * @internal
+ * @private
  */
 document.addEventListener(pimcore.events.pimcoreReady, (e) => {
     const perspectiveCfg = pimcore.globalmanager.get("perspective");

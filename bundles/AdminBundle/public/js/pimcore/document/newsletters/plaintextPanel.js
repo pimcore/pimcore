@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.document.newsletters.plaintextPanel");
+/**
+ * @private
+ */
 pimcore.document.newsletters.plaintextPanel = Class.create({
     
     initialize: function(document) {

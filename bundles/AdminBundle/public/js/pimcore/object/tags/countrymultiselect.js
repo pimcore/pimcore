@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.tags.countrymultiselect");
+/**
+ * @private
+ */
 pimcore.object.tags.countrymultiselect = Class.create(pimcore.object.tags.multiselect, {
 
     type: "countrymultiselect"

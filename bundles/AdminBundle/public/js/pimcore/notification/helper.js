@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.notification.helper.x");
 
+/**
+ * @private
+ */
 pimcore.notification.helper.updateCount = function (count) {
 
     var currentValue = Ext.get("notification_value").getHtml();
@@ -31,6 +31,9 @@ pimcore.notification.helper.updateCount = function (count) {
     }
 };
 
+/**
+ * @private
+ */
 pimcore.notification.helper.incrementCount = function () {
     var value = Ext.get("notification_value").getHtml();
     if(value) {
@@ -42,6 +45,9 @@ pimcore.notification.helper.incrementCount = function () {
     pimcore.notification.helper.updateCount(value);
 };
 
+/**
+ * @private
+ */
 pimcore.notification.helper.showNotifications = function (notifications) {
     for (var i = 0; i < notifications.length; i++) {
         var row = notifications[i];
@@ -94,6 +100,9 @@ pimcore.notification.helper.showNotifications = function (notifications) {
     }
 };
 
+/**
+ * @private
+ */
 pimcore.notification.helper.markAsRead = function (id, callback) {
     Ext.Ajax.request({
         url: Routing.generate('pimcore_admin_notification_markasread', {id: id}),
@@ -106,6 +115,9 @@ pimcore.notification.helper.markAsRead = function (id, callback) {
     });
 };
 
+/**
+ * @private
+ */
 pimcore.notification.helper.openLinkedElement = function (row) {
     if ('document' == row['linkedElementType']) {
         pimcore.helpers.openElement(row['linkedElementId'], 'document');
@@ -116,6 +128,9 @@ pimcore.notification.helper.openLinkedElement = function (row) {
     }
 };
 
+/**
+ * @private
+ */
 pimcore.notification.helper.openDetails = function (id, callback) {
     Ext.Ajax.request({
         url: Routing.generate('pimcore_admin_notification_find', {id: id}),
@@ -136,6 +151,9 @@ pimcore.notification.helper.openDetails = function (id, callback) {
     });
 };
 
+/**
+ * @private
+ */
 pimcore.notification.helper.openDetailsWindow = function (id, title, message, type, callback) {
     var notification = new Ext.Window({
         modal: true,
@@ -160,6 +178,9 @@ pimcore.notification.helper.openDetailsWindow = function (id, title, message, ty
     notification.focus();
 };
 
+/**
+ * @private
+ */
 pimcore.notification.helper.delete = function (id, callback) {
     Ext.Ajax.request({
         url: Routing.generate('pimcore_admin_notification_delete', {id: id}),
@@ -172,6 +193,9 @@ pimcore.notification.helper.delete = function (id, callback) {
     });
 };
 
+/**
+ * @private
+ */
 pimcore.notification.helper.deleteAll = function (callback) {
     Ext.Ajax.request({
         url: Routing.generate('pimcore_admin_notification_deleteall'),
@@ -184,11 +208,17 @@ pimcore.notification.helper.deleteAll = function (callback) {
     });
 };
 
+/**
+ * @private
+ */
 pimcore.notification.helper.setLastUpdateTimestamp = function () {
     this.lastUpdateTimestamp = parseInt(new Date().getTime() / 1000, 10);
 };
 pimcore.notification.helper.setLastUpdateTimestamp();
 
+/**
+ * @private
+ */
 pimcore.notification.helper.updateFromServer = function () {
     var user = pimcore.globalmanager.get("user");
     if (!document.hidden && user.isAllowed("notifications")) {

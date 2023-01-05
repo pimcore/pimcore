@@ -15,11 +15,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.gridcolumn.operator.workflowstate");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.workflowstate = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "extractor",
     type: "operator",

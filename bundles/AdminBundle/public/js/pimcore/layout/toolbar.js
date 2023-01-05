@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
- /**
- * @internal
- */
 pimcore.registerNS("pimcore.layout.toolbar");
- pimcore.layout.toolbar = Class.create({
+/**
+ * @private
+ */
+pimcore.layout.toolbar = Class.create({
 
      initialize: function() {
  

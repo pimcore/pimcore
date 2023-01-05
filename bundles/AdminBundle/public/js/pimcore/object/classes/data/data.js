@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classes.data.data");
+/**
+ * @private
+ */
 pimcore.object.classes.data.data = Class.create({
 
     invalidFieldNames: false,

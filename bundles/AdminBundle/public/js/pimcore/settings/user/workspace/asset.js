@@ -12,10 +12,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.user.workspace.asset");
+/**
+ * @private
+ */
 pimcore.settings.user.workspace.asset = Class.create({
 
     initialize: function (parent) {

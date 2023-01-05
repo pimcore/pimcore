@@ -12,7 +12,7 @@
  */
 
 /**
- * @internal
+ * @private
  */
 pimcore.registerNS("pimcore.document.pages.preview");
 Ext.define('pimcore.document.pages.preview', {

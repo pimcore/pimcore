@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.object.classes.data.languagemultiselect");
+/**
+ * @private
+ */
 pimcore.object.classes.data.languagemultiselect = Class.create(pimcore.object.classes.data.multiselect, {
 
     type: "languagemultiselect",

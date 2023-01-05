@@ -12,10 +12,10 @@
  */
 
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.user.role.settings");
+/**
+ * @private
+ */
 pimcore.settings.user.role.settings = Class.create({
 
     initialize: function (rolePanel) {

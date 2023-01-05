@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * @internal
- */
 pimcore.registerNS("pimcore.settings.targetingToolbar");
+/**
+ * @private
+ */
 pimcore.settings.targetingToolbar = Class.create({
     initialize: function () {
         var that = this;

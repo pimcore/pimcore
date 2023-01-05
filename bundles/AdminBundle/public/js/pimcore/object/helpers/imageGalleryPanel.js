@@ -12,7 +12,7 @@
  */
 
 /**
- * @internal
+ * @private
  */
 Ext.define('pimcore.object.helpers.ImageGalleryPanel', {
     extend: 'Ext.panel.Panel',
