@@ -4,12 +4,12 @@ pimcore.bundle.search = Class.create({
     registry: null,
 
     initialize: function () {
-        document.addEventListener(pimcore.events.preRegisterKeyBindings, this.pimcoreReady.bind(this));
+        document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
+        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
     },
 
     pimcoreReady: function () {
-        this.registerKeyBinding();
         this.registerSearchService();
     },
 
