@@ -24,10 +24,8 @@ pimcore.bundle.search = Class.create({
         this.registry.registerImplementation(new pimcore.bundle.search.element.service());
     },
 
-    preMenuBuild: function () {
-        //TODO: implement
-
-        //TODO: add navbar items
+    preMenuBuild: function (event) {
+        new pimcore.bundle.search.layout.toolbar(event.detail.menu);
     }
 });
 
