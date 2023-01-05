@@ -64,7 +64,6 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
     /**
      * checks if product is bookable
      * returns always true in default implementation
-     *
      */
     public function getOSIsBookable($quantityScale = 1): bool
     {
@@ -75,40 +74,30 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      * defines the name of the price system for this product.
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
-     *
-     * @return string|null
      */
-    public function getPriceSystemName(): ?string
+    public function getPriceSystemName(): string
     {
         return 'defaultOfferToolPriceSystem';
     }
 
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
-     *
-     * @return PriceSystemInterface|null
      */
-    public function getPriceSystemImplementation(): ?PriceSystemInterface
+    public function getPriceSystemImplementation(): PriceSystemInterface
     {
         return Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
     }
 
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
-     *
-     * @return AvailabilitySystemInterface|null
      */
-    public function getAvailabilitySystemImplementation(): ?AvailabilitySystemInterface
+    public function getAvailabilitySystemImplementation(): AvailabilitySystemInterface
     {
         return Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
     }
 
     /**
      * returns price for given quantity scale
-     *
-     * @param int $quantityScale
-     *
-     * @return PriceInterface
      */
     public function getOSPrice(int $quantityScale = 1): PriceInterface
     {
@@ -118,10 +107,6 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
     /**
      * returns price info for given quantity scale.
      * price info might contain price and additional information for prices like discounts, ...
-     *
-     * @param int $quantityScale
-     *
-     * @return PriceInfoInterface
      */
     public function getOSPriceInfo(int $quantityScale = 1): PriceInfoInterface
     {
@@ -130,10 +115,6 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
 
     /**
      * returns availability info based on given quantity
-     *
-     * @param int|null $quantity
-     *
-     * @return AvailabilityInterface
      */
     public function getOSAvailabilityInfo(int $quantity = null): AvailabilityInterface
     {

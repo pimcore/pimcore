@@ -31,7 +31,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
  */
 class MockProduct extends Concrete implements ProductInterface, IndexableInterface, CheckoutableInterface
 {
-    public function getAvailabilitySystemName(): ?string
+    public function getAvailabilitySystemName(): string
     {
         return 'default';
     }
@@ -41,12 +41,12 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return false;
     }
 
-    public function getPriceSystemImplementation(): ?PriceSystemInterface
+    public function getPriceSystemImplementation(): PriceSystemInterface
     {
         return Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
     }
 
-    public function getAvailabilitySystemImplementation(): ?AvailabilitySystemInterface
+    public function getAvailabilitySystemImplementation(): AvailabilitySystemInterface
     {
         return Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
     }
@@ -73,7 +73,7 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return false;
     }
 
-    public function getPriceSystemName(): ?string
+    public function getPriceSystemName(): string
     {
         return 'default';
     }

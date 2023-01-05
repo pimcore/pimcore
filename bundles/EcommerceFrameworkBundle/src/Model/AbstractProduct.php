@@ -36,8 +36,6 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
 
     /**
      * defines if product is included into the product index. If false, product doesn't appear in product index.
-     *
-     * @return bool
      */
     public function getOSDoIndexProduct(): bool
     {
@@ -49,11 +47,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes in case of multiple criteria for product active state
      *
-     * @param bool $inProductList
-     *
      * @throws UnsupportedException
-     *
-     * @return bool
      */
     public function isActive(bool $inProductList = false): bool
     {
@@ -66,10 +60,8 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * it should be overwritten in mapped sub classes of product classes
      *
      * @throws UnsupportedException
-     *
-     * @return string|null
      */
-    public function getPriceSystemName(): ?string
+    public function getPriceSystemName(): string
     {
         throw new UnsupportedException('getPriceSystemName is not supported for ' . get_class($this));
     }
@@ -77,10 +69,8 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
     /**
      * returns product type for product index (either object or variant).
      * by default it returns type of object, but it may be overwritten if necessary.
-     *
-     * @return string|null
      */
-    public function getOSIndexType(): ?string
+    public function getOSIndexType(): string
     {
         return $this->getType();
     }
@@ -88,8 +78,6 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
     /**
      * returns parent id for product index.
      * by default it returns id of parent object, but it may be overwritten if necessary.
-     *
-     * @return int|null
      */
     public function getOSParentId(): int|null
     {
@@ -101,8 +89,6 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * has to be overwritten either in pimcore object or mapped sub class.
      *
      * @throws UnsupportedException
-     *
-     * @return array|null
      */
     public function getCategories(): ?array
     {
@@ -118,8 +104,6 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * should be overwritten in mapped sub classes of product classes
      *
      * @throws UnsupportedException
-     *
-     * @return string|null
      */
     public function getOSName(): ?string
     {
@@ -131,8 +115,6 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * should be overwritten in mapped sub classes of product classes
      *
      * @throws UnsupportedException
-     *
-     * @return string|null
      */
     public function getOSProductNumber(): ?string
     {
@@ -143,10 +125,8 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * defines the name of the availability system for this product.
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
-     *
-     * @return string|null
      */
-    public function getAvailabilitySystemName(): ?string
+    public function getAvailabilitySystemName(): string
     {
         return 'default';
     }
@@ -165,30 +145,22 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
 
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
-     *
-     * @return PriceSystemInterface|null
      */
-    public function getPriceSystemImplementation(): ?PriceSystemInterface
+    public function getPriceSystemImplementation(): PriceSystemInterface
     {
         return Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
     }
 
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
-     *
-     * @return AvailabilitySystemInterface|null
      */
-    public function getAvailabilitySystemImplementation(): ?AvailabilitySystemInterface
+    public function getAvailabilitySystemImplementation(): AvailabilitySystemInterface
     {
         return Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
     }
 
     /**
      * returns price for given quantity scale
-     *
-     * @param int $quantityScale
-     *
-     * @return PriceInterface
      */
     public function getOSPrice(int $quantityScale = 1): PriceInterface
     {
@@ -198,10 +170,6 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
     /**
      * returns price info for given quantity scale.
      * price info might contain price and additional information for prices like discounts, ...
-     *
-     * @param int $quantityScale
-     *
-     * @return PriceInfoInterface
      */
     public function getOSPriceInfo(int $quantityScale = 1): PriceInfoInterface
     {
@@ -210,10 +178,6 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
 
     /**
      * returns availability info based on given quantity
-     *
-     * @param int|null $quantity
-     *
-     * @return AvailabilityInterface
      */
     public function getOSAvailabilityInfo(int $quantity = null): AvailabilityInterface
     {
