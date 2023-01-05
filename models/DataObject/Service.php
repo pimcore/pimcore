@@ -538,7 +538,7 @@ class Service extends Model\Element\Service
         return $config;
     }
 
-    public static function calculateCellValue(AbstractObject $object, array $helperDefinitions, string $key, array $context = []): array|\stdClass|null
+    public static function calculateCellValue(AbstractObject $object, array $helperDefinitions, string $key, array $context = []): mixed
     {
         $config = static::getConfigForHelperDefinition($helperDefinitions, $key, $context);
         if (!$config) {
@@ -1855,7 +1855,7 @@ class Service extends Model\Element\Service
                             $cellValue = implode(',', $cellValue);
                         }
 
-                        return $cellValue;
+                        return (string) $cellValue;
                     }
                 } elseif (substr($field, 0, 1) == '~') {
                     $type = $fieldParts[1];
