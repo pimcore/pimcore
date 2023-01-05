@@ -760,7 +760,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridConfigApplyToAllAction(Request $request): JsonResponse
     {
-        $objectId = (int) $request->get('objectId');
+        $objectId = $request->request->getInt('objectId');
         $object = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
@@ -877,7 +877,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridSaveColumnConfigAction(Request $request): JsonResponse
     {
-        $objectId = (int) $request->get('id');
+        $objectId = $request->request->getInt('id');
         $object   = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {

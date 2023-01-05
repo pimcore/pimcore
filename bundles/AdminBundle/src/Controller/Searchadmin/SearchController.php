@@ -515,8 +515,8 @@ class SearchController extends AdminController
      */
     public function quicksearchByIdAction(Request $request, Config $config): JsonResponse
     {
-        $type = $request->get('type');
-        $id = (int) $request->get('id');
+        $type = $request->query->get('type');
+        $id = $request->query->getInt('id');
         $searcherList = new Data\Listing();
 
         $searcherList->addConditionParam('id = :id', ['id' => $id]);

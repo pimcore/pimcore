@@ -43,7 +43,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deleteCollectionAction(Request $request): JsonResponse
     {
-        $id = (int) $request->get('id');
+        $id = $request->request->getInt('id');
 
         $configRelations = new Classificationstore\CollectionGroupRelation\Listing();
         $configRelations->setCondition('colId = ?', $id);
@@ -109,7 +109,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deleteGroupAction(Request $request): JsonResponse
     {
-        $id = (int) $request->get('id');
+        $id = $request->request->getInt('id');
 
         $config = Classificationstore\GroupConfig::getById($id);
         $config->delete();
@@ -1002,7 +1002,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
             $allowedGroupIds = null;
 
-            $oid = (int) $request->get('oid');
+            $oid = $request->request->getInt('oid');
             $object = DataObject\Concrete::getById($oid);
             if ($object) {
                 $class = $object->getClass();
@@ -1097,7 +1097,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $this->checkPermission('objects');
 
         $ids = $this->decodeJson($request->get('groupIds'));
-        $oid = (int) $request->get('oid');
+        $oid = $request->request->getInt('oid');
         $object = DataObject\Concrete::getById($oid);
         $fieldname = $request->get('fieldname');
 
@@ -1421,7 +1421,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deletePropertyAction(Request $request): JsonResponse
     {
-        $id = (int) $request->get('id');
+        $id = $request->request->getInt('id');
 
         $config = Classificationstore\KeyConfig::getById($id);
         //        $config->delete();
@@ -1442,7 +1442,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function editStoreAction(Request $request): JsonResponse
     {
-        $id = (int) $request->get('id');
+        $id = $request->request->getInt('id');
         $data = json_decode($request->get('data'), true);
 
         $name = $data['name'];

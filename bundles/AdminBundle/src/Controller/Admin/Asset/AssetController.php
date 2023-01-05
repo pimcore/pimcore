@@ -98,8 +98,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
     /**
      * @Route("/get-data-by-id", name="pimcore_admin_asset_getdatabyid", methods={"GET"})
-     *
-     *
      */
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
@@ -117,7 +115,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 return $this->getEditLockResponse($assetId, 'asset');
             }
 
-            Element\Editlock::lock((int) $request->get('id'), 'asset');
+            Element\Editlock::lock($request->query->getInt('id'), 'asset');
         }
 
         $asset = clone $asset;
@@ -448,8 +446,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw new \Exception('The filename of the asset is empty');
         }
 
-        $parentId = (int) $request->get('parentId');
-        $parentPath = $request->get('parentPath');
+        $parentId = $request->request->getInt('parentId');
+        $parentPath = $request->request->get('parentPath');
 
         if ($request->get('dir') && $request->get('parentId')) {
             // this is for uploading folders with Drag&Drop
@@ -2494,9 +2492,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $success = true;
 
-        $data = Tool::getHttpData($request->get('url'));
-        $filename = basename($request->get('url'));
-        $parentId = (int) $request->get('id');
+        $data = Tool::getHttpData($request->request->get('url'));
+        $filename = basename($request->request->get('url'));
+        $parentId = $request->request->getInt('id');
         $parentAsset = Asset::getById($parentId);
 
         if (!$parentAsset) {
