@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.bundle.staticroutes.settings");
+/**
+ * @private
+ */
 pimcore.bundle.staticroutes.settings = Class.create({
 
     initialize:function () {
