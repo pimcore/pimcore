@@ -120,7 +120,7 @@ class UserController extends AdminController implements KernelControllerEventInt
             $className = User\Service::getClassNameForType($type);
             $user = $className::create([
                 'parentId' => (int)$request->get('parentId'),
-                'name' => trim($request->get('name')),
+                'name' => trim($request->get('name', '')),
                 'password' => '',
                 'active' => $request->get('active'),
             ]);

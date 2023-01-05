@@ -95,7 +95,7 @@ class ElementController extends AdminController
      */
     public function getSubtypeAction(Request $request): JsonResponse
     {
-        $idOrPath = trim($request->get('id'));
+        $idOrPath = trim($request->get('id', ''));
         $type = $request->get('type');
 
         $event = new ResolveElementEvent($type, $idOrPath);
