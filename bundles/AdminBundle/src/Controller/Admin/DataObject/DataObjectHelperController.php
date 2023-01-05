@@ -555,18 +555,9 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param bool $noSystemColumns
-     * @param DataObject\ClassDefinition|null $class
-     * @param string $gridType
-     * @param bool $noBrickColumns
-     * @param DataObject\ClassDefinition\Data[] $fields
-     * @param array $context
-     * @param int $objectId
-     * @param array $types
-     *
-     * @return array
+     * @param DataObject\ClassDefinition\Data[]|null $fields
      */
-    public function getDefaultGridFields(bool $noSystemColumns, ?DataObject\ClassDefinition $class, string $gridType, bool $noBrickColumns, array $fields, array $context, int $objectId, array $types = []): array
+    public function getDefaultGridFields(bool $noSystemColumns, ?DataObject\ClassDefinition $class, string $gridType, bool $noBrickColumns, ?array $fields, array $context, int $objectId, array $types = []): array
     {
         $count = 0;
         $availableFields = [];
