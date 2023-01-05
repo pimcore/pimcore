@@ -67,8 +67,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deleteCollectionRelationAction(Request $request): JsonResponse
     {
-        $colId = $request->get('colId');
-        $groupId = $request->get('groupId');
+        $colId = $request->request->getInt('colId');
+        $groupId = $request->request->getInt('groupId');
 
         $config = new Classificationstore\CollectionGroupRelation();
         $config->setColId($colId);
@@ -227,7 +227,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $order = $sortingSettings['order'];
         }
 
-        if ($request->get('overrideSort') == 'true') {
+        if ($request->query->getBoolean('overrideSort')) {
             $orderKey = 'id';
             $order = 'DESC';
         }
@@ -407,7 +407,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $order = $sortingSettings['order'];
         }
 
-        if ($request->get('overrideSort') == 'true') {
+        if ($request->query->getBoolean('overrideSort')) {
             $orderKey = 'id';
             $order = 'DESC';
         }
@@ -434,8 +434,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $conditionParts[] = '('.implode(' OR ', $searchFilterConditions).')';
         }
 
-        if ($request->get('storeId')) {
-            $conditionParts[] = '(storeId = ' . $db->quote($request->get('storeId')) . ')';
+        if ($storeId = $request->query->getInt('storeId')) {
+            $conditionParts[] = '(storeId = ' . $db->quote($storeId) . ')';
         }
 
         if ($request->get('filter')) {
@@ -558,7 +558,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $order = $sortingSettings['order'];
         }
 
-        if ($request->get('overrideSort') == 'true') {
+        if ($request->query->getBoolean('overrideSort')) {
             $orderKey = 'id';
             $order = 'DESC';
         }
@@ -601,7 +601,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             }
         }
 
-        $colId = $request->get('colId');
+        $colId = $request->query->getInt('colId');
         if ($condition) {
             $condition = '( ' . $condition . ' ) AND';
         }
@@ -726,7 +726,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $order = $sortingSettings['order'];
         }
 
-        if ($request->get('overrideSort') == 'true') {
+        if ($request->query->getBoolean('overrideSort')) {
             $orderKey = 'id';
             $order = 'DESC';
         }
@@ -844,7 +844,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $order = $sortingSettings['order'];
         }
 
-        if ($request->get('overrideSort') == 'true') {
+        if ($request->query->getBoolean('overrideSort')) {
             $orderKey = 'id';
             $order = 'DESC';
         }
@@ -1229,7 +1229,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $order = $sortingSettings['order'];
         }
 
-        if ($request->get('overrideSort') == 'true') {
+        if ($request->query->getBoolean('overrideSort')) {
             $orderKey = 'id';
             $order = 'DESC';
         }
