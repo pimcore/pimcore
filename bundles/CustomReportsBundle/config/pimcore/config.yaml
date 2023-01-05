@@ -1,2 +1,6 @@
 imports:
     - { resource: doctrine_migrations.yaml }
+
+pimcore_custom_reports:
+    adapters:
+        sql: pimcore.custom_report.adapter.factory.sql

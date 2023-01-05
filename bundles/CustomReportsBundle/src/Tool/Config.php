@@ -138,7 +138,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
             $configuration = new \stdClass();
         }
 
-        $type = $configuration->type ?: 'sql';
+        $type = $configuration->type ?? 'sql';
         $serviceLocator = \Pimcore::getContainer()->get('pimcore.custom_report.adapter.factories');
 
         if (!$serviceLocator->has($type)) {
