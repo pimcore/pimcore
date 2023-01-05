@@ -14,12 +14,12 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
+namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Document\Newsletter\SendingParamContainer;
 use Pimcore\Model\DataObject\Listing;
-use Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface;
+use Pimcore\Bundle\CustomReportsBundle\Tool\CustomReportAdapterInterface;
 
 /**
  * @internal

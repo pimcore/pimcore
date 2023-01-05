@@ -14,11 +14,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Document\Newsletter;
+namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
 use Pimcore\Document\Newsletter\AddressSourceAdapter\ReportAdapter;
-use Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterFactoryInterface;
-use Pimcore\Model\Tool\CustomReport\Config;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\CustomReportAdapterFactoryInterface;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 /**
