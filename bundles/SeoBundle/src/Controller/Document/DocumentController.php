@@ -39,7 +39,7 @@ class DocumentController extends ElementControllerBase
 {
     use DocumentTreeConfigTrait;
 
-    final const DOCUMENT_ROOT_ID = 1;
+    private const DOCUMENT_ROOT_ID = 1;
 
     /**
      * @Route("/seopanel-tree-root", name="pimcore_bundle_seo_document_document_seopaneltreeroot", methods={"GET"})
