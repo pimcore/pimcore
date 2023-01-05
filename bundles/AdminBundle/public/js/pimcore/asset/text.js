@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.text");
+/**
+ * @private
+ */
 pimcore.asset.text = Class.create(pimcore.asset.asset, {
 
     initialize: function(id, options) {

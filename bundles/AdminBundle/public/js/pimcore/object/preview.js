@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.preview");
+/**
+ * @private
+ */
 Ext.define('pimcore.object.preview', {
     extend: pimcore.element.abstractPreview,
 

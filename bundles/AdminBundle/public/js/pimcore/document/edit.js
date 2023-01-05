@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.edit");
+/**
+ * @private
+ */
 pimcore.document.edit = Class.create({
 
     initialize: function(document) {

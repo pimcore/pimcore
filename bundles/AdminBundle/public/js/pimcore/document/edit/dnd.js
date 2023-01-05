@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.edit.dnd");
+/**
+ * @private
+ */
 pimcore.document.edit.dnd = Class.create({
 
     dndManager: null,

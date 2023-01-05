@@ -154,8 +154,7 @@ class Geobounds extends AbstractGeo implements
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -205,8 +204,7 @@ class Geobounds extends AbstractGeo implements
      *
      * @return DataObject\Data\Geobounds|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Geobounds
     {

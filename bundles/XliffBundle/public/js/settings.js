@@ -12,12 +12,17 @@
  */
 
 pimcore.registerNS("pimcore.bundle.xliff.settings");
+/**
+ * @private
+ */
 pimcore.bundle.xliff.settings = Class.create({
 
     initialize: function () {
+
         this.getTabPanel();
 
     },
+
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");

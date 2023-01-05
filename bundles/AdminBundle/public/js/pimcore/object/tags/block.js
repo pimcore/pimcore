@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.block");
+/**
+ * @private
+ */
 pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
 
     type: "block",

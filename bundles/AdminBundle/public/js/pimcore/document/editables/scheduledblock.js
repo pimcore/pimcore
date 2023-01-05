@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.scheduledblock");
+/**
+ * @private
+ */
 pimcore.document.editables.scheduledblock = Class.create(pimcore.document.editables.block, {
 
     initialize: function($super, id, name, config, data, inherited) {

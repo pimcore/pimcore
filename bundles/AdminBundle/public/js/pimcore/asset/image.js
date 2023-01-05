@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.image");
+/**
+ * @private
+ */
 pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
     initialize: function (id, options) {

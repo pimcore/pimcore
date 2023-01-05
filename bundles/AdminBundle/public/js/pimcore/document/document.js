@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.document");
+/**
+ * @private
+ */
 pimcore.document.document = Class.create(pimcore.element.abstract, {
     willClose: false,
     getData: function () {

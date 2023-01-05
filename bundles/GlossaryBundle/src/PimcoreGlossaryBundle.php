@@ -34,7 +34,7 @@ class PimcoreGlossaryBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/pimcoreglossary/js/startup.js',
-            '/bundles/pimcoreglossary/js/glossary.js',
+            '/bundles/pimcoreglossary/js/settings.js',
         ];
     }
 

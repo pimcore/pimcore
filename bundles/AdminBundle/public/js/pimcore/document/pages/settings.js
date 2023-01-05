@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.pages.settings");
+/**
+ * @private
+ */
 pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstract, {
 
     getLayout: function () {

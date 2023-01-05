@@ -11,8 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
 pimcore.registerNS("pimcore.object.tags.indexFieldSelection");
+/**
+ * @private
+ */
 pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.select, {
 
     type: "indexFieldSelection",

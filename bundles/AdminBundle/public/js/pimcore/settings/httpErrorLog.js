@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.httpErrorLog");
+/**
+ * @private
+ */
 pimcore.settings.httpErrorLog = Class.create({
 
     initialize: function(id) {

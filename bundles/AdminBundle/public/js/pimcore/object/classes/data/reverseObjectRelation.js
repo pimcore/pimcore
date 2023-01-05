@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.reverseObjectRelation");
+/**
+ * @private
+ */
 pimcore.object.classes.data.reverseObjectRelation = Class.create(pimcore.object.classes.data.data, {
 
     type: "reverseObjectRelation",

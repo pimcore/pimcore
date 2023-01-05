@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.bulkexport");
+/**
+ * @private
+ */
 pimcore.object.bulkexport = Class.create(pimcore.object.bulkbase, {
 
     initialize: function () {

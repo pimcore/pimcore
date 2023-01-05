@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.email");
+/**
+ * @private
+ */
 pimcore.document.email = Class.create(pimcore.document.page_snippet, {
 
     initialize: function(id, options) {

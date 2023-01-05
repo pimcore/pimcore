@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.layout.button");
+/**
+ * @private
+ */
 pimcore.object.classes.layout.button = Class.create(pimcore.object.classes.layout.layout, {
 
     type: "button",
