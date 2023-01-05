@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.object.tags.quantityValueRange');
+/**
+ * @private
+ */
 pimcore.object.tags.quantityValueRange = Class.create(pimcore.object.tags.abstract, {
     type: 'quantityValueRange',
 

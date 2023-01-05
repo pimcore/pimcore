@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.table");
+/**
+ * @private
+ */
 pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.data, {
 
     type: "table",

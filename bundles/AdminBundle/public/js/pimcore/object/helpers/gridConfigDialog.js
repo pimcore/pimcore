@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.helpers.gridConfigDialog");
+/**
+ * @private
+ */
 pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gridConfigDialog, {
 
     brickKeys: [],

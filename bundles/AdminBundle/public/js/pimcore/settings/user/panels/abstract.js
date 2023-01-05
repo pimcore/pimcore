@@ -13,6 +13,9 @@
 
 
 pimcore.registerNS("pimcore.settings.user.panels.abstract");
+/**
+ * @private
+ */
 pimcore.settings.user.panels.abstract = Class.create({
 
     initialize: function () {

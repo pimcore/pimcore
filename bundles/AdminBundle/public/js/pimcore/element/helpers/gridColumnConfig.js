@@ -11,8 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
 pimcore.registerNS("pimcore.element.helpers.gridColumnConfig");
+/**
+ * @private
+ */
 pimcore.element.helpers.gridColumnConfig = {
 
     batchJobDelay: 50,

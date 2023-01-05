@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.time");
+/**
+ * @private
+ */
 pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data, {
 
     type: "time",

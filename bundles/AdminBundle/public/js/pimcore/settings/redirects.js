@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.redirects");
+/**
+ * @private
+ */
 pimcore.settings.redirects = Class.create({
 
     initialize: function () {

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.customviews.tree");
+/**
+ * @private
+ */
 pimcore.asset.customviews.tree = Class.create(pimcore.asset.tree, {
 
     initialize: function($super, initConfig, perspectiveCfg) {

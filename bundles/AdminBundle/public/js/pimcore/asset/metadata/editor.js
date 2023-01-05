@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.editor");
+/**
+ * @private
+ */
 pimcore.asset.metadata.editor = Class.create({
 
     initialize: function(asset) {

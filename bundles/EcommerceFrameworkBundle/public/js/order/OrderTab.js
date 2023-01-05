@@ -11,9 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
 pimcore.registerNS("pimcore.bundle.EcommerceFramework.OrderTab");
 
+/**
+ * @private
+ */
 pimcore.bundle.EcommerceFramework.OrderTab = Class.create({
 
     title: t('bundle_ecommerce_order_tab'),
