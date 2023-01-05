@@ -368,14 +368,15 @@ class DataObjectHelperController extends AdminController
 
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
-                (bool) $request->get('no_system_columns', false),
+                $request->query->getBoolean('no_system_columns'),
                 $class,
                 $gridType,
-                (bool) $request->get('no_brick_columns', false),
+                $request->query->getBoolean('no_brick_columns'),
                 $fields,
                 $context,
                 $objectId,
-                $types);
+                $types
+            );
         } else {
             $savedColumns = $gridConfig['columns'];
             foreach ($savedColumns as $key => $sc) {

@@ -231,7 +231,7 @@ class AssetHelperController extends AdminController
 
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
-                (bool) $request->get('no_system_columns', false),
+                $request->query->getBoolean('no_system_columns'),
                 [], //maybe required for types other than metadata
                 $context,
                 $types
