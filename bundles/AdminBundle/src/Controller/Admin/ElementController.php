@@ -593,7 +593,7 @@ class ElementController extends AdminController
 
         $result = $this->convertResultWithPathFormatter($source, $context, $result, $targets);
 
-        if ($request->get('loadEditModeData') == 'true') {
+        if ($request->request->getBoolean('loadEditModeData')) {
             $idProperty = $request->get('idProperty', 'id');
             $methodName = 'get' . ucfirst($fieldname);
             if ($ownerType == 'object' && method_exists($source, $methodName)) {
@@ -844,7 +844,7 @@ class ElementController extends AdminController
      */
     public function analyzePermissionsAction(Request $request): Response
     {
-        $userId = $request->get('userId');
+        $userId = $request->request->getInt('userId');
         if ($userId) {
             $user = Model\User::getById($userId);
             $userList = [$user];
@@ -854,8 +854,8 @@ class ElementController extends AdminController
             $userList = $userList->load();
         }
 
-        $elementType = $request->get('elementType');
-        $elementId = $request->get('elementId');
+        $elementType = $request->request->get('elementType');
+        $elementId = $request->request->getInt('elementId');
 
         $element = Element\Service::getElementById($elementType, $elementId);
 
