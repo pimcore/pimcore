@@ -315,7 +315,7 @@ class PageController extends DocumentControllerBase
     public function clearEditableDataAction(Request $request): JsonResponse
     {
         $targetGroupId = $request->get('targetGroup');
-        $docId = $request->get('id');
+        $docId = (int) $request->get('id');
 
         $doc = Document\PageSnippet::getById($docId);
 

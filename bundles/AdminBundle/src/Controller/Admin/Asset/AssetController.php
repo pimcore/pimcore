@@ -448,7 +448,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw new \Exception('The filename of the asset is empty');
         }
 
-        $parentId = $request->get('parentId');
+        $parentId = (int) $request->get('parentId');
         $parentPath = $request->get('parentPath');
 
         if ($request->get('dir') && $request->get('parentId')) {
@@ -1826,7 +1826,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
-        $folder = Asset::getById($allParams['id']);
+        $folder = Asset::getById((int) $allParams['id']);
 
         $start = 0;
         $limit = 10;

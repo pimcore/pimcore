@@ -504,7 +504,7 @@ class ElementController extends AdminController
      */
     public function typePathAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
+        $id = (int) $request->get('id');
         $type = $request->get('type');
         $data = [];
 

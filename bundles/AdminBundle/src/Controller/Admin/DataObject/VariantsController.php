@@ -44,7 +44,7 @@ class VariantsController extends AdminController
      */
     public function updateKeyAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
+        $id = (int) $request->get('id');
         $key = $request->get('key');
         $object = DataObject\Concrete::getById($id);
 

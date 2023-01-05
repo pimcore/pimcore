@@ -295,7 +295,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 switch ($request->get('type')) {
                     case 'page':
-                        $document = Document\Page::create((int) $request->get('parentId'), $createValues, false);
+                        $document = Document\Page::create($parentDocument->getId(), $createValues, false);
                         $document->setTitle($request->get('title', null));
                         $document->setProperty('navigation_name', 'text', $request->get('name', null), false, false);
                         $document->save();
@@ -303,27 +303,27 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                         break;
                     case 'snippet':
-                        $document = Document\Snippet::create((int) $request->get('parentId'), $createValues);
+                        $document = Document\Snippet::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'email': //ckogler
-                        $document = Document\Email::create((int) $request->get('parentId'), $createValues);
+                        $document = Document\Email::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'link':
-                        $document = Document\Link::create((int) $request->get('parentId'), $createValues);
+                        $document = Document\Link::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'hardlink':
-                        $document = Document\Hardlink::create((int) $request->get('parentId'), $createValues);
+                        $document = Document\Hardlink::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'folder':
-                        $document = Document\Folder::create((int) $request->get('parentId'), $createValues);
+                        $document = Document\Folder::create($parentDocument->getId(), $createValues);
                         $document->setPublished(true);
 
                         try {
@@ -347,7 +347,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                         }
 
                         if (Tool::classExists($classname)) {
-                            $document = $classname::create((int) $request->get('parentId'), $createValues);
+                            $document = $classname::create($parentDocument->getId(), $createValues);
 
                             try {
                                 $document->save();

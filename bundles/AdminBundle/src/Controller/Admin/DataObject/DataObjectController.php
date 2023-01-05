@@ -640,7 +640,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function getSelectOptions(Request $request): JsonResponse
     {
-        $objectId = $request->get('objectId');
+        $objectId = (int) $request->get('objectId');
         $object = DataObject\Concrete::getById($objectId);
         if (!$object instanceof DataObject\Concrete) {
             return new JsonResponse(['success'=> false, 'message' => 'Object not found.']);
@@ -969,13 +969,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object->setClassId($request->get('classId'));
 
         if ($request->get('variantViaTree')) {
-            $parentId = $request->get('parentId');
+            $parentId = (int) $request->get('parentId');
             $parent = DataObject\Concrete::getById($parentId);
             $object->setClassId($parent->getClass()->getId());
         }
 
         $object->setClassName($request->get('className'));
-        $object->setParentId($request->get('parentId'));
+        $object->setParentId((int) $request->get('parentId'));
         $object->setKey($request->get('key'));
         $object->setCreationDate(time());
         $object->setUserOwner($this->getAdminUser()->getId());
