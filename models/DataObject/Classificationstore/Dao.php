@@ -76,7 +76,6 @@ class Dao extends Model\Dao\AbstractDao
 
         $collectionMapping = $this->model->getGroupCollectionMappings();
 
-
         $groupsTable = $this->getGroupsTableName();
 
         $dataExists = $this->db->fetchOne('SELECT `o_id` FROM `'.$groupsTable."` WHERE
