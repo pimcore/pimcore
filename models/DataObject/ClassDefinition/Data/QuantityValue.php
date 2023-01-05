@@ -427,13 +427,16 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
-        if ($data[$this->getName() . '__value'] !== null || $data[$this->getName() . '__unit']) {
-            if (!is_numeric($data[$this->getName() . '__value'])) {
-                $value = $this->toNumeric($data[$this->getName() . '__value']);
+        $dataValue = $data[$this->getName() . '__value'];
+        $dataUnit =  $data[$this->getName() . '__unit'];
+
+        if ($dataValue !== null || $dataUnit) {
+            if ($dataValue !== null && !is_numeric($dataValue)) {
+                $value = $this->toNumeric($dataValue);
             } else {
-                $value = $data[$this->getName() . '__value'];
+                $value = $dataValue;
             }
-            $quantityValue = new Model\DataObject\Data\QuantityValue((float) $value, $data[$this->getName() . '__unit']);
+            $quantityValue = new Model\DataObject\Data\QuantityValue($value === null ? null : (float)$value, $dataUnit);
 
             if (isset($params['owner'])) {
                 $quantityValue->_setOwner($params['owner']);

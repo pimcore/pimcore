@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.glossary");
-pimcore.settings.glossary = Class.create({
+pimcore.registerNS("pimcore.bundle.glossary.settings");
+pimcore.bundle.glossary.settings = Class.create({
 
     initialize: function () {
         this.languages = pimcore.settings.websiteLanguages;
@@ -44,7 +44,7 @@ pimcore.settings.glossary = Class.create({
 
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("glossary");
+                pimcore.globalmanager.remove("bundle_glossary");
             }.bind(this));
 
             pimcore.layout.refresh();
@@ -57,7 +57,7 @@ pimcore.settings.glossary = Class.create({
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         this.store = pimcore.helpers.grid.buildDefaultStore(
-            Routing.generate('pimcore_glossary_settings_glossary'),
+            Routing.generate('pimcore_bundle_glossary_settings_glossary'),
             [
                 'id', {name: 'text', allowBlank: false}, 'language', 'casesensitive', 'exactmatch',
                 'site', 'link', 'abbr', 'creationDate', 'modificationDate'
