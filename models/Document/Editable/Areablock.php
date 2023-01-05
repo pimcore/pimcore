@@ -106,8 +106,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     *@internal
-     *
+     * @internal
      */
     public function renderIndex(int $index, bool $return = false)
     {

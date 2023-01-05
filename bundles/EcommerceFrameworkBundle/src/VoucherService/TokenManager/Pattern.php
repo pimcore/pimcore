@@ -85,8 +85,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return bool
      *
-     *@throws VoucherServiceException
-     *
+     * @throws VoucherServiceException
      */
     public function checkToken(string $code, CartInterface $cart): bool
     {
@@ -109,8 +108,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return bool
      *
-     *@throws VoucherServiceException
-     *
+     * @throws VoucherServiceException
      */
     public function reserveToken(string $code, CartInterface $cart): bool
     {

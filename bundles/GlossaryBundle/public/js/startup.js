@@ -1,7 +1,20 @@
-pimcore.registerNS("pimcore.glossary");
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
 
+pimcore.registerNS("pimcore.bundle.glossary.startup");
 
-pimcore.glossary = Class.create({
+pimcore.bundle.glossary.startup = Class.create({
+
     initialize: function () {
         document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
@@ -25,9 +38,9 @@ pimcore.glossary = Class.create({
 
     editGlossary: function() {
         try {
-            pimcore.globalmanager.get("glossary").activate();
+            pimcore.globalmanager.get("bundle_glossary").activate();
         } catch (e) {
-            pimcore.globalmanager.add("glossary", new pimcore.settings.glossary());
+            pimcore.globalmanager.add("bundle_glossary", new pimcore.bundle.glossary.settings());
         }
     },
 
@@ -35,12 +48,12 @@ pimcore.glossary = Class.create({
         const user = pimcore.globalmanager.get('user');
         if (user.isAllowed("glossary")) {
             pimcore.helpers.keyBindingMapping.glossary = function() {
-                glossary.editGlossary();
+                pimcoreBundleGlossary.editGlossary();
             }
         }
     }
 })
 
-const glossary = new pimcore.glossary();
+const pimcoreBundleGlossary = new pimcore.bundle.glossary.startup();
 
 

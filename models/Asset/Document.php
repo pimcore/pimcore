@@ -49,8 +49,7 @@ class Document extends Model\Asset
     /**
      * @param string|null $path
      *
-     *@internal
-     *
+     * @internal
      */
     public function processPageCount(string $path = null)
     {

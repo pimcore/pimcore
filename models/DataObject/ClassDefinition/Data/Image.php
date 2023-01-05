@@ -84,8 +84,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @return Asset|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Asset
     {
@@ -103,8 +102,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @return int|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
@@ -152,8 +150,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @return Asset\Image|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Asset\Image
     {
