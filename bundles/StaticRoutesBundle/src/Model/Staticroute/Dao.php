@@ -141,11 +141,9 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
-            'pimcore' => [
-                'staticroutes' => [
-                    'definitions' => [
-                        $id => $data,
-                    ],
+            'pimcore_static_routes' => [
+                'definitions' => [
+                    $id => $data,
                 ],
             ],
         ];
