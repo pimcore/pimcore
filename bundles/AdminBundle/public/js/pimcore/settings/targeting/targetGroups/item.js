@@ -11,9 +11,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/**
- * global google
- */
 pimcore.registerNS("pimcore.settings.targeting.targetGroups.item");
 /**
  * @private

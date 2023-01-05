@@ -14,8 +14,6 @@
 pimcore.registerNS("pimcore.document.editables.wysiwyg");
 /**
  * @private
- *
- * global CKEDITOR
  */
 pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 

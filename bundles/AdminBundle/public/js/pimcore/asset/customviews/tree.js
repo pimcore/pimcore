@@ -11,8 +11,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
-
 pimcore.registerNS("pimcore.asset.customviews.tree");
 /**
  * @private
