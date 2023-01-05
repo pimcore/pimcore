@@ -561,7 +561,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
-            $index = $context['index'] ?? null;
+            $index = $context['index'] ?? $context['containerKey'] ?? null;
             $containerName = $context['fieldname'];
             if (!$context['containerType']) {
                 throw new \Exception('no container type set');
