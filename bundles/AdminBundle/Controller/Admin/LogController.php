@@ -229,10 +229,13 @@ class LogController extends AdminController implements KernelControllerEventInte
         $storage = Storage::get('application_log');
 
         if ($storage->fileExists($filePath)) {
-            $fileData = $storage->readStream($filePath);
+            $fileHandle = $storage->readStream($filePath);
             $response = new StreamedResponse(
-                static function () use ($fileData) {
-                    echo stream_get_contents($fileData);
+                static function () use ($fileHandle) {
+                    while (!feof($fileHandle)) {
+                        echo fread($fileHandle, 8192);
+                    }
+                    fclose($fileHandle);
                 }
             );
             $response->headers->set('Content-Type', 'text/plain');
@@ -257,7 +260,10 @@ class LogController extends AdminController implements KernelControllerEventInte
                 $response = new StreamedResponse(
                     static function () use ($filePath) {
                         $handle = fopen($filePath, 'rb');
-                        fpassthru($handle);
+
+                        while (!feof($handle)) {
+                            echo fread($handle, 8192);
+                        }
                         fclose($handle);
                     }
                 );
