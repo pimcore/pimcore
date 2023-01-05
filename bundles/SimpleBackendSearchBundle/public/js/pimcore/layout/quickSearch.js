@@ -29,7 +29,7 @@ pimcore.bundle.search.layout.quickSearch = Class.create({
         return new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_searchadmin_search_quicksearch'),
+                url: Routing.generate('pimcore_bundle_search_search_quicksearch'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -78,10 +78,10 @@ pimcore.bundle.search.layout.quickSearch = Class.create({
                 navigationModel: 'quicksearch.boundlist',
                 listeners: {
                     "highlightitem": function (view, node, opts) {
-                        var record = quickSearchStore.getAt(node.dataset.recordindex);
+                        const record = quickSearchStore.getAt(node.dataset.recordindex);
                         if (!record.get('preview')) {
                             Ext.Ajax.request({
-                                url: Routing.generate('pimcore_admin_searchadmin_search_quicksearch_by_id'),
+                                url: Routing.generate('pimcore_bundle_search_search_quicksearch_by_id'),
                                 method: 'GET',
                                 params: {
                                     "id": record.get('id'),
