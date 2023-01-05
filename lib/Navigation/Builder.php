@@ -274,8 +274,7 @@ class Builder
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     protected function addActiveCssClasses(Page $page, bool $isActive = false): void
     {
@@ -344,8 +343,7 @@ class Builder
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     protected function buildNextLevel(Document $parentDocument, bool $isRoot = false, callable $pageCallback = null, array $parents = [], int $maxDepth = null): array
     {

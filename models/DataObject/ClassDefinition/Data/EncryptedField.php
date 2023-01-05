@@ -240,8 +240,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      *
      * @return Model\DataObject\Data\EncryptedField|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\EncryptedField
     {

@@ -359,8 +359,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     *@deprecated use setElement() instead - will be removed in Pimcore 11
-     *
+     * @deprecated use setElement() instead - will be removed in Pimcore 11
      */
     public function setObject(ElementInterface $object): static
     {

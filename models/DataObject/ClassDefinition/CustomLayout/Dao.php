@@ -125,8 +125,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @return string|null
      *
-     *@deprecated
-     *
+     * @deprecated
      */
     public function getIdByNameAndClassId(string $name, string $classId): ?string
     {
