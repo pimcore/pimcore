@@ -10,10 +10,10 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-pimcore.registerNS("pimcore.xliff");
+pimcore.registerNS("pimcore.bundle.xliff.startup");
 
 
-pimcore.xliff = Class.create({
+pimcore.bundle.xliff.startup = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
@@ -43,11 +43,11 @@ pimcore.xliff = Class.create({
 
     xliffImportExport: function() {
         try {
-            pimcore.globalmanager.get("xliff").activate();
+            pimcore.globalmanager.get("bundle_xliff").activate();
         } catch (e) {
-            pimcore.globalmanager.add("xliff", new pimcore.settings.translation.xliff());
+            pimcore.globalmanager.add("bundle_xliff", new pimcore.bundle.xliff.settings());
         }
     },
 })
 
-const xliff = new pimcore.xliff();
+const bundle_xliff = new pimcore.bundle.xliff.startup();

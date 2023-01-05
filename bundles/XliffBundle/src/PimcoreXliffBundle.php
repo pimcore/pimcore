@@ -35,7 +35,7 @@ class PimcoreXliffBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/pimcorexliff/js/startup.js',
-            '/bundles/pimcorexliff/js/xliff.js',
+            '/bundles/pimcorexliff/js/settings.js',
         ];
     }
 

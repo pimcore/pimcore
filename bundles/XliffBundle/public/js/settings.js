@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.translation.xliff");
-pimcore.settings.translation.xliff = Class.create({
+pimcore.registerNS("pimcore.bundle.xliff.settings");
+pimcore.bundle.xliff.settings = Class.create({
 
     initialize: function () {
         this.getTabPanel();
