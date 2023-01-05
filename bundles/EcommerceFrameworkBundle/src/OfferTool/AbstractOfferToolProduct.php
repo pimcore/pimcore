@@ -140,15 +140,7 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);
     }
 
-    /**
-     * @static
-     *
-     * @param int|string $id
-     * @param array $params
-     *
-     * @return static|null
-     */
-    public static function getById(int|string $id, array $params = []): ?static
+    public static function getById(int $id, array $params = []): ?static
     {
         $object = DataObject::getById($id, $params);
 

@@ -199,13 +199,12 @@ class Document extends Element\AbstractElement
         return true;
     }
 
-    public static function getById(int|string $id, array $params = []): ?static
+    public static function getById(int $id, array $params = []): ?static
     {
-        if (!is_numeric($id) || $id < 1) {
+        if ($id < 1) {
             return null;
         }
 
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
         $params = Element\Service::prepareGetByIdParams($params);
 

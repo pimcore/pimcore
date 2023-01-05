@@ -335,13 +335,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * Static helper to get an object by the passed ID
      *
      */
-    public static function getById(int|string $id, array $params = []): ?static
+    public static function getById(int $id, array $params = []): ?static
     {
-        if (!is_numeric($id) || $id < 1) {
+        if ($id < 1) {
             return null;
         }
 
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         $params = Model\Element\Service::prepareGetByIdParams($params);
