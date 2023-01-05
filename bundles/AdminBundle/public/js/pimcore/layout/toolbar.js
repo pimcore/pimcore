@@ -1610,16 +1610,7 @@
              pimcore.globalmanager.add("pimcore_applicationlog_admin", new pimcore.log.admin());
          }
      },
- 
-     xliffImportExport: function () {
-         try {
-             pimcore.globalmanager.get("xliff").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("xliff", new pimcore.settings.translation.xliff());
-         }
-     },
- 
+
      wordExport: function () {
          try {
              pimcore.globalmanager.get("word").activate();
