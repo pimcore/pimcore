@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.email.blacklist");
+/**
+ * @private
+ */
 pimcore.settings.email.blacklist = Class.create({
 
     initialize:function () {

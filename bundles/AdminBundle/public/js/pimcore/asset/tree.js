@@ -12,6 +12,9 @@
  */
 
  pimcore.registerNS("pimcore.asset.tree");
+/**
+ * @private
+ */
  pimcore.asset.tree = Class.create({
  
      treeDataUrl: null,

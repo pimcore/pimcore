@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.bundle.customreports.abstract");
+/**
+ * @private
+ */
 pimcore.bundle.customreports.abstract = Class.create({
 
     initialize: function (reportPanel, type, reference, config) {

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.bundle.customreports.broker");
+/**
+ * @private
+ */
 pimcore.bundle.customreports.broker = {
 
     reports: {},

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.input");
+/**
+ * @private
+ */
 pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
 
     type: "input",

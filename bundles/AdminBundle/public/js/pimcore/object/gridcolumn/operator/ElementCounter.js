@@ -16,7 +16,9 @@
 
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.elementcounter");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "transformer",
     type: "operator",

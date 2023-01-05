@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.unknown");
+/**
+ * @private
+ */
 pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
 
     initialize: function(id, options) {

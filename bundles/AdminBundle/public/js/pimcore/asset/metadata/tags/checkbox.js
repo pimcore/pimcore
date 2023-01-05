@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.tags.checkbox");
+/**
+ * @private
+ */
 pimcore.asset.metadata.tags.checkbox = Class.create(pimcore.asset.metadata.tags.abstract, {
 
     type:"checkbox",

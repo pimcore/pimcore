@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.log.detailwindow");
+/**
+ * @private
+ */
 pimcore.log.detailwindow = Class.create({
     getClassName: function (){
         return "pimcore.plugin.eventscheduler.detailwindow";

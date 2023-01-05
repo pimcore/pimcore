@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.bundle.customreports.custom.item");
+/**
+ * @private
+ */
 pimcore.bundle.customreports.custom.item = Class.create({
 
 

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classificationstore.collectionsPanel");
+/**
+ * @private
+ */
 pimcore.object.classificationstore.collectionsPanel = Class.create({
 
     initialize: function (storeConfig, groupsPanel) {

@@ -10,6 +10,10 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
+
+/**
+ * @private
+ */
 Ext.define('pimcore.object.helpers.ImageGalleryDropZone', {
     extend: 'Ext.dd.DropTarget',
 

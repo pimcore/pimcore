@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.numeric");
+/**
+ * @private
+ */
 pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
 
     type: "numeric",

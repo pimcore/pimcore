@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.imageGallery");
+/**
+ * @private
+ */
 pimcore.object.classes.data.imageGallery = Class.create(pimcore.object.classes.data.hotspotimage, {
 
     type: "imageGallery",

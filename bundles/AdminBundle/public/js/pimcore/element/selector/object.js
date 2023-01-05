@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.selector.object");
+/**
+ * @private
+ */
 pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract, {
 
     fieldObject: {},

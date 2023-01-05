@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.variantsTab");
+/**
+ * @private
+ */
 pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract, {
     systemColumns: ["id", "fullpath"],
     objecttype: "variant",

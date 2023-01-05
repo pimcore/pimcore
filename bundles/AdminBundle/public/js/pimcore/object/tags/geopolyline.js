@@ -11,8 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/*global google */
 pimcore.registerNS('pimcore.object.tags.geopolyline');
+/**
+ * @private
+ */
 pimcore.object.tags.geopolyline = Class.create(pimcore.object.tags.geo.abstract, {
 
     type: 'geopolyline',
