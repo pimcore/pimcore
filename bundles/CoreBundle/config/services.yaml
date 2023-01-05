@@ -97,11 +97,6 @@ services:
       arguments:
         - 'Pimcore\Document\Newsletter\AddressSourceAdapter\CsvList'
 
-    pimcore.document.newsletter.factory.report:
-      class: Pimcore\Document\Newsletter\ReportAddressSourceAdapterFactory
-      arguments:
-        - '@pimcore.custom_report.adapter.factories'
-
     pimcore.newsletter.address_source_adapter.factories:
         public: true
         class: Symfony\Component\DependencyInjection\ServiceLocator
