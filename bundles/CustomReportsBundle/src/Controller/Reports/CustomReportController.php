@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\CustomReportsBundle\Controller\Reports;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
-use Pimcore\Model\Tool\CustomReport;
+use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -44,7 +44,7 @@ class CustomReportController extends AdminController
     public function treeAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports_config');
-        $reports = CustomReport\Config::getReportsList();
+        $reports = Tool\Config::getReportsList();
 
         return $this->adminJson($reports);
     }
@@ -59,7 +59,7 @@ class CustomReportController extends AdminController
     public function portletReportListAction(Request $request): JsonResponse
     {
         $this->checkPermission('reports');
-        $reports = CustomReport\Config::getReportsList($this->getAdminUser());
+        $reports = Tool\Config::getReportsList($this->getAdminUser());
 
         return $this->adminJson(['data' => $reports]);
     }
@@ -77,7 +77,7 @@ class CustomReportController extends AdminController
 
         $success = false;
 
-        $report = CustomReport\Config::getByName($request->get('name'));
+        $report = Tool\Config::getByName($request->get('name'));
 
         if (!$report) {
             $report = new CustomReport\Config();
@@ -105,7 +105,7 @@ class CustomReportController extends AdminController
     {
         $this->checkPermission('reports_config');
 
-        $report = CustomReport\Config::getByName($request->get('name'));
+        $report = Tool\Config::getByName($request->get('name'));
         if (!$report) {
             throw $this->createNotFoundException();
         }
@@ -130,12 +130,12 @@ class CustomReportController extends AdminController
         $this->checkPermission('reports_config');
 
         $newName = $request->get('newName');
-        $report = CustomReport\Config::getByName($newName);
+        $report = Tool\Config::getByName($newName);
         if ($report) {
             throw new \Exception('report already exists');
         }
 
-        $report = CustomReport\Config::getByName($request->get('name'));
+        $report = Tool\Config::getByName($request->get('name'));
         if (!$report) {
             throw $this->createNotFoundException();
         }
@@ -168,7 +168,7 @@ class CustomReportController extends AdminController
     {
         $this->checkPermissionsHasOneOf(['reports_config', 'reports']);
 
-        $report = CustomReport\Config::getByName($request->get('name'));
+        $report = Tool\Config::getByName($request->get('name'));
         if (!$report) {
             throw $this->createNotFoundException();
         }
@@ -189,7 +189,7 @@ class CustomReportController extends AdminController
     {
         $this->checkPermission('reports_config');
 
-        $report = CustomReport\Config::getByName($request->get('name'));
+        $report = Tool\Config::getByName($request->get('name'));
         if (!$report) {
             throw $this->createNotFoundException();
         }
@@ -226,7 +226,7 @@ class CustomReportController extends AdminController
     {
         $this->checkPermission('reports_config');
 
-        $report = CustomReport\Config::getByName($request->get('name'));
+        $report = Tool\Config::getByName($request->get('name'));
         if (!$report) {
             throw $this->createNotFoundException();
         }
@@ -244,7 +244,7 @@ class CustomReportController extends AdminController
         $result = [];
 
         try {
-            $adapter = CustomReport\Config::getAdapter($configuration);
+            $adapter = Tool\Config::getAdapter($configuration);
             $columns = $adapter->getColumns($configuration);
             if (!is_array($columns)) {
                 $columns = [];
@@ -286,7 +286,7 @@ class CustomReportController extends AdminController
 
         $reports = [];
 
-        $list = new CustomReport\Config\Listing();
+        $list = new Tool\Config\Listing();
         $items = $list->getDao()->loadForGivenUser($this->getAdminUser());
 
         foreach ($items as $report) {
@@ -332,13 +332,13 @@ class CustomReportController extends AdminController
 
         $drillDownFilters = $request->get('drillDownFilters', null);
 
-        $config = CustomReport\Config::getByName($request->get('name'));
+        $config = Tool\Config::getByName($request->get('name'));
         if (!$config) {
             throw $this->createNotFoundException();
         }
         $configuration = $config->getDataSourceConfig();
 
-        $adapter = CustomReport\Config::getAdapter($configuration, $config);
+        $adapter = Tool\Config::getAdapter($configuration, $config);
 
         $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters);
 
@@ -364,13 +364,13 @@ class CustomReportController extends AdminController
         $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
         $drillDownFilters = $request->get('drillDownFilters', null);
 
-        $config = CustomReport\Config::getByName($request->get('name'));
+        $config = Tool\Config::getByName($request->get('name'));
         if (!$config) {
             throw $this->createNotFoundException();
         }
         $configuration = $config->getDataSourceConfig();
 
-        $adapter = CustomReport\Config::getAdapter($configuration, $config);
+        $adapter = Tool\Config::getAdapter($configuration, $config);
         $result = $adapter->getAvailableOptions($filters ?? [], $field ?? '', $drillDownFilters ?? []);
 
         return $this->adminJson([
@@ -395,14 +395,14 @@ class CustomReportController extends AdminController
         $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
         $drillDownFilters = $request->get('drillDownFilters', null);
 
-        $config = CustomReport\Config::getByName($request->get('name'));
+        $config = Tool\Config::getByName($request->get('name'));
         if (!$config) {
             throw $this->createNotFoundException();
         }
 
         $configuration = $config->getDataSourceConfig();
 
-        $adapter = CustomReport\Config::getAdapter($configuration, $config);
+        $adapter = Tool\Config::getAdapter($configuration, $config);
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
         return $this->adminJson([
@@ -434,7 +434,7 @@ class CustomReportController extends AdminController
         }
         $includeHeaders = $request->get('headers', false);
 
-        $config = CustomReport\Config::getByName($request->get('name'));
+        $config = Tool\Config::getByName($request->get('name'));
         if (!$config) {
             throw $this->createNotFoundException();
         }
@@ -449,7 +449,7 @@ class CustomReportController extends AdminController
 
         $configuration = $config->getDataSourceConfig();
 
-        $adapter = CustomReport\Config::getAdapter($configuration, $config);
+        $adapter = Tool\Config::getAdapter($configuration, $config);
 
         $offset = $request->get('offset', 0);
         $limit = 5000;

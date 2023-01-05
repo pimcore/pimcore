@@ -16,12 +16,12 @@
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Config\Listing;
 
 use Pimcore\Model;
-use Pimcore\Model\Tool\CustomReport\Config;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Tool\CustomReport\Config\Listing $model
+ * @property \Pimcore\Bundle\CustomReportsBundle\Tool\Config\Listing $model
  */
 class Dao extends \Pimcore\Bundle\CustomReportsBundle\Tool\Config\Dao
 {

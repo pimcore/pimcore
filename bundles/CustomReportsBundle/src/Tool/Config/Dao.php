@@ -20,16 +20,16 @@ use Pimcore\Model;
 /**
  * @internal
  *
- * @property \Pimcore\Model\Tool\CustomReport\Config $model
+ * @property \Pimcore\Bundle\CustomReportsBundle\Tool\Config $model
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     public function configure()
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $definitions = \Pimcore::getContainer()->getParameter('pimcore_custom_reports.definitions');
 
         parent::configure([
-            'containerConfig' => $config['custom_report']['definitions'],
+            'containerConfig' => $definitions,
             'settingsStoreScope' => 'pimcore_custom_reports',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS'] ?? PIMCORE_CONFIGURATION_DIRECTORY  . '/custom-reports',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_CUSTOM_REPORTS',

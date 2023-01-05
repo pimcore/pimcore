@@ -1,7 +1,7 @@
-pimcore.registerNS("pimcore.bundle.customreports");
+pimcore.registerNS("pimcore.bundle.customreports.startup");
 
 
-pimcore.bundle.customreports = Class.create({
+pimcore.bundle.customreports.startup = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
@@ -75,4 +75,4 @@ pimcore.bundle.customreports = Class.create({
     }
 })
 
-const customreports = new pimcore.bundle.customreports();
+const customreports = new pimcore.bundle.customreports.startup();

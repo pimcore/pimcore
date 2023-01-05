@@ -26,7 +26,7 @@ use Pimcore\Model\Listing\Traits\OrderListingTrait;
 /**
  * @internal
  *
- * @method \Pimcore\Model\Tool\CustomReport\Config\Listing\Dao getDao()
+ * @method \Pimcore\Bundle\CustomreportsBundle\Tool\Config\Listing\Dao getDao()
  */
 class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {

@@ -14,7 +14,7 @@ final class Version20221228101109 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'In case the custom reports table already exists, mark the CustomReportsBundle as installed';
+        return 'In case the custom reports permissions already exists, mark the CustomReportsBundle as installed';
     }
 
     public function isInstalled(): bool
