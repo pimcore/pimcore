@@ -1,19 +1,6 @@
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
- */
+pimcore.registerNS('pimcore.bundle.search.element.selector.asset');
 
-pimcore.registerNS("pimcore.element.selector.document");
-pimcore.element.selector.document = Class.create(pimcore.element.selector.abstract, {
-
+pimcore.bundle.search.element.selector.asset = Class.create(pimcore.bundle.search.element.selector.abstract, {
     initStore: function () {
         this.store = new Ext.data.Store({
             autoDestroy: true,
@@ -27,20 +14,19 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                     rootProperty: 'data'
                 },
                 extraParams: {
-                    type: 'document'
+                    type: 'asset'
                 }
             },
-            fields: ["id", "fullpath", "type", "subtype", "published", "title", "description", "name", "filename"]
+            fields: ["id","fullpath","type","subtype","filename"]
         });
     },
 
     getTabTitle: function() {
-        return "document_search";
+        return "asset_search";
     },
 
     getForm: function () {
-
-        var compositeConfig = {
+        const compositeConfig = {
             xtype: "toolbar",
             items: [{
                 xtype: "textfield",
@@ -67,12 +53,12 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         };
 
         // check for restrictions
-        let possibleRestrictions = pimcore.globalmanager.get('document_search_types');
+        let possibleRestrictions = pimcore.globalmanager.get('asset_search_types');
         let filterStore = [];
         let selectedStore = [];
         for (let i=0; i<possibleRestrictions.length; i++) {
-            if(this.parent.restrictions.subtype.document && in_array(possibleRestrictions[i],
-                this.parent.restrictions.subtype.document )) {
+            if(this.parent.restrictions.subtype.asset && in_array(possibleRestrictions[i],
+                this.parent.restrictions.subtype.asset )) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
                 selectedStore.push(possibleRestrictions[i]);
             }
@@ -86,11 +72,10 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
             }
         }
 
-        let selectedValue = selectedStore.join(",");
+        var selectedValue = selectedStore.join(",");
         if(filterStore.length > 1) {
             filterStore.splice(0,0,[selectedValue, t("all_types")]);
         }
-
 
         compositeConfig.items.push({
             xtype: "combo",
@@ -102,12 +87,11 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
             value: selectedValue
         });
 
-
         // add button
         compositeConfig.items.push({
             xtype: "button",
-            iconCls: "pimcore_icon_search",
             text: t("search"),
+            iconCls: "pimcore_icon_search",
             handler: this.search.bind(this)
         });
 
@@ -147,10 +131,11 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 width: 300,
                 store: this.selectionStore,
                 columns: [
-                    {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
-                        renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                            return '<div class="pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
-                        }
+                    {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype', renderer:
+                            function (value, metaData, record, rowIndex, colIndex, store) {
+                                return '<div style="height: 16px;" class="pimcore_icon_asset pimcore_icon_' + value
+                                    + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
+                            }
                     },
                     {text: t("filename"), flex: 1, sortable: true, dataIndex: 'filename'}
                 ],
@@ -165,6 +150,20 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                             text: t('remove'),
                             iconCls: "pimcore_icon_delete",
                             handler: function (index, item) {
+
+                                if(this.parent.multiselect) {
+                                    var resultPanelStore = this.resultPanel.getStore();
+                                    var elementId = this.selectionStore.getAt(index).id;
+                                    var record = resultPanelStore.findRecord("id", elementId);
+
+                                    if(record) {
+                                        record.set('asset-selected', false);
+                                    }
+
+                                    resultPanelStore.reload();
+
+                                }
+
                                 this.selectionStore.removeAt(index);
                                 item.parentMenu.destroy();
                             }.bind(this, rowIndex)
@@ -190,19 +189,73 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
 
     getResultPanel: function () {
         if (!this.resultPanel) {
-            var columns = [
+            const columns = [
                 {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div class="pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
+                        return '<div style="height: 16px;" class="pimcore_icon_'
+                            + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
                 {text: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
-                {text: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
-                {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
-                {text: t("title"), flex: 200, sortable: false, dataIndex: 'title', hidden: false},
-                {text: t("description"), width: 200, sortable: false, dataIndex: 'description', hidden: true},
-                {text: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true}
+                {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath', renderer: Ext.util.Format.htmlEncode},
+                {text: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
+                {text: t("preview"), width: 150, sortable: false, dataIndex: 'subtype',
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                        const routes = {
+                            image: "pimcore_admin_asset_getimagethumbnail",
+                            video: "pimcore_admin_asset_getvideothumbnail",
+                            document: "pimcore_admin_asset_getdocumentthumbnail"
+                        };
+
+                        if (record.data.subtype in routes) {
+                            const route = routes[record.data.subtype];
+
+                            const params = {
+                                id: record.data.id,
+                                width: 100,
+                                height: 100,
+                                cover: true,
+                                aspectratio: true
+                            };
+
+                            const uri = Routing.generate(route, params);
+
+                            return '<div name="' + t(record.data.subtype)
+                                + '"><img src="' + uri + '" /></div>';
+                        }
+                    }
+                }
             ];
+
+            if (this.parent.multiselect) {
+                columns.unshift(
+                    {
+                        xtype: 'checkcolumn',
+                        fieldLabel: '',
+                        name: 'asset-select-checkbox',
+                        text: t("select"),
+                        dataIndex : 'asset-selected',
+                        sortable: false,
+                        renderer: function (value, metaData, record, rowIndex) {
+                            const currentElementId = this.resultPanel.getStore().getAt(rowIndex).id;
+                            const rec = this.selectionStore.getData().find("id", currentElementId);
+
+                            const checkbox = new Ext.grid.column.Check();
+
+                            if (typeof value ==='undefined' && rec !== null){
+                                this.resultPanel.getStore().getAt(rowIndex).set('asset-selected', true);
+                                return checkbox.renderer(true);
+                            }
+
+                            if (value && rec === null) {
+                                return checkbox.renderer(true);
+                            }
+
+                            return checkbox.renderer(false);
+                        }.bind(this)
+                    }
+                );
+            }
 
             this.pagingtoolbar = this.getPagingToolbar();
 
@@ -210,21 +263,42 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 region: "center",
                 store: this.store,
                 columns: columns,
-                viewConfig: {
-                    forceFit: true
-                },
                 loadMask: true,
                 columnLines: true,
                 stripeRows: true,
+                viewConfig: {
+                    forceFit: true,
+                    markDirty: false
+                },
+                plugins: ['gridfilters'],
                 selModel: this.getGridSelModel(),
                 bbar: this.pagingtoolbar,
                 listeners: {
+                    cellclick: {
+                        fn: function(view, cellEl, colIdx, store, rowEl, rowIdx, event) {
+
+                            var data = view.getStore().getAt(rowIdx);
+
+                            if (this.parent.multiselect && colIdx == 0) {
+                                if (data.get('asset-selected')) {
+                                    this.addToSelection(data.data);
+                                } else {
+                                    this.removeFromSelection(data.data);
+                                }
+                            }
+                        }.bind(this)
+                    },
                     rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
 
                         var data = grid.getStore().getAt(rowIndex);
 
                         if(this.parent.multiselect) {
                             this.addToSelection(data.data);
+
+                            if (!record.get('asset-selected')) {
+                                record.set('asset-selected', true);
+                            }
+
                         } else {
                             // select and close
                             this.parent.commitData(this.getData());
@@ -233,6 +307,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 }
             });
         }
+
 
         if(this.parent.multiselect) {
             this.resultPanel.on("rowcontextmenu", this.onRowContextmenu.bind(this));
@@ -251,7 +326,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         let proxy = this.store.getProxy();
         let query = Ext.util.Format.htmlEncode(formValues.query);
         proxy.setExtraParam("query", query);
-        proxy.setExtraParam("type", 'document');
+        proxy.setExtraParam("type", 'asset');
         proxy.setExtraParam("subtype", formValues.subtype);
 
         if (this.parent.config && this.parent.config.context) {

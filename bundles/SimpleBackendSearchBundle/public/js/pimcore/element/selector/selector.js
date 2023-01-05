@@ -1,7 +1,9 @@
-pimcore.registerNS('pimcore.bundle.search.element.selector');
+pimcore.registerNS('pimcore.bundle.search.element.selector.selector');
 
-pimcore.bundle.search.element.selector = Class.create({
+pimcore.bundle.search.element.selector.selector = Class.create({
     initialize: function (multiselect, callback, restrictions, config) {
+        console.log('selector - called!')
+
         this.initialRestrictions = restrictions ? restrictions: {};
         this.callback = callback;
         this.restrictions = restrictions;
@@ -174,21 +176,21 @@ pimcore.bundle.search.element.selector = Class.create({
         this.resetToolbarButtons();
         this.toolbarbuttons.document.toggle(true);
 
-        this.current = new pimcore.element.selector.document(this);
+        this.current = new pimcore.bundle.search.element.selector.document(this);
     },
 
     searchAssets: function () {
         this.resetToolbarButtons();
         this.toolbarbuttons.asset.toggle(true);
 
-        this.current = new pimcore.element.selector.asset(this);
+        this.current = new pimcore.bundle.search.element.selector.asset(this);
     },
 
     searchObjects: function () {
         this.resetToolbarButtons();
         this.toolbarbuttons.object.toggle(true);
 
-        this.current = new pimcore.element.selector.object(this);
+        this.current = new pimcore.bundle.search.element.selector.object(this);
     },
 
     commitData: function (data) {
@@ -197,4 +199,4 @@ pimcore.bundle.search.element.selector = Class.create({
             this.window.close();
         }
     }
-})
+});

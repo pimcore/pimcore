@@ -1,20 +1,6 @@
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
- */
+pimcore.registerNS('pimcore.bundle.search.element.selector.abstract');
 
-pimcore.registerNS("pimcore.element.selector.abstract");
-pimcore.element.selector.abstract = Class.create({
-
-
+pimcore.bundle.search.element.selector.abstract = Class.create({
     initialize: function (parent) {
         this.parent = parent;
 
@@ -32,7 +18,7 @@ pimcore.element.selector.abstract = Class.create({
             });
         }
 
-        var user = pimcore.globalmanager.get("user");
+        const user = pimcore.globalmanager.get("user");
         if(user.isAllowed("tags_search")) {
             this.searchPanel.add(this.getTagsPanel());
         }
@@ -42,9 +28,8 @@ pimcore.element.selector.abstract = Class.create({
     },
 
     addToSelection: function (data) {
-
         // check for dublicates
-        var existingItem = this.selectionStore.find("id", data.id);
+        const existingItem = this.selectionStore.find("id", data.id);
 
         if(existingItem < 0) {
             this.selectionStore.add(data);
@@ -52,9 +37,8 @@ pimcore.element.selector.abstract = Class.create({
     },
 
     removeFromSelection: function(data) {
-
         // check if element exists in store
-        var existingItem = this.selectionStore.find("id", data.id);
+        const existingItem = this.selectionStore.find("id", data.id);
 
         if (existingItem >= 0) {
             this.selectionStore.removeAt(existingItem);
@@ -62,10 +46,8 @@ pimcore.element.selector.abstract = Class.create({
     },
 
     getTagsPanel: function() {
-
         if(!this.tagsPanel) {
-
-            var considerAllChildTags = Ext.create("Ext.form.Checkbox", {
+            const considerAllChildTags = Ext.create("Ext.form.Checkbox", {
                 style: "margin-bottom: 0; margin-left: 5px",
                 fieldStyle: "margin-top: 0",
                 cls: "tag-tree-topbar",
@@ -80,7 +62,7 @@ pimcore.element.selector.abstract = Class.create({
             });
 
 
-            var tree = new pimcore.element.tag.tree();
+            const tree = new pimcore.element.tag.tree();
             tree.setAllowAdd(false);
             tree.setAllowDelete(false);
             tree.setAllowDnD(false);
@@ -125,7 +107,7 @@ pimcore.element.selector.abstract = Class.create({
                 return this.tmpData;
             } else {
                 // is the store is empty and a item is selected take this
-                var selected = this.getGrid().getSelectionModel().getSelected();
+                const selected = this.getGrid().getSelectionModel().getSelected();
                 if(selected) {
                     this.tmpData.push(selected.data);
                 }
@@ -133,7 +115,7 @@ pimcore.element.selector.abstract = Class.create({
 
             return this.tmpData;
         } else {
-            var selected = this.getGrid().getSelectionModel().getSelected();
+            const selected = this.getGrid().getSelectionModel().getSelected();
             if(selected) {
                 return selected.getAt(0).data;
             }
@@ -142,14 +124,13 @@ pimcore.element.selector.abstract = Class.create({
     },
 
     getPagingToolbar: function() {
-        var pagingToolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
+        const pagingToolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
         return pagingToolbar;
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
-
-        var menu = new Ext.menu.Menu();
-        var data = grid.getStore().getAt(rowIndex);
+        const menu = new Ext.menu.Menu();
+        const data = grid.getStore().getAt(rowIndex);
 
         menu.add(new Ext.menu.Item({
             text: t('add'),

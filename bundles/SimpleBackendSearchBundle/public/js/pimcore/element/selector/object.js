@@ -1,19 +1,6 @@
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Commercial License (PCL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
- */
+pimcore.registerNS('pimcore.bundle.search.element.selector.object');
 
-pimcore.registerNS("pimcore.element.selector.object");
-pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract, {
-
+pimcore.bundle.search.element.selector.object = Class.create(pimcore.bundle.search.element.selector.abstract, {
     fieldObject: {},
     gridType: 'object',
 
@@ -26,7 +13,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 
     getForm: function () {
-        var i;
+        let i;
 
         //set "Home" object ID for search grid column configuration
         this.object  = {};
@@ -34,7 +21,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
         this.searchType = "search";
 
-        var compositeConfig = {
+        const compositeConfig = {
             xtype: "toolbar",
             items: [{
                 xtype: "textfield",
@@ -214,8 +201,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             this.selectionStore = new Ext.data.JsonStore({
                 data: [],
                 fields: ["id", "type", "filename", "fullpath", "subtype", {name:"classname",renderer: function(v){
-                    return t(v);
-                }}]
+                        return t(v);
+                    }}]
             });
 
             this.selectionPanel = new Ext.grid.GridPanel({
@@ -243,7 +230,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 },
                 listeners: {
                     rowcontextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
-                        var menu = new Ext.menu.Menu();
+                        const menu = new Ext.menu.Menu();
 
                         menu.add(new Ext.menu.Item({
                             text: t('remove'),
@@ -287,11 +274,9 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
 
     changeClass: function () {
-
-        var selectedClass = this.classChangeCombo.getValue();
+        const selectedClass = this.classChangeCombo.getValue();
 
         if(selectedClass.indexOf(",") > 0) { // multiple classes because of a comma in the string
-
             //hide column config buttons
             this.columnConfigButton.hide();
             this.saveColumnConfigButton.hide();
@@ -299,8 +284,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             // init default store
             this.initDefaultStore();
         } else {
-            var classStore = pimcore.globalmanager.get("object_types_store");
-            var classIdx = classStore.findExact("text", selectedClass);
+            const classStore = pimcore.globalmanager.get("object_types_store");
+            const classIdx = classStore.findExact("text", selectedClass);
             this.selectedClass = selectedClass
             this.classId = classStore.getAt(classIdx).id;
             this.settings = {};
@@ -321,7 +306,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 
     initClassStore: function (selectedClass, response, save) {
-        var fields = [];
+        let fields = [];
         if(response.responseText) {
             response = Ext.decode(response.responseText);
             fields = response.availableFields;
@@ -335,7 +320,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         }
 
         this.itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
-        var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, Routing.generate('pimcore_admin_searchadmin_search_find'), null, true);
+        const gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, Routing.generate('pimcore_admin_searchadmin_search_find'), null, true);
         gridHelper.limit = this.itemsPerPage;
         this.store = gridHelper.getStore();
         this.store.setPageSize(this.itemsPerPage);
@@ -374,8 +359,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 }
             },
             fields: ["id","fullpath","type","subtype","filename",{name:"classname",convert: function(v, rec){
-                return t(rec.data.classname);
-            }},"published"]
+                    return t(rec.data.classname);
+                }},"published"]
         });
 
         var columns = [
@@ -432,20 +417,20 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         this.gridPanel.on("afterrender", function (grid) {
             if(selectedClass) {
 
-                var classStore = pimcore.globalmanager.get("object_types_store");
-                var classId = null;
+                const classStore = pimcore.globalmanager.get("object_types_store");
+                let classId = null;
                 classStore.each(function (rec) {
                     if(rec.data.text == selectedClass) {
                         classId = rec.data.id;
                     }
                 });
 
-                var columnConfig = new Ext.menu.Item({
+                const columnConfig = new Ext.menu.Item({
                     text: t("grid_options"),
                     iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
                     handler: this.openColumnConfig.bind(this, selectedClass, classId)
                 });
-                var menu = grid.headerCt.getMenu();
+                const menu = grid.headerCt.getMenu();
                 menu.add(columnConfig);
             }
         }.bind(this));
@@ -467,13 +452,12 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 
     openColumnConfig: function(selectedClass, classId) {
-        var fields = this.getGridConfig().columns;
+        const fields = this.getGridConfig().columns;
+        const fieldKeys = Object.keys(fields);
+        const visibleColumns = [];
 
-        var fieldKeys = Object.keys(fields);
-
-        var visibleColumns = [];
-        for(var i = 0; i < fieldKeys.length; i++) {
-            var field = fields[fieldKeys[i]];
+        for(let i = 0; i < fieldKeys.length; i++) {
+            const field = fields[fieldKeys[i]];
             if(!field.hidden) {
                 var fc = {
                     key: fieldKeys[i],
@@ -495,18 +479,18 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             }
         }
 
-        var objectId;
+        let objectId;
         if(this["object"] && this.object["id"]) {
             objectId = this.object.id;
         }
 
-        var columnConfig = {
+        const columnConfig = {
             language: this.gridLanguage,
             classid: classId,
             selectedGridColumns: visibleColumns
         };
 
-        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig,
+        const dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig,
             function(data, settings, save) {
                 this.saveColumnConfigButton.show(); //unhide save config button
                 this.gridLanguage = data.language;
@@ -547,15 +531,15 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 
     getGridConfig : function () {
-        var config = {
+        const config = {
             language: this.gridLanguage,
             sortinfo: this.sortinfo,
             columns: {}
         };
 
-        var cm = this.gridPanel.getView().getHeaderCt().getGridColumns();
+        const cm = this.gridPanel.getView().getHeaderCt().getGridColumns();
 
-        for (var i=0; i < cm.length; i++) {
+        for (let i=0; i < cm.length; i++) {
             if(cm[i].dataIndex) {
                 config.columns[cm[i].dataIndex] = {
                     name: cm[i].dataIndex,
@@ -578,7 +562,6 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
     applyExtraParamsToStore: function () {
         let formValues = this.formPanel.getForm().getFieldValues();
-
         let proxy = this.store.getProxy();
         let query = Ext.util.Format.htmlEncode(formValues.query);
         proxy.setExtraParam("query", query);
@@ -603,13 +586,13 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 
     createGrid: function (fromConfig, response, settings, save, context) {
-        var selectedClass = this.classChangeCombo.getValue();
+        const selectedClass = this.classChangeCombo.getValue();
 
         this.initClassStore(selectedClass,response, save);
     },
 
     getTableDescription: function () {
-        var selectedClass = this.classChangeCombo.getValue();
+        const selectedClass = this.classChangeCombo.getValue();
 
         if(selectedClass.indexOf(",") > 0) { // multiple classes because of a comma in the string
             // init default store
@@ -631,7 +614,6 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 
     deleteGridConfig: function () {
-
         Ext.MessageBox.show({
             title: t('delete'),
             msg: t('delete_gridconfig_dblcheck'),
@@ -654,7 +636,6 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                     searchType: this.searchType
                 },
                 success: function (response) {
-
                     decodedResponse = Ext.decode(response.responseText);
                     if (decodedResponse.deleteSuccess) {
                         pimcore.helpers.showNotification(t("success"), t("gridconfig_removed"), "success");
@@ -668,4 +649,4 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 });
 
-pimcore.element.selector.object.addMethods(pimcore.element.helpers.gridColumnConfig);
+pimcore.bundle.search.element.selector.object.addMethods(pimcore.element.helpers.gridColumnConfig);
