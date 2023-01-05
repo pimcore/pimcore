@@ -127,7 +127,7 @@ final class Configuration implements ConfigurationInterface
                         ->defaultNull()
                     ->end()
                     ->scalarNode('login_screen_custom_image')
-                        ->defaultNull()
+                        ->defaultValue('')
                     ->end()
                 ->end()
             ->end()

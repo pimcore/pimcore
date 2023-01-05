@@ -287,7 +287,7 @@ pimcore:
                     objectLayout:         false
 
                     # An expression to block the action
-                    guard:                ~ # Example: is_fully_authenticated() and has_role('ROLE_JOURNALIST') and subject.getTitle() == 'My first article'
+                    guard:                ~ # Example: is_fully_authenticated() and is_granted('ROLE_JOURNALIST') and subject.getTitle() == 'My first article'
 
                     # Optionally set the current place of the workflow. Can be used for example to reset the workflow to the initial place.
                     to:                   []

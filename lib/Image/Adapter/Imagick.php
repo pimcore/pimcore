@@ -417,8 +417,7 @@ class Imagick extends Adapter
     /**
      * @param string $CMYKColorProfile
      *
-     *@internal
-     *
+     * @internal
      */
     public static function setCMYKColorProfile(string $CMYKColorProfile)
     {

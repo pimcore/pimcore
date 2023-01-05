@@ -735,8 +735,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      *
      * @return bool
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     public function removeVoucherToken(string $code): bool
     {

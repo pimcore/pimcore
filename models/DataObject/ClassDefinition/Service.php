@@ -298,6 +298,11 @@ class Service
     public static function generateLayoutTreeFromArray(array $array, bool $throwException = false, bool $insideLocalizedField = false): Data\EncryptedField|bool|Data|Layout
     {
         if (is_array($array) && count($array) > 0) {
+            if ($title = $array['title'] ?? false) {
+                if (preg_match('/<.+?>/', $title)) {
+                    throw new \Exception('not a valid title:' . htmlentities($title));
+                }
+            }
             if ($name = $array['name'] ?? false) {
                 if (preg_match('/<.+?>/', $name)) {
                     throw new \Exception('not a valid name:' . htmlentities($name));
@@ -374,8 +379,7 @@ class Service
      * @param array $tableDefinitions
      * @param array $tableNames
      *
-     *@internal
-     *
+     * @internal
      */
     public static function updateTableDefinitions(array &$tableDefinitions, array $tableNames): void
     {
@@ -412,8 +416,7 @@ class Service
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public static function skipColumn(array $tableDefinitions, string $table, string $colName, string $type, string $default, string $null): bool
     {
@@ -444,8 +447,7 @@ class Service
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildImplementsInterfacesCode(array $implementsParts, ?string $newInterfaces): string
     {
@@ -476,8 +478,7 @@ class Service
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildUseTraitsCode(array $useParts, ?string $newTraits): string
     {
@@ -507,8 +508,7 @@ class Service
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildUseCode(array $useParts): string
     {
