@@ -1818,17 +1818,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param string $fallbackLanguage
-     * @param string $field
-     * @param DataObject\Concrete $object
-     * @param string $requestedLanguage
-     * @param array $helperDefinitions
-     *
-     * @return mixed
-     *
      * @internal
      */
-    protected static function getCsvFieldData(string $fallbackLanguage, string $field, Concrete $object, string $requestedLanguage, array $helperDefinitions): mixed
+    protected static function getCsvFieldData(string $fallbackLanguage, string $field, Concrete $object, string $requestedLanguage, array $helperDefinitions): string
     {
         //check if field is systemfield
         $systemFieldMap = [
@@ -1844,7 +1836,7 @@ class Service extends Model\Element\Service
         if (in_array($field, array_keys($systemFieldMap))) {
             $getter = $systemFieldMap[$field];
 
-            return $object->$getter();
+            return (string) $object->$getter();
         } else {
             //check if field is standard object field
             $fieldDefinition = $object->getClass()->getFieldDefinition($field);
@@ -1970,7 +1962,7 @@ class Service extends Model\Element\Service
             }
         }
 
-        return null;
+        return '';
     }
 
     /**
