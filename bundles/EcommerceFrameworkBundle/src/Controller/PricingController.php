@@ -258,7 +258,7 @@ class PricingController extends AdminController implements KernelControllerEvent
             'message' => '',
         ];
 
-        $ruleId = $request->get('id');
+        $ruleId = (int) $request->get('id');
         $ruleNewName = $request->get('name');
 
         try {

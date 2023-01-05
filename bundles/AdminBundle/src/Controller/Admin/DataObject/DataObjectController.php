@@ -379,7 +379,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 return $this->getEditLockResponse($objectId, 'object');
             }
 
-            Element\Editlock::lock($request->get('id'), 'object');
+            Element\Editlock::lock((int) $request->get('id'), 'object');
         }
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
@@ -2058,7 +2058,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function previewAction(Request $request): RedirectResponse|Response
     {
-        $id = $request->get('id');
+        $id = (int) $request->get('id');
         $object = DataObject\Service::getElementFromSession('object', $id);
 
         if ($object instanceof DataObject\Concrete) {

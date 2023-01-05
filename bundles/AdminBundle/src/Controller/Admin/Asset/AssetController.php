@@ -117,7 +117,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 return $this->getEditLockResponse($assetId, 'asset');
             }
 
-            Element\Editlock::lock($request->get('id'), 'asset');
+            Element\Editlock::lock((int) $request->get('id'), 'asset');
         }
 
         $asset = clone $asset;
@@ -2496,8 +2496,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $data = Tool::getHttpData($request->get('url'));
         $filename = basename($request->get('url'));
-        $parentId = $request->get('id');
-        $parentAsset = Asset::getById((int)$parentId);
+        $parentId = (int) $request->get('id');
+        $parentAsset = Asset::getById($parentId);
 
         if (!$parentAsset) {
             throw $this->createNotFoundException('Parent asset not found');

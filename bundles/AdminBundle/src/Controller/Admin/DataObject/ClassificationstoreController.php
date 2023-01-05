@@ -43,7 +43,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deleteCollectionAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
+        $id = (int) $request->get('id');
 
         $configRelations = new Classificationstore\CollectionGroupRelation\Listing();
         $configRelations->setCondition('colId = ?', $id);
@@ -109,7 +109,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deleteGroupAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
+        $id = (int) $request->get('id');
 
         $config = Classificationstore\GroupConfig::getById($id);
         $config->delete();
@@ -1421,7 +1421,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deletePropertyAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
+        $id = (int) $request->get('id');
 
         $config = Classificationstore\KeyConfig::getById($id);
         //        $config->delete();
@@ -1442,7 +1442,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function editStoreAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
+        $id = (int) $request->get('id');
         $data = json_decode($request->get('data'), true);
 
         $name = $data['name'];

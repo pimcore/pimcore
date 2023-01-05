@@ -258,8 +258,8 @@ class PageController extends DocumentControllerBase
      */
     public function checkPrettyUrlAction(Request $request): JsonResponse
     {
-        $docId = $request->get('id');
-        $path = (string) trim($request->get('path'));
+        $docId = (int) $request->get('id');
+        $path = trim($request->get('path', ''));
 
         $success = true;
 

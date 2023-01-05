@@ -48,7 +48,7 @@ class ElementController extends AdminController
      */
     public function lockElementAction(Request $request): Response
     {
-        Element\Editlock::lock($request->get('id'), $request->get('type'));
+        Element\Editlock::lock((int) $request->get('id'), $request->get('type'));
 
         return $this->adminJson(['success' => true]);
     }
@@ -340,7 +340,7 @@ class ElementController extends AdminController
     {
         $element = null;
         if ($request->get('id')) {
-            $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
+            $element = Element\Service::getElementById($request->get('type'), (int) $request->get('id'));
         } elseif ($request->get('path')) {
             $element = Element\Service::getElementByPath($request->get('type'), $request->get('path'));
         }
@@ -410,7 +410,7 @@ class ElementController extends AdminController
         $element = null;
 
         if ($request->get('id')) {
-            $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
+            $element = Element\Service::getElementById($request->get('type'), (int) $request->get('id'));
         } elseif ($request->get('path')) {
             $element = Element\Service::getElementByPath($request->get('type'), $request->get('path'));
         }
@@ -436,9 +436,9 @@ class ElementController extends AdminController
     {
         $success = false;
         $message = '';
-        $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
-        $sourceEl = Element\Service::getElementById($request->get('sourceType'), $request->get('sourceId'));
-        $targetEl = Element\Service::getElementById($request->get('targetType'), $request->get('targetId'));
+        $element = Element\Service::getElementById($request->get('type'), (int) $request->get('id'));
+        $sourceEl = Element\Service::getElementById($request->get('sourceType'), (int) $request->get('sourceId'));
+        $targetEl = Element\Service::getElementById($request->get('targetType'), (int) $request->get('targetId'));
 
         if ($element && $sourceEl && $targetEl
             && $request->get('sourceType') == $request->get('targetType')
@@ -484,7 +484,7 @@ class ElementController extends AdminController
     {
         $success = false;
 
-        $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
+        $element = Element\Service::getElementById($request->get('type'), (int) $request->get('id'));
         if ($element) {
             $element->unlockPropagate();
             $success = true;
@@ -721,7 +721,7 @@ class ElementController extends AdminController
      */
     public function deleteAllVersionAction(Request $request): JsonResponse
     {
-        $elementId = $request->get('id');
+        $elementId = (int) $request->get('id');
         $elementModificationdate = $request->get('date');
 
         $versions = new Model\Version\Listing();
@@ -743,7 +743,7 @@ class ElementController extends AdminController
      */
     public function getRequiresDependenciesAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
+        $id = (int) $request->get('id');
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
         $offset = (int) $request->get('start', 0);
@@ -776,7 +776,7 @@ class ElementController extends AdminController
      */
     public function getRequiredByDependenciesAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
+        $id = (int) $request->get('id');
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
         $offset = (int) $request->get('start', 0);
