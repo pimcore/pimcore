@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.bundle.seo.httpErrorLog");
+/**
+ * @private
+ */
 pimcore.bundle.seo.httpErrorLog = Class.create({
 
     initialize: function(id) {

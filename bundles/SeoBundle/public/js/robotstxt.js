@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.bundle.seo.robotstxt");
+/**
+ * @private
+ */
 pimcore.bundle.seo.robotstxt = Class.create({
     onFileSystem: false,
     data: {},
