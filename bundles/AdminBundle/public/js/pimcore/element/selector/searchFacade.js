@@ -30,7 +30,7 @@ pimcore.element.selector.searchFacade = new Class.create({
         if(this.hasImplementation()){
             //call implementation
             try {
-                this.getImplementation().openItemSelector(multiselect, callback, restrictions, config); //TODO: define config object
+                this.getImplementation().openItemSelector(multiselect, callback, restrictions, config);
             }
             catch (e) {
                 //TODO: handle error
