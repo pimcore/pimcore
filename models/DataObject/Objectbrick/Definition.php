@@ -447,8 +447,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getContainerClassName(string $classname, string $fieldname): string
     {
@@ -461,8 +460,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getContainerNamespace(string $classname, string $fieldname): string
     {
@@ -474,8 +472,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getContainerClassFolder(string $classname): string
     {
@@ -561,8 +558,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getDefinitionFile(string $key = null): string
     {

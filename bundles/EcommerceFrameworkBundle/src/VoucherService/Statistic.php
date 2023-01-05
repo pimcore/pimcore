@@ -49,8 +49,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
      *
      * @return bool|array
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     public static function getBySeriesId(int $seriesId, int $usagePeriod = null): bool|array
     {

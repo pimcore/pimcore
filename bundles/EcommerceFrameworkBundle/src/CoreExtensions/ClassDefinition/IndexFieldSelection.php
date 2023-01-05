@@ -165,8 +165,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, $object = null, array $params = []): array
     {
@@ -203,8 +202,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *
      * @return ObjectData\IndexFieldSelection|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?ObjectData\IndexFieldSelection
     {
@@ -257,8 +255,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {

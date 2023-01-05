@@ -31,8 +31,7 @@ trait AllowAssetRelationTrait
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     protected function allowAssetRelation(Asset $asset): bool
     {

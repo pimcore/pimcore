@@ -15,9 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Twig\Extension;
+namespace Pimcore\Bundle\GlossaryBundle\Twig\Extension;
 
-use Pimcore\Tool\Glossary\Processor;
+use Pimcore\Bundle\GlossaryBundle\Tool\Processor;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 

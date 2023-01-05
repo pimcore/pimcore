@@ -626,7 +626,7 @@ class OrderManager implements OrderManagerInterface
         }
 
         $orderItemChildren = $order->getChildren();
-        foreach ($orderItemChildren ?: [] as $orderItemChild) {
+        foreach ($orderItemChildren as $orderItemChild) {
             if ($orderItemChild instanceof AbstractOrderItem) {
                 if (!in_array($orderItemChild->getId(), $validItemIds)) {
                     if (!$orderItemChild->getDependencies()->getRequiredBy(null, 1)) {
@@ -768,7 +768,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @return Concrete
      *
-     *@throws \Exception
+     * @throws \Exception
      * @throws ProviderNotFoundException
      */
     public function getRecurringPaymentSourceOrderList(string $customerId, RecurringPaymentInterface $paymentProvider, string $paymentMethod = null, string $orderId = ''): Concrete
