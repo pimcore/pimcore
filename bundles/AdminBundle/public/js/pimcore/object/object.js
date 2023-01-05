@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.object");
+/**
+ * @private
+ */
 pimcore.object.object = Class.create(pimcore.object.abstract, {
     willClose: false,
     initialize: function (id, options) {

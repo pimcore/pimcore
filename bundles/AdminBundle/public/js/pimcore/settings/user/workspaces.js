@@ -13,6 +13,9 @@
 
 
 pimcore.registerNS("pimcore.settings.user.workspaces");
+/**
+ * @private
+ */
 pimcore.settings.user.workspaces = Class.create({
 
     initialize: function (userPanel) {

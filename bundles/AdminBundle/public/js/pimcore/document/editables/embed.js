@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.embed");
+/**
+ * @private
+ */
 pimcore.document.editables.embed = Class.create(pimcore.document.editable, {
 
     initialize: function($super, id, name, config, data, inherited) {

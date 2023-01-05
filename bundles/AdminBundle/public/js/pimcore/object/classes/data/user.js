@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.user");
+/**
+ * @private
+ */
 pimcore.object.classes.data.user = Class.create(pimcore.object.classes.data.data, {
 
     type: "user",

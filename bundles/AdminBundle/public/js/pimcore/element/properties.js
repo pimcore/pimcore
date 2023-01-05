@@ -13,6 +13,9 @@
  */
 
 pimcore.registerNS("pimcore.element.properties");
+/**
+ * @private
+ */
 pimcore.element.properties = Class.create({
 
     disallowedKeys: [],

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classificationstore.propertiespanel");
+/**
+ * @private
+ */
 pimcore.object.classificationstore.propertiespanel = Class.create({
 
     initialize: function (storeConfig, container) {

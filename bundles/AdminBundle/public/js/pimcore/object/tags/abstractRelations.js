@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.abstractRelations");
+/**
+ * @private
+ */
 pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstract, {
 
     getFilterEditToolbarItems: function () {

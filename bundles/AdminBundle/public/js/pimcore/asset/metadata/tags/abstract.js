@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.tags.abstract");
+/**
+ * @private
+ */
 pimcore.asset.metadata.tags.abstract = Class.create({
 
     asset:null,

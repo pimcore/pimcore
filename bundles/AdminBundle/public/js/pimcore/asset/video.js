@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.video");
+/**
+ * @private
+ */
 pimcore.asset.video = Class.create(pimcore.asset.asset, {
 
     initialize: function (id, options) {

@@ -13,6 +13,9 @@
 
 pimcore.registerNS("pimcore.perspective");
 
+/**
+ * @private
+ */
 pimcore.perspective = Class.create({
 
     initialize: function(perspective) {
