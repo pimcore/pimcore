@@ -425,7 +425,7 @@ class Dao extends Model\Dao\AbstractDao
                     if ($context['containerType'] === 'objectbrick') {
                         $inheritanceRelationContext = [
                             'ownertype' => 'localizedfield',
-                            'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield',
+                            'ownername' => '/objectbrick~' . $context['fieldname'] . '/' . $context['containerKey'] . '/localizedfield~localizedfield',
                         ];
                     } else {
                         $inheritanceRelationContext = [
