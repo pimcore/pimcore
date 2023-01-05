@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.tags.document");
+/**
+ * @private
+ */
 pimcore.asset.metadata.tags.document = Class.create(pimcore.asset.metadata.tags.manyToOneRelation, {
 
     type: "document",

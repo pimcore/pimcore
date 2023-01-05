@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.manager");
+/**
+ * @private
+ */
 pimcore.document.editables.manager = Class.create({
 
     editables: {},

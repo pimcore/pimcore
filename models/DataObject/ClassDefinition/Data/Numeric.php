@@ -492,7 +492,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             }
         }
 
-        if (is_numeric($value) && in_array($operator, self::$validFilterOperators)) {
+        if ((is_numeric($value) || $value === 'NULL') && in_array($operator, self::$validFilterOperators)) {
             return $key . ' ' . $operator . ' ' . $value . ' ';
         }
 

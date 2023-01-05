@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.object.classes.data.geopolygon');
+/**
+ * @private
+ */
 pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.data.geo.abstract, {
 
     type: 'geopolygon',

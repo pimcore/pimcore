@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.consent");
+/**
+ * @private
+ */
 pimcore.object.classes.data.consent = Class.create(pimcore.object.classes.data.data, {
 
     type: "consent",

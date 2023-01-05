@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.gridexport.xlsx");
+/**
+ * @private
+ */
 pimcore.asset.gridexport.xlsx = Class.create(pimcore.element.gridexport.abstract, {
     name: "xlsx",
     text: t("export_xlsx"),

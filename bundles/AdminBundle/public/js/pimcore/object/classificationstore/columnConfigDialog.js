@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classificationstore.columnConfigDialog");
+/**
+ * @private
+ */
 pimcore.object.classificationstore.columnConfigDialog = Class.create({
 
     keysAdded: 0,

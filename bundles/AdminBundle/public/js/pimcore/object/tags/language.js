@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.language");
+/**
+ * @private
+ */
 pimcore.object.tags.language = Class.create(pimcore.object.tags.select, {
 
     type: "language",

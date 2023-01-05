@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.printcontainer");
+/**
+ * @private
+ */
 pimcore.document.printcontainer = Class.create(pimcore.document.printabstract, {
     type: "printcontainer",
 

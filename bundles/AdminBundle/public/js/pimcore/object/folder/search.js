@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.search");
+/**
+ * @private
+ */
 pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     systemColumns: ["id", "fullpath", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
     fieldObject: {},

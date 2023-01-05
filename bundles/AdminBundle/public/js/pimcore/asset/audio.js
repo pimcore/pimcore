@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.audio");
+/**
+ * @private
+ */
 pimcore.asset.audio = Class.create(pimcore.asset.asset, {
 
     initialize: function(id, options) {

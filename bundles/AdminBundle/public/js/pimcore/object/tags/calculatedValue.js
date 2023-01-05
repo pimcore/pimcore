@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.calculatedValue");
+/**
+ * @private
+ */
 pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract, {
 
     type: "calculatedValue",

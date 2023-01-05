@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.printabstract");
+/**
+ * @private
+ */
 pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
     type: "printabstract",
 

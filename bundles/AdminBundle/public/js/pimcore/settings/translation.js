@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.translation.domain");
+/**
+ * @private
+ */
 pimcore.settings.translation.domain = Class.create({
     filterField: null,
     preconfiguredFilter: "",

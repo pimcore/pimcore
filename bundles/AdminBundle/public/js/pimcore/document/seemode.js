@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.seemode");
+/**
+ * @private
+ */
 pimcore.document.seemode = Class.create({
 
 
