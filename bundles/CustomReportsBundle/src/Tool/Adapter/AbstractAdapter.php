@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Adapter;
 
-use Pimcore\Bundle\CustomReportsBundle\ToolConfig;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 
 abstract class AbstractAdapter implements CustomReportAdapterInterface
 {
