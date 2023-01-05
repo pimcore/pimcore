@@ -71,12 +71,12 @@ Don't forget to check logfiles (especially `test.log` and `php.log`) inside the 
 
 Meaningful default values are set in the shipped `docker-compose.yml`. Can be modified as needed. 
 
-| Env Variable           | Example          | Comment                                                     |
-|------------------------|------------------|-------------------------------------------------------------|
-| APP_ENV                | test             | Test environment                         |
-| PIMCORE_TEST           | 1                | **important** this will switch several directories (like /var/classes) |
-| PIMCORE_TEST_SKIP_DB   | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
-| PIMCORE_TEST_REDIS_DSN | redis://localhost| **required for REDIS tests**   |
+| Env Variable           | Example          | Comment                                                                                                                         |
+|------------------------|------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| APP_ENV                | test             | Test environment                                                                                                                |
+| PIMCORE_TEST           | 1                | **important** this will switch several directories (like /var/classes)                                                          |
+| PIMCORE_TEST_SKIP_DB   | 1                | Skips DB setup. This does not skip the db-related tests but it<br/>reduces the setup time for tests that don't need a database. |
+| PIMCORE_TEST_REDIS_DSN | redis://localhost| **required for REDIS tests**                                                                                                    |
 
 #### Suites
 
