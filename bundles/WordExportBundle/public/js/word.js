@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.bundle.wordexport.word");
+/**
+ * @private
+ */
 pimcore.bundle.wordexport.word = Class.create({
 
     initialize: function () {

@@ -12,8 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.bundle.wordexport.startup");
-
-
+/**
+ * @private
+ */
 pimcore.bundle.wordexport.startup = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
