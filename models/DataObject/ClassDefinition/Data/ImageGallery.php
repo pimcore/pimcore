@@ -195,7 +195,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
         $fd = new Hotspotimage();
 
-        $images = explode(',', $images);
+        $images = array_map('intval', explode(',', $images));
         for ($i = 1; $i < count($images) - 1; $i++) {
             $imageId = $images[$i];
             $hotspotData = $hotspots[$i - 1];
