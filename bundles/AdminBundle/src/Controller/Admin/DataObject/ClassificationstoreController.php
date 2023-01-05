@@ -984,9 +984,6 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $this->checkPermission('objects');
 
         $ids = $this->decodeJson($request->get('collectionIds'));
-        $oid = (int) $request->get('oid');
-        $object = DataObject\Concrete::getById($oid);
-        $fieldname = $request->get('fieldname');
         $data = [];
 
         if ($ids) {
@@ -1005,6 +1002,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
             $allowedGroupIds = null;
 
+            $oid = (int) $request->get('oid');
+            $object = DataObject\Concrete::getById($oid);
             if ($object) {
                 $class = $object->getClass();
                 /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
@@ -1020,6 +1019,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             }
 
             if ($groupIdList) {
+                $fieldname = $request->get('fieldname');
                 $groupList = new Classificationstore\GroupConfig\Listing();
                 $groupCondition = 'id in (' . implode(',', $groupIdList) . ')';
                 $groupList->setCondition($groupCondition);
