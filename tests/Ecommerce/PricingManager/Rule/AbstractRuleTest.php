@@ -50,7 +50,7 @@ class AbstractRuleTest extends EcommerceTestCase
      *
      * @throws \Codeception\Exception\ModuleException
      */
-    protected function buildPricingManager($rules): PricingManagerInterface
+    protected function buildPricingManager(array $rules): PricingManagerInterface
     {
         $rules = $this->buildRules($rules);
 
@@ -78,7 +78,7 @@ class AbstractRuleTest extends EcommerceTestCase
         return new Price(Decimal::create($value), new Currency('EUR'));
     }
 
-    protected function buildCartCalculator(CartInterface $cart, PricingManagerInterface $pricingManager, $withModificators = false): CartPriceCalculator
+    protected function buildCartCalculator(CartInterface $cart, PricingManagerInterface $pricingManager, bool $withModificators = false): CartPriceCalculator
     {
         $calculator = new CartPriceCalculator($this->buildEnvironment(), $cart);
 
@@ -175,7 +175,7 @@ class AbstractRuleTest extends EcommerceTestCase
         return $product;
     }
 
-    protected function doAssertions($ruleDefinitions, $productDefinitions, $tests): SessionCart|CartInterface|\PHPUnit_Framework_MockObject_Stub
+    protected function doAssertions(array $ruleDefinitions, array $productDefinitions, array $tests): SessionCart|CartInterface|\PHPUnit_Framework_MockObject_Stub
     {
         $pricingManager = $this->buildPricingManager($ruleDefinitions);
 
@@ -218,7 +218,7 @@ class AbstractRuleTest extends EcommerceTestCase
         return $cart;
     }
 
-    protected function doAssertionsWithGiftItem($ruleDefinitions, $productDefinitions, $tests, $hasGiftItem)
+    protected function doAssertionsWithGiftItem(array $ruleDefinitions, array $productDefinitions, array $tests, bool $hasGiftItem): void
     {
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
 
@@ -238,7 +238,7 @@ class AbstractRuleTest extends EcommerceTestCase
         }
     }
 
-    protected function doAssertionsWithShippingCosts($ruleDefinitions, $productDefinitions, $tests, $noShippingCosts)
+    protected function doAssertionsWithShippingCosts(array $ruleDefinitions, array $productDefinitions, array $tests, bool $noShippingCosts): void
     {
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
 
@@ -256,17 +256,6 @@ class AbstractRuleTest extends EcommerceTestCase
         } else {
             $this->assertFalse($modifications['shipping']->getAmount()->equals(Decimal::create(0)), 'Check if cart has shipping costs - it should not have.');
         }
-    }
-
-    protected function getShippingModificator($modificators): ShippingInterface
-    {
-        foreach ($modificators as $modificator) {
-            if ($modificator instanceof ShippingInterface) {
-                return $modificator;
-            }
-        }
-
-        return $modificator;
     }
 
     /**

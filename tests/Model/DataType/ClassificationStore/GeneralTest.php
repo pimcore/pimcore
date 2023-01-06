@@ -47,7 +47,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         parent::tearDown();
     }
 
-    public function testBasics()
+    public function testBasics(): void
     {
         // make sure that store config exists
         $store = Classificationstore\StoreConfig::getByName('teststore');
@@ -137,7 +137,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         Cache::enable();
     }
 
-    public function testBooleanSelect()
+    public function testBooleanSelect(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -173,7 +173,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         return $o;
     }
 
-    public function testCheckbox()
+    public function testCheckbox(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -192,7 +192,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testClassificationStoreInput()
+    public function testClassificationStoreInput(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -211,7 +211,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testClassificationStoreQuantityValue()
+    public function testClassificationStoreQuantityValue(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $this->configureStoreWithQuantityValueField($store);
@@ -266,7 +266,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         Cache::enable();
     }
 
-    public function testCountry()
+    public function testCountry(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -285,7 +285,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testCountrymultiselect()
+    public function testCountrymultiselect(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -304,7 +304,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testDate()
+    public function testDate(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -324,7 +324,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testDatetime()
+    public function testDatetime(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -344,7 +344,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testEncryptedField()
+    public function testEncryptedField(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -364,7 +364,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testInput()
+    public function testInput(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -383,7 +383,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testInputQuantityValue()
+    public function testInputQuantityValue(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -409,7 +409,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testLanguage()
+    public function testLanguage(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -428,7 +428,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testLanguagemultiselect()
+    public function testLanguagemultiselect(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -447,7 +447,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testMultiselect()
+    public function testMultiselect(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -466,7 +466,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testNumeric()
+    public function testNumeric(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -485,7 +485,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testQuantityValue()
+    public function testQuantityValue(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -511,7 +511,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testRgbaColor()
+    public function testRgbaColor(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -530,7 +530,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testSelect()
+    public function testSelect(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -549,7 +549,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testSlider()
+    public function testSlider(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -568,7 +568,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testTable()
+    public function testTable(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -587,7 +587,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testTextarea()
+    public function testTextarea(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -606,7 +606,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testTime()
+    public function testTime(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -625,7 +625,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testUser()
+    public function testUser(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -654,7 +654,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testWysiwyg()
+    public function testWysiwyg(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -673,7 +673,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testAddGridFeatureJoinsWithTwoFilters()
+    public function testAddGridFeatureJoinsWithTwoFilters(): void
     {
         $name = 'inheritance';
         $class = ClassDefinition::getByName($name);

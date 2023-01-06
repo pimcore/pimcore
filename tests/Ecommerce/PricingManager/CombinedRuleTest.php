@@ -26,7 +26,7 @@ use Pimcore\Tests\Ecommerce\PricingManager\Rule\AbstractRuleTest;
 
 class CombinedRuleTest extends AbstractRuleTest
 {
-    public function testSimpleProductAndCartDiscount()
+    public function testSimpleProductAndCartDiscount(): void
     {
         $ruleDefinitions = [
             'testrule' => [
@@ -79,7 +79,7 @@ class CombinedRuleTest extends AbstractRuleTest
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
     }
 
-    public function testSimpleProductAndCartDiscountWithCondition1()
+    public function testSimpleProductAndCartDiscountWithCondition1(): void
     {
         $ruleDefinitions = [
             'testrule' => [
@@ -168,7 +168,7 @@ class CombinedRuleTest extends AbstractRuleTest
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
     }
 
-    public function testSimpleProductAndCartDiscountWithConditionFreeShippingFirst()
+    public function testSimpleProductAndCartDiscountWithConditionFreeShippingFirst(): void
     {
         $ruleDefinitions = [
             'testrule' => [
@@ -268,7 +268,7 @@ class CombinedRuleTest extends AbstractRuleTest
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
     }
 
-    public function testSimpleProductAndCartDiscountWithConditionFreeShippingLast()
+    public function testSimpleProductAndCartDiscountWithConditionFreeShippingLast(): void
     {
         $ruleDefinitions = [
             'testrule' => [
@@ -368,7 +368,7 @@ class CombinedRuleTest extends AbstractRuleTest
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
     }
 
-    public function testTwoAndConditions()
+    public function testTwoAndConditions(): void
     {
         $ruleDefinitions = [
             'testrule' => [
@@ -458,7 +458,7 @@ class CombinedRuleTest extends AbstractRuleTest
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
     }
 
-    public function testTwoOrConditions()
+    public function testTwoOrConditions(): void
     {
         $ruleDefinitions = [
             'testrule' => [

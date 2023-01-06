@@ -66,7 +66,7 @@ class CodeCollectorTest extends TestCase
         return $stub;
     }
 
-    public function testCodeIsAddedToDefaultBlock()
+    public function testCodeIsAddedToDefaultBlock(): void
     {
         $this->assertEmpty($this->getCodeParts());
 
@@ -83,7 +83,7 @@ class CodeCollectorTest extends TestCase
         ], $this->getCodeParts());
     }
 
-    public function testCodeIsAddedToSelectedBlock()
+    public function testCodeIsAddedToSelectedBlock(): void
     {
         $this->assertEmpty($this->getCodeParts());
 
@@ -100,7 +100,7 @@ class CodeCollectorTest extends TestCase
         ], $this->getCodeParts());
     }
 
-    public function testCodeIsAddedToSelectedAction()
+    public function testCodeIsAddedToSelectedAction(): void
     {
         $this->assertEmpty($this->getCodeParts());
 
@@ -117,7 +117,7 @@ class CodeCollectorTest extends TestCase
         ], $this->getCodeParts());
     }
 
-    public function testCodeIsAddedToSiteId()
+    public function testCodeIsAddedToSiteId(): void
     {
         $siteId = $this->buildSiteId('site_1');
 
@@ -134,7 +134,7 @@ class CodeCollectorTest extends TestCase
         ], $this->getCodeParts());
     }
 
-    public function testEnrichCodeBlock()
+    public function testEnrichCodeBlock(): void
     {
         $siteId = $this->buildSiteId('site_1');
 
@@ -150,7 +150,7 @@ class CodeCollectorTest extends TestCase
         $this->assertEquals("PREPEND:\ncode\n:APPEND", $codeBlock->asString());
     }
 
-    public function testEnrichCodeBlockHandleSiteSpecificParts()
+    public function testEnrichCodeBlockHandleSiteSpecificParts(): void
     {
         $siteIdA = $this->buildSiteId('site_a');
         $siteIdB = $this->buildSiteId('site_b');
@@ -177,7 +177,7 @@ class CodeCollectorTest extends TestCase
         $this->assertEquals("GLOBAL:\ncodeB\n:SITE B SPECIFIC", $codeBlockB->asString());
     }
 
-    public function testDefaultBlockIsInValidBlocks()
+    public function testDefaultBlockIsInValidBlocks(): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('The default block "C" must be a part of the valid blocks');
@@ -185,7 +185,7 @@ class CodeCollectorTest extends TestCase
         new CodeCollector($this->validBlocks, 'C');
     }
 
-    public function testErrorOnInvalidBlock()
+    public function testErrorOnInvalidBlock(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid block "C". Valid values are: A, B');
@@ -193,7 +193,7 @@ class CodeCollectorTest extends TestCase
         $this->collector->addCodePart('foo', 'C');
     }
 
-    public function testErrorOnInvalidAction()
+    public function testErrorOnInvalidAction(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid action "merge". Valid actions are: prepend, append');
