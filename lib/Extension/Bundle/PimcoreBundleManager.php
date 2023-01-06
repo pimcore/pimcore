@@ -500,10 +500,7 @@ class PimcoreBundleManager
     /**
      * Emits given path event
      *
-     * @param array  $paths
-     * @param string $eventName
-     *
-     * @return array
+     * @return string[]
      */
     protected function resolveEventPaths(array $paths, string $eventName): array
     {

@@ -275,6 +275,9 @@ class LoginController extends AdminController implements KernelControllerEventIn
         }
     }
 
+    /**
+     * @return array{config: Config, pluginCssPaths: string[]}
+     */
     protected function buildLoginPageViewParams(Config $config): array
     {
         return [

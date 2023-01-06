@@ -428,7 +428,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      * @param Request $request
      * @param Config $config
      *
-     * @return array
+     * @return array{success: bool, asset: ?Asset}
      *
      * @throws \Exception
      */

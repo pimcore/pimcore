@@ -27,6 +27,9 @@ use Symfony\Component\Process\Process;
  */
 class Composer
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected static array $options = [
         'bin-dir' => 'bin',
         'public-dir' => 'public',
@@ -151,7 +154,7 @@ class Composer
     }
 
     /**
-     * @return array
+     * @return string[]
      *
      * @internal
      */
@@ -179,6 +182,9 @@ class Composer
         return $arguments;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected static function getOptions(Event $event): array
     {
         $options = array_merge(static::$options, $event->getComposer()->getPackage()->getExtra());

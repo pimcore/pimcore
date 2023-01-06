@@ -52,6 +52,9 @@ abstract class AbstractDao implements DaoInterface
         $this->db->rollBack();
     }
 
+    /**
+     * @return string[]
+     */
     public function getValidTableColumns(string $table, bool $cache = true): array
     {
         $cacheKey = self::CACHEKEY . $table;

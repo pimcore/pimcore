@@ -21,6 +21,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PathsEvent extends Event
 {
+    /**
+     * @var string[]
+     */
     protected array $paths = [];
 
     public function __construct(array $paths = [])
@@ -28,17 +31,26 @@ class PathsEvent extends Event
         $this->setPaths($paths);
     }
 
+    /**
+     * @return string[]
+     */
     public function getPaths(): array
     {
         return $this->paths;
     }
 
+    /**
+     * @param string[] $paths
+     */
     public function setPaths(array $paths)
     {
         $this->paths = [];
         $this->addPaths($paths);
     }
 
+    /**
+     * @param string[] $paths
+     */
     public function addPaths(array $paths)
     {
         $this->paths = array_merge($this->paths, $paths);

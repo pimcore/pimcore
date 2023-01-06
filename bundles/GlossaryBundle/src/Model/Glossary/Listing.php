@@ -24,7 +24,7 @@ use Pimcore\Model\Listing\AbstractListing;
  * @method Glossary[] load()
  * @method Glossary|false current()
  * @method int getTotalCount()
- * @method array getDataArray()
+ * @method list<array<string,mixed>> getDataArray()
  */
 class Listing extends AbstractListing
 {

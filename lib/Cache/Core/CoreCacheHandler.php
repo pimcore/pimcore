@@ -422,9 +422,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Create tags for cache item - do this as late as possible as this is potentially expensive (nested items, dependencies)
      *
-     * @param string $key
-     * @param mixed $data
-     * @param array $tags
+     * @param string[] $tags
      *
      * @return null|string[]
      */
@@ -680,9 +678,9 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Normalize (unique) clear tags and shift special tags to shutdown (e.g. output)
      *
-     * @param array $tags
+     * @param string[] $tags
      *
-     * @return array
+     * @return string[]
      */
     protected function normalizeClearTags(array $tags): array
     {

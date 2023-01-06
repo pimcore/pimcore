@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
  * @method void commit()
  * @method void rollBack()
  * @method void configure()
- * @method array getValidTableColumns(string $table, bool $cache)
+ * @method string[] getValidTableColumns(string $table, bool $cache)
  * @method void resetValidTableColumnsCache(string $table)
  */
 abstract class AbstractModel implements ModelInterface

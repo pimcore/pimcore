@@ -130,6 +130,11 @@ interface ElementInterface extends ModelInterface
 
     public function getCacheTag(): string;
 
+    /**
+     * @param string[] $tags
+     *
+     * @return string[]
+     */
     public function getCacheTags(array $tags = []): array;
 
     public function __isBasedOnLatestData(): bool;

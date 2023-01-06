@@ -1583,6 +1583,9 @@ class SettingsController extends AdminController
         return $this->adminJson(['success' => false]);
     }
 
+    /**
+     * @return array{id: ?int, name: string, language: string, type: string, data: ?string, siteId: ?int, creationDate: ?int, modificationDate: ?int}
+     */
     private function getWebsiteSettingForEditMode(WebsiteSetting $item): array
     {
         $resultItem = [
