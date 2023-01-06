@@ -994,7 +994,7 @@ final class User extends User\UserRole
      * @param array|null
      * @return array|null
      */
-    public static function strictKeybinds(null|array $bindings)
+    public static function strictKeybinds($bindings)
     {
         if($bindings == null){
             return null;
