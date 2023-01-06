@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.gdpr.gdprPanel");
+/**
+ * @private
+ */
 pimcore.settings.gdpr.gdprPanel = Class.create({
 
     initialize: function () {

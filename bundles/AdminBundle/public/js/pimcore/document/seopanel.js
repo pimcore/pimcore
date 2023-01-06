@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.seopanel");
+/**
+ * @private
+ */
 pimcore.document.seopanel = Class.create({
 
     initialize: function () {

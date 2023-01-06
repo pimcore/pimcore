@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.layout.portlets.modifiedObjects");
+/**
+ * @private
+ */
 pimcore.layout.portlets.modifiedObjects = Class.create(pimcore.layout.portlets.abstract, {
 
     getType: function () {

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.report.webmastertools.settings");
+/**
+ * @private
+ */
 pimcore.report.webmastertools.settings = Class.create({
 
     initialize: function (parent) {

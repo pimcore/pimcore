@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.layout.portlets.modificationStatistic");
+/**
+ * @private
+ */
 pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.portlets.abstract, {
 
     getType: function () {

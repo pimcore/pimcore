@@ -12,7 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.object.tags.dateRange');
-
+/**
+ * @private
+ */
 pimcore.object.tags.dateRange = Class.create(pimcore.object.tags.abstract, {
     type: 'dateRange',
 

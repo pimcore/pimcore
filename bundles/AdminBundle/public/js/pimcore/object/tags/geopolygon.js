@@ -11,8 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-/*global google */
 pimcore.registerNS('pimcore.object.tags.geopolygon');
+/**
+ * @private
+ */
 pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, {
 
     type: 'geopolygon',

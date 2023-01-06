@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.report.custom.report");
+/**
+ * @private
+ */
 pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
     drillDownFilters: {},

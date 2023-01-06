@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.folder");
+/**
+ * @private
+ */
 pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
     initialize: function(id, options) {

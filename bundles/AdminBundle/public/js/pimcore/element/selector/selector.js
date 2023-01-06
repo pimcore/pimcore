@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.selector.selector");
+/**
+ * @private
+ */
 pimcore.element.selector.selector = Class.create({
 
     

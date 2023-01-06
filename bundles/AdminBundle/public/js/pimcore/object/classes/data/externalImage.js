@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.externalImage");
+/**
+ * @private
+ */
 pimcore.object.classes.data.externalImage = Class.create(pimcore.object.classes.data.data, {
 
     type: "externalImage",

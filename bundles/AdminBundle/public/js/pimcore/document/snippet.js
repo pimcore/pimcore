@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.snippet");
+/**
+ * @private
+ */
 pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
 
     initialize: function(id, options) {

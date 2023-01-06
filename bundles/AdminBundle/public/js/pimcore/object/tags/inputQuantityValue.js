@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.inputQuantityValue");
+/**
+ * @private
+ */
 pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstract, {
 
     type: "inputQuantityValue",

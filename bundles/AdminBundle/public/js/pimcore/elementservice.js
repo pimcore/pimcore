@@ -13,6 +13,9 @@
 
 pimcore.registerNS("pimcore.elementservice.x");
 
+/**
+ * @private
+ */
 pimcore.elementservice.deleteElement = function (options) {
     var elementType = options.elementType;
     var url = Routing.getBaseUrl() + "/admin/"  + elementType + "/delete-info?";
@@ -24,6 +27,9 @@ pimcore.elementservice.deleteElement = function (options) {
     });
 };
 
+/**
+ * @private
+ */
 pimcore.elementservice.deleteElementsComplete = function(options, response) {
     try {
         var res = Ext.decode(response.responseText);
@@ -71,6 +77,9 @@ pimcore.elementservice.deleteElementsComplete = function(options, response) {
     }
 }
 
+/**
+ * @private
+ */
 pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, res, options) {
 
     try {
@@ -103,7 +112,9 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, 
     }
 };
 
-
+/**
+ * @private
+ */
 pimcore.elementservice.getElementTreeNames = function(elementType) {
     var treeNames = ["layout_" + elementType + "_tree"]
     if (pimcore.settings.customviews.length > 0) {
@@ -117,6 +128,9 @@ pimcore.elementservice.getElementTreeNames = function(elementType) {
     return treeNames;
 };
 
+/**
+ * @private
+ */
 pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
 
     if (button == "ok" && r.deletejobs) {
@@ -263,6 +277,9 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
     }
 };
 
+/**
+ * @private
+ */
 pimcore.elementservice.updateAsset = function (id, data, callback) {
 
     if (!callback) {

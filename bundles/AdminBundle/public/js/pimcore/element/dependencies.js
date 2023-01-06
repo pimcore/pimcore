@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.dependencies");
+/**
+ * @private
+ */
 pimcore.element.dependencies = Class.create({
 
     initialize: function(element, type) {

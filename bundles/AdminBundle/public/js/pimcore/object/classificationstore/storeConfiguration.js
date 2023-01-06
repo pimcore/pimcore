@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classificationstore.storeConfiguration");
+/**
+ * @private
+ */
 pimcore.object.classificationstore.storeConfiguration = Class.create({
 
     initialize: function (storeConfig, callback) {
