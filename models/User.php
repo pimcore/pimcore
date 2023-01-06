@@ -990,6 +990,10 @@ final class User extends User\UserRole
         return $this->keyBindings ? $this->keyBindings : self::getDefaultKeyBindings();
     }
 
+    /**
+     * @param array|null
+     * @return array|null
+     */
     public static function strictKeybinds(null|array $bindings)
     {
         if($bindings == null){
