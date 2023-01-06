@@ -15,17 +15,18 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Cache;
-use Pimcore\Cache\RuntimeCache;
-use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
-use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\Db;
+use Pimcore\Cache;
+use Pimcore\Model;
+use Pimcore\Logger;
+use Pimcore\Model\DataObject;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
+use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
-use Pimcore\Logger;
-use Pimcore\Model;
-use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
+use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 
 /**
@@ -1422,6 +1423,16 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function setCompositeIndices($compositeIndices)
     {
+        $class = $this->getFieldDefinitions([]);
+        foreach($compositeIndices as $indexInd => $compositeIndex){
+            foreach($compositeIndex["index_columns"] as $fieldInd => $fieldName){
+                if(isset($class[$fieldName]) && $class[$fieldName] instanceof ManyToOneRelation){
+                    $compositeIndices[$indexInd]["index_columns"][$fieldInd] = $fieldName . "__id";
+                    $compositeIndices[$indexInd]["index_columns"][] = $fieldName . "__type";
+                    $compositeIndices[$indexInd]["index_columns"] = array_unique($compositeIndices[$indexInd]["index_columns"]);
+                }
+            }
+        }
         $this->compositeIndices = $compositeIndices ?? [];
 
         return $this;
