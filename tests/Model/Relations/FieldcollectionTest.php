@@ -44,13 +44,13 @@ class FieldcollectionTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses(): void
+    protected function setUpTestClasses()
     {
         $this->tester->setupPimcoreClass_RelationTest();
         $this->tester->setupFieldcollection_Unittestfieldcollection();
     }
 
-    public function testRelationFieldInsideFieldCollection(): void
+    public function testRelationFieldInsideFieldCollection()
     {
         $target1 = new RelationTest();
         $target1->setParent(Service::createFolderByPath('__test/relationobjects'));
@@ -119,7 +119,7 @@ class FieldcollectionTest extends ModelTestCase
         $this->assertEquals([], $rel);
     }
 
-    public function testLocalizedFieldInsideFieldCollection(): void
+    public function testLocalizedFieldInsideFieldCollection()
     {
         $target1 = new RelationTest();
         $target1->setParent(Service::createFolderByPath('__test/relationobjects'));

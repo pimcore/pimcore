@@ -42,7 +42,7 @@ class MultipleAssigmentTest extends ModelTestCase
         $this->createRelationObjects();
     }
 
-    protected function createRelationObjects(): void
+    protected function createRelationObjects()
     {
         for ($i = 0; $i < 20; $i++) {
             $object = new RelationTest();
@@ -60,13 +60,13 @@ class MultipleAssigmentTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses(): void
+    protected function setUpTestClasses()
     {
         $this->tester->setupPimcoreClass_RelationTest();
         $this->tester->setupPimcoreClass_MultipleAssignments();
     }
 
-    public function testMultipleAssignmentsOnSingleManyToMany(): void
+    public function testMultipleAssignmentsOnSingleManyToMany()
     {
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
@@ -97,7 +97,7 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    protected function checkMultipleAssignmentsOnSingleManyToMany(array $metaDataList, string $positionMessage = ''): void
+    protected function checkMultipleAssignmentsOnSingleManyToMany(array $metaDataList, $positionMessage = '')
     {
         $this->assertEquals(5, count($metaDataList), "Relation count $positionMessage.");
         foreach ($metaDataList as $i => $metadata) {
@@ -105,7 +105,7 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    public function testMultipleAssignmentsOnSingleManyToManyObject(): void
+    public function testMultipleAssignmentsOnSingleManyToManyObject()
     {
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
@@ -136,7 +136,7 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    protected function checkMultipleAssignmentsOnMultipleManyToMany(array $metaDataList, string $positionMessage = ''): void
+    protected function checkMultipleAssignmentsOnMultipleManyToMany(array $metaDataList, $positionMessage = '')
     {
         $this->assertEquals(10, count($metaDataList), "Relation count $positionMessage.");
         $number = 0;
@@ -150,7 +150,7 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    public function testMultipleAssignmentsMultipleManyToMany(): void
+    public function testMultipleAssignmentsMultipleManyToMany()
     {
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
@@ -197,7 +197,7 @@ class MultipleAssigmentTest extends ModelTestCase
         $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after serialize/unserialize');
     }
 
-    public function testMultipleAssignmentsMultipleManyToManyObject(): void
+    public function testMultipleAssignmentsMultipleManyToManyObject()
     {
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);

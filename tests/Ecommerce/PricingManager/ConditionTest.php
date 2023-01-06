@@ -36,7 +36,7 @@ use Pimcore\Tests\Support\Test\EcommerceTestCase;
 
 class ConditionTest extends EcommerceTestCase
 {
-    public function testCartAmount(): void
+    public function testCartAmount()
     {
         $cart = $this->getMockBuilder(SessionCart::class)->getMock();
 
@@ -116,7 +116,7 @@ class ConditionTest extends EcommerceTestCase
         return $category;
     }
 
-    public function testCatalogCategory(): void
+    public function testCatalogCategory()
     {
         $environmentCategories = [];
 
@@ -222,7 +222,7 @@ class ConditionTest extends EcommerceTestCase
         return $cart;
     }
 
-    public function testCatalogProduct(): void
+    public function testCatalogProduct()
     {
         /** @var Environment $environment */
         $environment = Stub::make(Environment::class, [
@@ -318,7 +318,7 @@ class ConditionTest extends EcommerceTestCase
         $this->assertFalse($catalogProduct->check($environment), 'check environment with cart and product against filled products');
     }
 
-    public function testDateRange(): void
+    public function testDateRange()
     {
         /** @var Environment $environment */
         $environment = Stub::make(Environment::class, [

@@ -42,7 +42,7 @@ class RecyclebinTest extends ModelTestCase
         $this->createDummyUser();
     }
 
-    protected function createDummyUser(): void
+    protected function createDummyUser()
     {
         if (!$user = User::getByName('test-user')) {
             $user = new User();
@@ -59,7 +59,7 @@ class RecyclebinTest extends ModelTestCase
      * Verifies that an object can be moved to recycle bin and restored
      *
      */
-    public function testSimpleObjectRecycleAndRestore(): void
+    public function testSimpleObjectRecycleAndRestore()
     {
         $object = TestHelper::createEmptyObject();
         $objectId = $object->getId();
@@ -89,7 +89,7 @@ class RecyclebinTest extends ModelTestCase
      * Verifies that object with children can be moved to recyclebin and restored
      *
      */
-    public function testRecursiveObjectRecycleAndRestore(): void
+    public function testRecursiveObjectRecycleAndRestore()
     {
         // create parent object
         $parent = TestHelper::createEmptyObject();
@@ -133,7 +133,7 @@ class RecyclebinTest extends ModelTestCase
      * Verifies that an object data is restored properly
      *
      */
-    public function testObjectDataRecycleAndRestore(): void
+    public function testObjectDataRecycleAndRestore()
     {
         // create target object
         $inputText = TestHelper::generateRandomString();

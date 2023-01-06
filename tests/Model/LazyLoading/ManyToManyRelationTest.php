@@ -28,7 +28,7 @@ use Pimcore\Model\DataObject\Service;
 
 class ManyToManyRelationTest extends AbstractLazyLoadingTest
 {
-    public function testUnpublished(): void
+    public function testUnpublished()
     {
         $preservedState = Concrete::getHideUnpublished();
         $folder = Service::createFolderByPath('/rel-test');
@@ -64,7 +64,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         Concrete::setHideUnpublished($preservedState);
     }
 
-    public function testClassAttributes(): void
+    public function testClassAttributes()
     {
         //prepare data object
 
@@ -102,7 +102,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testLocalizedClassAttributes(): void
+    public function testLocalizedClassAttributes()
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -139,7 +139,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testBlockClassAttributes(): void
+    public function testBlockClassAttributes()
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -184,7 +184,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testLazyBlockClassAttributes(): void
+    public function testLazyBlockClassAttributes()
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -226,7 +226,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testFieldCollectionAttributes(): void
+    public function testFieldCollectionAttributes()
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -276,7 +276,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testFieldCollectionLocalizedAttributes(): void
+    public function testFieldCollectionLocalizedAttributes()
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -362,7 +362,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testBrickAttributes(): void
+    public function testBrickAttributes()
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -403,7 +403,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testLocalizedBrickAttributes(): void
+    public function testLocalizedBrickAttributes()
     {
         //prepare data object
         $object = $this->createDataObject();

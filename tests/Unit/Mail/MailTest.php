@@ -37,7 +37,7 @@ class MailTest extends TestCase
     /**
      * Test: Mail generate with header and body param
      */
-    public function testGenerateMail(): void
+    public function testGenerateMail()
     {
         $headers = (new Headers())
             ->addMailboxListHeader('From', [$this->defaultSettings['from']])
@@ -55,7 +55,7 @@ class MailTest extends TestCase
     /**
      * Test: Mail generate with array param
      */
-    public function testGenerateMailWithArray(): void
+    public function testGenerateMailWithArray()
     {
         $headers = (new Headers())
             ->addMailboxListHeader('From', [$this->defaultSettings['from']])
@@ -79,7 +79,7 @@ class MailTest extends TestCase
     /**
      * Test: Initializes the mailer with the settings form Settings -> System -> Email Settings
      */
-    public function testMailInit(): void
+    public function testMailInit()
     {
         $emailConfig = \Pimcore\Config::getSystemConfiguration('email');
 
@@ -94,7 +94,7 @@ class MailTest extends TestCase
     /**
      * Test: Add Recipients to Mail with params email, name
      */
-    public function testAddRecipientsToMail(): void
+    public function testAddRecipientsToMail()
     {
         $mail = new \Pimcore\Mail();
         $mail->clearRecipients();
@@ -112,7 +112,7 @@ class MailTest extends TestCase
     /**
      * Test: Clear Recipients from Mail
      */
-    public function testClearRecipientsFromMail(): void
+    public function testClearRecipientsFromMail()
     {
         $mail = new \Pimcore\Mail();
         $mail->addTo($this->defaultSettings['to'])
@@ -131,7 +131,7 @@ class MailTest extends TestCase
     /**
      * Test: Text body render with Params
      */
-    public function testTextBodyRenderedWithParams(): void
+    public function testTextBodyRenderedWithParams()
     {
         $mail = new \Pimcore\Mail();
         $mail->text('Hi, {{ firstname }} {{ lastname }}.');
@@ -146,7 +146,7 @@ class MailTest extends TestCase
     /**
      * Test: Html body render with Params
      */
-    public function testHtmlBodyRenderedWithParams(): void
+    public function testHtmlBodyRenderedWithParams()
     {
         $mail = new \Pimcore\Mail();
         $mail->html('Hi, {{ firstname }} {{ lastname }}.');

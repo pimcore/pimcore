@@ -26,7 +26,7 @@ use Pimcore\Tests\Support\Util\Autoloader;
 
 class Unit extends \Codeception\Module
 {
-    public function __construct(ModuleContainer $moduleContainer, ?array $config = null)
+    public function __construct(ModuleContainer $moduleContainer, $config = null)
     {
         $this->config = array_merge($this->config, [
             'run_installer' => true,
@@ -35,12 +35,12 @@ class Unit extends \Codeception\Module
         parent::__construct($moduleContainer, $config);
     }
 
-    public function _beforeSuite(array $settings = []): void
+    public function _beforeSuite(array $settings = [])
     {
         $this->installPimcoreGlossaryBundle();
     }
 
-    private function installPimcoreGlossaryBundle(): void
+    private function installPimcoreGlossaryBundle()
     {
         if ($this->config['run_installer']) {
             /** @var Pimcore $pimcoreModule */

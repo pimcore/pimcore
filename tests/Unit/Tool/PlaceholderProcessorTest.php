@@ -32,7 +32,7 @@ class PlaceholderProcessorTest extends TestCase
         $this->processor = new PlaceholderProcessor();
     }
 
-    public function testPlaceholdersAreMergedIntoArrayValues(): void
+    public function testPlaceholdersAreMergedIntoArrayValues()
     {
         $input = [
             'locale' => '%locale%',
@@ -49,7 +49,7 @@ class PlaceholderProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergePlaceholders($input, $placeholders));
     }
 
-    public function testMultiplePlaceholdersAreMergedIntoArrayValues(): void
+    public function testMultiplePlaceholdersAreMergedIntoArrayValues()
     {
         $input = [
             'locale1' => '%locale1%',
@@ -69,7 +69,7 @@ class PlaceholderProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergePlaceholders($input, $placeholders));
     }
 
-    public function testPlaceholdersAreMergedIntoCompositeArrayValues(): void
+    public function testPlaceholdersAreMergedIntoCompositeArrayValues()
     {
         $input = [
             'locale' => 'my locale is %locale%',
@@ -86,7 +86,7 @@ class PlaceholderProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergePlaceholders($input, $placeholders));
     }
 
-    public function testPlaceholdersAreMergedIntoDeepArrayValues(): void
+    public function testPlaceholdersAreMergedIntoDeepArrayValues()
     {
         $input = [
             'locales' => [
@@ -116,7 +116,7 @@ class PlaceholderProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergePlaceholders($input, $placeholders));
     }
 
-    public function testPlaceholdersAreMergedIntoArrayKeys(): void
+    public function testPlaceholdersAreMergedIntoArrayKeys()
     {
         $input = [
             'locales' => [

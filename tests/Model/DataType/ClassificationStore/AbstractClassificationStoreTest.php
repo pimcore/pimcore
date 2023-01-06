@@ -24,7 +24,7 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
 {
     public static int $configCount = 0;
 
-    protected function configureStoreWithQuantityValueField(Classificationstore\StoreConfig $store): void
+    protected function configureStoreWithQuantityValueField(Classificationstore\StoreConfig $store)
     {
         // create group
         $group = new Classificationstore\GroupConfig();
@@ -59,9 +59,11 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUpTestClasses(): void
+    protected function setUpTestClasses()
     {
-        if (!ClassDefinition::getByName('csstore')) {
+        $class = ClassDefinition::getByName('csstore');
+
+        if (!$class) {
             $store = Classificationstore\StoreConfig::getByName('teststore');
             if (!$store) {
                 $store = new Classificationstore\StoreConfig();
@@ -70,13 +72,15 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
                 $this->configureStore($store);
             }
 
-            $this->tester->setupPimcoreClass_Csstore([
+            $class = $this->tester->setupPimcoreClass_Csstore([
                 'storeId' => $store->getId(),
             ]);
         }
+
+        return $class;
     }
 
-    protected function configureStore(Classificationstore\StoreConfig $store): void
+    protected function configureStore(Classificationstore\StoreConfig $store)
     {
         $group1 = Classificationstore\GroupConfig::getByName('testgroup1');
         if (!$group1) {

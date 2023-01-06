@@ -96,7 +96,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
     protected Asset $assetElement;
 
-    protected function prepareObjectTree(): void
+    protected function prepareObjectTree()
     {
         //example based on https://github.com/pimcore/pimcore/issues/11540
         $this->permissioncpath = $this->createFolder('permission\'"cpath', 1);
@@ -165,7 +165,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         return $asset;
     }
 
-    protected function prepareUsers(): void
+    protected function prepareUsers()
     {
         //create role
         $role = new User\Role();
@@ -280,7 +280,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         User\Role::getByName('Dummyrole')->delete();
     }
 
-    protected function doHasChildrenTest(DataObject\AbstractObject $element, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2, bool $resultPermissionTest3, bool $resultPermissionTest4): void
+    protected function doHasChildrenTest(DataObject\AbstractObject $element, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2, bool $resultPermissionTest3, bool $resultPermissionTest4)
     {
         $admin = User::getByName('admin');
 
@@ -325,7 +325,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         );
     }
 
-    public function testHasChildren(): void
+    public function testHasChildren()
     {
         $this->doHasChildrenTest($this->a, true, true, false, false, false);
         $this->doHasChildrenTest($this->permissionfoo, true, true, true, true, true);
@@ -348,7 +348,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         bool $resultPermissionTest4,
         bool $resultPermissionTest5,
         bool $resultPermissionTest6
-    ): void {
+    ) {
         $admin = User::getByName('admin');
 
         $this->assertEquals(
@@ -393,7 +393,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         );
     }
 
-    public function testIsAllowed(): void
+    public function testIsAllowed()
     {
         $this->doIsAllowedTest($this->permissionfoo, 'list', true, true, true, true, true, true, false);
         $this->doIsAllowedTest($this->permissionfoo, 'view', true, true, true, false, false, false, false);
@@ -426,7 +426,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doIsAllowedTest($this->hiddenobject, 'view', true, false, false, false, false, false, false);
     }
 
-    protected function doAreAllowedTest(DataObject\AbstractObject $element, User $user, array $expectedPermissions): void
+    protected function doAreAllowedTest(DataObject\AbstractObject $element, User $user, array $expectedPermissions)
     {
         $calculatedPermissions = $element->getUserPermissions($user);
 
@@ -439,7 +439,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         }
     }
 
-    public function testAreAllowed(): void
+    public function testAreAllowed()
     {
         $admin = User::getByName('admin');
 
@@ -558,7 +558,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         }
     }
 
-    protected function buildController(string $classname, User $user): mixed
+    protected function buildController(string $classname, User $user)
     {
         $dataObjectController = Stub::construct($classname, [], [
             'getAdminUser' => function () use ($user) {
@@ -579,7 +579,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      *
      * @throws \ReflectionException
      */
-    protected function doTestTreeGetChildrenById(DataObject\AbstractObject $element, User $user, ?array $expectedChildren): void
+    protected function doTestTreeGetChildrenById(DataObject\AbstractObject $element, User $user, ?array $expectedChildren)
     {
         $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Admin\\DataObject\\DataObjectController', $user);
 
@@ -629,7 +629,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         }
     }
 
-    public function testTreeGetChildrenById(): void
+    public function testTreeGetChildrenById()
     {
         $admin = User::getByName('admin');
 
@@ -885,7 +885,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         );
     }
 
-    protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100): void
+    protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100)
     {
         /**
          * @var SearchController $controller
@@ -932,7 +932,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         }
     }
 
-    public function testSearch(): void
+    public function testSearch()
     {
         $admin = User::getByName('admin');
 
@@ -1001,7 +1001,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestSearch('assetelement', $this->userPermissionTest6, []);
     }
 
-    public function testManyElementSearch(): void
+    public function testManyElementSearch()
     {
         $admin = User::getByName('admin');
 
@@ -1042,7 +1042,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestSearch('manyelement', $this->userPermissionTest4, [$manyElementX->getFullpath()], $elementCount);
     }
 
-    protected function doTestQuickSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100): void
+    protected function doTestQuickSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100)
     {
         /**
          * @var SearchController $controller
@@ -1081,7 +1081,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         }
     }
 
-    public function testQuickSearch(): void
+    public function testQuickSearch()
     {
         $admin = User::getByName('admin');
 

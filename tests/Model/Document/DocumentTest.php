@@ -39,7 +39,7 @@ class DocumentTest extends ModelTestCase
 {
     protected ?Page $testPage = null;
 
-    public function testCRUD(): void
+    public function testCRUD()
     {
         // create
         $this->testPage = TestHelper::createEmptyDocumentPage();
@@ -81,7 +81,7 @@ class DocumentTest extends ModelTestCase
     /**
      * Parent ID of a new object cannot be 0
      */
-    public function testParentIs0(): void
+    public function testParentIs0()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
@@ -95,7 +95,7 @@ class DocumentTest extends ModelTestCase
     /**
      * Verifies that an object with the same parent ID cannot be created.
      */
-    public function testParentIdentical(): void
+    public function testParentIdentical()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
@@ -111,7 +111,7 @@ class DocumentTest extends ModelTestCase
      *
      * @group notfound
      */
-    public function testParentNotFound(): void
+    public function testParentNotFound()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
@@ -125,7 +125,7 @@ class DocumentTest extends ModelTestCase
     /**
      * Verifies that asset PHP API version note is saved
      */
-    public function testSavingVersionNotes(): void
+    public function testSavingVersionNotes()
     {
         $versionNote = ['versionNote' => 'a new version of this document'];
         $this->testPage = TestHelper::createEmptyDocumentPage();
@@ -133,12 +133,12 @@ class DocumentTest extends ModelTestCase
         $this->assertEquals($this->testPage->getLatestVersion(null, true)->getNote(), $versionNote['versionNote']);
     }
 
-    public function reloadPage(): void
+    public function reloadPage()
     {
         $this->testPage = Page::getById($this->testPage->getId(), ['force' => true]);
     }
 
-    public function testCacheChildren(): void
+    public function testCacheChildren()
     {
         $parentDoc = TestHelper::createEmptyDocumentPage();
 
@@ -160,7 +160,7 @@ class DocumentTest extends ModelTestCase
         $this->assertEquals(2, count($children), 'Expected 2 children');
     }
 
-    public function testCacheSiblings(): void
+    public function testCacheSiblings()
     {
         $parentDoc = TestHelper::createEmptyDocumentPage();
 
@@ -182,7 +182,7 @@ class DocumentTest extends ModelTestCase
      * Verifies that a document can be saved with custom modification date.
      *
      */
-    public function testCustomModificationDate(): void
+    public function testCustomModificationDate()
     {
         $customDateTime = new \Carbon\Carbon();
         $customDateTime = $customDateTime->subHour();
@@ -205,7 +205,7 @@ class DocumentTest extends ModelTestCase
      * Verifies that a document can be saved with custom user modification id.
      *
      */
-    public function testCustomUserModification(): void
+    public function testCustomUserModification()
     {
         $userId = 101;
         $document = TestHelper::createEmptyDocumentPage();
@@ -221,7 +221,7 @@ class DocumentTest extends ModelTestCase
         $this->assertEquals(0, $document->getUserModification(), 'Expected auto assigned user modification id');
     }
 
-    public function testEmail(): void
+    public function testEmail()
     {
         /** @var Email $emailDocument */
         $emailDocument = TestHelper::createEmptyDocument('', true, true, '\\Pimcore\\Model\\Document\\Email');
@@ -250,7 +250,7 @@ class DocumentTest extends ModelTestCase
         $this->assertEquals($replyTo, $emailDocument->getReplyTo());
     }
 
-    public function testInheritance(): void
+    public function testInheritance()
     {
         $this->testPage = TestHelper::createEmptyDocumentPage();
         $this->assertInstanceOf(Page::class, $this->testPage);
@@ -301,7 +301,7 @@ class DocumentTest extends ModelTestCase
         $testSecondPage->setContentMasterDocumentId($testFirstPage->getId(), true);
     }
 
-    public function testLink(): void
+    public function testLink()
     {
         $target = TestHelper::createImageAsset();
 
@@ -317,7 +317,7 @@ class DocumentTest extends ModelTestCase
         $this->assertEquals($target->getId(), $newTarget->getId());
     }
 
-    public function testLinkItself(): void
+    public function testLinkItself()
     {
         /** @var Link $linkDocument */
         $linkDocument = TestHelper::createEmptyDocument('', true, true, '\\Pimcore\\Model\\Document\\Link');
@@ -339,7 +339,7 @@ class DocumentTest extends ModelTestCase
         $this->assertNull($linkDocument->getInternal());
     }
 
-    public function testSetGetChildren(): void
+    public function testSetGetChildren()
     {
         $parentDoc = TestHelper::createEmptyDocumentPage();
 
@@ -351,7 +351,7 @@ class DocumentTest extends ModelTestCase
         $this->assertSame($parentDoc->getChildren()->getDocuments()[0], $childDoc);
     }
 
-    public function testDocumentSerialization(): void
+    public function testDocumentSerialization()
     {
         $document = TestHelper::createEmptyDocumentPage('some-prefix', true, false);
 
@@ -368,7 +368,7 @@ class DocumentTest extends ModelTestCase
         $this->assertEquals(count($document->getEditables()), count($loadedDocument->getEditables()));
     }
 
-    public function testDocumentPrint(): void
+    public function testDocumentPrint()
     {
         $printpage = TestHelper::createEmptyDocument('print-', true, true, '\\Pimcore\\Model\\Document\\Printpage');
         $this->assertInstanceOf(Printpage::class, $printpage);

@@ -35,7 +35,7 @@ bazinga!
 !!!
 EOL;
 
-    public function testToString(): void
+    public function testToString()
     {
         $block = new CodeBlock($this->defaultParts);
 
@@ -44,7 +44,7 @@ EOL;
         $this->assertEquals($this->defaultResult, $block->__toString());
     }
 
-    public function testSetParts(): void
+    public function testSetParts()
     {
         $block = new CodeBlock();
 
@@ -56,7 +56,7 @@ EOL;
         $this->assertEquals($this->defaultResult, $block->asString());
     }
 
-    public function testAppend(): void
+    public function testAppend()
     {
         $block = new CodeBlock($this->defaultParts);
 
@@ -73,7 +73,7 @@ EOL;
         $this->assertEquals($expected, $block->asString());
     }
 
-    public function testPrepend(): void
+    public function testPrepend()
     {
         $block = new CodeBlock($this->defaultParts);
 

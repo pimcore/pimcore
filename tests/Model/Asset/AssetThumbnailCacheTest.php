@@ -54,7 +54,7 @@ class AssetThumbnailCacheTest extends TestCase
         return true;
     }
 
-    public function testThumbnailCache(): void
+    public function testThumbnailCache()
     {
         $asset = $this->testAsset;
         $thumbnailName = $this->thumbnailName;

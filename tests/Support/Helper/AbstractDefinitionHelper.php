@@ -32,7 +32,7 @@ abstract class AbstractDefinitionHelper extends Module
         return $this->getModule('\\' . ClassManager::class);
     }
 
-    public function _beforeSuite(array $settings = []): void
+    public function _beforeSuite(array $settings = [])
     {
         if ($this->config['initialize_definitions']) {
             if (TestHelper::supportsDbTests()) {
@@ -46,7 +46,7 @@ abstract class AbstractDefinitionHelper extends Module
         }
     }
 
-    public function _afterSuite(): void
+    public function _afterSuite()
     {
         if ($this->config['cleanup']) {
             TestHelper::cleanUp();
@@ -76,7 +76,7 @@ abstract class AbstractDefinitionHelper extends Module
         return $child;
     }
 
-    abstract public function initializeDefinitions(): void;
+    abstract public function initializeDefinitions();
 }
 
 @class_alias(AbstractDefinitionHelper::class, 'Pimcore\Tests\Support\Helper\AbstractDefinitionHelper');

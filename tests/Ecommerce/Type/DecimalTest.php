@@ -25,7 +25,7 @@ use Pimcore\Tests\Support\Test\TestCase;
  */
 class DecimalTest extends TestCase
 {
-    public function testRepresentations(): void
+    public function testRepresentations()
     {
         $value = Decimal::create(10.0, 4);
 
@@ -34,7 +34,7 @@ class DecimalTest extends TestCase
         $this->assertSame('10.0000', $value->asString());
     }
 
-    public function testAsString(): void
+    public function testAsString()
     {
         $value = Decimal::create(10.0, 4);
 
@@ -52,7 +52,7 @@ class DecimalTest extends TestCase
         $this->assertSame('15', $otherScale->asString(0));
     }
 
-    public function testAsStringNoScaleRoundsToNextInteger(): void
+    public function testAsStringNoScaleRoundsToNextInteger()
     {
         $noScale = Decimal::create(15.99, 0);
 
@@ -64,7 +64,7 @@ class DecimalTest extends TestCase
         $this->assertSame('16', $noScale->asString(0));
     }
 
-    public function testInvalidScaleThrowsException(): void
+    public function testInvalidScaleThrowsException()
     {
         $this->expectException(\DomainException::class);
         Decimal::create(10000, -1);
@@ -73,7 +73,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider createDataProvider
      */
-    public function testCreate(float|int|string|Decimal $input, string $expected): void
+    public function testCreate($input, string $expected)
     {
         $value = Decimal::create($input);
 
@@ -83,7 +83,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider createZeroScaleDataProvider
      */
-    public function testZeroScale(float|int|string|Decimal $input): void
+    public function testZeroScale($input)
     {
         $val = Decimal::create($input, 0);
 
@@ -92,7 +92,7 @@ class DecimalTest extends TestCase
         $this->assertEquals('16', $val->asString());
     }
 
-    public function testCreateZero(): void
+    public function testCreateZero()
     {
         $zero = Decimal::zero();
 
@@ -105,26 +105,26 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider invalidValueCreateProvider
      */
-    public function testErrorOnInvalidCreateArgument(mixed $value): void
+    public function testErrorOnInvalidCreateArgument($value)
     {
         $this->expectException(\TypeError::class);
         Decimal::create($value);
     }
 
-    public function testInvalidScaleThrowsExceptionOnCreate(): void
+    public function testInvalidScaleThrowsExceptionOnCreate()
     {
         $this->expectException(\DomainException::class);
         Decimal::create('10.0', -1);
     }
 
-    public function testCreateRounding(): void
+    public function testCreateRounding()
     {
         $this->assertEquals(16, Decimal::create('15.50', 0)->asRawValue());
         $this->assertEquals(16, Decimal::create('15.50', 0, PHP_ROUND_HALF_UP)->asRawValue());
         $this->assertEquals(15, Decimal::create('15.50', 0, PHP_ROUND_HALF_DOWN)->asRawValue());
     }
 
-    public function testFromRawValue(): void
+    public function testFromRawValue()
     {
         $simpleValue = Decimal::fromRawValue(100000, 4);
 
@@ -137,7 +137,7 @@ class DecimalTest extends TestCase
         $this->assertEquals(15.99, $decimalValue->asNumeric());
     }
 
-    public function testFromNumeric(): void
+    public function testFromNumeric()
     {
         $simpleValue = Decimal::fromNumeric(10, 4);
 
@@ -150,13 +150,13 @@ class DecimalTest extends TestCase
         $this->assertEquals(15.99, $decimalValue->asNumeric());
     }
 
-    public function testExceptionOnInvalidFromNumeric(): void
+    public function testExceptionOnInvalidFromNumeric()
     {
         $this->expectException(\InvalidArgumentException::class);
         Decimal::fromNumeric('ABC');
     }
 
-    public function testFromDecimal(): void
+    public function testFromDecimal()
     {
         $value = Decimal::fromRawValue(100000, 4);
         $createdValue = Decimal::fromDecimal($value, 4);
@@ -164,7 +164,7 @@ class DecimalTest extends TestCase
         $this->assertEquals($value, $createdValue);
     }
 
-    public function testFromDecimalWithDifferentScale(): void
+    public function testFromDecimalWithDifferentScale()
     {
         $value = Decimal::fromRawValue(100000, 4);
         $createdValue = Decimal::fromDecimal($value, 8);
@@ -172,7 +172,7 @@ class DecimalTest extends TestCase
         $this->assertEquals($value->asNumeric(), $createdValue->asNumeric());
     }
 
-    public function testWithScale(): void
+    public function testWithScale()
     {
         $val = Decimal::create('10', 4);
 
@@ -197,7 +197,7 @@ class DecimalTest extends TestCase
         $this->assertSame(10, $val->asNumeric());
     }
 
-    public function testWithScaleLosesPrecision(): void
+    public function testWithScaleLosesPrecision()
     {
         $val = Decimal::create('15.99', 4);
 
@@ -225,7 +225,7 @@ class DecimalTest extends TestCase
         $this->assertSame(16, $val->asNumeric());
     }
 
-    public function testExceptionOnAddWithMismatchingScale(): void
+    public function testExceptionOnAddWithMismatchingScale()
     {
         $valA = Decimal::create('10', 4);
         $valB = Decimal::create('20', 8);
@@ -239,7 +239,7 @@ class DecimalTest extends TestCase
         $valA->add($valB);
     }
 
-    public function testExceptionOnSubWithMismatchingScale(): void
+    public function testExceptionOnSubWithMismatchingScale()
     {
         $valA = Decimal::create('10', 4);
         $valB = Decimal::create('20', 8);
@@ -253,7 +253,7 @@ class DecimalTest extends TestCase
         $valA->sub($valB);
     }
 
-    public function testCompare(): void
+    public function testCompare()
     {
         $a = Decimal::create(5);
         $b = Decimal::create(10);
@@ -298,7 +298,7 @@ class DecimalTest extends TestCase
         $this->assertTrue($b->greaterThanOrEqual($b));
     }
 
-    public function testIsPositive(): void
+    public function testIsPositive()
     {
         $this->assertTrue(Decimal::create(10)->isPositive());
         $this->assertTrue(Decimal::create(1)->isPositive());
@@ -312,7 +312,7 @@ class DecimalTest extends TestCase
         $this->assertFalse(Decimal::create(0.00001, 4)->isPositive());
     }
 
-    public function testIsNegative(): void
+    public function testIsNegative()
     {
         $this->assertFalse(Decimal::create(10)->isNegative());
         $this->assertFalse(Decimal::create(1)->isNegative());
@@ -326,7 +326,7 @@ class DecimalTest extends TestCase
         $this->assertFalse(Decimal::create(0.00001, 4)->isNegative());
     }
 
-    public function testIsZero(): void
+    public function testIsZero()
     {
         $this->assertTrue(Decimal::create(0)->isZero());
         $this->assertTrue(Decimal::create(0.0)->isZero());
@@ -349,7 +349,7 @@ class DecimalTest extends TestCase
      * @param string $operation
      * @param array ...$arguments
      */
-    public function testImmutableOperations(int $input, int $expected, string $operation, ...$arguments): void
+    public function testImmutableOperations(int $input, int $expected, string $operation, ...$arguments)
     {
         $value = Decimal::create($input);
 
@@ -380,7 +380,7 @@ class DecimalTest extends TestCase
         );
     }
 
-    public function testAbs(): void
+    public function testAbs()
     {
         $a = Decimal::create(5);
         $b = Decimal::create(-5);
@@ -394,7 +394,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider addDataProvider
      */
-    public function testAdd(float|int|string|Decimal $a, float|int|string|Decimal $b, float|int $expected): void
+    public function testAdd($a, $b, $expected)
     {
         $valA = Decimal::create($a);
 
@@ -404,7 +404,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider subDataProvider
      */
-    public function testSub(float|int|string|Decimal $a, float|int|string|Decimal $b, float|int $expected): void
+    public function testSub($a, $b, $expected)
     {
         $valA = Decimal::create($a);
 
@@ -414,7 +414,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider mulDataProvider
      */
-    public function testMul(float|int|string|Decimal $a, float|int|string|Decimal $b, float|int $expected): void
+    public function testMul($a, $b, $expected)
     {
         $valA = Decimal::create($a);
 
@@ -424,7 +424,7 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider divDataProvider
      */
-    public function testDiv(float|int|string|Decimal $a, float|int|string|Decimal $b, float|int $expected): void
+    public function testDiv($a, $b, $expected)
     {
         $val = Decimal::create($a);
 
@@ -434,14 +434,14 @@ class DecimalTest extends TestCase
     /**
      * @dataProvider zeroDataProvider
      */
-    public function testExceptionOnDivisionByZero(float|int|string|Decimal $val): void
+    public function testExceptionOnDivisionByZero($val)
     {
         $this->expectException(\DivisionByZeroError::class);
         $valA = Decimal::fromRawValue(159900, 4);
         $valA->div(Decimal::create($val));
     }
 
-    public function testDivisionByZeroEpsilon(): void
+    public function testDivisionByZeroEpsilon()
     {
         // test division by zero error is thrown when difference from 0 is smaller than epsilon (depending on scale)
         $val = Decimal::create('10', 4);
@@ -455,14 +455,14 @@ class DecimalTest extends TestCase
         $val->div(0.00001);
     }
 
-    public function testAdditiveInverse(): void
+    public function testAdditiveInverse()
     {
         $this->assertSame('-15.5000', Decimal::create('15.50')->toAdditiveInverse()->asString());
         $this->assertSame('15.5000', Decimal::create('-15.50')->toAdditiveInverse()->asString());
         $this->assertSame(0, Decimal::create(0)->toAdditiveInverse()->asNumeric());
     }
 
-    public function testToPercentage(): void
+    public function testToPercentage()
     {
         $this->assertEquals(80, Decimal::create(100)->toPercentage(80)->asNumeric());
         $this->assertEquals(25, Decimal::create(100)->toPercentage(25)->asNumeric());
@@ -471,14 +471,14 @@ class DecimalTest extends TestCase
         $this->assertEquals(200, Decimal::create(100)->toPercentage(200)->asNumeric());
     }
 
-    public function testDiscount(): void
+    public function testDiscount()
     {
         $this->assertEquals(85, Decimal::create(100)->discount(15)->asNumeric());
         $this->assertEquals(50, Decimal::create(100)->discount(50)->asNumeric());
         $this->assertEquals(70, Decimal::create(100)->discount(30)->asNumeric());
     }
 
-    public function testPercentageOf(): void
+    public function testPercentageOf()
     {
         $origPrice = Decimal::create('129.99');
         $discountedPrice = Decimal::create('88.00');
@@ -495,7 +495,7 @@ class DecimalTest extends TestCase
         $this->assertEquals(50, $b->percentageOf($a));
     }
 
-    public function testDiscountPercentageOf(): void
+    public function testDiscountPercentageOf()
     {
         $origPrice = Decimal::create('129.99');
         $discountedPrice = Decimal::create('88.00');
@@ -515,7 +515,7 @@ class DecimalTest extends TestCase
     }
 
     // TODO test overflow/underflow is checked on every possible operation
-    public function testIntegerOverflow(): void
+    public function testIntegerOverflow()
     {
         $val = Decimal::fromRawValue(1);
 
@@ -529,7 +529,7 @@ class DecimalTest extends TestCase
         $maxInt->add(Decimal::fromRawValue(1));
     }
 
-    public function testIntegerUnderflow(): void
+    public function testIntegerUnderflow()
     {
         $val = Decimal::fromRawValue(-1);
 

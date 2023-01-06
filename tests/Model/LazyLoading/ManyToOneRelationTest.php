@@ -26,7 +26,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 
 class ManyToOneRelationTest extends AbstractLazyLoadingTest
 {
-    public function testClassAttributes(): void
+    public function testClassAttributes()
     {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
@@ -66,7 +66,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testLocalizedClassAttributes(): void
+    public function testLocalizedClassAttributes()
     {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
@@ -105,7 +105,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testBlockClassAttributes(): void
+    public function testBlockClassAttributes()
     {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
@@ -152,7 +152,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testLazyBlockClassAttributes(): void
+    public function testLazyBlockClassAttributes()
     {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
@@ -197,7 +197,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testFieldCollectionAttributes(): void
+    public function testFieldCollectionAttributes()
     {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
@@ -249,7 +249,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testFieldCollectionLocalizedAttributes(): void
+    public function testFieldCollectionLocalizedAttributes()
     {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
@@ -321,7 +321,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testBrickAttributes(): void
+    public function testBrickAttributes()
     {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
@@ -365,7 +365,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testLocalizedBrickAttributes(): void
+    public function testLocalizedBrickAttributes()
     {
         //prepare data object
         $object = $this->createDataObject();

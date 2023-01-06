@@ -44,7 +44,7 @@ class GeneralTest extends ModelTestCase
      *
      * two is created after one. two gets moved out and moved in again. Then one gets updated.
      */
-    public function testInheritance(): void
+    public function testInheritance()
     {
         // According to the bootstrap file en and de are valid website languages
 
@@ -146,7 +146,7 @@ class GeneralTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testEqual(): void
+    public function testEqual()
     {
         // According to the bootstrap file en and de are valid website languages
 
@@ -211,7 +211,7 @@ class GeneralTest extends ModelTestCase
      *
      * object relations field should inherit it's values from one to two
      */
-    public function testInheritanceWithFolder(): void
+    public function testInheritanceWithFolder()
     {
         // According to the bootstrap file en and de are valid website languages
 
@@ -274,7 +274,7 @@ class GeneralTest extends ModelTestCase
      *
      * object relations field should inherit it's values from one to two
      */
-    public function testInheritanceWithOtherClassObjectBetween(): void
+    public function testInheritanceWithOtherClassObjectBetween()
     {
         // According to the bootstrap file en and de are valid website languages
 

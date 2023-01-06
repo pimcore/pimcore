@@ -52,7 +52,7 @@ class SessionCartTest extends TestCase
         return $product;
     }
 
-    public function testAddToCart(): void
+    public function testAddToCart()
     {
         $product = $this->buildProduct(5);
         $cart = $this->buildCart();
@@ -65,7 +65,7 @@ class SessionCartTest extends TestCase
         $this->assertEquals(1, $cart->getItemCount(), 'item count with cart method');
     }
 
-    public function testCartAmountAndCount(): void
+    public function testCartAmountAndCount()
     {
         $product1 = $this->buildProduct(5);
         $product2 = $this->buildProduct(6);

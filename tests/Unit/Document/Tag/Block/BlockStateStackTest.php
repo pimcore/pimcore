@@ -22,14 +22,14 @@ use Pimcore\Tests\Support\Test\TestCase;
 
 class BlockStateStackTest extends TestCase
 {
-    public function testStackHasDefaultState(): void
+    public function testStackHasDefaultState()
     {
         $stack = new BlockStateStack();
 
         $this->assertEquals(1, $stack->count());
     }
 
-    public function testPushAndPop(): void
+    public function testPushAndPop()
     {
         $stack = new BlockStateStack();
 
@@ -62,7 +62,7 @@ class BlockStateStackTest extends TestCase
         $this->assertEquals(1, $stack->count());
     }
 
-    public function testExceptionOnPopLastState(): void
+    public function testExceptionOnPopLastState()
     {
         $stack = new BlockStateStack();
         $stack->push();
@@ -74,7 +74,7 @@ class BlockStateStackTest extends TestCase
         $stack->pop();
     }
 
-    public function testExceptionOnCurrentStateWithoutDefaultState(): void
+    public function testExceptionOnCurrentStateWithoutDefaultState()
     {
         // this should never happen, but just to check if the current state
         // handles an empty state properly

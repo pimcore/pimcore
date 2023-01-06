@@ -90,7 +90,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
 
     protected Asset $abcdefghjkl;
 
-    protected function prepareObjectTree(): void
+    protected function prepareObjectTree()
     {
         //example based on https://github.com/pimcore/pimcore/issues/11540
         $this->permissioncpath = $this->createFolder('permissioncpath', 1);
@@ -154,7 +154,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         return $asset;
     }
 
-    protected function prepareUsers(): void
+    protected function prepareUsers()
     {
         //create role
         $role = new User\Role();
@@ -223,7 +223,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         User\Role::getByName('Dummyrole')->delete();
     }
 
-    protected function doHasChildrenTest(Asset $element, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2): void
+    protected function doHasChildrenTest(Asset $element, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2)
     {
         $admin = User::getByName('admin');
 
@@ -246,7 +246,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         );
     }
 
-    public function testHasChildren(): void
+    public function testHasChildren()
     {
         $this->doHasChildrenTest($this->a, true, true, false); //didn't work before
         $this->doHasChildrenTest($this->permissionfoo, true, true, true); //didn't work before
@@ -260,7 +260,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->doHasChildrenTest($this->hiddenobject, false, false, false);
     }
 
-    protected function doIsAllowedTest(Asset $element, string $type, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2): void
+    protected function doIsAllowedTest(Asset $element, string $type, bool $resultAdmin, bool $resultPermissionTest1, bool $resultPermissionTest2)
     {
         $admin = User::getByName('admin');
 
@@ -283,7 +283,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         );
     }
 
-    public function testIsAllowed(): void
+    public function testIsAllowed()
     {
         $this->doIsAllowedTest($this->permissionfoo, 'list', true, true, true);
         $this->doIsAllowedTest($this->permissionfoo, 'view', true, true, true);
@@ -313,7 +313,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->doIsAllowedTest($this->hiddenobject, 'view', true, false, false);
     }
 
-    protected function doAreAllowedTest(Asset $element, User $user, array $expectedPermissions): void
+    protected function doAreAllowedTest(Asset $element, User $user, array $expectedPermissions)
     {
         $calculatedPermissions = $element->getUserPermissions($user);
 
@@ -326,7 +326,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         }
     }
 
-    public function testAreAllowed(): void
+    public function testAreAllowed()
     {
         $admin = User::getByName('admin');
 
@@ -419,7 +419,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         }
     }
 
-    protected function buildController(string $classname, User $user): mixed
+    protected function buildController(string $classname, User $user)
     {
         $AssetController = Stub::construct($classname, [], [
             'getAdminUser' => function () use ($user) {
@@ -436,7 +436,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         return $AssetController;
     }
 
-    protected function doTestTreeGetChildrenById(Asset $element, User $user, array $expectedChildren): void
+    protected function doTestTreeGetChildrenById(Asset $element, User $user, array $expectedChildren)
     {
         $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Admin\\Asset\\AssetController', $user);
 
@@ -479,7 +479,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         }
     }
 
-    public function testTreeGetChildrenById(): void
+    public function testTreeGetChildrenById()
     {
         $admin = User::getByName('admin');
 
@@ -598,7 +598,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         );
     }
 
-    protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100): void
+    protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100)
     {
         $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Searchadmin\\SearchController', $user);
 
@@ -645,7 +645,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         }
     }
 
-    public function testSearch(): void
+    public function testSearch()
     {
         $admin = User::getByName('admin');
 
@@ -682,7 +682,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->doTestSearch('hiddenobject', $this->userPermissionTest2, []);
     }
 
-    public function testManyElementSearch(): void
+    public function testManyElementSearch()
     {
         $admin = User::getByName('admin');
 

@@ -36,7 +36,7 @@ class NotificationServiceTest extends TestCase
         $this->notificationService = \Pimcore::getContainer()->get(NotificationService::class);
     }
 
-    public function _after(): void
+    public function _after()
     {
         $user = User::getByName('notification-user');
         $group = User\Role::getByName('notification-group');
@@ -51,7 +51,7 @@ class NotificationServiceTest extends TestCase
         }
     }
 
-    public function testSendToNoExistUser(): void
+    public function testSendToNoExistUser()
     {
         $user = 100;
 
@@ -66,7 +66,7 @@ class NotificationServiceTest extends TestCase
         );
     }
 
-    public function testSendToNoExistGroup(): void
+    public function testSendToNoExistGroup()
     {
         $group = 100;
 
@@ -81,7 +81,7 @@ class NotificationServiceTest extends TestCase
         );
     }
 
-    public function testSendToUser(): void
+    public function testSendToUser()
     {
         $count = 2;
         $user = new User();
@@ -104,7 +104,7 @@ class NotificationServiceTest extends TestCase
         $this->equalTo($count, $notifications['total']);
     }
 
-    public function testSendToUserWithElement(): void
+    public function testSendToUserWithElement()
     {
         $count = 2;
         $user = new User();
@@ -130,7 +130,7 @@ class NotificationServiceTest extends TestCase
         $this->equalTo($count, $notifications['total']);
     }
 
-    public function testSendToGroup(): void
+    public function testSendToGroup()
     {
         $count = 3;
         $group = new User\Role();

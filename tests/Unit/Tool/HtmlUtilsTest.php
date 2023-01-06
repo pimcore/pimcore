@@ -31,7 +31,7 @@ class HtmlUtilsTest extends TestCase
         'doe' => 2,
     ];
 
-    public function testAssembleAttributeString(): void
+    public function testAssembleAttributeString()
     {
         $this->assertEquals(
             'foo="bar" baz="inga" noop quux="1" john="1" doe="2"',
@@ -39,7 +39,7 @@ class HtmlUtilsTest extends TestCase
         );
     }
 
-    public function testAssembleAttributeStringOmitsNullValuesWhenConfigured(): void
+    public function testAssembleAttributeStringOmitsNullValuesWhenConfigured()
     {
         $this->assertEquals(
             'foo="bar" baz="inga" quux="1" john="1" doe="2"',

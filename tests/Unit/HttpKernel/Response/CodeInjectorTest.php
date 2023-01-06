@@ -38,7 +38,7 @@ class CodeInjectorTest extends TestCase
         $this->injector = new CodeInjector($this->responseHelper);
     }
 
-    public function testNotChangedIfNoMatch(): void
+    public function testNotChangedIfNoMatch()
     {
         $html = '<html><body></body></html>';
         $result = $this->injector->injectIntoHtml($html, $this->codePart, CodeInjector::SELECTOR_HEAD, CodeInjector::POSITION_BEGINNING);
@@ -46,7 +46,7 @@ class CodeInjectorTest extends TestCase
         $this->assertEquals($html, $result);
     }
 
-    public function testResponseNotChangedIfResponseHelperDoesNotClassifyAsHtml(): void
+    public function testResponseNotChangedIfResponseHelperDoesNotClassifyAsHtml()
     {
         $this->responseHelper
             ->method('isHtmlResponse')
@@ -64,7 +64,7 @@ class CodeInjectorTest extends TestCase
     /**
      * @dataProvider injectPresetProvider
      */
-    public function testInjectPreset(string $selector, string $position, string $source, string $expected): void
+    public function testInjectPreset(string $selector, string $position, string $source, string $expected)
     {
         $this->testInject($selector, $position, $source, $expected);
     }
@@ -74,7 +74,7 @@ class CodeInjectorTest extends TestCase
      *
      * @dataProvider injectDOMProvider
      */
-    public function testInjectDOM(string $selector, string $position, string $source, string $expected): void
+    public function testInjectDOM(string $selector, string $position, string $source, string $expected)
     {
         $this->testInject($selector, $position, $source, $expected);
     }
@@ -89,7 +89,7 @@ class CodeInjectorTest extends TestCase
     /**
      * @dataProvider invalidTypeProvider
      */
-    public function testInvalidPosition(string $position): void
+    public function testInvalidPosition(string $position)
     {
         $this->expectException(\InvalidArgumentException::class);
 

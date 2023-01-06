@@ -37,12 +37,12 @@ class EditableTest extends ModelTestCase
 
     protected TestDataHelper $testDataHelper;
 
-    public function _inject(TestDataHelper $testData): void
+    public function _inject(TestDataHelper $testData)
     {
         $this->testDataHelper = $testData;
     }
 
-    public function testAreablock(): void
+    public function testAreablock()
     {
         $this->createTestPage('areablock');
 
@@ -50,7 +50,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertAreablock($this->testPage, 'areablock', $this->seed);
     }
 
-    public function testCheckbox(): void
+    public function testCheckbox()
     {
         $this->createTestPage('checkbox');
 
@@ -58,7 +58,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertCheckbox($this->testPage, 'checkbox', $this->seed);
     }
 
-    public function testDate(): void
+    public function testDate()
     {
         $this->createTestPage('date');
 
@@ -66,7 +66,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertDate($this->testPage, 'date', $this->seed);
     }
 
-    public function testEmbed(): void
+    public function testEmbed()
     {
         $this->createTestPage('embed');
 
@@ -74,7 +74,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertEmbed($this->testPage, 'embed', $this->seed);
     }
 
-    public function testImage(): void
+    public function testImage()
     {
         $returnData = [];
         $this->createTestPage('image', $returnData);
@@ -83,7 +83,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertImage($this->testPage, 'image', $this->seed, $returnData);
     }
 
-    public function testInput(): void
+    public function testInput()
     {
         $this->createTestPage('input');
 
@@ -91,7 +91,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertInput($this->testPage, 'input', $this->seed);
     }
 
-    public function testLink(): void
+    public function testLink()
     {
         $returnData = [];
         TestHelper::createEmptyObjects();
@@ -101,7 +101,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertLink($this->testPage, 'link', $this->seed, $returnData);
     }
 
-    public function testMultiselect(): void
+    public function testMultiselect()
     {
         $this->createTestPage('multiselect');
 
@@ -109,7 +109,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertMultiselect($this->testPage, 'multiselect', $this->seed);
     }
 
-    public function testNumeric(): void
+    public function testNumeric()
     {
         $this->createTestPage('numeric');
 
@@ -117,7 +117,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertNumeric($this->testPage, 'numeric', $this->seed);
     }
 
-    public function testPdf(): void
+    public function testPdf()
     {
         $returnData = [];
         $this->createTestPage('pdf', $returnData);
@@ -126,7 +126,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertPdf($this->testPage, 'pdf', $this->seed, $returnData);
     }
 
-    public function testRelation(): void
+    public function testRelation()
     {
         $returnData = [];
         TestHelper::createEmptyObjects();
@@ -136,7 +136,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertRelation($this->testPage, 'relation', $this->seed, $returnData);
     }
 
-    public function testRelations(): void
+    public function testRelations()
     {
         $returnData = [];
         TestHelper::createEmptyObjects();
@@ -146,7 +146,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertRelations($this->testPage, 'relations', $this->seed, $returnData);
     }
 
-    public function testScheduledblock(): void
+    public function testScheduledblock()
     {
         $this->createTestPage('scheduledblock');
 
@@ -154,7 +154,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertScheduledblock($this->testPage, 'scheduledblock', $this->seed);
     }
 
-    protected function createTestPage(array|string $fields = [], array &$returnData = []): Page|\Pimcore\Model\Document
+    protected function createTestPage($fields = [], &$returnData = []): Page|\Pimcore\Model\Document
     {
         $this->testPage = TestHelper::createEmptyDocumentPage();
         $this->assertInstanceOf(Page::class, $this->testPage);
@@ -174,7 +174,7 @@ class EditableTest extends ModelTestCase
      * @param array|string $fields
      * @param array $returnData
      */
-    protected function fillPage(Page $document, array|string $fields = [], array &$returnData = []): void
+    protected function fillPage(Page $document, array|string $fields = [], array &$returnData = [])
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {
@@ -214,12 +214,12 @@ class EditableTest extends ModelTestCase
         }
     }
 
-    public function reloadPage(): void
+    public function reloadPage()
     {
         $this->testPage = Page::getById($this->testPage->getId(), ['force' => true]);
     }
 
-    public function testSelect(): void
+    public function testSelect()
     {
         $this->createTestPage('select');
 
@@ -227,7 +227,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertSelect($this->testPage, 'select', $this->seed);
     }
 
-    public function testTable(): void
+    public function testTable()
     {
         $this->createTestPage('table');
 
@@ -235,7 +235,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertTable($this->testPage, 'table', $this->seed);
     }
 
-    public function testTextarea(): void
+    public function testTextarea()
     {
         $this->createTestPage('textarea');
 
@@ -243,7 +243,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertTextarea($this->testPage, 'textarea', $this->seed);
     }
 
-    public function testVideo(): void
+    public function testVideo()
     {
         $returnData = [];
         TestHelper::createEmptyObjects();
@@ -253,7 +253,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertVideo($this->testPage, 'video', $this->seed, $returnData);
     }
 
-    public function testWysiwyg(): void
+    public function testWysiwyg()
     {
         $this->createTestPage('wysiwyg');
 
@@ -261,7 +261,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertWysiwyg($this->testPage, 'wysiwyg', $this->seed);
     }
 
-    public function testBlock(): void
+    public function testBlock()
     {
         $this->createTestPage('block');
 

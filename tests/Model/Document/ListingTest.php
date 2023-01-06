@@ -30,7 +30,7 @@ use Pimcore\Tests\Support\Util\TestHelper;
  */
 class ListingTest extends ModelTestCase
 {
-    public function testListCount(): void
+    public function testListCount()
     {
         $db = Db::get();
 

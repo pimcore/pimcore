@@ -50,7 +50,7 @@ class BundleCollectionTest extends TestCase
         ];
     }
 
-    public function testAddBundle(): void
+    public function testAddBundle()
     {
         foreach ($this->bundles as $bundle) {
             $this->collection->addBundle($bundle);
@@ -59,7 +59,7 @@ class BundleCollectionTest extends TestCase
         $this->assertEquals($this->bundles, $this->collection->getBundles('prod'));
     }
 
-    public function testAddBundleAsString(): void
+    public function testAddBundleAsString()
     {
         $identifiers = [];
 
@@ -73,14 +73,14 @@ class BundleCollectionTest extends TestCase
         $this->assertEquals($identifiers, $this->collection->getIdentifiers());
     }
 
-    public function testAddBundles(): void
+    public function testAddBundles()
     {
         $this->collection->addBundles($this->bundles);
 
         $this->assertEquals($this->bundles, $this->collection->getBundles('prod'));
     }
 
-    public function testAddBundlesAsString(): void
+    public function testAddBundlesAsString()
     {
         $identifiers = [];
 
@@ -94,7 +94,7 @@ class BundleCollectionTest extends TestCase
         $this->assertEquals($identifiers, $this->collection->getIdentifiers());
     }
 
-    public function testAddItem(): void
+    public function testAddItem()
     {
         foreach ($this->bundles as $bundle) {
             $this->collection->add(new Item($bundle));
@@ -103,7 +103,7 @@ class BundleCollectionTest extends TestCase
         $this->assertEquals($this->bundles, $this->collection->getBundles('prod'));
     }
 
-    public function testHasItem(): void
+    public function testHasItem()
     {
         foreach ($this->bundles as $bundle) {
             $item = new Item($bundle);
@@ -114,7 +114,7 @@ class BundleCollectionTest extends TestCase
         }
     }
 
-    public function testGetItem(): void
+    public function testGetItem()
     {
         foreach ($this->bundles as $bundle) {
             $item = new Item($bundle);
@@ -124,7 +124,7 @@ class BundleCollectionTest extends TestCase
         }
     }
 
-    public function testGetItemThrowsException(): void
+    public function testGetItemThrowsException()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Bundle "Pimcore\Tests\Unit\HttpKernel\BundleCollection\BundleA" is not registered');
@@ -134,7 +134,7 @@ class BundleCollectionTest extends TestCase
         $this->collection->getItem($item->getBundleIdentifier());
     }
 
-    public function testGetItems(): void
+    public function testGetItems()
     {
         $items = [];
         foreach ($this->bundles as $bundle) {
@@ -147,7 +147,7 @@ class BundleCollectionTest extends TestCase
         $this->assertEquals($items, $this->collection->getItems());
     }
 
-    public function testGetIdentifiers(): void
+    public function testGetIdentifiers()
     {
         $identifiers = [];
         foreach ($this->bundles as $bundle) {
@@ -160,7 +160,7 @@ class BundleCollectionTest extends TestCase
         $this->assertEquals($identifiers, $this->collection->getIdentifiers());
     }
 
-    public function testBundlesAreOrderedByPriority(): void
+    public function testBundlesAreOrderedByPriority()
     {
         $collection = $this->collection;
         $bundles = $this->bundles;
@@ -178,7 +178,7 @@ class BundleCollectionTest extends TestCase
         $this->assertEquals($bundles[2], $result[3]);
     }
 
-    public function testBundlesAreFilteredByEnvironment(): void
+    public function testBundlesAreFilteredByEnvironment()
     {
         $collection = $this->collection;
 
@@ -213,7 +213,7 @@ class BundleCollectionTest extends TestCase
     /**
      * @group only
      */
-    public function testDependenciesAreRegistered(): void
+    public function testDependenciesAreRegistered()
     {
         $collection = new BundleCollection();
         $collection->addBundle(new BundleE());
@@ -230,7 +230,7 @@ class BundleCollectionTest extends TestCase
     /**
      * @group only
      */
-    public function testDependenciesOfDependenciesAreRegistered(): void
+    public function testDependenciesOfDependenciesAreRegistered()
     {
         $collection = new BundleCollection();
         $collection->addBundle(new BundleI());
@@ -253,7 +253,7 @@ class BundleCollectionTest extends TestCase
     /**
      * @group only2
      */
-    public function testDependentCircularReferencesAreIgnored(): void
+    public function testDependentCircularReferencesAreIgnored()
     {
         $collection = new BundleCollection();
 
@@ -275,7 +275,7 @@ class BundleCollectionTest extends TestCase
     /**
      * @group only2
      */
-    public function testItemsAreNotOverwrittenByDependencies(): void
+    public function testItemsAreNotOverwrittenByDependencies()
     {
         $collection = new BundleCollection();
 
@@ -321,7 +321,7 @@ class BundleD extends Bundle
 
 class BundleE extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection): void
+    public static function registerDependentBundles(BundleCollection $collection)
     {
         $collection->addBundle(new BundleF());
     }
@@ -333,7 +333,7 @@ class BundleF extends Bundle
 
 class BundleG extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection): void
+    public static function registerDependentBundles(BundleCollection $collection)
     {
         $collection->addBundle(new BundleH, 8);
     }
@@ -341,7 +341,7 @@ class BundleG extends Bundle implements DependentBundleInterface
 
 class BundleH extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection): void
+    public static function registerDependentBundles(BundleCollection $collection)
     {
         $collection->addBundle(new BundleG, 5);
     }
@@ -349,7 +349,7 @@ class BundleH extends Bundle implements DependentBundleInterface
 
 class BundleI extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection): void
+    public static function registerDependentBundles(BundleCollection $collection)
     {
         $collection->addBundle(new BundleA);
         $collection->addBundle(new BundleB);
@@ -359,7 +359,7 @@ class BundleI extends Bundle implements DependentBundleInterface
 
 class BundleJ extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection): void
+    public static function registerDependentBundles(BundleCollection $collection)
     {
         $collection->addBundle(new BundleH(), 9);
     }

@@ -29,7 +29,7 @@ class ArrayNormalizerTest extends TestCase
         'd' => 'inga',
     ];
 
-    public function testArrayIsUntouchedWithoutNormalizers(): void
+    public function testArrayIsUntouchedWithoutNormalizers()
     {
         $normalizer = new ArrayNormalizer();
         $result = $normalizer->normalize($this->input);
@@ -37,7 +37,7 @@ class ArrayNormalizerTest extends TestCase
         $this->assertEquals($this->input, $result);
     }
 
-    public function testNormalizerNormalizesValues(): void
+    public function testNormalizerNormalizesValues()
     {
         $normalizer = new ArrayNormalizer();
 
@@ -64,7 +64,7 @@ class ArrayNormalizerTest extends TestCase
         );
     }
 
-    public function testNormalizerPassesKeyAndWholeArrayToNormalizerFunction(): void
+    public function testNormalizerPassesKeyAndWholeArrayToNormalizerFunction()
     {
         $normalizer = new ArrayNormalizer();
 

@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Definition;
 
 class Model extends AbstractDefinitionHelper
 {
-    public function _beforeSuite(array $settings = []): void
+    public function _beforeSuite(array $settings = [])
     {
         DataObject::setHideUnpublished(false);
         parent::_beforeSuite($settings);

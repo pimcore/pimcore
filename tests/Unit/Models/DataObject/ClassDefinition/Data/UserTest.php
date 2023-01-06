@@ -69,7 +69,7 @@ class UserTest extends TestCase
         parent::tearDown();
     }
 
-    public function test__set_stateDoesNotPopulateSelectOptionsWhenNotInAdminMode(): void
+    public function test__set_stateDoesNotPopulateSelectOptionsWhenNotInAdminMode()
     {
         \Pimcore::unsetAdminMode();
 
@@ -78,7 +78,7 @@ class UserTest extends TestCase
         assertEmpty($user->getOptions());
     }
 
-    public function test__set_statePopulatesSelectOptionsIbAdminMode(): void
+    public function test__set_statePopulatesSelectOptionsIbAdminMode()
     {
         \Pimcore::setAdminMode();
 

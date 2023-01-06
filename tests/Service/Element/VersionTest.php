@@ -56,7 +56,7 @@ class VersionTest extends TestCase
             ->getMock();
     }
 
-    protected function setStorageAdapter(VersionStorageAdapterInterface $adapter): void
+    protected function setStorageAdapter(VersionStorageAdapterInterface $adapter)
     {
         $proxy = \Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
         $proxy->setStorageAdapter($adapter);
@@ -78,7 +78,7 @@ class VersionTest extends TestCase
     /**
      * @throws \Exception
      */
-    public function testDisable(): void
+    public function testDisable()
     {
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
         $savedObject = TestHelper::createEmptyObject();
@@ -110,7 +110,7 @@ class VersionTest extends TestCase
     /**
      * Test for https://github.com/pimcore/pimcore/issues/4667
      */
-    public function testCondense(): void
+    public function testCondense()
     {
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
         /** @var Unittest $savedObject */
@@ -147,7 +147,7 @@ class VersionTest extends TestCase
     }
 
     // Save a new object and check if the storagetype is set to fs
-    public function testStorageAdapterTypeFS(): void
+    public function testStorageAdapterTypeFS()
     {
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
         $object = TestHelper::createEmptyObject();
@@ -161,7 +161,7 @@ class VersionTest extends TestCase
     }
 
     // Save a new object and check if the storagetype is set to db
-    public function testStorageAdapterDB(): void
+    public function testStorageAdapterDB()
     {
         $this->setStorageAdapter($this->mockDbStorageAdapter());
         $object = TestHelper::createEmptyObject();
@@ -175,7 +175,7 @@ class VersionTest extends TestCase
     }
 
     // Size of metadata exceeds "byteThreshold". Therefore, the fallback adapter (fs) should be used.
-    public function testStorageAdapterDelegate(): void
+    public function testStorageAdapterDelegate()
     {
         $this->setStorageAdapter($this->mockDelegateStorageAdapter(10));
         $randomText = TestHelper::generateRandomString(100);
@@ -191,7 +191,7 @@ class VersionTest extends TestCase
         $this->assertEmpty($result['metaData'], 'metaData must be empty.');
     }
 
-    public function testStorageAdapterFSWithBinaryFile(): void
+    public function testStorageAdapterFSWithBinaryFile()
     {
         $this->setStorageAdapter($this->mockFileSystemStorageAdapter());
         $randomText = TestHelper::generateRandomString(100);
@@ -222,7 +222,7 @@ class VersionTest extends TestCase
         $this->assertNotEmpty($id2, 'id must not be empty');
     }
 
-    public function testStorageAdapterDBWithBinaryFile(): void
+    public function testStorageAdapterDBWithBinaryFile()
     {
         $this->setStorageAdapter($this->mockDbStorageAdapter());
         $randomText = TestHelper::generateRandomString(100);
@@ -262,7 +262,7 @@ class VersionTest extends TestCase
     }
 
     // Size of binary file exceeds "byteThreshold". Therefore, the fallback adapter (fs) should be used.
-    public function testStorageAdapterDelegateWithBinaryFile(): void
+    public function testStorageAdapterDelegateWithBinaryFile()
     {
         $this->setStorageAdapter($this->mockDelegateStorageAdapter(10));
         $randomText = TestHelper::generateRandomString(100);
@@ -310,7 +310,7 @@ class VersionTest extends TestCase
     /**
      * Set up test classes before running tests
      */
-    protected function setUpTestClasses(): void
+    protected function setUpTestClasses()
     {
         //Create versionsData table. Needed for tests with DatabaseVersionStorageAdapter
         $db = Db::get();

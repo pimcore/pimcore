@@ -65,7 +65,7 @@ class GeoPointTest extends TestCase
     /**
      * @dataProvider matchProvider
      */
-    public function testMatch(GeoPoint $condition, VisitorInfo $visitorInfo, bool $expected): void
+    public function testMatch(GeoPoint $condition, VisitorInfo $visitorInfo, bool $expected)
     {
         $this->assertEquals($expected, $condition->match($visitorInfo));
     }
@@ -73,7 +73,7 @@ class GeoPointTest extends TestCase
     /**
      * @dataProvider noMatchProvider
      */
-    public function testCannotMatchIfOptionsEmpty(GeoPoint $condition): void
+    public function testCannotMatchIfOptionsEmpty(GeoPoint $condition)
     {
         $this->assertFalse($condition->canMatch());
     }

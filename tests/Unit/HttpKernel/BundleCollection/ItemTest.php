@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class ItemTest extends TestCase
 {
-    public function testGetBundle(): void
+    public function testGetBundle()
     {
         $bundle = new ItemTestBundleA();
         $item = new Item(new ItemTestBundleA());
@@ -34,14 +34,14 @@ class ItemTest extends TestCase
         $this->assertEquals($bundle, $item->getBundle());
     }
 
-    public function testGetBundleIdentifier(): void
+    public function testGetBundleIdentifier()
     {
         $item = new Item(new ItemTestBundleA());
 
         $this->assertEquals(ItemTestBundleA::class, $item->getBundleIdentifier());
     }
 
-    public function testEmptyEnvironmentsMatchesAnyEnvironment(): void
+    public function testEmptyEnvironmentsMatchesAnyEnvironment()
     {
         $item = new Item(new ItemTestBundleA(), 0, []);
         foreach (['prod', 'dev', 'test'] as $environment) {
@@ -49,7 +49,7 @@ class ItemTest extends TestCase
         }
     }
 
-    public function testItemMatchesEnvironment(): void
+    public function testItemMatchesEnvironment()
     {
         $item = new Item(new ItemTestBundleA(), 0, ['dev']);
 
@@ -58,7 +58,7 @@ class ItemTest extends TestCase
         $this->assertFalse($item->matchesEnvironment('test'));
     }
 
-    public function testItemWithMultipleEnvironments(): void
+    public function testItemWithMultipleEnvironments()
     {
         $item = new Item(new ItemTestBundleA(), 0, ['dev', 'test']);
 
@@ -67,7 +67,7 @@ class ItemTest extends TestCase
         $this->assertFalse($item->matchesEnvironment('prod'));
     }
 
-    public function testIsPimcoreBundle(): void
+    public function testIsPimcoreBundle()
     {
         $itemA = new Item(new ItemTestBundleA());
         $itemB = new Item(new ItemTestBundleB());
@@ -76,7 +76,7 @@ class ItemTest extends TestCase
         $this->assertTrue($itemB->isPimcoreBundle());
     }
 
-    public function testRegistersDependencies(): void
+    public function testRegistersDependencies()
     {
         $collection = new BundleCollection();
 
@@ -99,7 +99,7 @@ class ItemTestBundleB extends AbstractPimcoreBundle
 
 class ItemTestBundleC extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection): void
+    public static function registerDependentBundles(BundleCollection $collection)
     {
         $collection->add(new Item(new ItemTestBundleA()));
     }

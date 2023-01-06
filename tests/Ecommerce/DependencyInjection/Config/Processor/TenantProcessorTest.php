@@ -33,7 +33,7 @@ class TenantProcessorTest extends TestCase
         $this->processor = new TenantProcessor();
     }
 
-    public function testNothingIsMergedWithoutDefaults(): void
+    public function testNothingIsMergedWithoutDefaults()
     {
         $input = [
             'tenant1' => [
@@ -48,7 +48,7 @@ class TenantProcessorTest extends TestCase
         $this->assertEquals($input, $this->processor->mergeTenantConfig($input));
     }
 
-    public function testDefaultValuesAreMergedIntoEveryTenantAndRemoved(): void
+    public function testDefaultValuesAreMergedIntoEveryTenantAndRemoved()
     {
         $input = [
             '_defaults' => [
@@ -86,7 +86,7 @@ class TenantProcessorTest extends TestCase
      * Additional defaults can be used for YAML inheritance, but are removed
      * from final config.
      */
-    public function testAdditionalDefaultsAreRemovedWithoutMerging(): void
+    public function testAdditionalDefaultsAreRemovedWithoutMerging()
     {
         $input = [
             '_defaults' => [
@@ -126,7 +126,7 @@ class TenantProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergeTenantConfig($input));
     }
 
-    public function testAssociativeArraysAreExtended(): void
+    public function testAssociativeArraysAreExtended()
     {
         $input = [
             '_defaults' => [
@@ -166,7 +166,7 @@ class TenantProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergeTenantConfig($input));
     }
 
-    public function testSequentialArraysAreMerged(): void
+    public function testSequentialArraysAreMerged()
     {
         $input = [
             '_defaults' => [
@@ -192,7 +192,7 @@ class TenantProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergeTenantConfig($input));
     }
 
-    public function testDefaultsAreDeepMerged(): void
+    public function testDefaultsAreDeepMerged()
     {
         $input = [
             '_defaults' => [
@@ -271,7 +271,7 @@ class TenantProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergeTenantConfig($input));
     }
 
-    public function testExceptionOnMismatchingTypes(): void
+    public function testExceptionOnMismatchingTypes()
     {
         $input = [
             '_defaults' => [
