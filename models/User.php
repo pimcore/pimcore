@@ -855,6 +855,7 @@ final class User extends User\UserRole
                     'action' => 'searchObject',
                     'key' => ord('O'),
                     'alt' => true,
+                    'ctrl' => false,
                 ],
                 [
                     'action' => 'showElementHistory',
@@ -979,7 +980,8 @@ final class User extends User\UserRole
                     'ctrl' => true,
                     'shift' => true,
                 ],
-            ]);
+            ]
+        );
     }
 
     /**
