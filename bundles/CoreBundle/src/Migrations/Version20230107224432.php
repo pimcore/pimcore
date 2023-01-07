@@ -22,7 +22,8 @@ final class Version20230107224432 extends AbstractMigration
         // Append to the comma separated list whenever the permissions text field has 'translation' but not already xliff_import_export
         $this->addSql(
             'UPDATE users SET permissions = CONCAT(permissions, \',xliff_import_export\')
-            WHERE permissions LIKE \'%translation%\' AND permissions NOT LIKE \'%xliff_import_export%\''
+            WHERE (permissions LIKE \'%,translations,%\' OR TRIM(permissions) LIKE \'translations,%\' OR TRIM(permissions) LIKE \'%,translations\')
+            AND TRIM(permissions) NOT LIKE \'%xliff_import_export%\''
         );
     }
 
