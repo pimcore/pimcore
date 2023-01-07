@@ -4,6 +4,15 @@ services:
         autoconfigure: true
         public: false
 
+
+    #
+    # INSTALLER
+    #
+    Pimcore\Bundle\XliffBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreXliffBundle')"
+
     # auto-register all controllers as services
     Pimcore\Bundle\XliffBundle\Controller\:
         resource: '../src/Controller'

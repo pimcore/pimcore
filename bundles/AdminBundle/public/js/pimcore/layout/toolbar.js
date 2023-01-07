@@ -299,32 +299,36 @@ pimcore.layout.toolbar = Class.create({
                      handler: this.editRedirects
                  });
              }
- 
+
+             let translationItems = [];
+
              if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
-                 extrasItems.push({
+                 translationItems = [{
                      text: t("translations"),
                      iconCls: "pimcore_nav_icon_translations",
-                     itemId: 'pimcore_menu_extras_translations',
-                     hideOnClick: false,
-                     menu: {
-                         cls: "pimcore_navigation_flyout",
-                         shadow: false,
-                         items: [{
-                             text: t("translations"),
-                             iconCls: "pimcore_nav_icon_translations",
-                             itemId: 'pimcore_menu_extras_translations_shared_translations',
-                             handler: this.editTranslations.bind(this, 'messages'),
-                             priority: 10
-                         }, {
-                             text: "Microsoft® Word " + t("export"),
-                             iconCls: "pimcore_nav_icon_word_export",
-                             itemId: 'pimcore_menu_extras_translations_word_export',
-                             handler: this.wordExport,
-                             priority: 30
-                         }]
-                     }
-                 });
+                     itemId: 'pimcore_menu_extras_translations_shared_translations',
+                     handler: this.editTranslations.bind(this, 'messages'),
+                     priority: 10
+                 }, {
+                     text: "Microsoft® Word " + t("export"),
+                     iconCls: "pimcore_nav_icon_word_export",
+                     itemId: 'pimcore_menu_extras_translations_word_export',
+                     handler: this.wordExport,
+                     priority: 30
+                 }];
              }
+
+             extrasItems.push({
+                 text: t("translations"),
+                 iconCls: "pimcore_nav_icon_translations",
+                 itemId: 'pimcore_menu_extras_translations',
+                 hideOnClick: false,
+                 menu: {
+                     cls: "pimcore_navigation_flyout",
+                     shadow: false,
+                     items: translationItems
+                 }
+             });
  
              if (user.isAllowed("recyclebin") && perspectiveCfg.inToolbar("extras.recyclebin")) {
                  extrasItems.push({
@@ -1151,27 +1155,37 @@ pimcore.layout.toolbar = Class.create({
                  // if items are empty do not build submenus or main menu item
 
                  if(menu[key].items.length > 0) {
-                     pimcore.helpers.buildMenu(menu[key].items);
 
-                     let menuItem = {
-                         items: menu[key].items,
-                         shadow: menu[key].shadow,
-                         cls: "pimcore_navigation_flyout",
-                     }
-
-                     if(menu[key].listeners === true) {
-                         menuItem.listeners = {
-                             "show": function (e) {
-                                 Ext.get('pimcore_menu_' + key).addCls('active');
-                             },
-                             "hide": function (e) {
-                                 Ext.get('pimcore_menu_' + key).removeCls('active');
-                             },
+                     // Checks if sub-menus have any items; when empty, removes it
+                     menu[key].items.forEach( (subItem,subKey) => {
+                         if (subItem.menu && subItem.menu.items.length === 0) {
+                             menu[key].items.splice(subKey);
                          }
-                     }
+                     });
 
-                     // Adding single main menu item
-                     this[key + 'Menu'] = Ext.create('pimcore.menu.menu', menuItem);
+                     if (menu[key].items) {
+                         pimcore.helpers.buildMenu(menu[key].items);
+
+                         let menuItem = {
+                             items: menu[key].items,
+                             shadow: menu[key].shadow,
+                             cls: "pimcore_navigation_flyout",
+                         }
+
+                         if (menu[key].listeners === true) {
+                             menuItem.listeners = {
+                                 "show": function (e) {
+                                     Ext.get('pimcore_menu_' + key).addCls('active');
+                                 },
+                                 "hide": function (e) {
+                                     Ext.get('pimcore_menu_' + key).removeCls('active');
+                                 },
+                             }
+                         }
+
+                         // Adding single main menu item
+                         this[key + 'Menu'] = Ext.create('pimcore.menu.menu', menuItem);
+                     }
                  }
              });
          }

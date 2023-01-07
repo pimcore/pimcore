@@ -37,6 +37,11 @@ class PimcoreXliffBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new TranslationServicesPass());
     }
 
+    public function getInstaller(): Installer
+    {
+        return $this->container->get(Installer::class);
+    }
+
     public function getPath(): string
     {
         return \dirname(__DIR__);
