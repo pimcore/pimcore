@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.fileexplorer.file");
+pimcore.registerNS("pimcore.bundle.file_explorer.settings.file");
 /**
  * @private
  */
-pimcore.settings.fileexplorer.file = Class.create({
+pimcore.bundle.file_explorer.settings.file = Class.create({
 
     initialize: function (path, explorer) {
         this.path = path;
@@ -25,7 +25,7 @@ pimcore.settings.fileexplorer.file = Class.create({
 
     loadFileContents: function (path) {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_file_explorer_content'),
+            url: Routing.generate('pimcore_bundle_file_explorer_content'),
             success: this.loadFileContentsComplete.bind(this),
             params: {
                 path: path
@@ -119,7 +119,7 @@ pimcore.settings.fileexplorer.file = Class.create({
         var content = this.textEditor.getValue();
         Ext.Ajax.request({
             method: "put",
-            url: Routing.generate('pimcore_file_explorer_contentsave'),
+            url: Routing.generate('pimcore_bundle_file_explorer_contentsave'),
             params: {
                 path: this.responsePath,
                 content: content

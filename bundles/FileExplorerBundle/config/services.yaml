@@ -9,3 +9,7 @@ services:
         resource: '../src/Controller/Admin'
         public: true
         tags: [ 'controller.service_arguments' ]
+    Pimcore\Bundle\FileExplorerBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreFileExplorerBundle')"

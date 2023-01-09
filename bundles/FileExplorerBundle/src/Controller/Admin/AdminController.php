@@ -8,14 +8,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/file-explorer")
+ * @Route("/")
  *
  * @internal
  */
 class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
 {
     /**
-     * @Route("/tree", name="pimcore_file_explorer_tree", methods={"GET"})
+     * @Route("/tree", name="pimcore_bundle_file_explorer_tree", methods={"GET"})
      *
      * @param Request $request
      *
@@ -64,7 +64,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/content", name="pimcore_file_explorer_content", methods={"GET"})
+     * @Route("/content", name="pimcore_bundle_file_explorer_content", methods={"GET"})
      *
      * @param Request $request
      *
@@ -96,7 +96,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/content-save", name="pimcore_file_explorer_contentsave", methods={"PUT"})
+     * @Route("/content-save", name="pimcore_bundle_file_explorer_contentsave", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -123,7 +123,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/add", name="pimcore_file_explorer_add", methods={"POST"})
+     * @Route("/add", name="pimcore_bundle_file_explorer_add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -159,7 +159,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/add-folder", name="pimcore_file_explorer_addfolder", methods={"POST"})
+     * @Route("/add-folder", name="pimcore_bundle_file_explorer_addfolder", methods={"POST"})
      *
      * @param Request $request
      *
@@ -195,7 +195,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/delete", name="pimcore_file_explorer_delete", methods={"DELETE"})
+     * @Route("/delete", name="pimcore_bundle_file_explorer_delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -220,7 +220,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/rename", name="pimcore_file_explorer_rename", methods={"PUT"})
+     * @Route("/rename", name="pimcore_bundle_file_explorer_rename", methods={"PUT"})
      *
      * @param Request $request
      *
