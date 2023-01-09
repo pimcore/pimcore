@@ -14,14 +14,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\Command;
+namespace Pimcore\Bundle\SimpleBackendSearchBundle\Command;
 
-use Pimcore\Console\AbstractCommand;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Search;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Search;
+use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
