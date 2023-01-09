@@ -904,17 +904,13 @@ class Asset extends Element\AbstractElement
         return $this->siblings;
     }
 
-    public function hasSiblings(): ?bool
+    public function hasSiblings(): bool
     {
         if (is_bool($this->hasSiblings)) {
-            if (($this->hasSiblings && empty($this->siblings->getAssets())) || (!$this->hasSiblings && !empty($this->siblings->getAssets()))) {
-                return $this->getDao()->hasSiblings();
-            } else {
-                return $this->hasSiblings;
-            }
+            return $this->hasSiblings;
         }
 
-        return $this->getDao()->hasSiblings();
+        return $this->hasSiblings = $this->getDao()->hasSiblings();
     }
 
     public function hasChildren(): bool

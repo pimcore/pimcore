@@ -85,14 +85,10 @@ class Folder extends Model\Asset
     public function hasChildren(): bool
     {
         if (is_bool($this->hasChildren)) {
-            if (($this->hasChildren && empty($this->children->getAssets())) || (!$this->hasChildren && !empty($this->children->getAssets()))) {
-                return $this->getDao()->hasChildren();
-            }
-
             return $this->hasChildren;
         }
 
-        return $this->getDao()->hasChildren();
+        return $this->hasChildren = $this->getDao()->hasChildren();
     }
 
     /**
