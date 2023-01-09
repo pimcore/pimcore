@@ -15,9 +15,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle;
 
-use Pimcore\Extension\Bundle\Installer\InstallerInterface;
-use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
 class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle
 {
@@ -40,9 +39,12 @@ class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle
         ];
     }
 
-    public function getInstaller(): ?InstallerInterface
+    /**
+     * @return Installer
+     */
+    public function getInstaller(): Installer
     {
-        return null;
+        return $this->container->get(Installer::class);
     }
 
     public function getPath(): string

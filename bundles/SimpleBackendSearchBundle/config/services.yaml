@@ -13,3 +13,11 @@ services:
         resource: '../src/Controller'
         public: true
         tags: ['controller.service_arguments']
+
+    #
+    # INSTALLER
+    #
+    Pimcore\Bundle\SimpleBackendSearchBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('SimpleBackendSearchBundle')"
