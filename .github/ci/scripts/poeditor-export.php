@@ -50,7 +50,7 @@ foreach($translationFiles as $sourceUrl => $projectId) {
     foreach ($enData as $key => $value) {
         $data[] = [
             "term" => $key,
-            "context" => $reference,
+            "context" => '',
             "reference" => $reference,
         ];
 
@@ -71,11 +71,11 @@ foreach($translationFiles as $sourceUrl => $projectId) {
     $dataEnString = json_encode($dataEn);
 
     if (count($data)) {
-        echo sprintf('Running sync_terms for %s with project ID %s', $sourceUrl, $projectId) . "\n";
+        echo sprintf('Running add_terms for %s with project ID %s', $sourceUrl, $projectId) . "\n";
         try {
             $response = $getPostValues("https://poeditor.com/api/", [
                 "api_token" => $apiToken,
-                "action" => "sync_terms",
+                "action" => "add_terms",
                 "id" => $projectId,
                 "data" => $dataString
             ]);
