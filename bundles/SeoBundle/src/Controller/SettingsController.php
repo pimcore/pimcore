@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,7 +15,6 @@ declare(strict_types=1);
  */
 
 namespace Pimcore\Bundle\SeoBundle\Controller;
-
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;

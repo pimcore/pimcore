@@ -18,14 +18,8 @@ namespace Pimcore\Bundle\SeoBundle\EventListener;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Config;
-use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
-use Pimcore\Http\Request\Resolver\SiteResolver;
-use Pimcore\Log\ApplicationLogger;
-use Pimcore\Model\Document;
-use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -51,7 +45,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
     {
         return [
             // run with high priority before handling real errors
-            KernelEvents::EXCEPTION => ['onKernelException', 64]
+            KernelEvents::EXCEPTION => ['onKernelException', 64],
         ];
     }
 

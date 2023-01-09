@@ -15,8 +15,6 @@
 
 namespace Pimcore\Bundle\SeoBundle\Controller\Document;
 
-
-
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Event\AdminEvents;
@@ -28,7 +26,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-
 
 /**
  * @Route("/document")
@@ -137,7 +134,6 @@ class DocumentController extends ElementControllerBase
 
         return $this->adminJson($result['data']);
     }
-
 
     private function getSeoNodeConfig(Document $document): array
     {

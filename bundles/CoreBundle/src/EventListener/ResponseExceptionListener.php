@@ -23,7 +23,6 @@ use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
-use Pimcore\Log\ApplicationLogger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Psr\Log\LoggerAwareTrait;

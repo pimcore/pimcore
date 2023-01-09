@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -17,12 +18,10 @@ namespace Pimcore\Bundle\SeoBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class PimcoreSeoExtension extends Extension
 {
-
     public function load(array $configs, \Symfony\Component\DependencyInjection\ContainerBuilder $container)
     {
         $loader = new YamlFileLoader(

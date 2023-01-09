@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -25,7 +26,7 @@ class PimcoreSeoBundle extends AbstractPimcoreBundle
     public function getCssPaths(): array
     {
         return [
-            '/bundles/pimcoreseo/css/icons.css'
+            '/bundles/pimcoreseo/css/icons.css',
         ];
     }
 
@@ -46,7 +47,6 @@ class PimcoreSeoBundle extends AbstractPimcoreBundle
     {
         return $this->container->get(Installer::class);
     }
-
 
     public function getPath(): string
     {
