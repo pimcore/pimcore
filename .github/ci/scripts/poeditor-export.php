@@ -24,8 +24,6 @@ foreach ($projectConfig as $line) {
     }
 }
 
-print_r($translationFiles); exit;
-
 $getPostValues = function ($url, array $params) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,$url);
