@@ -231,7 +231,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @deprecated
      *
-     * @var array|null
+     * @var array<string, Model\Property>|null
      */
     protected ?array $properties = null;
 
