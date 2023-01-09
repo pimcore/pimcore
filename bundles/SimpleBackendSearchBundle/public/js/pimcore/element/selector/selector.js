@@ -2,8 +2,6 @@ pimcore.registerNS('pimcore.bundle.search.element.selector.selector');
 
 pimcore.bundle.search.element.selector.selector = Class.create({
     initialize: function (multiselect, callback, restrictions, config) {
-        console.log('selector - called!')
-
         this.initialRestrictions = restrictions ? restrictions: {};
         this.callback = callback;
         this.restrictions = restrictions;
