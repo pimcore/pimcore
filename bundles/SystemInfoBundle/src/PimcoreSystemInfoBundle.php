@@ -30,11 +30,6 @@ class PimcoreSystemInfoBundle extends AbstractPimcoreBundle
         ];
     }
 
-    public function getContainerExtension(): ?ExtensionInterface
-    {
-        return new PimcoreSystemInfoExtension();
-    }
-
     public function getPath(): string
     {
         return \dirname(__DIR__);
