@@ -8,10 +8,23 @@ declare(strict_types=1);
 
 $apiToken = getenv('POEDITOR_TOKEN');
 
-$projects = [
-    38068 => "bundles/CoreBundle/translations/en.json",
-    197253 => "bundles/CoreBundle/translations/en.extended.json"
+// POEditor project IDs
+$projectMapping = [
+    'essentials' => 38068,
+    'extended' => 197253,
 ];
+
+$projectConfig = array_filter(explode("\n", trim(getenv('TRANSLATION_FILES'))));
+$translationFiles = [];
+
+foreach ($projectConfig as $line) {
+    list($sourcePath, $projectKey) = array_map('trim', explode(':', $line));
+    if(isset($projectMapping[$projectKey])) {
+        $translationFiles[$sourcePath] = $projectMapping[$projectKey];
+    }
+}
+
+print_r($translationFiles); exit;
 
 $getPostValues = function ($url, array $params) {
     $ch = curl_init();
@@ -27,17 +40,19 @@ $getPostValues = function ($url, array $params) {
 };
 
 
-foreach($projects as $projectId => $sourceUrl) {
+foreach($translationFiles as $sourceUrl => $projectId) {
 
     $data = [];
     $dataEn = [];
     $enData = json_decode(file_get_contents($sourceUrl), true);
 
+    $reference = getenv('GITHUB_REPOSITORY') . ':' . $sourceUrl;
+
     foreach ($enData as $key => $value) {
         $data[] = [
             "term" => $key,
             "context" => "",
-            "reference" => "",
+            "reference" => $reference,
         ];
 
         $dataEn[] = [

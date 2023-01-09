@@ -26,5 +26,8 @@ jobs:
             - name: POEditor
               env:
                   POEDITOR_TOKEN: ${{ secrets.POEDITOR_TOKEN }}
+                  TRANSLATION_FILES: |
+                      bundles/CoreBundle/translations/en.json :essentials
+                      bundles/CoreBundle/translations/en.extended.json :extended
               run: |
                   php .github/ci/scripts/poeditor-export.php
