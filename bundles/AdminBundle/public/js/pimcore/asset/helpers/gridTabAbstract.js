@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.helpers.gridTabAbstract");
+/**
+ * @private
+ */
 pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gridTabAbstract, {
 
     objecttype: 'asset',

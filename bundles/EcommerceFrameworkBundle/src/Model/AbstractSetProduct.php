@@ -86,8 +86,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      *
      * @return PriceInterface|null
      *
-     *@throws UnsupportedException
-     *
+     * @throws UnsupportedException
      */
     public function getOSPrice(int $quantityScale = null, array $products = null): ?PriceInterface
     {
@@ -106,8 +105,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      *
      * @return PriceInfoInterface|null
      *
-     *@throws UnsupportedException
-     *
+     * @throws UnsupportedException
      */
     public function getOSPriceInfo(int $quantityScale = null, ?array $products = null): ?PriceInfoInterface
     {
@@ -144,8 +142,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      *
      * @return void
      *
-     *@throws UnsupportedException
-     *
+     * @throws UnsupportedException
      */
     protected function checkMandatoryProducts(array $products): void
     {

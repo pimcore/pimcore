@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 abstract class AbstractElasticSearch implements ProductListInterface
@@ -284,7 +285,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * gets order direction
      *
-     * @return ?string
+     * @return string|null
      */
     public function getOrder(): ?string
     {
@@ -386,7 +387,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * loads search results from index and returns them
      *
-     * @return array
+     * @return IndexableInterface[]
      *
      * @throws \Exception
      */
@@ -752,7 +753,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @param int $elementId
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup|null
+     * @return DefaultMockup|null
      */
     protected function loadElementById(int $elementId): ?\Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup
     {

@@ -19,21 +19,19 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
 use Pimcore\Analytics\Google\Tracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker as EcommerceTracker;
+use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class AbstractAnalyticsTracker extends EcommerceTracker
 {
     protected Tracker $tracker;
 
     /**
-     * @required
-     *
      * @internal
      *
      * TODO Pimcore 10 remove this setter and set as constructor dependency!
-     *
-     * @param Tracker $tracker
      */
-    public function setTracker(Tracker $tracker)
+    #[Required]
+    public function setTracker(Tracker $tracker): void
     {
         $this->tracker = $tracker;
     }

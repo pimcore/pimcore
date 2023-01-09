@@ -16,7 +16,9 @@
 
 
 pimcore.registerNS("pimcore.object.importcolumn.operator.splitter");
-
+/**
+ * @private
+ */
 pimcore.object.importcolumn.operator.splitter = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "Splitter",

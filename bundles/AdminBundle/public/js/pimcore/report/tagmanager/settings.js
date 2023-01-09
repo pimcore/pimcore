@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.report.tagmanager.settings");
+/**
+ * @private
+ */
 pimcore.report.tagmanager.settings = Class.create({
 
     initialize: function (parent) {

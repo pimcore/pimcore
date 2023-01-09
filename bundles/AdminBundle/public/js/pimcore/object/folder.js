@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.folder");
+/**
+ * @private
+ */
 pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     type: "folder",

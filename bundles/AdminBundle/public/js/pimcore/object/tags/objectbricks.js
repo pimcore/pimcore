@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.objectbricks");
+/**
+ * @private
+ */
 pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
     type: "objectbricks",

@@ -251,10 +251,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @return string|null
      *
-     *@throws \Exception
+     * @throws \Exception
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -652,7 +651,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      */
     protected function getPhpdocType(): string
     {
-        return implode(' | ', $this->getPhpDocClassString(true));
+        return $this->getPhpDocClassString(true);
     }
 
     public function normalize(mixed $value, array $params = []): ?array

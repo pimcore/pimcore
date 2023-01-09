@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.targetGroupMultiselect");
+/**
+ * @private
+ */
 pimcore.object.tags.targetGroupMultiselect = Class.create(pimcore.object.tags.multiselect, {
 
     type: "targetGroupMultiselect",

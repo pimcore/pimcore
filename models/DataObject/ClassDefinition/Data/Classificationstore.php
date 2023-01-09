@@ -327,8 +327,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @return DataObject\Classificationstore
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Classificationstore
     {
@@ -867,8 +866,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @return array|null
      *
-     *@internal
-     *
+     * @internal
      */
     public function recursiveGetActiveGroupsIds(?Concrete $object, array $activeGroups = []): ?array
     {

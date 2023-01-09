@@ -35,8 +35,8 @@ class EncryptedField implements OwnerAwareFieldInterface
     protected mixed $encrypted = null;
 
     /**
-     * @param mixed $plain
      * @param Data $delegate
+     * @param mixed $plain
      */
     public function __construct(Data $delegate, mixed $plain)
     {

@@ -325,9 +325,7 @@ class DataObjectHelperController extends AdminController
                 $shared = false;
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = [$this->getAdminUser()->getId()];
-                    if ($this->getAdminUser()->getRoles()) {
-                        $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
-                    }
+                    $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     $userIds = implode(',', $userIds);
                     $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select 1 from gridconfig_shares where sharedWithUserId IN ('.$userIds.') and gridConfigId = '.$savedGridConfig->getId());
 //                  $shared = $savedGridConfig->isShareGlobally() || GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
@@ -1424,7 +1422,8 @@ class DataObjectHelperController extends AdminController
 
     public function encodeFunc($value): string
     {
-        $value = str_replace('"', '""', (string) $value);
+        $value = $value['data'];
+        $value = str_replace('"', '""', $value);
         //force wrap value in quotes and return
         return '"' . $value . '"';
     }

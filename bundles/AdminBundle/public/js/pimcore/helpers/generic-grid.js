@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @private
+ */
 pimcore.helpers.grid = {};
 
 pimcore.helpers.grid.buildDefaultStore = function (url, fields, itemsPerPage, customConfig) {

@@ -511,7 +511,7 @@ class Log extends Model\AbstractModel
     /**
      * Returns the "replyTo" email address
      *
-     * @return ?string
+     * @return string|null
      */
     public function getReplyTo(): ?string
     {

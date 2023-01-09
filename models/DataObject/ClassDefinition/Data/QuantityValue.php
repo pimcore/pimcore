@@ -391,14 +391,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return array
-     *
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -418,24 +417,26 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
-     *
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
-        if ($data[$this->getName() . '__value'] !== null || $data[$this->getName() . '__unit']) {
-            if (!is_numeric($data[$this->getName() . '__value'])) {
-                $value = $this->toNumeric($data[$this->getName() . '__value']);
+        $dataValue = $data[$this->getName() . '__value'];
+        $dataUnit =  $data[$this->getName() . '__unit'];
+
+        if ($dataValue !== null || $dataUnit) {
+            if ($dataValue !== null && !is_numeric($dataValue)) {
+                $value = $this->toNumeric($dataValue);
             } else {
-                $value = $data[$this->getName() . '__value'];
+                $value = $dataValue;
             }
-            $quantityValue = new Model\DataObject\Data\QuantityValue((float) $value, $data[$this->getName() . '__unit']);
+            $quantityValue = new Model\DataObject\Data\QuantityValue($value === null ? null : (float)$value, $dataUnit);
 
             if (isset($params['owner'])) {
                 $quantityValue->_setOwner($params['owner']);
@@ -450,14 +451,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return array
-     *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
      */
     public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
     {
@@ -465,14 +465,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
+     * @see Data::getDataForEditmode
+     *
      * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null
-     *
-     * @see Data::getDataForEditmode
-     *
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -488,7 +487,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * @param array $data
-     * @param Model\DataObject\Concrete|null $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
@@ -499,13 +498,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
+     * @see Data::getDataFromEditmode
+     *
      * @param mixed $data
-     * @param DataObject\Concrete|null $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
-     *
-     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
@@ -521,14 +520,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
+     * @see Data::getVersionPreview
+     *
      * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
-     *
-     * @see Data::getVersionPreview
-     *
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {

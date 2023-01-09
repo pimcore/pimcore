@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.fieldcollections");
+/**
+ * @private
+ */
 pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.classes.data.data, {
 
     type: "fieldcollections",
