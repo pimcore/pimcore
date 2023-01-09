@@ -1441,7 +1441,6 @@ class DataObjectHelperController extends AdminController
 
     public function encodeFunc($value)
     {
-        $value = $value['data'];
         $value = str_replace('"', '""', $value);
         //force wrap value in quotes and return
         return '"' . $value . '"';
