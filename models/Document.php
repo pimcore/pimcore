@@ -46,8 +46,6 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $fullPathCache = null;
 
@@ -58,17 +56,8 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $key = null;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    protected ?string $path = null;
 
     /**
      * @internal
@@ -88,14 +77,14 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $children = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $siblings = [];
 
@@ -581,7 +570,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Get a list of the children (not recursivly)
-     *
      */
     public function getChildren(bool $includingUnpublished = false): Listing
     {
