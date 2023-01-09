@@ -1527,10 +1527,6 @@ pimcore.layout.toolbar = Class.create({
              pimcore.globalmanager.add("word", new pimcore.settings.translation.word());
          }
      },
-
-     showAdminer: function () {
-         pimcore.helpers.openGenericIframeWindow("adminer", Routing.generate('pimcore_admin_external_adminer_adminer'), "pimcore_icon_mysql", "Database Admin");
-     },
  
      showElementHistory: function() {
          try {
