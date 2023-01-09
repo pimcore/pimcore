@@ -145,12 +145,14 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             });
         }
 
-        items.push({
-            xtype: "button",
-            iconCls: "pimcore_icon_search",
-            style: "margin-left: 5px",
-            handler: this.openSearchEditor.bind(this)
-        });
+        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+            items.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_search",
+                style: "margin-left: 5px",
+                handler: this.openSearchEditor.bind(this)
+            });
+        }
 
         // add upload button when assets are allowed
         if (this.fieldConfig.assetsAllowed) {
@@ -336,14 +338,17 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             }.bind(this)
         }));
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: "pimcore_icon_search",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.openSearchEditor();
-            }.bind(this)
-        }));
+
+        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+        }
 
         // add upload button when assets are allowed
         if (this.fieldConfig.assetsAllowed) {

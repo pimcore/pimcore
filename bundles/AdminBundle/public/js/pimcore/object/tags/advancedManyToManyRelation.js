@@ -594,15 +594,17 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 });
             }
 
-            toolbarItems = toolbarItems.concat([
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                }
-                //,
-                //this.getCreateControl()
-            ]);
+            if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+                toolbarItems = toolbarItems.concat([
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_search",
+                        handler: this.openSearchEditor.bind(this)
+                    }
+                    //,
+                    //this.getCreateControl()
+                ]);
+            }
         }
 
         if (this.fieldConfig.assetsAllowed && this.fieldConfig.noteditable == false) {
@@ -723,14 +725,16 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             }.bind(this, data)
         }));
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: "pimcore_icon_search",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.openSearchEditor();
-            }.bind(this)
-        }));
+        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+        }
 
         e.stopEvent();
         menu.showAt(e.getXY());
