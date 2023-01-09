@@ -2,9 +2,9 @@ pimcore.registerNS('pimcore.bundle.search.layout.toolbar');
 
 pimcore.bundle.search.layout.toolbar = Class.create({
     initialize: function (menu) {
-        this.perspectiveCfg = pimcore.globalmanager.get("perspective");
-        this.user = pimcore.globalmanager.get("user");
-        this.quickSearch = new pimcore.bundle.search.layout.quickSearch();
+        this.perspectiveCfg = pimcore.globalmanager.get('perspective');
+        this.user = pimcore.globalmanager.get('user');
+        this.quickSearch = pimcore.globalmanager.get('quickSearchImplementationRegistry');
         this.menu = menu;
 
         this.createSearchEntry();
@@ -14,7 +14,11 @@ pimcore.bundle.search.layout.toolbar = Class.create({
         if (this.perspectiveCfg.inToolbar("search")) {
             const searchItems = [];
 
-            if ((this.user.isAllowed("documents") || this.user.isAllowed("assets") || this.user.isAllowed("objects")) && this.perspectiveCfg.inToolbar("search.quickSearch")) {
+            if ((this.user.isAllowed("documents") ||
+                this.user.isAllowed("assets") ||
+                this.user.isAllowed("objects")) &&
+                this.perspectiveCfg.inToolbar("search.quickSearch") &&
+                this.quickSearch.hasImplementation()) {
                 searchItems.push({
                     text: t("quicksearch"),
                     iconCls: "pimcore_nav_icon_quicksearch",

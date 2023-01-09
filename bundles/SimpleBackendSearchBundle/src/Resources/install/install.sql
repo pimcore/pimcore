@@ -1,5 +1,6 @@
-DROP TABLE IF EXISTS `search_backend_data`;
-CREATE TABLE `search_backend_data` (
+/*DROP TABLE IF EXISTS `search_backend_data`;
+CREATE TABLE `search_backend_data` (*/
+CREATE TABLE IF NOT EXISTS `search_backend_data` (
    `id` int(11) NOT NULL,
    `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin default '',
    `index` int(11) unsigned DEFAULT '0',

@@ -20,4 +20,4 @@ services:
     Pimcore\Bundle\SimpleBackendSearchBundle\Installer:
         public: true
         arguments:
-            $bundle: "@=service('kernel').getBundle('SimpleBackendSearchBundle')"
+            $bundle: "@=service('kernel').getBundle('PimcoreSimpleBackendSearchBundle')"
