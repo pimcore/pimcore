@@ -50,7 +50,7 @@ foreach($translationFiles as $sourceUrl => $projectId) {
     foreach ($enData as $key => $value) {
         $data[] = [
             "term" => $key,
-            "context" => "",
+            "context" => $reference,
             "reference" => $reference,
         ];
 
