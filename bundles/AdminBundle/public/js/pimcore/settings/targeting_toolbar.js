@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.targetingToolbar");
+/**
+ * @private
+ */
 pimcore.settings.targetingToolbar = Class.create({
     initialize: function () {
         var that = this;

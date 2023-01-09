@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.tag.tree");
+/**
+ * @private
+ */
 pimcore.element.tag.tree = Class.create({
 
     allowDnD: true,

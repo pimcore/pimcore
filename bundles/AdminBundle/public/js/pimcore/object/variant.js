@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.variant");
+/**
+ * @private
+ */
 pimcore.object.variant = Class.create(pimcore.object.object, {
 
 });

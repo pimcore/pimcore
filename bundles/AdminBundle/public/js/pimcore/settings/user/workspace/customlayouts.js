@@ -12,7 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.user.workspace.customlayouts");
-
+/**
+ * @private
+ */
 pimcore.settings.user.workspace.customlayouts = Class.create({
 
     initialize: function (type, data, allLayouts) {

@@ -91,8 +91,7 @@ class ApplicationLogger implements LoggerInterface
     /**
      * @param \Pimcore\Model\Asset|int|\Pimcore\Model\Document|\Pimcore\Model\DataObject\AbstractObject $relatedObject
      *
-     *@deprecated
-     *
+     * @deprecated
      */
     public function setRelatedObject(\Pimcore\Model\Asset|int|\Pimcore\Model\Document|\Pimcore\Model\DataObject\AbstractObject $relatedObject)
     {

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.time");
+/**
+ * @private
+ */
 pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
 
     type: "time",

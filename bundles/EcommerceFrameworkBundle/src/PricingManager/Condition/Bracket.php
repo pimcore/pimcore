@@ -128,8 +128,7 @@ class Bracket implements BracketInterface
      *
      * @return $this
      *
-     *@throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
-     *
+     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */
     public function fromJSON(string $string): static
     {

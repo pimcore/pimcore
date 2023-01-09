@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.report.analytics.elementexplorer");
+/**
+ * @private
+ */
 pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract, {
 
     matchType: function (type) {

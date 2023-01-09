@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.layout.accordion");
+/**
+ * @private
+ */
 pimcore.object.classes.layout.accordion = Class.create(pimcore.object.classes.layout.layout, {
 
     type: "accordion",

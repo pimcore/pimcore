@@ -13,6 +13,9 @@
  */
 
 pimcore.registerNS("pimcore.object.edit");
+/**
+ * @private
+ */
 pimcore.object.edit = Class.create({
 
     initialize: function(object) {

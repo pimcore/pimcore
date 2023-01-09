@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.metainfo");
+/**
+ * @private
+ */
 pimcore.element.metainfo = Class.create({
     getClassName: function (){
         return "pimcore.element.metainfo";

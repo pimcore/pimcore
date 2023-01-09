@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.properties");
+/**
+ * @private
+ */
 pimcore.document.properties = Class.create(pimcore.element.properties, {
     showNavigationProperties: false,
 

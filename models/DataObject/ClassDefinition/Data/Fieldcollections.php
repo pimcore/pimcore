@@ -158,8 +158,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @return DataObject\Fieldcollection
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Fieldcollection
     {

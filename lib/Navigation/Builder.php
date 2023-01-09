@@ -274,8 +274,7 @@ class Builder
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     protected function addActiveCssClasses(Page $page, bool $isActive = false): void
     {
@@ -330,7 +329,7 @@ class Builder
     {
         // the intention of this function is mainly to be overridden in order to customize the behavior of the navigation
         // e.g. for custom filtering and other very specific use-cases
-        return $parentDocument->getChildren();
+        return $parentDocument->getChildren()->load();
     }
 
     /**
@@ -344,8 +343,7 @@ class Builder
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     protected function buildNextLevel(Document $parentDocument, bool $isRoot = false, callable $pageCallback = null, array $parents = [], int $maxDepth = null): array
     {
