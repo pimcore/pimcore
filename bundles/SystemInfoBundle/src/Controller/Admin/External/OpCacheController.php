@@ -25,13 +25,13 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/system-info")
+ * @Route("/")
  * @internal
  */
 class OpCacheController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @Route("/external_opcache", name="pimcore_admin_external_opcache_index")
+     * @Route("/external_opcache", name="pimcore_bundle_system_info_settings_opcache_index")
      *
      * @param Request $request
      * @param Profiler|null $profiler

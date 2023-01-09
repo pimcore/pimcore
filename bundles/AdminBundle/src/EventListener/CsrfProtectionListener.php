@@ -71,7 +71,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
             'pimcore_admin_webdav',
 
             // external applications
-            'pimcore_admin_external_opcache_index',
+            'pimcore_bundle_system_info_settings_opcache_index',
         ];
 
         $route = $request->attributes->get('_route');

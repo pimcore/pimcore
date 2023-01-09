@@ -1,6 +1,6 @@
-pimcore.registerNS('pimcore.bundle.SystemInfo');
+pimcore.registerNS('pimcore.bundle.system_info.startup');
 
-pimcore.bundle.SystemInfo = Class.create({
+pimcore.bundle.system_info.startup = Class.create({
     user: null,
     toolbar: null,
     perspectiveConfig: null,
@@ -83,17 +83,17 @@ pimcore.bundle.SystemInfo = Class.create({
     },
 
     showPhpInfo: function () {
-        pimcore.helpers.openGenericIframeWindow("phpinfo", Routing.generate('pimcore_admin_misc_phpinfo'), "pimcore_icon_php", "PHP Info");
+        pimcore.helpers.openGenericIframeWindow("phpinfo", Routing.generate('pimcore_bundle_system_info_settings_phpinfo'), "pimcore_icon_php", "PHP Info");
     },
 
     showOpcacheStatus: function () {
-        pimcore.helpers.openGenericIframeWindow("opcachestatus", Routing.generate('pimcore_admin_external_opcache_index'), "pimcore_icon_reports", "PHP OPcache Status");
+        pimcore.helpers.openGenericIframeWindow("opcachestatus", Routing.generate('pimcore_bundle_system_info_settings_opcache_index'), "pimcore_icon_reports", "PHP OPcache Status");
     },
 
     showSystemRequirementsCheck: function () {
-        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_admin_install_check'), "pimcore_icon_systemrequirements", "System-Requirements Check");
+        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_bundle_system_info_settings_install_checks'), "pimcore_icon_systemrequirements", "System-Requirements Check");
     },
 
 });
 
-var systemInfoBundle = new pimcore.bundle.SystemInfo();
+var bundle_system_info = new pimcore.bundle.system_info.startup();

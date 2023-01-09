@@ -484,7 +484,6 @@
     "web2print_pdfreactor_settings": "PDFreactor nastavení",
     "web2print_wkhtmltopdf_binary": "Wkhtmltopdf binárka",
     "web2print_wkhtmltopdf_options_txt": "Jeden na řádek s '--' a mezerou medzi kľíčem a hodnotou (napr. --klic hodnota)",
-    "php_opcache_status": "PHP OPcache status",
     "custom_report_class": "Třída pro report",
     "editor_configuration": "Editor konfigurace",
     "high_resolution_info_text": "např. pro Web-to-Print nebo všude kde srcset není dostatečný, není nutné pro webové náhledy, které mají srset (1x a 2x) atribut automaticky",
