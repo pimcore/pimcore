@@ -57,6 +57,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
+     *
+     * @var array<string, Model\Property>|null
      */
     protected ?array $properties = null;
 
@@ -238,9 +240,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->parent;
     }
 
-    /**
-     * @return Model\Property[]
-     */
     public function getProperties(): array
     {
         $type = Service::getElementType($this);
