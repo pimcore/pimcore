@@ -320,7 +320,7 @@ pimcore.bundle.search.element.selector.object = Class.create(pimcore.bundle.sear
         }
 
         this.itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
-        const gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, Routing.generate('pimcore_admin_searchadmin_search_find'), null, true);
+        const gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, Routing.generate('pimcore_bundle_search_search_find'), null, true);
         gridHelper.limit = this.itemsPerPage;
         this.store = gridHelper.getStore();
         this.store.setPageSize(this.itemsPerPage);
@@ -349,7 +349,7 @@ pimcore.bundle.search.element.selector.object = Class.create(pimcore.bundle.sear
             pageSize: this.itemsPerPage,
             proxy : {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_searchadmin_search_find'),
+                url: Routing.generate('pimcore_bundle_search_search_find'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'

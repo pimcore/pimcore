@@ -8,7 +8,7 @@ pimcore.bundle.search.element.selector.document = Class.create(pimcore.bundle.se
             pageSize: 50,
             proxy : {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_searchadmin_search_find'),
+                url: Routing.generate('pimcore_bundle_search_search_find'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'

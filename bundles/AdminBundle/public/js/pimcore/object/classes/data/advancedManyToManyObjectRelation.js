@@ -123,6 +123,13 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
 
         this.specificPanel.add(this.classCombo);
 
+        const displayModeStore = [
+            ['grid', t('display_mode_grid')]
+        ];
+        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+            displayModeStore.push(['combo', t('display_mode_combo')]);
+        }
+
         this.specificPanel.add(
             {
                 xtype: "combo",
@@ -132,10 +139,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                 labelWidth: 140,
                 forceSelection: true,
                 width: 400,
-                store: [
-                    ['grid', t('display_mode_grid')],
-                    ['combo', t('display_mode_combo')],
-                ]
+                store: displayModeStore
             }
         );
 
