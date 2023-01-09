@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.tag.assignment");
+/**
+ * @private
+ */
 pimcore.element.tag.assignment = Class.create({
 
     initialize: function(element, elementType) {
@@ -79,13 +82,14 @@ pimcore.element.tag.assignment = Class.create({
                 store: gridStore,
                 columnLines: true,
                 stripeRows: true,
+                resizable: true,
                 columns: {
                     items: [
                         {
                             text: t("name"),
                             dataIndex: 'path',
                             sortable: true,
-                            width: 400
+                            flex: 1
                         },
                         {
                             xtype: 'actioncolumn',

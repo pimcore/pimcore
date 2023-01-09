@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @private
+ */
 Ext.define('pimcore.element.helpers.gridCellEditor', {
     extend: 'Ext.grid.CellEditor',
 
@@ -48,7 +51,7 @@ Ext.define('pimcore.element.helpers.gridCellEditor', {
         }
 
         if(fieldInfo.layout.noteditable) {
-            Ext.MessageBox.alert(t('error'), t('this_element_cannot_be_edited'));
+            pimcore.helpers.showNotification(t('warning'), t('this_element_cannot_be_edited'), 'warning');
             return;
         }
 

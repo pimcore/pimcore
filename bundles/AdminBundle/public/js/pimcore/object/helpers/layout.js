@@ -14,6 +14,9 @@
 
 
 pimcore.registerNS("pimcore.object.helpers.layout");
+/**
+ * @private
+ */
 pimcore.object.helpers.layout = {
 
     /**

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.hardlink");
+/**
+ * @private
+ */
 pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
     initialize: function (id, options) {

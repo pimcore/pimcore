@@ -242,8 +242,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
     {
@@ -281,8 +280,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @return DataObject\Data\ImageGallery
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {

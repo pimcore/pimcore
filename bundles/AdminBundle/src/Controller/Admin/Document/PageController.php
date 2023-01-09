@@ -217,7 +217,7 @@ class PageController extends DocumentControllerBase
     public function generatePreviewsAction(Request $request, MessageBusInterface $messengerBusPimcoreCore): JsonResponse
     {
         $list = new Document\Listing();
-        $list->setCondition('type = ?', ['page']);
+        $list->setCondition('`type` = ?', ['page']);
 
         foreach ($list->loadIdList() as $docId) {
             $messengerBusPimcoreCore->dispatch(
@@ -289,7 +289,7 @@ class PageController extends DocumentControllerBase
         }
 
         $list = new Document\Listing();
-        $list->setCondition('(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
+        $list->setCondition('(CONCAT(`path`, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
             AND id != ?', [
             $path, $path, $docId,
         ]);

@@ -191,8 +191,7 @@ class Cache
      *
      * @param bool $forceWrite
      *
-     *@internal
-     *
+     * @internal
      */
     public static function shutdown(bool $forceWrite = false): void
     {

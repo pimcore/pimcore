@@ -271,8 +271,7 @@ final class Property extends AbstractModel
      *
      * @param array $idMapping
      *
-     *@internal
-     *
+     * @internal
      */
     public function rewriteIds(array $idMapping)
     {

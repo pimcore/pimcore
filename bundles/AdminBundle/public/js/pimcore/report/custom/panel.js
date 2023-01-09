@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.report.custom.panel");
+/**
+ * @private
+ */
 pimcore.report.custom.panel = Class.create({
 
     initialize: function () {

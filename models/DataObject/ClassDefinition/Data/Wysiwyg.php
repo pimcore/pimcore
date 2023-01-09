@@ -116,8 +116,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -131,8 +130,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -146,8 +144,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return string|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -249,6 +246,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return Text::wysiwygText($data, [
                 'object' => $container,
                 'context' => $this,
+                'language' => $params['language'] ?? null,
             ]);
     }
 

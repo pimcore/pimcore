@@ -17,6 +17,9 @@
 
 pimcore.registerNS("pimcore.object.importcolumn.operator.ignore");
 
+/**
+ * @private
+ */
 pimcore.object.importcolumn.operator.ignore = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "Ignore",

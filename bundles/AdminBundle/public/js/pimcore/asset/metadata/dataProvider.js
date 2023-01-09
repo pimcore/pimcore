@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.dataProvider");
+/**
+ * @private
+ */
 pimcore.asset.metadata.dataProvider = Class.create({
 
     initialize: function (config) {

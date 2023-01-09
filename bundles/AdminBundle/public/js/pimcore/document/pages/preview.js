@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @private
+ */
 pimcore.registerNS("pimcore.document.pages.preview");
 Ext.define('pimcore.document.pages.preview', {
     extend: pimcore.element.abstractPreview,

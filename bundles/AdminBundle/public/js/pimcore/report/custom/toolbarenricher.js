@@ -1,3 +1,6 @@
+/**
+ * @private
+ */
 document.addEventListener(pimcore.events.pimcoreReady, (e) => {
     const user = pimcore.globalmanager.get("user");
     if(user.isAllowed("reports")){

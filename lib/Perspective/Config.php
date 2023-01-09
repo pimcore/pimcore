@@ -254,8 +254,7 @@ final class Config
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     protected static function getRuntimeElementTreeConfig(string $name): array
     {

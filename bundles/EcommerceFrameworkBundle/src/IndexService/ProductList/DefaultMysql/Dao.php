@@ -61,18 +61,18 @@ class Dao
 
         if ($this->model->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             if ($orderBy) {
-                $query = 'SELECT SQL_CALC_FOUND_ROWS DISTINCT o_virtualProductId as o_id, priceSystemName FROM '
+                $query = 'SELECT SQL_CALC_FOUND_ROWS DISTINCT virtualProductId as id, priceSystemName FROM '
                     . $this->model->getCurrentTenantConfig()->getTablename() . ' a '
                     . $this->model->getCurrentTenantConfig()->getJoins()
-                    . $condition . ' GROUP BY o_virtualProductId, priceSystemName' . $orderBy . ' ' . $limit;
+                    . $condition . ' GROUP BY virtualProductId, priceSystemName' . $orderBy . ' ' . $limit;
             } else {
-                $query = 'SELECT SQL_CALC_FOUND_ROWS DISTINCT o_virtualProductId as o_id, priceSystemName FROM '
+                $query = 'SELECT SQL_CALC_FOUND_ROWS DISTINCT virtualProductId as id, priceSystemName FROM '
                     . $this->model->getCurrentTenantConfig()->getTablename() . ' a '
                     . $this->model->getCurrentTenantConfig()->getJoins()
                     . $condition . ' ' . $limit;
             }
         } else {
-            $query = 'SELECT SQL_CALC_FOUND_ROWS a.o_id, priceSystemName FROM '
+            $query = 'SELECT SQL_CALC_FOUND_ROWS a.id, priceSystemName FROM '
                 . $this->model->getCurrentTenantConfig()->getTablename() . ' a '
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . ' ' . $limit;
@@ -93,7 +93,7 @@ class Dao
 
         if ($countValues) {
             if ($this->model->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                $query = "SELECT TRIM(`$fieldname`) as `value`, count(DISTINCT o_virtualProductId) as `count` FROM "
+                $query = "SELECT TRIM(`$fieldname`) as `value`, count(DISTINCT virtualProductId) as `count` FROM "
                     . $this->model->getCurrentTenantConfig()->getTablename() . ' a '
                     . $this->model->getCurrentTenantConfig()->getJoins()
                     . $condition . ' GROUP BY TRIM(`' . $fieldname . '`)';
@@ -140,7 +140,7 @@ class Dao
                     . 'WHERE fieldname = ' . $this->quote($fieldname);
             }
 
-            $subquery = 'SELECT a.o_id FROM '
+            $subquery = 'SELECT a.id FROM '
                 . $this->model->getCurrentTenantConfig()->getTablename() . ' a '
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition;
@@ -156,7 +156,7 @@ class Dao
             $query = 'SELECT dest FROM ' . $this->model->getCurrentTenantConfig()->getRelationTablename() . ' a '
                 . 'WHERE fieldname = ' . $this->quote($fieldname);
 
-            $subquery = 'SELECT a.o_id FROM '
+            $subquery = 'SELECT a.id FROM '
                 . $this->model->getCurrentTenantConfig()->getTablename() . ' a '
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition;
@@ -190,7 +190,7 @@ class Dao
         }
 
         if ($this->model->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-            $query = 'SELECT count(DISTINCT o_virtualProductId) FROM '
+            $query = 'SELECT count(DISTINCT virtualProductId) FROM '
                 . $this->model->getCurrentTenantConfig()->getTablename() . ' a '
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . ' ' . $limit;
@@ -235,7 +235,7 @@ class Dao
                 $maxFieldString .= 'MAX(' . $this->db->quoteIdentifier($f->getField()) . ') as ' . $this->db->quoteIdentifier($f->getField());
             }
 
-            $query = 'SELECT ' . $fieldString . ' FROM ' . $this->model->getCurrentTenantConfig()->getTablename() . ' a WHERE a.o_id = ?;';
+            $query = 'SELECT ' . $fieldString . ' FROM ' . $this->model->getCurrentTenantConfig()->getTablename() . ' a WHERE a.id = ?;';
 
             $this->logger->info('Query: ' . $query);
             $objectValues = $this->db->fetchAssociative($query, [$objectId]);

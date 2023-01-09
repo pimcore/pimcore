@@ -13,6 +13,9 @@
 
 
 pimcore.registerNS("pimcore.settings.user.usertab");
+/**
+ * @private
+ */
 pimcore.settings.user.usertab = Class.create({
 
     initialize: function (parentPanel, id) {

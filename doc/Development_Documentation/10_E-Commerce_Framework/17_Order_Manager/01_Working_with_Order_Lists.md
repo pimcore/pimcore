@@ -110,7 +110,7 @@ $orderList = $orderManager->createOrderList();
 // add all required fields to the select
 $orderList->addSelectField(['OrderNumber' => 'order.orderNumber']);
 $orderList->addSelectField(['TotalPrice' => 'order.totalPrice']);
-$orderList->addSelectField(['Items' => 'count(orderItem.o_id)']);
+$orderList->addSelectField(['Items' => 'count(orderItem.id)']);
 
 ```
 
@@ -122,7 +122,7 @@ $orderList->addSelectField(['Items' => 'count(orderItem.o_id)']);
 
 // e.g. get all orderings for a customer
 $orderList->joinCustomer( \Pimcore\Model\DataObject\Customer::classId() );
-$orderList->getQuery()->where('customer.o_id = ?', 12345);
+$orderList->getQuery()->where('customer.id = ?', 12345);
 
 
 // e.g. filter product number

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.abstract");
+/**
+ * @private
+ */
 pimcore.object.abstract = Class.create(pimcore.element.abstract, {
 
     selectInTree: function (type, button) {

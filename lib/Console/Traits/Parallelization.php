@@ -17,10 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Console\Traits;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
@@ -33,40 +31,6 @@ trait Parallelization
 
     use ParallelizationBase;
 
-    protected static function configureParallelization(Command $command): void
-    {
-        // we need to override WebmozartParallelization::configureParallelization here
-        // because some existing commands are already using the `p` option, and would therefore
-        // causes collisions
-        $command
-            ->addArgument(
-                'item',
-                InputArgument::OPTIONAL,
-                'The item to process. Can be used in commands where simple IDs are processed. Otherwise it is for internal use.'
-            )
-            ->addOption(
-                'processes',
-                null,
-                //'p', avoid collisions with already existing Pimcore command options
-                InputOption::VALUE_OPTIONAL,
-                'The number of parallel processes to run',
-                '1'
-            )
-            ->addOption(
-                'child',
-                null,
-                InputOption::VALUE_NONE,
-                'Set on child processes. For internal use only.'
-            )->addOption(
-                'batch-size',
-                null,
-                InputOption::VALUE_OPTIONAL,
-                'Sets the number of items to process per child process or in a batch',
-                '50'
-            )
-        ;
-    }
-
     protected function getParallelExecutableFactory(
         callable $fetchItems,
         callable $runSingleCommand,
@@ -76,19 +40,9 @@ trait Parallelization
         ErrorHandler $errorHandler
     ): ParallelExecutorFactory {
         return ParallelExecutorFactory::create(...func_get_args())
-            ->withSegmentSize($this->getSegmentSize())
-            ->withScriptPath($this->getConsolePath())
             ->withRunBeforeFirstCommand($this->runBeforeFirstCommand(...))
             ->withRunAfterLastCommand($this->runAfterLastCommand(...))
             ->withRunAfterBatch($this->runAfterBatch(...));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getSegmentSize(): int
-    {
-        return (int)$this->input->getOption('batch-size');
     }
 
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
@@ -144,10 +98,5 @@ trait Parallelization
             $this->lock->release();
             $this->lock = null;
         }
-    }
-
-    public function getConsolePath(): string
-    {
-        return PIMCORE_PROJECT_ROOT . '/bin/console';
     }
 }

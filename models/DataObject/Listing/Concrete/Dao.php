@@ -174,7 +174,7 @@ class Dao extends Model\DataObject\Listing\Dao
                 // set join condition
                 $condition = <<<CONDITION
 1
- AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+ AND {$this->db->quoteIdentifier($name)}.id = {$this->db->quoteIdentifier($this->getTableName())}.id
 CONDITION;
 
                 if (!empty($fc['fieldname'])) {
@@ -205,7 +205,7 @@ CONDITION;
                 $queryBuilder->leftJoin($this->getTableName(), $table, $this->db->quoteIdentifier($name),
                     <<<CONDITION
 1
-AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+AND {$this->db->quoteIdentifier($name)}.id = {$this->db->quoteIdentifier($this->getTableName())}.id
 CONDITION
                 );
 
@@ -219,7 +219,7 @@ CONDITION
                     $queryBuilder->leftJoin($this->getTableName(), $localizedTable, $this->db->quoteIdentifier($name),
                         <<<CONDITION
 1
-AND {$this->db->quoteIdentifier($name)}.ooo_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+AND {$this->db->quoteIdentifier($name)}.ooo_id = {$this->db->quoteIdentifier($this->getTableName())}.id
 CONDITION
                     );
                 }

@@ -16,7 +16,9 @@
 
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.localeswitcher");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "LocaleSwitcher",

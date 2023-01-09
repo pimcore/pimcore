@@ -325,9 +325,7 @@ class DataObjectHelperController extends AdminController
                 $shared = false;
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = [$this->getAdminUser()->getId()];
-                    if ($this->getAdminUser()->getRoles()) {
-                        $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
-                    }
+                    $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     $userIds = implode(',', $userIds);
                     $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select 1 from gridconfig_shares where sharedWithUserId IN ('.$userIds.') and gridConfigId = '.$savedGridConfig->getId());
 //                  $shared = $savedGridConfig->isShareGlobally() || GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
@@ -839,7 +837,7 @@ class DataObjectHelperController extends AdminController
                     . ' and classId = ' . $db->quote($classId).
                     ' and searchType = ' . $db->quote($searchType)
                     . ' and objectId != ' . $objectId . ' and objectId != 0'
-                    . ' and type != ' . $db->quote($type));
+                    . ' and `type` != ' . $db->quote($type));
                 $specializedConfigs = $count > 0;
             } catch (\Exception $e) {
                 $favourite->delete();
@@ -1357,8 +1355,8 @@ class DataObjectHelperController extends AdminController
         }
 
         $list->setObjectTypes(DataObject::$types);
-        $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
-        $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
+        $list->setCondition('id IN (' . implode(',', $quotedIds) . ')');
+        $list->setOrderKey(' FIELD(id, ' . implode(',', $quotedIds) . ')', false);
 
         $beforeListExportEvent = new GenericEvent($this, [
             'list' => $list,
@@ -1424,7 +1422,8 @@ class DataObjectHelperController extends AdminController
 
     public function encodeFunc($value): string
     {
-        $value = str_replace('"', '""', (string) $value);
+        $value = $value['data'];
+        $value = str_replace('"', '""', $value);
         //force wrap value in quotes and return
         return '"' . $value . '"';
     }

@@ -143,7 +143,7 @@ class Ghostscript extends Adapter
     protected function buildPageCountCommand(): string
     {
         $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
-        $localFile = self::getLocalFileFromStream((string)$this->getPdf());
+        $localFile = self::getLocalFileFromStream($this->getPdf());
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
         if (version_compare($this->getVersion(), '9.50', '>=')) {
@@ -178,7 +178,7 @@ class Ghostscript extends Adapter
     public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed
     {
         try {
-            $localFile = self::getLocalFileFromStream((string)$this->getPdf());
+            $localFile = self::getLocalFileFromStream($this->getPdf());
             $cmd = [self::getGhostscriptCli(), '-sDEVICE=pngalpha', '-dFirstPage=' . $page, '-dLastPage=' . $page, '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4', '-r'. $resolution, '-o', $imageTargetPath, $localFile];
             Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);

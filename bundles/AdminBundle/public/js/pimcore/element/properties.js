@@ -13,6 +13,9 @@
  */
 
 pimcore.registerNS("pimcore.element.properties");
+/**
+ * @private
+ */
 pimcore.element.properties = Class.create({
 
     disallowedKeys: [],
@@ -169,7 +172,7 @@ pimcore.element.properties = Class.create({
                                 }
                                 else if (type == "object") {
                                     if (v && typeof v == "object") {
-                                        return v.o_path + v.o_key;
+                                        return v.path + v.key;
                                     }
                                 }
 
@@ -338,9 +341,9 @@ pimcore.element.properties = Class.create({
                                     if(pData.all.data.id) {
                                         pimcore.helpers.openElement(pData.all.data.id, pData.type, pData.all.data.type);
                                     }
-                                    else if (pData.all.data.o_id) {
-                                        pimcore.helpers.openElement(pData.all.data.o_id, pData.type,
-                                                                                        pData.all.data.o_type);
+                                    else if (pData.all.data.id) {
+                                        pimcore.helpers.openElement(pData.all.data.id, pData.type,
+                                                                                        pData.all.data.type);
                                     }
                                 }
                             }.bind(this),
@@ -411,9 +414,9 @@ pimcore.element.properties = Class.create({
                                     if(pData.all.data.id) {
                                         pimcore.helpers.openElement(pData.all.data.id, pData.type, pData.all.data.type);
                                     }
-                                    else if (pData.all.data.o_id) {
-                                        pimcore.helpers.openElement(pData.all.data.o_id, pData.type,
-                                                                                                pData.all.data.o_type);
+                                    else if (pData.all.data.id) {
+                                        pimcore.helpers.openElement(pData.all.data.id, pData.type,
+                                                                                                pData.all.data.type);
                                     }
                                 }
                             }.bind(this, grid, rowIndex)

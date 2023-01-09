@@ -158,8 +158,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @return DataObject\Fieldcollection
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Fieldcollection
     {
@@ -635,10 +634,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        //TODO Pimcore 11 remove method_exists call
-                        if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
+                        if ($fd instanceof ClassSavedInterface) {
                             // defer creation
-                            $fd->classSaved($class);
+                            $fd->classSaved($class, $params);
                         }
                     }
 

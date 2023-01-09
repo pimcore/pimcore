@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.folder");
+/**
+ * @private
+ */
 pimcore.document.folder = Class.create(pimcore.document.document, {
 
     initialize: function(id, options) {

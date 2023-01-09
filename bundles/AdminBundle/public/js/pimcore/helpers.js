@@ -23,6 +23,9 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
     var user = pimcore.globalmanager.get("user");
     var bindings = [];
 
+    // firing event to enable bundles/extensions to add key bindings
+    document.dispatchEvent(new CustomEvent(pimcore.events.preRegisterKeyBindings));
+
     var decodedKeyBindings = Ext.decode(user.keyBindings);
     if (decodedKeyBindings) {
         for (var i = 0; i < decodedKeyBindings.length; i++) {
@@ -653,7 +656,7 @@ pimcore.helpers.handleCtrlS = function (keyCode, e) {
             }
         }
         else if (el.object) {
-            if (el.object.data.general.o_published) {
+            if (el.object.data.general.published) {
                 el.object.publish();
             } else {
                 el.object.save('version');
@@ -2755,13 +2758,6 @@ pimcore.helpers.searchAndReplaceAssignments = function() {
     }
 };
 
-pimcore.helpers.glossary = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("glossary")) {
-        pimcore.layout.toolbar.prototype.editGlossary();
-    }
-};
-
 pimcore.helpers.redirects = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("redirects")) {
@@ -2801,27 +2797,6 @@ pimcore.helpers.reports = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("reports")) {
         pimcore.layout.toolbar.prototype.showReports(null);
-    }
-};
-
-pimcore.helpers.seoDocumentEditor = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
-        pimcore.layout.toolbar.prototype.showDocumentSeo();
-    }
-};
-
-pimcore.helpers.robots = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("robots.txt")) {
-        pimcore.layout.toolbar.prototype.showRobotsTxt();
-    }
-};
-
-pimcore.helpers.httpErrorLog = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("http_errors")) {
-        pimcore.layout.toolbar.prototype.showHttpErrorLog();
     }
 };
 
@@ -2927,7 +2902,6 @@ pimcore.helpers.keyBindingMapping = {
     "showElementHistory": pimcore.helpers.showElementHistory,
     "closeAllTabs": pimcore.helpers.closeAllTabs,
     "searchAndReplaceAssignments": pimcore.helpers.searchAndReplaceAssignments,
-    "glossary": pimcore.helpers.glossary,
     "redirects": pimcore.helpers.redirects,
     "sharedTranslations": pimcore.helpers.sharedTranslations,
     "recycleBin": pimcore.helpers.recycleBin,
@@ -2935,9 +2909,6 @@ pimcore.helpers.keyBindingMapping = {
     "applicationLogger": pimcore.helpers.applicationLogger,
     "reports": pimcore.helpers.reports,
     "tagManager": pimcore.helpers.tagManager,
-    "seoDocumentEditor": pimcore.helpers.seoDocumentEditor,
-    "robots": pimcore.helpers.robots,
-    "httpErrorLog": pimcore.helpers.httpErrorLog,
     "customReports": pimcore.helpers.customReports,
     "tagConfiguration": pimcore.helpers.tagConfiguration,
     "users": pimcore.helpers.users,
@@ -3224,7 +3195,7 @@ pimcore.helpers.formatTimeDuration = function (dataDuration) {
 };
 
 /**
- * Delete confim dialog box
+ * Delete confirm dialog box
  *
  * @param title
  * @param name
@@ -3240,4 +3211,28 @@ pimcore.helpers.deleteConfirm = function (title, name, deleteCallback) {
                 }
             }
         }.bind(this))
+};
+
+/**
+ * Building menu with priority
+ * @param items
+ */
+pimcore.helpers.buildMenu = function(items) {
+    // priority for every menu and submenu starts at 10
+    // leaving enough space for bundles etc.
+    let priority = 10;
+    for(let i = 0; i < items.length; i++) {
+        // only adding priority if not set yet
+        if(items[i].priority === undefined && items[i].text !== undefined) {
+            items[i].priority = priority;
+            priority += 10;
+        }
+        // if there are no submenus left, skip to the next item
+        if(items[i].menu === undefined) {
+            continue;
+        }
+
+        pimcore.helpers.buildMenu(items[i].menu.items);
+        items[i].menu = Ext.create('pimcore.menu.menu', items[i].menu);
+    }
 };

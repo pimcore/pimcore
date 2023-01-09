@@ -11,6 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+
+ /**
+  * @private
+  */
 pimcore.edithelpers = {};
 
 // disable reload & links, this function is here because it has to be in the header (body attribute)

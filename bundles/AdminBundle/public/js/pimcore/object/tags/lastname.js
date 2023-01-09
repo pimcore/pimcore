@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.lastname");
+/**
+ * @private
+ */
 pimcore.object.tags.lastname = Class.create(pimcore.object.tags.input, {
 
     type: "lastname"

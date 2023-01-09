@@ -11,23 +11,28 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
- pimcore.registerNS("pimcore.layout.toolbar");
- pimcore.layout.toolbar = Class.create({
- 
+pimcore.registerNS("pimcore.layout.toolbar");
+/**
+ * @private
+ */
+pimcore.layout.toolbar = Class.create({
+
      initialize: function() {
  
          var user = pimcore.globalmanager.get("user");
          this.toolbar = Ext.getCmp("pimcore_panel_toolbar");
  
          var perspectiveCfg = pimcore.globalmanager.get("perspective");
+
+         var menu = {};
  
          if (perspectiveCfg.inToolbar("file")) {
              var fileItems = [];
  
              if (perspectiveCfg.inToolbar("file.perspectives")) {
- 
+
                  if (pimcore.settings.availablePerspectives.length > 1) {
- 
+
                      var items = [];
                      for (var i = 0; i < pimcore.settings.availablePerspectives.length; i++) {
                          var perspective = pimcore.settings.availablePerspectives[i];
@@ -47,7 +52,7 @@
                          items.push(itemCfg);
                      }
  
-                     this.perspectivesMenu = new Ext.menu.Item({
+                     this.perspectivesMenu = {
                          text: t("perspectives"),
                          iconCls: "pimcore_nav_icon_perspective",
                          itemId: 'pimcore_menu_file_perspective',
@@ -57,14 +62,14 @@
                              shadow: false,
                              items: items
                          }
-                     });
+                     };
                      fileItems.push(this.perspectivesMenu);
                  }
              }
  
  
              if (user.isAllowed("dashboards") && perspectiveCfg.inToolbar("file.dashboards")) {
-                 this.dashboardMenu = new Ext.menu.Item({
+                 this.dashboardMenu = {
                      text: t("dashboards"),
                      iconCls: "pimcore_nav_icon_dashboards",
                      itemId: 'pimcore_menu_file_dashboards',
@@ -79,14 +84,14 @@
                              handler: pimcore.helpers.openWelcomePage.bind(this)
                          }]
                      }
-                 });
+                 };
  
                  Ext.Ajax.request({
                      url: Routing.generate('pimcore_admin_portal_dashboardlist'),
                      success: function (response) {
                          var data = Ext.decode(response.responseText);
                          for (var i = 0; i < data.length; i++) {
-                             this.dashboardMenu.menu.add(new Ext.menu.Item({
+                             this.dashboardMenu.menu.add({
                                  text: data[i],
                                  iconCls: "pimcore_nav_icon_dashboards",
                                  itemId: 'pimcore_menu_file_dashboards_custom_' + data[i],
@@ -98,7 +103,7 @@
                                          pimcore.globalmanager.add("layout_portal_" + key, new pimcore.layout.portal(key));
                                      }
                                  }.bind(this, data[i])
-                             }));
+                             });
                          }
  
                          this.dashboardMenu.menu.add(new Ext.menu.Separator({}));
@@ -273,34 +278,18 @@
                      }
                  });
              }
- 
-             this.fileMenu = new Ext.menu.Menu({
+
+             menu.file = {
                  items: fileItems,
                  shadow: false,
-                 cls: "pimcore_navigation_flyout",
-                 listeners: {
-                     "show": function (e) {
-                         Ext.get('pimcore_menu_file').addCls('active');
-                     },
-                     "hide": function (e) {
-                         Ext.get('pimcore_menu_file').removeCls('active');
-                     }
-                 }
-             });
+                 listeners: true,
+                 cls: "pimcore_navigation_flyout"
+             };
          }
  
          if (perspectiveCfg.inToolbar("extras")) {
  
              var extrasItems = [];
- 
-             if (user.isAllowed("glossary") && perspectiveCfg.inToolbar("extras.glossary")) {
-                 extrasItems.push({
-                     text: t("glossary"),
-                     iconCls: "pimcore_nav_icon_glossary",
-                     itemId: 'pimcore_menu_extras_glossary',
-                     handler: this.editGlossary
-                 });
-             }
  
              if (user.isAllowed("redirects") && perspectiveCfg.inToolbar("extras.redirects")) {
                  extrasItems.push({
@@ -456,18 +445,7 @@
                              }
                          );
                      }
- 
-                     if (perspectiveCfg.inToolbar("extras.systemtools.database")) {
-                         systemItems.push(
-                             {
-                                 text: t("database_administration"),
-                                 iconCls: "pimcore_nav_icon_mysql",
-                                 itemId: 'pimcore_menu_extras_system_info_database_administration',
-                                 handler: this.showAdminer
-                             }
-                         );
-                     }
- 
+
                      if (perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")) {
                          systemItems.push(
                              {
@@ -492,23 +470,15 @@
                      });
                  }
              }
- 
- 
-             if (extrasItems.length > 0) {
-                 this.extrasMenu = new Ext.menu.Menu({
-                     items: extrasItems,
-                     shadow: false,
-                     cls: "pimcore_navigation_flyout",
-                     listeners: {
-                         "show": function (e) {
-                             Ext.get('pimcore_menu_extras').addCls('active');
-                         },
-                         "hide": function (e) {
-                             Ext.get('pimcore_menu_extras').removeCls('active');
-                         }
-                     }
-                 });
-             }
+
+             // adding menu even though extraItems can be empty
+             // items can be added via event later
+             menu.extras = {
+                 items: extrasItems,
+                 shadow: false,
+                 listeners: true,
+                 cls: "pimcore_navigation_flyout"
+             };
          }
  
          if (perspectiveCfg.inToolbar("marketing")) {
@@ -554,52 +524,7 @@
                      }
                  });
              }
- 
-             if (perspectiveCfg.inToolbar("marketing.seo")) {
-                 var seoMenu = [];
- 
-                 if (user.isAllowed("documents") && user.isAllowed("seo_document_editor") && perspectiveCfg.inToolbar("marketing.seo.documents")) {
-                     seoMenu.push({
-                         text: t("seo_document_editor"),
-                         iconCls: "pimcore_nav_icon_document_seo",
-                         itemId: 'pimcore_menu_marketing_seo_document_editor',
-                         handler: this.showDocumentSeo
-                     });
-                 }
- 
-                 if (user.isAllowed("robots.txt") && perspectiveCfg.inToolbar("marketing.seo.robots")) {
-                     seoMenu.push({
-                         text: "robots.txt",
-                         iconCls: "pimcore_nav_icon_robots",
-                         itemId: 'pimcore_menu_marketing_seo_robots_txt',
-                         handler: this.showRobotsTxt
-                     });
-                 }
- 
-                 if (user.isAllowed("http_errors") && perspectiveCfg.inToolbar("marketing.seo.httperrors")) {
-                     seoMenu.push({
-                         text: t("http_errors"),
-                         iconCls: "pimcore_nav_icon_httperrorlog",
-                         itemId: 'pimcore_menu_marketing_seo_http_errors',
-                         handler: this.showHttpErrorLog
-                     });
-                 }
- 
-                 if (seoMenu.length > 0) {
-                     marketingItems.push({
-                         text: t("search_engine_optimization"),
-                         iconCls: "pimcore_nav_icon_seo",
-                         itemId: 'pimcore_menu_marketing_seo',
-                         hideOnClick: false,
-                         menu: {
-                             cls: "pimcore_navigation_flyout",
-                             shadow: false,
-                             items: seoMenu
-                         }
-                     });
-                 }
-             }
- 
+
              if (user.isAllowed("reports_config")) {
                  if (perspectiveCfg.inToolbar("settings.customReports")) {
                      marketingItems.push({
@@ -621,22 +546,13 @@
                      });
                  }
              }
- 
-             if (marketingItems.length > 0) {
-                 this.marketingMenu = new Ext.menu.Menu({
-                     items: marketingItems,
-                     shadow: false,
-                     cls: "pimcore_navigation_flyout",
-                     listeners: {
-                         "show": function (e) {
-                             Ext.get('pimcore_menu_marketing').addCls('active');
-                         },
-                         "hide": function (e) {
-                             Ext.get('pimcore_menu_marketing').removeCls('active');
-                         }
-                     }
-                 });
-             }
+
+             menu.marketing = {
+                 items: marketingItems,
+                 shadow: false,
+                 listeners: true,
+                 cls: "pimcore_navigation_flyout"
+             };
          }
  
          if (perspectiveCfg.inToolbar("settings")) {
@@ -1022,19 +938,12 @@
  
              // help menu
              if (settingsItems.length > 0) {
-                 this.settingsMenu = new Ext.menu.Menu({
-                     items: settingsItems,
-                     shadow: false,
-                     cls: "pimcore_navigation_flyout",
-                     listeners: {
-                         "show": function (e) {
-                             Ext.get('pimcore_menu_settings').addCls('active');
-                         },
-                         "hide": function (e) {
-                             Ext.get('pimcore_menu_settings').removeCls('active');
-                         }
-                     }
-                 });
+                menu.settings = {
+                    items: settingsItems,
+                    shadow: false,
+                    listeners: true,
+                    cls: "pimcore_navigation_flyout"
+                };
              }
          }
  
@@ -1096,19 +1005,12 @@
              }
  
              if (searchItems.length > 0) {
-                 this.searchMenu = new Ext.menu.Menu({
+                 menu.search = {
                      items: searchItems,
                      shadow: false,
-                     cls: "pimcore_navigation_flyout",
-                     listeners: {
-                         "show": function (e) {
-                             Ext.get('pimcore_menu_search').addCls('active');
-                         },
-                         "hide": function (e) {
-                             Ext.get('pimcore_menu_search').removeCls('active');
-                         }
-                     }
-                 });
+                     listeners: true,
+                     cls: "pimcore_navigation_flyout"
+                 };
              }
          }
  
@@ -1178,10 +1080,55 @@
                  });
                  pimcore.notification.helper.incrementCount();
              }
- 
-             this.notificationMenu = new Ext.menu.Menu({
+
+
+             menu.notification = {
                  items: notificationItems,
-                 cls: "pimcore_navigation_flyout"
+                 shadow: false,
+                 listeners: false,
+                 cls: "pimcore_navigation_flyout",
+             };
+         }
+
+         // Additional menu items can be added via this event
+         const preMenuBuild = new CustomEvent(pimcore.events.preMenuBuild, {
+             detail: {
+                 menu: menu,
+             }
+         });
+
+         document.dispatchEvent(preMenuBuild);
+
+         if(Object.keys(menu).length !== 0) {
+             Object.keys(menu).forEach(key => {
+                 // Building all submenus
+                 // menu[key].items can be empty
+                 // menu items can be added via event after the inital setup
+                 // if items are empty do not build submenus or main menu item
+
+                 if(menu[key].items.length > 0) {
+                     pimcore.helpers.buildMenu(menu[key].items);
+
+                     let menuItem = {
+                         items: menu[key].items,
+                         shadow: menu[key].shadow,
+                         cls: "pimcore_navigation_flyout",
+                     }
+
+                     if(menu[key].listeners === true) {
+                         menuItem.listeners = {
+                             "show": function (e) {
+                                 Ext.get('pimcore_menu_' + key).addCls('active');
+                             },
+                             "hide": function (e) {
+                                 Ext.get('pimcore_menu_' + key).removeCls('active');
+                             },
+                         }
+                     }
+
+                     // Adding single main menu item
+                     this[key + 'Menu'] = Ext.create('pimcore.menu.menu', menuItem);
+                 }
              });
          }
  
@@ -1466,15 +1413,7 @@
          }
      },
  
-     editGlossary: function () {
- 
-         try {
-             pimcore.globalmanager.get("glossary").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("glossary", new pimcore.settings.glossary());
-         }
-     },
+
  
      systemSettings: function () {
  
@@ -1551,34 +1490,7 @@
              pimcore.globalmanager.add("objectbricks", new pimcore.object.objectbrick());
          }
      },
- 
-     showDocumentSeo: function () {
-         try {
-             pimcore.globalmanager.get("document_seopanel").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("document_seopanel", new pimcore.document.seopanel());
-         }
-     },
- 
-     showRobotsTxt: function () {
-         try {
-             pimcore.globalmanager.get("robotstxt").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("robotstxt", new pimcore.settings.robotstxt());
-         }
-     },
- 
-     showHttpErrorLog: function () {
-         try {
-             pimcore.globalmanager.get("http_error_log").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("http_error_log", new pimcore.settings.httpErrorLog());
-         }
-     },
- 
+
      clearCache: function (params) {
          Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
              if (btn == 'yes'){
@@ -1660,11 +1572,7 @@
      showSystemRequirementsCheck: function () {
          pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_admin_install_check'), "pimcore_icon_systemrequirements", "System-Requirements Check");
      },
- 
-     showAdminer: function () {
-         pimcore.helpers.openGenericIframeWindow("adminer", Routing.generate('pimcore_admin_external_adminer_adminer'), "pimcore_icon_mysql", "Database Admin");
-     },
- 
+
      showElementHistory: function() {
          try {
              pimcore.globalmanager.get("element_history").activate();

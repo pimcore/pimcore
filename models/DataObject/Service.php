@@ -55,17 +55,17 @@ class Service extends Model\Element\Service
      *
      * @var array
      */
-    protected static array $systemFields = ['o_path', 'o_key', 'o_id', 'o_published', 'o_creationDate', 'o_modificationDate', 'o_fullpath'];
+    protected static array $systemFields = ['path', 'key', 'id', 'published', 'creationDate', 'modificationDate', 'fullpath'];
 
     /**
      * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
      *
      * @var string[]
      */
-    private const BC_VERSION_DEPENDENT_DATABASE_COLUMNS = ['id', 'parentId', 'type', 'key', 'path', 'index', 'published',
-                                                                'creationDate', 'modificationDate', 'userOwner', 'userModification',
-                                                                'classId', 'childrenSortBy', 'className', 'childrenSortOrder',
-                                                                'versionCount', ];
+    private const BC_VERSION_DEPENDENT_DATABASE_COLUMNS = ['id', 'parentid', 'type', 'key', 'path', 'index', 'published',
+                                                                'creationdate', 'modificationdate', 'userowner', 'usermodification',
+                                                                'classid', 'childrensortby', 'classname', 'childrensortorder',
+                                                                'versioncount', ];
 
     /**
      * @param Model\User|null $user
@@ -1352,9 +1352,9 @@ class Service extends Model\Element\Service
         }
 
         if (!$element->getId()) {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? ', [$parent->getId(), $key]);
+            $list->setCondition('parentId = ? AND `key` = ? ', [$parent->getId(), $key]);
         } else {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? AND o_id != ? ', [$parent->getId(), $key, $element->getId()]);
+            $list->setCondition('parentId = ? AND `key` = ? AND id != ? ', [$parent->getId(), $key, $element->getId()]);
         }
         $check = $list->loadIdList();
         if (!empty($check)) {
@@ -1666,8 +1666,7 @@ class Service extends Model\Element\Service
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildConditionPartsFromDescriptor(array $descriptor): array
     {
@@ -1702,7 +1701,7 @@ class Service extends Model\Element\Service
     {
         $objectData = [];
         $mappedFieldnames = [];
-        foreach ($fields as $field) {
+        foreach ($fields as $index => $field) {
             if (static::isHelperGridColumnConfig($field) && $validLanguages = static::expandGridColumnForExport($helperDefinitions, $field)) {
                 $currentLocale = $localeService->getLocale();
                 $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions);
@@ -1711,29 +1710,27 @@ class Service extends Model\Element\Service
                     $localeService->setLocale($validLanguage);
                     $fieldData = self::getCsvFieldData($currentLocale, $field, $object, $validLanguage, $helperDefinitions);
                     $localizedFieldKey = $field . '-' . $validLanguage;
-                    if (!isset($mappedFieldnames[$localizedFieldKey])) {
-                        $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
+                    if (!isset($mappedFieldnames[$index])) {
+                        $mappedFieldnames[$index] = $mappedFieldnameBase . '-' . $validLanguage;
                     }
-                    $objectData[$localizedFieldKey] = $fieldData;
+                    $objectData[$index] = ['fieldName' => $localizedFieldKey, 'data' => $fieldData];
                 }
 
                 $localeService->setLocale($currentLocale);
             } else {
                 $fieldData = self::getCsvFieldData($requestedLanguage, $field, $object, $requestedLanguage, $helperDefinitions);
-                if (!isset($mappedFieldnames[$field])) {
-                    $mappedFieldnames[$field] = self::mapFieldname($field, $helperDefinitions);
+                if (!isset($mappedFieldnames[$index])) {
+                    $mappedFieldnames[$index] = self::mapFieldname($field, $helperDefinitions);
                 }
 
-                $objectData[$field] = $fieldData;
+                $objectData[$index] = ['fieldName' => $field, 'data' => $fieldData];
             }
         }
 
         if ($returnMappedFieldNames) {
-            $tmp = [];
             foreach ($mappedFieldnames as $key => $value) {
-                $tmp[$value] = $objectData[$key];
+                $objectData[$key]['fieldName'] = $value;
             }
-            $objectData = $tmp;
         }
 
         $event = new DataObjectEvent($object, ['objectData' => $objectData,
@@ -1775,8 +1772,8 @@ class Service extends Model\Element\Service
                 if ($addTitles && empty($data)) {
                     $tmp = [];
                     $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, true, $context);
-                    foreach ($mapped as $key => $value) {
-                        $tmp[] = '"' . $key . '"';
+                    foreach ($mapped as $columns) {
+                        $tmp[] = '"' . $columns['fieldName'] . '"';
                     }
                     $data[] = $tmp;
                 }
@@ -1990,21 +1987,13 @@ class Service extends Model\Element\Service
      */
     public static function getVersionDependentDatabaseColumnName(string $fieldName): string
     {
-        $currentVersion = \Pimcore\Version::getVersion();
+        $newFieldName = $fieldName;
+        if (str_starts_with($newFieldName, 'o_')) {
+            $newFieldName = substr($newFieldName, 2);
+        }
 
-        if (str_starts_with($currentVersion, '11.')) {
-            $newFieldName = $fieldName;
-            if (str_starts_with($newFieldName, 'o_')) {
-                $newFieldName = substr($newFieldName, 2);
-            }
-            if (in_array($newFieldName, self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
-                return $newFieldName;
-            }
-        } else {
-            if (!str_starts_with($fieldName, 'o_')
-                && in_array($fieldName, self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
-                return 'o_' . $fieldName;
-            }
+        if (in_array(strtolower($newFieldName), self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
+            return $newFieldName;
         }
 
         return $fieldName;

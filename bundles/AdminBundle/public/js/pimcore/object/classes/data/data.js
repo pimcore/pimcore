@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.data");
+/**
+ * @private
+ */
 pimcore.object.classes.data.data = Class.create({
 
     invalidFieldNames: false,
@@ -21,7 +24,8 @@ pimcore.object.classes.data.data = Class.create({
         "userpermissions", "dependencies", "modificationdate", "usermodification", "byid", "bypath", "data",
         "versions", "properties", "permissions", "permissionsforuser", "childamount", "apipluginbroker", "resource",
         "parentClass", "definition", "locked", "language", "omitmandatorycheck", "idpath", "object", "fieldname",
-        "property", "localizedfields", "parentid", "scheduledtasks", "latestVersion"
+        "property", "localizedfields", "parentid", "scheduledtasks", "latestVersion", "haschildren", "siblings", "hassiblings",
+        "childrenSortby", "childrensortorder", "versioncount", "dirtylanguages", "dirtyfields", "classtitle"
     ],
 
     /**

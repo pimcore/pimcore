@@ -12,7 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.object.classes.data.numericRange');
-
+/**
+ * @private
+ */
 pimcore.object.classes.data.numericRange = Class.create(pimcore.object.classes.data.data, {
     type: 'numericRange',
 
