@@ -11,8 +11,8 @@ $apiToken = getenv('POEDITOR_TOKEN');
 // POEditor project IDs
 $projectMapping = [
     'essentials' => 38068,
-    //'extended' => 197253,
-    'extended' => 585539,
+    'extended' => 197253,
+//    'extended' => 585539, // test project
 ];
 
 $projectConfig = array_filter(explode("\n", trim(getenv('TRANSLATION_FILES'))));
