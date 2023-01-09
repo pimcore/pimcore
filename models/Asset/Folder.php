@@ -50,18 +50,13 @@ class Folder extends Model\Asset
     /**
      * set the children of the document
      *
-     * @param Asset[]|null $children
+     * @param Listing|null $children
      *
      * @return $this
      */
     public function setChildren(?Listing $children): static
     {
         $this->children = $children;
-        if (is_array($children) && count($children) > 0) {
-            $this->hasChildren = true;
-        } else {
-            $this->hasChildren = false;
-        }
 
         return $this;
     }
