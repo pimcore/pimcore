@@ -18,7 +18,7 @@ class Installer extends SettingsStoreAwareInstaller
 
     public function uninstall()
     {
-        $this->revokePermissions();
+        $this->removePermissions();
         parent::uninstall();
     }
 
@@ -47,7 +47,7 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
-    protected function revokePermissions()
+    protected function removePermissions()
     {
         $db = \Pimcore\Db::get();
 
