@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.robotstxt");
+pimcore.registerNS("pimcore.bundle.seo.robotstxt");
 /**
  * @private
  */
-pimcore.settings.robotstxt = Class.create({
+pimcore.bundle.seo.robotstxt = Class.create({
     onFileSystem: false,
     data: {},
     textEditors: [],
@@ -29,7 +29,7 @@ pimcore.settings.robotstxt = Class.create({
         this.panel.setLoading(true);
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_settings_robotstxtget'),
+            url: Routing.generate('pimcore_bundle_seo_settings_robotstxtget'),
             success: function (response) {
 
                 try {
@@ -95,7 +95,7 @@ pimcore.settings.robotstxt = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_robotstxt",
-                title: "robots.txt",
+                title: t("robots.txt"),
                 iconCls: "pimcore_icon_robots",
                 border: false,
                 layout: "fit",
@@ -109,7 +109,7 @@ pimcore.settings.robotstxt = Class.create({
 
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("robotstxt");
+                pimcore.globalmanager.remove("bundle_seo_robotstxt");
             }.bind(this));
 
             pimcore.layout.refresh();
@@ -179,7 +179,7 @@ pimcore.settings.robotstxt = Class.create({
 
     save : function () {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_settings_robotstxtput'),
+            url: Routing.generate('pimcore_bundle_seo_settings_robotstxtput'),
             method: "PUT",
             params: this.getValues(),
             success: function (response) {

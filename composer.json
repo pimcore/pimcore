@@ -186,6 +186,8 @@
       "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/",
       "Pimcore\\Bundle\\GlossaryBundle\\": "bundles/GlossaryBundle/src/",
       "Pimcore\\Bundle\\XliffBundle\\": "bundles/XliffBundle/src/"
+      "Pimcore\\Bundle\\SeoBundle\\": "bundles/SeoBundle/src/"
+
     },
     "classmap": [
       "lib/Pimcore.php"

@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.document.seopanel");
+pimcore.registerNS("pimcore.bundle.seo.seopanel");
 /**
  * @private
  */
-pimcore.document.seopanel = Class.create({
+pimcore.bundle.seo.seopanel = Class.create({
 
     initialize: function () {
         this.getTabPanel();
@@ -45,13 +45,13 @@ pimcore.document.seopanel = Class.create({
             tabPanel.setActiveItem("pimcore_document_seopanel");
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("document_seopanel");
+                pimcore.globalmanager.remove("bundle_seo_seo_seopanel");
             }.bind(this));
 
             pimcore.layout.refresh();
 
             Ext.Ajax.request({
-                url: Routing.generate('pimcore_admin_document_document_seopaneltreeroot'),
+                url: Routing.generate('pimcore_bundle_seo_document_document_seopaneltreeroot'),
                 success: function (response) {
                     var res = Ext.decode(response.responseText);
                     if(res["id"]) {
@@ -107,7 +107,7 @@ pimcore.document.seopanel = Class.create({
         var store = Ext.create('Ext.data.TreeStore', {
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_document_document_seopaneltree')
+                url: Routing.generate('pimcore_bundle_seo_document_document_seopaneltree')
             }
         });
 
@@ -262,7 +262,7 @@ pimcore.document.seopanel = Class.create({
             success: function (node) {
                 if (values.id == 1) {
                     Ext.Ajax.request({
-                        url: Routing.generate('pimcore_admin_document_document_seopaneltreeroot'),
+                        url: Routing.generate('pimcore_bundle_seo_document_document_seopaneltreeroot'),
                         success: function (response) {
                             var cfg = Ext.decode(response.responseText);
                             if(cfg.id) { // We are the root node
