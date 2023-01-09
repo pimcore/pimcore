@@ -1145,8 +1145,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function objectbrickGetAction(Request $request): JsonResponse
     {
-        $this->checkPermission('objectbricks');
-
         $fc = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
 
         $isWriteable = $fc->isWritable();
@@ -1166,8 +1164,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function objectbrickUpdateAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $this->checkPermission('objectbricks');
-
         try {
             $key = $request->get('key');
             $title = $request->get('title');
@@ -1261,6 +1257,8 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function exportObjectbrickAction(Request $request): Response
     {
+        $this->checkPermission('objectbricks');
+
         $objectBrick = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
 
         if (!$objectBrick instanceof DataObject\Objectbrick\Definition) {
@@ -1305,8 +1303,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function objectbrickTreeAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $this->checkPermission('objectbricks');
-
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
 
@@ -1457,8 +1453,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function objectbrickListAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $this->checkPermission('objectbricks');
-
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
 
@@ -1614,7 +1608,8 @@ class ClassController extends AdminController implements KernelControllerEventIn
             unset($item['userOwner']);
             unset($item['userModification']);
 
-            if ($type == 'class' && $item['name'] == $name) {
+            if ($type === 'class' && $item['name'] == $name) {
+                $this->checkPermission('classes');
                 $class = DataObject\ClassDefinition::getByName($name);
                 if (!$class) {
                     $class = new DataObject\ClassDefinition();
@@ -1623,7 +1618,8 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $success = DataObject\ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($item), true);
 
                 return $this->adminJson(['success' => $success !== false]);
-            } elseif ($type == 'objectbrick' && $item['key'] == $name) {
+            } elseif ($type === 'objectbrick' && $item['key'] == $name) {
+                $this->checkPermission('objectbricks');
                 if (!$brick = DataObject\Objectbrick\Definition::getByKey($name)) {
                     $brick = new DataObject\Objectbrick\Definition();
                     $brick->setKey($name);
@@ -1632,7 +1628,8 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $success = DataObject\ClassDefinition\Service::importObjectBrickFromJson($brick, json_encode($item), true);
 
                 return $this->adminJson(['success' => $success !== false]);
-            } elseif ($type == 'fieldcollection' && $item['key'] == $name) {
+            } elseif ($type === 'fieldcollection' && $item['key'] == $name) {
+                $this->checkPermission('classes');
                 if (!$fieldCollection = DataObject\Fieldcollection\Definition::getByKey($name)) {
                     $fieldCollection = new DataObject\Fieldcollection\Definition();
                     $fieldCollection->setKey($name);
@@ -1641,7 +1638,8 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $success = DataObject\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
 
                 return $this->adminJson(['success' => $success !== false]);
-            } elseif ($type == 'customlayout') {
+            } elseif ($type === 'customlayout') {
+                $this->checkPermission('classes');
                 $layoutData = json_decode(base64_decode($data['name']), true);
                 $className = $layoutData['className'];
                 $layoutName = $layoutData['name'];
@@ -1735,47 +1733,53 @@ class ClassController extends AdminController implements KernelControllerEventIn
             ];
         }
 
-        $classes = new DataObject\ClassDefinition\Listing();
-        $classes->setOrder('ASC');
-        $classes->setOrderKey('id');
-        $classes = $classes->load();
+        if($this->getAdminUser()->isAllowed('classes')) {
+            $classes = new DataObject\ClassDefinition\Listing();
+            $classes->setOrder('ASC');
+            $classes->setOrderKey('id');
+            $classes = $classes->load();
 
-        foreach ($classes as $class) {
-            $result[] = [
-                'icon' => 'class',
-                'checked' => true,
-                'type' => 'class',
-                'name' => $class->getName(),
-                'displayName' => $class->getName(),
-            ];
+            foreach ($classes as $class) {
+                $result[] = [
+                    'icon' => 'class',
+                    'checked' => true,
+                    'type' => 'class',
+                    'name' => $class->getName(),
+                    'displayName' => $class->getName(),
+                ];
+            }
         }
 
-        $objectBricks = new DataObject\Objectbrick\Definition\Listing();
-        $objectBricks = $objectBricks->load();
+        if ($this->getAdminUser()->isAllowed('objectbricks')) {
+            $objectBricks = new DataObject\Objectbrick\Definition\Listing();
+            $objectBricks = $objectBricks->load();
 
-        foreach ($objectBricks as $objectBrick) {
-            $result[] = [
-                'icon' => 'objectbricks',
-                'checked' => true,
-                'type' => 'objectbrick',
-                'name' => $objectBrick->getKey(),
-                'displayName' => $objectBrick->getKey(),
-            ];
+            foreach ($objectBricks as $objectBrick) {
+                $result[] = [
+                    'icon' => 'objectbricks',
+                    'checked' => true,
+                    'type' => 'objectbrick',
+                    'name' => $objectBrick->getKey(),
+                    'displayName' => $objectBrick->getKey(),
+                ];
+            }
         }
 
-        $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
-        $customLayouts = $customLayouts->load();
-        foreach ($customLayouts as $customLayout) {
-            $class = DataObject\ClassDefinition::getById($customLayout->getClassId());
-            $displayName = $class->getName() . ' / ' .  $customLayout->getName();
+        if ($this->getAdminUser()->isAllowed('classes')) {
+            $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
+            $customLayouts = $customLayouts->load();
+            foreach ($customLayouts as $customLayout) {
+                $class = DataObject\ClassDefinition::getById($customLayout->getClassId());
+                $displayName = $class->getName().' / '.$customLayout->getName();
 
-            $result[] = [
-                'icon' => 'custom_views',
-                'checked' => true,
-                'type' => 'customlayout',
-                'name' => $customLayout->getId(),
-                'displayName' => $displayName,
-            ];
+                $result[] = [
+                    'icon' => 'custom_views',
+                    'checked' => true,
+                    'type' => 'customlayout',
+                    'name' => $customLayout->getId(),
+                    'displayName' => $displayName,
+                ];
+            }
         }
 
         return new JsonResponse(['success' => true, 'data' => $result]);
@@ -1796,25 +1800,25 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $result = [];
 
         foreach ($list as $item) {
-            if ($item['type'] == 'fieldcollection') {
+            if ($item['type'] === 'fieldcollection' && $this->getAdminUser()->isAllowed('classes')) {
                 if ($fieldCollection = DataObject\Fieldcollection\Definition::getByKey($item['name'])) {
                     $fieldCollectionJson = json_decode(DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
                     $fieldCollectionJson->key = $item['name'];
                     $result['fieldcollection'][] = $fieldCollectionJson;
                 }
-            } elseif ($item['type'] == 'class') {
+            } elseif ($item['type'] === 'class' && $this->getAdminUser()->isAllowed('classes')) {
                 if ($class = DataObject\ClassDefinition::getByName($item['name'])) {
                     $data = json_decode(DataObject\ClassDefinition\Service::generateClassDefinitionJson($class));
                     $data->name = $item['name'];
                     $result['class'][] = $data;
                 }
-            } elseif ($item['type'] == 'objectbrick') {
+            } elseif ($item['type'] === 'objectbrick' && $this->getAdminUser()->isAllowed('objectbricks')) {
                 if ($objectBrick = DataObject\Objectbrick\Definition::getByKey($item['name'])) {
                     $objectBrickJson = json_decode(DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
                     $objectBrickJson->key = $item['name'];
                     $result['objectbrick'][] = $objectBrickJson;
                 }
-            } elseif ($item['type'] == 'customlayout') {
+            } elseif ($item['type'] === 'customlayout' && $this->getAdminUser()->isAllowed('classes')) {
                 if ($customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name'])) {
                     $classId = $customLayout->getClassId();
                     $class = DataObject\ClassDefinition::getById($classId);
@@ -1844,11 +1848,11 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $unrestrictedActions = [
             'getTreeAction', 'fieldcollectionListAction', 'fieldcollectionTreeAction', 'fieldcollectionGetAction',
             'getClassDefinitionForColumnConfigAction', 'objectbrickListAction', 'objectbrickTreeAction', 'objectbrickGetAction',
+            'objectbrickDeleteAction', 'objectbrickUpdateAction', 'importObjectbrickAction', 'exportObjectbrickAction', 'bulkCommitAction', 'doBulkExportAction', 'bulkExportAction' // permissions for listed write operations handled separately in action methods
         ];
 
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);
     }
-
     /**
      * @Route("/get-fieldcollection-usages", name="getfieldcollectionusages", methods={"GET"})
      *
