@@ -108,6 +108,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - Removed `dontCheckEnabled` config support from Areablock editable. 
   - Functionality that was moved into its own bundle and must be enabled manually in `config/bundles.php`
     - Glossary has been moved into PimcoreGlossaryBundle
+    - SEO Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
