@@ -412,16 +412,6 @@ pimcore.layout.toolbar = Class.create({
  
                  if (perspectiveCfg.inToolbar("extras.systemtools")) {
                      var systemItems = [];
-                     if (perspectiveCfg.inToolbar("extras.systemtools.database")) {
-                         systemItems.push(
-                             {
-                                 text: t("database_administration"),
-                                 iconCls: "pimcore_nav_icon_mysql",
-                                 itemId: 'pimcore_menu_extras_system_info_database_administration',
-                                 handler: this.showAdminer
-                             }
-                         );
-                     }
 
                      if (perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")) {
                          systemItems.push(
