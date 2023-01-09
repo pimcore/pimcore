@@ -29,5 +29,6 @@ jobs:
                   TRANSLATION_FILES: |
                       bundles/CoreBundle/translations/en.json :essentials
                       bundles/CoreBundle/translations/en.extended.json :extended
+                      bundles/GlossaryBundle/translations/admin.en.json :extended
               run: |
                   php .github/ci/scripts/poeditor-export.php
