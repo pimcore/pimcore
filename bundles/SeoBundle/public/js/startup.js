@@ -78,10 +78,10 @@ pimcore.bundle.seo.startup = Class.create({
 
     showDocumentSeo: function () {
         try {
-            pimcore.globalmanager.get("bundle_seo_seo_seopanel").activate();
+            pimcore.globalmanager.get("bundle_seo_seopanel").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("bundle_seo_seo_seopanel", new pimcore.bundle.seo.seopanel());
+            pimcore.globalmanager.add("bundle_seo_seopanel", new pimcore.bundle.seo.seopanel());
         }
     },
 
