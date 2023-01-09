@@ -13,6 +13,9 @@
  */
 
 pimcore.registerNS("pimcore.object.quantityValue.unitsettings");
+/**
+ * @private
+ */
 pimcore.object.quantityValue.unitsettings = Class.create({
 
     initialize: function () {

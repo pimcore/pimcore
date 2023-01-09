@@ -372,8 +372,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @param string $adminPath
      *
-     *@internal
-     *
+     * @internal
      */
     public function setAdminPath(string $adminPath)
     {
@@ -413,8 +412,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @param Kernel $kernel
      *
-     *@internal
-     *
+     * @internal
      */
     public function setKernel(Kernel $kernel)
     {

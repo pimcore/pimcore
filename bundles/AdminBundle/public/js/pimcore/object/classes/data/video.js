@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.video");
+/**
+ * @private
+ */
 pimcore.object.classes.data.video = Class.create(pimcore.object.classes.data.data, {
 
     type: "image",

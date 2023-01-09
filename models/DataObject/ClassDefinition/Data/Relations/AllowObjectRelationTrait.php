@@ -31,8 +31,7 @@ trait AllowObjectRelationTrait
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     protected function allowObjectRelation(DataObject\AbstractObject $object): bool
     {

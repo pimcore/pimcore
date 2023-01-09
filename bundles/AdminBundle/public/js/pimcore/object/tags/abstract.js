@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.abstract");
+/**
+ * @private
+ */
 pimcore.object.tags.abstract = Class.create({
 
     object:null,

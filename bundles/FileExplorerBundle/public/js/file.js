@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.fileexplorer.file");
+/**
+ * @private
+ */
 pimcore.settings.fileexplorer.file = Class.create({
 
     initialize: function (path, explorer) {

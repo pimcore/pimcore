@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.workflowmanagement.actionPanel");
+/**
+ * @private
+ */
 pimcore.workflowmanagement.actionPanel = Class.create({
 
     getClassName: function ()

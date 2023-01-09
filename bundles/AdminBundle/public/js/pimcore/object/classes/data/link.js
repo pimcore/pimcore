@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.link");
+/**
+ * @private
+ */
 pimcore.object.classes.data.link = Class.create(pimcore.object.classes.data.data, {
 
     type: "link",

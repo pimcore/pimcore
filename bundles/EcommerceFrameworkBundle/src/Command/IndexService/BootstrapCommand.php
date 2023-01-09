@@ -53,7 +53,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     protected function configure()
     {
         parent::configure();
-        self::configureParallelization($this);
+        self::configureCommand($this);
         self::configureTimeout($this);
         $this
             ->setName('ecommerce:indexservice:bootstrap')

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.note_details");
+/**
+ * @private
+ */
 pimcore.element.note_details = Class.create({
     getClassName: function (){
         return "pimcore.element.note_details";

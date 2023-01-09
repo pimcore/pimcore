@@ -8,10 +8,22 @@ declare(strict_types=1);
 
 $apiToken = getenv('POEDITOR_TOKEN');
 
-$projects = [
-    38068 => "bundles/CoreBundle/translations/en.json",
-    197253 => "bundles/CoreBundle/translations/en.extended.json"
+// POEditor project IDs
+$projectMapping = [
+    'essentials' => 38068,
+    'extended' => 197253,
+//    'extended' => 585539, // test project
 ];
+
+$projectConfig = array_filter(explode("\n", trim(getenv('TRANSLATION_FILES'))));
+$translationFiles = [];
+
+foreach ($projectConfig as $line) {
+    list($sourcePath, $projectKey) = array_map('trim', explode(':', $line));
+    if(isset($projectMapping[$projectKey])) {
+        $translationFiles[$sourcePath] = $projectMapping[$projectKey];
+    }
+}
 
 $getPostValues = function ($url, array $params) {
     $ch = curl_init();
@@ -27,17 +39,19 @@ $getPostValues = function ($url, array $params) {
 };
 
 
-foreach($projects as $projectId => $sourceUrl) {
+foreach($translationFiles as $sourceUrl => $projectId) {
 
     $data = [];
     $dataEn = [];
     $enData = json_decode(file_get_contents($sourceUrl), true);
 
+    $reference = getenv('GITHUB_REPOSITORY') . ':' . $sourceUrl;
+
     foreach ($enData as $key => $value) {
         $data[] = [
             "term" => $key,
-            "context" => "",
-            "reference" => "",
+            "context" => 'x',
+            "reference" => $reference,
         ];
 
         $dataEn[] = [
@@ -56,11 +70,12 @@ foreach($projects as $projectId => $sourceUrl) {
     $dataString = json_encode($data);
     $dataEnString = json_encode($dataEn);
 
-    if (count($data) > 500) {
+    if (count($data)) {
+        echo sprintf('Running add_terms for %s with project ID %s', $sourceUrl, $projectId) . "\n";
         try {
             $response = $getPostValues("https://poeditor.com/api/", [
                 "api_token" => $apiToken,
-                "action" => "sync_terms",
+                "action" => "add_terms",
                 "id" => $projectId,
                 "data" => $dataString
             ]);
@@ -71,7 +86,7 @@ foreach($projects as $projectId => $sourceUrl) {
         }
 
         echo "\n\n";
-
+        echo sprintf('Running update_language for %s with project ID %s', $sourceUrl, $projectId) . "\n";
         try {
             $response = $getPostValues("https://poeditor.com/api/", [
                 "api_token" => $apiToken,
@@ -86,6 +101,8 @@ foreach($projects as $projectId => $sourceUrl) {
             echo $e->getMessage();
         }
 
+        echo "\n\n";
+        echo "###############################################";
         echo "\n\n";
     }
 }

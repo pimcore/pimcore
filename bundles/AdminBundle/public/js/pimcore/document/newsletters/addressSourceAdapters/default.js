@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.newsletters.addressSourceAdapters.default");
+/**
+ * @private
+ */
 pimcore.document.newsletters.addressSourceAdapters.default = Class.create({
 
     initialize: function(document, data) {

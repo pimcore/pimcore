@@ -738,8 +738,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @return $this
      *
-     *@internal
-     *
+     * @internal
      */
     public function addTagClearedOnShutdown(string $tag): static
     {
@@ -756,8 +755,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @return $this
      *
-     *@internal
-     *
+     * @internal
      */
     public function addTagIgnoredOnSave(string $tag): static
     {
@@ -772,8 +770,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @return $this
      *
-     *@internal
-     *
+     * @internal
      */
     public function removeTagIgnoredOnSave(string $tag): static
     {
@@ -789,8 +786,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @return $this
      *
-     *@internal
-     *
+     * @internal
      */
     public function addTagIgnoredOnClear(string $tag): static
     {
@@ -805,8 +801,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @return $this
      *
-     *@internal
-     *
+     * @internal
      */
     public function removeTagIgnoredOnClear(string $tag): static
     {
@@ -893,8 +888,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @return $this
      *
-     *@internal
-     *
+     * @internal
      */
     public function shutdown(bool $forceWrite = false): static
     {

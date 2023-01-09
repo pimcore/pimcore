@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.consent");
+/**
+ * @private
+ */
 pimcore.object.tags.consent = Class.create(pimcore.object.tags.abstract, {
 
     type:"consent",

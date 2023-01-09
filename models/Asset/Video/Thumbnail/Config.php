@@ -181,8 +181,7 @@ final class Config extends Model\AbstractModel
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public function addItem(string $name, array $parameters, string $media = null): bool
     {
@@ -204,8 +203,7 @@ final class Config extends Model\AbstractModel
 
     /**
      *
-     *@internal
-     *
+     * @internal
      */
     public function addItemAt(int $position, string $name, array $parameters, $media = null): bool
     {

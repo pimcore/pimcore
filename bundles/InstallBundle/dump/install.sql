@@ -279,24 +279,6 @@ CREATE TABLE `email_log` (
   CONSTRAINT `fk_email_log_documents` FOREIGN KEY (`documentId`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `http_error_log`;
-CREATE TABLE `http_error_log` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `uri` varchar(1024) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `code` int(3) DEFAULT NULL,
-  `parametersGet` longtext,
-  `parametersPost` longtext,
-  `cookies` longtext,
-  `serverVars` longtext,
-  `date` int(11) unsigned DEFAULT NULL,
-  `count` bigint(20) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `uri` (`uri`),
-  KEY `code` (`code`),
-  KEY `date` (`date`),
-  KEY `count` (`count`)
-) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
-
 DROP TABLE IF EXISTS `lock_keys`;
 CREATE TABLE `lock_keys` (
   `key_id` varchar(64) NOT NULL,
