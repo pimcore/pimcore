@@ -11,7 +11,8 @@ $apiToken = getenv('POEDITOR_TOKEN');
 // POEditor project IDs
 $projectMapping = [
     'essentials' => 38068,
-    'extended' => 197253,
+    //'extended' => 197253,
+    'extended' => 585539,
 ];
 
 $projectConfig = array_filter(explode("\n", trim(getenv('TRANSLATION_FILES'))));
@@ -69,7 +70,8 @@ foreach($translationFiles as $sourceUrl => $projectId) {
     $dataString = json_encode($data);
     $dataEnString = json_encode($dataEn);
 
-    if (count($data) > 500) {
+    if (count($data)) {
+        echo sprintf('Running sync_terms for %s with project ID %s', $sourceUrl, $projectId) . "\n";
         try {
             $response = $getPostValues("https://poeditor.com/api/", [
                 "api_token" => $apiToken,
@@ -84,7 +86,7 @@ foreach($translationFiles as $sourceUrl => $projectId) {
         }
 
         echo "\n\n";
-
+        echo sprintf('Running update_language for %s with project ID %s', $sourceUrl, $projectId) . "\n";
         try {
             $response = $getPostValues("https://poeditor.com/api/", [
                 "api_token" => $apiToken,
@@ -99,6 +101,8 @@ foreach($translationFiles as $sourceUrl => $projectId) {
             echo $e->getMessage();
         }
 
+        echo "\n\n";
+        echo "###############################################";
         echo "\n\n";
     }
 }
