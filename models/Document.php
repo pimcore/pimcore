@@ -571,7 +571,7 @@ class Document extends Element\AbstractElement
         } else {
             $cacheKey = $this->getListingCacheKey([$includingUnpublished]);
             $this->children[$cacheKey] = $children;
-            $this->hasChildren[$cacheKey] = (bool) count($children);
+            unset($this->hasChildren[$cacheKey]);
         }
 
         return $this;

@@ -1017,7 +1017,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             //default cache key
             $cacheKey = $this->getListingCacheKey([$objectTypes, $includingUnpublished]);
             $this->children[$cacheKey] = $children;
-            $this->hasChildren[$cacheKey] = (bool) $children->count();
+            unset($this->hasChildren[$cacheKey]);
         }
 
         return $this;

@@ -57,6 +57,7 @@ class Folder extends Model\Asset
     public function setChildren(?Listing $children): static
     {
         $this->children = $children;
+        $this->hasChildren = null;
 
         return $this;
     }
