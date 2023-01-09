@@ -30,7 +30,11 @@
 <table id="wrapper" cellpadding="0" cellspacing="0" border="0">
     <tr>
         <td>
-            Sorry, no preview available
+            Sorry, no preview available<br>
+            {% set tempFile = asset.getTemporaryFile() %}
+            {% set dataUri = pimcore_asset_version_preview(tempFile) %}
+
+            <a href="{{ dataUri }}" download="{{ asset.getFilename() }}">{{ 'download'|trans([],'admin') }}</a>
         </td>
     </tr>
 </table>
