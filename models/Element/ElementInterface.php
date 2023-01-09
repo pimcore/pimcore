@@ -66,7 +66,7 @@ interface ElementInterface extends ModelInterface
     /**
      * get possible types
      *
-     * @return array
+     * @return string[]
      */
     public static function getTypes(): array;
 

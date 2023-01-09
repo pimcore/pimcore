@@ -70,7 +70,7 @@ class Asset extends Element\AbstractElement
      *
      * @internal
      *
-     * @var array
+     * @var string[]
      */
     public static array $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
 
