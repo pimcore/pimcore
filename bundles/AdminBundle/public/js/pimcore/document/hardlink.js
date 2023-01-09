@@ -386,17 +386,19 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                         }.bind(this)
                     }));
 
-                    menu.add(new Ext.menu.Item({
-                        text: t('search'),
-                        iconCls: "pimcore_icon_search",
-                        handler: function (item) {
-                            item.parentMenu.destroy();
-                            pimcore.helpers.itemselector(false, function (data) {
-                                pathField.setValue(data.fullpath);
-                            }.bind(this), {type: ['document']})
+                    if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+                        menu.add(new Ext.menu.Item({
+                            text: t('search'),
+                            iconCls: "pimcore_icon_search",
+                            handler: function (item) {
+                                item.parentMenu.destroy();
+                                pimcore.helpers.itemselector(false, function (data) {
+                                    pathField.setValue(data.fullpath);
+                                }.bind(this), {type: ['document']})
 
-                        }.bind(this)
-                    }));
+                            }.bind(this)
+                        }));
+                    }
 
                     menu.showAt(e.getXY());
 
@@ -423,8 +425,11 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                     handler: function () {
                         pathField.setValue("");
                     }.bind(this)
-                },
-                {
+                }
+            ];
+
+            if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+                items.push({
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
                     style: "margin-left: 5px",
@@ -433,8 +438,8 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                             pathField.setValue(data.fullpath);
                         }.bind(this), {type: ['document']})
                     }.bind(this)
-                }
-            ];
+                });
+            }
 
             this.panel = new Ext.form.FormPanel({
                 title: t('settings'),

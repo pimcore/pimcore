@@ -186,12 +186,19 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             disabled: true
         });
 
-        this.parentChooseButton = new Ext.Button({
-            labelStyle: 'padding-left: 10px;',
-            iconCls: 'pimcore_icon_search',
-            handler: this.openParentSearchEditor.bind(this)
-        });
+        const panelFcItems = [
+            this.parentField
+        ];
 
+        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+            this.parentChooseButton = new Ext.Button({
+                labelStyle: 'padding-left: 10px;',
+                iconCls: 'pimcore_icon_search',
+                handler: this.openParentSearchEditor.bind(this)
+            });
+
+            panelFcItems.push(this.parentChooseButton);
+        }
 
         var panel = new Ext.Panel({
             bodyStyle: "padding: 10px;",
@@ -199,10 +206,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 this.nameField,
                 new Ext.form.FieldContainer({
                     layout: 'hbox',
-                    items: [
-                        this.parentField,
-                        this.parentChooseButton
-                    ]
+                    items: panelFcItems
                 })
 
             ],
@@ -660,15 +664,14 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
 
             if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
-                toolbarItems = toolbarItems.concat([
-                    {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_search",
-                        handler: this.openSearchEditor.bind(this)
-                    },
-                    this.getCreateControl()
-                ]);
+                toolbarItems.push({
+                    xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    handler: this.openSearchEditor.bind(this)
+                });
             }
+
+            toolbarItems = toolbarItems.concat(this.getCreateControl());
         }
 
         return toolbarItems;

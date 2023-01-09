@@ -1509,34 +1509,40 @@ pimcore.helpers.sendTestEmail = function (from, to, subject, emailType, document
     });
     emailContentTextField.hide();
 
-    var documentTextField = new Ext.form.TextField({
+    const documentTextField = new Ext.form.TextField({
         name: 'documentPath',
         flex: 1,
         editable: false
     });
-    var searchDocumentButton = new Ext.Button({
-        name: 'searchDocument',
-        fieldLabel: t('document'),
-        iconCls: 'pimcore_icon_search',
-        handler: function() {
-            pimcore.helpers.itemselector(false, function(e) {
-                documentTextField.setValue(e.fullpath);
-            }, {
-                type: ["document"],
-                subtype: {
-                    document: ["email", "newsletter"]
-                }
-            });
-        }
-    });
+
+    const items = [
+        documentTextField
+    ];
+
+    if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        const searchDocumentButton = new Ext.Button({
+            name: 'searchDocument',
+            fieldLabel: t('document'),
+            iconCls: 'pimcore_icon_search',
+            handler: function() {
+                pimcore.helpers.itemselector(false, function(e) {
+                    documentTextField.setValue(e.fullpath);
+                }, {
+                    type: ["document"],
+                    subtype: {
+                        document: ["email", "newsletter"]
+                    }
+                });
+            }
+        });
+
+        items.push(searchDocumentButton);
+    }
 
     var documentComponent = Ext.create('Ext.form.FieldContainer', {
         fieldLabel: t('document'),
         layout: 'hbox',
-        items: [
-            documentTextField,
-            searchDocumentButton
-        ],
+        items: items,
         componentCls: "object_field",
         border: false,
         style: {
@@ -1836,6 +1842,30 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         });
     }.bind(this));
 
+    const fcItems = [
+        fieldPath
+    ];
+
+    if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        fcItems.push({
+            xtype: "button",
+            iconCls: "pimcore_icon_search",
+            style: "margin-left: 5px",
+            handler: function () {
+                pimcore.helpers.itemselector(false, function (item) {
+                    if (item) {
+                        internalTypeField.setValue(item.type);
+                        linkTypeField.setValue('internal');
+                        fieldPath.setValue(item.fullpath);
+                        return true;
+                    }
+                }, {
+                    type: ["asset", "document", "object"]
+                });
+            }
+        });
+    }
+
     var form = new Ext.FormPanel({
         itemId: "form",
         items: [
@@ -1864,23 +1894,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                 xtype: "fieldcontainer",
                                 layout: 'hbox',
                                 border: false,
-                                items: [fieldPath, {
-                                    xtype: "button",
-                                    iconCls: "pimcore_icon_search",
-                                    style: "margin-left: 5px",
-                                    handler: function () {
-                                        pimcore.helpers.itemselector(false, function (item) {
-                                            if (item) {
-                                                internalTypeField.setValue(item.type);
-                                                linkTypeField.setValue('internal');
-                                                fieldPath.setValue(item.fullpath);
-                                                return true;
-                                            }
-                                        }, {
-                                            type: ["asset", "document", "object"]
-                                        });
-                                    }
-                                }]
+                                items: fcItems
                             },
                             {
                                 xtype: 'fieldset',
@@ -2006,9 +2020,9 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
     const allowedTypes = data.allowedTypes;
-    var window = null;
-    var form = null;
-    var fieldPath = new Ext.form.TextField({
+    let window = null;
+    let form = null;
+    const fieldPath = new Ext.form.TextField({
         fieldLabel: t('path'),
         itemId: "path",
         value: data.path,
@@ -2034,8 +2048,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             }.bind(this)
         }
     });
-
-    var poster = new Ext.form.TextField({
+    const poster = new Ext.form.TextField({
         fieldLabel: t('poster_image'),
         value: data.poster,
         name: "poster",
@@ -2049,7 +2062,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
-    var initDD = function (el) {
+    const initDD = function (el) {
         // register at global DnD manager
         new Ext.dd.DropZone(el.getEl(), {
             reference: this,
@@ -2108,24 +2121,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         poster.on("render", initDD);
     }
 
-    var searchButton = new Ext.Button({
-        iconCls: "pimcore_icon_search",
-        handler: function () {
-            pimcore.helpers.itemselector(false, function (item) {
-                if (item) {
-                    fieldPath.setValue(item.fullpath);
-                    return true;
-                }
-            }, {
-                type: ["asset"],
-                subtype: {
-                    asset: ["video"]
-                }
-            });
-        }
-    });
-
-    var openButton = new Ext.Button({
+    const openButton = new Ext.Button({
         iconCls: "pimcore_icon_open",
         handler: function () {
             pimcore.helpers.openElement(fieldPath.getValue(), 'asset');
@@ -2133,24 +2129,45 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
-    var posterImageSearchButton = new Ext.Button({
-        iconCls: "pimcore_icon_search",
-        handler: function () {
-            pimcore.helpers.itemselector(false, function (item) {
-                if (item) {
-                    poster.setValue(item.fullpath);
-                    return true;
-                }
-            }, {
-                type: ["asset"],
-                subtype: {
-                    asset: ["image"]
-                }
-            });
-        }
-    });
+    let searchButton = undefined;
+    let posterImageSearchButton = undefined;
+    if(pimcore.globalmanager.exists('searchImplementationRegistry')){
+        searchButton = new Ext.Button({
+            iconCls: "pimcore_icon_search",
+            handler: function () {
+                pimcore.helpers.itemselector(false, function (item) {
+                    if (item) {
+                        fieldPath.setValue(item.fullpath);
+                        return true;
+                    }
+                }, {
+                    type: ["asset"],
+                    subtype: {
+                        asset: ["video"]
+                    }
+                });
+            }
+        });
 
-    var posterImageOpenButton = new Ext.Button({
+        posterImageSearchButton = new Ext.Button({
+            iconCls: "pimcore_icon_search",
+            handler: function () {
+                pimcore.helpers.itemselector(false, function (item) {
+                    if (item) {
+                        poster.setValue(item.fullpath);
+                        return true;
+                    }
+                }, {
+                    type: ["asset"],
+                    subtype: {
+                        asset: ["image"]
+                    }
+                });
+            }
+        });
+    }
+
+    const posterImageOpenButton = new Ext.Button({
         iconCls: "pimcore_icon_open",
         handler: function () {
             pimcore.helpers.openElement(poster.getValue(), 'asset');
@@ -2158,15 +2175,19 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
-    var updateType = function (type) {
-        searchButton.enable();
+    const updateType = function (type) {
+        if(typeof searchButton !== 'undefined') {
+            searchButton.enable();
+        }
         openButton.enable();
 
         var labelEl = form.getComponent("pathContainer").getComponent("path").labelEl;
         labelEl.update(t("path"));
 
         if (type != "asset") {
-            searchButton.disable();
+            if(typeof searchButton !== 'undefined') {
+                searchButton.disable();
+            }
             openButton.disable();
 
             poster.hide();
@@ -2196,6 +2217,20 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     };
 
+    const pathContainerItems = [
+        fieldPath
+    ];
+    const posterContainerItems = [
+        poster
+    ];
+
+    if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        pathContainerItems.push(searchButton);
+        posterContainerItems.push(posterImageSearchButton, posterImageOpenButton);
+    }
+
+    pathContainerItems.push(openButton);
+
     form = new Ext.FormPanel({
         itemId: "form",
         bodyStyle: "padding:10px;",
@@ -2221,13 +2256,13 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             layout: 'hbox',
             border: false,
             itemId: "pathContainer",
-            items: [fieldPath, searchButton, openButton]
+            items: pathContainerItems
         }, {
             xtype: "fieldcontainer",
             layout: 'hbox',
             border: false,
             itemId: "posterContainer",
-            items: [poster, posterImageSearchButton, posterImageOpenButton]
+            items: posterContainerItems
         }, {
             xtype: "textfield",
             name: "title",

@@ -62,6 +62,47 @@ pimcore.settings.translation.word = Class.create({
             ]
         });
 
+        const componentToolbarItems = [
+            {
+                xtype: "tbspacer",
+                width: 24,
+                height: 24,
+                cls: "pimcore_icon_droptarget"
+            },
+            t("elements_to_export"),
+            "->",
+            {
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                handler: function () {
+                    this.exportStore.removeAll();
+                }.bind(this)
+            }
+        ];
+
+        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+            componentToolbarItems.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_search",
+                handler: function () {
+                    pimcore.helpers.itemselector(true, function (items) {
+                        if (items.length > 0) {
+                            for (var i = 0; i < items.length; i++) {
+                                this.exportStore.add({
+                                    id: items[i].id,
+                                    path: items[i].fullpath,
+                                    type: items[i].type,
+                                    children: true
+                                });
+                            }
+                        }
+                    }.bind(this), {
+                        type: ["object", "document"]
+                    });
+                }.bind(this)
+            });
+        }
+
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.exportStore,
             autoHeight: true,
@@ -95,43 +136,7 @@ pimcore.settings.translation.word = Class.create({
                     }
                 ]
             },
-            tbar: [
-                {
-                    xtype: "tbspacer",
-                    width: 24,
-                    height: 24,
-                    cls: "pimcore_icon_droptarget"
-                },
-                t("elements_to_export"),
-                "->",
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: function () {
-                        this.exportStore.removeAll();
-                    }.bind(this)
-                },
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: function () {
-                        pimcore.helpers.itemselector(true, function (items) {
-                            if (items.length > 0) {
-                                for (var i = 0; i < items.length; i++) {
-                                    this.exportStore.add({
-                                        id: items[i].id,
-                                        path: items[i].fullpath,
-                                        type: items[i].type,
-                                        children: true
-                                    });
-                                }
-                            }
-                        }.bind(this), {
-                            type: ["object", "document"]
-                        });
-                    }.bind(this)
-                }
-            ]
+            tbar: componentToolbarItems
         });
 
         //this.component.on("rowcontextmenu", this.onRowContextmenu);

@@ -44,7 +44,7 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
             this.config.width = Ext.get(this.id).getWidth() ?? Ext.get(this.id).getWidth() - 2;
         }
 
-        var buttons = [
+        const buttons = [
             {
                 xtype: "button",
                 iconCls: "pimcore_icon_open",
@@ -55,13 +55,17 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
                 iconCls: "pimcore_icon_delete",
                 style: "margin-left: 5px",
                 handler: this.empty.bind(this)
-            }, {
+            }
+        ];
+
+        if(pimcore.globalmanager.exists('searchImplementationRegistry')){
+            buttons.push({
                 xtype: "button",
                 iconCls: "pimcore_icon_search",
                 style: "margin-left: 5px",
                 handler: this.openSearchEditor.bind(this)
-            }
-        ];
+            });
+        }
 
         this.buttonsForm = Ext.create('Ext.form.FieldContainer', {
             layout: 'hbox',
@@ -271,15 +275,16 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
             }
         }
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: "pimcore_icon_search",
-            handler: function (item) {
-                item.parentMenu.destroy();
-
-                this.openSearchEditor();
-            }.bind(this)
-        }));
+        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+        }
 
         if((this.config["types"] && in_array("asset",this.config.types)) || !this.config["types"]) {
             menu.add(new Ext.menu.Item({
