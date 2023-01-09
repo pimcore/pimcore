@@ -924,7 +924,7 @@ class Asset extends Element\AbstractElement
 
     public function getChildren(): Listing
     {
-        return new Listing();
+        return (new Listing())->setAssets([]);
     }
 
     /**
