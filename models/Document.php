@@ -594,7 +594,9 @@ class Document extends Element\AbstractElement
                 $list->setOrder('asc');
                 $this->children[$cacheKey] = $list;
             } else {
-                $this->children[$cacheKey] = [];
+                $list = new Document\Listing();
+                $list->setDocuments([]);
+                $this->children[$cacheKey] = $list;
             }
         }
 
@@ -621,12 +623,8 @@ class Document extends Element\AbstractElement
 
     /**
      * Get a list of the sibling documents
-     *
-     * @param bool $includingUnpublished
-     *
-     * @return array
      */
-    public function getSiblings(bool $includingUnpublished = false): array
+    public function getSiblings(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -640,10 +638,11 @@ class Document extends Element\AbstractElement
                 }
                 $list->setOrderKey('index');
                 $list->setOrder('asc');
-                $this->siblings[$cacheKey] = $list->load();
-                $this->hasSiblings[$cacheKey] = (bool) count($this->siblings[$cacheKey]);
+                $this->siblings[$cacheKey] = $list;
             } else {
-                $this->siblings[$cacheKey] = [];
+                $list = new Listing();
+                $list->setDocuments([]);
+                $this->siblings[$cacheKey] = $list;
                 $this->hasSiblings[$cacheKey] = false;
             }
         }
@@ -653,10 +652,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Returns true if the document has at least one sibling
-     *
-     * @param bool|null $includingUnpublished
-     *
-     * @return bool
      */
     public function hasSiblings(bool $includingUnpublished = null): bool
     {

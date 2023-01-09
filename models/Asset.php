@@ -136,9 +136,9 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array|null
+     * @var Listing|null
      */
-    protected ?array $siblings = null;
+    protected ?Listing $siblings = null;
 
     /**
      * @internal
@@ -882,7 +882,7 @@ class Asset extends Element\AbstractElement
         return $path;
     }
 
-    public function getSiblings(): array
+    public function getSiblings(): Listing
     {
         if ($this->siblings === null) {
             if ($this->getParentId()) {
@@ -893,9 +893,11 @@ class Asset extends Element\AbstractElement
                 }
                 $list->setOrderKey('filename');
                 $list->setOrder('asc');
-                $this->siblings = $list->getAssets();
+                $this->siblings = $list;
             } else {
-                $this->siblings = [];
+                $list = new Asset\Listing();
+                $list->setAssets([]);
+                $this->siblings = $list;
             }
         }
 
@@ -905,7 +907,7 @@ class Asset extends Element\AbstractElement
     public function hasSiblings(): ?bool
     {
         if (is_bool($this->hasSiblings)) {
-            if (($this->hasSiblings && empty($this->siblings)) || (!$this->hasSiblings && !empty($this->siblings))) {
+            if (($this->hasSiblings && empty($this->siblings->getAssets())) || (!$this->hasSiblings && !empty($this->siblings->getAssets()))) {
                 return $this->getDao()->hasSiblings();
             } else {
                 return $this->hasSiblings;
@@ -920,12 +922,9 @@ class Asset extends Element\AbstractElement
         return false;
     }
 
-    /**
-     * @return Asset[]
-     */
-    public function getChildren(): array
+    public function getChildren(): Listing
     {
-        return [];
+        return new Listing();
     }
 
     /**
