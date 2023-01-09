@@ -990,25 +990,12 @@ final class User extends User\UserRole
         return $this->keyBindings ? $this->keyBindings : self::getDefaultKeyBindings();
     }
 
-    /**
-     * @param array|null $bindings
-     * @return array|null
-     */
-    public static function strictKeybinds($bindings)
+    public static function strictKeybinds(array $bindings): array
     {
-        if($bindings == null){
-            return null;
-        }
         foreach($bindings as $ind => $binding){
-            if(!array_key_exists('ctrl', $binding)){
-                $bindings[$ind]['ctrl'] = false;
-            }
-            if(!array_key_exists('alt', $binding)){
-                $bindings[$ind]['alt'] = false;
-            }
-            if(!array_key_exists('shift', $binding)){
-                $bindings[$ind]['shift'] = false;
-            }
+            $bindings[$ind]['ctrl'] ??= false;
+            $bindings[$ind]['alt'] ??= false;
+            $bindings[$ind]['shift'] ??= false;
         }
         return $bindings;
     }
