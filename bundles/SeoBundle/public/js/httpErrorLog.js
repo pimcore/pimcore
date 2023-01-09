@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.httpErrorLog");
+pimcore.registerNS("pimcore.bundle.seo.httpErrorLog");
 /**
  * @private
  */
-pimcore.settings.httpErrorLog = Class.create({
+pimcore.bundle.seo.httpErrorLog = Class.create({
 
     initialize: function(id) {
         this.getTabPanel();
@@ -45,7 +45,7 @@ pimcore.settings.httpErrorLog = Class.create({
 
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("http_error_log");
+                pimcore.globalmanager.remove("bundle_seo_http_error_log");
             }.bind(this));
 
             pimcore.layout.refresh();
@@ -58,7 +58,7 @@ pimcore.settings.httpErrorLog = Class.create({
     getGrid: function () {
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = Routing.generate('pimcore_admin_misc_httperrorlog');
+        var url = Routing.generate('pimcore_bundle_seo_misc_httperrorlog');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
@@ -127,7 +127,7 @@ pimcore.settings.httpErrorLog = Class.create({
             listeners: {
                 "rowdblclick": function (grid, record, tr, rowIndex, e, eOpts ) {
                     var data = grid.getStore().getAt(rowIndex);
-                    var path = Routing.generate('pimcore_admin_misc_httperrorlogdetail', {
+                    var path = Routing.generate('pimcore_bundle_seo_misc_httperrorlogdetail', {
                         uri: data.get("uri"),
                     });
                     var win = new Ext.Window({
@@ -163,7 +163,7 @@ pimcore.settings.httpErrorLog = Class.create({
                     text: t('flush'),
                     handler: function () {
                         Ext.Ajax.request({
-                            url: Routing.generate('pimcore_admin_misc_httperrorlogflush'),
+                            url: Routing.generate('pimcore_bundle_seo_misc_httperrorlogflush'),
                             method: "DELETE",
                             success: function () {
                                 var proxy = this.store.getProxy();
