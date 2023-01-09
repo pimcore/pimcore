@@ -65,13 +65,13 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
             return;
         }
 
-        $document = $this->documentResolver->getDocument($request);
-        if (!$document) {
+        if(class_exists(Staticroute::class) && null !== Staticroute::getCurrentRoute()) {
             return;
         }
 
-        if(class_exists('Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute') && $document instanceof WrapperInterface && !Staticroute::getCurrentRoute()) {
-            $this->handleHardlink($request, $event->getResponse(), $document);
+        $document = $this->documentResolver->getDocument($request);
+        if (!$document) {
+            return;
         }
 
         if ($document instanceof WrapperInterface) {

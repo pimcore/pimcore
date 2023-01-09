@@ -134,7 +134,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             return;
         }
 
-        if(class_exists('Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute') && null !== Staticroute::getCurrentRoute()) {
+        if(class_exists(Staticroute::class) && null !== Staticroute::getCurrentRoute()) {
             return;
         }
 
