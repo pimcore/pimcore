@@ -40,4 +40,8 @@ final class Version20221222134837 extends AbstractMigration
             'Please make sure to enable the Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle manually in config/bundles.php'
         );
     }
+
+    public function down(Schema $schema): void {
+        // do nothing
+    }
 }
