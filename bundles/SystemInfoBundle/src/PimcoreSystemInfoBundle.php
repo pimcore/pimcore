@@ -11,10 +11,12 @@ class PimcoreSystemInfoBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
-    public function getComposerPackageName(): string
-    {
-        return 'pimcore/system-info-bundle';
-    }
+// @TODO Enable when bundle move to own repo
+//
+//    public function getComposerPackageName(): string
+//    {
+//        return 'pimcore/system-info-bundle';
+//    }
 
     public function getCssPaths(): array
     {
