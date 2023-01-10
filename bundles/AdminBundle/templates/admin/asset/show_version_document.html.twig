@@ -1,4 +1,4 @@
-{% if asset.getMimeType() == 'pdf' %}
+{% if asset.getMimeType() == 'application/pdf' %}
     {% set tempFile = asset.getTemporaryFile() %}
     {% set dataUri = pimcore_asset_version_preview(tempFile) %}
     
