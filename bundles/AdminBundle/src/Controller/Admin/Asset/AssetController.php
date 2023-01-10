@@ -1110,6 +1110,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if (!$version) {
             throw $this->createNotFoundException('Version not found');
         }
+
+        /** @var Asset $asset */
         $asset = $version->loadData();
 
         if (!$asset->isAllowed('versions')) {
@@ -1118,10 +1120,15 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
+        $fileExtension = File::getFileExtension($asset->getFilename());
+
+        $downloadFilename = preg_replace('/\.?('.preg_quote($fileExtension, '/').')$/', '-'.date('Y-m-d', $version->getDate()).'.$1', $asset->getFilename());
+
         return $this->render(
             '@PimcoreAdmin/admin/asset/show_version_' . strtolower($asset->getType()) . '.html.twig',
             [
                 'asset' => $asset,
+                'downloadFilename' => $downloadFilename,
                 'loader' => $loader,
             ]
         );

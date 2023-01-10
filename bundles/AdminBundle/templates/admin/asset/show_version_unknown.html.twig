@@ -34,7 +34,7 @@
             {% set tempFile = asset.getTemporaryFile() %}
             {% set dataUri = pimcore_asset_version_preview(tempFile) %}
 
-            <a href="{{ dataUri }}" download="{{ asset.getFilename() }}">{{ 'download'|trans([],'admin') }}</a>
+            <a href="{{ dataUri }}" download="{{ downloadFilename }}">{{ 'download'|trans([],'admin') }}</a>
         </td>
     </tr>
 </table>
