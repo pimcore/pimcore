@@ -23,15 +23,9 @@ use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
-use Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
-use Symfony\Component\Security\Core\User\EquatableInterface;
-use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class Authentication
@@ -75,13 +69,15 @@ class Authentication
         }
 
         $token = $session->get('_security_pimcore_admin');
-        $token = static::safelyUnserialize($token);
+        $token = $token ? static::safelyUnserialize($token) : null;
 
         if ($token instanceof TokenInterface) {
             $token = static::refreshUser($token, \Pimcore::getContainer()->get(UserProvider::class));
             $user = $token->getUser();
 
-            return $user instanceof \Pimcore\Bundle\AdminBundle\Security\User\User ? $user->getUser() : null;
+            if ($user instanceof \Pimcore\Bundle\AdminBundle\Security\User\User && self::isValidUser($user->getUser())) {
+                return $user->getUser();
+            }
         }
 
         return null;
@@ -231,11 +227,7 @@ class Authentication
 
     public static function isValidUser(?User $user): bool
     {
-        if ($user instanceof User && $user->isActive() && $user->getId() && $user->getPassword()) {
-            return true;
-        }
-
-        return false;
+        return $user instanceof User && $user->isActive() && $user->getId() && $user->getPassword();
     }
 
     /**
