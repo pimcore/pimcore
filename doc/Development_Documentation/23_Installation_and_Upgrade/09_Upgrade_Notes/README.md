@@ -57,6 +57,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Application Logger] Table names of archive tables are now named with year-month rather than month-year see [#8237](https://github.com/pimcore/pimcore/issues/8237).
 - [Glossary] 
   - `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
+  - Config `pimcore:glossary:` has been removed, please use `pimcore_glossary:` instead.
+    - Make sure to enable the PimcoreGlossaryBundle manually in the `config\bundles.php`
 - [Elements] Passing $force parameter as boolean is not valid anymore in `getById`, `getByPath`, `getElementById` methods. Instead, please pass it as an associative array ( eg.`['force' => true]`).
    For details, please see [#12789](https://github.com/pimcore/pimcore/issues/12789)
 - [DataObjects] Changed default behaviour: getByXXX methods on `Concrete` class now returns objects and variants if nothing else is specified.
@@ -109,6 +111,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
       - Config `pimcore:glossary:` has been removed, please use `pimcore_glossary:` in the PimcoreGlossaryBundle instead.
     - Staticroutes has been moved into PimcoreStaticRoutesBundle
       - Config `pimcore:staticroutes:` has been removed, please use `pimcore_static_routes:` in the PimcoreStaticRoutesBundle instead.
+    - SEO Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
@@ -140,6 +143,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [CustomLayout] Passing `int` to `setDefault` is deprecated and will be removed in Pimcore 11. Use type `bool` instead. Same for `getDefault` method, it will return type `bool` only in Pimcore 11.
 - [ClassSavedInterface] Introduced additional interface implementing the `classSaved` method. The interface will be used by field definitions in `Pimcore\Model\DataObject\ClassDefinition\Data\*`. If your custom field definition implements the `classSaved` method, please use the `ClassSavedInterface` interface. Make sure that you either provide a default value (e.g. `$params = []`) for `$params` or don't use a second parameter in the method signature at all. Note that using the `classSaved` method without implementing the interface is deprecated and won't work in Pimcore 11.
 - [DataObject]: The usage of `getO_` or `setO_` methods is deprecated. The BC layer supporting these methods will be removed in Pimcore 11.
+- [Classification Store] Deleting the data from deleted groups and keys.
 - [Commands] Calling `configureParallelization` on `Parallelization` trait is deprecated and will be removed in Pimcore 11. Please call `Parallelization::configureCommand` instead.
 
 ## 10.5.13
