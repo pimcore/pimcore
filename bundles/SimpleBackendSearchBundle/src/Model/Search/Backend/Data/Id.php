@@ -14,24 +14,32 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Messenger;
+namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
+
+use Pimcore\Model\Element;
 
 /**
  * @internal
  */
-class SearchBackendMessage
+class Id
 {
-    public function __construct(protected string $type, protected int $id)
-    {
-    }
+    protected int $id;
 
-    public function getType(): string
+    protected string $type;
+
+    public function __construct(Element\ElementInterface $webResource)
     {
-        return $this->type;
+        $this->id = $webResource->getId();
+        $this->type = Element\Service::getElementType($webResource) ?: 'unknown';
     }
 
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
     }
 }

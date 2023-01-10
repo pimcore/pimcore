@@ -14,32 +14,21 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Model;
+namespace Pimcore\Bundle\SimpleBackendSearchBundle\Event;
 
-use Pimcore\Model\Search\Backend\Data;
-use Symfony\Contracts\EventDispatcher\Event;
-
-class SearchBackendEvent extends Event
+final class SearchBackendEvents
 {
-    protected Data $data;
+    /**
+     * @Event("Pimcore\Bundle\SimpleBackendSearchBundle\Event\Model\SearchBackendEvent")
+     *
+     * @var string
+     */
+    const PRE_SAVE = 'pimcore.search.backend.preSave';
 
     /**
-     * Data constructor.
+     * @Event("Pimcore\Bundle\SimpleBackendSearchBundle\Event\Model\SearchBackendEvent")
      *
-     * @param Data $data
+     * @var string
      */
-    public function __construct(Data $data)
-    {
-        $this->data = $data;
-    }
-
-    public function getData(): Data
-    {
-        return $this->data;
-    }
-
-    public function setData(Data $data)
-    {
-        $this->data = $data;
-    }
+    const POST_SAVE = 'pimcore.search.backend.postSave';
 }

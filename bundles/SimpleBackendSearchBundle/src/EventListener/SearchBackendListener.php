@@ -21,11 +21,11 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Search\Backend\Data;
-use Pimcore\Messenger\SearchBackendMessage;
 use Pimcore\Event\Model\ElementEventInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Message\SearchBackendMessage;
 
 /**
  * @internal

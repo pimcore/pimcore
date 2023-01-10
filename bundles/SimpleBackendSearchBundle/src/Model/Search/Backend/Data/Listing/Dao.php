@@ -13,18 +13,20 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Search\Backend\Data\Listing;
+namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data\Listing;
 
 use Pimcore\Logger;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Search;
+use Pimcore\Model\Listing\Dao\AbstractDao;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Search\Backend\Data\Listing $model
+ * @property Data\Listing $model
  */
-class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
+class Dao extends AbstractDao
 {
     /**
      * Loads a list of entries for the specicifies parameters, returns an array of Search\Backend\Data

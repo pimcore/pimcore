@@ -13,18 +13,20 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Search\Backend\Data;
+namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
-use Pimcore\Db\Helper;
-use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Logger;
+use Pimcore\Db\Helper;
+use Pimcore\Model\Dao\AbstractDao;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Search\Backend\Data $model
+ * @property Data $model
  */
-class Dao extends \Pimcore\Model\Dao\AbstractDao
+class Dao extends AbstractDao
 {
     public function getForElement(Model\Element\ElementInterface $element): void
     {

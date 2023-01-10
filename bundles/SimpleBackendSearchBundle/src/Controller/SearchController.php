@@ -22,7 +22,6 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Model\DataObject;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\HttpFoundation\Request;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,6 +32,7 @@ use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
 /**
  * @Route("/search")

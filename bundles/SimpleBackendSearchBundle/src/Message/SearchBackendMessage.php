@@ -14,21 +14,24 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event;
+namespace Pimcore\Bundle\SimpleBackendSearchBundle\Message;
 
-final class SearchBackendEvents
+/**
+ * @internal
+ */
+class SearchBackendMessage
 {
-    /**
-     * @Event("Pimcore\Event\Model\SearchBackendEvent")
-     *
-     * @var string
-     */
-    const PRE_SAVE = 'pimcore.search.backend.preSave';
+    public function __construct(protected string $type, protected int $id)
+    {
+    }
 
-    /**
-     * @Event("Pimcore\Event\Model\SearchBackendEvent")
-     *
-     * @var string
-     */
-    const POST_SAVE = 'pimcore.search.backend.postSave';
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
 }

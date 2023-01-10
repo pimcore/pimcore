@@ -17,11 +17,12 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\MessageHandler;
 
 use Pimcore\Model\Element;
-use Pimcore\Model\Search\Backend\Data;
-use Pimcore\Messenger\SearchBackendMessage;
+use Pimcore\Messenger\Handler\HandlerHelperTrait;
 use Symfony\Component\Messenger\Handler\Acknowledger;
 use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Message\SearchBackendMessage;
 
 /**
  * @internal

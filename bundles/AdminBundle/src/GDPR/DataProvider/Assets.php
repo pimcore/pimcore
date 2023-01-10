@@ -109,89 +109,15 @@ class Assets extends Elements implements DataProviderInterface
      * @param int $limit
      * @param string|null $sort
      *
+     * TODO: redefine - implement a "very simple" search
+     *
      * @return array
      */
     public function searchData(int $id, string $firstname, string $lastname, string $email, int $start, int $limit, string $sort = null): array
     {
-        if (empty($id) && empty($firstname) && empty($lastname) && empty($email)) {
-            return ['data' => [], 'success' => true, 'total' => 0];
-        }
+        //TODO: implement
 
-        $offset = $start;
-        $offset = $offset ?: 0;
-        $limit = $limit ?: 50;
-
-        $searcherList = new Data\Listing();
-        $conditionParts = [];
-        $db = \Pimcore\Db::get();
-
-        //id search
-        if ($id) {
-            $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST (+"' . $id . '" IN BOOLEAN MODE) )';
-        }
-
-        // search for firstname, lastname, email
-        if ($firstname || $lastname || $email) {
-            $firstname = $this->prepareQueryString($firstname);
-            $lastname = $this->prepareQueryString($lastname);
-            $email = $this->prepareQueryString($email);
-
-            $queryString = ($firstname ? '+"' . $firstname . '"' : '') . ' ' . ($lastname ? '+"' . $lastname . '"' : '') . ' ' . ($email ? '+"' . $email . '"' : '');
-            $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST ("' . $db->quote($queryString) . '" IN BOOLEAN MODE) )';
-        }
-
-        $db = Db::get();
-
-        $typesPart = '';
-        if ($this->config['types']) {
-            $typesList = [];
-            foreach ($this->config['types'] as $type) {
-                $typesList[] = $db->quote($type);
-            }
-            $typesPart = ' AND `type` IN (' . implode(',', $typesList) . ')';
-        }
-
-        $conditionParts[] = '( maintype = "asset" ' . $typesPart . ')';
-
-        $condition = implode(' AND ', $conditionParts);
-        $searcherList->setCondition($condition);
-
-        $searcherList->setOffset($offset);
-        $searcherList->setLimit($limit);
-
-        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(['sort' => $sort]);
-        if ($sortingSettings['orderKey']) {
-            // we need a special mapping for classname as this is stored in subtype column
-            $sortMapping = [
-                'type' => 'subtype',
-            ];
-
-            $sort = $sortingSettings['orderKey'];
-            if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
-                $sort = $sortMapping[$sortingSettings['orderKey']];
-            }
-            $searcherList->setOrderKey($sort);
-        }
-        if ($sortingSettings['order']) {
-            $searcherList->setOrder($sortingSettings['order']);
-        }
-
-        $hits = $searcherList->load();
-
-        $elements = [];
-        foreach ($hits as $hit) {
-            $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
-
-            if ($element instanceof Asset) {
-                $data = \Pimcore\Model\Asset\Service::gridAssetData($element);
-                $data['permissions'] = $element->getUserPermissions();
-                $elements[] = $data;
-            }
-        }
-
-        $totalMatches = $searcherList->getTotalCount();
-
-        return ['data' => $elements, 'success' => true, 'total' => $totalMatches];
+        return [];
     }
 
     /**

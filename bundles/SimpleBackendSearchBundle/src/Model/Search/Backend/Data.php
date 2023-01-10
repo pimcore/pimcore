@@ -14,27 +14,29 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Search\Backend;
+namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend;
 
-use Doctrine\DBAL\Exception\DeadlockException;
-use ForceUTF8\Encoding;
-use Pimcore\Event\Model\SearchBackendEvent;
-use Pimcore\Event\SearchBackendEvents;
-use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
-use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+
 use Pimcore\Logger;
+use ForceUTF8\Encoding;
 use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Search\Backend\Data\Dao;
+use Pimcore\Model\Document;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\AbstractModel;
+use Doctrine\DBAL\Exception\DeadlockException;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Event\SearchBackendEvents;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Event\Model\SearchBackendEvent;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data\Dao;
 
 /**
  * @internal
  *
  * @method Dao getDao()
  */
-class Data extends \Pimcore\Model\AbstractModel
+class Data extends AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 

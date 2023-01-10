@@ -14,19 +14,20 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Search\Backend\Data;
+namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
-use Pimcore\Model\Search\Backend\Data;
+use Pimcore\Model\Listing\AbstractListing;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
 /**
  * @internal
  *
- * @method \Pimcore\Model\Search\Backend\Data\Listing\Dao getDao()
+ * @method Data\Listing\Dao getDao()
  * @method Data[] load()
  * @method Data|false current()
  * @method int getTotalCount()
  */
-class Listing extends \Pimcore\Model\Listing\AbstractListing
+class Listing extends AbstractListing
 {
     /**
      * @return Data[]

@@ -32,3 +32,16 @@ services:
     Pimcore\Bundle\SimpleBackendSearchBundle\MessageHandler\SearchBackendHandler:
         tags:
             - { name: messenger.message_handler }
+
+    #
+    # Data Provider
+    #
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Assets:
+        class: Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR\Assets
+        arguments:
+            $config: '%pimcore.gdpr-data-extrator.assets%'
+
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects:
+        class: Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR\DataObject
+        arguments:
+            $config: '%pimcore.gdpr-data-extrator.dataobjects%'
