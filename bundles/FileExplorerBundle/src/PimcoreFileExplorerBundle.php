@@ -46,7 +46,7 @@ class PimcoreFileExplorerBundle extends AbstractPimcoreBundle
 
     public function getInstaller(): Installer
     {
-        /** @var $installer Installer */
+        /** @var Installer $installer */
         $installer = $this->container->get(Installer::class);
         return $installer;
     }
