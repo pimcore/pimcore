@@ -41,4 +41,9 @@ final class Version20221216140012 extends AbstractMigration
             'Please make sure to enable the Pimcore\\Bundle\\SeoBundle\\PimcoreSeoBundle manually in config/bundles.php'
         );
     }
+
+    public function down(Schema $schema): void
+    {
+        // do nothing
+    }
 }
