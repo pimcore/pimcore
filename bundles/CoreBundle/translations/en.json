@@ -997,7 +997,6 @@
     "possible_causes": "Possible causes",
     "postal_code_format_error": "Postal code format, e.g. use \"5020 Salzburg, Söllheimer Straße 16\" instead of \"A-5020 Salzburg, Söllheimer Straße 16\"",
     "delete_data_from_it": "This will also delete all data from it.",
-    "postal_code_format_error": "Postal code format, e.g. use \"5020 Salzburg, Söllheimer Straße 16\" instead of \"A-5020 Salzburg, Söllheimer Straße 16\"",
     "display_mode": "Display Mode",
     "display_mode_grid": "Grid view",
     "display_mode_combo": "Tag field",
