@@ -59,32 +59,6 @@ pimcore.bundle.file_explorer.startup = Class.create({
         return items;
     },
 
-    pimcoreReady: function(e) {
-        const user = pimcore.globalmanager.get('user');
-        var perspectiveCfg = pimcore.globalmanager.get("perspective");
-
-        var toolbar = pimcore.globalmanager.get('layout_toolbar');
-
-        if (
-            user.admin &&
-            perspectiveCfg.inToolbar("extras") &&
-            perspectiveCfg.inToolbar("extras.systemtools") &&
-            perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")
-        ) {
-            const index = toolbar.extrasMenu.items.keys.indexOf('pimcore_menu_extras_system_info');
-            const systemInfoMenu  = toolbar.extrasMenu.items.items[index];
-
-            systemInfoMenu.getMenu().add(
-                {
-                    text: t("server_fileexplorer"),
-                    iconCls: "pimcore_nav_icon_fileexplorer",
-                    itemId: 'pimcore_menu_extras_system_info_server_file_explorer',
-                    handler: this.showFileExplorer
-                }
-            )
-        }
-    },
-
     showFileExplorer: function () {
         try {
             pimcore.globalmanager.get("file_explorer").activate();

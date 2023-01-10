@@ -29,7 +29,7 @@ class Installer extends SettingsStoreAwareInstaller
         /**
          * The following code is here for backwards compatibility reason.
          * If the permissions are already installed, the installer should not generate
-         * any further errors and only add permissions which
+         * any further errors and only add permissions which are not installed
          */
         $permissionsString = array_map(function ($permission) {
             return '\'' . $permission . '\'';
