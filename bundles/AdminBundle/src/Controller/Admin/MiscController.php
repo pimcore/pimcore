@@ -98,13 +98,17 @@ class MiscController extends AdminController
         /** @var Translator $translator */
         $translator->lazyInitialize('admin', $language);
 
-        $translations = $translator->getCatalogue($language)->all('admin');
-        if ($language != 'en') {
-            // add en as a fallback
-            $translator->lazyInitialize('admin', 'en');
-            foreach ($translator->getCatalogue('en')->all('admin') as $key => $value) {
-                if (!isset($translations[$key]) || empty($translations[$key])) {
-                    $translations[$key] = $value;
+        $translations = [];
+
+        foreach(['admin', 'admin_ext'] as $domain) {
+            $translations = array_merge($translations, $translator->getCatalogue($language)->all($domain));
+            if ($language != 'en') {
+                // add en as a fallback
+                $translator->lazyInitialize($domain, 'en');
+                foreach ($translator->getCatalogue('en')->all($domain) as $key => $value) {
+                    if (empty($translations[$key])) {
+                        $translations[$key] = $value;
+                    }
                 }
             }
         }
