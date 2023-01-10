@@ -1412,7 +1412,10 @@ class DataObjectHelperController extends AdminController
         return $this->adminJson(['success' => true]);
     }
 
-    public function encodeFunc($value): string
+    /**
+     * @param array{fieldName: string, data: string} $value
+     */
+    public function encodeFunc(array $value): string
     {
         $value = $value['data'];
         $value = str_replace('"', '""', $value);
