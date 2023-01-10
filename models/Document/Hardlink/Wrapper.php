@@ -128,7 +128,7 @@ trait Wrapper
     /**
      * @param bool $includingUnpublished
      *
-     * @return listing
+     * @return Listing
      */
     public function getChildren(bool $includingUnpublished = false): Listing
     {

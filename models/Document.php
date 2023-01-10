@@ -557,12 +557,12 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
-     * @param listing|null $children
+     * @param Listing|null $children
      * @param bool $includingUnpublished
      *
      * @return $this
      */
-    public function setChildren(?listing $children, bool $includingUnpublished = false): static
+    public function setChildren(?Listing $children, bool $includingUnpublished = false): static
     {
         if ($children === null) {
             // unset all cached children
