@@ -69,17 +69,17 @@ class Dao extends Model\Dao\AbstractDao
 
         $groupsTable = $this->getGroupsTableName();
 
-        $dataExists = $this->db->fetchOne('SELECT `o_id` FROM `'.$groupsTable."` WHERE
-         `o_id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
+        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$groupsTable."` WHERE
+         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
         if ($dataExists) {
-            $this->db->delete($groupsTable, ['o_id' => $objectId, 'fieldname' => $fieldname]);
+            $this->db->delete($groupsTable, ['id' => $objectId, 'fieldname' => $fieldname]);
         }
 
         if (is_array($activeGroups)) {
             foreach ($activeGroups as $activeGroupId => $enabled) {
                 if ($enabled) {
                     $data = [
-                        'o_id' => $objectId,
+                        'id' => $objectId,
                         'groupId' => $activeGroupId,
                         'fieldname' => $fieldname,
                     ];
