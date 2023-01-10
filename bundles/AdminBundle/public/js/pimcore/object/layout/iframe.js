@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.layout.iframe");
+/**
+ * @private
+ */
 pimcore.object.layout.iframe = Class.create(pimcore.object.abstract, {
 
     initialize: function (config, context) {

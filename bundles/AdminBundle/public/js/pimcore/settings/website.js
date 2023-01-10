@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.website");
+/**
+ * @private
+ */
 pimcore.settings.website = Class.create({
 
     initialize:function () {

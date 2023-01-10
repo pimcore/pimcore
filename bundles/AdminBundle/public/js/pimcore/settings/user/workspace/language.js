@@ -13,6 +13,9 @@
 
 pimcore.registerNS("pimcore.settings.user.workspace.language");
 
+/**
+ * @private
+ */
 pimcore.settings.user.workspace.language = Class.create({
 
     initialize: function (type, data) {

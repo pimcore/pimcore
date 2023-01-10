@@ -1,5 +1,8 @@
 pimcore.registerNS("pimcore.error.ValidationException");
 
+/**
+ * @private
+ */
 pimcore.error.ValidationException = function (message) {
     this.message = message;
     if ("captureStackTrace" in Error) { // V8's native method, fallback otherwise
@@ -13,7 +16,9 @@ pimcore.error.ValidationException.prototype = Object.create(Error.prototype);
 pimcore.error.ValidationException.prototype.name = "ValidationException";
 pimcore.error.ValidationException.prototype.constructor = pimcore.error.ValidationException;
 
-
+/**
+ * @private
+ */
 pimcore.error.ActionCancelledException = function (message) {
     this.message = message;
     if ("captureStackTrace" in Error) { // V8's native method, fallback otherwise

@@ -285,8 +285,7 @@ interface CartInterface
      *
      * @return bool
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     public function addVoucherToken(string $token): bool;
 

@@ -16,7 +16,9 @@
 
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.trimmer");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcolumn.operator.text, {
     operatorGroup: "transformer",
     type: "operator",

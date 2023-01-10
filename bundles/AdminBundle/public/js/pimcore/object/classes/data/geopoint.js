@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.object.classes.data.geopoint');
+/**
+ * @private
+ */
 pimcore.object.classes.data.geopoint = Class.create(pimcore.object.classes.data.geo.abstract, {
 
     type: 'geopoint',

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.web2print");
+/**
+ * @private
+ */
 pimcore.settings.web2print = Class.create({
 
     initialize: function () {

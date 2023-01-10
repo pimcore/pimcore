@@ -165,8 +165,7 @@ final class Config extends Model\AbstractModel
      *
      * @return self|null
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getByAutoDetect(array|string|Config $config): ?Config
     {
@@ -482,8 +481,7 @@ final class Config extends Model\AbstractModel
      *
      * @return self
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getByArrayConfig(array $config): Config
     {
@@ -517,8 +515,7 @@ final class Config extends Model\AbstractModel
      *
      * @return self
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getByLegacyConfig(array $config): Config
     {
@@ -603,8 +600,7 @@ final class Config extends Model\AbstractModel
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public function getEstimatedDimensions(Model\Asset\Image $asset): array
     {

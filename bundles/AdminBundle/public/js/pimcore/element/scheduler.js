@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.scheduler");
+/**
+ * @private
+ */
 pimcore.element.scheduler = Class.create({
 
     initialize: function(element, type, options) {

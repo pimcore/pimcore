@@ -13,6 +13,9 @@
 
 
 pimcore.registerNS("pimcore.settings.user.panels.abstract");
+/**
+ * @private
+ */
 pimcore.settings.user.panels.abstract = Class.create({
 
     initialize: function () {
@@ -93,7 +96,7 @@ pimcore.settings.user.panels.abstract = Class.create({
                         parentId: pid,
                         type: type,
                         name: value,
-                        active: 1,
+                        active: true,
                         rid: rid
                     },
                     success: this.addComplete.bind(this, parentNode)

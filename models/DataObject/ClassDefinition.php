@@ -344,8 +344,7 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @param string $name
      *
-     *@internal
-     *
+     * @internal
      */
     public function rename(string $name)
     {
@@ -649,8 +648,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getDefinitionFile(string $name = null): string
     {
