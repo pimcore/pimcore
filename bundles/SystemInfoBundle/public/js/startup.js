@@ -83,15 +83,15 @@ pimcore.bundle.system_info.startup = Class.create({
     },
 
     showPhpInfo: function () {
-        pimcore.helpers.openGenericIframeWindow("phpinfo", Routing.generate('pimcore_bundle_system_info_settings_phpinfo'), "pimcore_icon_php", "PHP Info");
+        pimcore.helpers.openGenericIframeWindow("phpinfo", Routing.generate('pimcore_bundle_systeminfo_settings_phpinfo'), "pimcore_icon_php", "PHP Info");
     },
 
     showOpcacheStatus: function () {
-        pimcore.helpers.openGenericIframeWindow("opcachestatus", Routing.generate('pimcore_bundle_system_info_settings_opcache_index'), "pimcore_icon_reports", "PHP OPcache Status");
+        pimcore.helpers.openGenericIframeWindow("opcachestatus", Routing.generate('pimcore_bundle_systeminfo_opcache_index'), "pimcore_icon_reports", "PHP OPcache Status");
     },
 
     showSystemRequirementsCheck: function () {
-        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_bundle_system_info_settings_install_checks'), "pimcore_icon_systemrequirements", "System-Requirements Check");
+        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_bundle_systeminfo_settings_installcheck'), "pimcore_icon_systemrequirements", "System-Requirements Check");
     },
 
 });

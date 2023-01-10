@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\SystemInfoBundle\Controller\Admin\External;
+namespace Pimcore\Bundle\SystemInfoBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -25,13 +25,14 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/")
+ * @Route("/opcache")
+ *
  * @internal
  */
-class OpCacheController extends AdminController implements KernelControllerEventInterface
+class OpcacheController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @Route("/external_opcache", name="pimcore_bundle_system_info_settings_opcache_index")
+     * @Route("/index", name="pimcore_bundle_systeminfo_opcache_index")
      *
      * @param Request $request
      * @param Profiler|null $profiler

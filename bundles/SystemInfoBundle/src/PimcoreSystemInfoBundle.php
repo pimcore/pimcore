@@ -19,7 +19,7 @@ class PimcoreSystemInfoBundle extends AbstractPimcoreBundle
     public function getCssPaths(): array
     {
         return [
-            '/bundles/pimcoresysteminfo/css/system-info.css'
+            '/bundles/pimcoresysteminfo/css/icons.css'
         ];
     }
 

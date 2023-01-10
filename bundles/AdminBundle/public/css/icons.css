@@ -239,11 +239,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/stop-circle.svg) center center no-repeat !important
 }
 
-.pimcore_nav_icon_reports {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/pie_chart.svg) center center no-repeat !important;
-}
-
-
 .pimcore_nav_icon_server_info {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/electronics.svg) center center no-repeat !important;
 }
@@ -278,10 +273,6 @@
 
 .pimcore_nav_icon_targeting_toolbar {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/ok.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_reports {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/pie_chart.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_marketing_settings {

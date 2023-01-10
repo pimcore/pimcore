@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\SystemInfoBundle\Controller\Admin;
+namespace Pimcore\Bundle\SystemInfoBundle\Controller;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
@@ -11,16 +11,15 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/")
+ * @Route("/settings")
  *
  * @internal
  */
-
-class SystemInfoController extends AdminController
+class SettingsController extends AdminController
 {
 
     /**
-     * @Route("/phpinfo", name="pimcore_bundle_system_info_settings_phpinfo", methods={"GET"})
+     * @Route("/phpinfo", name="pimcore_bundle_systeminfo_settings_phpinfo", methods={"GET"})
      *
      * @param Request $request
      * @param Profiler|null $profiler
@@ -47,7 +46,7 @@ class SystemInfoController extends AdminController
     }
 
     /**
-     * @Route("/installation_check", name="pimcore_bundle_system_info_settings_install_checks", methods={"GET", "POST"})
+     * @Route("/install-check", name="pimcore_bundle_systeminfo_settings_installcheck", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param Connection $db
