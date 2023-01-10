@@ -19,12 +19,8 @@
             vertical-align: middle;
             width: 400px;
         }
-
-
     </style>
-
 </head>
-
 <body>
 
 <table id="wrapper" cellpadding="0" cellspacing="0" border="0">
@@ -34,11 +30,35 @@
             {% set tempFile = asset.getTemporaryFile() %}
             {% set dataUri = pimcore_asset_version_preview(tempFile) %}
 
-            <a href="{{ dataUri }}" download="{{ downloadFilename }}">{{ 'download'|trans([],'admin') }}</a>
+            <a href="{{ dataUri }}" download="{{ asset.getFilename() }}" id="download-version-link">{{ 'download'|trans([],'admin') }}</a>
         </td>
     </tr>
 </table>
 
+<script>
+    function formatDate (date) {
+        let month = '' + (date.getMonth() + 1),
+            day = '' + date.getDate(),
+            year = date.getFullYear(),
+            hour = '' + date.getHours(),
+            minute = '' + date.getMinutes()
+            seconds = '' + date.getSeconds();
 
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+        if (hour.length < 2) hour = '0' + hour;
+        if (minute.length < 2) minute = '0' + minute;
+        if (seconds.length < 2) seconds = '0' + seconds;
+
+        return [year, month, day, hour, minute, seconds].join('-');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        {% set filenamePrefix = asset.getFilename()|split('.')|slice(0,-1)|join('.') %}
+        {% set filenameSuffix = asset.getFilename()|split('.')|last %}
+        var versionDate = new Date({{ version.getDate() }} * 1000);
+        document.getElementById('download-version-link').setAttribute('download', "{{ filenamePrefix }}-"+ formatDate(versionDate)+".{{ filenameSuffix }}");
+    }, false);
+</script>
 </body>
 </html>

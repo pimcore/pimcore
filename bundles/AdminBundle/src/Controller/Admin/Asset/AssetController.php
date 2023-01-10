@@ -1124,14 +1124,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $fileExtension = File::getFileExtension($asset->getFilename());
 
-        $versionDate = (new DateTimeImmutable('@'.$version->getDate()))->setTimezone(new DateTimeZone(date_default_timezone_get()));
-        $downloadFilename = preg_replace('/\.?('.preg_quote($fileExtension, '/').')$/', '-'.$versionDate->format('Y-m-d-H-i-s').'.$1', $asset->getFilename());
-
         return $this->render(
             '@PimcoreAdmin/admin/asset/show_version_' . strtolower($asset->getType()) . '.html.twig',
             [
                 'asset' => $asset,
-                'downloadFilename' => $downloadFilename,
+                'version' => $version,
                 'loader' => $loader,
             ]
         );
