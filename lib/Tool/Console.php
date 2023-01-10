@@ -137,7 +137,6 @@ final class Console
     }
 
     /**
-     * @param string $script
      * @param string[] $arguments
      *
      * @return string[]
