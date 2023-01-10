@@ -357,12 +357,12 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
                                     var lastOptions = this.store.lastOptions;
                                     Ext.apply(lastOptions.params, {
-                                        overrideSort: "false"
+                                        overrideSort: false
                                     });
 
                                 }.bind(this),
                                 params: {
-                                    "overrideSort": "true"
+                                    overrideSort: true
                                 }
                             }
 
