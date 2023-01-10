@@ -95,6 +95,7 @@ class GoogleTagManagerListener
         $siteKey = $siteId->getConfigKey();
 
         $reportConfig = Config::getReportConfig();
+//        dd($reportConfig, $siteKey);
         if (!isset($reportConfig['tagmanager']['sites'][$siteKey]['containerId'])) {
             return;
         }
@@ -111,7 +112,7 @@ class GoogleTagManagerListener
 
         $codeHead = $this->generateCode(
             GoogleTagManagerEvents::CODE_HEAD,
-            '@PimcoreGoogleMarketingBundle/Analytics/Tracking/GoogleTagManager/codeHead.html.twig',
+            '@PimcoreGoogleMarketing/Analytics/Tracking/GoogleTagManager/codeHead.html.twig',
             $this->headBlocks,
             [
                 'containerId' => $containerId,
@@ -120,7 +121,7 @@ class GoogleTagManagerListener
 
         $codeBody = $this->generateCode(
             GoogleTagManagerEvents::CODE_BODY,
-            '@PimcoreGoogleMarketingBundle/Analytics/Tracking/GoogleTagManager/codeBody.html.twig',
+            '@PimcoreGoogleMarketing/Analytics/Tracking/GoogleTagManager/codeBody.html.twig',
             $this->bodyBlocks,
             [
                 'containerId' => $containerId,

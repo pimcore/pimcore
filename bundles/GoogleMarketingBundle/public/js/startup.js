@@ -1,6 +1,6 @@
-pimcore.registerNS('pimcore.bundle.googleMarketing');
+pimcore.registerNS('pimcore.bundle.google_marketing.startup');
 
-pimcore.bundle.googleMarketing = Class.create({
+pimcore.bundle.google_marketing.startup = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
@@ -29,4 +29,4 @@ pimcore.bundle.googleMarketing = Class.create({
     }
 });
 
-var googleMarketingBundle = new pimcore.bundle.googleMarketing();
+var google_marketing_bundle = new pimcore.bundle.google_marketing.startup();

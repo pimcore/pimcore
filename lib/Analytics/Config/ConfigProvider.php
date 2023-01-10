@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Analytics\Google\Config;
+namespace Pimcore\Analytics\Config;
 
 class ConfigProvider
 {

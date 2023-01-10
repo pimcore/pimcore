@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Analytics\GoogleTagManager\EventSubscriber;
+namespace Pimcore\Bundle\GoogleMarketingBundle\EventSubscriber;
 
 use Pimcore\Analytics\Google\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
@@ -78,7 +78,7 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
                 $block = $event->getBlock(Tracker::BLOCK_BEFORE_SCRIPT_TAG);
 
                 $code = $this->twig->render(
-                    '@PimcoreGoogleMarketingBundle/Analytics/Tracking/GoogleTagManager/dataLayer.html.twig',
+                    '@PimcoreGoogleMarketing/Analytics/Tracking/GoogleTagManager/dataLayer.html.twig',
                     ['trackedCodes' => $trackedCodes]
                 );
 

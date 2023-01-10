@@ -17,13 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
-use Pimcore\Analytics\Google\Tracker;
+use Pimcore\Analytics\TrackerInterface;
+
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker as EcommerceTracker;
 use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class AbstractAnalyticsTracker extends EcommerceTracker
 {
-    protected Tracker $tracker;
+    protected TrackerInterface $tracker;
 
     /**
      * @internal
@@ -31,7 +32,7 @@ abstract class AbstractAnalyticsTracker extends EcommerceTracker
      * TODO Pimcore 10 remove this setter and set as constructor dependency!
      */
     #[Required]
-    public function setTracker(Tracker $tracker): void
+    public function setTracker(TrackerInterface $tracker): void
     {
         $this->tracker = $tracker;
     }

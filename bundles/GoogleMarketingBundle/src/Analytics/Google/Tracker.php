@@ -15,14 +15,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Analytics\Google;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google;
 
 use Pimcore\Analytics\AbstractTracker;
 use Pimcore\Analytics\Code\CodeBlock;
 use Pimcore\Analytics\Code\CodeCollector;
-use Pimcore\Analytics\Google\Config\Config;
-use Pimcore\Analytics\Google\Config\ConfigProvider;
-use Pimcore\Analytics\Google\Event\TrackingDataEvent;
+use Pimcore\Analytics\Config\Config;
+use Pimcore\Analytics\Config\ConfigProvider;
+use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Event\TrackingDataEvent;
 use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Event\Analytics\GoogleAnalyticsEvents;
@@ -144,7 +144,7 @@ class Tracker extends AbstractTracker
         ];
 
         if ($siteConfig['gtagcode']) {
-            $template = '@PimcoreGoogleMarketingBundle/Analytics/Tracking/Google/Analytics/gtagTrackingCode.html.twig';
+            $template = '@PimcoreGoogleMarketing/Analytics/Tracking/Google/Analytics/gtagTrackingCode.html.twig';
 
             $data['gtagConfig'] = $this->getTrackerConfigurationFromJson($siteConfig['universal_configuration'] ?? null, [
                 'anonymize_ip' => true,

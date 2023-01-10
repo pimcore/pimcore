@@ -6,10 +6,32 @@ services:
     #
     # GOOGLE TAG MANAGER
     #
-    Pimcore\Analytics\GoogleTagManager\EventSubscriber\TrackingCodeSubscriber: ~
+    Pimcore\Bundle\GoogleMarketingBundle\EventSubscriber\TrackingCodeSubscriber: ~
     # fallback locator which is used from the deprecated Pimcore\Google\Analytics class
     pimcore.analytics.google.fallback_service_locator:
         class: Symfony\Component\DependencyInjection\ServiceLocator
         public: true
         tags:
             - { name: container.service_locator }
+    #
+    # Installer
+    #
+    Pimcore\Bundle\GoogleMarketingBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreGoogleMarketingBundle')"
+    #
+    # GOOGLE
+    #
+
+    Pimcore\Analytics\Config\ConfigProvider: ~
+    Pimcore\Analytics\Config\Config:
+        factory: [ '@Pimcore\Analytics\Config\ConfigProvider', 'getConfig' ]
+
+    Pimcore\Analytics\Config\SiteConfigProvider: ~
+
+    Pimcore\Analytics\TrackerInterface: '@Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Tracker'
+
+    Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Tracker:
+        calls:
+            - [ setLogger, [ '@logger' ] ]

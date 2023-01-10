@@ -15,10 +15,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Analytics\Google\Event;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Event;
 
 use Pimcore\Analytics\Code\CodeBlock;
-use Pimcore\Analytics\Google\Config\Config;
+use Pimcore\Analytics\Config\Config;
 use Pimcore\Analytics\SiteId\SiteId;
 use Symfony\Contracts\EventDispatcher\Event;
 

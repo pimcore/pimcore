@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
 use Google\Service\Analytics;
-use Pimcore\Analytics\Google\Config\SiteConfigProvider;
+use Pimcore\Analytics\Config\SiteConfigProvider;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Google;
 use Pimcore\Model\Document;

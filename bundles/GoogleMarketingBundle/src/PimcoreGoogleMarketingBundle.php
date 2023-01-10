@@ -4,6 +4,7 @@ namespace Pimcore\Bundle\GoogleMarketingBundle;
 
 use Pimcore\Bundle\GoogleMarketingBundle\DependencyInjection\PimcoreGoogleMarketingExtension;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\Installer;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
@@ -32,14 +33,19 @@ class PimcoreGoogleMarketingBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/pimcoregooglemarketing/js/startup.js',
+            '/bundles/pimcoregooglemarketing/js/reports/analytics/elementexplorer.js',
+            '/bundles/pimcoregooglemarketing/js/reports/analytics/elementoverview.js',
+            '/bundles/pimcoregooglemarketing/js/reports/analytics/settings.js',
+            '/bundles/pimcoregooglemarketing/js/reports/tagmanager/settings.js',
+            '/bundles/pimcoregooglemarketing/js/reports/webmastertools/settings.js',
         ];
     }
 
-
-
-    public function getContainerExtension(): ?ExtensionInterface
+    public function getInstaller(): ?Installer\InstallerInterface
     {
-        return new PimcoreGoogleMarketingExtension();
+        /** @var \Pimcore\Bundle\GoogleMarketingBundle\Installer $installer */
+        $installer = $this->container->get(\Pimcore\Bundle\GoogleMarketingBundle\Installer::class);
+        return $installer;
     }
 
 }
