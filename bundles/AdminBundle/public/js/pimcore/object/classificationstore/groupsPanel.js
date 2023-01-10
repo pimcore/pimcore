@@ -322,7 +322,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;
 
-                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_group'), data.data.name), function(btn) {
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced') + `</br>${t('delete_data_from_it')}`, t('classificationstore_group'), data.data.name), function(btn) {
                             if (btn == 'yes') {
 
                                 //necessary for aborting all pending proxy requests
