@@ -61,7 +61,7 @@ class SettingsController extends AdminController
         }
 
         $viewParams = Requirements::checkAll($db);
-        $viewParams['headless'] = (bool)$request->get('headless');
+        $viewParams['headless'] = $request->query->getBoolean('headless') || $request->request->getBoolean('headless');
 
         return $this->render('@PimcoreSystemInfo/admin/install/check.html.twig', $viewParams);
     }
