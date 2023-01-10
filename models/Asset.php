@@ -143,13 +143,6 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var bool|null
-     */
-    protected ?bool $hasSiblings = null;
-
-    /**
-     * @internal
-     *
      * @var bool
      */
     protected bool $dataChanged = false;
@@ -906,7 +899,7 @@ class Asset extends Element\AbstractElement
 
     public function hasSiblings(): bool
     {
-        return $this->hasSiblings ??= $this->getDao()->hasSiblings();
+       return $this->getDao()->hasSiblings();
     }
 
     public function hasChildren(): bool

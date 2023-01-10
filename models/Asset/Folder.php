@@ -41,13 +41,6 @@ class Folder extends Model\Asset
     protected ?Listing $children = null;
 
     /**
-     * @internal
-     *
-     * @var bool|null
-     */
-    protected ?bool $hasChildren = null;
-
-    /**
      * set the children of the document
      *
      * @param Listing|null $children
@@ -84,7 +77,7 @@ class Folder extends Model\Asset
 
     public function hasChildren(): bool
     {
-        return $this->hasChildren ??= $this->getDao()->hasChildren();
+      return $this->getDao()->hasChildren();
     }
 
     /**
