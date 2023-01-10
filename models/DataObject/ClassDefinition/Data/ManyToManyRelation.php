@@ -171,6 +171,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
+    /**
+     * @return array<array{assetTypes: string}>
+     */
     public function getAssetTypes(): array
     {
         return $this->assetTypes;
