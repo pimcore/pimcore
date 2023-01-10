@@ -368,14 +368,15 @@ class DataObjectHelperController extends AdminController
 
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
-                $request->get('no_system_columns', false),
+                $request->query->getBoolean('no_system_columns'),
                 $class,
                 $gridType,
-                $request->get('no_brick_columns', false),
+                $request->query->getBoolean('no_brick_columns'),
                 $fields,
                 $context,
                 $objectId,
-                $types);
+                $types
+            );
         } else {
             $savedColumns = $gridConfig['columns'];
             foreach ($savedColumns as $key => $sc) {
@@ -555,18 +556,9 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param bool $noSystemColumns
-     * @param DataObject\ClassDefinition|null $class
-     * @param string $gridType
-     * @param bool $noBrickColumns
-     * @param DataObject\ClassDefinition\Data[] $fields
-     * @param array $context
-     * @param int $objectId
-     * @param array $types
-     *
-     * @return array
+     * @param DataObject\ClassDefinition\Data[]|null $fields
      */
-    public function getDefaultGridFields(bool $noSystemColumns, ?DataObject\ClassDefinition $class, string $gridType, bool $noBrickColumns, array $fields, array $context, int $objectId, array $types = []): array
+    public function getDefaultGridFields(bool $noSystemColumns, ?DataObject\ClassDefinition $class, string $gridType, bool $noBrickColumns, ?array $fields, array $context, int $objectId, array $types = []): array
     {
         $count = 0;
         $availableFields = [];
@@ -768,7 +760,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridConfigApplyToAllAction(Request $request): JsonResponse
     {
-        $objectId = $request->get('objectId');
+        $objectId = $request->request->getInt('objectId');
         $object = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
@@ -885,7 +877,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridSaveColumnConfigAction(Request $request): JsonResponse
     {
-        $objectId = $request->get('id');
+        $objectId = $request->request->getInt('id');
         $object   = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {

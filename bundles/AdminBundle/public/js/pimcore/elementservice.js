@@ -145,10 +145,15 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                 const preDeleteEvent = new CustomEvent(pimcore.events[preDeleteEventName], {
                     detail: {
                         elementId: elementId
-                    }
+                    },
+                    cancelable: true
                 });
 
-                document.dispatchEvent(preDeleteEvent);
+                const isAllowed = document.dispatchEvent(preDeleteEvent);
+                if (!isAllowed) {
+                    r.deletejobs = r.deletejobs.filter((job) => job[0].params.id != elementId);
+                    ids = ids.filter((id) => id != elementId);
+                }
             });
         } catch (e) {
             pimcore.helpers.showPrettyError('asset', t("error"), t("delete_failed"), e.message);

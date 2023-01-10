@@ -439,6 +439,6 @@ EOT;
             return false;
         }
 
-        return $request->get(self::ATTRIBUTE_IGNORE_EDITMODE_INDICES, false);
+        return $request->attributes->getBoolean(self::ATTRIBUTE_IGNORE_EDITMODE_INDICES);
     }
 }

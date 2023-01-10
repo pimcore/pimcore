@@ -28,10 +28,15 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             detail: {
                 asset: this,
                 type: "image"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenAssetImage);
+        const isAllowed = document.dispatchEvent(preOpenAssetImage);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         var user = pimcore.globalmanager.get("user");
 

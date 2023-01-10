@@ -183,7 +183,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
     public function addAction(Request $request): JsonResponse
     {
         try {
-            $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
+            $element = Element\Service::getElementById($request->request->get('type'), $request->request->getInt('id'));
 
             if ($element) {
                 $list = $element::getList(['unpublished' => true]);

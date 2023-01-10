@@ -115,14 +115,14 @@ class UserController extends AdminController implements KernelControllerEventInt
     public function addAction(Request $request): JsonResponse
     {
         try {
-            $type = $request->get('type');
+            $type = $request->request->get('type');
 
             $className = User\Service::getClassNameForType($type);
             $user = $className::create([
-                'parentId' => (int)$request->get('parentId'),
-                'name' => trim($request->get('name')),
+                'parentId' => $request->request->getInt('parentId'),
+                'name' => trim($request->request->get('name', '')),
                 'password' => '',
-                'active' => $request->get('active'),
+                'active' => $request->request->getBoolean('active'),
             ]);
 
             if ($request->get('rid')) {

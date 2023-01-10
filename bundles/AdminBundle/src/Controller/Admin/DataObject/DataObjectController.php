@@ -362,7 +362,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function getAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $objectId = (int)$request->get('id');
+        $objectId = $request->query->getInt('id');
         $objectFromDatabase = DataObject\Concrete::getById($objectId);
         if ($objectFromDatabase === null) {
             return $this->adminJson(['success' => false, 'message' => 'element_not_found'], JsonResponse::HTTP_NOT_FOUND);
@@ -379,7 +379,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 return $this->getEditLockResponse($objectId, 'object');
             }
 
-            Element\Editlock::lock($request->get('id'), 'object');
+            Element\Editlock::lock($objectId, 'object');
         }
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
@@ -640,7 +640,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function getSelectOptions(Request $request): JsonResponse
     {
-        $objectId = $request->get('objectId');
+        $objectId = $request->query->getInt('objectId');
         $object = DataObject\Concrete::getById($objectId);
         if (!$object instanceof DataObject\Concrete) {
             return new JsonResponse(['success'=> false, 'message' => 'Object not found.']);
@@ -969,14 +969,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object->setClassId($request->get('classId'));
 
         if ($request->get('variantViaTree')) {
-            $parentId = $request->get('parentId');
+            $parentId = $request->request->getInt('parentId');
             $parent = DataObject\Concrete::getById($parentId);
             $object->setClassId($parent->getClass()->getId());
         }
 
-        $object->setClassName($request->get('className'));
-        $object->setParentId($request->get('parentId'));
-        $object->setKey($request->get('key'));
+        $object->setClassName($request->request->get('className'));
+        $object->setParentId($request->request->getInt('parentId'));
+        $object->setKey($request->request->get('key'));
         $object->setCreationDate(time());
         $object->setUserOwner($this->getAdminUser()->getId());
         $object->setUserModification($this->getAdminUser()->getId());
@@ -2058,7 +2058,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function previewAction(Request $request): RedirectResponse|Response
     {
-        $id = $request->get('id');
+        $id = $request->query->getInt('id');
         $object = DataObject\Service::getElementFromSession('object', $id);
 
         if ($object instanceof DataObject\Concrete) {

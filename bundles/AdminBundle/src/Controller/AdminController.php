@@ -88,48 +88,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * @deprecated
-     */
-    public function getTranslator(): TranslatorInterface
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated, please use $this->translator instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->translator;
-    }
-
-    /**
-     * @deprecated
-     */
-    public function getBundleManager(): PimcoreBundleManager
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated, please use $this->bundleManager instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->bundleManager;
-    }
-
-    /**
-     * @deprecated
-     */
-    public function getTokenResolver(): TokenStorageUserResolver
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated, please use $this->tokenResolver instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->tokenResolver;
-    }
-
-    /**
      * Get user from user proxy object which is registered on security component
      *
      * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model

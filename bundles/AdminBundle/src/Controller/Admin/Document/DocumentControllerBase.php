@@ -264,7 +264,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     public function removeFromSessionAction(Request $request): JsonResponse
     {
-        Model\Document\Service::removeElementFromSession('document', $request->get('id'));
+        Model\Document\Service::removeElementFromSession('document', $request->request->getInt('id'));
 
         return $this->adminJson(['success' => true]);
     }
