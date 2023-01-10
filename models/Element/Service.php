@@ -103,15 +103,7 @@ class Service extends Model\AbstractModel
 
         $type = $element->getType();
         if ($type !== DataObject::OBJECT_TYPE_FOLDER) {
-            if ($element instanceof Document) {
-                $type = 'document';
-            } elseif ($element instanceof DataObject\AbstractObject) {
-                $type = 'object';
-            } elseif ($element instanceof Asset) {
-                $type = 'asset';
-            } else {
-                throw new \Exception('unknown type');
-            }
+            $type = self::getElementType($element) ?? throw new \Exception('unknown type');
         }
         $path .= '/' . $type;
 
@@ -244,15 +236,12 @@ class Service extends Model\AbstractModel
 
     private static function getDependedElement(array $config): Asset|Document|AbstractObject|null
     {
-        if ($config['type'] == 'object') {
-            return DataObject::getById($config['id']);
-        } elseif ($config['type'] == 'asset') {
-            return Asset::getById($config['id']);
-        } elseif ($config['type'] == 'document') {
-            return Document::getById($config['id']);
-        }
-
-        return null;
+        return match ($config['type']) {
+            'asset' => Asset::getById($config['id']),
+            'object' => DataObject::getById($config['id']),
+            'document' => Document::getById($config['id']),
+            default => null,
+        };
     }
 
     /**
@@ -364,17 +353,12 @@ class Service extends Model\AbstractModel
 
     public static function getElementByPath(string $type, string $path): ?ElementInterface
     {
-        $element = null;
-
-        if ($type == 'asset') {
-            $element = Asset::getByPath($path);
-        } elseif ($type == 'object') {
-            $element = DataObject::getByPath($path);
-        } elseif ($type == 'document') {
-            $element = Document::getByPath($path);
-        }
-
-        return $element;
+        return match ($type) {
+            'asset' => Asset::getByPath($path),
+            'object' => DataObject::getByPath($path),
+            'document' => Document::getByPath($path),
+            default => null,
+        };
     }
 
     /**
@@ -461,30 +445,24 @@ class Service extends Model\AbstractModel
      */
     public static function pathExists(string $path, string $type = null): bool
     {
-        if ($type == 'asset') {
-            return Asset\Service::pathExists($path);
-        } elseif ($type == 'document') {
-            return Document\Service::pathExists($path);
-        } elseif ($type == 'object') {
-            return DataObject\Service::pathExists($path);
-        }
-
-        return false;
+        return match ($type) {
+            'asset' => Asset\Service::pathExists($path),
+            'object' => DataObject\Service::pathExists($path),
+            'document' => Document\Service::pathExists($path),
+            default => false,
+        };
     }
 
     public static function getElementById(string $type, int|string $id, array $params = []): Asset|Document|AbstractObject|null
     {
-        $element = null;
         $params = self::prepareGetByIdParams($params);
-        if ($type === 'asset') {
-            $element = Asset::getById($id, $params);
-        } elseif ($type === 'object') {
-            $element = DataObject::getById($id, $params);
-        } elseif ($type === 'document') {
-            $element = Document::getById($id, $params);
-        }
 
-        return $element;
+        return match ($type) {
+            'asset' => Asset::getById($id, $params),
+            'object' => DataObject::getById($id, $params),
+            'document' => Document::getById($id, $params),
+            default => null,
+        };
     }
 
     /**
@@ -515,19 +493,12 @@ class Service extends Model\AbstractModel
      */
     public static function getElementType(ElementInterface $element): ?string
     {
-        if ($element instanceof DataObject\AbstractObject) {
-            return 'object';
-        }
-
-        if ($element instanceof Document) {
-            return 'document';
-        }
-
-        if ($element instanceof Asset) {
-            return 'asset';
-        }
-
-        return null;
+        return match (true) {
+            $element instanceof Asset => 'asset',
+            $element instanceof Document => 'document',
+            $element instanceof DataObject\AbstractObject => 'object',
+            default => null,
+        };
     }
 
     /**
@@ -540,17 +511,13 @@ class Service extends Model\AbstractModel
     public static function getElementTypeByClassName(string $className): ?string
     {
         $className = trim($className, '\\');
-        if (is_a($className, AbstractObject::class, true)) {
-            return 'object';
-        }
-        if (is_a($className, Asset::class, true)) {
-            return 'asset';
-        }
-        if (is_a($className, Document::class, true)) {
-            return 'document';
-        }
 
-        return null;
+        return match (true) {
+            is_a($className, Asset::class, true) => 'asset',
+            is_a($className, Document::class, true) => 'document',
+            is_a($className, AbstractObject::class, true) => 'object',
+            default => null,
+        };
     }
 
     /**
@@ -568,27 +535,6 @@ class Service extends Model\AbstractModel
         }
 
         return $elementType . '-' . $element->getId();
-    }
-
-    /**
-     * determines the type of an element (object,asset,document)
-     *
-     * @param  ElementInterface $element
-     *
-     * @return string|null
-     *
-     *@deprecated use getElementType() instead, will be removed in Pimcore 11
-     *
-     */
-    public static function getType(ElementInterface $element): ?string
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            'The Service::getType() method is deprecated, use Service::getElementType() instead.'
-        );
-
-        return self::getElementType($element);
     }
 
     /**
