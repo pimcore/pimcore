@@ -100,7 +100,7 @@ class MiscController extends AdminController
 
         $translations = [];
 
-        foreach(['admin', 'admin_ext'] as $domain) {
+        foreach (['admin', 'admin_ext'] as $domain) {
             $translations = array_merge($translations, $translator->getCatalogue($language)->all($domain));
             if ($language != 'en') {
                 // add en as a fallback
