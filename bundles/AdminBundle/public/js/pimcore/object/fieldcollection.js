@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.fieldcollection");
+/**
+ * @private
+ */
 pimcore.object.fieldcollection = Class.create({
 
     forbiddenNames: [

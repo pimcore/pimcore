@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.layout.tabpanel");
+/**
+ * @private
+ */
 pimcore.object.classes.layout.tabpanel = Class.create(pimcore.object.classes.layout.layout, {
 
     type: "tabpanel",

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.settings_abstract");
+/**
+ * @private
+ */
 pimcore.document.settings_abstract = Class.create({
 
     initialize: function(document) {

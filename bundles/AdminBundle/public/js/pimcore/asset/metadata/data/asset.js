@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.data.asset");
+/**
+ * @private
+ */
 pimcore.asset.metadata.data.asset = Class.create(pimcore.asset.metadata.data.data, {
 
     type: "asset"

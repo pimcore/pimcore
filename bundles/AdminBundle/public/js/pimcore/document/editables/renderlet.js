@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.document.editables.renderlet');
+/**
+ * @private
+ */
 pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
 
     defaultHeight: 100,

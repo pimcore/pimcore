@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.emails.settings");
+/**
+ * @private
+ */
 pimcore.document.emails.settings = Class.create(pimcore.document.settings_abstract, {
 
     getLayout: function () {

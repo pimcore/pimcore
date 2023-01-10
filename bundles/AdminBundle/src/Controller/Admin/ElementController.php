@@ -48,7 +48,7 @@ class ElementController extends AdminController
      */
     public function lockElementAction(Request $request): Response
     {
-        Element\Editlock::lock($request->get('id'), $request->get('type'));
+        Element\Editlock::lock($request->request->getInt('id'), $request->request->get('type'));
 
         return $this->adminJson(['success' => true]);
     }
@@ -95,8 +95,8 @@ class ElementController extends AdminController
      */
     public function getSubtypeAction(Request $request): JsonResponse
     {
-        $idOrPath = trim($request->get('id'));
-        $type = $request->get('type');
+        $idOrPath = trim($request->query->get('id', ''));
+        $type = $request->query->get('type');
 
         $event = new ResolveElementEvent($type, $idOrPath);
         \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT);
@@ -339,10 +339,10 @@ class ElementController extends AdminController
     public function findUsagesAction(Request $request): JsonResponse
     {
         $element = null;
-        if ($request->get('id')) {
-            $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
-        } elseif ($request->get('path')) {
-            $element = Element\Service::getElementByPath($request->get('type'), $request->get('path'));
+        if ($request->query->get('id')) {
+            $element = Element\Service::getElementById($request->query->get('type'), $request->query->getInt('id'));
+        } elseif ($request->query->get('path')) {
+            $element = Element\Service::getElementByPath($request->query->get('type'), $request->query->get('path'));
         }
 
         $results = [];
@@ -409,10 +409,10 @@ class ElementController extends AdminController
     {
         $element = null;
 
-        if ($request->get('id')) {
-            $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
-        } elseif ($request->get('path')) {
-            $element = Element\Service::getElementByPath($request->get('type'), $request->get('path'));
+        if ($request->query->get('id')) {
+            $element = Element\Service::getElementById($request->query->get('type'), $request->query->getInt('id'));
+        } elseif ($request->query->get('path')) {
+            $element = Element\Service::getElementByPath($request->query->get('type'), $request->query->get('path'));
         }
 
         if ($element instanceof Element\ElementInterface) {
@@ -436,9 +436,9 @@ class ElementController extends AdminController
     {
         $success = false;
         $message = '';
-        $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
-        $sourceEl = Element\Service::getElementById($request->get('sourceType'), $request->get('sourceId'));
-        $targetEl = Element\Service::getElementById($request->get('targetType'), $request->get('targetId'));
+        $element = Element\Service::getElementById($request->request->get('type'), $request->request->getInt('id'));
+        $sourceEl = Element\Service::getElementById($request->request->get('sourceType'), $request->request->getInt('sourceId'));
+        $targetEl = Element\Service::getElementById($request->request->get('targetType'), $request->request->getInt('targetId'));
 
         if ($element && $sourceEl && $targetEl
             && $request->get('sourceType') == $request->get('targetType')
@@ -484,7 +484,7 @@ class ElementController extends AdminController
     {
         $success = false;
 
-        $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
+        $element = Element\Service::getElementById($request->request->get('type'), $request->request->getInt('id'));
         if ($element) {
             $element->unlockPropagate();
             $success = true;
@@ -504,8 +504,8 @@ class ElementController extends AdminController
      */
     public function typePathAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
-        $type = $request->get('type');
+        $id = $request->query->getInt('id');
+        $type = $request->query->get('type');
         $data = [];
 
         if ($type === 'asset') {
@@ -593,7 +593,7 @@ class ElementController extends AdminController
 
         $result = $this->convertResultWithPathFormatter($source, $context, $result, $targets);
 
-        if ($request->get('loadEditModeData') == 'true') {
+        if ($request->request->getBoolean('loadEditModeData')) {
             $idProperty = $request->get('idProperty', 'id');
             $methodName = 'get' . ucfirst($fieldname);
             if ($ownerType == 'object' && method_exists($source, $methodName)) {
@@ -721,8 +721,8 @@ class ElementController extends AdminController
      */
     public function deleteAllVersionAction(Request $request): JsonResponse
     {
-        $elementId = $request->get('id');
-        $elementModificationdate = $request->get('date');
+        $elementId = $request->request->getInt('id');
+        $elementModificationdate = $request->request->get('date');
 
         $versions = new Model\Version\Listing();
         $versions->setCondition('cid = ' . $versions->quote($elementId) . ' AND date <> ' . $versions->quote($elementModificationdate));
@@ -743,8 +743,8 @@ class ElementController extends AdminController
      */
     public function getRequiresDependenciesAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
-        $type = $request->get('elementType');
+        $id = $request->query->getInt('id');
+        $type = $request->query->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
         $offset = (int) $request->get('start', 0);
         $limit = (int) $request->get('limit', 25);
@@ -776,8 +776,8 @@ class ElementController extends AdminController
      */
     public function getRequiredByDependenciesAction(Request $request): JsonResponse
     {
-        $id = $request->get('id');
-        $type = $request->get('elementType');
+        $id = $request->query->getInt('id');
+        $type = $request->query->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
         $offset = (int) $request->get('start', 0);
         $limit = (int) $request->get('limit', 25);
@@ -844,7 +844,7 @@ class ElementController extends AdminController
      */
     public function analyzePermissionsAction(Request $request): Response
     {
-        $userId = $request->get('userId');
+        $userId = $request->request->getInt('userId');
         if ($userId) {
             $user = Model\User::getById($userId);
             $userList = [$user];
@@ -854,8 +854,8 @@ class ElementController extends AdminController
             $userList = $userList->load();
         }
 
-        $elementType = $request->get('elementType');
-        $elementId = $request->get('elementId');
+        $elementType = $request->request->get('elementType');
+        $elementId = $request->request->getInt('elementId');
 
         $element = Element\Service::getElementById($elementType, $elementId);
 

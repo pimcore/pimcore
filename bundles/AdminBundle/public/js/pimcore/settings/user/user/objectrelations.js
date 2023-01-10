@@ -13,6 +13,9 @@
 
 
 pimcore.registerNS("pimcore.settings.user.user.objectrelations");
+/**
+ * @private
+ */
 pimcore.settings.user.user.objectrelations = Class.create({
 
     initialize: function (userPanel) {

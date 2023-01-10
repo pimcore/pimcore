@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.grid");
+/**
+ * @private
+ */
 pimcore.asset.metadata.grid = Class.create({
 
     initialize: function (config) {
