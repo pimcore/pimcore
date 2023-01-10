@@ -14,14 +14,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Messenger\Handler;
+namespace Pimcore\Bundle\SimpleBackendSearchBundle\MessageHandler;
 
-use Pimcore\Messenger\SearchBackendMessage;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data;
+use Pimcore\Messenger\SearchBackendMessage;
 use Symfony\Component\Messenger\Handler\Acknowledger;
-use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
 use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
+use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
 
 /**
  * @internal

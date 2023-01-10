@@ -76,8 +76,6 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\ElementTagsListener: ~
 
-    Pimcore\Bundle\CoreBundle\EventListener\SearchBackendListener: ~
-
     Pimcore\Bundle\CoreBundle\EventListener\UUIDListener: ~
 
 

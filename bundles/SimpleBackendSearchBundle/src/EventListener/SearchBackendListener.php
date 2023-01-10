@@ -14,18 +14,18 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\EventListener;
+namespace Pimcore\Bundle\SimpleBackendSearchBundle\EventListener;
 
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\AssetEvent;
-use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Messenger\SearchBackendMessage;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Pimcore\Messenger\SearchBackendMessage;
+use Pimcore\Event\Model\ElementEventInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * @internal
@@ -63,7 +63,7 @@ class SearchBackendListener implements EventSubscriberInterface
         if (
             !$e instanceof AssetEvent &&
             (($e->hasArgument('isAutoSave') && $e->getArgument('isAutoSave')) ||
-            ($e->hasArgument('saveVersionOnly') && $e->getArgument('saveVersionOnly')))
+                ($e->hasArgument('saveVersionOnly') && $e->getArgument('saveVersionOnly')))
         ) {
             return;
         }

@@ -6,9 +6,8 @@ services:
 
     #
     # CONTROLLERS
+    # (auto-register all controllers as services)
     #
-
-    # auto-register all controllers as services
     Pimcore\Bundle\SimpleBackendSearchBundle\Controller\:
         resource: '../src/Controller'
         public: true
@@ -21,3 +20,15 @@ services:
         public: true
         arguments:
             $bundle: "@=service('kernel').getBundle('PimcoreSimpleBackendSearchBundle')"
+
+    #
+    # EventListener
+    #
+    Pimcore\Bundle\SimpleBackendSearchBundle\EventListener\SearchBackendListener: ~
+
+    #
+    # Message Handler
+    #
+    Pimcore\Bundle\SimpleBackendSearchBundle\MessageHandler\SearchBackendHandler:
+        tags:
+            - { name: messenger.message_handler }
