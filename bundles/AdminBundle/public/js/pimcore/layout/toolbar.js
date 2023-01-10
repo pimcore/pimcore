@@ -1109,36 +1109,27 @@ pimcore.layout.toolbar = Class.create({
 
                  if(menu[key].items.length > 0) {
 
-                     // Checks if sub-menus have any items; when empty, removes it
-                     menu[key].items.forEach( (subItem,subKey) => {
-                         if (subItem.menu && subItem.menu.items.length === 0) {
-                             menu[key].items.splice(subKey);
-                         }
-                     });
+                     pimcore.helpers.buildMenu(menu[key].items);
 
-                     if (menu[key].items) {
-                         pimcore.helpers.buildMenu(menu[key].items);
-
-                         let menuItem = {
-                             items: menu[key].items,
-                             shadow: menu[key].shadow,
-                             cls: "pimcore_navigation_flyout",
-                         }
-
-                         if (menu[key].listeners === true) {
-                             menuItem.listeners = {
-                                 "show": function (e) {
-                                     Ext.get('pimcore_menu_' + key).addCls('active');
-                                 },
-                                 "hide": function (e) {
-                                     Ext.get('pimcore_menu_' + key).removeCls('active');
-                                 },
-                             }
-                         }
-
-                         // Adding single main menu item
-                         this[key + 'Menu'] = Ext.create('pimcore.menu.menu', menuItem);
+                     let menuItem = {
+                         items: menu[key].items,
+                         shadow: menu[key].shadow,
+                         cls: "pimcore_navigation_flyout",
                      }
+
+                     if (menu[key].listeners === true) {
+                         menuItem.listeners = {
+                             "show": function (e) {
+                                 Ext.get('pimcore_menu_' + key).addCls('active');
+                             },
+                             "hide": function (e) {
+                                 Ext.get('pimcore_menu_' + key).removeCls('active');
+                             },
+                         }
+                     }
+
+                     // Adding single main menu item
+                     this[key + 'Menu'] = Ext.create('pimcore.menu.menu', menuItem);
                  }
              });
          }
