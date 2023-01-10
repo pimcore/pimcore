@@ -1108,7 +1108,6 @@ pimcore.layout.toolbar = Class.create({
                  // if items are empty do not build submenus or main menu item
 
                  if(menu[key].items.length > 0) {
-
                      pimcore.helpers.buildMenu(menu[key].items);
 
                      let menuItem = {
@@ -1117,7 +1116,7 @@ pimcore.layout.toolbar = Class.create({
                          cls: "pimcore_navigation_flyout",
                      }
 
-                     if (menu[key].listeners === true) {
+                     if(menu[key].listeners === true) {
                          menuItem.listeners = {
                              "show": function (e) {
                                  Ext.get('pimcore_menu_' + key).addCls('active');
