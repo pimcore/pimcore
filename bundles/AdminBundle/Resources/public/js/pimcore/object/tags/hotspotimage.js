@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.object.tags.hotspotimage");
 pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
-    type: "image",
+    type: "hotspotimage",
     data: null,
 
     marginTop: 10,
