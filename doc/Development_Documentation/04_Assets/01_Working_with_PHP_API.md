@@ -132,5 +132,35 @@ This includes for example:
 ```
 The `copyright` field will be appended to every `title` and `alt` attribute separated by |.
 
+
+## Operations with Asset files located in the Storage 
+
+### Restrict access to download asset file
+https://pimcore.com/docs/pimcore/10.2/Development_Documentation/Assets/Restricting_Public_Asset_Access.html
+ ```php
+ // check rights here
+$stream = $asset->getStream();
+return new StreamedResponse(
+    function () use ($stream) {
+        fpassthru($stream);
+    }, 
+    200, 
+    [
+        'Content-Type' => 'application/pdf',
+    ]
+);
+```
+
+### Upload Asset file from Storage to some SFTP 
+```php
+$asset = \Pimcore\Model\Asset::getById(3456);
+$stream = $asset->getStream();
+// @todo how to do it? Both \Pimcore\Model\Asset::getLocalFile and \Pimcore\Helper\TemporaryFileHelperTrait::getTemporaryFileFromStream are internal
+// I guess we need to configure league/flysystem-sftp-v3 storage but it is not working for me on Pimcore v10.4.4
+```
+
+
+
+
 ---
 
