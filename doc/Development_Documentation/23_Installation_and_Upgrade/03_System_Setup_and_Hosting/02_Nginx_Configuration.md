@@ -15,6 +15,7 @@ Assumptions - change them to match your environment/distro:
 - PHP-FPM is configured to listen on the Socket `/var/run/php/pimcore.sock`. If your setup differs, change the `server` directive within the `upstream` block accordingly.
 - Before you change the order of location blocks, read [Understanding Nginx Server and Location Block Selection Algorithms](https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms)
 - Assets are set to expire after 14 days; adjust all `expires` directives to suit your needs.
+- Assets are NOT stored on a remote Storage like GCS or S3. If they are, see Section #Assets in the nginx configuration
 
 ### Development Environment
 
