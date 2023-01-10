@@ -1,5 +1,5 @@
 
-name: "POEditor Translations Export"
+name: "Trigger POEditor Translations Export"
 
 on:
     workflow_dispatch:
@@ -7,7 +7,7 @@ on:
         branches:
             - "[0-9]+.x"
         paths:
-            - 'bundles/CoreBundle/translations/en.*json'
+            - 'bundles/CoreBundle/Resources/translations/en.*json'
 
 permissions:
   contents: read
@@ -16,19 +16,8 @@ jobs:
     poeditor:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
-              with:
-                  ref: ${{ github.head_ref }}
-
-            - name: "Install PHP"
-              uses: "shivammathur/setup-php@v2"
-
-            - name: POEditor
+            - name: Trigger workflow in pimcore/poeditor-export-action
               env:
-                  POEDITOR_TOKEN: ${{ secrets.POEDITOR_TOKEN }}
-                  TRANSLATION_FILES: |
-                      bundles/CoreBundle/translations/en.json :essentials
-                      bundles/CoreBundle/translations/en.extended.json :extended
-                      bundles/GlossaryBundle/translations/admin.en.json :extended
+                  GH_TOKEN: ${{ secrets.POEDITOR_ACTION_TRIGGER_TOKEN }}
               run: |
-                  php .github/ci/scripts/poeditor-export.php
+                  gh workflow run -R pimcore/poeditor-export-action poeditor-export.yaml

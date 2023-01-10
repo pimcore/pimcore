@@ -515,9 +515,8 @@ class SearchController extends AdminController
      */
     public function quicksearchByIdAction(Request $request, Config $config): JsonResponse
     {
-        $type = $request->get('type');
-        $id = $request->get('id');
-        $db = \Pimcore\Db::get();
+        $type = $request->query->get('type');
+        $id = $request->query->getInt('id');
         $searcherList = new Data\Listing();
 
         $searcherList->addConditionParam('id = :id', ['id' => $id]);
