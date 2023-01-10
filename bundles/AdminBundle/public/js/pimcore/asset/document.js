@@ -28,11 +28,15 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
             detail: {
                 object: this,
                 type: "document"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenAssetDocument);
-
+        const isAllowed = document.dispatchEvent(preOpenAssetDocument);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         var user = pimcore.globalmanager.get("user");
 

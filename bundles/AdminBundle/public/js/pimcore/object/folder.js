@@ -29,10 +29,15 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             detail: {
                 object: this,
                 type: "folder"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenObjectFolder);
+        const isAllowed = document.dispatchEvent(preOpenObjectFolder);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         this.getData();
     },
@@ -63,11 +68,15 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         const preGetObjectFolder = new CustomEvent(pimcore.events.preGetObjectFolder, {
             detail: {
                 eventData: eventData,
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preGetObjectFolder);
-
+        const isAllowed = document.dispatchEvent(preGetObjectFolder);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         var options = this.options || {};
         Ext.Ajax.request({
