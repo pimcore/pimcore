@@ -24,41 +24,12 @@ use Symfony\Component\Process\Process;
 
 final class Console
 {
-    private static ?string $systemEnvironment = null;
-
     protected static array $executableCache = [];
 
     /**
-     * @deprecated since v.6.9.
-     *
-     * @static
-     *
-     * @return string "windows" or "unix"
-     */
-    public static function getSystemEnvironment(): string
-    {
-        if (self::$systemEnvironment == null) {
-            if (stripos(php_uname('s'), 'windows') !== false) {
-                self::$systemEnvironment = 'windows';
-            } elseif (stripos(php_uname('s'), 'darwin') !== false) {
-                self::$systemEnvironment = 'darwin';
-            } else {
-                self::$systemEnvironment = 'unix';
-            }
-        }
-
-        return self::$systemEnvironment;
-    }
-
-    /**
-     * @param string $name
-     * @param bool $throwException
-     *
-     * @return bool|string
-     *
      * @throws \Exception
      */
-    public static function getExecutable(string $name, bool $throwException = false): bool|string
+    public static function getExecutable(string $name, bool $throwException = false): string|false
     {
         if (isset(self::$executableCache[$name])) {
             if (!self::$executableCache[$name] && $throwException) {
@@ -142,32 +113,10 @@ final class Console
         return false;
     }
 
-    protected static function checkComposite(string $process): bool
-    {
-        return self::checkConvert($process);
-    }
-
-    protected static function checkConvert(string $executablePath): bool
-    {
-        try {
-            $process = new Process([$executablePath, '--help']);
-            $process->run();
-            if (strpos($process->getOutput() . $process->getErrorOutput(), 'imagemagick.org') !== false) {
-                return true;
-            }
-        } catch (\Exception $e) {
-            // noting to do
-        }
-
-        return false;
-    }
-
     /**
-     * @return mixed
-     *
      * @throws \Exception
      */
-    public static function getPhpCli(): mixed
+    public static function getPhpCli(): string|false
     {
         try {
             return self::getExecutable('php', true);
@@ -182,11 +131,17 @@ final class Console
         }
     }
 
-    public static function getTimeoutBinary(): bool|string
+    public static function getTimeoutBinary(): string|false
     {
         return self::getExecutable('timeout');
     }
 
+    /**
+     * @param string $script
+     * @param string[] $arguments
+     *
+     * @return string[]
+     */
     protected static function buildPhpScriptCmd(string $script, array $arguments = []): array
     {
         $phpCli = self::getPhpCli();
@@ -197,20 +152,13 @@ final class Console
             array_push($cmd, '--env=' . Config::getEnvironment());
         }
 
-        if (!empty($arguments)) {
-            $cmd = array_merge($cmd, $arguments);
-        }
+        $cmd = array_merge($cmd, $arguments);
 
         return $cmd;
     }
 
     /**
-     * @param string $script
-     * @param array $arguments
-     * @param string|null $outputFile
-     * @param float $timeout
-     *
-     * @return string
+     * @param string[] $arguments
      */
     public static function runPhpScript(string $script, array $arguments = [], string $outputFile = null, float $timeout = 60): string
     {
@@ -236,126 +184,7 @@ final class Console
     }
 
     /**
-     * @param string $script
-     * @param array $arguments
-     * @param string|null $outputFile
-     *
-     * @return int
-     *
-     * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
-     */
-    public static function runPhpScriptInBackground(string $script, array $arguments = [], string $outputFile = null): int
-    {
-        $cmd = self::buildPhpScriptCmd($script, $arguments);
-        $process = new Process($cmd);
-        $commandLine = $process->getCommandLine();
-
-        return self::execInBackground($commandLine, $outputFile);
-    }
-
-    /**
-     * @param string $cmd
-     * @param string|null $outputFile
-     *
-     * @return int
-     *
-     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
-     *
-     * @static
-     */
-    public static function execInBackground(string $cmd, string $outputFile = null): int
-    {
-        // windows systems
-        if (self::getSystemEnvironment() == 'windows') {
-            return self::execInBackgroundWindows($cmd, $outputFile);
-        } elseif (self::getSystemEnvironment() == 'darwin') {
-            return self::execInBackgroundUnix($cmd, $outputFile, false);
-        } else {
-            return self::execInBackgroundUnix($cmd, $outputFile);
-        }
-    }
-
-    /**
-     * @param string $cmd
-     * @param ?string $outputFile
-     * @param bool $useNohup
-     *
-     * @return int
-     *
-     * @deprecated since v.6.9. For long running background tasks use queues.
-     *
-     * @static
-     */
-    protected static function execInBackgroundUnix(string $cmd, ?string $outputFile, bool $useNohup = true): int
-    {
-        if (!$outputFile) {
-            $outputFile = '/dev/null';
-        }
-
-        $nice = (string) self::getExecutable('nice');
-        if ($nice) {
-            $nice .= ' -n 19 ';
-        }
-
-        if ($useNohup) {
-            $nohup = (string) self::getExecutable('nohup');
-            if ($nohup) {
-                $nohup .= ' ';
-            }
-        } else {
-            $nohup = '';
-        }
-
-        /**
-         * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
-         */
-        if (strpos(php_sapi_name(), 'apache') !== false) {
-            foreach (['APP_ENV'] as $envVarName) {
-                if ($envValue = $_SERVER[$envVarName] ?? $_SERVER['REDIRECT_' . $envVarName] ?? null) {
-                    putenv($envVarName . '='.$envValue);
-                }
-            }
-        }
-
-        $commandWrapped = $nohup . $nice . $cmd . ' > '. $outputFile .' 2>&1 & echo $!';
-        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
-        $pid = shell_exec($commandWrapped);
-
-        Logger::debug('Process started with PID ' . $pid);
-
-        return (int)$pid;
-    }
-
-    /**
-     * @param string $cmd
-     * @param string $outputFile
-     *
-     * @return int
-     *
-     * @deprecated since v.6.9. For long-running background tasks use queues.
-     *
-     * @static
-     */
-    protected static function execInBackgroundWindows(string $cmd, string $outputFile): int
-    {
-        if (!$outputFile) {
-            $outputFile = 'NUL';
-        }
-
-        $commandWrapped = 'cmd /c ' . $cmd . ' > '. $outputFile . ' 2>&1';
-        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
-
-        $WshShell = new \COM('WScript.Shell');
-        $WshShell->Run($commandWrapped, 0, false);
-        Logger::debug('Process started - returning the PID is not supported on Windows Systems');
-
-        return 0;
-    }
-
-    /**
-     * @param array|string $cmd
-     *
-     * @return void
+     * @param string[]|string $cmd
      *
      * @internal
      */
