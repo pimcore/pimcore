@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.selector.document");
+/**
+ * @private
+ */
 pimcore.element.selector.document = Class.create(pimcore.element.selector.abstract, {
 
     initStore: function () {

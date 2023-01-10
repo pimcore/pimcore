@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.rgbaColor");
+/**
+ * @private
+ */
 pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
 
     type: "rgbaColor",

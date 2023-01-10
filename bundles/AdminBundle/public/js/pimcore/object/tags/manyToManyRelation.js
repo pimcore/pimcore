@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.manyToManyRelation");
+/**
+ * @private
+ */
 pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstractRelations, {
 
     type: "manyToManyRelation",

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.metadata.predefined");
+/**
+ * @private
+ */
 pimcore.settings.metadata.predefined = Class.create({
 
     initialize: function () {

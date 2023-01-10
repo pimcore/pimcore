@@ -224,8 +224,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -275,8 +274,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return Asset|Document|DataObject\AbstractObject|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Asset|Document|DataObject\AbstractObject|null
     {

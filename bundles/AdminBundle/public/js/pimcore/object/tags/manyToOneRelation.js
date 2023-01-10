@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.manyToOneRelation");
+/**
+ * @private
+ */
 pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstract, {
 
     type: "manyToOneRelation",

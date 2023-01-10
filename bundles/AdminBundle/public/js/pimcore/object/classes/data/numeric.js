@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.numeric");
+/**
+ * @private
+ */
 pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.data, {
 
     type: "numeric",

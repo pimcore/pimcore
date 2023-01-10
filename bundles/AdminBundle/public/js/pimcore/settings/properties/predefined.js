@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.properties.predefined");
+/**
+ * @private
+ */
 pimcore.settings.properties.predefined = Class.create({
 
     initialize: function () {
