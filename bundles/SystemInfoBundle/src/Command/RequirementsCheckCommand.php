@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\Command;
+namespace Pimcore\Bundle\SystemInfoBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
