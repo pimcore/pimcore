@@ -409,10 +409,9 @@ pimcore.layout.toolbar = Class.create({
                          handler: this.showMaintenance
                      });
                  }
- 
-                 if (perspectiveCfg.inToolbar("extras.systemtools")) {
-                     var systemItems = [];
 
+                 var systemItems = [];
+                 if (perspectiveCfg.inToolbar("extras.systemtools")) {
                      if (perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")) {
                          systemItems.push(
                              {
@@ -423,19 +422,19 @@ pimcore.layout.toolbar = Class.create({
                              }
                          );
                      }
- 
-                     extrasItems.push({
-                         text: t("system_infos_and_tools"),
-                         iconCls: "pimcore_nav_icon_info",
-                         hideOnClick: false,
-                         itemId: 'pimcore_menu_extras_system_info',
-                         menu: {
-                             cls: "pimcore_navigation_flyout",
-                             shadow: false,
-                             items: systemItems
-                         }
-                     });
                  }
+
+                 extrasItems.push({
+                     text: t("system_infos_and_tools"),
+                     iconCls: "pimcore_nav_icon_info",
+                     hideOnClick: false,
+                     itemId: 'pimcore_menu_extras_system_info',
+                     menu: {
+                         cls: "pimcore_navigation_flyout",
+                         shadow: false,
+                         items: systemItems
+                     }
+                 });
              }
 
              // adding menu even though extraItems can be empty

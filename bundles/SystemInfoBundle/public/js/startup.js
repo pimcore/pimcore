@@ -10,73 +10,50 @@ pimcore.bundle.system_info.startup = Class.create({
     },
 
     preMenuBuild: function (event) {
-        const menu = event.detail.menu;
-        this.user = pimcore.globalmanager.get('user');
-        this.toolbar = pimcore.globalmanager.get('layout_toolbar');
-        this.perspectiveConfig = pimcore.globalmanager.get('perspective');
-        const systemInfoMenuItems = this.getSystemInfoMenu();
+        let menu = event.detail.menu;
 
-        const filteredMenu = menu.extras.items.filter(function (item) {
-            return item.itemId === 'pimcore_menu_extras_system_info';
-        });
-
-        if (filteredMenu.length > 0) {
-            const systemInfoMenu = filteredMenu.shift();
-            systemInfoMenuItems.map(function(item) {
-                systemInfoMenu.menu.items.push(item);
-            });
-        } else {
-            menu.extras.items.push({
-                text: t("system_infos_and_tools"),
-                iconCls: "pimcore_nav_icon_info",
-                hideOnClick: false,
-                itemId: 'pimcore_menu_extras_system_info',
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: systemInfoMenuItems
-                }
-            })
-        }
+        this.addSystemInfoMenu(menu);
     },
 
-    getSystemInfoMenu: function () {
+    addSystemInfoMenu: function (menu) {
         const items = [];
+        const user = pimcore.globalmanager.get('user');
+        const perspectiveConfig = pimcore.globalmanager.get("perspective");
 
-        if (this.user.admin && this.perspectiveConfig.inToolbar('extras.systemtools')) {
-
-            if (this.perspectiveConfig.inToolbar('extras.systemtools.phpinfo')) {
-                items.push(
-                    {
-                        text: t('php_info'),
-                        iconCls: 'pimcore_nav_icon_php',
-                        itemId: 'pimcore_menu_extras_system_info_php_info',
-                        handler: this.showPhpInfo
+        if (user.admin && perspectiveConfig.inToolbar('extras.systemtools')) {
+            menu.extras.items.some(function(item, index) {
+                if (item.itemId === 'pimcore_menu_extras_system_info') {
+                    if (perspectiveConfig.inToolbar('extras.systemtools.phpinfo')) {
+                        menu.extras.items[index].menu.items.push({
+                            text: t('php_info'),
+                            iconCls: 'pimcore_nav_icon_php',
+                            itemId: 'pimcore_menu_extras_system_info_php_info',
+                            handler: this.showPhpInfo,
+                            priority: 10,
+                        });
                     }
-                );
-            }
 
-            if (this.perspectiveConfig.inToolbar('extras.systemtools.opcache')) {
-                items.push(
-                    {
-                        text: t('php_opcache_status'),
-                        iconCls: 'pimcore_nav_icon_reports',
-                        itemId: 'pimcore_menu_extras_system_info_php_opcache_status',
-                        handler: this.showOpcacheStatus
+                    if (perspectiveConfig.inToolbar('extras.systemtools.opcache')) {
+                        menu.extras.items[index].menu.items.push({
+                            text: t('php_opcache_status'),
+                            iconCls: 'pimcore_nav_icon_reports',
+                            itemId: 'pimcore_menu_extras_system_info_php_opcache_status',
+                            handler: this.showOpcacheStatus,
+                            priority: 20,
+                        });
                     }
-                );
-            }
 
-            if (this.perspectiveConfig.inToolbar('extras.systemtools.requirements')) {
-                items.push(
-                    {
-                        text: t('system_requirements_check'),
-                        iconCls: 'pimcore_nav_icon_systemrequirements',
-                        itemId: 'pimcore_menu_extras_system_info_system_requirements_check',
-                        handler: this.showSystemRequirementsCheck
+                    if (perspectiveConfig.inToolbar('extras.systemtools.requirements')) {
+                        menu.extras.items[index].menu.items.push({
+                            text: t('system_requirements_check'),
+                            iconCls: 'pimcore_nav_icon_systemrequirements',
+                            itemId: 'pimcore_menu_extras_system_info_system_requirements_check',
+                            handler: this.showSystemRequirementsCheck,
+                            priority: 30,
+                        });
                     }
-                );
-            }
+                }
+            });
         }
 
         return items;
