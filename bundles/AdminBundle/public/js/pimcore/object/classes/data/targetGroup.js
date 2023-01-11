@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.targetGroup");
+/**
+ * @private
+ */
 pimcore.object.classes.data.targetGroup = Class.create(pimcore.object.classes.data.data, {
 
     type: "targetGroup",

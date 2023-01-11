@@ -79,7 +79,7 @@ class PortalController extends AdminController implements KernelControllerEventI
     public function createDashboardAction(Request $request): JsonResponse
     {
         $dashboards = $this->dashboardHelper->getAllDashboards();
-        $key = trim($request->get('key'));
+        $key = trim($request->request->get('key', ''));
 
         if (isset($dashboards[$key])) {
             return $this->adminJson(['success' => false, 'message' => 'name_already_in_use']);
@@ -315,8 +315,8 @@ class PortalController extends AdminController implements KernelControllerEventI
         $list = DataObject::getList([
             'limit' => 10,
             'order' => 'DESC',
-            'orderKey' => 'o_modificationDate',
-            'condition' => "o_userModification = '".$this->getAdminUser()->getId()."'",
+            'orderKey' => 'modificationDate',
+            'condition' => "userModification = '".$this->getAdminUser()->getId()."'",
         ]);
 
         $response = [];
@@ -357,7 +357,7 @@ class PortalController extends AdminController implements KernelControllerEventI
             $end = $startDate - ($i * 86400);
             $start = $end - 86399;
 
-            $o = $db->fetchOne('SELECT COUNT(*) AS count FROM objects WHERE o_modificationDate > '.$start . ' AND o_modificationDate < '.$end);
+            $o = $db->fetchOne('SELECT COUNT(*) AS count FROM objects WHERE modificationDate > '.$start . ' AND modificationDate < '.$end);
             $a = $db->fetchOne('SELECT COUNT(*) AS count FROM assets WHERE modificationDate > '.$start . ' AND modificationDate < '.$end);
             $d = $db->fetchOne('SELECT COUNT(*) AS count FROM documents WHERE modificationDate > '.$start . ' AND modificationDate < '.$end);
 

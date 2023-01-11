@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.gdpr.dataproviders.assets");
+/**
+ * @private
+ */
 pimcore.settings.gdpr.dataproviders.assets = Class.create({
 
     title: t("gdpr_dataSource_assets"),

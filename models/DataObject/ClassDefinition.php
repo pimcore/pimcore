@@ -344,8 +344,7 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @param string $name
      *
-     *@internal
-     *
+     * @internal
      */
     public function rename(string $name)
     {
@@ -566,7 +565,7 @@ final class ClassDefinition extends Model\AbstractModel
 
         // delete all objects using this class
         $list = new Listing();
-        $list->setCondition('o_classId = ?', $this->getId());
+        $list->setCondition('classId = ?', $this->getId());
         $list->load();
 
         foreach ($list->getObjects() as $o) {
@@ -638,12 +637,10 @@ final class ClassDefinition extends Model\AbstractModel
      * with PIMCORE_CLASS_DEFINITION_WRITABLE set, it globally allow/disallow creation and change in classes
      * when the ENV is not set, it allows modification and creation of new in classes in /var/classes but disables modification of classes in config/pimcore/classes
      * more details in 05_Deployment_Tools.md
-     *
-     * @return bool
      */
     public function isWritable(): bool
     {
-        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return (bool) ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
     }
 
     /**
@@ -651,8 +648,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getDefinitionFile(string $name = null): string
     {
@@ -719,7 +715,7 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    public function setCreationDate(int $creationDate): static
+    public function setCreationDate(?int $creationDate): static
     {
         $this->creationDate = (int)$creationDate;
 
@@ -733,16 +729,16 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    public function setUserOwner(int $userOwner): static
+    public function setUserOwner(?int $userOwner): static
     {
-        $this->userOwner = (int)$userOwner;
+        $this->userOwner = $userOwner;
 
         return $this;
     }
 
-    public function setUserModification(int $userModification): static
+    public function setUserModification(?int $userModification): static
     {
-        $this->userModification = (int)$userModification;
+        $this->userModification = $userModification;
 
         return $this;
     }

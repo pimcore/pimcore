@@ -325,7 +325,6 @@ class Imagick extends Adapter
             for ($i = 0; $i < $width; $i++) {
                 for ($j = 0; $j < $height; $j++) {
                     $pixel = $this->resource->getImagePixelColor($i, $j);
-                    // @phpstan-ignore-next-line - phpstan expects bool, but actually doc says int
                     $color = $pixel->getColor(1); // get the real alpha not just 1/0
                     if ($color['a'] < 1) { // if there's an alpha pixel, return true
                         return true;
@@ -418,8 +417,7 @@ class Imagick extends Adapter
     /**
      * @param string $CMYKColorProfile
      *
-     *@internal
-     *
+     * @internal
      */
     public static function setCMYKColorProfile(string $CMYKColorProfile)
     {

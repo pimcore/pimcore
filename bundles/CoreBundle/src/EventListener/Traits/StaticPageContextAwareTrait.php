@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Traits;
 
 use Pimcore\Http\Request\Resolver\StaticPageResolver;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * @internal
@@ -26,11 +27,7 @@ trait StaticPageContextAwareTrait
 {
     private ?StaticPageResolver $staticPageResolver = null;
 
-    /**
-     * @required
-     *
-     * @param StaticPageResolver $staticPageResolver
-     */
+    #[Required]
     public function setStaticPageResolver(StaticPageResolver $staticPageResolver): void
     {
         $this->staticPageResolver = $staticPageResolver;

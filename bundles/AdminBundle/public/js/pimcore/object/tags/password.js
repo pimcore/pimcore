@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.password");
+/**
+ * @private
+ */
 pimcore.object.tags.password = Class.create(pimcore.object.tags.abstract, {
 
     type: "password",

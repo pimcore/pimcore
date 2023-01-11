@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.tag.configuration");
+/**
+ * @private
+ */
 pimcore.element.tag.configuration = Class.create({
 
     initialize: function() {

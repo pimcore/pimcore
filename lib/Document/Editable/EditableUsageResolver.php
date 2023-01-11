@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document;
@@ -49,7 +48,6 @@ class EditableUsageResolver
         // this is especially necessary when lazy loading certain elements on a page (eg. using ajax-include and similar solutions)
         $this->renderer->render($document, [
             EditmodeResolver::ATTRIBUTE_EDITMODE => true,
-            ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS => true,
             Block::ATTRIBUTE_IGNORE_EDITMODE_INDICES => true,
             ]);
         $names = $this->subscriber->getRecordedEditableNames();

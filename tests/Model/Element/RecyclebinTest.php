@@ -108,7 +108,7 @@ class RecyclebinTest extends ModelTestCase
         $parent->delete();
 
         $recycledItems = new Item\Listing();
-        $recycledItems->setCondition('path = ?', $parentPath);
+        $recycledItems->setCondition('`path` = ?', $parentPath);
 
         $this->assertEquals(2, $recycledItems->current()->getAmount(), 'Expected 2 recycled item');
 
@@ -117,7 +117,7 @@ class RecyclebinTest extends ModelTestCase
         $recycledContent = unserialize($storage->read($recycledItems->current()->getStoreageFile()));
 
         $this->assertEquals($parentId, $recycledContent->getId(), 'Expected recycled parent object ID');
-        $this->assertCount(1, $recycledContent->getChildren(DataObject::$types, true), 'Expected recycled child object');
+        $this->assertCount(1, $recycledContent->getChildren(DataObject::$types, true)->getData(), 'Expected recycled child object');
 
         //restore deleted items (parent + child)
         $recycledItems->current()->restore();
@@ -157,7 +157,7 @@ class RecyclebinTest extends ModelTestCase
 
         //restore deleted items (parent + child)
         $recycledItems = new Item\Listing();
-        $recycledItems->setCondition('path = ?', $sourceObjectPath);
+        $recycledItems->setCondition('`path` = ?', $sourceObjectPath);
         $recycledItems->current()->restore();
 
         //load relation and check if relation loads correctly

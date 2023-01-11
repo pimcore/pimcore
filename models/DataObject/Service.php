@@ -55,17 +55,17 @@ class Service extends Model\Element\Service
      *
      * @var array
      */
-    protected static array $systemFields = ['o_path', 'o_key', 'o_id', 'o_published', 'o_creationDate', 'o_modificationDate', 'o_fullpath'];
+    protected static array $systemFields = ['path', 'key', 'id', 'published', 'creationDate', 'modificationDate', 'fullpath'];
 
     /**
      * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
      *
      * @var string[]
      */
-    private const BC_VERSION_DEPENDENT_DATABASE_COLUMNS = ['id', 'parentId', 'type', 'key', 'path', 'index', 'published',
-                                                                'creationDate', 'modificationDate', 'userOwner', 'userModification',
-                                                                'classId', 'childrenSortBy', 'className', 'childrenSortOrder',
-                                                                'versionCount', ];
+    private const BC_VERSION_DEPENDENT_DATABASE_COLUMNS = ['id', 'parentid', 'type', 'key', 'path', 'index', 'published',
+                                                                'creationdate', 'modificationdate', 'userowner', 'usermodification',
+                                                                'classid', 'childrensortby', 'classname', 'childrensortorder',
+                                                                'versioncount', ];
 
     /**
      * @param Model\User|null $user
@@ -538,7 +538,7 @@ class Service extends Model\Element\Service
         return $config;
     }
 
-    public static function calculateCellValue(AbstractObject $object, array $helperDefinitions, string $key, array $context = []): array|\stdClass|null
+    public static function calculateCellValue(AbstractObject $object, array $helperDefinitions, string $key, array $context = []): mixed
     {
         $config = static::getConfigForHelperDefinition($helperDefinitions, $key, $context);
         if (!$config) {
@@ -1352,9 +1352,9 @@ class Service extends Model\Element\Service
         }
 
         if (!$element->getId()) {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? ', [$parent->getId(), $key]);
+            $list->setCondition('parentId = ? AND `key` = ? ', [$parent->getId(), $key]);
         } else {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? AND o_id != ? ', [$parent->getId(), $key, $element->getId()]);
+            $list->setCondition('parentId = ? AND `key` = ? AND id != ? ', [$parent->getId(), $key, $element->getId()]);
         }
         $check = $list->loadIdList();
         if (!empty($check)) {
@@ -1370,7 +1370,7 @@ class Service extends Model\Element\Service
      *
      * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout|null $layout
      * @param Concrete|null $object
-     * @param array $context additional contextual data
+     * @param array<string, mixed> $context additional contextual data
      *
      * @internal
      */
@@ -1666,8 +1666,7 @@ class Service extends Model\Element\Service
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildConditionPartsFromDescriptor(array $descriptor): array
     {
@@ -1821,17 +1820,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param string $fallbackLanguage
-     * @param string $field
-     * @param DataObject\Concrete $object
-     * @param string $requestedLanguage
-     * @param array $helperDefinitions
-     *
-     * @return mixed
-     *
      * @internal
      */
-    protected static function getCsvFieldData(string $fallbackLanguage, string $field, Concrete $object, string $requestedLanguage, array $helperDefinitions): mixed
+    protected static function getCsvFieldData(string $fallbackLanguage, string $field, Concrete $object, string $requestedLanguage, array $helperDefinitions): string
     {
         //check if field is systemfield
         $systemFieldMap = [
@@ -1847,7 +1838,7 @@ class Service extends Model\Element\Service
         if (in_array($field, array_keys($systemFieldMap))) {
             $getter = $systemFieldMap[$field];
 
-            return $object->$getter();
+            return (string) $object->$getter();
         } else {
             //check if field is standard object field
             $fieldDefinition = $object->getClass()->getFieldDefinition($field);
@@ -1866,7 +1857,7 @@ class Service extends Model\Element\Service
                             $cellValue = implode(',', $cellValue);
                         }
 
-                        return $cellValue;
+                        return (string) $cellValue;
                     }
                 } elseif (substr($field, 0, 1) == '~') {
                     $type = $fieldParts[1];
@@ -1973,7 +1964,7 @@ class Service extends Model\Element\Service
             }
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -1990,21 +1981,13 @@ class Service extends Model\Element\Service
      */
     public static function getVersionDependentDatabaseColumnName(string $fieldName): string
     {
-        $currentVersion = \Pimcore\Version::getVersion();
+        $newFieldName = $fieldName;
+        if (str_starts_with($newFieldName, 'o_')) {
+            $newFieldName = substr($newFieldName, 2);
+        }
 
-        if (str_starts_with($currentVersion, '11.')) {
-            $newFieldName = $fieldName;
-            if (str_starts_with($newFieldName, 'o_')) {
-                $newFieldName = substr($newFieldName, 2);
-            }
-            if (in_array($newFieldName, self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
-                return $newFieldName;
-            }
-        } else {
-            if (!str_starts_with($fieldName, 'o_')
-                && in_array($fieldName, self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
-                return 'o_' . $fieldName;
-            }
+        if (in_array(strtolower($newFieldName), self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
+            return $newFieldName;
         }
 
         return $fieldName;

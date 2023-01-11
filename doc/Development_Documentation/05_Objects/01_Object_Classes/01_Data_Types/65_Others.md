@@ -121,11 +121,11 @@ Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField::setStrictMode(fals
 
 A slug is the part of a URL which identifies a particular page on a website in an easy 
 to read form. In other words, it’s the part of the URL that explains the page’s content.
-For example, if the URL is `https://demo.pimcore.fun/slug`, and the slug simply is `/slug`.
+For example, if the URL is `https://demo.pimcore.fun/slug`, then the slug simply is `/slug`.
 
 ![URL Slug](../../../img/classes-datatypes-urlslug.png)
 
-> Note that currently URL slugs are not supported inside [Blocks](./11_Blocks.md) & [Classification Stores](./15_Classification_Store.md).
+> Note that currently URL slugs are not supported inside [Blocks](./05_Blocks.md) & [Classification Stores](./15_Classification_Store.md).
 
 This data-type can be used to manage custom URL slugs for data objects, you can add as many fields of this type to a class as you want. 
 Pimcore then cares automatically about the routing and calls the configured controller/action if a slug matches.

@@ -24,6 +24,9 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * @deprecated
+ */
 class PreAuthenticatedAdminSessionFactory implements AuthenticatorFactoryInterface
 {
     /**

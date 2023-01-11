@@ -233,13 +233,13 @@ class InheritanceHelper
 
                 $query = "
                     WITH RECURSIVE cte(id, classId) as (
-                        SELECT c.o_id AS id, c.o_classId AS classId
+                        SELECT c.id AS id, c.classId AS classId
                         FROM objects c
-                        WHERE c.o_parentId = {$object->getId()}
+                        WHERE c.parentid = {$object->getId()}
                         UNION ALL
-                        SELECT p.o_id AS id, p.o_classId AS classId
+                        SELECT p.id AS id, p.classId AS classId
                         FROM objects p
-                        INNER JOIN cte on (p.o_parentId = cte.id)
+                        INNER JOIN cte on (p.parentid = cte.id)
                     ) select x.id
                     FROM cte x
                     LEFT JOIN {$this->querytable} l on (x.id = l.{$this->idField})
@@ -313,7 +313,7 @@ class InheritanceHelper
             }
         }
 
-        $systemFields = ['o_id', 'fieldname'];
+        $systemFields = ['id', 'fieldname'];
 
         $toBeRemovedItemIds = [];
 
@@ -340,8 +340,8 @@ class InheritanceHelper
                     }
                 }
                 if ($toBeRemoved) {
-                    if (!in_array($queryItem['o_id'], $objectsWithBrickIds)) {
-                        $toBeRemovedItemIds[] = $queryItem['o_id'];
+                    if (!in_array($queryItem['id'], $objectsWithBrickIds)) {
+                        $toBeRemovedItemIds[] = $queryItem['id'];
                     }
                 }
             }
@@ -385,14 +385,14 @@ class InheritanceHelper
                 $language = $params['language'];
 
                 $query = "
-                WITH RECURSIVE cte(id, classId, parentId, o_path) as (
-                    SELECT c.o_id AS id, c.o_classId AS classId, c.o_parentId AS parentId, c.o_path AS o_path
+                WITH RECURSIVE cte(id, classId, parentId, path) as (
+                    SELECT c.id AS id, c.classId AS classId, c.parentid AS parentId, c.path as `path`
                     FROM objects c
-                    WHERE c.o_parentId = $currentParentId
+                    WHERE c.parentid = $currentParentId
                     UNION ALL
-                    SELECT p.o_id AS id, p.o_classId AS classId, p.o_parentId AS parentId, p.o_path AS o_path
+                    SELECT p.id AS id, p.classId AS classId, p.parentid AS parentId, p.path as `path`
                     FROM objects p
-                    INNER JOIN cte on (p.o_parentId = cte.id)
+                    INNER JOIN cte on (p.parentid = cte.id)
                 ) SELECT l.language AS `language`,
                          x.id AS id,
                          x.classId AS classId,
@@ -401,17 +401,17 @@ class InheritanceHelper
                     FROM cte x
                     LEFT JOIN $storeTable l ON x.id = l.$idfield
                    WHERE COALESCE(`language`, " . $this->db->quote($language) . ') = ' . $this->db->quote($language) .
-                   ' ORDER BY x.o_path ASC';
+                   ' ORDER BY x.path ASC';
             } else {
                 $query = "
-                    WITH RECURSIVE cte(id, classId, parentId, o_path) as (
-                        SELECT c.o_id AS id, c.o_classId AS classId, c.o_parentId AS parentId, c.o_path AS o_path
+                    WITH RECURSIVE cte(id, classId, parentId, path) as (
+                        SELECT c.id AS id, c.classId AS classId, c.parentid AS parentId, c.path as `path`
                         FROM objects c
-                        WHERE c.o_parentId = $currentParentId
+                        WHERE c.parentid = $currentParentId
                         UNION ALL
-                        SELECT p.o_id AS id, p.o_classId AS classId, p.o_parentId AS parentId, p.o_path AS o_path
+                        SELECT p.id AS id, p.classId AS classId, p.parentid AS parentId, p.path as `path`
                         FROM objects p
-                        INNER JOIN cte on (p.o_parentId = cte.id)
+                        INNER JOIN cte on (p.parentid = cte.id)
                     )	SELECT x.id AS id,
                                x.classId AS classId,
                                x.parentId AS parentId
@@ -419,7 +419,7 @@ class InheritanceHelper
                         FROM cte x
                         LEFT JOIN $storeTable a ON x.id = a.$idfield
                         GROUP BY x.id
-                        ORDER BY x.o_path ASC";
+                        ORDER BY x.path ASC";
             }
             $queryCacheKey = 'tree_'.md5($query);
 

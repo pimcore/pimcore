@@ -48,7 +48,7 @@ abstract class AbstractTestDataHelper extends Module
     protected function getObjectList(?string $condition = null): array
     {
         $list = new DataObject\Listing();
-        $list->setOrderKey('o_id');
+        $list->setOrderKey('id');
         if (isset($condition)) {
             $list->setCondition($condition);
         }

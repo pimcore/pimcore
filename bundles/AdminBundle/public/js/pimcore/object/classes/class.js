@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.klass");
+/**
+ * @private
+ */
 pimcore.object.classes.klass = Class.create({
 
     allowedInType: 'object',

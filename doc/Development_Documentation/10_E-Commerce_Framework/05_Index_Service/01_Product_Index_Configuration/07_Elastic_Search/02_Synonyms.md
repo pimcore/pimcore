@@ -15,7 +15,7 @@ needed.
 Pimcore ships with a simple `FileSynonymProvider` that can be used right away. The synonym source is a file 
 (e.g. a Pimcore asset) that follows the [Solr file format](https://www.elastic.co/guide/en/elasticsearch/reference/7.12/analysis-synonym-tokenfilter.html#_solr_synonyms).  
 
-Besides the service configuration it self, the synonym providers need to be configured in index service 
+Besides the service configuration itself, the synonym providers need to be configured in index service 
 configuration as follows. 
 
 ```yml
@@ -24,7 +24,7 @@ pimcore_ecommerce_framework:
         tenants:
             <YOUR_ELASTIC_SEARCH_TENANT>:
                 enabled: true
-                worker_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch7
+                worker_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch8
                 config_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch
 
                 config_options:
@@ -53,7 +53,7 @@ pimcore_ecommerce_framework:
         tenants:
             <YOUR_ELASTIC_SEARCH_TENANT>:
                 enabled: true
-                worker_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch7
+                worker_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch8
                 config_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch
 
                 config_options:

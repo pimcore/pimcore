@@ -27,7 +27,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface, ClassSavedInterface
 {
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
@@ -208,7 +208,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
 
                 $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
-                $relation->setCondition("type = 'calculatedValue' and groupId = " . $relation->quote($groupId));
+                $relation->setCondition("`type` = 'calculatedValue' and groupId = " . $relation->quote($groupId));
                 $relation = $relation->load();
                 foreach ($relation as $key) {
                     $keyId = $key->getKeyId();
@@ -327,8 +327,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @return DataObject\Classificationstore
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Classificationstore
     {
@@ -867,8 +866,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @return array|null
      *
-     *@internal
-     *
+     * @internal
      */
     public function recursiveGetActiveGroupsIds(?Concrete $object, array $activeGroups = []): ?array
     {

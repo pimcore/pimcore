@@ -75,8 +75,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             $domain = Translation::DOMAIN_DEFAULT;
         }
 
-        $id = (string) $id;
-
         if ($domain === Translation::DOMAIN_ADMIN && !empty($this->adminTranslationMapping)) {
             if (null === $locale) {
                 $locale = $this->getLocale();
@@ -168,37 +166,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->initializedCatalogues[$cacheKey] = true;
 
         if (Translation::isAValidDomain($domain)) {
-            $catalogue = null;
-
             if (!$catalogue = Cache::load($cacheKey)) {
                 $data = ['__pimcore_dummy' => 'only_a_dummy'];
                 $dataIntl = ['__pimcore_dummy' => 'only_a_dummy'];
-
-                if ($domain == 'admin') {
-                    $jsonFiles = [
-                        $locale . '.json' => 'en.json',
-                        $locale . '.extended.json' => 'en.extended.json',
-                    ];
-
-                    foreach ($jsonFiles as $sourceFile => $fallbackFile) {
-                        try {
-                            $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . '/' . $sourceFile);
-                        } catch (\Exception $e) {
-                            $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . '/' . $fallbackFile);
-                        }
-
-                        $jsonTranslations = json_decode(file_get_contents($jsonPath), true);
-                        if (is_array($jsonTranslations)) {
-                            $defaultCatalog = $this->getCatalogue($locale);
-
-                            foreach ($jsonTranslations as $translationKey => $translationValue) {
-                                if (!$defaultCatalog->has($translationKey, 'admin')) {
-                                    $data[$translationKey] = $translationValue;
-                                }
-                            }
-                        }
-                    }
-                }
 
                 $list = new Translation\Listing();
                 $list->setDomain($domain);
@@ -228,7 +198,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                 }
 
                 // aliases support
-                if ($domain == 'admin') {
+                if ($domain === 'admin' || $domain === 'admin_ext') {
                     $aliasesPath = $this->getKernel()->locateResource($this->getAdminPath() . '/aliases.json');
                     $aliases = json_decode(file_get_contents($aliasesPath), true);
                     foreach ($aliases as $aliasTarget => $aliasSource) {
@@ -374,8 +344,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @param string $adminPath
      *
-     *@internal
-     *
+     * @internal
      */
     public function setAdminPath(string $adminPath)
     {
@@ -415,8 +384,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * @param Kernel $kernel
      *
-     *@internal
-     *
+     * @internal
      */
     public function setKernel(Kernel $kernel)
     {

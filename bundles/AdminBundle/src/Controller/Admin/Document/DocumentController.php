@@ -36,7 +36,6 @@ use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
-use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend;
 use Pimcore\Tool\Session;
@@ -180,7 +179,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 $inheritedPermission = $document->getDao()->isInheritingPermission('list', $userIds);
 
-                $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,`key`),cpath)=1 AND
+                $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,`key`),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
                 $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
@@ -295,7 +294,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 switch ($request->get('type')) {
                     case 'page':
-                        $document = Document\Page::create($request->get('parentId'), $createValues, false);
+                        $document = Document\Page::create($parentDocument->getId(), $createValues, false);
                         $document->setTitle($request->get('title', null));
                         $document->setProperty('navigation_name', 'text', $request->get('name', null), false, false);
                         $document->save();
@@ -303,27 +302,27 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                         break;
                     case 'snippet':
-                        $document = Document\Snippet::create($request->get('parentId'), $createValues);
+                        $document = Document\Snippet::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'email': //ckogler
-                        $document = Document\Email::create($request->get('parentId'), $createValues);
+                        $document = Document\Email::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'link':
-                        $document = Document\Link::create($request->get('parentId'), $createValues);
+                        $document = Document\Link::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'hardlink':
-                        $document = Document\Hardlink::create($request->get('parentId'), $createValues);
+                        $document = Document\Hardlink::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'folder':
-                        $document = Document\Folder::create($request->get('parentId'), $createValues);
+                        $document = Document\Folder::create($parentDocument->getId(), $createValues);
                         $document->setPublished(true);
 
                         try {
@@ -347,7 +346,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                         }
 
                         if (Tool::classExists($classname)) {
-                            $document = $classname::create($request->get('parentId'), $createValues);
+                            $document = $classname::create($parentDocument->getId(), $createValues);
 
                             try {
                                 $document->save();
@@ -414,9 +413,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $parentDocument = Document::getById((int) $request->get('id'));
 
             $list = new Document\Listing();
-            $list->setCondition('path LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
+            $list->setCondition('`path` LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
             $list->setLimit((int)$request->get('amount'));
-            $list->setOrderKey('LENGTH(path)', false);
+            $list->setOrderKey('LENGTH(`path`)', false);
             $list->setOrder('DESC');
 
             $documents = $list->load();
@@ -581,7 +580,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                     if ($document->hasChildren()) {
                         $list = new Document\Listing();
-                        $list->setCondition('path LIKE :path', [
+                        $list->setCondition('`path` LIKE :path', [
                             'path' => $list->escapeLike($document->getRealFullPath()) . '/%',
                         ]);
 
@@ -930,8 +929,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
             if ($document->hasChildren()) {
                 // get amount of children
                 $list = new Document\Listing();
-                $list->setCondition('path LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
-                $list->setOrderKey('LENGTH(path)', false);
+                $list->setCondition('`path` LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
+                $list->setOrderKey('LENGTH(`path`)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();
 
@@ -1219,107 +1218,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
         } else {
             return $this->adminJson(false);
         }
-    }
-
-    /**
-     * SEO PANEL
-     */
-
-    /**
-     * @Route("/seopanel-tree-root", name="pimcore_admin_document_document_seopaneltreeroot", methods={"GET"})
-     *
-     * @param DocumentRouteHandler $documentRouteHandler
-     *
-     * @return JsonResponse
-     */
-    public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler): JsonResponse
-    {
-        $this->checkPermission('seo_document_editor');
-
-        /** @var Document\Page $root */
-        $root = Document\Page::getById(1);
-        if ($root->isAllowed('list')) {
-            // make sure document routes are also built for unpublished documents
-            $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
-
-            $nodeConfig = $this->getSeoNodeConfig($root);
-
-            return $this->adminJson($nodeConfig);
-        }
-
-        throw $this->createAccessDeniedHttpException();
-    }
-
-    /**
-     * @Route("/seopanel-tree", name="pimcore_admin_document_document_seopaneltree", methods={"GET"})
-     *
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param DocumentRouteHandler $documentRouteHandler
-     *
-     * @return JsonResponse
-     */
-    public function seopanelTreeAction(
-        Request $request,
-        EventDispatcherInterface $eventDispatcher,
-        DocumentRouteHandler $documentRouteHandler
-    ): JsonResponse {
-        $allParams = array_merge($request->request->all(), $request->query->all());
-
-        $filterPrepareEvent = new GenericEvent($this, [
-            'requestParams' => $allParams,
-        ]);
-        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE);
-
-        $allParams = $filterPrepareEvent->getArgument('requestParams');
-
-        $this->checkPermission('seo_document_editor');
-
-        // make sure document routes are also built for unpublished documents
-        $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
-
-        $document = Document::getById($allParams['node']);
-
-        $documents = [];
-        if ($document->hasChildren()) {
-            $list = new Document\Listing();
-            $list->setCondition('parentId = ?', $document->getId());
-            $list->setOrderKey('index');
-            $list->setOrder('asc');
-
-            $beforeListLoadEvent = new GenericEvent($this, [
-                'list' => $list,
-                'context' => $allParams,
-            ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
-            /** @var Document\Listing $list */
-            $list = $beforeListLoadEvent->getArgument('list');
-
-            $childrenList = $list->load();
-
-            foreach ($childrenList as $childDocument) {
-                // only display document if listing is allowed for the current user
-                if ($childDocument->isAllowed('list')) {
-                    $list = new Document\Listing();
-                    $list->setCondition('path LIKE ? and type = ?', [$list->escapeLike($childDocument->getRealFullPath()). '/%', 'page']);
-
-                    if ($childDocument instanceof Document\Page || $list->getTotalCount() > 0) {
-                        $documents[] = $this->getSeoNodeConfig($childDocument);
-                    }
-                }
-            }
-        }
-
-        $result = ['data' => $documents, 'success' => true, 'total' => count($documents)];
-
-        $afterListLoadEvent = new GenericEvent($this, [
-            'list' => $result,
-            'context' => $allParams,
-        ]);
-        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD);
-        $result = $afterListLoadEvent->getArgument('list');
-
-        return $this->adminJson($result['data']);
     }
 
     /**

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.fieldcollection");
+/**
+ * @private
+ */
 pimcore.object.fieldcollection = Class.create({
 
     forbiddenNames: [
@@ -189,7 +192,7 @@ pimcore.object.fieldcollection = Class.create({
 
     addFieldComplete: function (button, value, object) {
 
-        var isValidName = /^[a-zA-Z]+$/;
+        var isValidName = /^[a-zA-Z][a-zA-Z0-9]*$/;
 
         if (button == "ok" && value.length > 2 && isValidName.test(value) && !in_arrayi(value, this.forbiddenNames)) {
             Ext.Ajax.request({

@@ -397,8 +397,7 @@ class Asset extends Element\AbstractElement
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getTypeFromMimeMapping(string $mimeType, string $filename): string
     {
@@ -411,7 +410,7 @@ class Asset extends Element\AbstractElement
         $mappings = [
             'unknown' => ["/\.stp$/"],
             'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/", '/photoshop/'],
-            'text' => ['/text/', '/xml$/', '/\.json$/'],
+            'text' => ['/text\//', '/xml$/', '/\.json$/'],
             'audio' => ['/audio/'],
             'video' => ['/video/'],
             'document' => ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/'],
@@ -648,8 +647,7 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception
      *
-     *@internal
-     *
+     * @internal
      */
     protected function update(array $params = [])
     {

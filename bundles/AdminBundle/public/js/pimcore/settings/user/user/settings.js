@@ -13,6 +13,9 @@
 
 
 pimcore.registerNS("pimcore.settings.user.user.settings");
+/**
+ * @private
+ */
 pimcore.settings.user.user.settings = Class.create({
 
     initialize: function (userPanel) {

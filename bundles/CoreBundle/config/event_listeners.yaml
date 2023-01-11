@@ -135,8 +135,6 @@ services:
     Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
         calls:
             - [loadTemplateFromResource, ['@@PimcoreCoreBundle/public/misc/maintenance.html']]
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleSearchConsoleVerificationListener: ~
 

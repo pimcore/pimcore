@@ -680,7 +680,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $list = new \Pimcore\Model\DataObject\Inheritance\Listing();
 
-        $list->setCondition("(o_path = '/tmp' OR o_path LIKE '/tmp/%') AND 1 = 1");
+        $list->setCondition("(`path` = '/tmp' OR `path` like '/tmp/%') AND 1 = 1");
         $list->setLimit(25);
         $list->setOffset(0);
         $list->setGroupBy('oo_id');
@@ -726,14 +726,14 @@ class GeneralTest extends AbstractClassificationStoreTest
             'joinType' => 'left',
             'joinTable' => 'object_classificationstore_data_inheritance',
             'joinAlias' => 'cskey_teststore_1_1',
-            'joinCondition' => "(cskey_teststore_1_1.o_id = object_localized_inheritance_en.o_id and cskey_teststore_1_1.fieldname = 'teststore' and cskey_teststore_1_1.groupId=1 and cskey_teststore_1_1.keyId=1 and cskey_teststore_1_1.language = 'default')",
+            'joinCondition' => "(cskey_teststore_1_1.id = object_localized_inheritance_en.id and cskey_teststore_1_1.fieldname = 'teststore' and cskey_teststore_1_1.groupId=1 and cskey_teststore_1_1.keyId=1 and cskey_teststore_1_1.language = 'default')",
         ];
 
         $expectedJoin1 = [
             'joinType' => 'left',
             'joinTable' => 'object_classificationstore_data_inheritance',
             'joinAlias' => 'cskey_teststore_1_2',
-            'joinCondition' => "(cskey_teststore_1_2.o_id = object_localized_inheritance_en.o_id and cskey_teststore_1_2.fieldname = 'teststore' and cskey_teststore_1_2.groupId=1 and cskey_teststore_1_2.keyId=2 and cskey_teststore_1_2.language = 'default')",
+            'joinCondition' => "(cskey_teststore_1_2.id = object_localized_inheritance_en.id and cskey_teststore_1_2.fieldname = 'teststore' and cskey_teststore_1_2.groupId=1 and cskey_teststore_1_2.keyId=2 and cskey_teststore_1_2.language = 'default')",
         ];
 
         $selectParts = $queryBuilder->getQueryPart('select');

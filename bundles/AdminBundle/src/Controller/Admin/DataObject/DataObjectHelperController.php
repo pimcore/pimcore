@@ -325,9 +325,7 @@ class DataObjectHelperController extends AdminController
                 $shared = false;
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = [$this->getAdminUser()->getId()];
-                    if ($this->getAdminUser()->getRoles()) {
-                        $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
-                    }
+                    $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     $userIds = implode(',', $userIds);
                     $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select 1 from gridconfig_shares where sharedWithUserId IN ('.$userIds.') and gridConfigId = '.$savedGridConfig->getId());
 //                  $shared = $savedGridConfig->isShareGlobally() || GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
@@ -370,14 +368,15 @@ class DataObjectHelperController extends AdminController
 
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
-                $request->get('no_system_columns', false),
+                $request->query->getBoolean('no_system_columns'),
                 $class,
                 $gridType,
-                $request->get('no_brick_columns', false),
+                $request->query->getBoolean('no_brick_columns'),
                 $fields,
                 $context,
                 $objectId,
-                $types);
+                $types
+            );
         } else {
             $savedColumns = $gridConfig['columns'];
             foreach ($savedColumns as $key => $sc) {
@@ -557,18 +556,9 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param bool $noSystemColumns
-     * @param DataObject\ClassDefinition|null $class
-     * @param string $gridType
-     * @param bool $noBrickColumns
-     * @param DataObject\ClassDefinition\Data[] $fields
-     * @param array $context
-     * @param int $objectId
-     * @param array $types
-     *
-     * @return array
+     * @param DataObject\ClassDefinition\Data[]|null $fields
      */
-    public function getDefaultGridFields(bool $noSystemColumns, ?DataObject\ClassDefinition $class, string $gridType, bool $noBrickColumns, array $fields, array $context, int $objectId, array $types = []): array
+    public function getDefaultGridFields(bool $noSystemColumns, ?DataObject\ClassDefinition $class, string $gridType, bool $noBrickColumns, ?array $fields, array $context, int $objectId, array $types = []): array
     {
         $count = 0;
         $availableFields = [];
@@ -770,7 +760,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridConfigApplyToAllAction(Request $request): JsonResponse
     {
-        $objectId = $request->get('objectId');
+        $objectId = $request->request->getInt('objectId');
         $object = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
@@ -839,7 +829,7 @@ class DataObjectHelperController extends AdminController
                     . ' and classId = ' . $db->quote($classId).
                     ' and searchType = ' . $db->quote($searchType)
                     . ' and objectId != ' . $objectId . ' and objectId != 0'
-                    . ' and type != ' . $db->quote($type));
+                    . ' and `type` != ' . $db->quote($type));
                 $specializedConfigs = $count > 0;
             } catch (\Exception $e) {
                 $favourite->delete();
@@ -887,7 +877,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridSaveColumnConfigAction(Request $request): JsonResponse
     {
-        $objectId = $request->get('id');
+        $objectId = $request->request->getInt('id');
         $object   = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
@@ -1357,8 +1347,8 @@ class DataObjectHelperController extends AdminController
         }
 
         $list->setObjectTypes(DataObject::$types);
-        $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
-        $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
+        $list->setCondition('id IN (' . implode(',', $quotedIds) . ')');
+        $list->setOrderKey(' FIELD(id, ' . implode(',', $quotedIds) . ')', false);
 
         $beforeListExportEvent = new GenericEvent($this, [
             'list' => $list,
@@ -1422,9 +1412,12 @@ class DataObjectHelperController extends AdminController
         return $this->adminJson(['success' => true]);
     }
 
-    public function encodeFunc($value): string
+    /**
+     * @param array{fieldName: string, data: string} $value
+     */
+    public function encodeFunc(array $value): string
     {
-        $value = str_replace('"', '""', (string) $value);
+        $value = str_replace('"', '""', $value);
         //force wrap value in quotes and return
         return '"' . $value . '"';
     }

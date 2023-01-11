@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.password");
+/**
+ * @private
+ */
 pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.data, {
 
     type: "password",

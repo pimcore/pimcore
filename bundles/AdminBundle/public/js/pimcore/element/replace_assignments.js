@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.replace_assignments");
+/**
+ * @private
+ */
 pimcore.element.replace_assignments = Class.create({
 
     initialize: function () {

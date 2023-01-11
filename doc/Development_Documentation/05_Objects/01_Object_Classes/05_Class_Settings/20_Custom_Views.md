@@ -47,12 +47,12 @@ return [
             "position" => "right",
             "sort" => "1",
             "expanded" => TRUE,
-            "having" => "o_type = \"folder\" || o5.title NOT LIKE '%magnis%'",
+            "having" => "type = \"folder\" || o5.title NOT LIKE '%magnis%'",
             "joins" => [
                 array(
                     "type" => "left",
                     "name" => array("o5" => "object_localized_5_en"),
-                    "condition" => "objects.o_id = o5.oo_id",
+                    "condition" => "objects.id = o5.oo_id",
                     "columns" => array("o5" => "title")
                 )
             ],

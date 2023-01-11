@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.folder");
+/**
+ * @private
+ */
 pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     type: "folder",
@@ -26,10 +29,15 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             detail: {
                 object: this,
                 type: "folder"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenObjectFolder);
+        const isAllowed = document.dispatchEvent(preOpenObjectFolder);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         this.getData();
     },
@@ -60,11 +68,15 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         const preGetObjectFolder = new CustomEvent(pimcore.events.preGetObjectFolder, {
             detail: {
                 eventData: eventData,
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preGetObjectFolder);
-
+        const isAllowed = document.dispatchEvent(preGetObjectFolder);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         var options = this.options || {};
         Ext.Ajax.request({
@@ -105,7 +117,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     addTab: function () {
 
-        var tabTitle = this.data.general.o_key;
+        var tabTitle = this.data.general.key;
         if (this.id == 1) {
             tabTitle = "home";
         }
@@ -174,7 +186,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         this.addToMainTabPanel();
 
         if (this.getAddToHistory()) {
-            pimcore.helpers.recordElement(this.id, "object", this.data.general.o_path + this.data.general.o_key);
+            pimcore.helpers.recordElement(this.id, "object", this.data.general.path + this.data.general.key);
         }
 
         // recalculate the layout
@@ -223,10 +235,10 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
             buttons.push("-");
 
-            if(this.isAllowed("delete") && !this.data.general.o_locked && this.data.general.o_id != 1) {
+            if(this.isAllowed("delete") && !this.data.general.locked && this.data.general.id != 1) {
                 buttons.push(this.toolbarButtons.remove);
             }
-            if(this.isAllowed("rename") && !this.data.general.o_locked && this.data.general.o_id != 1) {
+            if(this.isAllowed("rename") && !this.data.general.locked && this.data.general.id != 1) {
                 buttons.push(this.toolbarButtons.rename);
             }
 
@@ -259,7 +271,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 tooltip: t("search_and_move"),
                 iconCls: "pimcore_material_icon_download_zip pimcore_material_icon",
                 scale: "medium",
-                handler: pimcore.helpers.searchAndMove.bind(this, this.data.general.o_id,
+                handler: pimcore.helpers.searchAndMove.bind(this, this.data.general.id,
                     function () {
                         if (this.search.grid) {
                             this.search.grid.getStore().reload();
@@ -274,7 +286,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: t("id") + " " + this.data.general.o_id,
+                text: t("id") + " " + this.data.general.id,
                 scale: "medium"
             });
 
@@ -350,10 +362,10 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         try {
             data.general = Ext.apply({}, this.data.general);
             // object shouldn't be relocated, renamed, or anything else that is evil
-            delete data.general["o_parentId"];
-            delete data.general["o_type"];
-            delete data.general["o_key"];
-            delete data.general["o_locked"];
+            delete data.general["parentId"];
+            delete data.general["type"];
+            delete data.general["key"];
+            delete data.general["locked"];
 
             data.general = Ext.encode(data.general);
         }
@@ -449,21 +461,21 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     getMetaInfo: function() {
         return {
-            id: this.data.general.o_id,
+            id: this.data.general.id,
             path: this.data.general.fullpath,
-            modificationdate: this.data.general.o_modificationDate,
-            creationdate: this.data.general.o_creationDate,
-            usermodification: this.data.general.o_userModification,
-            usermodification_name: this.data.general.o_userModificationFullname,
-            userowner: this.data.general.o_userOwner,
-            userowner_name: this.data.general.o_userOwnerFullname,
-            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "folder")
+            modificationdate: this.data.general.modificationDate,
+            creationdate: this.data.general.creationDate,
+            usermodification: this.data.general.userModification,
+            usermodification_name: this.data.general.userModificationFullname,
+            userowner: this.data.general.userOwner,
+            userowner_name: this.data.general.userOwnerFullname,
+            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, "folder")
         };
     },
 
     showMetaInfo: function() {
         var metainfo = this.getMetaInfo();
-        
+
         new pimcore.element.metainfo([
         {
             name: "id",
@@ -496,12 +508,12 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
     },
 
     rename: function () {
-        if(this.isAllowed("rename") && !this.data.general.o_locked && this.data.general.o_id != 1) {
+        if(this.isAllowed("rename") && !this.data.general.locked && this.data.general.id != 1) {
             var options = {
                 elementType: "object",
-                elementSubType: this.data.general.o_type,
+                elementSubType: this.data.general.type,
                 id: this.id,
-                default: this.data.general.o_key
+                default: this.data.general.key
             }
             pimcore.elementservice.editElementKey(options);
         }

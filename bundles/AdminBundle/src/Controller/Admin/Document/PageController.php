@@ -217,7 +217,7 @@ class PageController extends DocumentControllerBase
     public function generatePreviewsAction(Request $request, MessageBusInterface $messengerBusPimcoreCore): JsonResponse
     {
         $list = new Document\Listing();
-        $list->setCondition('type = ?', ['page']);
+        $list->setCondition('`type` = ?', ['page']);
 
         foreach ($list->loadIdList() as $docId) {
             $messengerBusPimcoreCore->dispatch(
@@ -258,8 +258,8 @@ class PageController extends DocumentControllerBase
      */
     public function checkPrettyUrlAction(Request $request): JsonResponse
     {
-        $docId = $request->get('id');
-        $path = (string) trim($request->get('path'));
+        $docId = $request->request->getInt('id');
+        $path = trim($request->request->get('path', ''));
 
         $success = true;
 
@@ -289,7 +289,7 @@ class PageController extends DocumentControllerBase
         }
 
         $list = new Document\Listing();
-        $list->setCondition('(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
+        $list->setCondition('(CONCAT(`path`, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
             AND id != ?', [
             $path, $path, $docId,
         ]);
@@ -314,8 +314,8 @@ class PageController extends DocumentControllerBase
      */
     public function clearEditableDataAction(Request $request): JsonResponse
     {
-        $targetGroupId = $request->get('targetGroup');
-        $docId = $request->get('id');
+        $targetGroupId = $request->request->get('targetGroup');
+        $docId = $request->request->getInt('id');
 
         $doc = Document\PageSnippet::getById($docId);
 

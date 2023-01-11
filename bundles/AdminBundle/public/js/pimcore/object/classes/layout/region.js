@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.layout.region");
+/**
+ * @private
+ */
 pimcore.object.classes.layout.region = Class.create(pimcore.object.classes.layout.layout, {
 
     type: "region",

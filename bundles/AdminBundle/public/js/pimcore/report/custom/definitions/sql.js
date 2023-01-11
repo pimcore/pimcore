@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.report.custom.definition.sql");
+/**
+ * @private
+ */
 pimcore.report.custom.definition.sql = Class.create({
 
     element: null,

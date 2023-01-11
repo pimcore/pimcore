@@ -180,8 +180,7 @@ class RequestHelper
      *
      * @return Request
      *
-     *@internal
-     *
+     * @internal
      */
     public function createRequestWithContext(string $uri = '/'): Request
     {

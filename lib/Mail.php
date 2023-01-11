@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use League\HTMLToMarkdown\HtmlConverter;
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
@@ -675,7 +674,6 @@ class Mail extends Email
             // render document
             if ($this->getDocument() instanceof Model\Document) {
                 $attributes = $this->getParams();
-                $attributes[ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS] = true;
 
                 $html = Model\Document\Service::render($this->getDocument(), $attributes);
             }
@@ -840,8 +838,7 @@ class Mail extends Email
     /**
      * @param array|null $originalData
      *
-     *@internal
-     *
+     * @internal
      */
     public function setOriginalData(?array $originalData)
     {
