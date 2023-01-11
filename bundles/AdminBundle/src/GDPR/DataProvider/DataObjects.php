@@ -23,8 +23,9 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\Service;
-use Pimcore\Model\Search\Backend\Data;
+use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
+use Pimcore\Model\Element;
+use Pimcore\Model\DataObject;
 
 /**
  * @internal
@@ -131,15 +132,55 @@ class DataObjects extends Elements implements DataProviderInterface
      * @param int $limit
      * @param string|null $sort
      *
-     * TODO: redefine - implement a "very simple" search
-     *
      * @return array
      */
     public function searchData(int $id, string $firstname, string $lastname, string $email, int $start, int $limit, string $sort = null): array
     {
-        //TODO: implement
+        if (empty($id) && empty($firstname) && empty($lastname) && empty($email)) {
+            return ['data' => [], 'success' => true, 'total' => 0];
+        }
 
-        return [];
+        $db = \Pimcore\Db::get();
+        $queryBuilder = $db->createQueryBuilder();
+        $query = $queryBuilder
+            ->select('id', 'type')
+            ->from('objects')
+            ->where('id = :id')
+            ->setParameter('id', $id)
+            ->setFirstResult($start)
+            ->setMaxResults($limit);
+
+        $sortingSettings = QueryParams::extractSortingSettings(['sort' => $sort]);
+        if ($sortingSettings['orderKey']) {
+            // we need a special mapping for classname as this is stored in subtype column
+            $sortMapping = [
+                'classname' => 'subtype',
+            ];
+
+            $sort = $sortingSettings['orderKey'];
+            if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
+                $sort = $sortMapping[$sortingSettings['orderKey']];
+            }
+
+            $order = $sortingSettings['order'] ?? null;
+
+            $query->orderBy($sort, $order);
+        }
+
+        $query = $query->executeQuery();
+
+        if($query->rowCount() > 0){
+            foreach ($query->fetchAllAssociative() as $hit) {
+                $element = Element\Service::getElementById($hit['type'], $hit['id']);
+                if ($element instanceof Concrete) {
+                    $data = DataObject\Service::gridObjectData($element);
+                    $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'] ?? false;
+                    $elements[] = $data;
+                }
+            }
+        }
+
+        return ['data' => $elements, 'success' => true, 'total' => $query->rowCount()];
     }
 
     /**
