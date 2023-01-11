@@ -20,5 +20,41 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 
 class Installer extends SettingsStoreAwareInstaller
 {
+    protected const USER_PERMISSIONS = [
+        'word_export'
+    ];
 
+    public function install(): void
+    {
+        $this->addUserPermission();
+        parent::install();
+    }
+
+    public function uninstall(): void
+    {
+        $this->removeUserPermission();
+        parent::uninstall();
+    }
+
+    private function addUserPermission(): void
+    {
+        $db = \Pimcore\Db::get();
+
+        foreach (self::USER_PERMISSIONS as $permission) {
+            $db->insert('users_permission_definitions', [
+                $db->quoteIdentifier('key') => $permission,
+            ]);
+        }
+    }
+
+    private function removeUserPermission(): void
+    {
+        $db = \Pimcore\Db::get();
+
+        foreach (self::USER_PERMISSIONS as $permission) {
+            $db->delete('users_permission_definitions', [
+                $db->quoteIdentifier('key') => $permission,
+            ]);
+        }
+    }
 }
