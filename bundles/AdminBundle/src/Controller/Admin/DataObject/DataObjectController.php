@@ -568,7 +568,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $fieldConfig->setValues($fieldConfigData);
 
         $visibleFields = null;
-        if(method_exists($fieldConfig, 'getVisibleFields')) {
+        if (method_exists($fieldConfig, 'getVisibleFields')) {
             $visibleFields = is_array($fieldConfig->getVisibleFields()) ? $fieldConfig->getVisibleFields() : explode(',', $fieldConfig->getVisibleFields());
         }
 
@@ -604,7 +604,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if (method_exists($fieldConfig, 'getObjectsAllowed') && $fieldConfig->getObjectsAllowed()) {
             $allowedTypes[] = 'object';
 
-            if ( $allowClasses ) {
+            if ($allowClasses) {
                 $subTypes = array_merge($subTypes, ['object', 'variant']);
 
                 foreach ($fieldConfig->getClasses() as $classData) {
@@ -621,8 +621,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
         $objects = json_decode($res->getContent(), true)['data'];
 
-        if($request->get('data')) {
-            foreach(json_decode($request->get('data'), true) as $preSelectedElement) {
+        if ($request->get('data')) {
+            foreach (json_decode($request->get('data'), true) as $preSelectedElement) {
                 if (isset($preSelectedElement['id'], $preSelectedElement['type'])) {
                     $objects[] = ['id' => $preSelectedElement['id'], 'type' => $preSelectedElement['type']];
                 }
@@ -633,7 +633,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         foreach ($objects as $objectData) {
             $option = [
                 'id' => $objectData['id'],
-                'type' => $objectData['type']
+                'type' => $objectData['type'],
             ];
 
             $visibleFieldValues = [];
@@ -658,10 +658,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                                 [$objectData],
                                 [
                                     'fd' => $fieldConfig,
-                                    'context' => []
+                                    'context' => [],
                                 ]
                             )[0] ?? null;
-                            if($formattedPath) {
+                            if ($formattedPath) {
                                 $objectData['fullpath'] = $formattedPath;
                             }
                         }
@@ -683,7 +683,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     DataObject\Localizedfield::setGetFallbackValues(true);
 
                     $getter = 'get'.ucfirst($visibleField);
-                    if(method_exists($object, $getter)) {
+                    if (method_exists($object, $getter)) {
                         $visibleFieldValue = $object->$getter();
                         if ($visibleField === 'key' && $object instanceof DataObject\Concrete && count($classes) > 1) {
                             $visibleFieldValue .= ' ('.$object->getClassName().')';
