@@ -59,11 +59,7 @@ abstract class AbstractDefinitionHelper extends Module
             $name = $type;
         }
 
-        if (strpos($type, 'indexField') === 0) {
-            $classname = 'Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ClassDefinition\\' . ucfirst($type);
-        } else {
-            $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\Data\\' . ucfirst($type);
-        }
+        $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\Data\\' . ucfirst($type);
         /** @var Data $child */
         $child = new $classname();
         $child->setName($name);

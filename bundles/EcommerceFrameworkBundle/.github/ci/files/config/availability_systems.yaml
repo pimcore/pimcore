@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # AVAILABILITY SYSTEMS
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem: ~

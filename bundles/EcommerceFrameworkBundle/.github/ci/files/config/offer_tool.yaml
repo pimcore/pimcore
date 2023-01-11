@@ -1,0 +1,15 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # OFFER TOOL
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService:
+        arguments:
+            - '%pimcore_ecommerce.offer_tool.order_storage.offer_class%'
+            - '%pimcore_ecommerce.offer_tool.order_storage.offer_item_class%'
+            - '%pimcore_ecommerce.offer_tool.order_storage.parent_folder_path%'

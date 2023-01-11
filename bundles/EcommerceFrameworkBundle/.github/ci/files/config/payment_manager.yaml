@@ -1,0 +1,9 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManager:
+        arguments:
+            - '@pimcore_ecommerce.locator.payment_manager.provider'
