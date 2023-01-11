@@ -48,6 +48,7 @@ trait AllowObjectRelationTrait
             foreach ($allowedClasses as $c) {
                 $allowedClassnames[] = $c['classes'];
             }
+
             //check for allowed classes
             if ($object instanceof DataObject\Concrete) {
                 $classname = $object->getClassName();
