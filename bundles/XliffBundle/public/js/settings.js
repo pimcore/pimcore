@@ -48,7 +48,7 @@ pimcore.bundle.xliff.settings = Class.create({
 
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("xliff");
+                pimcore.globalmanager.remove("bundle_xliff");
             }.bind(this));
 
             pimcore.layout.refresh();
