@@ -1108,6 +1108,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if (!$version) {
             throw $this->createNotFoundException('Version not found');
         }
+
+        /** @var Asset $asset */
         $asset = $version->loadData();
 
         if (!$asset->isAllowed('versions')) {
@@ -1120,6 +1122,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             '@PimcoreAdmin/admin/asset/show_version_' . strtolower($asset->getType()) . '.html.twig',
             [
                 'asset' => $asset,
+                'version' => $version,
                 'loader' => $loader,
             ]
         );
