@@ -42,6 +42,6 @@ services:
             $config: '%pimcore.gdpr-data-extrator.assets%'
 
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects:
-        class: Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR\DataObject
+        class: Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR\DataObjects
         arguments:
             $config: '%pimcore.gdpr-data-extrator.dataobjects%'

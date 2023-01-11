@@ -2,12 +2,14 @@
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR;
 
-use Pimcore\Model\Element\Service;
+use Pimcore\Model\Element;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
+use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
-class DataObject extends DataProvider\DataObjects
+class DataObjects extends DataProvider\DataObjects
 {
     /**
      * @param int $id
@@ -74,7 +76,7 @@ class DataObject extends DataProvider\DataObjects
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
 
-        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(['sort' => $sort]);
+        $sortingSettings = QueryParams::extractSortingSettings(['sort' => $sort]);
         if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
@@ -95,9 +97,9 @@ class DataObject extends DataProvider\DataObjects
 
         $elements = [];
         foreach ($hits as $hit) {
-            $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
+            $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element instanceof Concrete) {
-                $data = \Pimcore\Model\DataObject\Service::gridObjectData($element);
+                $data = DataObject\Service::gridObjectData($element);
                 $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'] ?? false;
                 $elements[] = $data;
             }
