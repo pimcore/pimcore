@@ -63,8 +63,6 @@ class Folder extends DAV\Collection
     /**
      * @param Asset|string $name
      *
-     * @return File|Folder
-     *
      * @throws DAV\Exception\NotFound
      */
     public function getChild($name): File|Folder
