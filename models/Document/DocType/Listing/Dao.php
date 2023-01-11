@@ -38,7 +38,7 @@ class Dao extends Model\Document\DocType\Dao
             usort($docTypes, $this->model->getOrder());
         } else {
             // Default sort if nothing else has been set
-            usort($docTypes, self::sortByPriority(...)]);
+            usort($docTypes, self::sortByPriority(...));
         }
 
         $this->model->setDocTypes($docTypes);
