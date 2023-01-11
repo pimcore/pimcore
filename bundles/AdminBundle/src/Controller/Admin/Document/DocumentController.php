@@ -671,8 +671,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function docTypesGetAction(Request $request): JsonResponse
     {
         // get list of types
-        $list = new Document\DocType\Listing();
-        $list->setOrder([DocType\Listing::class, 'sortByPriority']);
+        $list = new DocType\Listing();
 
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
@@ -758,7 +757,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function getDocTypesAction(Request $request): JsonResponse
     {
         $list = new DocType\Listing();
-        $list->setOrder([DocType\Listing::class, 'sortByPriority']);
 
         if ($type = $request->get('type')) {
             if (!Document\Service::isValidType($type)) {

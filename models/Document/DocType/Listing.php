@@ -18,7 +18,6 @@ namespace Pimcore\Model\Document\DocType;
 
 use Pimcore\Model;
 use Pimcore\Model\AbstractModel;
-use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Listing\CallableFilterListingInterface;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
@@ -65,24 +64,5 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     public function load(): array
     {
         return $this->getDocTypes();
-    }
-
-    /**
-     * Sorts DocTypes by priority and falls back to name in case they are equal
-     *
-     * @example $listing->setOrder([[Listing::class, 'sortByPriority']]);
-     *
-     * @param DocType $a
-     * @param DocType $b
-     *
-     * @return int
-     */
-    public static function sortByPriority(DocType $a, DocType $b): int
-    {
-        if ($a->getPriority() === $b->getPriority()) {
-            return \strcasecmp($a->getName(), $b->getName());
-        }
-
-        return $a->getPriority() <=> $b->getPriority();
     }
 }
