@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.urlSlug");
+/**
+ * @private
+ */
 pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.data, {
 
     type: "urlSlug",

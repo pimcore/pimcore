@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.history");
+/**
+ * @private
+ */
 pimcore.element.history = Class.create({
 
     initialize:function () {

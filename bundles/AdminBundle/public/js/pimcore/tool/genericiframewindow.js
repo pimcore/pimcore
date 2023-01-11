@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.tool.genericiframewindow");
+/**
+ * @private
+ */
 pimcore.tool.genericiframewindow = Class.create({
 
     initialize: function (id, src, iconCls, title) {

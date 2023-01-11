@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.newsletters.addressSourceAdapters.csvList");
+/**
+ * @private
+ */
 pimcore.document.newsletters.addressSourceAdapters.csvList = Class.create({
 
     initialize: function(document, data) {

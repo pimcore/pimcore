@@ -83,8 +83,7 @@ final class ImageThumbnail
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public function generate(bool $deferredAllowed = true): void
     {

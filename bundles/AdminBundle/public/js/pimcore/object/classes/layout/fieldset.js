@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.layout.fieldset");
+/**
+ * @private
+ */
 pimcore.object.classes.layout.fieldset = Class.create(pimcore.object.classes.layout.layout, {
 
     type: "fieldset",

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.workflow.transitionPanel");
+/**
+ * @private
+ */
 pimcore.workflow.transitionPanel = Class.create({
 
     getClassName: function ()

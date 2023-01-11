@@ -362,8 +362,7 @@ final class Translation extends AbstractModel
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function importTranslationsFromFile(string $file, string $domain = self::DOMAIN_DEFAULT, bool $replaceExistingTranslations = true, array $languages = null, array $dialect = null): array
     {

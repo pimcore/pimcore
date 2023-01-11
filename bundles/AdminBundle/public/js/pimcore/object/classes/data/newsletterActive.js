@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.newsletterActive");
+/**
+ * @private
+ */
 pimcore.object.classes.data.newsletterActive = Class.create(pimcore.object.classes.data.data, {
 
     type: "newsletterActive",

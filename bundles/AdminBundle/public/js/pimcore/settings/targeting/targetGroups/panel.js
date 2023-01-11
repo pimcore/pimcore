@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.targeting.targetGroups.panel");
+/**
+ * @private
+ */
 pimcore.settings.targeting.targetGroups.panel= Class.create({
 
     initialize: function() {

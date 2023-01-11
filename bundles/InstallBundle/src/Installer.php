@@ -596,6 +596,10 @@ class Installer
 
         $db->executeQuery('SET FOREIGN_KEY_CHECKS=1;');
 
+        // close connections and collection garbage ... in order to avoid too many connections error
+        // when installing demos
+        \Pimcore::collectGarbage();
+
         return $errors;
     }
 
@@ -725,7 +729,6 @@ class Installer
             'documents',
             'emails',
             'gdpr_data_extractor',
-            'glossary',
             'http_errors',
             'notes_events',
             'objects',

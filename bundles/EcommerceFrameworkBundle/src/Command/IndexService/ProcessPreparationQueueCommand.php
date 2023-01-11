@@ -62,7 +62,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     {
         parent::configure();
 
-        self::configureParallelization($this);
+        self::configureCommand($this);
         self::configureTimeout($this);
 
         $this

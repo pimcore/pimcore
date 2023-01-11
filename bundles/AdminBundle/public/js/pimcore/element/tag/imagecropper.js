@@ -10,7 +10,11 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
+
 pimcore.registerNS("pimcore.element.tag.imagecropper");
+/**
+ * @private
+ */
 pimcore.element.tag.imagecropper = Class.create({
 
     initialize: function (imageId, data, saveCallback, config) {

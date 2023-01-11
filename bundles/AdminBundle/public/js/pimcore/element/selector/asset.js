@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.selector.asset");
+/**
+ * @private
+ */
 pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract, {
 
     initStore: function () {

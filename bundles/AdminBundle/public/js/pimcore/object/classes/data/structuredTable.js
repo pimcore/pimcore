@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.structuredTable");
+/**
+ * @private
+ */
 pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classes.data.data, {
 
     type: "structuredTable",

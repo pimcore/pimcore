@@ -24,6 +24,9 @@
 });
 
 pimcore.registerNS("pimcore.document.tree");
+/**
+ * @private
+ */
 pimcore.document.tree = Class.create({
 
     treeDataUrl: null,
