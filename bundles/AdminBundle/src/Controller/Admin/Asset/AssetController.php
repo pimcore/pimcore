@@ -15,8 +15,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 
-use DateTimeImmutable;
-use DateTimeZone;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
@@ -1119,8 +1117,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-
-        $fileExtension = File::getFileExtension($asset->getFilename());
 
         return $this->render(
             '@PimcoreAdmin/admin/asset/show_version_' . strtolower($asset->getType()) . '.html.twig',
