@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
+use Doctrine\DBAL\Exception;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Response;
@@ -109,9 +110,14 @@ class Assets extends Elements implements DataProviderInterface
      * @param string|null $sort
      *
      * @return array
+     * @throws Exception
      */
     public function searchData(int $id, string $firstname, string $lastname, string $email, int $start, int $limit, string $sort = null): array
     {
+        if (empty($id) && empty($firstname) && empty($lastname) && empty($email)) {
+            return ['data' => [], 'success' => true, 'total' => 0];
+        }
+
         $db = \Pimcore\Db::get();
         $queryBuilder = $db->createQueryBuilder();
         $query = $queryBuilder
