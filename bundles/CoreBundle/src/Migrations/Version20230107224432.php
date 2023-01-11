@@ -23,11 +23,7 @@ final class Version20230107224432 extends AbstractMigration
         $this->addSql("INSERT IGNORE INTO `users_permission_definitions` (`key`, `category`) VALUES ('xliff_import_export', 'Pimcore Xliff Bundle')");
 
         // Append to the comma separated list whenever the permissions text field has 'translation' but not already xliff_import_export
-        $this->addSql(
-            'UPDATE users SET permissions = CONCAT(permissions, \',xliff_import_export\')
-            WHERE (permissions LIKE \'%,translations,%\' OR TRIM(permissions) LIKE \'translations,%\' OR TRIM(permissions) LIKE \'%,translations\')
-            AND TRIM(permissions) NOT LIKE \'%xliff_import_export%\''
-        );
+        $this->addSql('UPDATE users SET permissions = CONCAT(permissions, \',xliff_import_export\') WHERE `permissions` REGEXP \'(?:^|,)translations(?:$|,)\'');
 
         if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\XliffBundle\\PimcoreXliffBundle', 'pimcore')) {
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\XliffBundle\\PimcoreXliffBundle', true, 'bool', 'pimcore');
@@ -42,10 +38,7 @@ final class Version20230107224432 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // Replace to remove permission when the comma is suffixed (eg. first of the list or any order)
-        $this->addSql('UPDATE users SET permissions = REPLACE(permissions, \'xliff_import_export,\', \'\')');
-        // Replace to remove permission when the comma is prefixed (eg. last of the comma separated list)
-        $this->addSql('UPDATE users SET permissions = REPLACE(permissions, \',xliff_import_export\', \'\')');
+        $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)xliff_import_export(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)xliff_import_export(?:$|,)\'');
 
         $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'xliff_import_export'");
 
