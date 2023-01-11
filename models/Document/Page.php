@@ -202,8 +202,6 @@ class Page extends TargetingDocument
             } elseif ($targetGroup instanceof TargetGroup) {
                 return $targetGroup->getId();
             }
-
-            return null;
         }, $targetGroups);
 
         $ids = array_filter($ids, function ($id) {
