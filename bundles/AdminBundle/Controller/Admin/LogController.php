@@ -266,9 +266,11 @@ class LogController extends AdminController implements KernelControllerEventInte
 
     /**
      * @param resource $fileHandle
+     *
      * @return StreamedResponse
      */
-    private function getResponseForFileHandle($fileHandle) {
+    private function getResponseForFileHandle($fileHandle)
+    {
         return new StreamedResponse(
             static function () use ($fileHandle) {
                 while (!feof($fileHandle)) {
