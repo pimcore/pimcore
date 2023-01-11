@@ -1084,4 +1084,6 @@ delete_data_from_it: This will also delete all data from it.
 display_mode: Display Mode
 display_mode_grid: Grid view
 display_mode_combo: Tag field
+display_mode_display: Display path reference
+display_mode_inline_search: Inline Search
 batch_confirmation: You are about to update %s dataObjects. Do you want to continue ?
