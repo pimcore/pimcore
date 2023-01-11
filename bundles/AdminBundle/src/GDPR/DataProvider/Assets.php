@@ -17,11 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
-use Pimcore\Db;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Element\Service;
-use Pimcore\Model\Search\Backend\Data;
+use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Response;
+use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 
 /**
  * @internal
@@ -115,9 +114,64 @@ class Assets extends Elements implements DataProviderInterface
      */
     public function searchData(int $id, string $firstname, string $lastname, string $email, int $start, int $limit, string $sort = null): array
     {
-        //TODO: implement
+        $db = \Pimcore\Db::get();
+        $queryBuilder = $db->createQueryBuilder();
+        $query = $queryBuilder
+            ->select('assets.id')
+            ->from('assets')
+            ->leftJoin('assets', 'assets_metadata', 'metadata', 'assets.id = metadata.cid')
+            ->where('assets.id = :id')
+            ->orWhere(
+                $queryBuilder->expr()->like('metadata.data', ':firstname')
+            )
+            ->orWhere(
+                $queryBuilder->expr()->like('metadata.data', ':lastname')
+            )
+            ->orWhere(
+                $queryBuilder->expr()->like('metadata.data', ':email')
+            )
+            ->setParameters([
+                'id' => $id,
+                'firstname' => $firstname,
+                'lastname' => $lastname,
+                'email' => $email
+            ])
+            ->setFirstResult($start)
+            ->setMaxResults($limit);
 
-        return [];
+        $sortingSettings = QueryParams::extractSortingSettings(['sort' => $sort]);
+        if ($sortingSettings['orderKey']) {
+            // we need a special mapping for classname as this is stored in subtype column
+            $sortMapping = [
+                'type' => 'subtype',
+            ];
+
+            $sort = $sortingSettings['orderKey'];
+            if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
+                $sort = $sortMapping[$sortingSettings['orderKey']];
+            }
+
+            $order = $sortingSettings['order'] ?? null;
+
+            $query->orderBy($sort, $order);
+        }
+
+        $query = $query->executeQuery();
+
+        $elements = [];
+        if($query->rowCount() > 0) {
+            foreach ($query->fetchAllAssociative() as $hit) {
+                $element = Element\Service::getElementById('asset', $hit['id']);
+
+                if ($element instanceof Asset) {
+                    $data = Asset\Service::gridAssetData($element);
+                    $data['permissions'] = $element->getUserPermissions();
+                    $elements[] = $data;
+                }
+            }
+        }
+
+        return ['data' => $elements, 'success' => true, 'total' => $query->rowCount()];
     }
 
     /**
