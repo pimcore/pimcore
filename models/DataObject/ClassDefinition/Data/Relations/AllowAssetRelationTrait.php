@@ -40,17 +40,14 @@ trait AllowAssetRelationTrait
         }
 
         $allowedAssetTypes = $this->getAssetTypes();
-        $allowedTypes = [];
         $allowed = true;
         if (!$this->getAssetsAllowed()) {
             $allowed = false;
         } elseif (count($allowedAssetTypes) > 0) {
             //check for allowed asset types
-            $allowedAssetTypes = array_column($allowedAssetTypes, 'assetTypes');
+            $allowedTypes = array_column($allowedAssetTypes, 'assetTypes');
 
-            if (!in_array($asset->getType(), $allowedTypes, true)) {
-                $allowed = false;
-            }
+            $allowed = in_array($asset->getType(), $allowedTypes, true);
         } else {
             //don't check if no allowed asset types set
         }
