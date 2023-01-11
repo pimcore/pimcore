@@ -15,6 +15,7 @@ Assumptions - change them to match your environment/distro:
 - PHP-FPM is configured to listen on the Socket `/var/run/php/pimcore.sock`. If your setup differs, change the `server` directive within the `upstream` block accordingly.
 - Before you change the order of location blocks, read [Understanding Nginx Server and Location Block Selection Algorithms](https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms)
 - Assets are set to expire after 14 days; adjust all `expires` directives to suit your needs.
+- Assets are NOT stored on a remote Storage like GCS or S3. If they are, see Section #Assets in the nginx configuration
 
 ### Development Environment
 
@@ -123,6 +124,8 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
+    # If you are using remote storages like S3 or Google Cloud Storage, this doesn't work. You either deactivate it and handle it in PHP
+    # or redirect these suffixes directly to your CDN URL. Additionally you should configure the frontend url prefixes accordingly, see: https://pimcore.com/docs/pimcore/current/Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/File_Storage_Setup.html
     location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
@@ -407,6 +410,8 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
+    # If you are using remote storages like S3 or Google Cloud Storage, this doesn't work. You either deactivate it and handle it in PHP
+    # or redirect these suffixes directly to your CDN URL. Additionally you should configure the frontend url prefixes accordingly, see: https://pimcore.com/docs/pimcore/current/Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/File_Storage_Setup.html
     location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
