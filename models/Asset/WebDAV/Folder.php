@@ -60,14 +60,7 @@ class Folder extends DAV\Collection
         return $children;
     }
 
-    /**
-     * @param Asset|string $name
-     *
-     * @return File|Folder
-     *
-     * @throws DAV\Exception\NotFound
-     */
-    public function getChild($name): File|Folder
+    public function getChild(Asset|string $name): File|Folder
     {
         $asset = null;
 
@@ -93,8 +86,6 @@ class Folder extends DAV\Collection
 
             return new Asset\WebDAV\File($asset);
         }
-
-        throw new DAV\Exception\NotFound('File not found: ' . $name);
     }
 
     public function getName(): string
