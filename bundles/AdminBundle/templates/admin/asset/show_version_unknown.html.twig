@@ -36,29 +36,14 @@
 </table>
 
 <script>
-    function formatDate (date) {
-        let month = '' + (date.getMonth() + 1),
-            day = '' + date.getDate(),
-            year = date.getFullYear(),
-            hour = '' + date.getHours(),
-            minute = '' + date.getMinutes()
-            seconds = '' + date.getSeconds();
-
-        if (month.length < 2) month = '0' + month;
-        if (day.length < 2) day = '0' + day;
-        if (hour.length < 2) hour = '0' + hour;
-        if (minute.length < 2) minute = '0' + minute;
-        if (seconds.length < 2) seconds = '0' + seconds;
-
-        return [year, month, day, hour, minute, seconds].join('-');
-    }
-
     document.addEventListener('DOMContentLoaded', function () {
         {% set filenamePrefix = asset.getFilename()|split('.')|slice(0,-1)|join('.') %}
         {% set filenameSuffix = asset.getFilename()|split('.')|last %}
-        var versionDate = new Date({{ version.getDate() }} * 1000);
-        document.getElementById('download-version-link').setAttribute('download', "{{ filenamePrefix }}-"+ formatDate(versionDate)+".{{ filenameSuffix }}");
+        let versionDate = Ext.Date.format(new Date({{ version.getDate() * 1000 }}), 'Y-m-d-H-i-s');
+        document.getElementById('download-version-link').setAttribute('download', "{{ filenamePrefix }}-" + versionDate + ".{{ filenameSuffix }}");
     }, false);
 </script>
+
+<script src="/bundles/pimcoreadmin/js/../extjs/js/ext-all.js" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
 </body>
 </html>
