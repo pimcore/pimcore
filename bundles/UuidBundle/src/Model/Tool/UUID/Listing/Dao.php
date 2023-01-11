@@ -13,15 +13,17 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\UUID\Listing;
+namespace Pimcore\Bundle\UuidBundle\Model\Tool\UUID\Listing;
 
+use Exception;
+use Pimcore\Bundle\UuidBundle\Model\Tool\UUID\Listing;
 use Pimcore\Model;
-use Pimcore\Model\Tool\UUID;
+use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Tool\UUID\Listing $model
+ * @property Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
@@ -50,7 +52,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . UUID\Dao::TABLE_NAME .' ' . $this->getCondition(), $this->model->getConditionVariables());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return 0;
         }
     }

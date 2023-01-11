@@ -6,16 +6,18 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class PimcoreUuidExtension extends Extension
+class PimcoreUuidExtension extends ConfigurableExtension
 {
 
-    public function load(array $configs, ContainerBuilder $container)
+    public function loadInternal(array $configs, ContainerBuilder $container)
     {
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../../config')
         );
         $loader->load('services.yaml');
+        $container->setParameter('pimcore_uuid.instance_identifier', $configs['instance_identifier']);
     }
 }

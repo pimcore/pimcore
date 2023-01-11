@@ -14,16 +14,17 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\UUID;
+namespace Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 
-use Pimcore\Model;
+use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
+use Pimcore\Model\Listing\AbstractListing;
 
 /**
  * @internal
  *
- * @method \Pimcore\Model\Tool\UUID\Listing\Dao getDao()
- * @method Model\Tool\UUID[] load()
+ * @method Listing\Dao getDao()
+ * @method UUID[] load()
  */
-class Listing extends Model\Listing\AbstractListing
+class Listing extends AbstractListing
 {
 }

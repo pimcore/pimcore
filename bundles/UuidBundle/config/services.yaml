@@ -3,3 +3,10 @@ services:
         autowire: true
         autoconfigure: true
         public: false
+    #
+    # INSTALLER
+    #
+    Pimcore\Bundle\UuidBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreUuidBundle')"
