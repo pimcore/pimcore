@@ -108,8 +108,6 @@ class Assets extends Elements implements DataProviderInterface
      * @param int $limit
      * @param string|null $sort
      *
-     * TODO: redefine - implement a "very simple" search
-     *
      * @return array
      */
     public function searchData(int $id, string $firstname, string $lastname, string $email, int $start, int $limit, string $sort = null): array
