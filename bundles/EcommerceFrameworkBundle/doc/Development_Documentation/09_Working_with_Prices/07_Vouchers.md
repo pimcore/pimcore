@@ -12,23 +12,23 @@ To use vouchers, following steps are necessary:
 A voucher series contains basic information of the voucher and settings for creating the voucher tokens. It is 
 represented by `OnlineShopVoucherSeries` objects. The corresponding class is added to the system during installation 
 of the E-Commerce Framework. 
-![Creating Voucher Series](../../img/voucher-series.png)
+![Creating Voucher Series](../img/voucher-series.png)
  
 Currently there are two types of vouchers supported - Single and Pattern.
 - Single: One single token is defined that can be used multiple times. 
-![Voucher Series Settings Single](../../img/voucher-series-single.jpg)
+![Voucher Series Settings Single](../img/voucher-series-single.jpg)
 - Pattern: Tokens are generated based on a certain pattern definition. 
-![Voucher Series Settings Pattern](../../img/voucher-series-pattern.png)
+![Voucher Series Settings Pattern](../img/voucher-series-pattern.png)
 
 
 #### Create tokens based on the `OnlineShopVoucherSeries`
 In the Pimcore Backend UI, each `OnlineShopVoucherSeries` object has an additional tab for managing the voucher tokens. 
 Depending on the token type there are different functions for managing the tokens and some statistics concerning the voucher. 
 - Simple: 'Activate' the token and specify how often it may be used. 
-![Create Tokens Simple](../../img/voucher-series-single-2.jpg)
+![Create Tokens Simple](../img/voucher-series-single-2.jpg)
 - Pattern: Create tokens based on the defined pattern, export created tokens as csv and get an overview of created tokens 
 and their usages. 
-![Create Tokens Pattern](../../img/voucher-series-pattern-2.png)
+![Create Tokens Pattern](../img/voucher-series-pattern-2.png)
 
 
 #### Create a Pricing Rule for the `OnlineShopVoucherSeries`
@@ -39,7 +39,7 @@ available actions for pricing rules can be used.
 The voucher token condition also can contain an error message, that can be shown if voucher token is added to cart, but
 not all other conditions of the pricing rule are met.  
 
-![Pricing Rule](../../img/voucher-series-rule.jpg)
+![Pricing Rule](../img/voucher-series-rule.jpg)
 
 
 #### Allow the User to Add a Token to his Cart

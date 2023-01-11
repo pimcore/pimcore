@@ -10,9 +10,9 @@ Recurring payment can for example be used to implement sequential payments like 
 
 ## Best Practice
 ### Bad Way
-![Recurring Payment Bad](../../img/recurring-payment-bad.png) 
+![Recurring Payment Bad](../img/recurring-payment-bad.png) 
 ### Good Way
-![Recurring Payment Good](../../img/recurring-payment-good.png) 
+![Recurring Payment Good](../img/recurring-payment-good.png) 
 
 ## Implementation
 The following code will briefly show how to perform a one time payment inside the checkout process for _Wirecard Checkout Page_ (former known as Qpay).

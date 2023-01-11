@@ -4,7 +4,7 @@ The following architecture overview shows available framework components. The co
 the `pimcore_ecommerce_framework` configuration node and a factory is responsible for resolving of the implementations. 
 For each component a custom implementation can be configured and used. 
 
-![bigpicture](../img/ecommerce-architecture.png)
+![bigpicture](img/ecommerce-architecture.png)
 
 # Separation of Concerns
 We try to separate different functionality and encapsulate them as good as possible in the different components. 

@@ -19,7 +19,7 @@ is not possible.
 The configuration concludes a TaxEntryCombinationMode (`combine` and `one after another`) and one or more tax entries
 with a name and a tax rate in percent.
 
-![tax classes](../../img/tax-class.png)
+![tax classes](../img/tax-class.png)
 
 The selection of the correct tax class (for a certain country and a certain product group) is done by the Price System
 (see next section).
