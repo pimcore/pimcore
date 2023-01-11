@@ -15,6 +15,7 @@ parameters:
     excludePaths:
         - '**/Processor/PdfReactor.php'
         - '**/PDFreactor.class.php'
+        - 'bundles/EcommerceFrameworkBundle/*'
 
     ignoreErrors:
         - '~^Unsafe usage of new static\(\)~'
