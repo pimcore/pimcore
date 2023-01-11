@@ -8,4 +8,7 @@ return [
     "Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\SimpleBackendSearchBundle\\PimcoreSimpleBackendSearchBundle" => [
+        "all" => TRUE
+    ],
 ];

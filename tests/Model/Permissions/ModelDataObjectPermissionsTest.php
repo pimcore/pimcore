@@ -17,12 +17,12 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Stub;
-use Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Controller\SearchController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Search;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
@@ -890,7 +890,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         /**
          * @var SearchController $controller
          */
-        $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Searchadmin\\SearchController', $user);
+        $controller = $this->buildController('\\Pimcore\\Bundle\\SimpleBackendSearchBundle\\Controller\\SearchController', $user);
 
         $request = new Request([
             'type' => 'object',
@@ -1047,7 +1047,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         /**
          * @var SearchController $controller
          */
-        $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Searchadmin\\SearchController', $user);
+        $controller = $this->buildController('\\Pimcore\\Bundle\\SimpleBackendSearchBundle\\Controller\\SearchController', $user);
 
         $request = new Request([
             'query' => $searchText,
