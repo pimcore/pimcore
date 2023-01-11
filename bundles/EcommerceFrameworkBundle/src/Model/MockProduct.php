@@ -18,18 +18,20 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;
 use Pimcore\Model\DataObject\Concrete;
-
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 /**
  * Mock Product class which should be used as a product when actual product is not available in the System.
  */
 class MockProduct extends Concrete implements ProductInterface, IndexableInterface, CheckoutableInterface
 {
-    public function getAvailabilitySystemName(): ?string
+    public function getAvailabilitySystemName(): string
     {
         return 'default';
     }
@@ -39,27 +41,29 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return false;
     }
 
-    public function getPriceSystemImplementation(): ?PriceSystemInterface
+    public function getPriceSystemImplementation(): PriceSystemInterface
     {
         return Factory::getInstance()->getPriceSystem($this->getPriceSystemName());
     }
 
-    public function getAvailabilitySystemImplementation(): ?AvailabilitySystemInterface
+    public function getAvailabilitySystemImplementation(): AvailabilitySystemInterface
     {
         return Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
     }
 
-    public function getOSPrice(int $quantityScale = 1): ?PriceInterface
+    public function getOSPrice(int $quantityScale = 1): PriceInterface
     {
-        return null;
+        /** @var EnvironmentInterface $environment */
+        $environment = \Pimcore::getKernel()->getContainer()->get(EnvironmentInterface::class);
+        return new Price(Decimal::create(0), $environment->getDefaultCurrency());
     }
 
-    public function getOSPriceInfo(int $quantityScale = 1): ?PriceInfoInterface
+    public function getOSPriceInfo(int $quantityScale = 1): PriceInfoInterface
     {
         return $this->getPriceSystemImplementation()->getPriceInfo($this, 0);
     }
 
-    public function getOSAvailabilityInfo(int $quantity = null): ?AvailabilityInterface
+    public function getOSAvailabilityInfo(int $quantity = null): AvailabilityInterface
     {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, 0);
     }
@@ -69,7 +73,7 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return false;
     }
 
-    public function getPriceSystemName(): ?string
+    public function getPriceSystemName(): string
     {
         return 'default';
     }
