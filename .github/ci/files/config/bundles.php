@@ -8,6 +8,9 @@ return [
     "Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\SeoBundle\\PimcoreSeoBundle" => [
+        "all" => TRUE
+    ],
     "Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle" => [
         "all" => TRUE
     ],

@@ -54,8 +54,8 @@ class LogController extends AdminController implements KernelControllerEventInte
         $qb
             ->select('*')
             ->from(ApplicationLoggerDb::TABLE_NAME)
-            ->setFirstResult($request->get('start', 0))
-            ->setMaxResults($request->get('limit', 50));
+            ->setFirstResult((int) $request->get('start', 0))
+            ->setMaxResults((int) $request->get('limit', 50));
 
         $sortingSettings = QueryParams::extractSortingSettings(array_merge(
             $request->request->all(),
