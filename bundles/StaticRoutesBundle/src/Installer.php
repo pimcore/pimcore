@@ -24,8 +24,9 @@ use Pimcore\Model\Tool\SettingsStore;
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const SETTINGS_STORE_SCOPE = 'pimcore_staticroutes';
+    protected const USER_PERMISSION_CATEGORY = 'Pimcore Static Routes Bundle';
     protected const USER_PERMISSIONS = [
-        'staticroutes'
+        'routes'
     ];
 
     public function install(): void
@@ -48,6 +49,7 @@ class Installer extends SettingsStoreAwareInstaller
         foreach (self::USER_PERMISSIONS as $permission) {
             $db->insert('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('category') => self::USER_PERMISSION_CATEGORY,
             ]);
         }
     }
