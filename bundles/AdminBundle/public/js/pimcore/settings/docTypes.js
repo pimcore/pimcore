@@ -152,10 +152,11 @@ pimcore.settings.document.doctypes = Class.create({
                 flex: 50,
                 sortable: true,
                 dataIndex: 'priority',
-                editor: new Ext.form.ComboBox({
-                    store: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                editor: new Ext.form.NumberField({
                     mode: "local",
                     editable: false,
+                    minValue: 0,
+                    decimalPrecision: 0,
                     triggerAction: "all"
                 })
             },
