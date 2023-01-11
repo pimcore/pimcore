@@ -242,7 +242,8 @@ class ObjectTest extends ModelTestCase
      * Values should be stored as they are passed. E.g. passing '' (empty string) to a setter function should be stored as such in the database.
      * Passing null to a setter function should be stored as null in the database.
      */
-    public function testEmptyValuesAsNullApi(): void {
+    public function testEmptyValuesAsNullApi(): void
+    {
         $db = Db::get();
 
         $object = TestHelper::createEmptyObject();
@@ -289,7 +290,8 @@ class ObjectTest extends ModelTestCase
     /**
      * In contrast to the api calls, empty strings and null values should be stored as null if the save was triggered from the backend ui.
      */
-    public function testEmptyValuesAsNullBackend(): void {
+    public function testEmptyValuesAsNullBackend(): void
+    {
         $object = TestHelper::createEmptyObject();
 
         //check empty strings

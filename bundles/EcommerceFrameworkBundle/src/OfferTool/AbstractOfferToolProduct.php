@@ -21,7 +21,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySyste
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;

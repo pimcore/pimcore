@@ -107,7 +107,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      */
     public function setLayoutDefinitions(?Layout $layoutDefinitions): static
     {
-        if($layoutDefinitions) {
+        if ($layoutDefinitions) {
             $this->layoutDefinitions = $layoutDefinitions;
 
             $this->fieldDefinitions = [];

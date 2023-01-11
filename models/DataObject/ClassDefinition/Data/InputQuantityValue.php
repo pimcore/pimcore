@@ -83,11 +83,11 @@ class InputQuantityValue extends QuantityValue
 
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?InputQuantityValueDataObject
     {
-        if(is_array($data)) {
+        if (is_array($data)) {
             $dataValue = $data['value'] === null || $data['value'] === '' ? null : $data['value'];
             $dataUnit = $data['unit'] === null || $data['unit'] == -1 ? null : $data['unit'];
 
-            if($dataValue || $dataUnit) {
+            if ($dataValue || $dataUnit) {
                 return $this->getNewDataObject($dataValue, $dataUnit);
             }
         }

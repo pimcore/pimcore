@@ -24,8 +24,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Model\DataObject\Concrete;
+
 /**
  * Mock Product class which should be used as a product when actual product is not available in the System.
  */
@@ -55,6 +56,7 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
     {
         /** @var EnvironmentInterface $environment */
         $environment = \Pimcore::getKernel()->getContainer()->get(EnvironmentInterface::class);
+
         return new Price(Decimal::create(0), $environment->getDefaultCurrency());
     }
 
