@@ -62,6 +62,8 @@ class Folder extends DAV\Collection
 
     /**
      * @param Asset|string $name
+     *
+     * @throws DAV\Exception\NotFound
      */
     public function getChild($name): File|Folder
     {
@@ -82,11 +84,15 @@ class Folder extends DAV\Collection
             $asset = $name;
         }
 
-        if ($asset instanceof Asset\Folder) {
-            return new Asset\WebDAV\Folder($asset);
+        if ($asset instanceof Asset) {
+            if ($asset instanceof Asset\Folder) {
+                return new Asset\WebDAV\Folder($asset);
+            }
+
+            return new Asset\WebDAV\File($asset);
         }
 
-        return new Asset\WebDAV\File($asset);
+        throw new DAV\Exception\NotFound('File not found: ' . $name);
     }
 
     public function getName(): string
