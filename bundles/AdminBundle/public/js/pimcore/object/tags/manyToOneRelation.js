@@ -37,6 +37,52 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             }
             return true;
         }.bind(this));
+
+        this.fieldConfig.visibleFields = "fullpath";
+
+        let storeConfig = {
+            data: this.data,
+            listeners: {
+                add: function () {
+                    this.dataChanged = true;
+                }.bind(this),
+                remove: function () {
+                    this.dataChanged = true;
+                }.bind(this),
+                clear: function () {
+                    this.dataChanged = true;
+                }.bind(this)
+            },
+        };
+
+        if (this.fieldConfig.displayMode == 'combo') {
+            storeConfig.proxy = {
+                type: 'ajax',
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list'),
+                extraParams: {
+                    fieldConfig: JSON.stringify(this.fieldConfig),
+                    data: JSON.stringify(
+                        (this.data.id && this.data.type) ? [{id: this.data.id, type: this.data.type}] : []
+                    )
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'options',
+                    successProperty: 'success',
+                    messageProperty: 'message'
+                }
+            };
+            storeConfig.fields = ['id', 'label'];
+            storeConfig.autoLoad = true;
+            storeConfig.listeners = {
+                beforeload: function(store) {
+                    store.getProxy().setExtraParam('unsavedChanges', this.object ? this.object.getSaveData().data : {});
+                    store.getProxy().setExtraParam('context', JSON.stringify(this.getContext()));
+                }.bind(this)
+            };
+        }
+
+        this.store = new Ext.data.JsonStore(storeConfig);
     },
 
 
@@ -77,9 +123,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
     getLayoutEdit: function () {
 
-        var href = {
-            name: this.fieldConfig.name
-        };
+        var href = {};
 
         var labelWidth = this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100;
 
@@ -95,10 +139,40 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             href.width = 300;
         }
 
-        href.cls = 'pimcore_droptarget_display_edit';
+        if (this.fieldConfig.displayMode == 'combo') {
+            Object.assign(href, {
+                store: this.store,
+                autoLoadOnValue: true,
+                labelWidth: labelWidth,
+                forceSelection: true,
+                height: 'auto',
+                value: this.data.id,
+                typeAhead: true,
+                filterPickList: true,
+                triggerAction: "all",
+                displayField: "label",
+                valueField: "id",
+                listeners: {
+                    change: function (comboBox, newValue) {
+                        if (newValue) {
+                            let record = this.store.getById(newValue);
+                            if (record) {
+                                this.dataChanged = true;
+                                this.data.id = record.get('id');
+                                this.data.type = record.get('type');
+                            }
+                        }
+                    }.bind(this)
+                }
+            });
 
-        href.fieldBodyCls = 'pimcore_droptarget_display x-form-trigger-wrap';
-        this.component = new Ext.form.field.Display(href);
+            this.component = Ext.create('Ext.form.field.ComboBox', href);
+        } else {
+            href.cls = 'pimcore_droptarget_display_edit';
+            href.fieldBodyCls = 'pimcore_droptarget_display x-form-trigger-wrap';
+            this.component = new Ext.form.field.Display(href);
+        }
+
         if (this.data.published === false) {
             this.component.addCls("strikeThrough");
         }
@@ -122,7 +196,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
-            el.getEl().on('dblclick', function(){
+            el.getEl().on('dblclick', function () {
                 var subtype = this.data.subtype;
                 if (this.data.type === "object" && this.data.subtype !== "folder" && this.data.subtype !== null) {
                     subtype = "object";
@@ -270,7 +344,18 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                     this.data.subtype = data["type"];
                     this.data.path = data["fullpath"];
                     this.dataChanged = true;
-                    this.component.setValue(data["fullpath"]);
+                    if (this.fieldConfig.displayMode == 'combo') {
+                        if (!this.component.getStore().getById(data.id)) {
+                            this.component.getStore().getProxy().setExtraParam('data', JSON.stringify([{id: this.data.id, type: this.data.type}]));
+                            this.component.getStore().on('load', function(){
+                                this.component.setValue(this.data.id);
+                            }.bind(this), this, { single: true });
+                            this.component.getStore().load();
+                        }
+                        this.component.setValue(this.data.id);
+                    } else {
+                        this.component.setValue(data["fullpath"]);
+                    }
                     this.requestNicePathData();
                 }
             } catch (e) {
@@ -308,7 +393,18 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             if (data.published === false) {
                 this.component.addCls("strikeThrough");
             }
-            this.component.setValue(data.path);
+            if (this.fieldConfig.displayMode == 'combo') {
+                if (!this.component.getStore().getById(data.id)) {
+                    this.component.getStore().getProxy().setExtraParam('data', JSON.stringify([{id: data.id, type: data.elementType}]));
+                    this.component.getStore().on('load', function(){
+                        this.component.setValue(data.id);
+                    }.bind(this), this, { single: true });
+                    this.component.getStore().load();
+                }
+                this.component.setValue(data.id);
+            } else {
+                this.component.setValue(data.path);
+            }
             this.requestNicePathData();
 
             return true;
@@ -429,7 +525,13 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         if (data.published === false) {
             this.component.addCls("strikeThrough");
         }
-        this.component.setValue(data.fullpath);
+
+        if (this.fieldConfig.displayMode == 'combo') {
+            this.component.setValue(data.id);
+        } else {
+            this.component.setValue(data.fullpath);
+        }
+
         this.requestNicePathData();
     },
 
@@ -554,7 +656,11 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                     this.component.removeCls("grid_nicepath_requested");
 
                     if (typeof responseData[target["nicePathKey"]] !== "undefined") {
-                        this.component.setValue(responseData[target["nicePathKey"]]);
+                        if (this.fieldConfig.displayMode == 'combo') {
+                            this.component.setValue(target["id"]);
+                        } else {
+                            this.component.setValue(responseData[target["nicePathKey"]]);
+                        }
                     }
 
                 }.bind(this, target)

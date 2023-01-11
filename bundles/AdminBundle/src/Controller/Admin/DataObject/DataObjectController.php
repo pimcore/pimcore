@@ -557,64 +557,139 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function optionsAction(Request $request): JsonResponse
     {
-        $fieldConfig = json_decode($request->get('fieldConfig'), true);
-
-        $options = [];
-        $classes = [];
-        if (count($fieldConfig['classes']) > 0) {
-            foreach ($fieldConfig['classes'] as $classData) {
-                $classes[] = $classData['classes'];
-            }
+        $fieldConfigData = json_decode($request->get('fieldConfig'), true);
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
+        if (!$loader->supports($fieldConfigData['fieldtype'])) {
+            return new JsonResponse([]);
         }
 
-        $visibleFields = is_array($fieldConfig['visibleFields']) ? $fieldConfig['visibleFields'] : explode(',', $fieldConfig['visibleFields']);
+        /** @var AbstractRelations $fieldConfig */
+        $fieldConfig = $loader->build($fieldConfigData['fieldtype']);
+        $fieldConfig->setValues($fieldConfigData);
+
+        $visibleFields = null;
+        if(method_exists($fieldConfig, 'getVisibleFields')) {
+            $visibleFields = is_array($fieldConfig->getVisibleFields()) ? $fieldConfig->getVisibleFields() : explode(',', $fieldConfig->getVisibleFields());
+        }
 
         if (!$visibleFields) {
             $visibleFields = ['id', 'fullpath', 'classname'];
         }
 
         $searchRequest = $request;
-        $searchRequest->request->set('type', 'object');
-        $searchRequest->request->set('subtype', 'object,variant');
+
+        $allowedTypes = [];
+        $subTypes = [];
+        $classes = [];
+        $allowClasses = true;
+
+        if ($fieldConfig->getAssetsAllowed()) {
+            $allowedTypes[] = 'asset';
+            $allowClasses = false;
+
+            foreach ($fieldConfig->getAssetTypes() as $subType) {
+                $subTypes[] = $subType['assetTypes'];
+            }
+        }
+
+        if (method_exists($fieldConfig, 'getDocumentsAllowed') && $fieldConfig->getDocumentsAllowed()) {
+            $allowedTypes[] = 'document';
+            $allowClasses = false;
+
+            foreach ($fieldConfig->getDocumentTypes() as $subType) {
+                $subTypes[] = $subType['documentTypes'];
+            }
+        }
+
+        if (method_exists($fieldConfig, 'getObjectsAllowed') && $fieldConfig->getObjectsAllowed()) {
+            $allowedTypes[] = 'object';
+
+            if ( $allowClasses ) {
+                $subTypes = array_merge($subTypes, ['object', 'variant']);
+
+                foreach ($fieldConfig->getClasses() as $classData) {
+                    $classes[] = $classData['classes'];
+                }
+            }
+        }
+
+        $searchRequest->request->set('type', implode(',', $allowedTypes));
+        $searchRequest->request->set('subtype', implode(',', $subTypes));
         $searchRequest->request->set('class', implode(',', $classes));
         $searchRequest->request->set('fields', $visibleFields);
         $searchRequest->attributes->set('unsavedChanges', $request->get('unsavedChanges', ''));
         $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
         $objects = json_decode($res->getContent(), true)['data'];
 
-        if ($request->get('data')) {
-            foreach (explode(',', $request->get('data')) as $preSelectedElementId) {
-                $objects[] = ['id' => $preSelectedElementId];
+        if($request->get('data')) {
+            foreach(json_decode($request->get('data'), true) as $preSelectedElement) {
+                if (isset($preSelectedElement['id'], $preSelectedElement['type'])) {
+                    $objects[] = ['id' => $preSelectedElement['id'], 'type' => $preSelectedElement['type']];
+                }
             }
         }
 
+        $options = [];
         foreach ($objects as $objectData) {
             $option = [
                 'id' => $objectData['id'],
+                'type' => $objectData['type']
             ];
 
             $visibleFieldValues = [];
             foreach ($visibleFields as $visibleField) {
+                if ($visibleField === 'fullpath' && $fieldConfig instanceof DataObject\ClassDefinition\PathFormatterAwareInterface) {
+                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
+                    if (!$object instanceof Element\ElementInterface) {
+                        continue;
+                    }
+
+                    $formatter = $fieldConfig->getPathFormatterClass();
+
+                    if (null !== $formatter) {
+                        $pathFormatter = DataObject\ClassDefinition\Helper\PathFormatterResolver::resolvePathFormatter(
+                            $fieldConfig->getPathFormatterClass()
+                        );
+
+                        if ($pathFormatter instanceof DataObject\ClassDefinition\PathFormatterInterface) {
+                            $formattedPath = $pathFormatter->formatPath(
+                                [],
+                                $object,
+                                [$objectData],
+                                [
+                                    'fd' => $fieldConfig,
+                                    'context' => []
+                                ]
+                            )[0] ?? null;
+                            if($formattedPath) {
+                                $objectData['fullpath'] = $formattedPath;
+                            }
+                        }
+                    }
+                }
+
                 if (isset($objectData[$visibleField])) {
                     $visibleFieldValues[] = $objectData[$visibleField];
                 } else {
+                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
+                    if (!$object instanceof Element\ElementInterface) {
+                        continue;
+                    }
+
                     $inheritValues = DataObject\Concrete::getGetInheritedValues();
                     $fallbackValues = DataObject\Localizedfield::getGetFallbackValues();
 
                     DataObject\Concrete::setGetInheritedValues(true);
                     DataObject\Localizedfield::setGetFallbackValues(true);
 
-                    $object = DataObject\Concrete::getById($objectData['id']);
-                    if (!$object instanceof DataObject\Concrete) {
-                        continue;
-                    }
-
                     $getter = 'get'.ucfirst($visibleField);
-                    $visibleFieldValue = $object->$getter();
-                    if (count($classes) > 1 && $visibleField == 'key') {
-                        $visibleFieldValue .= ' ('.$object->getClassName().')';
+                    if(method_exists($object, $getter)) {
+                        $visibleFieldValue = $object->$getter();
+                        if ($visibleField === 'key' && $object instanceof DataObject\Concrete && count($classes) > 1) {
+                            $visibleFieldValue .= ' ('.$object->getClassName().')';
+                        }
+                        $visibleFieldValues[] = $visibleFieldValue;
                     }
-                    $visibleFieldValues[] = $visibleFieldValue;
 
                     DataObject\Concrete::setGetInheritedValues($inheritValues);
                     DataObject\Localizedfield::setGetFallbackValues($fallbackValues);
