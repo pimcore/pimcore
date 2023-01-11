@@ -1701,7 +1701,7 @@ class Service extends Model\Element\Service
     {
         $objectData = [];
         $mappedFieldnames = [];
-        foreach ($fields as $index => $field) {
+        foreach ($fields as $field) {
             if (static::isHelperGridColumnConfig($field) && $validLanguages = static::expandGridColumnForExport($helperDefinitions, $field)) {
                 $currentLocale = $localeService->getLocale();
                 $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions);
@@ -1710,27 +1710,29 @@ class Service extends Model\Element\Service
                     $localeService->setLocale($validLanguage);
                     $fieldData = self::getCsvFieldData($currentLocale, $field, $object, $validLanguage, $helperDefinitions);
                     $localizedFieldKey = $field . '-' . $validLanguage;
-                    if (!isset($mappedFieldnames[$index])) {
-                        $mappedFieldnames[$index] = $mappedFieldnameBase . '-' . $validLanguage;
+                    if (!isset($mappedFieldnames[$localizedFieldKey])) {
+                        $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
                     }
-                    $objectData[$index] = ['fieldName' => $localizedFieldKey, 'data' => $fieldData];
+                    $objectData[$localizedFieldKey] = $fieldData;
                 }
 
                 $localeService->setLocale($currentLocale);
             } else {
                 $fieldData = self::getCsvFieldData($requestedLanguage, $field, $object, $requestedLanguage, $helperDefinitions);
-                if (!isset($mappedFieldnames[$index])) {
-                    $mappedFieldnames[$index] = self::mapFieldname($field, $helperDefinitions);
+                if (!isset($mappedFieldnames[$field])) {
+                    $mappedFieldnames[$field] = self::mapFieldname($field, $helperDefinitions);
                 }
 
-                $objectData[$index] = ['fieldName' => $field, 'data' => $fieldData];
+                $objectData[$field] = $fieldData;
             }
         }
 
         if ($returnMappedFieldNames) {
+            $tmp = [];
             foreach ($mappedFieldnames as $key => $value) {
-                $objectData[$key]['fieldName'] = $value;
+                $tmp[$value] = $objectData[$key];
             }
+            $objectData = $tmp;
         }
 
         $event = new DataObjectEvent($object, ['objectData' => $objectData,
@@ -1772,8 +1774,8 @@ class Service extends Model\Element\Service
                 if ($addTitles && empty($data)) {
                     $tmp = [];
                     $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, true, $context);
-                    foreach ($mapped as $columns) {
-                        $tmp[] = '"' . $columns['fieldName'] . '"';
+                    foreach ($mapped as $key => $value) {
+                        $tmp[] = '"' . $key . '"';
                     }
                     $data[] = $tmp;
                 }
