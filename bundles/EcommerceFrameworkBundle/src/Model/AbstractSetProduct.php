@@ -90,7 +90,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      */
     public function getOSPrice(int $quantityScale = null, array $products = null): PriceInterface
     {
-            return $this->getOSPriceInfo($quantityScale, $products)->getPrice();
+        return $this->getOSPriceInfo($quantityScale, $products)->getPrice();
     }
 
     /**
@@ -117,6 +117,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      * @param AbstractSetProductEntry[]|null $products
      *
      * @return AvailabilityInterface
+     *
      * @throws UnsupportedException
      */
     public function getOSAvailabilityInfo(int $quantity = null, ?array $products = null): AvailabilityInterface

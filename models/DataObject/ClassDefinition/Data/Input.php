@@ -158,7 +158,7 @@ class Input extends Data implements
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        if($data === '') {
+        if ($data === '') {
             return null;
         }
 
