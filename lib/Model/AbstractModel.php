@@ -167,11 +167,11 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @return $this
      */
-    public function setValues(array $data = []): static
+    public function setValues(array $data = [], bool $ignoreEmptyValues = false): static
     {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $key => $value) {
-                $this->setValue($key, $value);
+                $this->setValue($key, $value, $ignoreEmptyValues);
             }
         }
 
@@ -181,11 +181,12 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @return $this
      */
-    public function setValue(string $key, mixed $value): static
+    public function setValue(string $key, mixed $value, bool $ignoreEmptyValues = false): static
     {
         $method = 'set' . $key;
         if (strcasecmp($method, __FUNCTION__) !== 0
-            && isset($value)) {
+            && (isset($value) || !$ignoreEmptyValues)
+        ) {
             if (method_exists($this, $method)) {
                 $this->$method($value);
             } elseif (method_exists($this, 'set' . preg_replace('/^o_/', '', $key))) {

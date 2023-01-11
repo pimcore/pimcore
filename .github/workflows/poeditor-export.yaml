@@ -7,7 +7,9 @@ on:
         branches:
             - "[0-9]+.x"
         paths:
-            - 'bundles/CoreBundle/Resources/translations/en.*json'
+            - 'bundles/CoreBundle/Resources/translations/admin*.en.yaml'
+            - 'bundles/GlossaryBundle/translations/admin.en.yaml'
+            - 'bundles/SeoBundle/translations/admin.en.yaml'
 
 permissions:
   contents: read
