@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -235,5 +236,104 @@ class ObjectTest extends ModelTestCase
         $loadedNonConcrete = DataObject\Concrete::getById($nonConcreteObject->getId(), ['force' => true]);
 
         $this->assertNull($loadedNonConcrete, 'Loaded Concrete should be null.');
+    }
+
+    /**
+     * Values should be stored as they are passed. E.g. passing '' (empty string) to a setter function should be stored as such in the database.
+     * Passing null to a setter function should be stored as null in the database.
+     */
+    public function testEmptyValuesAsNullApi(): void {
+        $db = Db::get();
+
+        $object = TestHelper::createEmptyObject();
+        $object->setInput('InputValue');
+        $object->setTextarea('TextareaValue');
+        $object->setWysiwyg('WysiwygValue');
+        $object->setPassword('PasswordValue');
+        $iqv = new \Pimcore\Model\DataObject\Data\InputQuantityValue('1', 'km');
+        $object->setInputQuantityValue($iqv);
+        $object->save();
+
+        //check if empty strings are stored as empty strings in the database
+        $object->setInput('');
+        $object->setTextarea('');
+        $object->setWysiwyg('');
+        $object->setPassword('');
+        $iqv = new \Pimcore\Model\DataObject\Data\InputQuantityValue('', '');
+        $object->setInputQuantityValue($iqv);
+        $object->save();
+
+        $result = $db->fetchAllAssociative('select * from object_store_' . $object->getClassId() . ' where oo_id=' .  $object->getId());
+        $this->assertTrue($result[0]['input'] === '');
+        $this->assertTrue($result[0]['textarea'] === '');
+        $this->assertTrue($result[0]['wysiwyg'] === '');
+        $this->assertNull($result[0]['password']);
+        $this->assertTrue($result[0]['inputQuantityValue__value'] === '');
+
+        //check if null values are stored as null in the database
+        $object->setInput(null);
+        $object->setTextarea(null);
+        $object->setWysiwyg(null);
+        $object->setPassword(null);
+        $object->setInputQuantityValue(null);
+        $object->save();
+
+        $result = $db->fetchAllAssociative('select * from object_store_' . $object->getClassId() . ' where oo_id=' .  $object->getId());
+        $this->assertNull($result[0]['input']);
+        $this->assertNull($result[0]['textarea']);
+        $this->assertNull($result[0]['wysiwyg']);
+        $this->assertNull($result[0]['password']);
+        $this->assertNull($result[0]['inputQuantityValue__value']);
+    }
+
+    /**
+     * In contrast to the api calls, empty strings and null values should be stored as null if the save was triggered from the backend ui.
+     */
+    public function testEmptyValuesAsNullBackend(): void {
+        $object = TestHelper::createEmptyObject();
+
+        //check empty strings
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Input();
+        $value = $dataType->getDataFromEditmode('', $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Textarea();
+        $value = $dataType->getDataFromEditmode('', $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg();
+        $value = $dataType->getDataFromEditmode('', $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Password();
+        $value = $dataType->getDataFromEditmode('', $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue();
+        $iqv = ['value' => '', 'unit' => ''];
+        $value = $dataType->getDataFromEditmode($iqv, $object);
+        $this->assertNull($value);
+
+        //check null values
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Input();
+        $value = $dataType->getDataFromEditmode(null, $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Textarea();
+        $value = $dataType->getDataFromEditmode(null, $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg();
+        $value = $dataType->getDataFromEditmode(null, $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Password();
+        $value = $dataType->getDataFromEditmode(null, $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue();
+        $iqv = ['value' => null, 'unit' => null];
+        $value = $dataType->getDataFromEditmode($iqv, $object);
+        $this->assertNull($value);
     }
 }

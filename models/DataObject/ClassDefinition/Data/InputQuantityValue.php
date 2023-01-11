@@ -81,21 +81,15 @@ class InputQuantityValue extends QuantityValue
         return null;
     }
 
-    /**
-     * @param mixed $data
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return InputQuantityValueDataObject|null
-     */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?InputQuantityValueDataObject
     {
-        if ($data['value'] || $data['unit']) {
-            if (empty($data['unit']) || $data['unit'] == -1) {
-                return $this->getNewDataObject($data['value'], null);
-            }
+        if(is_array($data)) {
+            $dataValue = $data['value'] === null || $data['value'] === '' ? null : $data['value'];
+            $dataUnit = $data['unit'] === null || $data['unit'] == -1 ? null : $data['unit'];
 
-            return $this->getNewDataObject($data['value'], $data['unit']);
+            if($dataValue || $dataUnit) {
+                return $this->getNewDataObject($dataValue, $dataUnit);
+            }
         }
 
         return null;
