@@ -23,6 +23,7 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
  */
 class Installer extends SettingsStoreAwareInstaller
 {
+    protected const USER_PERMISSION_CATEGORY = 'Pimcore Xliff Bundle';
     protected const USER_PERMISSIONS = [
         'xliff_import_export'
     ];
@@ -46,6 +47,7 @@ class Installer extends SettingsStoreAwareInstaller
         foreach (self::USER_PERMISSIONS as $permission) {
             $db->insert('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('category') => self::USER_PERMISSION_CATEGORY,
             ]);
         }
     }
