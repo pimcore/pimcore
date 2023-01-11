@@ -23,7 +23,7 @@ final class Version20230111074323 extends AbstractMigration
         // Append to the comma separated list whenever the permissions text field has 'translation' but not already word_export
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('word_export', 'Pimcore Word Export Bundle')");
 
-        $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',word_export\') WHERE `permissions` REGEXP \'(?:|,)translations(?:|,)\'');
+        $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',word_export\') WHERE `permissions` REGEXP \'(?:^|,)translations(?:$|,)\'');
 
         if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', 'pimcore')) {
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', true, 'bool', 'pimcore');
@@ -38,7 +38,7 @@ final class Version20230111074323 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // Replace to remove permission when the comma is suffixed (eg. first of the list or any order)
-        $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:|,)word_export(?:|,)\', \'\') WHERE `permissions` REGEXP \'(?:|,)word_export(?:|,)\'');
+        $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)word_export(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)word_export(?:$|,)\'');
 
         $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'word_export'");
     }
