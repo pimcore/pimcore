@@ -3,7 +3,7 @@
 The GDPR Data Extractor is a tool that helps the user to full fill the *right of access by the data subject* and helps to
 export data that is stored for a specific person in different data sources like `data objects`, `sent mails`, `Pimcore backend 
 user`, etc. For details on the usage see our user docs chapter 
-[Data Protection and GDPR](../../User_Documentation/10_Administration_of_Pimcore/01_Data_Protection_and_GDPR.md).
+[Data Protection and GDPR](../../User_Documentation/13_Administration_of_Pimcore/01_Data_Protection_and_GDPR.md).
 
 ![GDPR Data Extractor](../img/gdpr-data-extractor.jpg)
 
@@ -60,7 +60,7 @@ exports can be attached or external data sources can be included.
 To do so, following steps are necessary: 
 
 1) Create a custom implementation of 
-[`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/GDPR/DataProvider/DataProviderInterface.php#L20). 
+[`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/src/GDPR/DataProvider/DataProviderInterface.php#L20). 
 The following functions need to be implemented:
 
     * `getSortPriority()` - Returns sort priority for the tabs - higher is sorted first.

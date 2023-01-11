@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,7 +26,7 @@ class Geopolygon implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function marshal($value, $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             $resultItems = [];
@@ -44,7 +45,7 @@ class Geopolygon implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function unmarshal($value, $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if ($value['value'] ?? null) {
             $value = json_decode($value['value'], true);

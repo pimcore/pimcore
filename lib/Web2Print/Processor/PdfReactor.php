@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -37,7 +38,7 @@ class PdfReactor extends Processor
      *
      * @return array
      */
-    protected function getConfig($config)
+    protected function getConfig(object $config): array
     {
         $config = (object)$config;
         $web2PrintConfig = Config::getWeb2PrintConfig();
@@ -67,10 +68,7 @@ class PdfReactor extends Processor
         return $reactorConfig;
     }
 
-    /**
-     * @return \com\realobjects\pdfreactor\webservice\client\PDFreactor
-     */
-    protected function getClient()
+    protected function getClient(): \com\realobjects\pdfreactor\webservice\client\PDFreactor
     {
         $web2PrintConfig = Config::getWeb2PrintConfig();
         $this->includeApi();
@@ -88,9 +86,9 @@ class PdfReactor extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
-    public function getPdfFromString($html, $params = [], $returnFilePath = false)
+    public function getPdfFromString(string $html, array $params = [], bool $returnFilePath = false): string
     {
         $pdfreactor = $this->getClient();
 
@@ -117,9 +115,9 @@ class PdfReactor extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
-    protected function buildPdf(Document\PrintAbstract $document, $config)
+    protected function buildPdf(Document\PrintAbstract $document, object $config): string
     {
         $this->includeApi();
 
@@ -167,9 +165,9 @@ class PdfReactor extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
-    public function getProcessingOptions()
+    public function getProcessingOptions(): array
     {
         $this->includeApi();
 

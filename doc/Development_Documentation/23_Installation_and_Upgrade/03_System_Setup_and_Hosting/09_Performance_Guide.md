@@ -237,6 +237,8 @@ framework:
                 provider: 'redis://localhost'
 ```
 
+Beware that element data gets added to the cache on first request of the data. To warm-up the cache after clearing the cache (e.g. caused by a deployment), execute `bin/console pimcore:cache:warming` so users experience optimal performance even on first access of an element.
+
 #### Benchmarks:
 On running command, `ab -n 100 -c 20 http://localhost/en/shop/Products/Cars~c390`
 

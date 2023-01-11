@@ -39,5 +39,5 @@ interface LoaderInterface
      *
      * @return mixed
      */
-    public function build(string $name, array $params = []);
+    public function build(string $name, array $params = []): mixed;
 }

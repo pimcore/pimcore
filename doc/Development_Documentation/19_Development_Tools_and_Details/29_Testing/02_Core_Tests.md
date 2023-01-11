@@ -32,7 +32,7 @@ After finishing, shutdown docker containers and cleanup volumes with `docker-com
 
 This will run all tests.
 ```
-docker-compose exec php-fpm vendor/bin/codecept run -c . -vvv
+docker-compose exec php vendor/bin/codecept run -c . -vvv
 ```
 
 #### Only run a specific suite
@@ -40,7 +40,7 @@ docker-compose exec php-fpm vendor/bin/codecept run -c . -vvv
 Only runs the `Model` tests. For a list of suites see the list below.
 
 ```
-docker-compose exec php-fpm vendor/bin/codecept run -c . Model -vvv
+docker-compose exec php vendor/bin/codecept run -c . Model -vvv
 ```
 
 #### Only run a specific test group
@@ -49,7 +49,7 @@ This can be a subset of a suite. You also have the option to provide a comma-sep
 For an overview of available groups see the table below.
 
 ```
-docker-compose exec php-fpm vendor/bin/codecept run -c . Model -vvv -g dataTypeLocal
+docker-compose exec php vendor/bin/codecept run -c . Model -vvv -g dataTypeLocal
 ```
 
 
@@ -59,7 +59,7 @@ For Redis, the `PIMCORE_TEST_REDIS_DSN` option is mandatory. If not using the Re
 to a value that does not conflict to any other Redis DBs on your system.
 
 ```
-docker-compose exec php-fpm vendor/bin/codecept run -c . Cache
+docker-compose exec php vendor/bin/codecept run -c . Cache
 ```
 
 
@@ -69,14 +69,14 @@ Don't forget to check logfiles (especially `test.log` and `php.log`) inside the 
 
 #### Important Environment Variables
 
-Meaningful default values are set in the shipped `docker-compose.yml`. Can be modified as needed. 
+Meaningful default values are set in the shipped `docker-compose.yaml`. Can be modified as needed. 
 
-| Env Variable           | Example          | Comment                                                     |
-|------------------------|------------------|-------------------------------------------------------------|
-| APP_ENV                | test             | Test environment                         |
-| PIMCORE_TEST           | 1                | **important** this will switch several directories (like /var/classes) |
-| PIMCORE_TEST_SKIP_DB   | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
-| PIMCORE_TEST_REDIS_DSN | redis://localhost| **required for REDIS tests**   |
+| Env Variable           | Example          | Comment                                                                                                                         |
+|------------------------|------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| APP_ENV                | test             | Test environment                                                                                                                |
+| PIMCORE_TEST           | 1                | **important** this will switch several directories (like /var/classes)                                                          |
+| PIMCORE_TEST_SKIP_DB   | 1                | Skips DB setup. This does not skip the db-related tests but it<br/>reduces the setup time for tests that don't need a database. |
+| PIMCORE_TEST_REDIS_DSN | redis://localhost| **required for REDIS tests**                                                                                                    |
 
 #### Suites
 
@@ -127,7 +127,7 @@ See [Codeception Commands](https://codeception.com/docs/reference/Commands) for 
 In general, contributions in form extending and improving tests is highly appreciated.
 Please follow the structure and principles described above.
 
-If you have the extend the data model then please have a look at [Model.php](https://github.com/pimcore/pimcore/blob/11.x/tests/_support/Helper/Model.php).
+If you have the extend the data model then please have a look at [Model.php](https://github.com/pimcore/pimcore/blob/11.x/tests/Support/Helper/Model.php).
 There you will find all class definitions used for testing.
 
 ### Perform PHPStan Analysis

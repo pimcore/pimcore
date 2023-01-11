@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,34 +16,25 @@
 
 namespace Pimcore\Templating;
 
+use Pimcore\Config;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
+use Twig\Extension\SandboxExtension;
 
 /**
  * @internal
  */
 class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 {
-    /**
-     * @var Environment
-     */
-    protected $twig;
+    protected bool $delegate = false;
 
     /**
-     * @var bool
-     */
-    protected $delegate = false;
-
-    /**
-     * @param Environment $twig
      * @param EngineInterface[] $engines
      */
-    public function __construct(Environment $twig, array $engines = [])
+    public function __construct(protected Environment $twig, protected Config $config, array $engines = [])
     {
-        $this->twig = $twig;
-
         parent::__construct($engines);
     }
 
@@ -84,9 +76,6 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
         }
     }
 
-    /**
-     * @param bool $delegate
-     */
     public function setDelegate(bool $delegate)
     {
         $this->delegate = $delegate;
@@ -95,17 +84,27 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     /**
      * @return bool $delegate
      */
-    public function isDelegate()
+    public function isDelegate(): bool
     {
         return $this->delegate;
     }
 
-    /**
-     * @return Environment
-     */
-    public function getTwigEnvironment(): Environment
+    public function getTwigEnvironment(bool $sandboxed = false): Environment
     {
+        if ($sandboxed) {
+            /** @var SandboxExtension $sandboxExtension */
+            $sandboxExtension = $this->twig->getExtension(SandboxExtension::class);
+            $sandboxExtension->enableSandbox();
+        }
+
         return $this->twig;
+    }
+
+    public function disableSandboxExtensionFromTwigEnvironment(): void
+    {
+        /** @var SandboxExtension $sandboxExtension */
+        $sandboxExtension = $this->twig->getExtension(SandboxExtension::class);
+        $sandboxExtension->disableSandbox();
     }
 
     /**
@@ -117,7 +116,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
      *
      * @throws \Exception
      */
-    public function renderResponse($view, array $parameters = [], Response $response = null)
+    public function renderResponse(string $view, array $parameters = [], Response $response = null): Response
     {
         if (null === $response) {
             $response = new Response();

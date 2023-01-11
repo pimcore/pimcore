@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,15 +23,9 @@ class ResolveElementEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var string
-     */
-    protected $id;
+    protected string $id;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type;
 
     /**
      * ElementEvent constructor.
@@ -39,40 +34,28 @@ class ResolveElementEvent extends Event
      * @param string $id
      * @param array $arguments
      */
-    public function __construct($type, $id, array $arguments = [])
+    public function __construct(string $type, string $id, array $arguments = [])
     {
         $this->type = $type;
         $this->id = $id;
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     */
     public function setId(string $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     */
     public function setType(string $type): void
     {
         $this->type = $type;

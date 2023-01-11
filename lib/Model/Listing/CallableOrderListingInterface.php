@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,13 +18,7 @@ namespace Pimcore\Model\Listing;
 
 interface CallableOrderListingInterface
 {
-    /**
-     * @param callable|null $order
-     */
-    public function setOrder($order);
+    public function setOrder(?callable $order);
 
-    /**
-     * @return callable|null
-     */
-    public function getOrder();
+    public function getOrder(): ?callable;
 }

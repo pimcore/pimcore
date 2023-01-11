@@ -37,20 +37,11 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
     use DataObject\Traits\CompositeIndexTrait;
 
-    /**
-     * @var array|null
-     */
-    protected $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
-    /**
-     * @var DataObject\Concrete\Dao\InheritanceHelper
-     */
-    protected $inheritanceHelper;
+    protected DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper;
 
-    /**
-     * @return string
-     */
-    public function getTableName()
+    public function getTableName(): string
     {
         $context = $this->model->getContext();
         if ($context) {
@@ -69,14 +60,11 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_localized_data_'.$this->model->getClass()->getId();
     }
 
-    /**
-     * @return string
-     */
-    public function getQueryTableName()
+    public function getQueryTableName(): string
     {
         $context = $this->model->getContext();
         if ($context) {
-            $containerType = $context['containerType'];
+            $containerType = $context['containerType'] ?? null;
             if ($containerType == 'objectbrick') {
                 $containerKey = $context['containerKey'];
 
@@ -92,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save($params = [])
+    public function save(array $params = [])
     {
         $context = $this->model->getContext();
 
@@ -457,7 +445,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return bool force update
      */
-    public function delete($deleteQuery = true, $isUpdate = true)
+    public function delete(bool $deleteQuery = true, bool $isUpdate = true): bool
     {
         if ($isUpdate && !DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
             return false;
@@ -584,11 +572,7 @@ class Dao extends Model\Dao\AbstractDao
         return false;
     }
 
-    /**
-     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     */
-    public function load($object, $params = [])
+    public function load(DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = [])
     {
         $validLanguages = Tool::getValidLanguages();
         foreach ($validLanguages as &$language) {
@@ -704,7 +688,7 @@ class Dao extends Model\Dao\AbstractDao
          *
          * @return string
          */
-        $getFallbackValue = function ($field, array $languages) use (&$getFallbackValue, $db) {
+        $getFallbackValue = function (string $field, array $languages) use (&$getFallbackValue, $db) {
             // init
             $lang = array_shift($languages);
 
@@ -772,7 +756,7 @@ CREATE OR REPLACE VIEW `object_localized_{$this->model->getClass()->getId()}_{$l
 SELECT {$selectViewFields}
 FROM `{$defaultTable}`
     JOIN `objects`
-        ON (`objects`.`o_id` = `{$defaultTable}`.`oo_id`)
+        ON (`objects`.`id` = `{$defaultTable}`.`oo_id`)
 QUERY;
 
                 // join fallback languages
@@ -798,7 +782,7 @@ QUERY;
      *
      * @throws \Exception
      */
-    public function createUpdateTable($params = [])
+    public function createUpdateTable(array $params = [])
     {
         $table = $this->getTableName();
 
@@ -814,7 +798,7 @@ QUERY;
               INDEX `index` (`index`),
               INDEX `fieldname` (`fieldname`),
               INDEX `language` (`language`),
-              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
             ) DEFAULT CHARSET=utf8mb4;'
             );
         } else {
@@ -824,7 +808,7 @@ QUERY;
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`,`language`),
               INDEX `language` (`language`),
-              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
             ) DEFAULT CHARSET=utf8mb4;'
             );
         }
@@ -890,7 +874,7 @@ QUERY;
                       `language` varchar(10) NOT NULL DEFAULT '',
                       PRIMARY KEY (`ooo_id`,`language`),
                       INDEX `language` (`language`),
-                      CONSTRAINT `".self::getForeignKeyName($queryTable, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+                      CONSTRAINT `".self::getForeignKeyName($queryTable, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
                     ) DEFAULT CHARSET=utf8mb4;'
                 );
 
@@ -958,17 +942,10 @@ QUERY;
             $this->createLocalizedViews();
         }
 
-        $this->tableDefinitions = null;
+        $this->tableDefinitions = [];
     }
 
-    /**
-     * @param string $fieldname
-     * @param string $language
-     * @param array $extraParams
-     *
-     * @return array
-     */
-    public function getFieldDefinitionParams(string $fieldname, string $language, $extraParams = [])
+    public function getFieldDefinitionParams(string $fieldname, string $language, array $extraParams = []): array
     {
         return array_merge(
             [

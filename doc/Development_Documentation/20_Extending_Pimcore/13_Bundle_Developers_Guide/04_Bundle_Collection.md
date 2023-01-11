@@ -1,7 +1,7 @@
 # Bundle Collection
 
 The `BundleCollection` is a container which is used to register every used bundle. As Pimcore gathers bundles from multiple 
-sources - registered via code in `App\Kernel` and registered through the extension manager config, it makes sense to have 
+sources - registered via code in `App\Kernel` and registered through `config/bundles.php` config, it makes sense to have 
 a unified API how bundles can be registered. 
 
 While Symfony's standard edition uses a `registerBundles` method building an array of bundles to load, Pimcore expects you

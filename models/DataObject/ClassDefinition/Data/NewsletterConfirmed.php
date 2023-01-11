@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,5 +27,5 @@ class NewsletterConfirmed extends Model\DataObject\ClassDefinition\Data\Checkbox
      *
      * @var string
      */
-    public $fieldtype = 'newsletterConfirmed';
+    public string $fieldtype = 'newsletterConfirmed';
 }

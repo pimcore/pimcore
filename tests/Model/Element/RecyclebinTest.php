@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,8 +19,8 @@ namespace Pimcore\Tests\Model\Element;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model\User;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
 
 /**
@@ -31,7 +32,7 @@ use Pimcore\Tool\Storage;
  */
 class RecyclebinTest extends ModelTestCase
 {
-    protected $user;
+    protected User $user;
 
     public function setUp(): void
     {
@@ -45,7 +46,7 @@ class RecyclebinTest extends ModelTestCase
     {
         if (!$user = User::getByName('test-user')) {
             $user = new User();
-            $user->setAdmin(1);
+            $user->setAdmin(true);
             $user
                 ->setName('test-user')
                 ->save();
@@ -107,7 +108,7 @@ class RecyclebinTest extends ModelTestCase
         $parent->delete();
 
         $recycledItems = new Item\Listing();
-        $recycledItems->setCondition('path = ?', $parentPath);
+        $recycledItems->setCondition('`path` = ?', $parentPath);
 
         $this->assertEquals(2, $recycledItems->current()->getAmount(), 'Expected 2 recycled item');
 
@@ -116,7 +117,7 @@ class RecyclebinTest extends ModelTestCase
         $recycledContent = unserialize($storage->read($recycledItems->current()->getStoreageFile()));
 
         $this->assertEquals($parentId, $recycledContent->getId(), 'Expected recycled parent object ID');
-        $this->assertCount(1, $recycledContent->getChildren(DataObject::$types, true), 'Expected recycled child object');
+        $this->assertCount(1, $recycledContent->getChildren(DataObject::$types, true)->getData(), 'Expected recycled child object');
 
         //restore deleted items (parent + child)
         $recycledItems->current()->restore();
@@ -156,7 +157,7 @@ class RecyclebinTest extends ModelTestCase
 
         //restore deleted items (parent + child)
         $recycledItems = new Item\Listing();
-        $recycledItems->setCondition('path = ?', $sourceObjectPath);
+        $recycledItems->setCondition('`path` = ?', $sourceObjectPath);
         $recycledItems->current()->restore();
 
         //load relation and check if relation loads correctly

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,28 +23,17 @@ use Pimcore\Migrations\FilteredMigrationsRepository;
 use Pimcore\Migrations\FilteredTableMetadataStorage;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 {
-    /**
-     * @var BundleInterface
-     */
-    protected $bundle;
+    protected BundleInterface $bundle;
 
-    /**
-     * @var FilteredMigrationsRepository
-     */
-    protected $migrationRepository;
+    protected FilteredMigrationsRepository $migrationRepository;
 
-    /**
-     * @var FilteredTableMetadataStorage
-     */
-    protected $tableMetadataStorage;
+    protected FilteredTableMetadataStorage $tableMetadataStorage;
 
-    /**
-     * @var DependencyFactory
-     */
-    protected $dependencyFactory;
+    protected DependencyFactory $dependencyFactory;
 
     public function __construct(BundleInterface $bundle)
     {
@@ -51,31 +41,19 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         $this->bundle = $bundle;
     }
 
-    /**
-     * @param FilteredMigrationsRepository $migrationRepository
-     *
-     * @required
-     */
+    #[Required]
     public function setMigrationRepository(FilteredMigrationsRepository $migrationRepository): void
     {
         $this->migrationRepository = $migrationRepository;
     }
 
-    /**
-     * @param FilteredTableMetadataStorage $tableMetadataStorage
-     *
-     * @required
-     */
+    #[Required]
     public function setTableMetadataStorage(FilteredTableMetadataStorage $tableMetadataStorage): void
     {
         $this->tableMetadataStorage = $tableMetadataStorage;
     }
 
-    /**
-     * @param DependencyFactory $dependencyFactory
-     *
-     * @required
-     */
+    #[Required]
     public function setDependencyFactory(DependencyFactory $dependencyFactory): void
     {
         $this->dependencyFactory = $dependencyFactory;
@@ -145,28 +123,19 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         $this->markUninstalled();
     }
 
-    /**
-     * @return bool
-     */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         $installSetting = SettingsStore::get($this->getSettingsStoreInstallationId(), 'pimcore');
 
         return (bool) ($installSetting ? $installSetting->getData() : false);
     }
 
-    /**
-     * @return bool
-     */
-    public function canBeInstalled()
+    public function canBeInstalled(): bool
     {
         return !$this->isInstalled();
     }
 
-    /**
-     * @return bool
-     */
-    public function canBeUninstalled()
+    public function canBeUninstalled(): bool
     {
         return $this->isInstalled();
     }

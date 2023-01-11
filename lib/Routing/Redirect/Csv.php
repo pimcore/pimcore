@@ -34,10 +34,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class Csv
 {
-    /**
-     * @var array
-     */
-    private $columns = [
+    private array $columns = [
         'id',
         'type',
         'source',
@@ -52,15 +49,9 @@ class Csv
         'expiry',
     ];
 
-    /**
-     * @var ArrayNormalizer
-     */
-    private $importNormalizer;
+    private ?ArrayNormalizer $importNormalizer = null;
 
-    /**
-     * @var OptionsResolver
-     */
-    private $importResolver;
+    private ?OptionsResolver $importResolver = null;
 
     /**
      * @param Redirect\Listing $list
@@ -175,11 +166,6 @@ class Csv
         return $stats;
     }
 
-    /**
-     * @param array $record
-     *
-     * @return array
-     */
     private function preprocessImportData(array $record): array
     {
         // normalize data to types (string, int, ...) or null
@@ -191,13 +177,7 @@ class Csv
         return $data;
     }
 
-    /**
-     * @param array $data
-     * @param array $stats
-     *
-     * @return mixed|Redirect|null
-     */
-    private function processImportData(array $data, array &$stats)
+    private function processImportData(array $data, array &$stats): void
     {
         $redirect = null;
 
@@ -218,13 +198,8 @@ class Csv
 
         $redirect->setValues($data);
         $redirect->save();
-
-        return $redirect;
     }
 
-    /**
-     * @return ArrayNormalizer
-     */
     private function getImportNormalizer(): ArrayNormalizer
     {
         if (null !== $this->importNormalizer) {
@@ -286,9 +261,6 @@ class Csv
         return $this->importNormalizer;
     }
 
-    /**
-     * @return OptionsResolver
-     */
     private function getImportResolver(): OptionsResolver
     {
         if (null !== $this->importResolver) {

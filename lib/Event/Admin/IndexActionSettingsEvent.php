@@ -21,10 +21,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class IndexActionSettingsEvent extends Event
 {
-    /**
-     * @var array
-     */
-    private $settings;
+    private array $settings;
 
     public function __construct(array $settings)
     {
@@ -41,11 +38,7 @@ class IndexActionSettingsEvent extends Event
         $this->settings = $settings;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     */
-    public function addSetting(string $key, $value)
+    public function addSetting(string $key, mixed $value)
     {
         $this->settings[$key] = $value;
     }

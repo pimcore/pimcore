@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,11 +23,7 @@ namespace Pimcore\Workflow\Notes;
  */
 trait NotesAwareTrait
 {
-    /**
-     *
-     * @var null|CustomHtmlServiceInterface
-     */
-    protected $customHtmlService = null;
+    protected ?CustomHtmlServiceInterface $customHtmlService = null;
 
     public function getNotes(): ?array
     {
@@ -72,7 +69,7 @@ trait NotesAwareTrait
      *
      * @param CustomHtmlServiceInterface $customHtmlService
      */
-    public function setCustomHtmlService(CustomHtmlServiceInterface $customHtmlService)
+    public function setCustomHtmlService(CustomHtmlServiceInterface $customHtmlService): void
     {
         if ($customHtmlService instanceof AbstractCustomHtmlService) {
             if ($this->getName() == $customHtmlService->getTransitionName()) {

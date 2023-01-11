@@ -25,13 +25,10 @@ use Pimcore\Model\Document;
  */
 class Dao extends Document\PrintAbstract\Dao
 {
-    /**
-     * @return string
-     */
-    public function getLastedChildModificationDate()
+    public function getLastedChildModificationDate(): string
     {
         $path = $this->model->getFullPath();
 
-        return $this->db->fetchOne('SELECT modificationDate FROM documents WHERE path LIKE ? ORDER BY modificationDate DESC LIMIT 0,1', [Helper::escapeLike($path) . '%']);
+        return $this->db->fetchOne('SELECT modificationDate FROM documents WHERE `path` like ? ORDER BY modificationDate DESC LIMIT 0,1', [Helper::escapeLike($path) . '%']);
     }
 }

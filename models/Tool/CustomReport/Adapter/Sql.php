@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,21 +26,11 @@ class Sql extends AbstractAdapter
     /**
      * {@inheritdoc}
      */
-    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null)
+    public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array
     {
         $db = Db::get();
 
-        if ($fields === null) {
-            $columns = $this->fullConfig->getColumnConfiguration();
-            $fields = [];
-            foreach ($columns as $column) {
-                if ($column['export'] || $column['display'] || $column['order'] || ($column['columnAction'] ?? null)) {
-                    $fields[] = $column['name'];
-                }
-            }
-        }
-
-        $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
+        $baseQuery = $this->getBaseQuery($filters ?? [], $fields ?? [], false, $drillDownFilters ?? []);
         $data = [];
         $total = 0;
 
@@ -65,7 +56,7 @@ class Sql extends AbstractAdapter
     /**
      * {@inheritdoc}
      */
-    public function getColumns($configuration)
+    public function getColumns(?\stdClass $configuration): array
     {
         $sql = '';
         if ($configuration) {
@@ -94,7 +85,7 @@ class Sql extends AbstractAdapter
      *
      * @return string
      */
-    protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null)
+    protected function buildQueryString(\stdClass $config, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): string
     {
         $config = (array)$config;
         $sql = '';
@@ -117,7 +108,7 @@ class Sql extends AbstractAdapter
         }
 
         if (!empty($config['where'])) {
-            if (strpos(strtoupper(trim($config['where'])), 'WHERE') === 0) {
+            if (str_starts_with(strtoupper(trim($config['where'])), 'WHERE')) {
                 $config['where'] = preg_replace('/^\s*WHERE\s*/', '', $config['where']);
             }
             $sql .= ' WHERE (' . str_replace("\n", ' ', $config['where']) . ')';
@@ -156,7 +147,7 @@ class Sql extends AbstractAdapter
      *
      * @return array|null
      */
-    protected function getBaseQuery($filters, $fields, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null)
+    protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): ?array
     {
         $db = Db::get();
         $condition = ['1 = 1'];
@@ -164,11 +155,11 @@ class Sql extends AbstractAdapter
         $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
 
         $data = '';
-
+        $extractAllFields = empty($fields);
         if ($filters) {
             if (is_array($filters)) {
                 foreach ($filters as $filter) {
-                    $value = $filter['value'] ;
+                    $value = $filter['value'] ?? null;
                     $type = $filter['type'];
                     $operator = $filter['operator'];
                     $maxValue = null;
@@ -220,8 +211,8 @@ class Sql extends AbstractAdapter
 
             $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
 
-            if ($fields) {
-                $data = 'SELECT `' . implode('`, `', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+            if ($fields && !$extractAllFields) {
+                $data = 'SELECT `' . implode('`,`', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             } else {
                 $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             }
@@ -238,7 +229,7 @@ class Sql extends AbstractAdapter
     /**
      * {@inheritdoc}
      */
-    public function getAvailableOptions($filters, $field, $drillDownFilters)
+    public function getAvailableOptions(array $filters, string $field, array $drillDownFilters): array
     {
         $db = Db::get();
         $baseQuery = $this->getBaseQuery($filters, [$field], false, $drillDownFilters);

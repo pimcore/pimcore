@@ -13,11 +13,8 @@ parameters:
         container_xml_path: var/cache/test/App_KernelTestDebugContainer.xml
 
     excludePaths:
-        - '**/External/AdminerController.php'
         - '**/Processor/PdfReactor.php'
         - '**/PDFreactor.class.php'
-        - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
-        - '**/bundles/AdminBundle/Security/Authenticator/AdminAbstractAuthenticator.php'
 
     ignoreErrors:
         - '~^Unsafe usage of new static\(\)~'

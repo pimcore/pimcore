@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,12 +36,12 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     /**
      * @var \Pimcore\Model\Metadata\Predefined[]|null
      */
-    protected $definitions = null;
+    protected ?array $definitions = null;
 
     /**
      * @return \Pimcore\Model\Metadata\Predefined[]
      */
-    public function getDefinitions()
+    public function getDefinitions(): array
     {
         if ($this->definitions === null) {
             $this->getDao()->loadList();
@@ -54,7 +55,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      *
      * @return $this
      */
-    public function setDefinitions($definitions)
+    public function setDefinitions(?array $definitions): static
     {
         $this->definitions = $definitions;
 
@@ -69,7 +70,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      *
      * @throws \Exception
      */
-    public static function getByTargetType($type, $subTypes = null)
+    public static function getByTargetType(string $type, array|string $subTypes = null): ?array
     {
         if ($type !== 'asset') {
             throw new \Exception('other types than assets are currently not supported');
@@ -100,38 +101,38 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
 
     /**
      * @param string $key
-     * @param string $language
+     * @param string|null $language
      * @param string|null $targetSubtype
      *
      * @return \Pimcore\Model\Metadata\Predefined|null
      */
-    public static function getByKeyAndLanguage($key, $language, $targetSubtype = null)
+    public static function getByKeyAndLanguage(string $key, ?string $language, string $targetSubtype = null): ?\Pimcore\Model\Metadata\Predefined
     {
         $list = new self();
 
-        $definitions = array_filter($list->load(), function ($item) use ($key, $language, $targetSubtype) {
+        foreach ($list->load() as $item) {
             if ($item->getName() != $key) {
-                return false;
+                continue;
             }
 
             if ($language && $language != $item->getLanguage()) {
-                return false;
+                continue;
             }
 
             if ($targetSubtype && $targetSubtype != $item->getTargetSubtype()) {
-                return false;
+                continue;
             }
 
-            return true;
-        });
+            return $item;
+        }
 
-        return $definitions[0] ?? null;
+        return null;
     }
 
     /**
      * @return \Pimcore\Model\Metadata\Predefined[]
      */
-    public function load()
+    public function load(): array
     {
         return $this->getDefinitions();
     }

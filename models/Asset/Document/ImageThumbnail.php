@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -40,28 +41,23 @@ final class ImageThumbnail
      *
      * @var int
      */
-    protected $page = 1;
+    protected int $page = 1;
 
     /**
      * @param Model\Asset\Document|null $asset
-     * @param string|array|Image\Thumbnail\Config $config
+     * @param string|array|Image\Thumbnail\Config|null $config
      * @param int $page
      * @param bool $deferred
      */
-    public function __construct($asset, $config = null, $page = 1, $deferred = true)
+    public function __construct(?Model\Asset\Document $asset, array|string|Image\Thumbnail\Config $config = null, int $page = 1, bool $deferred = true)
     {
         $this->asset = $asset;
-        $this->config = $this->createConfig($config);
+        $this->config = $this->createConfig($config ?? []);
         $this->page = $page;
         $this->deferred = $deferred;
     }
 
-    /**
-     * @param bool $deferredAllowed
-     *
-     * @return string
-     */
-    public function getPath($deferredAllowed = true)
+    public function getPath(bool $deferredAllowed = true): string
     {
         $pathReference = $this->getPathReference($deferredAllowed);
         $path = $this->convertToWebPath($pathReference);
@@ -76,10 +72,7 @@ final class ImageThumbnail
         return $path;
     }
 
-    /**
-     * @param bool $deferredAllowed
-     */
-    public function generate($deferredAllowed = true)
+    public function generate(bool $deferredAllowed = true): void
     {
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
@@ -171,12 +164,7 @@ final class ImageThumbnail
         return $this->getPath();
     }
 
-    /**
-     * @param string|array|Image\Thumbnail\Config $selector
-     *
-     * @return Image\Thumbnail\Config
-     */
-    protected function createConfig($selector)
+    protected function createConfig(array|string|Image\Thumbnail\Config $selector): Image\Thumbnail\Config
     {
         $config = Image\Thumbnail\Config::getByAutoDetect($selector);
 

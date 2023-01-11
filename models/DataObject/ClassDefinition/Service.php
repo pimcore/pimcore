@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,14 +19,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 use Pimcore\Tool;
 
 class Service
 {
-    /**
-     * @var bool
-     */
-    private static $doRemoveDynamicOptions = false;
+    private static bool $doRemoveDynamicOptions = false;
 
     /**
      * @internal
@@ -47,13 +46,7 @@ class Service
         self::$doRemoveDynamicOptions = $doRemoveDynamicOptions;
     }
 
-    /**
-     *
-     * @param  DataObject\ClassDefinition $class
-     *
-     * @return string
-     */
-    public static function generateClassDefinitionJson($class)
+    public static function generateClassDefinitionJson(DataObject\ClassDefinition $class): string
     {
         $class = clone $class;
         if ($class->layoutDefinitions instanceof Layout) {
@@ -63,16 +56,12 @@ class Service
         self::setDoRemoveDynamicOptions(true);
         $data = json_decode(json_encode($class));
         self::setDoRemoveDynamicOptions(false);
-        unset($data->name);
-        unset($data->creationDate);
-        unset($data->userOwner);
-        unset($data->userModification);
-        unset($data->fieldDefinitions);
+        unset($data->name, $data->creationDate, $data->userOwner, $data->userModification, $data->fieldDefinitions);
 
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    private static function removeDynamicOptionsFromLayoutDefinition(&$layout)
+    private static function removeDynamicOptionsFromLayoutDefinition(mixed &$layout): void
     {
         if (method_exists($layout, 'resolveBlockedVars')) {
             $blockedVars = $layout->resolveBlockedVars();
@@ -102,15 +91,7 @@ class Service
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     * @param string $json
-     * @param bool $throwException
-     * @param bool $ignoreId
-     *
-     * @return bool
-     */
-    public static function importClassDefinitionFromJson($class, $json, $throwException = false, $ignoreId = false)
+    public static function importClassDefinitionFromJson(DataObject\ClassDefinition $class, string $json, bool $throwException = false, bool $ignoreId = false): bool
     {
         $userId = 0;
         $user = \Pimcore\Tool\Admin::getCurrentUser();
@@ -147,7 +128,6 @@ class Service
             'listingParentClass',
             'useTraits',
             'listingUseTraits',
-            'previewUrl',
             'propertyVisibility',
             'linkGeneratorReference',
             'previewGeneratorReference',
@@ -168,28 +148,22 @@ class Service
         return true;
     }
 
-    /**
-     * @param DataObject\Fieldcollection\Definition $fieldCollection
-     *
-     * @return string
-     */
-    public static function generateFieldCollectionJson($fieldCollection)
+    public static function generateFieldCollectionJson(DataObject\Fieldcollection\Definition $fieldCollection): string
     {
         $fieldCollection = clone $fieldCollection;
-        $fieldCollection->setKey(null);
-        $fieldCollection->setFieldDefinitions([]);
+        if ($fieldCollection->layoutDefinitions instanceof Layout) {
+            self::removeDynamicOptionsFromLayoutDefinition($fieldCollection->layoutDefinitions);
+        }
 
-        return json_encode($fieldCollection, JSON_PRETTY_PRINT);
+        self::setDoRemoveDynamicOptions(true);
+        $data = json_decode(json_encode($fieldCollection));
+        self::setDoRemoveDynamicOptions(false);
+        unset($data->key, $data->fieldDefinitions);
+
+        return json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    /**
-     * @param DataObject\Fieldcollection\Definition $fieldCollection
-     * @param string $json
-     * @param bool $throwException
-     *
-     * @return bool
-     */
-    public static function importFieldCollectionFromJson($fieldCollection, $json, $throwException = false)
+    public static function importFieldCollectionFromJson(DataObject\Fieldcollection\Definition $fieldCollection, string $json, bool $throwException = false): bool
     {
         $importData = json_decode($json, true);
 
@@ -216,16 +190,9 @@ class Service
         return true;
     }
 
-    /**
-     * @param DataObject\Objectbrick\Definition $objectBrick
-     *
-     * @return string
-     */
-    public static function generateObjectBrickJson($objectBrick)
+    public static function generateObjectBrickJson(DataObject\Objectbrick\Definition $objectBrick): string
     {
         $objectBrick = clone $objectBrick;
-        $objectBrick->setKey(null);
-        $objectBrick->setFieldDefinitions([]);
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
@@ -243,17 +210,34 @@ class Service
             }
         }
 
-        return json_encode($objectBrick, JSON_PRETTY_PRINT);
+        if ($objectBrick->layoutDefinitions instanceof Layout) {
+            self::removeDynamicOptionsFromLayoutDefinition($objectBrick->layoutDefinitions);
+        }
+        self::setDoRemoveDynamicOptions(true);
+        $data = json_decode(json_encode($objectBrick));
+        self::setDoRemoveDynamicOptions(false);
+        unset($data->key, $data->fieldDefinitions);
+
+        return json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    /**
-     * @param DataObject\Objectbrick\Definition $objectBrick
-     * @param string $json
-     * @param bool $throwException
-     *
-     * @return bool
-     */
-    public static function importObjectBrickFromJson($objectBrick, $json, $throwException = false)
+    public static function generateCustomLayoutJson(CustomLayout $customLayout): string
+    {
+        if ($layoutDefinitions = $customLayout->getLayoutDefinitions()) {
+            self::removeDynamicOptionsFromLayoutDefinition($layoutDefinitions);
+        }
+        self::setDoRemoveDynamicOptions(true);
+        $data = [
+            'description' => $customLayout->getDescription(),
+            'layoutDefinitions' => json_decode(json_encode($layoutDefinitions)),
+            'default' => $customLayout->getDefault() ?: 0,
+        ];
+        self::setDoRemoveDynamicOptions(false);
+
+        return json_encode($data, JSON_PRETTY_PRINT);
+    }
+
+    public static function importObjectBrickFromJson(DataObject\Objectbrick\Definition $objectBrick, string $json, bool $throwException = false): bool
     {
         $importData = json_decode($json, true);
 
@@ -301,19 +285,24 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $array
      * @param bool $throwException
      * @param bool $insideLocalizedField
      *
-     * @return Data|Layout|false
+     * @return EncryptedField|bool|Data|Layout
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    public static function generateLayoutTreeFromArray($array, $throwException = false, $insideLocalizedField = false)
+    public static function generateLayoutTreeFromArray(array $array, bool $throwException = false, bool $insideLocalizedField = false): Data\EncryptedField|bool|Data|Layout
     {
         if (is_array($array) && count($array) > 0) {
+            if ($title = $array['title'] ?? false) {
+                if (preg_match('/<.+?>/', $title)) {
+                    throw new \Exception('not a valid title:' . htmlentities($title));
+                }
+            }
             if ($name = $array['name'] ?? false) {
                 if (preg_match('/<.+?>/', $name)) {
                     throw new \Exception('not a valid name:' . htmlentities($name));
@@ -330,8 +319,9 @@ class Service
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;
 
                 if (method_exists($item, 'addChild')) { // allows children
+                    //TODO remove childs in Pimcore 12
                     $item->setValues($array, ['children', 'childs']);
-                    $children = $array['children'] ?? $array['childs'] ?? [];
+                    $children = $array['children'] ?? [];
 
                     if (!empty($children['datatype'])) {
                         $childO = self::generateLayoutTreeFromArray($children, $throwException, $insideLocalizedField);
@@ -376,11 +366,7 @@ class Service
         return false;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $blockedVars
-     */
-    private static function removeDynamicOptionsFromArray(&$data, $blockedVars)
+    private static function removeDynamicOptionsFromArray(array &$data, array $blockedVars): void
     {
         foreach ($blockedVars as $blockedVar) {
             if (isset($data[$blockedVar])) {
@@ -390,12 +376,12 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $tableDefinitions
      * @param array $tableNames
+     *
+     * @internal
      */
-    public static function updateTableDefinitions(&$tableDefinitions, $tableNames)
+    public static function updateTableDefinitions(array &$tableDefinitions, array $tableNames): void
     {
         if (!is_array($tableDefinitions)) {
             $tableDefinitions = [];
@@ -421,8 +407,6 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $tableDefinitions
      * @param string $table
      * @param string $colName
@@ -431,8 +415,10 @@ class Service
      * @param string $null
      *
      * @return bool
+     *
+     * @internal
      */
-    public static function skipColumn($tableDefinitions, $table, $colName, $type, $default, $null)
+    public static function skipColumn(array $tableDefinitions, string $table, string $colName, string $type, string $default, string $null): bool
     {
         $tableDefinition = $tableDefinitions[$table] ?? false;
         if ($tableDefinition) {
@@ -454,16 +440,16 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $implementsParts
      * @param string|null $newInterfaces A comma separated list of interfaces
      *
      * @return string
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    public static function buildImplementsInterfacesCode($implementsParts, ?string $newInterfaces)
+    public static function buildImplementsInterfacesCode(array $implementsParts, ?string $newInterfaces): string
     {
         if ($newInterfaces) {
             $customParts = explode(',', $newInterfaces);
@@ -485,16 +471,16 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $useParts
      * @param string|null $newTraits
      *
      * @return string
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    public static function buildUseTraitsCode($useParts, ?string $newTraits)
+    public static function buildUseTraitsCode(array $useParts, ?string $newTraits): string
     {
         if (!is_array($useParts)) {
             $useParts = [];
@@ -516,15 +502,15 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $useParts
      *
      * @return string
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    public static function buildUseCode($useParts)
+    public static function buildUseCode(array $useParts): string
     {
         if ($useParts) {
             $result = '';
@@ -537,5 +523,46 @@ class Service
         }
 
         return '';
+    }
+
+    /**
+     * @internal
+     */
+    public static function buildFieldConstantsCode(Data ...$fieldDefinitions): string
+    {
+        $fieldConstants = '';
+        foreach ($fieldDefinitions as $fieldDefinition) {
+            if (!$fieldDefinition instanceof Data\Localizedfields) {
+                $fieldConstants .= static::buildFieldConstantCode($fieldDefinition) . "\n";
+
+                continue;
+            }
+
+            foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldDefinition) {
+                $fieldConstants .= static::buildFieldConstantCode($localizedFieldDefinition) . "\n";
+            }
+        }
+
+        return $fieldConstants . "\n";
+    }
+
+    /**
+     * @internal
+     */
+    public static function buildFieldConstantCode(Data $fieldDefinition): string
+    {
+        $nameUpperSnakeCase = static::camelCaseToUpperSnakeCase($fieldDefinition->getName());
+
+        return 'public const FIELD_' . $nameUpperSnakeCase . ' = \'' . $fieldDefinition->getName() . '\';';
+    }
+
+    /**
+     * @internal
+     */
+    public static function camelCaseToUpperSnakeCase(string $camelCase): string
+    {
+        $snakeCase = ltrim(preg_replace('/[A-Z]+/', '_\\0', $camelCase), '_');
+
+        return strtoupper($snakeCase);
     }
 }

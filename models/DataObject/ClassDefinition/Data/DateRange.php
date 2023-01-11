@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,6 +22,7 @@ use Carbon\CarbonPeriod;
 use Exception;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -31,6 +33,7 @@ class DateRange extends Data implements
     VarExporterInterface,
     NormalizerInterface
 {
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -41,7 +44,7 @@ class DateRange extends Data implements
      *
      * @var string
      */
-    public $fieldtype = 'dateRange';
+    public string $fieldtype = 'dateRange';
 
     /**
      * Type for the column to query
@@ -68,32 +71,11 @@ class DateRange extends Data implements
     ];
 
     /**
-     * @internal
-     */
-    public string|int $width = 0;
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): void
-    {
-        if (\is_numeric($width)) {
-            $width = (int) $width;
-        }
-
-        $this->width = $width;
-    }
-
-    /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param CarbonPeriod|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource($data, $object = null, $params = []): array
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $startDateKey = $this->getName() . '__start_date';
         $endDateKey = $this->getName() . '__end_date';
@@ -124,13 +106,11 @@ class DateRange extends Data implements
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource($data, $object = null, $params = []): ?CarbonPeriod
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
         $startDateKey = $this->getName() . '__start_date';
         $endDateKey = $this->getName() . '__end_date';
@@ -142,11 +122,6 @@ class DateRange extends Data implements
 
             $startDate = $this->getDateFromTimestamp($data[$startDateKey]);
             $endDate = $this->getDateFromTimestamp($data[$endDateKey]);
-
-            if (!$startDate instanceof Carbon) {
-                return null;
-            }
-
             $period = CarbonPeriod::create()->setStartDate($startDate);
 
             if ($endDate instanceof Carbon) {
@@ -160,29 +135,30 @@ class DateRange extends Data implements
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param CarbonPeriod|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource($data, $object = null, $params = []): array
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param CarbonPeriod|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     *
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof CarbonPeriod) {
             $endDate = $data->getEndDate();
@@ -197,23 +173,19 @@ class DateRange extends Data implements
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return CarbonPeriod|null
+     *
+     * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode($data, $object = null, $params = []): ?CarbonPeriod
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
         if (\is_array($data) && isset($data['start_date'], $data['end_date'])) {
             $startDate = $this->getDateFromTimestamp($data['start_date'] / 1000);
             $endDate = $this->getDateFromTimestamp($data['end_date'] / 1000);
-
-            if (!$startDate instanceof Carbon || !$endDate instanceof Carbon) {
-                return null;
-            }
 
             return CarbonPeriod::create($startDate, $endDate);
         }
@@ -240,15 +212,16 @@ class DateRange extends Data implements
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param CarbonPeriod|null $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     *
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof CarbonPeriod) {
             return $data->toString();
@@ -262,7 +235,7 @@ class DateRange extends Data implements
      *
      * @throws Exception
      */
-    public function getForCsvExport($object, $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
@@ -275,10 +248,7 @@ class DateRange extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getDataForSearchIndex($object, $params = []): string
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
@@ -286,15 +256,12 @@ class DateRange extends Data implements
     /**
      * {@inheritDoc}
      */
-    public function isDiffChangeAllowed($object, $params = []): bool
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof CarbonPeriod) {
             return $value->toArray();
@@ -303,10 +270,7 @@ class DateRange extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?CarbonPeriod
     {
         if (\is_array($value)) {
             return CarbonPeriod::create(\reset($value), \end($value));
@@ -318,7 +282,7 @@ class DateRange extends Data implements
     /**
      * {@inheritDoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = []): void
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
 
@@ -354,14 +318,7 @@ class DateRange extends Data implements
         }
     }
 
-    /**
-     *
-     * @param CarbonPeriod|null $oldValue
-     * @param CarbonPeriod|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
             return true;
@@ -391,33 +348,21 @@ class DateRange extends Data implements
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . CarbonPeriod::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . CarbonPeriod::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . CarbonPeriod::class . '|null';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . CarbonPeriod::class . '|null';
@@ -426,7 +371,7 @@ class DateRange extends Data implements
     /**
      * Returns a CarbonInterface for the given timestamp.
      */
-    private function getDateFromTimestamp(int $timestamp): CarbonInterface
+    private function getDateFromTimestamp(float|int|string $timestamp): Carbon
     {
         $date = new Carbon();
         $date->setTimestamp($timestamp);

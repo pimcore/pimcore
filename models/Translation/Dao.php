@@ -33,9 +33,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     const TABLE_PREFIX = 'translations_';
 
-    /**
-     * @return string
-     */
     public function getDatabaseTableName(): string
     {
         return self::TABLE_PREFIX . $this->model->getDomain();
@@ -48,7 +45,7 @@ class Dao extends Model\Dao\AbstractDao
      * @throws NotFoundResourceException
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getByKey($key, $languages = null)
+    public function getByKey(string $key, array $languages = null)
     {
         if (is_array($languages)) {
             $sql = 'SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key
@@ -132,7 +129,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getAvailableLanguages()
+    public function getAvailableLanguages(): array
     {
         $l = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
         $languages = [];
@@ -149,7 +146,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getAvailableDomains()
+    public function getAvailableDomains(): array
     {
         $domainTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'translations_%'");
         $domains = [];

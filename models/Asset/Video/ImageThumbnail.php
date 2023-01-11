@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -37,14 +38,14 @@ final class ImageThumbnail
      *
      * @var int|null
      */
-    protected $timeOffset;
+    protected ?int $timeOffset = null;
 
     /**
      * @internal
      *
      * @var Image|null
      */
-    protected $imageAsset;
+    protected ?Image $imageAsset = null;
 
     /**
      * @param Model\Asset\Video|null $asset
@@ -53,21 +54,16 @@ final class ImageThumbnail
      * @param Image|null $imageAsset
      * @param bool $deferred
      */
-    public function __construct($asset, $config = null, $timeOffset = null, $imageAsset = null, $deferred = true)
+    public function __construct(?Model\Asset\Video $asset, array|string|Image\Thumbnail\Config $config = null, int $timeOffset = null, Image $imageAsset = null, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->timeOffset = $timeOffset;
         $this->imageAsset = $imageAsset;
-        $this->config = $this->createConfig($config);
+        $this->config = $this->createConfig($config ?? []);
         $this->deferred = $deferred;
     }
 
-    /**
-     * @param bool $deferredAllowed
-     *
-     * @return string
-     */
-    public function getPath($deferredAllowed = true)
+    public function getPath(bool $deferredAllowed = true): string
     {
         $pathReference = $this->getPathReference($deferredAllowed);
         $path = $this->convertToWebPath($pathReference);
@@ -83,13 +79,13 @@ final class ImageThumbnail
     }
 
     /**
-     * @internal
-     *
      * @param bool $deferredAllowed
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    public function generate($deferredAllowed = true)
+    public function generate(bool $deferredAllowed = true): void
     {
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
@@ -140,7 +136,7 @@ final class ImageThumbnail
                         $tempFile = File::getLocalTempFilePath('png');
                         $converter = \Pimcore\Video::getInstance();
                         $converter->load($this->asset->getLocalFile());
-                        $converter->saveImage($tempFile, $timeOffset);
+                        $converter->saveImage($tempFile, (int) $timeOffset);
                         $generated = true;
                         $storage->write($cacheFilePath, file_get_contents($tempFile));
                         unlink($tempFile);
@@ -197,13 +193,9 @@ final class ImageThumbnail
     }
 
     /**
-     * @param string|array|Image\Thumbnail\Config $selector
-     *
-     * @return Image\Thumbnail\Config|null
-     *
      * @throws Model\Exception\NotFoundException
      */
-    private function createConfig($selector)
+    private function createConfig(array|string|Image\Thumbnail\Config $selector): ?Image\Thumbnail\Config
     {
         $thumbnailConfig = Image\Thumbnail\Config::getByAutoDetect($selector);
 
@@ -222,7 +214,7 @@ final class ImageThumbnail
      *
      * @throws \Exception
      */
-    public function getMedia($name, $highRes = 1)
+    public function getMedia(string $name, int $highRes = 1): ?Image\Thumbnail
     {
         $thumbConfig = $this->getConfig();
         if ($thumbConfig instanceof Image\Thumbnail\Config) {

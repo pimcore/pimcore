@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,19 +27,10 @@ use Symfony\Component\Lock\LockInterface;
  */
 class LowQualityImagePreviewTask implements TaskInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var LockInterface
-     */
-    private $lock;
+    private LockInterface $lock;
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function __construct(LoggerInterface $logger, LockFactory $lockFactory)
     {
         $this->logger = $logger;
@@ -55,7 +47,7 @@ class LowQualityImagePreviewTask implements TaskInterface
             $this->logger->debug('Execute low quality image preview generation');
 
             $listing = new Asset\Listing();
-            $listing->setCondition("type = 'image'");
+            $listing->setCondition("`type` = 'image'");
             $listing->setOrderKey('id');
             $listing->setOrder('DESC');
 

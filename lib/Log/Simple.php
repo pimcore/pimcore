@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,11 +23,7 @@ use Pimcore\File;
  */
 class Simple
 {
-    /**
-     * @param string $name
-     * @param string $message
-     */
-    public static function log($name, $message)
+    public static function log(string $name, string $message): void
     {
         $log = PIMCORE_LOG_DIRECTORY . "/$name.log";
         clearstatcache(true, $log);

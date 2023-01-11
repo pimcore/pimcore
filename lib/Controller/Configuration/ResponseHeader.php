@@ -30,24 +30,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
  */
 class ResponseHeader extends ConfigurationAnnotation
 {
-    /**
-     * @var string
-     */
-    protected $key;
+    protected string $key;
 
-    /**
-     * @var string|array
-     */
-    protected $values;
+    protected string|array $values;
 
-    /**
-     * @var bool
-     */
-    protected $replace = false;
+    protected bool $replace = false;
 
-    /**
-     * @param array $data
-     */
     public function __construct(array $data)
     {
         // value is the default key if annotation was called without assignment
@@ -80,49 +68,31 @@ class ResponseHeader extends ConfigurationAnnotation
         return true;
     }
 
-    /**
-     * @return string
-     */
     public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * @param string $key
-     */
     public function setKey(string $key)
     {
         $this->key = $key;
     }
 
-    /**
-     * @return array|string
-     */
-    public function getValues()
+    public function getValues(): array|string
     {
         return $this->values;
     }
 
-    /**
-     * @param array|string $values
-     */
-    public function setValues($values)
+    public function setValues(array|string $values)
     {
         $this->values = $values;
     }
 
-    /**
-     * @return bool
-     */
     public function getReplace(): bool
     {
         return $this->replace;
     }
 
-    /**
-     * @param bool $replace
-     */
     public function setReplace(bool $replace)
     {
         $this->replace = $replace;

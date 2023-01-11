@@ -5,18 +5,18 @@ Pimcore supports different configurations for different environments (dev, test,
 configurations including a fallback mechanism. 
 
 Pimcore is relying on Symfony's environments, with some extras, however all the essential 
-information can be found in the [Symfony Docs](https://symfony.com/doc/5.2/configuration.html#configuration-environments)
+information can be found in the [Symfony Docs](https://symfony.com/doc/current/configuration.html#configuration-environments)
 
 > Note: While Pimcore uses Symfony's DotEnv component to allow you to 
-[configure environment variables in `.env` files](https://symfony.com/doc/5.4/configuration.html#configuring-environment-variables-in-env-files), 
+[configure environment variables in `.env` files](https://symfony.com/doc/current/configuration.html#configuring-environment-variables-in-env-files), 
 sometimes (e.g. in *prod* environments) you may want to configure everything via real 
 environment variables instead. In this case, you can disable loading of `.env` files 
 by setting the `PIMCORE_SKIP_DOTENV_FILE` environment variable to a truthy value.
 
 In addition to Symfony configurations, Pimcore also supports environment specific configs for: 
 
-* <https://github.com/pimcore/demo/tree/10.x/config/pimcore> 
-* <https://github.com/pimcore/demo/tree/10.x/var/config>
+* <https://github.com/pimcore/demo/tree/11.x/config/pimcore> 
+* <https://github.com/pimcore/demo/tree/11.x/var/config>
 
 The environment specific config file has priority over the default config, so if your 
 current environment is `dev` Pimcore first checks if e.g. `var/config/image-thumbnails_dev.php`

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,8 +16,10 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Concrete;
+use Twig\Sandbox\SecurityError;
 
 class Text extends Model\DataObject\ClassDefinition\Layout implements Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface
 {
@@ -27,99 +30,73 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      *
      * @var string
      */
-    public $fieldtype = 'text';
+    public string $fieldtype = 'text';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $html = '';
+    public string $html = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $renderingClass;
+    public string $renderingClass = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $renderingData;
+    public string $renderingData;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
-    /**
-     * @return string
-     */
-    public function getHtml()
+    public function getHtml(): string
     {
         return $this->html;
     }
 
-    /**
-     * @param string $html
-     *
-     * @return $this
-     */
-    public function setHtml($html)
+    public function setHtml(string $html): static
     {
         $this->html = $html;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRenderingClass()
+    public function getRenderingClass(): string
     {
         return $this->renderingClass;
     }
 
-    /**
-     * @param string $renderingClass
-     */
-    public function setRenderingClass($renderingClass)
+    public function setRenderingClass(string $renderingClass)
     {
         $this->renderingClass = $renderingClass;
     }
 
-    /**
-     * @return string
-     */
-    public function getRenderingData()
+    public function getRenderingData(): string
     {
         return $this->renderingData;
     }
 
-    /**
-     * @param string $renderingData
-     */
-    public function setRenderingData($renderingData)
+    public function setRenderingData(string $renderingData)
     {
         $this->renderingData = $renderingData;
     }
 
-    /**
-     * @return bool
-     */
     public function getBorder(): bool
     {
         return $this->border;
     }
 
-    /**
-     * @param bool $border
-     */
     public function setBorder(bool $border): void
     {
         $this->border = $border;
@@ -128,11 +105,15 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
-        $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
-            $this->getRenderingClass()
-        );
+        $renderer = null;
+        $class = $this->getRenderingClass();
+        if (!empty($class)) {
+            $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
+                $class
+            );
+        }
 
         $context['fieldname'] = $this->getName();
         $context['layout'] = $this;
@@ -143,13 +124,24 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         }
 
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
-        $twig = $templatingEngine->getTwigEnvironment();
-        $template = $twig->createTemplate($this->html);
-        $this->html = $template->render(array_merge($context,
-            [
-                'object' => $object,
-            ]
-        ));
+
+        try {
+            $twig = $templatingEngine->getTwigEnvironment(true);
+            $template = $twig->createTemplate($this->html);
+            $this->html = $template->render(array_merge($context,
+                [
+                    'object' => $object,
+                ]
+            ));
+        } catch (SecurityError $e) {
+            Logger::err((string) $e);
+
+            $this->html = sprintf('<h2>Error</h2>Failed rendering the template: <b>%s</b>.
+                Please check your twig sandbox security policy or contact the administrator.',
+                substr($e->getMessage(), 0, strpos($e->getMessage(), ' in "__string')));
+        } finally {
+            $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
+        }
 
         return $this;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,15 +18,12 @@ namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 
 abstract class AbstractClassificationStoreTest extends ModelTestCase
 {
-    public static $configCount = 0;
+    public static int $configCount = 0;
 
-    /**
-     * @param Classificationstore\StoreConfig $store
-     */
     protected function configureStoreWithQuantityValueField(Classificationstore\StoreConfig $store)
     {
         // create group
@@ -82,9 +80,6 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
         return $class;
     }
 
-    /**
-     * @param Classificationstore\StoreConfig $store
-     */
     protected function configureStore(Classificationstore\StoreConfig $store)
     {
         $group1 = Classificationstore\GroupConfig::getByName('testgroup1');

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,7 +16,7 @@
 
 namespace Pimcore\Tests\Ecommerce;
 
-use Codeception\Util\Stub;
+use Codeception\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
@@ -26,18 +27,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
-use Pimcore\Tests\Test\EcommerceTestCase;
+use Pimcore\Tests\Support\Test\EcommerceTestCase;
 
 class ProductTaxManagementTest extends EcommerceTestCase
 {
-    /**
-     * @param float $grossPrice
-     * @param array $taxes
-     * @param string $combinationType
-     *
-     * @return CheckoutableInterface
-     */
-    private function setUpProduct($grossPrice, $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
+    private function setUpProduct(float $grossPrice, array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
     {
         $grossPrice = Decimal::create($grossPrice);
 
@@ -101,7 +95,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
 
     public function testPriceWithTaxEntriesCombine()
     {
-        $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_COMBINE);
+        $product = $this->setUpProduct(100, ['tax_1' => 10, 'tax_2' => 15]);
         $price = $product->getOSPrice();
 
         $this->assertSame('100.0000', $price->getGrossAmount()->asString(), 'Get gross amount with tax 10% + 15% combine');
@@ -110,7 +104,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
 
     public function testPriceWithTaxEntriesOneAfterAnother()
     {
-        $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
+        $product = $this->setUpProduct(100, ['tax_1' => 10, 'tax_2' => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
         $price = $product->getOSPrice();
 
         $this->assertSame('100.0000', $price->getGrossAmount()->asString(), 'Get gross amount with tax 10% + 15% one-after-another');

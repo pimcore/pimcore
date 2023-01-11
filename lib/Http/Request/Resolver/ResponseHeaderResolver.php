@@ -53,7 +53,7 @@ class ResponseHeaderResolver extends AbstractRequestResolver
      * @param array|string $values
      * @param bool $replace
      */
-    public function addResponseHeader(Request $request, string $key, $values, bool $replace = false)
+    public function addResponseHeader(Request $request, string $key, array|string $values, bool $replace = false)
     {
         // the array of headers set by the ResponseHeader annotation
         $responseHeaders = $this->getResponseHeaders($request);

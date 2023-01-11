@@ -25,17 +25,11 @@ class TargetingCodeEvent extends Event
     /**
      * @var CodeBlock[]
      */
-    private $blocks;
+    private array $blocks;
 
-    /**
-     * @var string
-     */
-    private $template;
+    private string $template;
 
-    /**
-     * @var array
-     */
-    private $data;
+    private array $data;
 
     /**
      * @param string $template

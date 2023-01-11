@@ -3,13 +3,13 @@
 There are several different kinds of logs in Pimcore. All of them are located under `/var/log` and get rotated
 as well as compressed automatically on every day (7 days retention) by the maintenance command. 
  
-## <env>.log
+## `<env>.log`
 This is definitely one of the most important logs and also the default logging location. 
 
 Pimcore uses Symfony default monolog logging with following channels: `pimcore`, `pimcore_api`, `session`. 
-For details see [Symfonys monolog docs](https://symfony.com/doc/5.2/logging.html).
+For details see [Symfonys monolog docs](https://symfony.com/doc/current/logging.html).
 
-## php.log
+## `php.log`
 By default Pimcore writes PHP-Engine Log Messages to the file `php.log`.
 You can change this using constant `PIMCORE_PHP_ERROR_LOG` that is used to set PHP's [error_log Configuration](http://php.net/manual/en/errorfunc.configuration.php#ini.error-log).
 
@@ -48,18 +48,30 @@ In this log you can see every request where a redirect takes action.
 ```
 
 ## Writing your own log files
-You can add your own logging functionality using Pimcore's log writer. You can call a static 
-function like this:
+To create a custom log entry, we need to create the monolog log channels and log handlers configuration. Here is an example on how to log in a custom filename called `custom.log`
 
-##### Custom log entry
+```yaml
+monolog:
+    handlers:
+        custom_handler:
+            level:    debug
+            type:     stream
+            path:     '%kernel.logs_dir%/custom.log'
+            channels: [custom_log]
+    channels: [custom_log, some_other_channel]
+
+```
+It is possible to inject the `Psr\Log\LoggerInterface` by changing the variable name eg. `$customLogLogger` (camel case channel name + `Logger`) and Symfony will automatically wire the specified channel.
+
 ```php
-\Pimcore\Log\Simple::log($name, $message);
+class SomeService {
+    public function __construct(\Psr\Log\LoggerInterface $customLogLogger)
+    {
+        $customLogLogger->debug('Test Message');
+    }
+}
 ```
 
-The `$name` variable defines the filename of the log file, "mylog" will write a file to `/var/log/mylog.log` 
-(extension is added automatically). If the file does not yet exist it will be created on the fly. 
-
-The message is the line that will be written to the log. A date and time will also be prepended 
-automatically to each log entry.
+For more, please refer to [Monolog Documentation](https://symfony.com/doc/6.2/logging/channels_handlers.html)
 
 

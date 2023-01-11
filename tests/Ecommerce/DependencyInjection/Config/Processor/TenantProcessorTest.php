@@ -18,15 +18,12 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Ecommerce\DependencyInjection\Config\Processor;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Config\Processor\TenantProcessor;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class TenantProcessorTest extends TestCase
 {
-    /**
-     * @var TenantProcessor
-     */
-    private $processor;
+    private TenantProcessor $processor;
 
     /**
      * {@inheritdoc}

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -160,6 +161,10 @@ final class DocumentEvents
      *  - config | configuration which is passed from the pimcore admin interface
      *  - reactorConfig | configuration which is passed to PDFReactor
      *  - document | Pimcore document that is converted
+     *
+     * HeadlessChrome:
+     *  - params | puppeteer PDF options (see also https://pptr.dev/api/puppeteer.pdfoptions/)
+     *  - html | HTML passed to puppeteer
      *
      * @Event("Pimcore\Event\Model\PrintConfigEvent")
      *

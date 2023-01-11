@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ class SendNewsletterHandler
     {
     }
 
-    public function __invoke(SendNewsletterMessage $message)
+    public function __invoke(SendNewsletterMessage $message): void
     {
         $sendingId = $message->getTmpStoreId();
         $hostUrl = $this->pimcoreConfig['documents']['newsletter']['defaultUrlPrefix'] ?: $message->getHostUrl();

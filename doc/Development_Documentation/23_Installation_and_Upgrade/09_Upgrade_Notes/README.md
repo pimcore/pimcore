@@ -1,9 +1,21 @@
 # Upgrade Notes
 ## 11.0.0
+- [General] **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. 
+ This results in **various bc breaks**. Please make sure to add the corresponding types to your implementation.
+- [UrlSlug] Removed `index` column and `index` index from `object_url_slugs` table as it was not being used anywhere.
+- Bumped Symfony packages to "^6.1". Pimcore 11 will only support Symfony 6.
+- `FrontendController::renderTemplate()`: Changed the visibility to `protected`.
+- [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface`
+- [JSRouting Bundle] Bumped `friendsofsymfony/jsrouting-bundle` to version `^3.2.1`
+- [Installer] Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
+- [Assets] Refactored `Pimcore\Model\Asset::getMetadata` method to allow listing of all metadata entries filtered by a specific language. Prior this version, the language filter was only available when a specific metadata name was defined in the parameters. Added native type hints and related tests.
+- [Documents] Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
+- [Class Definitions] Class Resolver does not catch exceptions anymore.
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
 - [Runtime Cache] Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.  
 - Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
 - Removed Plugin Broker BC layer for JS events
+- Cleanup Symfony packages from composer.json, see [#13097](https://github.com/pimcore/pimcore/pull/13097)
 - [DocType] staticGeneratorEnabled is now a boolean instead of an integer
 - [Ecommerce] Pricing Manager 
   - Removed $session property
@@ -24,18 +36,164 @@
   ```php
   $web2printConfig = Config::getWeb2PrintConfig();
   $web2printConfig = $web2printConfig['headlessChromeSettings'];
-  - ```
+  ```
+- [Video Editable] Removed [deprecated and legacy `<iframe>` attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe): `frameborder`, `webkitAllowFullScreen`, `mozallowfullscreen`, and `allowfullscreen` for YouTube, Vimeo, and DailyMotion embeds.
 - [Web2Print] Deprecated WkHtmlToPdf Processor has been removed.
 - [Documents] Deprecated WkHtmlToImage has been removed.
 - [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
 - [DataObjects] Added return types to setter methods. For details see [#12185](https://github.com/pimcore/pimcore/issues/12185)
+- [Maintenance] Removed `--async` & `--force` option from `pimcore:maintenance` command. Please make sure to setup to `messenger:consume pimcore_maintenance` independent
+    worker that process the maintenance queues.
 - [Exception] Deprecated MissingDependencyException has been removed.
-
-## 11.0.0
 - [CustomLayouts] Removed command `pimcore:deployment:custom-layouts-rebuild` as CustomLayouts are migrated to LocationAwareConfigRepository.
+- [Data Objects] Alias `ReverseManyToManyObjectRelation` removed, please use `ReverseObjectRelation` instead.
+- [Documents] Added a second boolean parameter `$validate` to the setContentMasterDocumentId() method. This will restrict the option to set pages as content master documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)
+- [Config] Removed legacy callback from LocationAwareConfigRepository. Therefore, configurations in the old php file format are not supported anymore.
+Any existing configurations will be migrated to either the yaml file format or the settings store, depending on your configuration.
+Please make sure to set your preferred storage location ***before*** migration. For details on configuration please check the [documentation](../../21_Deployment/03_Configuration_Environments.md). 
+- [Request] Removed deprecated getMasterRequest() in favor of getMainRequest().
+- [Email] Removed the deprecated methods setBodyHtml(), setBodyText(), createAttachment() and setSubject(). Use html(),
+  text(), attach() and subject() instead.
+- [Application Logger] Table names of archive tables are now named with year-month rather than month-year see [#8237](https://github.com/pimcore/pimcore/issues/8237).
+- [Glossary] 
+  - `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
+  - Config `pimcore:glossary:` has been removed, please use `pimcore_glossary:` instead.
+    - Make sure to enable the PimcoreGlossaryBundle manually in the `config\bundles.php`
+- [Elements] Passing $force parameter as boolean is not valid anymore in `getById`, `getByPath`, `getElementById` methods. Instead, please pass it as an associative array ( eg.`['force' => true]`).
+   For details, please see [#12789](https://github.com/pimcore/pimcore/issues/12789)
+- [DataObjects] Changed default behaviour: getByXXX methods on `Concrete` class now returns objects and variants if nothing else is specified.
+  Changed default value for parameter `$limit` from `0` to `null`.
+- [Workflows] Removed classes Pimcore\Model\Workflow, Pimcore\Model\Workflow\Dao, Pimcore\Model\Workflow\Listing\Dao and Pimcore\Model\Workflow\Listing.
+    Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
+- [Core] Removed the deprecated method `Kernel::getRootDir()`, use `Kernel::getProjectDir()` instead.
+- [Relations] Add possibility to inline download asset from relations
+- [PhpArrayTable]: Removed PhpArrayTable class
+- [Elements] Changed method signature on `Pimcore\Model\Element\ElementInterface::save()`, this changes the `::save()` method on all classes (e.g. DataObjects and Pages) implementing the interface, including those inheriting from `Concrete`/`AbstractObject`, see [#13207](https://github.com/pimcore/pimcore/issues/13207)
+- [Document Editables] Removed method_exists bc layer for `getDataEditmode()`, `rewriteIds()` & `load()`, please use the corresponding interfaces `EditmodeDataInterface`, `IdRewriterInterface` & `LazyLoadingInterface` instead.
+- [Commands] 
+  - Removed `webmozarts/console-parallelization` dependency to make parallelization optional. If you still want to use parallelization for console commands, please add the dependency to your own `composer.json`.
+  - Removed the deprecated `Parallelization::configureParallelization()` method.
+- [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is
+  removed. Instead, please pass the arguments as an associative array (eg.`getNavigation($args)`.For details, please see [#12310](https://github.com/pimcore/pimcore/issues/12310)
+- [Flysystem] Bumped `league/flysystem-bundle` minimum requirement to ^3.0 (which introduces `directoryExists()`,`has()` methods and fixes support for `directory_visibility` configuration option). Please bump the Flysystem Adapters requirement accordingly to `^3.0` in your project `composer.json`. 
+ NB: [Visibility](https://flysystem.thephpleague.com/docs/visibility/) permissions were specified as `0644` for files and `0755` for directories, are now using the more simplified `public/private` options which are translated respectively into `0600` and `0744`. 
+- [AdminBundle] Removed deprecated methods `getTranslator()`, `getBundleManager()` and `getTokenResolver()` from the `Pimcore\Bundle\AdminBundle\Controller\AdminController`
+- [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
+- [Sitemap] Bumped minimum requirement of `presta\sitemap-bundle` to `^3.3`, dropped support for `v2` and removed related BC Layer.
+- [Relations]: Add confirm dialog to empty button of relations and add possibility to disable clear relations in the class layout.
+- [Email] Bumped `league/html-to-markdown` to ^5.1.
+- [Cache] Removed `psr/simple-cache` dependency, due to the lack of usage in the Core.
+- [Config] Removed deprecated services/aliases: `Pimcore\Templating\Renderer\TagRenderer`, `pimcore.cache.adapter.pdo`, `pimcore.cache.adapter.pdo_tag_aware`
+- [DataObjects] Changed `$objectTypes` default value to include variants in certain scenarios.
+- [Elements]: Removed deprecated `getTotalCount()` method
+- Bumped `mjaschen/phpgeo` to "^4.0".
+- [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
+- [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
+- [Video] It's now possible to drop a video asset directly into an video editable in class
+- [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
+- [Config] The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
+- [DataObjects] Removed deprecated preview url in class editor.
+- [DataObjects] Removed sql filter functionality for data object grid
+- [DataObjects] Loading non-Concrete objects with the Concrete class is no longer possible
+- [Device Detector] Bumped `matomo/device-detector` to ^6.0.
+- [security] Removed support old authentication system (not setting `security.enable_authenticator_manager: true` in `security.yaml`).
+- Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
+- Removed BruteforceProtection
+- Removed PreAuthenticatedAdminToken
+- [Logger] Bumped `monolog/monolog` to [^3.2](https://github.com/Seldaek/monolog/blob/main/UPGRADE.md#300) and `symfony/monolog-bundle` to [^3.8](https://github.com/symfony/monolog-bundle/blob/master/CHANGELOG.md#380-2022-05-10) (which adds support for monolog v3). Please adapt your custom implementation accordingly eg. log records are now `LogRecord` Objects instead of array.
+- [Ecommerce] The constructor of the indexing services (eg. `DefaultMysql`, `AbstractElasticSearch`) and related workers were changed to support the injection of monolog logger, please adapt your custom implementation.
+- [Bundles] 
+  - Removed support for loading bundles through `extensions.php`.
+  - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.
+  - Removed commands: `pimcore:bundle:enable`, `pimcore:bundle:disable`.
+  - Removed `dontCheckEnabled` config support from Areablock editable. 
+  - Functionality that was moved into its own bundle and must be enabled manually in `config/bundles.php`
+    - Glossary has been moved into PimcoreGlossaryBundle
+    - SEO Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
+- [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
+- [Session] 
+  - `AdminSessionHandler` requires session from request stack.
+  - `EcommerceFrameworkBundle\SessionEnvironment` not loading from or storing into session in cli mode anymore.
+  - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
+- `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
+- [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
+- [DataObjects] Removed `o_` prefix for data object properties and database columns.
+- [DataObjects] Due to the removal of the `o_` prefix the property names `classTitle`, `hasChildren`, `siblings`, `hasSiblings`, `childrenSortBy`, `childrenSortOrder`, `versionCount`, `dirtyLanguages` and `dirtyFields`
+   were added to the list of reserved words. Please check your implementation and rename the properties as necessary. 
+- [Ecommerce][IndexService] Please make sure to rebuild your product index to make sure changes apply accordingly (this is relevant for mysql and elasticsearch indices). As an alternative you could manually rename and remove `o_` from all index columns/fields.
+- [Ecommerce] Elasticsearch 7 support was removed
+- [Ecommerce] Config option `es_client_params` in `index_service` was removed 
+- [ClassSavedInterface] Removed `method_exists` bc layer. Please add the corresponding `ClassSavedInterface` interface to your custom field definitions. For more details check the 10.6.0 patch notes.
+- [UrlSlug] Allow processing unpublished fallback document is now default behaviour, removed the related configuration options and usages (`allow_processing_unpublished_fallback_document`, `ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS`). For details, please see [#10005](https://github.com/pimcore/pimcore/issues/10005#issuecomment-907007745)
+- [DataObjects\Documents] **BC Break**: Calling `getChildren/getSiblings` on `AbstractObject` or `Document` now returns unloaded listing. If the list is not traveresed immediately, then it is required to call `load()` explicitily.
+  Also, `setChildren` now accepts `Listing` as first parameter instead of array.
+- [Admin] Removed `adminer` as built-in database management tool.
+- [DataObjects] Text data types now set their corresponding database columns to `null` instead of `''` (empty string) when empty.
+- [Ecommerce][Product Interfaces] Changed return type-hints of `CheckoutableInterface` methods `getOSPrice`, `getOSPriceInfo`, `getOSAvailabilityInfo`, `getPriceSystemName`, `getAvailabilitySystemName`, `getPriceSystemImplementation`, `getAvailabilitySystemImplementation` to be non-nullable.
+- [Elements] Removed the deprecated `Pimcore\Model\Element\Service::getType()`, use `Pimcore\Model\Element\Service::getElementType()` instead.
 
+
+## 10.6.0
+- [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
+- [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isBrickEnabled()` method which is also deprecated.
+- [Twig] Pimcore now requires the `twig/extra-bundle` which eases the usage of Twig's "extra" extensions.
+- [UrlSlug] Deprecated `$index` property and its getter and setter methods as they were not being used. These will be removed in Pimcore 11.
+- [DataObject]: Since the `o_` prefix will be removed in Pimcore 11, a new method has been added: `DataObject\Service::getVersionDependentDatabaseColumnName()`.
+  This method will return the field/column name for the current version and provide a way to support both version for bundles. 
+  E.g. passing `o_id` in Pimcore 10 will return `o_id`, but `id` in Pimcore 11. 
+- [Ecommerce] Elasticsearch 7 support has been deprecated, elasticsearch 8 supported was added.
+- [CustomLayout] Passing `int` to `setDefault` is deprecated and will be removed in Pimcore 11. Use type `bool` instead. Same for `getDefault` method, it will return type `bool` only in Pimcore 11.
+- [ClassSavedInterface] Introduced additional interface implementing the `classSaved` method. The interface will be used by field definitions in `Pimcore\Model\DataObject\ClassDefinition\Data\*`. If your custom field definition implements the `classSaved` method, please use the `ClassSavedInterface` interface. Make sure that you either provide a default value (e.g. `$params = []`) for `$params` or don't use a second parameter in the method signature at all. Note that using the `classSaved` method without implementing the interface is deprecated and won't work in Pimcore 11.
+- [DataObject]: The usage of `getO_` or `setO_` methods is deprecated. The BC layer supporting these methods will be removed in Pimcore 11.
+- [Classification Store] Deleting the data from deleted groups and keys.
+- [Commands] Calling `configureParallelization` on `Parallelization` trait is deprecated and will be removed in Pimcore 11. Please call `Parallelization::configureCommand` instead.
+
+## 10.5.13
+- [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
+
+## 10.5.10
+- [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.
+
+## 10.5.9
+- [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
+         Please use following configuration to allow more in template rendering:
+  ```yaml
+  pimcore:
+        templating_engine:
+            twig:
+              sandbox_security_policy:
+                tags: ['if']
+                filters: ['upper']
+                functions: ['include', 'path', 'range']
+  ```
+
+
+## 10.5.8
+- [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
+```nginx
+map $args $static_page_root {
+    default                                 /var/tmp/pages;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+}
+
+map $uri $static_page_uri {
+    default                                 $uri;
+    "/"                                     /%home;
+}
+
+.....
+
+location / {
+    error_page 404 /meta/404;
+
+    try_files $static_page_root$static_page_uri.html $uri /index.php$is_args$args;
+}
+```
 
 ## 10.5.0
+- [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
 - [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
   For examples please see existing classes, e.g. `Pimcore\Model\Document\DocType\Listing`.
@@ -46,21 +204,33 @@
     security:
         enable_authenticator_manager: true
     ```
-- [Elements] Calling the methods `Asset::getById()`, `Document::getById()` and `DataObject::getById()` with second boolean parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the second parameter as associative array with `$force` value.
+  `[Authentication] PreAuthenticatedAdminSessionListener` has been deprecated and will be removed in Pimcore 11.
+- [Elements] Calling the methods `getById` and `getByPath` on `Asset`,`Document`,`DataObject` with second boolean parameter `$force` and `Element\Service::getElementById` with third boolean  parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the parameter as associative array with `$force` value.
   e.g. Before 
    ```php
     Asset::getById($id, true);
     Document::getById($id, true);
     DataObject::getById($id, true);
+  
+    Asset::getByPath($path, true);
+    Document::getByPath($path, true);
+    DataObject::getByPath($path, true);
+  
+    Element\Service::getElementById::getElementById($type, $id, $true);
    ```
     After
    ```php
     Asset::getById($id, ['force' => true]);
     Document::getById($id, ['force' => true]);
     DataObject::getById($id, ['force' => true]);
-   ```
   
-- [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Currently, the `getNavigation()` method can be called by passing the config params `activeDocument`, `navigationRootDocument`, `htmlMenuIdPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime` as the arguments i.e `getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache,$maxDepth, $cacheLifetime)`. According to the new implementation you should call the method like `getNavigation($params)` where `$params` should be an associative array with the keys `active`, `root`, `htmlMenuPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime`.
+    Asset::getByPath($path, ['force' => true]);
+    Document::getByPath($path, ['force' => true]);
+    DataObject::getByPath($path, ['force' => true]);
+  
+    Element\Service::getElementById($type, $id, ['force' => true]);
+   ```
+- [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Currently, the `getNavigation()` method can be called by passing the config params `activeDocument`, `navigationRootDocument`, `htmlMenuIdPrefix`, `pageCallback`, `cache`, `maxDepth`, `cacheLifetime` and `markActiveTrail` as the arguments i.e `getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache, $maxDepth, $cacheLifetime, $markActiveTrail)`. According to the new implementation you should call the method like `getNavigation($params)` where `$params` should be an associative array with the keys `active`, `root`, `htmlMenuPrefix`, `pageCallback`, `cache`, `maxDepth`, `cacheLifetime` and `markActiveTrail`.
   
 - [Runtime Cache] The trait `\Pimcore\Cache\RuntimeCacheTrait` has been deprecated because of its ambiguous naming and usage of persisted cache along with the runtime object cache.
   It is recommended to use `\Pimcore\Cache\RuntimeCache` instead of this trait. For persisted cache, please use `\Pimcore\Cache` instead.
@@ -75,7 +245,7 @@
   The only cases could be affected are those where the workspace are set but master permissions are disallowed, before this change, it could lead to (not intended) false positive.
 - [Security/User] `UsernameNotFoundException` (deprecated since Symfony 5.3) occurences have been replaced with `UserNotFoundException`.
 - [Deprecated] Generate type declarations option in class definition is deprecated, because type declarations will always be added with Pimcore 11
-- [Application Logger] File Objects are now stored in the flysystem. Due some incompatibilities of checking files by modification date (cloud storages) and for perfomance issues (scan folders/file), the cleanup task now do not run in time range from [midnight and 4 a.m.](https://github.com/pimcore/pimcore/pull/7164) anymore, but it deletes the file matching the column in the database as soon as the database entries are archived.
+- [Application Logger] File Objects are now stored in the flysystem. Due some incompatibilities of checking files by modification date (cloud storages) and for performance issues (scan folders/file), the cleanup task now do not run in time range from [midnight and 4 a.m.](https://github.com/pimcore/pimcore/pull/7164) anymore, but it deletes the file matching the column in the database as soon as the database entries are archived.
 - [Session] Implementing Session Configurator with tag `pimcore.session.configurator` to register session bags, is deprecated and will be removed in Pimcore 11.
   Implement an [EventListener](https://github.com/pimcore/pimcore/blob/11.x/bundles/EcommerceFrameworkBundle/EventListener/SessionBagListener.php) to register a session bag before the session is started.
 - [Ecommerce][PricingManager] Token condition is deprecated and will be removed in Pimcore 11.
@@ -132,7 +302,8 @@ Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guid
 - [Custom Layouts] Deprecated Class `ClassLayoutDefinitionManager` and constant `PIMCORE_CUSTOMLAYOUT_DIRECTORY`.
 - [Workflows] Deprecated classes Pimcore\Model\Workflow, Pimcore\Model\Workflow\Dao, Pimcore\Model\Workflow\Listing\Dao and Pimcore\Model\Workflow\Listing. 
 Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
-
+- [Maintenance] Deprecated passing `--force` option to maintenance command.
+- [Exception] `MissingDependencyException` has been deprecated and will be removed in Pimcore 11.
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
@@ -184,6 +355,7 @@ $newId = $object->getId(); //returns null
 - [Documents] Introduced additional interfaces for editable methods `getDataEditmode()`, `rewriteIds()` & `load()`. Existing `method_exists` calls are deprecated and will be removed in Pimcore 11.
 - [Data objects] Default values now get saved to versions -> Restoring a version also restores the default values (before those fields were null after restoring)
 - Method `create()` from `Pimcore\Model\DataObject\Classificationstore\CollectionGroupRelation` and `Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation` no longer saves the new object, but just returns the instance. Related changes can be found here: https://github.com/pimcore/pimcore/pull/11326/files 
+- Method `Kernel::getRootDir()` is deprecated, use `Kernel::getProjectDir()` instead. For more details, please check [10923](https://github.com/pimcore/pimcore/pull/10923).
 
 ## 10.2.0
 - [Maintenance] Maintenance tasks are now handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance messages to the bus and runs them afterwards immediately from the queue. However it's recommended to setup independent workers that process the queues, by running `bin/console messenger:consume pimcore_core pimcore_maintenance` (using e.g. Supervisor) and adding `--async` option to the `pimcore:maintenance` command that stops the maintenance command to process the queue directly. Details about setting it up for production environments, please check [Symfony Messenger Component docs](https://symfony.com/doc/current/messenger.html#deploying-to-production).
@@ -301,7 +473,7 @@ framework:
 - Removed Pimcore Bundles generator and command `pimcore:generate:bundle`.
 - `Pimcore\Controller\Controller` abstract class now extends `Symfony\Bundle\FrameworkBundle\Controller\AbstractController` instead of `Symfony\Bundle\FrameworkBundle\Controller\Controller`.
 - `Pimcore\Translation\Translator::transChoice()` & `Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator::transChoice()` methods have been removed. Use `trans()` method with `%count%` parameter.
-- Removed `pimcore.documents.create_redirect_when_moved` config. Please remove from System.yml.
+- Removed `pimcore.documents.create_redirect_when_moved` config. Please remove from `system.yaml`.
 - Removed `pimcore.workflows.initial_place` config. Use `pimcore.workflows.initial_markings` instead.
 - `WebDebugToolbarListenerPass` has been removed and `WebDebugToolbarListener` has been marked as final & internal.
 - Bumped `sabre/dav` to ^4.1.1

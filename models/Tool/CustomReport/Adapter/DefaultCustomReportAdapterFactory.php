@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,17 +16,13 @@
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
+use Pimcore\Model\Tool\CustomReport\Config;
+
 class DefaultCustomReportAdapterFactory implements CustomReportAdapterFactoryInterface
 {
-    /**
-     * @var string
-     */
-    private $className;
+    private string $className;
 
-    /**
-     * @param string $className
-     */
-    public function __construct($className)
+    public function __construct(string $className)
     {
         $this->className = $className;
     }
@@ -33,7 +30,7 @@ class DefaultCustomReportAdapterFactory implements CustomReportAdapterFactoryInt
     /**
      * {@inheritdoc}
      */
-    public function create($config, $fullConfig = null)
+    public function create(\stdClass $config, Config $fullConfig = null): CustomReportAdapterInterface
     {
         return new $this->className($config, $fullConfig);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,20 +25,10 @@ use Psr\Log\LoggerInterface;
  */
 class DbCleanupBrokenViewsTask implements TaskInterface
 {
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @param Connection $db
-     * @param LoggerInterface $logger
-     */
     public function __construct(Connection $db, LoggerInterface $logger)
     {
         $this->db = $db;

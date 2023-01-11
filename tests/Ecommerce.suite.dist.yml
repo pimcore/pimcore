@@ -1,7 +1,7 @@
-class_name: EcommerceTester
+actor: EcommerceTester
 modules:
     enabled:
-        - \Pimcore\Tests\Helper\Pimcore:
+        - \Pimcore\Tests\Support\Helper\Pimcore:
             connect_db: true
-        - \Pimcore\Tests\Helper\ClassManager
-        - \Pimcore\Tests\Helper\Ecommerce
+        - \Pimcore\Tests\Support\Helper\ClassManager
+        - \Pimcore\Tests\Support\Helper\Ecommerce

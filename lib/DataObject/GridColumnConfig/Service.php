@@ -28,15 +28,9 @@ use Psr\Container\ContainerInterface;
  */
 final class Service
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $operatorFactories;
+    private ContainerInterface $operatorFactories;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $valueFactories;
+    private ContainerInterface $valueFactories;
 
     public function __construct(
         ContainerInterface $operatorFactories,
@@ -50,7 +44,7 @@ final class Service
      * @param \stdClass[] $jsonConfigs
      * @param array $context
      *
-     * @return array
+     * @return ConfigElementInterface[]
      */
     public function buildOutputDataConfig(array $jsonConfigs, array $context = []): array
     {
@@ -59,8 +53,6 @@ final class Service
 
     /**
      * @param \stdClass[] $jsonConfigs
-     * @param array $config
-     * @param array $context
      *
      * @return ConfigElementInterface[]
      */
@@ -74,8 +66,8 @@ final class Service
             if ('value' === $configElement->type) {
                 $config[] = $this->buildValue($configElement->class, $configElement, $context);
             } elseif ('operator' === $configElement->type) {
-                if (!empty($configElement->childs)) {
-                    $configElement->childs = $this->doBuildConfig($configElement->childs, [], $context);
+                if (!empty($configElement->children)) {
+                    $configElement->children = $this->doBuildConfig($configElement->children, [], $context);
                 }
 
                 $operator = $this->buildOperator($configElement->class, $configElement, $context);
@@ -88,14 +80,7 @@ final class Service
         return $config;
     }
 
-    /**
-     * @param string $name
-     * @param \stdClass $configElement
-     * @param array $context
-     *
-     * @return OperatorInterface|null
-     */
-    private function buildOperator(string $name, \stdClass $configElement, array $context = [])
+    private function buildOperator(string $name, \stdClass $configElement, array $context = []): ?OperatorInterface
     {
         if (!$this->operatorFactories->has($name)) {
             throw new \InvalidArgumentException(sprintf('Operator "%s" is not supported', $name));
@@ -107,7 +92,7 @@ final class Service
         return $factory->build($configElement, $context);
     }
 
-    private function buildValue(string $name, \stdClass $configElement, $context = null): ValueInterface
+    private function buildValue(string $name, \stdClass $configElement, mixed $context = null): ValueInterface
     {
         if (!$this->valueFactories->has($name)) {
             throw new \InvalidArgumentException(sprintf('Value "%s" is not supported', $name));

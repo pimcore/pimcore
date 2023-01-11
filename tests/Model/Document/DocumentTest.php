@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,13 +19,14 @@ namespace Pimcore\Tests\Model\Document;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Link;
+use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PrintAbstract;
 use Pimcore\Model\Document\Printpage;
 use Pimcore\Model\Document\Service;
 use Pimcore\Model\Element\Service as ElementService;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class DocumentTest
@@ -35,8 +37,7 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class DocumentTest extends ModelTestCase
 {
-    /** @var Page */
-    protected $testPage;
+    protected ?Page $testPage = null;
 
     public function testCRUD()
     {
@@ -343,9 +344,11 @@ class DocumentTest extends ModelTestCase
         $parentDoc = TestHelper::createEmptyDocumentPage();
 
         $childDoc = TestHelper::createEmptyDocumentPage('child1-', false);
-        $parentDoc->setChildren([$childDoc]);
+        $listing = new Listing();
+        $listing->setData([$childDoc]);
+        $parentDoc->setChildren($listing);
 
-        $this->assertSame($parentDoc->getChildren()[0], $childDoc);
+        $this->assertSame($parentDoc->getChildren()->getDocuments()[0], $childDoc);
     }
 
     public function testDocumentSerialization()

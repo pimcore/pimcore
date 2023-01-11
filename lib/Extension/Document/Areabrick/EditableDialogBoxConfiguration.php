@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,105 +18,70 @@ namespace Pimcore\Extension\Document\Areabrick;
 
 class EditableDialogBoxConfiguration implements \JsonSerializable
 {
-    /**
-     * @var null|string
-     */
-    protected $id = null;
+    protected ?string $id = null;
 
-    /**
-     * @var null|int
-     */
-    protected $width = 550;
+    protected ?int $width = 550;
 
-    /**
-     * @var null|int
-     */
-    protected $height = 370;
+    protected ?int $height = 370;
 
-    /**
-     * @var array
-     */
-    protected $items = [];
+    protected array $items = [];
 
-    /**
-     * @var bool
-     */
-    protected $reloadOnClose = false;
+    protected bool $reloadOnClose = false;
 
-    /**
-     * @return string|null
-     */
     public function getId(): ?string
     {
         return $this->id;
     }
 
     /**
-     * @param string|null $id
-     *
      * @return $this
      */
-    public function setId(?string $id): self
+    public function setId(?string $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getWidth(): ?int
     {
         return $this->width;
     }
 
     /**
-     * @param int|null $width
-     *
      * @return $this
      */
-    public function setWidth(?int $width): self
+    public function setWidth(?int $width): static
     {
         $this->width = $width;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getHeight(): ?int
     {
         return $this->height;
     }
 
     /**
-     * @param int|null $height
-     *
      * @return $this
      */
-    public function setHeight(?int $height): self
+    public function setHeight(?int $height): static
     {
         $this->height = $height;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getItems(): array
     {
         return $this->items;
     }
 
     /**
-     * @param array $items
-     *
      * @return $this
      */
-    public function setItems(array $items): self
+    public function setItems(array $items): static
     {
         $this->items = $items;
 
@@ -123,42 +89,31 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
     }
 
     /**
-     * @param array $item
-     *
      * @return $this
      */
-    public function addItem(array $item): self
+    public function addItem(array $item): static
     {
         $this->items[] = $item;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getReloadOnClose(): bool
     {
         return $this->reloadOnClose;
     }
 
     /**
-     * @param bool $reloadOnClose
-     *
      * @return $this
      */
-    public function setReloadOnClose(bool $reloadOnClose): self
+    public function setReloadOnClose(bool $reloadOnClose): static
     {
         $this->reloadOnClose = $reloadOnClose;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : array
+    public function jsonSerialize(): array
     {
         return get_object_vars($this);
     }

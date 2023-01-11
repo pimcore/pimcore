@@ -23,7 +23,7 @@ dependencies. All Dependencies are managed through Composer (the standard PHP de
 it easy and comfortable to keep all dependencies of Pimcore and your project up-to-date and safe. 
 
 Since Pimcore is a Symfony application, it can utilize all Symfony tools, like the 
-[Symfony Security Checker](https://symfony.com/doc/5.2/security/security_checker.html). 
+[Symfony Security Checker](https://symfony.com/doc/current/security/security_checker.html). 
 
 ### Content Security Policy
 Pimcore provides a Content Security Policy handler, which enables an additional security layer to protect from certain attacks like Cross-Site Scripting (XSS) and data injection and so on, by adding `Content-Security-Policy` HTTP response header with [nonce](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce) to every request in Admin interface. The generated nonce encoded string is matched with the one provided in link or inline javascript, which allows them to be executed safely. 
@@ -87,7 +87,7 @@ too.
 
 ### Dependency Management
 Same as for the core development, we also recommend security checks for all the additional solution dependencies. Also 
-for solutions, all Symfony tools, like the [Symfony Security Checker](https://symfony.com/doc/5.2/security/security_checker.html) 
+for solutions, all Symfony tools, like the [Symfony Security Checker](https://symfony.com/doc/current/security/security_checker.html) 
 can be utilized.
 
 ### Project Specific Penetration Testing

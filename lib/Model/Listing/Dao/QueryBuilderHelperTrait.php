@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,9 +19,6 @@ namespace Pimcore\Model\Listing\Dao;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Model\DataObject;
 
-/**
- * @internal
- */
 trait QueryBuilderHelperTrait
 {
     /**
@@ -46,6 +44,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyConditionsToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $condition = $this->model->getCondition();
@@ -59,15 +60,15 @@ trait QueryBuilderHelperTrait
                 if (!empty($condition)) {
                     $condition .= ' AND ';
                 }
-                $condition .= ' ' . $tableName . ".o_type IN ('" . implode("','", $objectTypes) . "')";
+                $condition .= ' ' . $tableName . ".type IN ('" . implode("','", $objectTypes) . "')";
             }
 
             if ($condition) {
                 if (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                    $condition = '(' . $condition . ') AND ' . $tableName . '.o_published = 1';
+                    $condition = '(' . $condition . ') AND ' . $tableName . '.published = 1';
                 }
             } elseif (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                $condition = $tableName . '.o_published = 1';
+                $condition = $tableName . '.published = 1';
             }
         }
 
@@ -77,6 +78,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyGroupByToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $groupBy = $this->model->getGroupBy();
@@ -85,6 +89,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyOrderByToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $orderKey = $this->model->getOrderKey();
@@ -112,6 +119,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyLimitToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $queryBuilder->setFirstResult($this->model->getOffset());
@@ -131,7 +141,7 @@ trait QueryBuilderHelperTrait
         }
 
         if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
-            $queryBuilder->select(!empty($originalSelect) ? $originalSelect : '*');
+            $queryBuilder->select(!empty($originalSelect) ? $originalSelect : $identifierColumn);
 
             // Rewrite to 'SELECT COUNT(*) FROM (' . $queryBuilder . ') XYZ'
             $innerQuery = (string)$queryBuilder;

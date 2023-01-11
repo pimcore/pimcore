@@ -24,10 +24,7 @@ class VisitedPagesCounter implements DataProviderInterface
 {
     const PROVIDER_KEY = 'visited_pages_counter';
 
-    /**
-     * @var VisitedPagesCounterService
-     */
-    private $service;
+    private VisitedPagesCounterService $service;
 
     public function __construct(VisitedPagesCounterService $service)
     {
