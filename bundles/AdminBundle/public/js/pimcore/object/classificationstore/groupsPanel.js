@@ -448,11 +448,11 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
                                     var lastOptions = this.groupsStore.lastOptions;
                                     Ext.apply(lastOptions.params, {
-                                        overrideSort: "false"
+                                        overrideSort: false
                                     });
                                 }.bind(this),
                                 params: {
-                                    "overrideSort": "true"
+                                    overrideSort: true
                                 }
                             }
                         );

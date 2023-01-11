@@ -439,11 +439,11 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
                                     var lastOptions = this.collectionsStore.lastOptions;
                                     Ext.apply(lastOptions.params, {
-                                        overrideSort: "false"
+                                        overrideSort: false
                                     });
                                 }.bind(this),
                                 params: {
-                                    "overrideSort": "true"
+                                    overrideSort: true
                                 }
                             }
                         );
