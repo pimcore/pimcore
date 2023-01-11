@@ -60,7 +60,10 @@ class Folder extends DAV\Collection
         return $children;
     }
 
-    public function getChild(Asset|string $name): File|Folder
+    /**
+     * @param Asset|string $name
+     */
+    public function getChild($name): File|Folder
     {
         $asset = null;
 
@@ -79,13 +82,11 @@ class Folder extends DAV\Collection
             $asset = $name;
         }
 
-        if ($asset instanceof Asset) {
-            if ($asset instanceof Asset\Folder) {
-                return new Asset\WebDAV\Folder($asset);
-            }
-
-            return new Asset\WebDAV\File($asset);
+        if ($asset instanceof Asset\Folder) {
+            return new Asset\WebDAV\Folder($asset);
         }
+
+        return new Asset\WebDAV\File($asset);
     }
 
     public function getName(): string
