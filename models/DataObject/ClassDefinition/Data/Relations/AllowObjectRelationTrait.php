@@ -35,7 +35,7 @@ trait AllowObjectRelationTrait
      */
     protected function allowObjectRelation(DataObject\AbstractObject $object): bool
     {
-        if (!$object instanceof DataObject\AbstractObject || $object->getId() <= 0) {
+        if ($object->getId() <= 0) {
             return false;
         }
 
