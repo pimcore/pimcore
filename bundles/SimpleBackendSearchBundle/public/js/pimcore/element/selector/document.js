@@ -13,6 +13,9 @@
 
 pimcore.registerNS('pimcore.bundle.search.element.selector.document');
 
+/**
+ * @private
+ */
 pimcore.bundle.search.element.selector.document = Class.create(pimcore.bundle.search.element.selector.abstract, {
     initStore: function () {
         this.store = new Ext.data.Store({

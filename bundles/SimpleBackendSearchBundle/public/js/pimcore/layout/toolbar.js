@@ -13,6 +13,9 @@
 
 pimcore.registerNS('pimcore.bundle.search.layout.toolbar');
 
+/**
+ * @private
+ */
 pimcore.bundle.search.layout.toolbar = Class.create({
     initialize: function (menu) {
         this.perspectiveCfg = pimcore.globalmanager.get('perspective');

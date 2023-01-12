@@ -13,6 +13,9 @@
 
 pimcore.registerNS('pimcore.bundle.search');
 
+/**
+ * @private
+ */
 pimcore.bundle.search = Class.create({
     registry: null,
 

@@ -13,6 +13,9 @@
 
 pimcore.registerNS('pimcore.bundle.search.layout.quickSearch');
 
+/**
+ * @private
+ */
 pimcore.bundle.search.layout.quickSearch = Class.create({
     initialize: function () {
         this.initKeyMap();

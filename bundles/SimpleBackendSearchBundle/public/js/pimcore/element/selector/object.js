@@ -13,6 +13,9 @@
 
 pimcore.registerNS('pimcore.bundle.search.element.selector.object');
 
+/**
+ * @private
+ */
 pimcore.bundle.search.element.selector.object = Class.create(pimcore.bundle.search.element.selector.abstract, {
     fieldObject: {},
     gridType: 'object',

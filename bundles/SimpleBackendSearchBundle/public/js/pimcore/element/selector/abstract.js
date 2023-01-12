@@ -13,6 +13,9 @@
 
 pimcore.registerNS('pimcore.bundle.search.element.selector.abstract');
 
+/**
+ * @private
+ */
 pimcore.bundle.search.element.selector.abstract = Class.create({
     initialize: function (parent) {
         this.parent = parent;

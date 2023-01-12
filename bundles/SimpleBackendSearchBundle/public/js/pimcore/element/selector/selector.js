@@ -13,6 +13,9 @@
 
 pimcore.registerNS('pimcore.bundle.search.element.selector.selector');
 
+/**
+ * @private
+ */
 pimcore.bundle.search.element.selector.selector = Class.create({
     initialize: function (multiselect, callback, restrictions, config) {
         this.initialRestrictions = restrictions ? restrictions: {};

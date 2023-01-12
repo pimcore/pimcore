@@ -13,6 +13,9 @@
 
 pimcore.registerNS('pimcore.bundle.search.element.selector.asset');
 
+/**
+ * @private
+ */
 pimcore.bundle.search.element.selector.asset = Class.create(pimcore.bundle.search.element.selector.abstract, {
     initStore: function () {
         this.store = new Ext.data.Store({
