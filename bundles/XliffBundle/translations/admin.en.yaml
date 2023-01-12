@@ -13,7 +13,6 @@ xliff_export_objects: >-
 xliff_export_notice: >-
     Here you can select the documents and objects you want to export for external
     translation.
-important_notice: Important Notice
 xliff_import_notice: >-
     Select a translated XLIFF file which was previously exported by pimcore and
     then translated by a localization service provider (LSP) or by a CAT
