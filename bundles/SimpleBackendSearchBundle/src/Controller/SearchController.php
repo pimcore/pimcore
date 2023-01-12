@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
 use Pimcore\Config;
+use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
