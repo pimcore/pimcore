@@ -26,7 +26,6 @@ pimcore.bundle.wordexport.startup = Class.create({
         let that = this;
         const user = pimcore.globalmanager.get('user');
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
-        console.log("HELLO");
         if (user.isAllowed("word_export") && perspectiveCfg.inToolbar("extras.word_export")) {
             menu.extras.items.some(function(item, index) {
                 if (item.itemId === 'pimcore_menu_extras_translations'){
