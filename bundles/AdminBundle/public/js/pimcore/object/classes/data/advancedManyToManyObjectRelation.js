@@ -126,7 +126,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
         const displayModeStore = [
             ['grid', t('display_mode_grid')]
         ];
-        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
             displayModeStore.push(['combo', t('display_mode_combo')]);
         }
 

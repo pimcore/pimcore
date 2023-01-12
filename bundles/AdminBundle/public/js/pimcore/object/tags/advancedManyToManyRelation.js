@@ -594,7 +594,16 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 });
             }
 
-            if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+            if (this.fieldConfig.assetsAllowed && this.fieldConfig.noteditable == false) {
+                toolbarItems.push({
+                    xtype: "button",
+                    cls: "pimcore_inline_upload",
+                    iconCls: "pimcore_icon_upload",
+                    handler: this.uploadDialog.bind(this)
+                });
+            }
+
+            if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
                 toolbarItems = toolbarItems.concat([
                     {
                         xtype: "button",
@@ -605,15 +614,6 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     //this.getCreateControl()
                 ]);
             }
-        }
-
-        if (this.fieldConfig.assetsAllowed && this.fieldConfig.noteditable == false) {
-            toolbarItems.push({
-                xtype: "button",
-                cls: "pimcore_inline_upload",
-                iconCls: "pimcore_icon_upload",
-                handler: this.uploadDialog.bind(this)
-            });
         }
 
         return toolbarItems;
@@ -725,7 +725,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             }.bind(this, data)
         }));
 
-        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
             menu.add(new Ext.menu.Item({
                 text: t('search'),
                 iconCls: "pimcore_icon_search",
