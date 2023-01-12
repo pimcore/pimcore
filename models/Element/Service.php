@@ -472,8 +472,16 @@ class Service extends Model\AbstractModel
         return false;
     }
 
-    public static function getElementById(string $type, int $id, array $params = []): Asset|Document|AbstractObject|null
+    public static function getElementById(string $type, int|string $id, array $params = []): Asset|Document|AbstractObject|null
     {
+        if (is_string($id)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0',
+                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
+            );
+            $id = is_numeric($id) ? (int) $id : 0;
+        }
         $element = null;
         $params = self::prepareGetByIdParams($params);
         if ($type === 'asset') {
