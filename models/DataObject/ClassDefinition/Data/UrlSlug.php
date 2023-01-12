@@ -276,7 +276,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                             }
 
                             // if now exception is thrown then the slug is owned by a diffrent object/field
-                            throw new \Exception('Unique constraint violated. Slug already used by object '
+                            throw new \Exception('Unique constraint violated. Slug "' . $slug['slug'] . '" is already used by object '
                                 . $existingSlug->getObjectId() . ', fieldname: ' . $existingSlug->getFieldname());
                         }
                     }
