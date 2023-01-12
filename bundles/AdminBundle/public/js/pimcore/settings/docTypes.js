@@ -155,7 +155,7 @@ pimcore.settings.document.doctypes = Class.create({
                 editor: new Ext.form.NumberField({
                     mode: "local",
                     editable: true,
-                    minValue: 1,
+                    minValue: 0,
                     decimalPrecision: 0,
                     triggerAction: "all"
                 })
