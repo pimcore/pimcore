@@ -24,7 +24,7 @@ class StructuredTable implements InterpreterInterface
 
     /**
      * @param mixed $value
-     * @param ?array $config
+     * @param array|null $config
      * @return string|null
      */
     public function interpret($value, $config = null)

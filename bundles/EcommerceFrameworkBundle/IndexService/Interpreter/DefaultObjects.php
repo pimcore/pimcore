@@ -21,7 +21,7 @@ class DefaultObjects implements RelationInterpreterInterface
 {
     /**
      * @param mixed $value
-     * @param ?array $config
+     * @param array|null $config
      * @return array
      */
     public function interpret($value, $config = null)

@@ -555,8 +555,8 @@ class DefaultMysql implements ProductListInterface
 
     /**
      * @param bool $excludeConditions
-     * @param ?string $excludedFieldname
-     * @param ?string $variantMode
+     * @param string|null $excludedFieldname
+     * @param string|null $variantMode
      * @return string
      */
     protected function buildQueryFromConditions($excludeConditions = false, $excludedFieldname = null, $variantMode = null)
@@ -633,7 +633,7 @@ class DefaultMysql implements ProductListInterface
     }
 
     /**
-     * @param ?string $excludedFieldname
+     * @param string|null $excludedFieldname
      * @return string
      */
     protected function buildUserspecificConditions($excludedFieldname = null)

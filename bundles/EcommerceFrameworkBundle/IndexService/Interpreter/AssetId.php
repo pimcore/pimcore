@@ -21,8 +21,8 @@ class AssetId implements InterpreterInterface
 {
     /**
      * @param mixed $value
-     * @param ?array $config
-     * @return ?int
+     * @param array|null $config
+     * @return int|null
      */
     public function interpret($value, $config = null)
     {

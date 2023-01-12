@@ -56,8 +56,8 @@ class Dao
 
     /**
      * @param string $condition
-     * @param ?string $orderBy
-     * @param ?int $limit
+     * @param string|null $orderBy
+     * @param int|null $limit
      * @param int $offset
      * @return array
      * @throws \Doctrine\DBAL\Exception
@@ -206,8 +206,8 @@ class Dao
 
     /**
      * @param string $condition
-     * @param ?string $orderBy
-     * @param ?int $limit
+     * @param string|null $orderBy
+     * @param int|null $limit
      * @param int $offset
      * @return int
      */

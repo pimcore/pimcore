@@ -117,7 +117,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @param int $seriesId
-     * @param ?array $params
+     * @param array|null $params
      * @return bool|array
      */
     public static function getCodes($seriesId, $params)
@@ -177,7 +177,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @param int $usages
-     * @param ?int $seriesId
+     * @param int|null $seriesId
      * @return int|false
      */
     public static function getCountByUsages($usages = 1, $seriesId = null)
