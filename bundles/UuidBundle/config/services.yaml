@@ -10,3 +10,8 @@ services:
         public: true
         arguments:
             $bundle: "@=service('kernel').getBundle('PimcoreUuidBundle')"
+
+    #
+    # EVENT LISTENER
+    #
+    Pimcore\Bundle\UuidBundle\EventListener\UUIDListener: ~

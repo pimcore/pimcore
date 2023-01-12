@@ -14,8 +14,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\EventListener;
+namespace Pimcore\Bundle\UuidBundle\EventListener;
 
+use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
@@ -23,6 +24,8 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Model\ElementEventInterface;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -55,7 +58,7 @@ class UUIDListener implements EventSubscriberInterface
             $element = $this->extractElement($e);
 
             if ($element) {
-                \Pimcore\Model\Tool\UUID::create($element);
+                UUID::create($element);
             }
         }
     }
@@ -66,10 +69,8 @@ class UUIDListener implements EventSubscriberInterface
             $element = $this->extractElement($e);
 
             if ($element) {
-                $uuidObject = \Pimcore\Model\Tool\UUID::getByItem($element);
-                if ($uuidObject instanceof \Pimcore\Model\Tool\UUID) {
-                    $uuidObject->delete();
-                }
+                $uuidObject = UUID::getByItem($element);
+                $uuidObject?->delete();
             }
         }
     }
@@ -84,7 +85,7 @@ class UUIDListener implements EventSubscriberInterface
         return false;
     }
 
-    protected function extractElement(Event $event): \Pimcore\Model\DataObject\ClassDefinition|\Pimcore\Model\Element\ElementInterface|null
+    protected function extractElement(Event $event): ClassDefinition|ElementInterface|null
     {
         $element = null;
 

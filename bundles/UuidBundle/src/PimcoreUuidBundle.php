@@ -20,14 +20,6 @@ class PimcoreUuidBundle extends AbstractPimcoreBundle
     {
         return \dirname(__DIR__);
     }
-    public function getCssPaths(): array
-    {
-        return [];
-    }
-    public function getJsPaths(): array
-    {
-        return [];
-    }
 
     public function getContainerExtension(): ?ExtensionInterface
     {
@@ -36,9 +28,6 @@ class PimcoreUuidBundle extends AbstractPimcoreBundle
 
     public function getInstaller(): Installer
     {
-        /** @var Installer $installer */
-        $installer = $this->container->get(Installer::class);
-        return $installer;
+        return $this->container->get(Installer::class);
     }
-
 }
