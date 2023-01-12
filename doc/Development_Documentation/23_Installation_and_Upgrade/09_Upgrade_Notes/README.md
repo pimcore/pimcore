@@ -106,6 +106,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - Removed `dontCheckEnabled` config support from Areablock editable. 
   - Functionality that was moved into its own bundle and must be enabled manually in `config/bundles.php`
     - Glossary has been moved into PimcoreGlossaryBundle
+    - Search has been moved into PimcoreSimpleBackendSearchBundle
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
@@ -124,6 +125,12 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [DataObjects\Documents] **BC Break**: Calling `getChildren/getSiblings` on `AbstractObject` or `Document` now returns unloaded listing. If the list is not traveresed immediately, then it is required to call `load()` explicitily.
   Also, `setChildren` now accepts `Listing` as first parameter instead of array.
 - [Admin] Removed `adminer` as built-in database management tool.
+- [Search] The search functionality has been extracted to its own bundle (`PimcoreSimpleBackendSearchBundle`)
+  - The `pimcore:search-backend-reindex` command has been moved to the search bundle
+  - Search icons all over Pimcore won't be available without the search bundle
+  - The "advanced" GDPR search has also been moved. We provide a basic search to cover the fundamental functionality if the search bundle isn't available.
+  - The asset, object, document and quick search have been moved to the search bundle
+  - All backend-search related files have been moved to the search bundle (please check custom implementations if you rely on any backend-search component!)
 
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
