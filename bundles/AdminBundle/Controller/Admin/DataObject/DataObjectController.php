@@ -381,7 +381,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         // set the latest available version for editmode
         $draftVersion = null;
-        $object = $this->getLatestVersion($objectFromDatabase, $draftVersion);
+        try {
+            $object = $this->getLatestVersion($objectFromDatabase, $draftVersion);
+        } catch(\Exception $e) {
+            $object = $objectFromDatabase;
+        }
 
         // check for lock
         if ($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete')) {
