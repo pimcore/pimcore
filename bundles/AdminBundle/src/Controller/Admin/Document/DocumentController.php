@@ -671,8 +671,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function docTypesGetAction(Request $request): JsonResponse
     {
         // get list of types
-        $list = new Document\DocType\Listing();
-        $list->load();
+        $list = new DocType\Listing();
 
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
@@ -757,12 +756,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function getDocTypesAction(Request $request): JsonResponse
     {
-        $list = new Document\DocType\Listing();
+        $list = new DocType\Listing();
+
         if ($type = $request->get('type')) {
             if (!Document\Service::isValidType($type)) {
                 throw new BadRequestHttpException('Invalid type: ' . $type);
             }
-            $list->setFilter(function (Document\DocType $docType) use ($type) {
+            $list->setFilter(static function (DocType $docType) use ($type) {
                 return $docType->getType() === $type;
             });
         }
