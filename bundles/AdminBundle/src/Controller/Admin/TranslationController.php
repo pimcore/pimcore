@@ -672,7 +672,7 @@ class TranslationController extends AdminController
     /**
      * -----------------------------------------------------------------------------------
      * THE FOLLOWING ISN'T RELATED TO THE SHARED TRANSLATIONS OR ADMIN-TRANSLATIONS
-     * XLIFF CONTENT-EXPORT
+     * XLIFF CONTENT-EXPORT & MS WORD CONTENT-EXPORT
      * -----------------------------------------------------------------------------------
      */
 
@@ -760,7 +760,7 @@ class TranslationController extends AdminController
 
         $elements = array_values($elements);
 
-        $elementsPerJob = 10;
+        $elementsPerJob = $request->get('elements_per_job', 10);
 
         // one job = X elements
         $elements = array_chunk($elements, $elementsPerJob);

@@ -24,6 +24,7 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class TranslationController extends AdminController
 {
+    private const PERMISSION = 'word_export';
     /**
      * @Route("/word-export", name="pimcore_bundle_wordexport_translation_wordexport", methods={"POST"})
      *
@@ -33,6 +34,7 @@ class TranslationController extends AdminController
      */
     public function wordExportAction(Request $request): JsonResponse
     {
+        $this->checkPermission(self::PERMISSION);
         ini_set('display_errors', 'off');
 
         $id = $this->sanitzeExportId((string)$request->get('id'));
@@ -242,6 +244,7 @@ class TranslationController extends AdminController
      */
     public function wordExportDownloadAction(Request $request): Response
     {
+        $this->checkPermission(self::PERMISSION);
         $id = $this->sanitzeExportId((string)$request->get('id'));
         $exportFile = $this->getExportFilePath($id, true);
 
