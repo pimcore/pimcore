@@ -589,7 +589,6 @@
   "database_administration": "Database Administration",
   "important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality": "IMPORTANT: Use imagick PECL extension for best results, GDlib is just a fallback with limited functionality and less quality!",
   "trim": "Trim",
-  "server_fileexplorer": "Server File Explorer",
   "add_user": "Add User",
   "use_as_site": "Use as site",
   "remove_site": "Remove Site",

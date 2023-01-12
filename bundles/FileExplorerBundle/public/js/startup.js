@@ -43,13 +43,13 @@ pimcore.bundle.file_explorer.startup = Class.create({
         var perspectiveCfg = pimcore.globalmanager.get("perspective");
 
         if (
-            user.admin &&
+            (user.admin || user.isAllowed('fileexplorer')) &&
             perspectiveCfg.inToolbar("extras") &&
             perspectiveCfg.inToolbar("extras.systemtools") &&
             perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")
         ) {
             items.push({
-                text: t("server_fileexplorer"),
+                text: t("pimcore_file_explorer_bundle_server_file_explorer"),
                 iconCls: "pimcore_nav_icon_fileexplorer",
                 itemId: 'pimcore_menu_extras_system_info_server_fileexplorer',
                 handler: this.showFileExplorer

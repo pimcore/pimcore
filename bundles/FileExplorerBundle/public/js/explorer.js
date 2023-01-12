@@ -23,7 +23,7 @@ pimcore.bundle.file_explorer.settings.explorer = Class.create({
 
         this.panel = new Ext.Panel({
             id: "pimcore_fileexplorer",
-            title: t("server_fileexplorer"),
+            title: t("pimcore_file_explorer_bundle_server_file_explorer"),
             iconCls: "pimcore_icon_folder pimcore_icon_overlay_search",
             border: false,
             layout: "border",
@@ -71,7 +71,7 @@ pimcore.bundle.file_explorer.settings.explorer = Class.create({
                     type: "folder",
                     expanded: true,
                     id: '/fileexplorer/',
-                    text: t("document_root"),
+                    text: t("pimcore_file_explorer_bundle_document_root"),
                     writeable: true
                 },
                 listeners: {
@@ -96,21 +96,21 @@ pimcore.bundle.file_explorer.settings.explorer = Class.create({
 
         if (record.data.type == "folder") {
             menu.add(new Ext.menu.Item({
-                text: t('new_file'),
+                text: t('pimcore_file_explorer_bundle_new_file'),
                 iconCls: "pimcore_icon_file pimcore_icon_overlay_add",
                 handler: this.addNewFile.bind(this, record),
                 disabled: !record.data.writeable
             }));
 
             menu.add(new Ext.menu.Item({
-                text: t('new_folder'),
+                text: t('pimcore_file_explorer_bundle_new_folder'),
                 iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                 handler: this.addNewFolder.bind(this, record),
                 disabled: !record.data.writeable
             }));
 
             menu.add(new Ext.menu.Item({
-                text: t('reload'),
+                text: t('pimcore_file_explorer_bundle_reload'),
                 iconCls: "pimcore_icon_reload",
                 handler: function (node) {
                     this.treePanel.getStore().load({
@@ -120,7 +120,7 @@ pimcore.bundle.file_explorer.settings.explorer = Class.create({
             }));
         } else if (record.data.type == "file") {
             menu.add(new Ext.menu.Item({
-                text: t('delete'),
+                text: t('pimcore_file_explorer_bundle_delete'),
                 iconCls: "pimcore_icon_delete",
                 handler: this.deleteFile.bind(this, record),
                 disabled: !record.data.writeable
@@ -129,7 +129,7 @@ pimcore.bundle.file_explorer.settings.explorer = Class.create({
 
         if (record.parentNode) {
             menu.add(new Ext.menu.Item({
-                text: t('rename'),
+                text: t('pimcore_file_explorer_bundle_rename'),
                 iconCls: "pimcore_icon_key",
                 handler: this.rename.bind(this, record),
                 disabled: !record.data.writeable
@@ -141,7 +141,7 @@ pimcore.bundle.file_explorer.settings.explorer = Class.create({
 
     addNewFile: function (node) {
 
-        Ext.MessageBox.prompt(t('new_file'), t('enter_the_name_of_the_new_item'),
+        Ext.MessageBox.prompt(t('pimcore_file_explorer_bundle_new_file'), t('pimcore_file_explorer_bundle_enter_name'),
             function (node, button, value) {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_bundle_file_explorer_add'),
@@ -166,7 +166,7 @@ pimcore.bundle.file_explorer.settings.explorer = Class.create({
 
     addNewFolder: function (node) {
 
-        Ext.MessageBox.prompt(t('new_folder'), t('enter_the_name_of_the_new_item'),
+        Ext.MessageBox.prompt(t('pimcore_file_explorer_bundle_new_folder'), t('pimcore_file_explorer_bundle_enter_name'),
             function (node, button, value) {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_bundle_file_explorer_addfolder'),
@@ -192,7 +192,7 @@ pimcore.bundle.file_explorer.settings.explorer = Class.create({
 
     rename: function (node) {
 
-        Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
+        Ext.MessageBox.prompt(t('pimcore_file_explorer_bundle_rename'), t('pimcore_file_explorer_bundle_enter_new_name'),
             function (node, button, value) {
                 if (button == "ok") {
                     Ext.Ajax.request({
