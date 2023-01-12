@@ -386,16 +386,6 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         ];
         toolbarItems = toolbarItems.concat(this.getFilterEditToolbarItems());
 
-        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
-            toolbarItems = toolbarItems.concat([
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                }
-            ]);
-        }
-
         if (this.fieldConfig.allowToClearRelation) {
             toolbarItems.push({
                 xtype: "button",
@@ -406,6 +396,16 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                     }.bind(this));
                 }.bind(this)
             });
+        }
+
+        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+            toolbarItems = toolbarItems.concat([
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    handler: this.openSearchEditor.bind(this)
+                }
+            ]);
         }
 
         if (this.fieldConfig.assetsAllowed) {
@@ -553,7 +553,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             }.bind(this, data)
         }));
 
-        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
             menu.add(new Ext.menu.Item({
                 text: t('search'),
                 iconCls: "pimcore_icon_search",

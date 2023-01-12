@@ -98,7 +98,7 @@ pimcore.settings.translation.xliff = Class.create({
             ]
         ];
 
-        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
             componentToolbarItems.push({
                 xtype: "button",
                 iconCls: "pimcore_icon_search",

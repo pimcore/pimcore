@@ -202,7 +202,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
             }
         }
 
-        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
             menu.add(new Ext.menu.Item({
                 text: t('search'),
                 iconCls: 'pimcore_icon_search',

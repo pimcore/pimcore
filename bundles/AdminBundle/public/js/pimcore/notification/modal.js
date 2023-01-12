@@ -58,7 +58,7 @@ pimcore.notification.modal = Class.create({
                 this.component,
             ];
 
-            if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+            if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
                 elementItems.push({
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
@@ -180,7 +180,7 @@ pimcore.notification.modal = Class.create({
             }.bind(this)
         }));
 
-        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
             menu.add(new Ext.menu.Item({
                 text: t('search'),
                 iconCls: "pimcore_icon_search",

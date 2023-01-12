@@ -529,7 +529,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     handler: this.empty.bind(this, textField)
                 }];
 
-                if(pimcore.globalmanager.exists('searchImplementationRegistry')){
+                if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()){
                     items.push({
                         xtype: "button",
                         iconCls: "pimcore_icon_search",

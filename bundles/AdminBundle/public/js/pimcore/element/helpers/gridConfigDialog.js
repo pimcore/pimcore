@@ -447,7 +447,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
         });
         items.push(this.itemsPerPage);
 
-        if (this.previewSettings.showPreviewSelector && pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        if (this.previewSettings.showPreviewSelector && pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
             items.push({
                 xtype: "button",
                 text: t("preview_item"),

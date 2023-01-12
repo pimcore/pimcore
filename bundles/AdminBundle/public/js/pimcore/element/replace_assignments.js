@@ -160,7 +160,7 @@ pimcore.element.replace_assignments = Class.create({
                 },
             ]
 
-            if(pimcore.globalmanager.exists('searchImplementationRegistry')){
+            if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()){
                 itemsFcOne.push({
                     xtype: "button",
                     iconCls: "pimcore_icon_search",

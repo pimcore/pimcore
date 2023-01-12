@@ -758,7 +758,7 @@
              if (record.data.permissions.create &&
                  !record.data.locked &&
                  perspectiveCfg.inTreeContextMenu("asset.searchAndMove") &&
-                 pimcore.globalmanager.exists('searchImplementationRegistry')) {
+                 pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
                  advancedMenuItems.push({
                      text: t('search_and_move'),
                      iconCls: "pimcore_icon_search pimcore_icon_overlay_go",

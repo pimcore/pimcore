@@ -215,7 +215,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             }.bind(this)
         });
 
-        if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
             toolBarItems.push({
                 xtype: "button",
                 iconCls: "pimcore_icon_search",

@@ -13,6 +13,16 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
+
+    #
+    # Commands
+    # (auto-register all commands as services)
+    #
+    Pimcore\Bundle\SimpleBackendSearchBundle\Command\:
+        resource: '../src/Command'
+        tags: ['console.command']
+
+
     #
     # INSTALLER
     #

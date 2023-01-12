@@ -370,7 +370,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        if (!this.fieldConfig.noteditable && pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        if (!this.fieldConfig.noteditable && pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
             menu.add(new Ext.menu.Item({
                 text: t('search'),
                 iconCls: "pimcore_icon_search",

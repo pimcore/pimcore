@@ -118,7 +118,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             }
         ];
 
-        if(pimcore.globalmanager.exists('searchImplementationRegistry')){
+        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()){
             tbarItems.push({
                 xtype: "button",
                 iconCls: "pimcore_icon_search",
@@ -394,7 +394,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        if(!this.fieldConfig.noteditable && pimcore.globalmanager.exists('searchImplementationRegistry')) {
+        if(!this.fieldConfig.noteditable && pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
             menu.add(new Ext.menu.Item({
                 text: t('search'),
                 iconCls: "pimcore_icon_search",

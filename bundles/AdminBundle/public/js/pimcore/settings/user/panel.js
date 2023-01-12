@@ -56,7 +56,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 "->"
             ];
 
-            if(pimcore.globalmanager.exists('searchImplementationRegistry')) {
+            if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
                 treeToolbarItems.push({
                     text: t("search"),
                         iconCls: "pimcore_icon_search",
