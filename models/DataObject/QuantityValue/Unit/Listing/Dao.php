@@ -34,7 +34,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         foreach ($unitConfigs as $unitConfig) {
             $unit = new DataObject\QuantityValue\Unit();
-            $unit->setValues($unitConfig);
+            $unit->setValues($unitConfig, true);
             $units[] = $unit;
         }
 
