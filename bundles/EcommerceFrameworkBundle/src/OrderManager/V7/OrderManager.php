@@ -36,7 +36,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
-use Pimcore\Event\Ecommerce\OrderManagerEvents;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\OrderManagerEvents;
 use Pimcore\Event\Model\Ecommerce\OrderManagerEvent;
 use Pimcore\Event\Model\Ecommerce\OrderManagerItemEvent;
 use Pimcore\File;

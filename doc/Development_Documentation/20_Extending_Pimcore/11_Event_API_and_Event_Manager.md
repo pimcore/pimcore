@@ -45,13 +45,6 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Tests](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/TestEvents.php)
 - [Translation](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/TranslationEvents.php)
 - [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/BundleManagerEvents.php)
-- [Ecommerce::Index Service](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/Ecommerce/IndexServiceEvents.php)
-- [Ecommerce::Checkout Manager](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/Ecommerce/CheckoutManagerEvents.php)
-- [Ecommerce::Commit Order Processor](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/Ecommerce/CommitOrderProcessorEvents.php)
-- [Ecommerce::Order Agent](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/Ecommerce/OrderAgentEvents.php)
-- [Ecommerce::Order Manager](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/Ecommerce/OrderManagerEvents.php)
-- [Ecommerce::Order Manager Item](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/Ecommerce/CheckoutManagerItemEvents.php)
-- [Ecommerce::Send Confirmation Mail](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/Ecommerce/SendConfirmationMailEvents.php)
 
 ## Examples
 
