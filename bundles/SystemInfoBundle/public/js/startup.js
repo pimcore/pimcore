@@ -25,7 +25,7 @@ pimcore.bundle.system_info.startup = Class.create({
                 if (item.itemId === 'pimcore_menu_extras_system_info') {
                     if (perspectiveConfig.inToolbar('extras.systemtools.phpinfo')) {
                         menu.extras.items[index].menu.items.push({
-                            text: t('php_info'),
+                            text: t('bundle_systemInfo_php_info'),
                             iconCls: 'pimcore_nav_icon_php',
                             itemId: 'pimcore_menu_extras_system_info_php_info',
                             handler: this.showPhpInfo,
@@ -35,7 +35,7 @@ pimcore.bundle.system_info.startup = Class.create({
 
                     if (perspectiveConfig.inToolbar('extras.systemtools.opcache')) {
                         menu.extras.items[index].menu.items.push({
-                            text: t('php_opcache_status'),
+                            text: t('bundle_systemInfo_php_opcache_status'),
                             iconCls: 'pimcore_nav_icon_reports',
                             itemId: 'pimcore_menu_extras_system_info_php_opcache_status',
                             handler: this.showOpcacheStatus,
@@ -45,7 +45,7 @@ pimcore.bundle.system_info.startup = Class.create({
 
                     if (perspectiveConfig.inToolbar('extras.systemtools.requirements')) {
                         menu.extras.items[index].menu.items.push({
-                            text: t('system_requirements_check'),
+                            text: t('bundle_systemInfo_system_requirements_check'),
                             iconCls: 'pimcore_nav_icon_systemrequirements',
                             itemId: 'pimcore_menu_extras_system_info_system_requirements_check',
                             handler: this.showSystemRequirementsCheck,

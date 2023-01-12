@@ -44,7 +44,6 @@
     "ext-zip": "*",
     "ext-zlib": "*",
     "ext-curl": "*",
-    "amnuts/opcache-gui": "^3.0.1",
     "cbschuld/browser.php": "^1.9.6",
     "colinmollenhour/credis": "^1.10.0",
     "composer/ca-bundle": "^1.2",
