@@ -20,12 +20,12 @@ use Pimcore\Model;
 use Pimcore\Logger;
 use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
-use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend;
 
 /**
  * @internal
  *
- * @property Data $model
+ * @property Backend\Data $model
  */
 class Dao extends AbstractDao
 {
@@ -46,7 +46,7 @@ class Dao extends AbstractDao
             if (is_array($data)) {
                 unset($data['id']);
                 $this->assignVariablesToModel($data);
-                $this->model->setId(new Model\Search\Backend\Data\Id($element));
+                $this->model->setId(new Backend\Data\Id($element));
             }
         } catch (\Exception $e) {
         }
@@ -93,7 +93,7 @@ class Dao extends AbstractDao
      */
     public function delete()
     {
-        if ($this->model->getId() instanceof Model\Search\Backend\Data\Id) {
+        if ($this->model->getId() instanceof Backend\Data\Id) {
             $this->db->delete('search_backend_data', [
                 'id' => $this->model->getId()->getId(),
                 'maintype' => $this->model->getId()->getType(),
