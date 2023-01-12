@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.maintenance");
+/**
+ * @private
+ */
 pimcore.settings.maintenance = Class.create({
 
     initialize: function () {

@@ -11,8 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
- pimcore.registerNS("pimcore.layout.toolbar");
- pimcore.layout.toolbar = Class.create({
+pimcore.registerNS("pimcore.layout.toolbar");
+/**
+ * @private
+ */
+pimcore.layout.toolbar = Class.create({
 
      initialize: function() {
  
@@ -521,52 +524,7 @@
                      }
                  });
              }
- 
-             if (perspectiveCfg.inToolbar("marketing.seo")) {
-                 var seoMenu = [];
- 
-                 if (user.isAllowed("documents") && user.isAllowed("seo_document_editor") && perspectiveCfg.inToolbar("marketing.seo.documents")) {
-                     seoMenu.push({
-                         text: t("seo_document_editor"),
-                         iconCls: "pimcore_nav_icon_document_seo",
-                         itemId: 'pimcore_menu_marketing_seo_document_editor',
-                         handler: this.showDocumentSeo
-                     });
-                 }
- 
-                 if (user.isAllowed("robots.txt") && perspectiveCfg.inToolbar("marketing.seo.robots")) {
-                     seoMenu.push({
-                         text: "robots.txt",
-                         iconCls: "pimcore_nav_icon_robots",
-                         itemId: 'pimcore_menu_marketing_seo_robots_txt',
-                         handler: this.showRobotsTxt
-                     });
-                 }
- 
-                 if (user.isAllowed("http_errors") && perspectiveCfg.inToolbar("marketing.seo.httperrors")) {
-                     seoMenu.push({
-                         text: t("http_errors"),
-                         iconCls: "pimcore_nav_icon_httperrorlog",
-                         itemId: 'pimcore_menu_marketing_seo_http_errors',
-                         handler: this.showHttpErrorLog
-                     });
-                 }
- 
-                 if (seoMenu.length > 0) {
-                     marketingItems.push({
-                         text: t("search_engine_optimization"),
-                         iconCls: "pimcore_nav_icon_seo",
-                         itemId: 'pimcore_menu_marketing_seo',
-                         hideOnClick: false,
-                         menu: {
-                             cls: "pimcore_navigation_flyout",
-                             shadow: false,
-                             items: seoMenu
-                         }
-                     });
-                 }
-             }
- 
+
              if (user.isAllowed("reports_config")) {
                  if (perspectiveCfg.inToolbar("settings.customReports")) {
                      marketingItems.push({
@@ -589,14 +547,12 @@
                  }
              }
 
-             if (marketingItems.length > 0) {
-                 menu.marketing = {
-                     items: marketingItems,
-                     shadow: false,
-                     listeners: true,
-                     cls: "pimcore_navigation_flyout"
-                 };
-             }
+             menu.marketing = {
+                 items: marketingItems,
+                 shadow: false,
+                 listeners: true,
+                 cls: "pimcore_navigation_flyout"
+             };
          }
  
          if (perspectiveCfg.inToolbar("settings")) {
@@ -1253,10 +1209,14 @@
              detail: {
                  translation: this,
                  domain: domain ?? "website"
-             }
+             },
+             cancelable: true
          });
  
-         document.dispatchEvent(preEditTranslations);
+         const isAllowed = document.dispatchEvent(preEditTranslations);
+         if (!isAllowed){
+             return;
+         }
  
          try {
              pimcore.globalmanager.get("translationdomainmanager").activate();
@@ -1467,34 +1427,7 @@
              pimcore.globalmanager.add("objectbricks", new pimcore.object.objectbrick());
          }
      },
- 
-     showDocumentSeo: function () {
-         try {
-             pimcore.globalmanager.get("document_seopanel").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("document_seopanel", new pimcore.document.seopanel());
-         }
-     },
- 
-     showRobotsTxt: function () {
-         try {
-             pimcore.globalmanager.get("robotstxt").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("robotstxt", new pimcore.settings.robotstxt());
-         }
-     },
- 
-     showHttpErrorLog: function () {
-         try {
-             pimcore.globalmanager.get("http_error_log").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("http_error_log", new pimcore.settings.httpErrorLog());
-         }
-     },
- 
+
      clearCache: function (params) {
          Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
              if (btn == 'yes'){

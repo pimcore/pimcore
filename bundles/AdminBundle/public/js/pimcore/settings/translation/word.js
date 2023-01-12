@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.translation.word");
+/**
+ * @private
+ */
 pimcore.settings.translation.word = Class.create({
 
     initialize: function () {

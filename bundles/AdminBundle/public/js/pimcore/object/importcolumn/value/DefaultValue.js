@@ -14,9 +14,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
 pimcore.registerNS("pimcore.object.importcolumn.value.defaultvalue");
-
+/**
+ * @private
+ */
 pimcore.object.importcolumn.value.defaultvalue = Class.create(pimcore.object.importcolumn.Abstract, {
 
     type: "value",

@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @private
+ */
 document.addEventListener("DOMContentLoaded", function(event) {
     var cleanupButtons = document.getElementById('cleanupButtons');
     if (cleanupButtons) {

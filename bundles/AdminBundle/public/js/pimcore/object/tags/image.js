@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.image");
+/**
+ * @private
+ */
 pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     type: "image",

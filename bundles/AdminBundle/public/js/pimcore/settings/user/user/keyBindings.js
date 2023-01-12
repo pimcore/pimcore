@@ -13,6 +13,9 @@
 
 
 pimcore.registerNS("pimcore.settings.user.user.keyBindings");
+/**
+ * @private
+ */
 pimcore.settings.user.user.keyBindings = Class.create({
 
     initialize: function (userPanel, userProfile) {

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editable");
+/**
+ * @private
+ */
 pimcore.document.editable = Class.create({
 
     id: null,

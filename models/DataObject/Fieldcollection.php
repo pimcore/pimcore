@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
@@ -34,7 +35,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @internal
      *
-     * @var TItem[]
+     * @var array<TItem|\__PHP_Incomplete_Class>
      */
     protected array $items = [];
 
@@ -299,6 +300,18 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
                     if ($fieldValue instanceof Localizedfield) {
                         $fieldValue->loadLazyData();
                     }
+                }
+            }
+        }
+    }
+
+    public function __wakeup()
+    {
+        if (is_array($this->items)) {
+            foreach ($this->items as $key => $item) {
+                if ($item instanceof \__PHP_Incomplete_Class) {
+                    unset($this->items[$key]);
+                    Logger::error('fieldcollection item ' . $key . ' does not exist anymore');
                 }
             }
         }

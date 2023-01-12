@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.layout.portal");
+/**
+ * @private
+ */
 pimcore.layout.portal = Class.create({
 
     key: "welcome",

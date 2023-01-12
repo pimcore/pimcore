@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.data.date");
+/**
+ * @private
+ */
 pimcore.asset.metadata.data.date = Class.create(pimcore.asset.metadata.data.data, {
 
     type: "date"

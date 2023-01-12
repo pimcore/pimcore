@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.tag.imagehotspotmarkereditor");
+/**
+ * @private
+ */
 pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
     initialize: function (imageId, data, saveCallback, config) {

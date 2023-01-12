@@ -11,4 +11,7 @@ return [
     "Pimcore\\Bundle\\SimpleBackendSearchBundle\\PimcoreSimpleBackendSearchBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\SeoBundle\\PimcoreSeoBundle" => [
+        "all" => TRUE
+    ],
 ];

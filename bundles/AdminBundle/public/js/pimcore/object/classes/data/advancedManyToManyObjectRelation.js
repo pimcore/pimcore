@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.advancedManyToManyObjectRelation");
+/**
+ * @private
+ */
 pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimcore.object.classes.data.data, {
 
     type: "advancedManyToManyObjectRelation",
@@ -148,7 +151,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                 type: 'ajax',
                 url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                 extraParams: {
-                    no_brick_columns: "true",
+                    no_brick_columns: true,
                     gridtype: 'all',
                     name: this.datax.allowedClassId
                 },

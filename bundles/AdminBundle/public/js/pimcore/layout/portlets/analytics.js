@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.layout.portlets.analytics");
+/**
+ * @private
+ */
 pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstract, {
 
     getType: function () {

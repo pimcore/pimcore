@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.helpers.gridConfigDialog");
+/**
+ * @private
+ */
 pimcore.element.helpers.gridConfigDialog = Class.create({
 
     showFieldname: true,

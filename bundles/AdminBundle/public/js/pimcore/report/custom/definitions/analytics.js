@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.report.custom.definition.analytics");
+/**
+ * @private
+ */
 pimcore.report.custom.definition.analytics = Class.create({
 
     element: null,

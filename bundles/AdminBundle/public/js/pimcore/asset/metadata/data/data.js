@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.data.data");
+/**
+ * @private
+ */
 pimcore.asset.metadata.data.data = Class.create({
 
     allowIn: {

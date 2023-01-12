@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.gender");
+/**
+ * @private
+ */
 pimcore.object.tags.gender = Class.create(pimcore.object.tags.select, {
 
     type: "gender"

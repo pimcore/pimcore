@@ -298,6 +298,11 @@ class Service
     public static function generateLayoutTreeFromArray(array $array, bool $throwException = false, bool $insideLocalizedField = false): Data\EncryptedField|bool|Data|Layout
     {
         if (is_array($array) && count($array) > 0) {
+            if ($title = $array['title'] ?? false) {
+                if (preg_match('/<.+?>/', $title)) {
+                    throw new \Exception('not a valid title:' . htmlentities($title));
+                }
+            }
             if ($name = $array['name'] ?? false) {
                 if (preg_match('/<.+?>/', $name)) {
                     throw new \Exception('not a valid name:' . htmlentities($name));

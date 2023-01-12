@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.textarea");
+/**
+ * @private
+ */
 pimcore.object.classes.data.textarea = Class.create(pimcore.object.classes.data.data, {
 
     type: "textarea",

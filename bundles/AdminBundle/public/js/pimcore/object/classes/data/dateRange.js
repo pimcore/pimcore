@@ -12,7 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.object.classes.data.dateRange');
-
+/**
+ * @private
+ */
 pimcore.object.classes.data.dateRange = Class.create(pimcore.object.classes.data.data, {
     type: 'dateRange',
 

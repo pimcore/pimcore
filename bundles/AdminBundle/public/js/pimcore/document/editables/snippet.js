@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.document.editables.snippet');
+/**
+ * @private
+ */
 pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
     defaultHeight: 100,

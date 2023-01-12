@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.translation.xliff");
+/**
+ * @private
+ */
 pimcore.settings.translation.xliff = Class.create({
 
     initialize: function () {

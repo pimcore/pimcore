@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.relation");
+/**
+ * @private
+ */
 pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
 
     initialize: function($super, id, name, config, data, inherited) {

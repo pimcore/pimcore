@@ -267,8 +267,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     public function __wakeup()
     {
-        $brickGetter = null;
-
         // for backwards compatibility
         if ($this->object) {
             $this->objectId = $this->object->getId();
@@ -287,7 +285,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             foreach ($this->items as $key => $item) {
                 if ($item instanceof \__PHP_Incomplete_Class) {
                     unset($this->items[$key]);
-                    Logger::error('brick ' . $brickGetter . ' does not exist anymore');
+                    Logger::error('brick item ' . $key . ' does not exist anymore');
                 }
             }
         }
