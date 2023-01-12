@@ -25,9 +25,6 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 class DataObjectController extends AdminController
 {
     /**
-     * TODO:
-     *  - ask: should we add a additional hock (event) to let users register their own "display modes"
-     *
      * @Route("/relation-objects-list", name="pimcore_bundle_search_dataobject_relation_objects_list", methods={"GET"})
      */
     public function optionsAction(Request $request): JsonResponse
