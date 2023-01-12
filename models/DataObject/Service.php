@@ -450,7 +450,7 @@ class Service extends Model\Element\Service
 
                         if ($type === 'classificationstore') {
 
-                            if (!empty($inheritedData = self::getInheritedValue($object, $key, $requestedLanguage))) {
+                            if (!empty($inheritedData = self::getInheritedData($object, $key, $requestedLanguage))) {
                                 $data[$dataKey] = $inheritedData['value'];
                                 $data['inheritedFields'][$dataKey] = ['inherited' => $inheritedData['parent']->getId() != $object->getId(), 'objectid' => $inheritedData['parent']->getId()];
                             }
@@ -2087,7 +2087,7 @@ class Service extends Model\Element\Service
         return null;
     }
 
-    protected static function getInheritedValue(Concrete $object, string $key, string $requestedLanguage): array
+    protected static function getInheritedData(Concrete $object, string $key, string $requestedLanguage): array
     {
         if (!$parent = self::hasInheritableParentObject($object)) return [];
 
@@ -2098,6 +2098,6 @@ class Service extends Model\Element\Service
             ];
         }
 
-        return self::getInheritedValue($parent, $key, $requestedLanguage);
+        return self::getInheritedData($parent, $key, $requestedLanguage);
     }
 }
