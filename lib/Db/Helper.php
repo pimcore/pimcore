@@ -110,7 +110,7 @@ class Helper
      * @param ConnectionInterface|\Doctrine\DBAL\Connection $db
      * @param string $sql
      * @param array $exclusions
-     * @return \Doctrine\DBAL\Result
+     * @return \Doctrine\DBAL\Result|Doctrine\DBAL\Driver\ResultStatement|null
      * @throws ValidationException
      */
     public static function queryIgnoreError(ConnectionInterface|\Doctrine\DBAL\Connection $db, $sql, $exclusions = [])
