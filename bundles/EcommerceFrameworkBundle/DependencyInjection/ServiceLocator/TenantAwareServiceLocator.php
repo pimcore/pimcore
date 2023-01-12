@@ -91,7 +91,7 @@ abstract class TenantAwareServiceLocator
     }
 
     /**
-     * @return ?string
+     * @return string|null
      */
     abstract protected function getEnvironmentTenant();
 }

@@ -85,7 +85,7 @@ class Language extends AbstractVariableCondition implements ConditionInterface
     }
 
     /**
-     * @return ?string
+     * @return string|null
      */
     protected function loadLanguage(Request $request)
     {

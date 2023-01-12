@@ -58,7 +58,7 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
     /**
      * @param string $key
      * @param int|string $cartId
-     * @return ?AbstractCartCheckoutData
+     * @return AbstractCartCheckoutData|null
      */
     public static function getByKeyCartId($key, $cartId)
     {
