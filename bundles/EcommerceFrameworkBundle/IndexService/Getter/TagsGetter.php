@@ -26,7 +26,7 @@ class TagsGetter implements GetterInterface
     use OptionsResolverTrait;
 
     /**
-     * @param object $object
+     * @param object $element
      * @param array $config
      * @return mixed
      */
