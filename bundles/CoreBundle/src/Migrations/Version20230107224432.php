@@ -15,7 +15,7 @@ final class Version20230107224432 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Grant XLIFF import/export permission to those who already had "translation" permission, due XLIFF functionalities being moved out to be Standalone from Core Translation';
+        return 'Marks the XliffBundle as installed and grants XLIFF import/export permissions.';
     }
 
     public function up(Schema $schema): void
