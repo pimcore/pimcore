@@ -22,6 +22,7 @@ interface WrapperInterface extends ElementInterface
 {
     /**
      * @param Document $hardLinkSource
+     * @return static
      */
     public function setHardLinkSource($hardLinkSource);
 
@@ -32,6 +33,7 @@ interface WrapperInterface extends ElementInterface
 
     /**
      * @param Document $sourceDocument
+     * @return static
      */
     public function setSourceDocument(Document $sourceDocument);
 

@@ -261,7 +261,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
     protected function getDataEditmode()
     {

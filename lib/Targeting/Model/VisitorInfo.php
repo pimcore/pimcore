@@ -325,6 +325,9 @@ class VisitorInfo implements \IteratorAggregate
         return new \ArrayIterator($this->data);
     }
 
+    /**
+     * @param int|string $key
+     */
     public function has($key): bool
     {
         return isset($this->data[$key]);
@@ -341,6 +344,11 @@ class VisitorInfo implements \IteratorAggregate
         return $this->data[$key] ?? $default;
     }
 
+    /**
+     * @param int|string $key
+     * @param mixed $value
+     * @return void
+     */
     public function set($key, $value)
     {
         $this->data[$key] = $value;

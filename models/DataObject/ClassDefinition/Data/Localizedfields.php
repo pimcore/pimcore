@@ -1450,6 +1450,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return null;
     }
 
+    /**
+     * @param array $data
+     * @return static
+     */
     public static function __set_state($data)
     {
         $obj = new static();

@@ -73,8 +73,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * {@inheritdoc}
-     *
+     * @param string $name
      * @return bool
      */
     public function supports($name)// : bool
@@ -83,8 +82,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * {@inheritdoc}
-     *
+     * @param string $name
+     * @param array $parameters
      * @return string
      */
     public function getRouteDebugMessage($name, array $parameters = [])// : string
@@ -197,8 +196,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * {@inheritdoc}
-     *
+     * @param string $pathinfo
      * @return array
      */
     public function match($pathinfo)// : array
