@@ -1302,7 +1302,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         $forObjectEditor = $request->get('forObjectEditor');
 
-        $context = null;
+        $context = [];
         $layoutDefinitions = [];
         $groups = [];
         $definitions = [];
