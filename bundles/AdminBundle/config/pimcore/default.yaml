@@ -126,21 +126,6 @@ pimcore_admin:
                 action: tagManager
                 ctrl: true
                 alt: true
-            seo_document_editor:
-                key: 'S'
-                action: seoDocumentEditor
-                ctrl: true
-                alt: true
-            robots:
-                key: 'J'
-                action: robots
-                ctrl: true
-                alt: true
-            http_error_log:
-                key: 'O'
-                action: httpErrorLog
-                ctrl: true
-                alt: true
             tag_configuration:
                 key: 'N'
                 action: tagConfiguration

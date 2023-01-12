@@ -28,10 +28,15 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             detail: {
                 document: this,
                 type: "page"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenDocumentPage);
+        const isAllowed = document.dispatchEvent(preOpenDocumentPage);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         this.getData();
 

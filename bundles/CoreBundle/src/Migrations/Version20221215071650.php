@@ -42,4 +42,9 @@ final class Version20221215071650 extends AbstractMigration
             'Please make sure to enable the Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle manually in config/bundles.php'
         );
     }
+
+    public function down(Schema $schema): void
+    {
+        // do nothing
+    }
 }

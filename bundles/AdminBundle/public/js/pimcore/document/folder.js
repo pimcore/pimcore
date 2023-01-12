@@ -28,10 +28,15 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             detail: {
                 document: this,
                 type: "folder"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenDocumentFolder);
+        const isAllowed = document.dispatchEvent(preOpenDocumentFolder);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         this.getData();
     },

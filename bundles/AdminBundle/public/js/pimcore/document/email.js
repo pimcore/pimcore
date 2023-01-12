@@ -28,10 +28,15 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
             detail: {
                 document: this,
                 type: this.getType()
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenDocument);
+        const isAllowed = document.dispatchEvent(preOpenDocument);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         this.getData();
     },
