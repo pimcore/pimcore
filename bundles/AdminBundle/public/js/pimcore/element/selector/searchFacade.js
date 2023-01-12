@@ -19,7 +19,7 @@ pimcore.element.selector.searchFacade = new Class.create({
     },
 
     hasImplementation: function () {
-        return this.getImplementation() !== undefined;
+        return this.getImplementation() !== null;
     },
 
     registerImplementation: function (searchClass) {
