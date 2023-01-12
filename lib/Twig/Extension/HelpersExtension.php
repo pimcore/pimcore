@@ -107,13 +107,9 @@ class HelpersExtension extends AbstractExtension
     }
 
     /**
-     * @param string $file
-     *
-     * @return string
-     *
      * @throws \Exception
      */
-    public function getAssetVersionPreview($file)
+    public function getAssetVersionPreview(string $file): string
     {
         $dataUri = 'data:'.MimeTypes::getDefault()->guessMimeType($file).';base64,'.base64_encode(file_get_contents($file));
         unlink($file);

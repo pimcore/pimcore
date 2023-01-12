@@ -153,12 +153,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->handleEncryption($classDefinition, [$tableQuery, $tableStore]);
     }
 
-    /**
-     * @param string $table
-     * @param array $columnsToRemove
-     * @param array $protectedColumns
-     */
-    protected function removeIndices($table, $columnsToRemove, $protectedColumns): void
+    protected function removeIndices(string $table, array $columnsToRemove, array $protectedColumns): void
     {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             $indexPrefix = str_starts_with($table, 'object_brick_query_') ? 'p_index_' : 'u_index_';
