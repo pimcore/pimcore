@@ -26,21 +26,8 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \Pimcore\Db::get();
 
-        /**
-         * The following code is here for backwards compatibility reason.
-         * If the permissions are already installed, the installer should not generate
-         * any further errors and only add permissions which are not installed
-         */
-        $permissionsString = array_map(function ($permission) {
-            return '\'' . $permission . '\'';
-        }, self::USER_PERMISSIONS);
 
-        $alreadyInstalled = $db->fetchAllAssociative('select `key` from users_permission_definitions where `key` in ('. implode(',', $permissionsString) .');');
-        $columns = array_column($alreadyInstalled, 'key');
-
-        $remainingPermissions = array_diff(self::USER_PERMISSIONS, $columns);
-
-        foreach ($remainingPermissions as $permission) {
+        foreach (self::USER_PERMISSIONS as $permission) {
             $db->insert('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
             ]);
