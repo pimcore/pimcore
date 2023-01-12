@@ -19,8 +19,6 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    Pimcore\Bundle\XliffBundle\Controller\XliffTranslationController: ~
-
     Pimcore\Bundle\XliffBundle\ExportDataExtractorService\ExportDataExtractorServiceInterface:
         class:  Pimcore\Bundle\XliffBundle\ExportDataExtractorService\ExportDataExtractorService
 
