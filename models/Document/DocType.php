@@ -52,7 +52,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string
      */
-    protected string $group;
+    protected ?string $group = null;
 
     /**
      * The specified controller
@@ -158,7 +158,7 @@ class DocType extends Model\AbstractModel
         return $this->name;
     }
 
-    public function getGroup(): string
+    public function getGroup(): ?string
     {
         return $this->group;
     }
@@ -168,7 +168,7 @@ class DocType extends Model\AbstractModel
         return $this->template;
     }
 
-    public function setController(string $controller): static
+    public function setController(?string $controller): static
     {
         $this->controller = $controller;
 
@@ -196,7 +196,7 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-    public function setTemplate(string $template): static
+    public function setTemplate(?string $template): static
     {
         $this->template = $template;
 
