@@ -36,6 +36,6 @@ trait DaoTrait
 
     protected function assignVariablesToModel(array $data): void
     {
-        $this->model->setValues($data);
+        $this->model->setValues($data, true);
     }
 }

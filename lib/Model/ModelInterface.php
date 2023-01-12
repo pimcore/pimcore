@@ -31,5 +31,5 @@ interface ModelInterface
 
     public function setValues(array $data = []): static;
 
-    public function setValue(string $key, mixed $value): static;
+    public function setValue(string $key, mixed $value, bool $ignoreEmptyValues = false): static;
 }

@@ -126,7 +126,11 @@ class Dao extends Model\Element\Dao
         }
 
         // metadata
-        $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
+        $dataExists = $this->db->fetchOne('SELECT `name` FROM assets_metadata WHERE cid = ? LIMIT 1', [$this->model->getId()]);
+        if ($dataExists) {
+            $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
+        }
+
         /** @var array $metadata */
         $metadata = $this->model->getMetadata(null, null, false, true);
 

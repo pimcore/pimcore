@@ -64,7 +64,7 @@ class Dao extends Model\User\AbstractUser\Dao
             $result = $this->db->fetchAllAssociative('SELECT * FROM users_workspaces_' . $type . ' WHERE userId = ?', [$this->model->getId()]);
             foreach ($result as $row) {
                 $workspace = new $className();
-                $workspace->setValues($row);
+                $workspace->setValues($row, true);
                 $workspaces[] = $workspace;
             }
 

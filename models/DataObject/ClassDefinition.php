@@ -715,7 +715,7 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    public function setCreationDate(int $creationDate): static
+    public function setCreationDate(?int $creationDate): static
     {
         $this->creationDate = (int)$creationDate;
 
@@ -729,16 +729,16 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    public function setUserOwner(int $userOwner): static
+    public function setUserOwner(?int $userOwner): static
     {
-        $this->userOwner = (int)$userOwner;
+        $this->userOwner = $userOwner;
 
         return $this;
     }
 
-    public function setUserModification(int $userModification): static
+    public function setUserModification(?int $userModification): static
     {
-        $this->userModification = (int)$userModification;
+        $this->userModification = $userModification;
 
         return $this;
     }
