@@ -31,65 +31,44 @@ interface CheckoutableInterface extends ProductInterface
      * defines the name of the price system for this product.
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
-     *
-     * @return string|null
      */
-    public function getPriceSystemName(): ?string;
+    public function getPriceSystemName(): string;
 
     /**
      * defines the name of the availability system for this product.
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
-     *
-     * @return string|null
      */
-    public function getAvailabilitySystemName(): ?string;
+    public function getAvailabilitySystemName(): string;
 
     /**
      * checks if product is bookable
-     *
      */
     public function getOSIsBookable($quantityScale = 1): bool;
 
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
-     *
-     * @return PriceSystemInterface|null
      */
-    public function getPriceSystemImplementation(): ?PriceSystemInterface;
+    public function getPriceSystemImplementation(): PriceSystemInterface;
 
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
-     *
-     * @return AvailabilitySystemInterface|null
      */
-    public function getAvailabilitySystemImplementation(): ?AvailabilitySystemInterface;
+    public function getAvailabilitySystemImplementation(): AvailabilitySystemInterface;
 
     /**
      * returns price for given quantity scale
-     *
-     * @param int $quantityScale
-     *
-     * @return PriceInterface|null
      */
-    public function getOSPrice(int $quantityScale = 1): ?PriceInterface;
+    public function getOSPrice(int $quantityScale = 1): PriceInterface;
 
     /**
      * returns price info for given quantity scale.
      * price info might contain price and additional information for prices like discounts, ...
-     *
-     * @param int $quantityScale
-     *
-     * @return PriceInfoInterface|null
      */
-    public function getOSPriceInfo(int $quantityScale = 1): ?PriceInfoInterface;
+    public function getOSPriceInfo(int $quantityScale = 1): PriceInfoInterface;
 
     /**
      * returns availability info based on given quantity
-     *
-     * @param int|null $quantity
-     *
-     * @return AvailabilityInterface|null
      */
-    public function getOSAvailabilityInfo(int $quantity = null): ?AvailabilityInterface;
+    public function getOSAvailabilityInfo(int $quantity = null): AvailabilityInterface;
 }

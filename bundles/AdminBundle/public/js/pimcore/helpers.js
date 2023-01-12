@@ -3232,6 +3232,12 @@ pimcore.helpers.buildMenu = function(items) {
             continue;
         }
 
+        // if the submenu has no items, remove the submenu itself
+        if(items[i].menu.items.length === 0){
+            items.splice(i, 1);
+            continue;
+        }
+        
         pimcore.helpers.buildMenu(items[i].menu.items);
         items[i].menu = Ext.create('pimcore.menu.menu', items[i].menu);
     }

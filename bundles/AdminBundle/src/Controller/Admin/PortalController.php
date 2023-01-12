@@ -79,7 +79,7 @@ class PortalController extends AdminController implements KernelControllerEventI
     public function createDashboardAction(Request $request): JsonResponse
     {
         $dashboards = $this->dashboardHelper->getAllDashboards();
-        $key = trim($request->get('key'));
+        $key = trim($request->request->get('key', ''));
 
         if (isset($dashboards[$key])) {
             return $this->adminJson(['success' => false, 'message' => 'name_already_in_use']);

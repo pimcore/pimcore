@@ -39,6 +39,12 @@ class ListCommand extends AbstractBundleCommand
                 InputOption::VALUE_NONE,
                 'Show fully qualified class names instead of short names'
             )
+            ->addOption(
+                'details',
+                'd',
+                InputOption::VALUE_NONE,
+                'Show more details of pimcore bundles e.g. version, description etc.'
+            )
             ->addOption('json', null, InputOption::VALUE_NONE, 'Return data as JSON')
         ;
     }
@@ -48,11 +54,10 @@ class ListCommand extends AbstractBundleCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $details = $input->getOption('details');
         $returnData = [
             'headers' => [
                 'Bundle',
-                'Description',
-                'Version',
                 'Enabled',
                 'Installed',
                 $input->hasOption('json') ? 'Installable' : 'I?',
@@ -62,24 +67,32 @@ class ListCommand extends AbstractBundleCommand
             'rows' => [],
         ];
 
+        if ($details) {
+            array_splice($returnData['headers'], 1, 0, ['Description', 'Version']);
+        }
+
         foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {
             $row = [];
             $row[] = $input->getOption('fully-qualified-classnames') ? $bundleClass : $this->getShortClassName($bundleClass);
 
             try {
                 $bundle = $this->bundleManager->getActiveBundle($bundleClass, false);
-                $row[] = $bundle->getDescription();
-                $row[] = $bundle->getVersion();
+                if ($details) {
+                    $row[] = substr($bundle->getDescription(), 0, 30) . (strlen($bundle->getDescription()) > 30 ? '...' : '');
+                    $row[] = $bundle->getVersion();
+                }
                 $row[] = true;
                 $row[] = $this->bundleManager->isInstalled($bundle);
                 $row[] = $this->bundleManager->canBeInstalled($bundle);
                 $row[] = $this->bundleManager->canBeUninstalled($bundle);
                 $row[] = $this->bundleManager->getManuallyRegisteredBundleState($bundleClass)['priority'];
             } catch (BundleNotFoundException $e) {
-                $row[] = '';
-                $row[] = '';
+                if ($details) {
+                    $row[] = '';
+                    $row[] = '';
+                }
                 $row[] = $row[] = $row[] = $row[] = false;
-                $row[] = '';
+                $row[] = 0;
             }
 
             $returnData['rows'][] = $row;
@@ -96,8 +109,10 @@ class ListCommand extends AbstractBundleCommand
             $table->setHeaders($returnData['headers']);
 
             $returnData['rows'] = array_map(function ($row) {
-                for ($i = 3; $i <= 6; $i++) {
-                    $row[$i] = $this->formatBool($row[$i]);
+                foreach ($row as $idx => $column) {
+                    if (is_bool($column)) {
+                        $row[$idx] = $this->formatBool($column);
+                    }
                 }
 
                 return $row;

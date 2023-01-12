@@ -35,6 +35,7 @@ abstract class AbstractRelations extends Data implements
     Data\IdRewriterInterface
 {
     use DataObject\Traits\ContextPersistenceTrait;
+    use Data\Extension\Relation;
 
     const RELATION_ID_SEPARATOR = '$$';
 
