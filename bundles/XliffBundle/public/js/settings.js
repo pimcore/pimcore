@@ -330,7 +330,7 @@ pimcore.bundle.xliff.settings = Class.create({
                         this.exportProgressbar = null;
                         this.exportProgressWin = null;
 
-                        pimcore.helpers.download(Routing.generate('pimcore_bundle_xliff_exportdownload', {id: id}));
+                        pimcore.helpers.download(Routing.generate('pimcore_bundle_xliff_translation_exportdownload', {id: id}));
                     }.bind(this, res.id),
                     update: function (currentStep, steps, percent) {
                         if(this.exportProgressbar) {

@@ -30,6 +30,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/translation")
+ *
+ */
 class XliffTranslationController extends TranslationController
 {
     /**
@@ -45,7 +49,7 @@ class XliffTranslationController extends TranslationController
     public function xliffExportAction(Request $request, ExportServiceInterface $exportService): JsonResponse
     {
         $this->checkPermission('xliff_import_export');
-        
+
         $id = $request->get('id');
         $data = $this->decodeJson($request->get('data'));
         $source = $request->get('source');
@@ -66,14 +70,14 @@ class XliffTranslationController extends TranslationController
     }
 
     /**
-     * @Route("/xliff-export-download", name="pimcore_bundle_xliff_exportdownload", methods={"GET"})
+     * @Route("/xliff-export-download", name="pimcore_bundle_xliff_translation_exportdownload", methods={"GET"})
      *
      *
      */
     public function xliffExportDownloadAction(Request $request, ExporterInterface $translationExporter, ExportServiceInterface $exportService): BinaryFileResponse
     {
         $this->checkPermission('xliff_import_export');
-        
+
         $id = $request->get('id');
         $exportFile = $exportService->getTranslationExporter()->getExportFilePath($id);
 
@@ -98,7 +102,7 @@ class XliffTranslationController extends TranslationController
     public function xliffImportUploadAction(Request $request, ImportDataExtractorInterface $importDataExtractor): JsonResponse
     {
         $this->checkPermission('xliff_import_export');
-    
+
         $jobs = [];
         $id = uniqid();
         $importFile = $importDataExtractor->getImportFilePath($id);
@@ -143,7 +147,7 @@ class XliffTranslationController extends TranslationController
     public function xliffImportElementAction(Request $request, ImportDataExtractorInterface $importDataExtractor, ImporterServiceInterface $importerService): JsonResponse
     {
         $this->checkPermission('xliff_import_export');
-        
+
         $id = $request->get('id');
         $step = (int) $request->get('step');
 
