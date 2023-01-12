@@ -70,7 +70,9 @@ class UUIDListener implements EventSubscriberInterface
 
             if ($element) {
                 $uuidObject = UUID::getByItem($element);
-                $uuidObject?->delete();
+                if($uuidObject) {
+                    $uuidObject->delete();
+                }
             }
         }
     }
