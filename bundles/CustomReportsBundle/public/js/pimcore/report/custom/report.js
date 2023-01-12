@@ -25,7 +25,7 @@ pimcore.bundle.customreports.custom.report = Class.create(pimcore.bundle.customr
     progressStop: false,
 
     matchType: function (type) {
-        var types = ["global"];
+        var types = ["global", "document_page"];
         if (pimcore.bundle.customreports.abstract.prototype.matchTypeValidate(type, types)) {
             return true;
         }

@@ -52,8 +52,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.notes = new pimcore.element.notes(this, "object");
         }
 
-        if(pimcore.bundle.customreports) {
-            this.reports = pimcore.bundle.customreports.panel("object_concrete", this);
+        if(pimcore.globalmanager.get('customReportsPanelImplementationFactory').hasImplementation()) {
+            this.reports = pimcore.globalmanager.get('customReportsPanelImplementationFactory').getNewReportInstance("object_concrete");
         }
         this.variants = new pimcore.object.variantsTab(this);
         this.appLogger = new pimcore.log.admin({

@@ -226,14 +226,12 @@ pimcore.bundle.customreports.panel = Class.create({
         for (var i = 0; i < pimcore.bundle.customreports.broker.groups.length; i++) {
 
             group = pimcore.bundle.customreports.broker.groups[i];
-
             // add reports to group
             if (typeof pimcore.bundle.customreports.broker.reports[group.id] == "object") {
                 for (var r = 0; r < pimcore.bundle.customreports.broker.reports[group.id].length; r++) {
                     reportClass = pimcore.bundle.customreports.broker.reports[group.id][r]["class"];
                     try {
                         reportClass = stringToFunction(reportClass);
-
                         if (reportClass.prototype.matchType(this.type)) {
                             reportCount++;
                         }

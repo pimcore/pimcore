@@ -5,6 +5,19 @@ pimcore.bundle.customreports.startup = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
+        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
+    },
+
+    pimcoreReady: function () {
+        this.registerCustomReportsPanel();
+        pimcore.globalmanager.add("reports", this.customReportsPanel.getNewReportInstance());
+        pimcore.globalmanager.add("custom_reports_settings", new pimcore.bundle.customreports.custom.settings());
+    },
+
+    registerCustomReportsPanel: function () {
+        this.customReportsPanel = pimcore.globalmanager.get('customReportsPanelImplementationFactory');
+
+        this.customReportsPanel.registerImplementation(pimcore.bundle.customreports.panel);
     },
 
     preMenuBuild: function (e) {
@@ -38,7 +51,7 @@ pimcore.bundle.customreports.startup = Class.create({
             pimcore.globalmanager.get("custom_reports_settings").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("custom_reports_settings", new pimcore.bundle.customreports.custom.settings());
+            console.log(e);
         }
     },
 
@@ -47,7 +60,7 @@ pimcore.bundle.customreports.startup = Class.create({
             pimcore.globalmanager.get("reports").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("reports", new pimcore.bundle.customreports.panel());
+            console.log(e);
         }
 
         // this is for generated/configured reports like the SQL Report

@@ -68,8 +68,8 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
 
         this.dependencies = new pimcore.element.dependencies(this, "document");
         this.preview = new pimcore.document.pages.preview(this);
-        if(pimcore.bundle.customreports) {
-            this.reports = pimcore.bundle.customreports.panel("document_snippet", this);
+        if(pimcore.globalmanager.get('customReportsPanelImplementationFactory').hasImplementation()) {
+            this.reports = pimcore.globalmanager.get('customReportsPanelImplementationFactory').getNewReportInstance("document_snippet");
         }
         this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
         this.workflows = new pimcore.element.workflows(this, "document");
