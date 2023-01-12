@@ -23,6 +23,7 @@ use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
@@ -261,19 +262,11 @@ class Document extends Element\AbstractElement
             } catch (NotFoundException $e) {
                 return null;
             }
+            // Getting Typeloader from container
+            $loader = \Pimcore::getContainer()->get(TypeLoader::class);
 
-            $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
-
-            // this is the fallback for custom document types using prefixes
-            // so we need to check if the class exists first
-            if (!Tool::classExists($className)) {
-                $oldStyleClass = 'Document_' . ucfirst($document->getType());
-                if (Tool::classExists($oldStyleClass)) {
-                    $className = $oldStyleClass;
-                }
-            }
             /** @var Document $newDocument */
-            $newDocument = self::getModelFactory()->build($className);
+            $newDocument = $loader->build($document->getType());
 
             if (get_class($document) !== get_class($newDocument)) {
                 $document = $newDocument;
