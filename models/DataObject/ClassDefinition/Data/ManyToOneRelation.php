@@ -28,9 +28,8 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
+class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
-    use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
@@ -618,5 +617,10 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         return $this->getRelationFilterCondition($value, $operator, $name);
+    }
+
+    public function getVisibleFields(): ?string
+    {
+        return 'fullpath';
     }
 }
