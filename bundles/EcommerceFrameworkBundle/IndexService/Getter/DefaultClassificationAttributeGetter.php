@@ -31,7 +31,7 @@ class DefaultClassificationAttributeGetter implements GetterInterface
      * note that this getter does not support localization at the moment
      *
      * @param object $object
-     * @param array|null $config
+     * @param array $config
      *
      * @return mixed
      */

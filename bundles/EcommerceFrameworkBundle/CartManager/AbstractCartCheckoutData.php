@@ -55,6 +55,11 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
 
     abstract public function save();
 
+    /**
+     * @param string $key
+     * @param int|string $cartId
+     * @return ?AbstractCartCheckoutData
+     */
     public static function getByKeyCartId($key, $cartId)
     {
         throw new \Exception('Not implemented.');

@@ -281,7 +281,7 @@ class DefaultService implements VoucherServiceInterface
     }
 
     /**
-     * @param string|null $seriesId
+     * @param int $seriesId
      *
      * @return bool
      */
@@ -305,7 +305,7 @@ class DefaultService implements VoucherServiceInterface
     }
 
     /**
-     * @param null|string $seriesId
+     * @param int $seriesId
      *
      * @return bool
      */

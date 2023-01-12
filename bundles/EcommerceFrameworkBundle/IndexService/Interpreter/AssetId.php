@@ -19,6 +19,11 @@ use Pimcore\Model\Asset;
 
 class AssetId implements InterpreterInterface
 {
+    /**
+     * @param mixed $value
+     * @param ?array $config
+     * @return ?int
+     */
     public function interpret($value, $config = null)
     {
         if (!empty($value) && $value instanceof Asset) {

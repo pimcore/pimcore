@@ -61,6 +61,10 @@ class VoucherToken implements ConditionInterface
         return false;
     }
 
+    /**
+     * @param string $code
+     * @return bool
+     */
     public function checkVoucherCode($code)
     {
         if (in_array(VoucherServiceToken::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
