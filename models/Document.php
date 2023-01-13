@@ -478,7 +478,7 @@ class Document extends Element\AbstractElement
      *
      * @internal
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         $disallowedKeysInFirstLevel = ['install', 'admin', 'plugin'];
         if ($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
@@ -531,13 +531,13 @@ class Document extends Element\AbstractElement
      *
      * @internal
      */
-    public function saveIndex(int $index)
+    public function saveIndex(int $index): void
     {
         $this->getDao()->saveIndex($index);
         $this->clearDependentCache();
     }
 
-    public function clearDependentCache(array $additionalTags = [])
+    public function clearDependentCache(array $additionalTags = []): void
     {
         try {
             $tags = [$this->getCacheTag(), 'document_properties', 'output'];
@@ -669,7 +669,7 @@ class Document extends Element\AbstractElement
      *
      * @throws \Exception
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // remove children
         if ($this->hasChildren()) {
@@ -696,7 +696,7 @@ class Document extends Element\AbstractElement
         $service->removeTranslation($this);
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
 
@@ -1003,7 +1003,7 @@ class Document extends Element\AbstractElement
      *
      * @param bool $hideUnpublished
      */
-    public static function setHideUnpublished(bool $hideUnpublished)
+    public static function setHideUnpublished(bool $hideUnpublished): void
     {
         self::$hideUnpublished = $hideUnpublished;
     }

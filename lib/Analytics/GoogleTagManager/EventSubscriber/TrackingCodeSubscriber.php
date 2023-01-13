@@ -57,7 +57,7 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onCodeHead(CodeEvent $event)
+    public function onCodeHead(CodeEvent $event): void
     {
         if (! $this->isEnabled()) {
             return;

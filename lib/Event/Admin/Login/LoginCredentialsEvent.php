@@ -37,7 +37,7 @@ class LoginCredentialsEvent extends Event
         return $this->credentials;
     }
 
-    public function setCredentials(array $credentials)
+    public function setCredentials(array $credentials): void
     {
         $this->credentials = $credentials;
     }

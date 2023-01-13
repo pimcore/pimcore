@@ -33,7 +33,7 @@ class AbstractPriceInfo implements PriceInfoInterface
      */
     protected array $products;
 
-    public static function getInstance(): AbstractPriceInfo
+    public static function getInstance(): static
     {
         return new static(func_get_args());
     }
@@ -41,7 +41,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setQuantity(int|string $quantity)
+    public function setQuantity(int|string $quantity): void
     {
         $this->quantity = $quantity;
     }
@@ -111,7 +111,7 @@ class AbstractPriceInfo implements PriceInfoInterface
         return $this->product;
     }
 
-    public function setProducts($products)
+    public function setProducts(array $products): void
     {
         $this->products = $products;
     }

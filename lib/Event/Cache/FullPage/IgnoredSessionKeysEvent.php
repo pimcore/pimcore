@@ -49,7 +49,7 @@ class IgnoredSessionKeysEvent extends Event
     /**
      * @param string[] $keys
      */
-    public function setKeys(array $keys)
+    public function setKeys(array $keys): void
     {
         $this->keys = $keys;
     }

@@ -38,7 +38,7 @@ class ConsoleEvent extends Event
         return $this->application;
     }
 
-    public function setApplication(Application $application)
+    public function setApplication(Application $application): void
     {
         $this->application = $application;
     }

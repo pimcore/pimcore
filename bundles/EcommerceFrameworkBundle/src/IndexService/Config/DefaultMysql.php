@@ -87,7 +87,7 @@ class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setTenantWorker(WorkerInterface $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker): void
     {
         if (!$tenantWorker instanceof DefaultMysqlWorker) {
             throw new \InvalidArgumentException(sprintf(

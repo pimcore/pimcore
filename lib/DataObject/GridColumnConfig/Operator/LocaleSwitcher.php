@@ -28,7 +28,7 @@ final class LocaleSwitcher extends AbstractOperator
 
     private ?string $locale = null;
 
-    public function __construct(LocaleServiceInterface $localeService, \stdClass $config, $context = null)
+    public function __construct(LocaleServiceInterface $localeService, \stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 

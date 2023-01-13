@@ -28,10 +28,15 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             detail: {
                 object: this,
                 type: "folder"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenAssetFolder);
+        const isAllowed = document.dispatchEvent(preOpenAssetFolder);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         var user = pimcore.globalmanager.get("user");
 

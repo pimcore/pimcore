@@ -26,18 +26,18 @@ class TagsGetter implements GetterInterface
 {
     use OptionsResolverTrait;
 
-    public function get($element, $config = null): array
+    public function get(object $object, array $config = null): mixed
     {
         $config = $this->resolveOptions($config ?? []);
 
         $type = 'object';
-        if ($element instanceof Asset) {
+        if ($object instanceof Asset) {
             $type = 'asset';
-        } elseif ($element instanceof Document) {
+        } elseif ($object instanceof Document) {
             $type = 'document';
         }
 
-        $tags = Tag::getTagsForElement($type, $element->getId());
+        $tags = Tag::getTagsForElement($type, $object->getId());
 
         if (!$config['includeParentTags']) {
             return $tags;
@@ -57,7 +57,7 @@ class TagsGetter implements GetterInterface
         return $result;
     }
 
-    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'includeParentTags' => false,

@@ -477,7 +477,7 @@ class Data extends \Pimcore\Model\AbstractModel
         return $data;
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->getDao()->delete();
     }
@@ -485,7 +485,7 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         if ($this->id instanceof Data\Id) {
             $this->dispatchEvent(new SearchBackendEvent($this), SearchBackendEvents::PRE_SAVE);

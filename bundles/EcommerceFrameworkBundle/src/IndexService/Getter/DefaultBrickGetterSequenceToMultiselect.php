@@ -23,7 +23,7 @@ class DefaultBrickGetterSequenceToMultiselect implements GetterInterface
 {
     use OptionsResolverTrait;
 
-    public function get($object, $config = null): array
+    public function get(object $object, array $config = null): mixed
     {
         $config = $this->resolveOptions($config ?? []);
         $sourceList = $config['source'];
@@ -83,7 +83,7 @@ class DefaultBrickGetterSequenceToMultiselect implements GetterInterface
         return $values;
     }
 
-    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver): void
     {
         if ('default' === $resolverName) {
             $resolver

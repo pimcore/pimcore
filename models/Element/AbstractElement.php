@@ -295,7 +295,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      */
-    protected function updateModificationInfos()
+    protected function updateModificationInfos(): void
     {
         if (Model\Version::isEnabled() === true) {
             $this->setVersionCount($this->getDao()->getVersionCountForUpdate() + 1);
@@ -355,7 +355,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return array_key_exists($name, $properties);
     }
 
-    public function removeProperty(string $name)
+    public function removeProperty(string $name): void
     {
         $properties = $this->getProperties();
         unset($properties[$name]);
@@ -525,7 +525,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      */
-    public function unlockPropagate()
+    public function unlockPropagate(): void
     {
         $type = Service::getElementType($this);
 
@@ -545,7 +545,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @throws \Exception
      */
-    protected function validatePathLength()
+    protected function validatePathLength(): void
     {
         if (mb_strlen($this->getRealFullPath()) > 765) {
             throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
@@ -565,7 +565,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->__dataVersionTimestamp;
     }
 
-    public function __setDataVersionTimestamp(int $_dataVersionTimestamp)
+    public function __setDataVersionTimestamp(int $_dataVersionTimestamp): void
     {
         $this->__dataVersionTimestamp = $_dataVersionTimestamp;
     }
@@ -666,7 +666,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * {@inheritdoc}
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -676,7 +676,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return array_diff(parent::__sleep(), $this->getBlockedVars());
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->isInDumpState()) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
@@ -707,7 +707,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @internal
      */
-    public function deleteAutoSaveVersions(int $userId = null)
+    public function deleteAutoSaveVersions(int $userId = null): void
     {
         $list = new Model\Version\Listing();
         $list->setLoadAutoSave(true);
@@ -725,7 +725,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      */
-    protected function removeInheritedProperties()
+    protected function removeInheritedProperties(): void
     {
         $myProperties = $this->getProperties();
 
@@ -743,7 +743,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      */
-    protected function renewInheritedProperties()
+    protected function renewInheritedProperties(): void
     {
         $this->removeInheritedProperties();
 

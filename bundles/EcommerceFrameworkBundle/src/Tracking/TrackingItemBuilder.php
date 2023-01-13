@@ -79,7 +79,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      * @param AbstractProductData $item the tracking item that is going to be serialized later on.
      * @param ProductInterface $product
      */
-    protected function initProductAttributes(AbstractProductData $item, ProductInterface $product)
+    protected function initProductAttributes(AbstractProductData $item, ProductInterface $product): void
     {
         $item
             ->setId($product->getOSProductNumber())

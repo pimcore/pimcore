@@ -28,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RecyclebinCleanupCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:recyclebin:cleanup')

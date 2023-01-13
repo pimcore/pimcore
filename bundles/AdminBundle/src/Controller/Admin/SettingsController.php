@@ -33,7 +33,6 @@ use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
 use Pimcore\Model\Staticroute;
-use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -556,7 +555,7 @@ class SettingsController extends AdminController
      *
      * @throws \Exception
      */
-    protected function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = [])
+    protected function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = []): void
     {
         if (isset($definitions[$source])) {
             $targets = explode(',', $definitions[$source]);
@@ -1441,49 +1440,6 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxtget", methods={"GET"})
-     *
-     * @return JsonResponse
-     */
-    public function robotsTxtGetAction(): JsonResponse
-    {
-        $this->checkPermission('robots.txt');
-
-        $config = Config::getRobotsConfig();
-
-        return $this->adminJson([
-            'success' => true,
-            'data' => $config,
-            'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt'),
-        ]);
-    }
-
-    /**
-     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxtput", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function robotsTxtPutAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('robots.txt');
-
-        $values = $request->get('data');
-        if (!is_array($values)) {
-            $values = [];
-        }
-
-        foreach ($values as $siteId => $robotsContent) {
-            SettingsStore::set('robots.txt-' . $siteId, $robotsContent, 'string', 'robots.txt');
-        }
-
-        return $this->adminJson([
-            'success' => true,
-        ]);
-    }
-
-    /**
      * @Route("/website-settings", name="pimcore_admin_settings_websitesettings", methods={"POST"})
      *
      * @param Request $request
@@ -1655,7 +1611,7 @@ class SettingsController extends AdminController
      * @param string $language
      * @param string $dbName
      */
-    protected function deleteViews(string $language, string $dbName)
+    protected function deleteViews(string $language, string $dbName): void
     {
         $db = \Pimcore\Db::get();
         $views = $db->fetchAllAssociative('SHOW FULL TABLES IN ' . $db->quoteIdentifier($dbName) . " WHERE TABLE_TYPE LIKE 'VIEW'");

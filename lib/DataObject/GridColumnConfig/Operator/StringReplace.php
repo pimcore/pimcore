@@ -29,7 +29,7 @@ final class StringReplace extends AbstractOperator
 
     private bool $insensitive;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -100,7 +100,7 @@ final class StringReplace extends AbstractOperator
         return $this->search;
     }
 
-    public function setSearch(string $search)
+    public function setSearch(string $search): void
     {
         $this->search = $search;
     }
@@ -110,7 +110,7 @@ final class StringReplace extends AbstractOperator
         return $this->replace;
     }
 
-    public function setReplace(string $replace)
+    public function setReplace(string $replace): void
     {
         $this->replace = $replace;
     }
@@ -120,7 +120,7 @@ final class StringReplace extends AbstractOperator
         return $this->insensitive;
     }
 
-    public function setInsensitive(bool $insensitive)
+    public function setInsensitive(bool $insensitive): void
     {
         $this->insensitive = $insensitive;
     }

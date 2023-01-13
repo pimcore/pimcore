@@ -134,7 +134,7 @@ final class Config implements ArrayAccess
      *
      * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
      */
-    public static function setSystemConfiguration(?array $configuration, string $offset = null)
+    public static function setSystemConfiguration(?array $configuration, string $offset = null): void
     {
         if (null !== $offset) {
             self::getSystemConfiguration();
@@ -296,7 +296,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function setWebsiteConfig(?array $config, string $language = null)
+    public static function setWebsiteConfig(?array $config, string $language = null): void
     {
         RuntimeCache::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
     }
@@ -356,7 +356,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function setReportConfig(array $config)
+    public static function setReportConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_report', $config);
     }
@@ -395,7 +395,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function setRobotsConfig(array $config)
+    public static function setRobotsConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_robots', $config);
     }
@@ -422,7 +422,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function setWeb2PrintConfig(array $config)
+    public static function setWeb2PrintConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_web2print', $config);
     }
@@ -432,7 +432,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function setModelClassMappingConfig(array $config)
+    public static function setModelClassMappingConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_model_classmapping', $config);
     }

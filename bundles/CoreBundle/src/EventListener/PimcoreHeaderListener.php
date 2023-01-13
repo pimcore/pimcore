@@ -32,7 +32,7 @@ class PimcoreHeaderListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if ($event->isMainRequest()) {
             $response = $event->getResponse();

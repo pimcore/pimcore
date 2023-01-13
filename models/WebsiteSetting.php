@@ -257,7 +257,7 @@ final class WebsiteSetting extends AbstractModel
         return $this->language;
     }
 
-    public function setLanguage(string $language)
+    public function setLanguage(string $language): void
     {
         $this->language = $language;
     }
@@ -265,7 +265,7 @@ final class WebsiteSetting extends AbstractModel
     /**
      * @internal
      */
-    public function clearDependentCache()
+    public function clearDependentCache(): void
     {
         \Pimcore\Cache::clearTag('website_config');
     }

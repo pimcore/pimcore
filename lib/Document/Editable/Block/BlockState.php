@@ -51,7 +51,7 @@ final class BlockState implements \JsonSerializable
         return !empty($this->blocks);
     }
 
-    public function pushBlock(BlockName $block)
+    public function pushBlock(BlockName $block): void
     {
         array_push($this->blocks, $block);
     }
@@ -65,7 +65,7 @@ final class BlockState implements \JsonSerializable
         return array_pop($this->blocks);
     }
 
-    public function clearBlocks()
+    public function clearBlocks(): void
     {
         $this->blocks = [];
     }
@@ -83,7 +83,7 @@ final class BlockState implements \JsonSerializable
         return !empty($this->indexes);
     }
 
-    public function pushIndex(int $index)
+    public function pushIndex(int $index): void
     {
         array_push($this->indexes, $index);
     }
@@ -97,7 +97,7 @@ final class BlockState implements \JsonSerializable
         return array_pop($this->indexes);
     }
 
-    public function clearIndexes()
+    public function clearIndexes(): void
     {
         $this->indexes = [];
     }

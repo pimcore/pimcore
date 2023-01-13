@@ -33,7 +33,7 @@ class Dao extends AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById(int $id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -51,7 +51,7 @@ class Dao extends AbstractDao
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
             $this->create();
@@ -63,7 +63,7 @@ class Dao extends AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('glossary', ['id' => $this->model->getId()]);
     }
@@ -71,7 +71,7 @@ class Dao extends AbstractDao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);
@@ -94,7 +94,7 @@ class Dao extends AbstractDao
     /**
      * Create a new record for the object in database
      */
-    public function create()
+    public function create(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);

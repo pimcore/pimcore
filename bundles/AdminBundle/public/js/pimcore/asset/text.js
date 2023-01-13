@@ -28,10 +28,15 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
             detail: {
                 object: this,
                 type: "text"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenAssetText);
+        const isAllowed = document.dispatchEvent(preOpenAssetText);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         var user = pimcore.globalmanager.get("user");
 

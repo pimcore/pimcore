@@ -26,7 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CleanupReservationsCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('ecommerce:voucher:cleanup-reservations');
         $this->setDescription('Cleans the token reservations due to sysConfig duration settings');

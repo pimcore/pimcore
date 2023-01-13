@@ -107,7 +107,7 @@ final class Tag extends Model\AbstractModel
      * @param int $cId
      * @param Tag $tag
      */
-    public static function addTagToElement(string $cType, int $cId, Tag $tag)
+    public static function addTagToElement(string $cType, int $cId, Tag $tag): void
     {
         $event = new TagEvent($tag, [
             'elementType' => $cType,
@@ -127,7 +127,7 @@ final class Tag extends Model\AbstractModel
      * @param int $cId
      * @param Tag $tag
      */
-    public static function removeTagFromElement(string $cType, int $cId, Tag $tag)
+    public static function removeTagFromElement(string $cType, int $cId, Tag $tag): void
     {
         $event = new TagEvent($tag, [
             'elementType' => $cType,
@@ -148,13 +148,13 @@ final class Tag extends Model\AbstractModel
      * @param int $cId
      * @param Tag[] $tags
      */
-    public static function setTagsForElement(string $cType, int $cId, array $tags)
+    public static function setTagsForElement(string $cType, int $cId, array $tags): void
     {
         $tag = new Tag();
         $tag->getDao()->setTagsForElement($cType, $cId, $tags);
     }
 
-    public static function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace = false)
+    public static function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace = false): void
     {
         $tag = new Tag();
         $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
@@ -195,7 +195,7 @@ final class Tag extends Model\AbstractModel
         }
     }
 
-    public function save()
+    public function save(): void
     {
         $isUpdate = $this->exists();
 
@@ -319,7 +319,7 @@ final class Tag extends Model\AbstractModel
         return count($this->getChildren()) > 0;
     }
 
-    public function correctPath()
+    public function correctPath(): void
     {
         //set id path to correct value
         $parentIds = [];
@@ -342,7 +342,7 @@ final class Tag extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new TagEvent($this), TagEvents::PRE_DELETE);
 

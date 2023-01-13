@@ -116,7 +116,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @throws \Exception
      */
-    public function save(Concrete $object, array $params = [])
+    public function save(Concrete $object, array $params = []): void
     {
         $saveRelationalData = $this->getDao()->save($object, $params);
 
@@ -153,14 +153,14 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @param TItem $item
      */
-    public function add(Fieldcollection\Data\AbstractData $item)
+    public function add(Fieldcollection\Data\AbstractData $item): void
     {
         $this->items[] = $item;
 
         $this->markFieldDirty('_self', true);
     }
 
-    public function remove(int $index)
+    public function remove(int $index): void
     {
         if (isset($this->items[$index])) {
             array_splice($this->items, $index, 1);
@@ -244,7 +244,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @internal
      */
-    public function loadLazyField(Concrete $object, string $type, string $fcField, int $index, string $field)
+    public function loadLazyField(Concrete $object, string $type, string $fcField, int $index, string $field): void
     {
         // lazy loading existing can be data if the item already had an index
         $item = $this->getByOriginalIndex($index);
@@ -302,7 +302,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @internal
      */
-    public function loadLazyData()
+    public function loadLazyData(): void
     {
         $items = $this->getItems();
         if (is_array($items)) {

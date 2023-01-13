@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 class Soundex implements InterpreterInterface
 {
-    public function interpret($value, $config = null): int
+    public function interpret(mixed $value, ?array $config = null): int
     {
         if (is_array($value)) {
             sort($value);
