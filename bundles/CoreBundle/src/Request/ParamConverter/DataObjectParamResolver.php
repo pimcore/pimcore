@@ -60,25 +60,16 @@ class DataObjectParamResolver implements ValueResolverInterface
         $object = $class::getById($value);
         if (!$object) {
             throw new NotFoundHttpException(sprintf('Invalid data object ID given for parameter "%s".', $param));
-        } elseif (!$object->isPublished() && !Tool::isElementRequestByAdmin($request, $object) && (!array_key_exists('unpublished', $options) || !$options['unpublished'])) {
+        } elseif (
+            !$object->isPublished()
+            && !Tool::isElementRequestByAdmin($request, $object)
+            && !array_key_exists('unpublished', $options)
+        ) {
             throw new NotFoundHttpException(sprintf('Data object for parameter "%s" is not published.', $param));
         }
 
         $request->attributes->set($param, $object);
 
         return [$object];
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     */
-    public function supports(ParamConverter $configuration): bool
-    {
-        if (null === $configuration->getClass()) {
-            return false;
-        }
-
-        return is_subclass_of($configuration->getClass(), AbstractObject::class);
     }
 }
