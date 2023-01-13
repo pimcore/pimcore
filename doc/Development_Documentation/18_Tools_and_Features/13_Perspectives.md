@@ -61,8 +61,7 @@ The table below, describes the most useful of available options in the configura
 
 ## Simple example
 
-In the [example configuration](14_Perspective_Example.md) you can find advance usage. 
-Below, I showed how to create the simple structure which would be use for catalog administrators.
+Note: This is a simple example, which could be used for catalog administrators. For advanced usage please see the [example configuration](14_Perspective_Example.md).
 
 We need only to see 
 * products (objects from a specific directory)
