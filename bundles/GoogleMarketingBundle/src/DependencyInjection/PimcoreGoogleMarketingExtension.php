@@ -20,9 +20,7 @@ class PimcoreGoogleMarketingExtension extends Extension
             new FileLocator(__DIR__ . '/../../config')
         );
         $loader->load('services.yaml');
-        $loader->load('event_listeners.yaml');
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
-
     }
 
     /**

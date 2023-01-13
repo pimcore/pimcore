@@ -15,7 +15,8 @@ pimcore.bundle.google_marketing.startup = Class.create({
                 text: t("marketing_settings"),
                 iconCls: "pimcore_nav_icon_marketing_settings",
                 itemId: 'pimcore_menu_marketing_settings',
-                handler: this.reportSettings
+                handler: this.reportSettings,
+                priority: 30
             });
         }
     },
