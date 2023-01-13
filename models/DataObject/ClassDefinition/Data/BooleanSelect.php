@@ -348,6 +348,7 @@ class BooleanSelect extends Data implements
     /**
      * @param int $value
      * @param string $label
+     *
      * @return void
      */
     public function setOptionsEntry($value, $label)
@@ -381,6 +382,7 @@ class BooleanSelect extends Data implements
 
     /**
      * @param string $noLabel
+     *
      * @return $this
      */
     public function setNoLabel($noLabel)
@@ -401,6 +403,7 @@ class BooleanSelect extends Data implements
 
     /**
      * @param string $emptyLabel
+     *
      * @return $this
      */
     public function setEmptyLabel($emptyLabel)

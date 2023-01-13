@@ -65,6 +65,7 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      * returns always true in default implementation
      *
      * @param int $quantityScale
+     *
      * @return bool
      */
     public function getOSIsBookable($quantityScale = 1): bool

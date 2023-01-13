@@ -59,7 +59,9 @@ class Dao
      * @param string|null $orderBy
      * @param int|null $limit
      * @param int $offset
+     *
      * @return array
+     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function load($condition, $orderBy = null, $limit = null, $offset = 0)
@@ -110,6 +112,7 @@ class Dao
      * @param string $fieldname
      * @param string $condition
      * @param bool $countValues
+     *
      * @return array
      */
     public function loadGroupByValues($fieldname, $condition, $countValues = false)
@@ -154,6 +157,7 @@ class Dao
      * @param string $fieldname
      * @param string $condition
      * @param bool $countValues
+     *
      * @return array
      */
     public function loadGroupByRelationValues($fieldname, $condition, $countValues = false)
@@ -209,6 +213,7 @@ class Dao
      * @param string|null $orderBy
      * @param int|null $limit
      * @param int $offset
+     *
      * @return int
      */
     public function getCount($condition, $orderBy = null, $limit = null, $offset = 0)
@@ -250,6 +255,7 @@ class Dao
 
     /**
      * @param mixed $value
+     *
      * @return mixed
      */
     public function quote($value)

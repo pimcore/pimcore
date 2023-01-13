@@ -20,6 +20,7 @@ interface GetterInterface
     /**
      * @param object $object
      * @param array $config
+     *
      * @return mixed
      */
     public function get($object, $config = null);

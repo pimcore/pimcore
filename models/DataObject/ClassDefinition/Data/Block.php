@@ -1299,6 +1299,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     /**
      * @param array $data
+     *
      * @return static
      */
     public static function __set_state($data)

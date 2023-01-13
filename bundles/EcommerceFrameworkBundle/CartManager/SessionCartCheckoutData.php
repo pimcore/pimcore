@@ -27,6 +27,7 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
     /**
      * @param string $key
      * @param int|string $cartId
+     *
      * @return AbstractCartCheckoutData|null
      */
     public static function getByKeyCartId($key, $cartId)
@@ -71,6 +72,7 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
 
     /**
      * @param int|string|null $cartId
+     *
      * @return void
      */
     public function setCartId($cartId)

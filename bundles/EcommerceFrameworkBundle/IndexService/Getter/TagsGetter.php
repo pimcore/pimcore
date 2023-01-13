@@ -28,6 +28,7 @@ class TagsGetter implements GetterInterface
     /**
      * @param object $element
      * @param array $config
+     *
      * @return mixed
      */
     public function get($element, $config = null)

@@ -339,6 +339,7 @@ interface CartInterface
 
     /**
      * @param int $errorCode
+     *
      * @return bool
      */
     public function isVoucherErrorCode($errorCode);

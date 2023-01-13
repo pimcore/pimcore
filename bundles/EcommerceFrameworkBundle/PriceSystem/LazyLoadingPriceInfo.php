@@ -38,6 +38,7 @@ class LazyLoadingPriceInfo extends AbstractPriceInfo implements PriceInfoInterfa
     /**
      * @param string $name
      * @param array $arg
+     *
      * @return mixed
      */
     public function __call($name, $arg)

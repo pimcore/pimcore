@@ -123,6 +123,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface
 
     /**
      * @param string $attributeName
+     *
      * @return mixed
      */
     public function getRelationAttribute($attributeName)
@@ -149,6 +150,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface
     /**
      * @param string $method
      * @param array $args
+     *
      * @return mixed
      */
     public function __call($method, $args)

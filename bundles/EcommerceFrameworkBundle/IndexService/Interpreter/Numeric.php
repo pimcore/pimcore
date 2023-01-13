@@ -20,6 +20,7 @@ class Numeric implements InterpreterInterface
     /**
      * @param mixed $value
      * @param array|null $config
+     *
      * @return float
      */
     public function interpret($value, $config = null)

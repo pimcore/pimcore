@@ -128,6 +128,7 @@ class AbstractPriceInfo implements PriceInfoInterface
 
     /**
      * @param array $products
+     *
      * @return void
      */
     public function setProducts($products)
