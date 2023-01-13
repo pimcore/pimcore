@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.gdpr.dataproviders.sentMail");
+/**
+ * @private
+ */
 pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
 
     searchParams: [],

@@ -64,7 +64,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
      *
      * @return bool
      */
@@ -74,7 +74,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     * @param array $parameters
      *
      * @return string
      */
@@ -188,7 +189,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $pathinfo
      *
      * @return array
      */

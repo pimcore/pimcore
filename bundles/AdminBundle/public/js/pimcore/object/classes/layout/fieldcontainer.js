@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.layout.fieldcontainer");
+/**
+ * @private
+ */
 pimcore.object.classes.layout.fieldcontainer = Class.create(pimcore.object.classes.layout.layout, {
 
     type: "fieldcontainer",

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.geo.abstract");
+/**
+ * @private
+ */
 pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.data.data, {
 
     /**

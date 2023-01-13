@@ -231,10 +231,11 @@ class AssetHelperController extends AdminController
 
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
-                $request->get('no_system_columns', false),
+                $request->query->getBoolean('no_system_columns'),
                 [], //maybe required for types other than metadata
                 $context,
-                $types);
+                $types
+            );
         } else {
             $savedColumns = $gridConfig['columns'];
 
@@ -764,9 +765,9 @@ class AssetHelperController extends AdminController
         return $this->adminJson(['success' => true]);
     }
 
-    public function encodeFunc($value): string
+    public function encodeFunc(string $value): string
     {
-        $value = str_replace('"', '""', (string) $value);
+        $value = str_replace('"', '""', $value);
         //force wrap value in quotes and return
         return '"' . $value . '"';
     }

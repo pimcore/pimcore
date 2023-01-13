@@ -192,5 +192,7 @@ trait Wrapper
     public function setSourceDocument(Document $sourceDocument): void
     {
         $this->sourceDocument = $sourceDocument;
+
+        return $this;
     }
 }

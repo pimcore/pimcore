@@ -270,7 +270,9 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param bool $showControls
+     * @param bool $return
+     * @param string $additionalClass
      */
     public function blockStart($showControls = true, $return = false, $additionalClass = '')
     {
@@ -328,7 +330,7 @@ EOT;
     }
 
     /**
-     * {@inheritdoc}
+     * @param bool $return
      */
     public function blockEnd($return = false)
     {
@@ -440,6 +442,6 @@ EOT;
             return false;
         }
 
-        return $request->get(self::ATTRIBUTE_IGNORE_EDITMODE_INDICES, false);
+        return $request->attributes->getBoolean(self::ATTRIBUTE_IGNORE_EDITMODE_INDICES);
     }
 }

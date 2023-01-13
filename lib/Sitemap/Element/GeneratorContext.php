@@ -62,6 +62,9 @@ class GeneratorContext implements GeneratorContextInterface
         return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : $default;
     }
 
+    /**
+     * @param int|string $key
+     */
     public function has($key): bool
     {
         return array_key_exists($key, $this->parameters);

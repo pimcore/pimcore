@@ -101,8 +101,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
         $errorPath = $this->determineErrorPath($request);
 
-        $this->logToHttpErrorLog($event->getRequest(), $statusCode);
-
         // Error page rendering
         if (empty($errorPath)) {
             // if not set, use Symfony error handling
@@ -129,26 +127,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
         }
 
         $event->setResponse(new Response($response, $statusCode, $headers));
-    }
-
-    protected function logToHttpErrorLog(Request $request, $statusCode)
-    {
-        $uri = $request->getUri();
-        $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', [$uri]);
-        if ($exists) {
-            $this->db->executeQuery('UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?', [time(), $uri]);
-        } else {
-            $this->db->insert('http_error_log', [
-                'uri' => $uri,
-                'code' => (int) $statusCode,
-                'parametersGet' => serialize($_GET),
-                'parametersPost' => serialize($_POST),
-                'cookies' => serialize($_COOKIE),
-                'serverVars' => serialize($_SERVER),
-                'date' => time(),
-                'count' => 1,
-            ]);
-        }
     }
 
     /**

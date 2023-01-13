@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.area_abstract");
+/**
+ * @private
+ */
 pimcore.document.area_abstract = Class.create(pimcore.document.editable, {
     dialogBoxes: {},
 

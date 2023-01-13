@@ -12,7 +12,7 @@
  */
 
 /**
- * @internal
+ * @private
  * Adding a priority sorting function for menus
  */
 Ext.define('pimcore.menu.menu', {

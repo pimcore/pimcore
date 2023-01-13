@@ -13,6 +13,9 @@
 
 
 pimcore.registerNS("pimcore.settings.user.workspace.document");
+/**
+ * @private
+ */
 pimcore.settings.user.workspace.document = Class.create({
 
     initialize: function (parent) {

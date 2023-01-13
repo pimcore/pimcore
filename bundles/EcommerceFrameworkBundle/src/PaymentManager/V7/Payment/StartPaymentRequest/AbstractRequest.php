@@ -18,6 +18,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\Star
 
 class AbstractRequest implements \ArrayAccess
 {
+    /**
+     * @param array $data
+     */
     public function __construct($data = [])
     {
         foreach ($data as $key => $value) {

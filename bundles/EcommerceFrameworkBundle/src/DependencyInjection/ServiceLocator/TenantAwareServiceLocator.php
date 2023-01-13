@@ -46,6 +46,9 @@ abstract class TenantAwareServiceLocator
         $this->strictTenants = $strictTenants;
     }
 
+    /**
+     * @return mixed
+     */
     protected function locate(string $tenant = null)
     {
         $tenant = $this->resolveTenant($tenant);
@@ -78,5 +81,8 @@ abstract class TenantAwareServiceLocator
         return $this->defaultTenant;
     }
 
+    /**
+     * @return string|null
+     */
     abstract protected function getEnvironmentTenant();
 }

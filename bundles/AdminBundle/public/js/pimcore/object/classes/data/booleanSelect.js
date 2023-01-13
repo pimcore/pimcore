@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.booleanSelect");
+/**
+ * @private
+ */
 pimcore.object.classes.data.booleanSelect = Class.create(pimcore.object.classes.data.data, {
 
     type: "booleanSelect",

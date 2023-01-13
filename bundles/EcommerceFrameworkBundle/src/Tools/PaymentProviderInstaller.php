@@ -107,6 +107,12 @@ class PaymentProviderInstaller extends AbstractInstaller
         }
     }
 
+    /**
+     * @param string $brickKey
+     * @param string $filepath
+     *
+     * @return void
+     */
     protected static function installBrick($brickKey, $filepath)
     {
         try {

@@ -33,7 +33,6 @@ use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
 use Pimcore\Model\Staticroute;
-use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -1438,49 +1437,6 @@ class SettingsController extends AdminController
         $pipe->save();
 
         return $this->adminJson(['success' => true]);
-    }
-
-    /**
-     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxtget", methods={"GET"})
-     *
-     * @return JsonResponse
-     */
-    public function robotsTxtGetAction(): JsonResponse
-    {
-        $this->checkPermission('robots.txt');
-
-        $config = Config::getRobotsConfig();
-
-        return $this->adminJson([
-            'success' => true,
-            'data' => $config,
-            'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt'),
-        ]);
-    }
-
-    /**
-     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxtput", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function robotsTxtPutAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('robots.txt');
-
-        $values = $request->get('data');
-        if (!is_array($values)) {
-            $values = [];
-        }
-
-        foreach ($values as $siteId => $robotsContent) {
-            SettingsStore::set('robots.txt-' . $siteId, $robotsContent, 'string', 'robots.txt');
-        }
-
-        return $this->adminJson([
-            'success' => true,
-        ]);
     }
 
     /**

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.system");
+/**
+ * @private
+ */
 pimcore.settings.system = Class.create({
 
     initialize: function () {

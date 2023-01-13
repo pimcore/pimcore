@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.snippet");
+/**
+ * @private
+ */
 pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
 
     initialize: function(id, options) {
@@ -25,10 +28,15 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
             detail: {
                 document: this,
                 type: "snippet"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenDocumentSnippet);
+        const isAllowed = document.dispatchEvent(preOpenDocumentSnippet);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         this.getData();
     },

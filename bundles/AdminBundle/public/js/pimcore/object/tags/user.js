@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.user");
+/**
+ * @private
+ */
 pimcore.object.tags.user = Class.create(pimcore.object.tags.select, {
 
     type: "user",
