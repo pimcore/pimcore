@@ -208,7 +208,6 @@ results: Results
 dimension: Dimension
 metric: Metric
 segment: Segment
-data_explorer: Data Explorer
 navigation: Navigation
 entrances: Entrances
 exits: Exits
@@ -251,7 +250,6 @@ visits: Visits
 detail: Detail
 report_settings: Report Settings
 overview: Overview
-visitor_overview: Visitor Overview
 other: Other
 google_analytics: Google Analytics
 reports_and_marketing: Marketing & Reports
