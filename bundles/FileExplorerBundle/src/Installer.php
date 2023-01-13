@@ -10,19 +10,19 @@ class Installer extends SettingsStoreAwareInstaller
         'fileexplorer'
     ];
 
-    public function install()
+    public function install(): void
     {
         $this->addPermissions();
         parent::install();
     }
 
-    public function uninstall()
+    public function uninstall(): void
     {
         $this->removePermissions();
         parent::uninstall();
     }
 
-    protected function addPermissions()
+    protected function addPermissions(): void
     {
         $db = \Pimcore\Db::get();
 
@@ -34,7 +34,7 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
-    protected function removePermissions()
+    protected function removePermissions(): void
     {
         $db = \Pimcore\Db::get();
 
