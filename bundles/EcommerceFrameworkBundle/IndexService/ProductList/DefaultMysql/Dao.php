@@ -62,7 +62,7 @@ class Dao
      * @return array
      * @throws \Doctrine\DBAL\Exception
      */
-    public function load($condition, $orderBy = null, $limit = null, $offset = null)
+    public function load($condition, $orderBy = null, $limit = null, $offset = 0)
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -211,7 +211,7 @@ class Dao
      * @param int $offset
      * @return int
      */
-    public function getCount($condition, $orderBy = null, $limit = null, $offset = null)
+    public function getCount($condition, $orderBy = null, $limit = null, $offset = 0)
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;

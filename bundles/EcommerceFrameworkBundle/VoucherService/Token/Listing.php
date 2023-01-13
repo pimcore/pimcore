@@ -200,7 +200,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @param int $seriesId
-     * @return bool|int
+     * @return int|false
      */
     public static function getCountBySeriesId($seriesId)
     {
@@ -218,7 +218,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @param int $seriesId
-     * @return bool|int
+     * @return int|false
      */
     public static function getCountByReservation($seriesId = null)
     {

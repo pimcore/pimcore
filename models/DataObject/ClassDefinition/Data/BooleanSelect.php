@@ -381,7 +381,7 @@ class BooleanSelect extends Data implements
 
     /**
      * @param string $noLabel
-     * @return static
+     * @return $this
      */
     public function setNoLabel($noLabel)
     {
@@ -401,7 +401,7 @@ class BooleanSelect extends Data implements
 
     /**
      * @param string $emptyLabel
-     * @return static
+     * @return $this
      */
     public function setEmptyLabel($emptyLabel)
     {

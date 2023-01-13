@@ -926,7 +926,7 @@ class Imagick extends Adapter
      * @param float $sigma
      * @param float $amount
      * @param float $threshold
-     * @return static
+     * @return $this
      */
     public function sharpen($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05)
     {
