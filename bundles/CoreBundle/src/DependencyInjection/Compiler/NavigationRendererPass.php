@@ -32,7 +32,7 @@ final class NavigationRendererPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $taggedServices = $container->findTaggedServiceIds('pimcore.navigation.renderer');
 

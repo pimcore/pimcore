@@ -54,7 +54,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      *
      * @return bool
      */
-    public function getOSIsBookable($quantityScale = 1, array $products = null): bool
+    public function getOSIsBookable(int $quantityScale = 1, array $products = null): bool
     {
         if ($this->isActive()) {
             if (empty($products)) {

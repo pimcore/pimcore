@@ -55,7 +55,7 @@ class DocumentMetaDataListener implements EventSubscriberInterface
      *
      * @param RequestEvent $event
      */
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
 

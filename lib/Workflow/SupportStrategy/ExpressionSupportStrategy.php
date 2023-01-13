@@ -48,7 +48,7 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
         $this->expression = $expression;
     }
 
-    public function supports(WorkflowInterface $workflow, $subject): bool
+    public function supports(WorkflowInterface $workflow, object $subject): bool
     {
         if (!$this->supportsClass($subject)) {
             return false;

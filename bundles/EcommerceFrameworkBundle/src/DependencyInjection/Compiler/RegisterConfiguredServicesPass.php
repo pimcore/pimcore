@@ -27,14 +27,14 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class RegisterConfiguredServicesPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->registerIndexServiceWorkers($container);
         $this->registerTrackingManagerTrackers($container);
         $this->registerPaymentManagerConfiguration($container);
     }
 
-    public function registerIndexServiceWorkers(ContainerBuilder $container)
+    public function registerIndexServiceWorkers(ContainerBuilder $container): void
     {
         $workers = [];
         foreach ($container->findTaggedServiceIds('pimcore_ecommerce.index_service.worker') as $id => $tags) {
@@ -45,7 +45,7 @@ final class RegisterConfiguredServicesPass implements CompilerPassInterface
         $indexService->setArgument('$tenantWorkers', $workers);
     }
 
-    public function registerTrackingManagerTrackers(ContainerBuilder $container)
+    public function registerTrackingManagerTrackers(ContainerBuilder $container): void
     {
         $trackers = [];
 

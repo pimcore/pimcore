@@ -59,7 +59,7 @@ interface PriceInfoInterface
      *
      * @param int|string $quantity
      */
-    public function setQuantity(int|string $quantity);
+    public function setQuantity(int|string $quantity): void;
 
     /**
      * Relation to price system

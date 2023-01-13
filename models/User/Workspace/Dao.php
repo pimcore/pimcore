@@ -26,7 +26,7 @@ use Pimcore\Model\User\Workspace;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    public function save()
+    public function save(): void
     {
         $tableName = '';
         if ($this->model instanceof Workspace\Asset) {

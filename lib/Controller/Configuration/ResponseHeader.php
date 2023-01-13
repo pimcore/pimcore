@@ -73,7 +73,7 @@ class ResponseHeader extends ConfigurationAnnotation
         return $this->key;
     }
 
-    public function setKey(string $key)
+    public function setKey(string $key): void
     {
         $this->key = $key;
     }
@@ -83,7 +83,7 @@ class ResponseHeader extends ConfigurationAnnotation
         return $this->values;
     }
 
-    public function setValues(array|string $values)
+    public function setValues(array|string $values): void
     {
         $this->values = $values;
     }
@@ -93,7 +93,7 @@ class ResponseHeader extends ConfigurationAnnotation
         return $this->replace;
     }
 
-    public function setReplace(bool $replace)
+    public function setReplace(bool $replace): void
     {
         $this->replace = $replace;
     }

@@ -51,14 +51,11 @@ final class Console
     }
 
     /**
-     * @param string $name
-     * @param bool $throwException
-     *
-     * @return bool|string
+     * @return ($throwException is true ? string : string|false)
      *
      * @throws \Exception
      */
-    public static function getExecutable(string $name, bool $throwException = false): bool|string
+    public static function getExecutable(string $name, bool $throwException = false): string|false
     {
         if (isset(self::$executableCache[$name])) {
             if (!self::$executableCache[$name] && $throwException) {
@@ -163,11 +160,9 @@ final class Console
     }
 
     /**
-     * @return mixed
-     *
      * @throws \Exception
      */
-    public static function getPhpCli(): mixed
+    public static function getPhpCli(): string
     {
         try {
             return self::getExecutable('php', true);
@@ -182,11 +177,16 @@ final class Console
         }
     }
 
-    public static function getTimeoutBinary(): bool|string
+    public static function getTimeoutBinary(): string|false
     {
         return self::getExecutable('timeout');
     }
 
+    /**
+     * @param string[] $arguments
+     *
+     * @return string[]
+     */
     protected static function buildPhpScriptCmd(string $script, array $arguments = []): array
     {
         $phpCli = self::getPhpCli();
@@ -197,20 +197,13 @@ final class Console
             array_push($cmd, '--env=' . Config::getEnvironment());
         }
 
-        if (!empty($arguments)) {
-            $cmd = array_merge($cmd, $arguments);
-        }
+        $cmd = array_merge($cmd, $arguments);
 
         return $cmd;
     }
 
     /**
-     * @param string $script
-     * @param array $arguments
-     * @param string|null $outputFile
-     * @param float $timeout
-     *
-     * @return string
+     * @param string[] $arguments
      */
     public static function runPhpScript(string $script, array $arguments = [], string $outputFile = null, float $timeout = 60): string
     {
@@ -353,9 +346,7 @@ final class Console
     }
 
     /**
-     * @param array|string $cmd
-     *
-     * @return void
+     * @param string[]|string $cmd
      *
      * @internal
      */

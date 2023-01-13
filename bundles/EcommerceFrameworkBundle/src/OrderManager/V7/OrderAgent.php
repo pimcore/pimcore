@@ -628,7 +628,7 @@ class OrderAgent implements OrderAgentInterface
      * @param StatusInterface $status
      * @param AbstractPaymentInformation $currentPaymentInformation
      */
-    protected function extractAdditionalPaymentInformation(StatusInterface $status, AbstractPaymentInformation $currentPaymentInformation)
+    protected function extractAdditionalPaymentInformation(StatusInterface $status, AbstractPaymentInformation $currentPaymentInformation): void
     {
     }
 

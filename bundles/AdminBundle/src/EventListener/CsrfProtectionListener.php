@@ -53,7 +53,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
         ];
     }
 
-    public function handleRequest(RequestEvent $event)
+    public function handleRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {

@@ -56,7 +56,7 @@ class ObjectUserProvider implements UserProviderInterface
         $this->usernameField = $usernameField;
     }
 
-    protected function setClassName(string $className)
+    protected function setClassName(string $className): void
     {
         if (empty($className)) {
             throw new InvalidArgumentException('Object class name is empty');
@@ -107,7 +107,7 @@ class ObjectUserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsClass($class): bool
+    public function supportsClass(string $class): bool
     {
         return $class === $this->className;
     }

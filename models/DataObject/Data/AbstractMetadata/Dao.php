@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
 
     protected ?array $tableDefinitions = null;
 
-    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object')
+    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object'): void
     {
         throw new \Exception('Needs to be implemented by child class');
     }
@@ -43,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
         throw new \Exception('Needs to be implemented by child class');
     }
 
-    public function createOrUpdateTable(DataObject\ClassDefinition $class)
+    public function createOrUpdateTable(DataObject\ClassDefinition $class): void
     {
         $classId = $class->getId();
         $table = 'object_metadata_' . $classId;

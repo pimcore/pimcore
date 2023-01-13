@@ -45,7 +45,7 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    public function setUnitId(string $unitId)
+    public function setUnitId(string $unitId): void
     {
         $this->unitId = $unitId;
         $this->unit = null;
@@ -93,7 +93,7 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
         return $converter->convert($this, $unit);
     }
 
-    abstract public function getValue();
+    abstract public function getValue(): mixed;
 
     abstract public function __toString();
 }

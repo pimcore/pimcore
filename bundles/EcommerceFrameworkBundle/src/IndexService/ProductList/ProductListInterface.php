@@ -70,7 +70,7 @@ interface ProductListInterface extends PaginateListingInterface
      * @param array|string $condition
      * @param string $fieldname
      */
-    public function addCondition(array|string $condition, string $fieldname = '');
+    public function addCondition(array|string $condition, string $fieldname = ''): void;
 
     /**
      * Adds query condition to product list for fulltext search
@@ -80,7 +80,7 @@ interface ProductListInterface extends PaginateListingInterface
      * @param string|array $condition
      * @param string $fieldname
      */
-    public function addQueryCondition(string|array $condition, string $fieldname = '');
+    public function addQueryCondition(string|array $condition, string $fieldname = ''): void;
 
     /**
      * Reset filter condition for fieldname
@@ -96,7 +96,7 @@ interface ProductListInterface extends PaginateListingInterface
      *
      * @param string $fieldname
      */
-    public function resetQueryCondition(string $fieldname);
+    public function resetQueryCondition(string $fieldname): void;
 
     /**
      * Adds relation condition to product list
@@ -104,12 +104,12 @@ interface ProductListInterface extends PaginateListingInterface
      * @param string $fieldname
      * @param string|array $condition
      */
-    public function addRelationCondition(string $fieldname, string|array $condition);
+    public function addRelationCondition(string $fieldname, string|array $condition): void;
 
     /**
      * Resets all conditions of product list
      */
-    public function resetConditions();
+    public function resetConditions(): void;
 
     /**
      * Adds price condition to product list
@@ -117,7 +117,7 @@ interface ProductListInterface extends PaginateListingInterface
      * @param float|null $from
      * @param float|null $to
      */
-    public function addPriceCondition(float $from = null, float $to = null);
+    public function addPriceCondition(float $from = null, float $to = null): void;
 
     public function setInProductList(bool $inProductList): void;
 
@@ -128,7 +128,7 @@ interface ProductListInterface extends PaginateListingInterface
      *
      * @param string $order
      */
-    public function setOrder(string $order);
+    public function setOrder(string $order): void;
 
     /**
      * gets order direction
@@ -142,23 +142,23 @@ interface ProductListInterface extends PaginateListingInterface
      *
      * @param array|string $orderKey either single field name, or array of field names or array of arrays (field name, direction)
      */
-    public function setOrderKey(array|string $orderKey);
+    public function setOrderKey(array|string $orderKey): void;
 
     public function getOrderKey(): array|string;
 
-    public function setLimit(int $limit);
+    public function setLimit(int $limit): void;
 
     public function getLimit(): ?int;
 
-    public function setOffset(int $offset);
+    public function setOffset(int $offset): void;
 
     public function getOffset(): int;
 
-    public function setCategory(AbstractCategory $category);
+    public function setCategory(AbstractCategory $category): void;
 
     public function getCategory(): ?AbstractCategory;
 
-    public function setVariantMode(string $variantMode);
+    public function setVariantMode(string $variantMode): void;
 
     public function getVariantMode(): string;
 

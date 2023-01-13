@@ -46,7 +46,7 @@ final class AreabrickPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $config = $container->getParameter('pimcore.config');
 
@@ -176,7 +176,7 @@ final class AreabrickPass implements CompilerPassInterface
      * @param Definition $definition
      * @param \ReflectionClass|null $reflector
      */
-    protected function handleContainerAwareDefinition(ContainerBuilder $container, Definition $definition, \ReflectionClass $reflector = null)
+    protected function handleContainerAwareDefinition(ContainerBuilder $container, Definition $definition, \ReflectionClass $reflector = null): void
     {
         if (null === $reflector) {
             $reflector = new \ReflectionClass($definition->getClass());

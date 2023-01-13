@@ -69,7 +69,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         if ($name != $this->name) {
             $this->name = $name;
@@ -82,7 +82,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         return $this->type;
     }
 
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         if ($type != $this->type) {
             $this->type = $type;
@@ -100,13 +100,13 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         return $this->data;
     }
 
-    public function setData(mixed $data)
+    public function setData(mixed $data): void
     {
         $this->data = $data;
         $this->markMeDirty();
     }
 
-    protected function renewReferences()
+    protected function renewReferences(): void
     {
         $copier = new DeepCopy();
         $copier->skipUncloneable(true);
@@ -154,7 +154,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         return $this->name . '; ' . $this->type;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->needsRenewReferences = true;
 
@@ -180,12 +180,12 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
      *
      * @param bool $needsRenewReferences
      */
-    public function setNeedsRenewReferences(bool $needsRenewReferences)
+    public function setNeedsRenewReferences(bool $needsRenewReferences): void
     {
         $this->needsRenewReferences = (bool) $needsRenewReferences;
     }
 
-    public function setLanguage(string $language)
+    public function setLanguage(string $language): void
     {
         $this->_language = $language;
     }

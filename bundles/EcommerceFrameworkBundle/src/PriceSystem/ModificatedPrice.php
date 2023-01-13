@@ -51,7 +51,7 @@ class ModificatedPrice extends Price implements ModificatedPriceInterface
         return $this->description ?? '';
     }
 
-    public function setDescription(?string $description = null)
+    public function setDescription(?string $description = null): void
     {
         $this->description = $description;
     }

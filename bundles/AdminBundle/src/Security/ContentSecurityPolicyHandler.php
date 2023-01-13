@@ -64,7 +64,7 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
         $this->cspHeaderOptions = $resolver->resolve($cspHeaderOptions);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             self::DEFAULT_OPT => "'self'",

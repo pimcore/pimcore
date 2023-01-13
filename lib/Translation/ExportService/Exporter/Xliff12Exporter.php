@@ -94,7 +94,7 @@ class Xliff12Exporter implements ExporterInterface
         return $exportFile;
     }
 
-    protected function prepareExportFile(string $exportFilePath)
+    protected function prepareExportFile(string $exportFilePath): void
     {
         if ($this->xliffFile === null) {
             $dom = new \DOMDocument();
@@ -108,7 +108,7 @@ class Xliff12Exporter implements ExporterInterface
         return 'application/x-xliff+xml';
     }
 
-    protected function addTransUnitNode(\SimpleXMLElement $xml, string $name, string $sourceContent, string $sourceLang, ?string $targetContent, string $targetLang)
+    protected function addTransUnitNode(\SimpleXMLElement $xml, string $name, string $sourceContent, string $sourceLang, ?string $targetContent, string $targetLang): void
     {
         $transUnit = $xml->addChild('trans-unit');
         $transUnit->addAttribute('id', htmlentities($name));

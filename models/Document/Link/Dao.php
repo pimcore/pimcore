@@ -31,7 +31,7 @@ class Dao extends Model\Document\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -50,7 +50,7 @@ class Dao extends Model\Document\Dao
         }
     }
 
-    public function create()
+    public function create(): void
     {
         parent::create();
 

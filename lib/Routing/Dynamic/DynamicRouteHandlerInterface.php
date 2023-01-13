@@ -44,5 +44,5 @@ interface DynamicRouteHandlerInterface
      * @param RouteCollection $collection
      * @param DynamicRequestContext $context
      */
-    public function matchRequest(RouteCollection $collection, DynamicRequestContext $context);
+    public function matchRequest(RouteCollection $collection, DynamicRequestContext $context): void;
 }

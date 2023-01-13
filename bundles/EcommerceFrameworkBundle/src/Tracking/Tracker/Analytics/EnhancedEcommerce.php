@@ -61,7 +61,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      */
     protected array $trackedCodes = [];
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -75,7 +75,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      *
      * @param ProductInterface $product
      */
-    public function trackProductView(ProductInterface $product)
+    public function trackProductView(ProductInterface $product): void
     {
         $this->ensureDependencies();
 
@@ -97,7 +97,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      * @param ProductInterface $product
      * @param string $list
      */
-    public function trackProductImpression(ProductInterface $product, string $list = 'default')
+    public function trackProductImpression(ProductInterface $product, string $list = 'default'): void
     {
         $this->ensureDependencies();
 
@@ -114,9 +114,9 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * {@inheritdoc}
      */
-    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, float|int $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, float|int $quantity = 1): void
     {
-        return $this->trackProductActionAdd($product, $quantity);
+        $this->trackProductActionAdd($product, $quantity);
     }
 
     /**
@@ -125,7 +125,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      * @param ProductInterface $product
      * @param float|int $quantity
      */
-    public function trackProductActionAdd(ProductInterface $product, float|int $quantity = 1)
+    public function trackProductActionAdd(ProductInterface $product, float|int $quantity = 1): void
     {
         $this->ensureDependencies();
         $this->trackProductAction($product, 'add', $quantity);
@@ -134,7 +134,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * {@inheritdoc}
      */
-    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, float|int $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, float|int $quantity = 1): void
     {
         $this->trackProductActionRemove($product, $quantity);
     }
@@ -145,13 +145,13 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      * @param ProductInterface $product
      * @param float|int $quantity
      */
-    public function trackProductActionRemove(ProductInterface $product, float|int $quantity = 1)
+    public function trackProductActionRemove(ProductInterface $product, float|int $quantity = 1): void
     {
         $this->ensureDependencies();
         $this->trackProductAction($product, 'remove', $quantity);
     }
 
-    protected function trackProductAction(ProductInterface $product, string $action, float|int $quantity = 1)
+    protected function trackProductAction(ProductInterface $product, string $action, float|int $quantity = 1): void
     {
         $item = $this->trackingItemBuilder->buildProductActionItem($product);
         $item->setQuantity($quantity);
@@ -169,7 +169,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      *
      * @param CartInterface $cart
      */
-    public function trackCheckout(CartInterface $cart)
+    public function trackCheckout(CartInterface $cart): void
     {
         $this->ensureDependencies();
 
@@ -192,7 +192,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      * @param string|null $stepNumber
      * @param string|null $checkoutOption
      */
-    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, string $stepNumber = null, string $checkoutOption = null)
+    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, string $stepNumber = null, string $checkoutOption = null): void
     {
         $this->ensureDependencies();
 
@@ -221,7 +221,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      *
      * @param AbstractOrder $order
      */
-    public function trackCheckoutComplete(AbstractOrder $order)
+    public function trackCheckoutComplete(AbstractOrder $order): void
     {
         $this->ensureDependencies();
 
@@ -242,7 +242,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
         string $eventAction,
         string $eventLabel = null,
         int $eventValue = null
-    ) {
+    ): void {
         $parameters = [
             'eventCategory' => $eventCategory,
             'eventAction' => $eventAction,
@@ -365,7 +365,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * Makes sure dependencies are included once before any call
      */
-    protected function ensureDependencies()
+    protected function ensureDependencies(): void
     {
         if ($this->dependenciesIncluded || empty($this->dependencies)) {
             return;

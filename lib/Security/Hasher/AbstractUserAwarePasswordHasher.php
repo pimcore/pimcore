@@ -30,7 +30,7 @@ abstract class AbstractUserAwarePasswordHasher extends PlaintextPasswordHasher i
     /**
      * {@inheritdoc}
      */
-    public function setUser(UserInterface $user)
+    public function setUser(UserInterface $user): void
     {
         if ($this->user) {
             throw new RuntimeException('User was already set and can\'t be overwritten');

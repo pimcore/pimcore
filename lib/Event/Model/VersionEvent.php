@@ -38,7 +38,7 @@ class VersionEvent extends Event
         return $this->version;
     }
 
-    public function setVersion(Version $version)
+    public function setVersion(Version $version): void
     {
         $this->version = $version;
     }
