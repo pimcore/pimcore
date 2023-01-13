@@ -28,19 +28,6 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         $productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
-    protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = [])
-    {
-        foreach ($availableRelations as $rel) {
-            if ($rel instanceof Folder) {
-                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChildren(), $availableRelationsArray);
-            } else {
-                $availableRelationsArray[$rel->getId()] = true;
-            }
-        }
-
-        return $availableRelationsArray;
-    }
-
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter, array $params, bool $isPrecondition = false): array
     {
         $field = $this->getField($filterDefinition);

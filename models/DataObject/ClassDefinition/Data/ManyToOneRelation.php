@@ -331,7 +331,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -486,7 +486,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @param DataObject\ClassDefinition\Data\ManyToOneRelation $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->assetUploadPath = $masterDefinition->assetUploadPath;
         $this->relationType = $masterDefinition->relationType;

@@ -23,13 +23,7 @@ class DefaultBrickGetterSequence implements GetterInterface
 {
     use OptionsResolverTrait;
 
-    /**
-     * @param object $object
-     * @param array $config
-     *
-     * @return mixed
-     */
-    public function get($object, $config = null)
+    public function get(object $object, array $config = null): mixed
     {
         $config = $this->resolveOptions($config ?? []);
         $sourceList = $config['source'];
@@ -58,9 +52,11 @@ class DefaultBrickGetterSequence implements GetterInterface
                 }
             }
         }
+
+        return null;
     }
 
-    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver): void
     {
         if ('default' === $resolverName) {
             $resolver->setRequired('source');

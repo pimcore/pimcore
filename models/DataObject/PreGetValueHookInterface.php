@@ -18,8 +18,5 @@ namespace Pimcore\Model\DataObject;
 
 interface PreGetValueHookInterface
 {
-    /**
-     * @return mixed
-     */
-    public function preGetValue(string $key);
+    public function preGetValue(string $key): mixed;
 }

@@ -51,7 +51,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
      *
      * @return Marking
      */
-    public function getMarking($subject): Marking
+    public function getMarking(object $subject): Marking
     {
         $this->checkIfSubjectIsValid($subject);
 
@@ -85,7 +85,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
      *
      * @return void
      */
-    public function setMarking($subject, Marking $marking, array $context = [])
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         $subject = $this->checkIfSubjectIsValid($subject);
         $places = array_keys($marking->getPlaces());

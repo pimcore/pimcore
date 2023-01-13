@@ -26,18 +26,12 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class CartCheckoutData extends AbstractCartCheckoutData
 {
-    public function save()
+    public function save(): void
     {
         $this->getDao()->save();
     }
 
-    /**
-     * @param string $key
-     * @param int|string $cartId
-     *
-     * @return AbstractCartCheckoutData|null
-     */
-    public static function getByKeyCartId($key, $cartId)
+    public static function getByKeyCartId(string $key, int|string $cartId): ?AbstractCartCheckoutData
     {
         $cacheKey = CartCheckoutData\Dao::TABLE_NAME . '_' . $key . '_' . $cartId;
 
@@ -58,7 +52,7 @@ class CartCheckoutData extends AbstractCartCheckoutData
         return $checkoutDataItem;
     }
 
-    public static function removeAllFromCart(int|string $cartId)
+    public static function removeAllFromCart(int|string $cartId): void
     {
         $checkoutDataItem = new self();
         $checkoutDataItem->getDao()->removeAllFromCart($cartId);

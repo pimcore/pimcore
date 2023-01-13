@@ -32,12 +32,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface, In
      */
     protected static array $linkGenerators = [];
 
-    /**
-     * @param int $id
-     * @param array $params
-     * @param array $relations
-     */
-    public function __construct($id, $params, $relations)
+    public function __construct(int $id, array $params, array $relations)
     {
         $this->id = $id;
         $this->params = $params;
@@ -93,12 +88,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface, In
         return $this->id;
     }
 
-    /**
-     * @param string $attributeName
-     *
-     * @return mixed
-     */
-    public function getRelationAttribute($attributeName)
+    public function getRelationAttribute(string $attributeName): mixed
     {
         $relationObjectArray = [];
         if ($this->relations[$attributeName]) {
@@ -119,13 +109,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface, In
         }
     }
 
-    /**
-     * @param string $method
-     * @param array $args
-     *
-     * @return mixed
-     */
-    public function __call($method, $args)
+    public function __call(string $method, array $args): mixed
     {
         $attributeName = $method;
         if (substr($method, 0, 3) == 'get') {

@@ -31,7 +31,7 @@ class TargetGroup extends AbstractVariableCondition implements ConditionInterfac
     /**
      * @return self
      */
-    public static function fromConfig(array $config): ConditionInterface|TargetGroup
+    public static function fromConfig(array $config): self
     {
         return new self($config['targetGroup'] ?? null);
     }

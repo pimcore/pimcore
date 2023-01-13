@@ -46,13 +46,13 @@ class VisitedPagesCountListener implements EventSubscriberInterface
         ];
     }
 
-    public function onVisitedPagesCountMatch()
+    public function onVisitedPagesCountMatch(): void
     {
         // increment page count after matching proceeded
         $this->recordPageCount = true;
     }
 
-    public function onPostResolveVisitorInfo(TargetingEvent $event)
+    public function onPostResolveVisitorInfo(TargetingEvent $event): void
     {
         // TODO currently the pages count is only recorded if there's a condition depending on
         // the count. This is good for minimizing storage data and writes, but implies that the

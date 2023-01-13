@@ -82,7 +82,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
      * (Re-)initialize standard price modificators, e.g. after removing an item from a cart
      * within the same request, such as an AJAX-call.
      */
-    public function initModificators()
+    public function initModificators(): void
     {
         $this->reset();
 
@@ -107,7 +107,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         return $modificator;
     }
 
-    protected function setModificatorConfig(array $modificatorConfig)
+    protected function setModificatorConfig(array $modificatorConfig): void
     {
         $resolver = new OptionsResolver();
         $this->configureModificatorResolver($resolver);
@@ -117,7 +117,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         }
     }
 
-    protected function configureModificatorResolver(OptionsResolver $resolver)
+    protected function configureModificatorResolver(OptionsResolver $resolver): void
     {
         $resolver->setDefined(['class', 'options']);
         $resolver->setAllowedTypes('class', 'string');
@@ -134,7 +134,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
      *
      * @throws UnsupportedException
      */
-    public function calculate($ignorePricingRules = false): void
+    public function calculate(bool $ignorePricingRules = false): void
     {
         // sum up all item prices
         $subTotalNet = Decimal::zero();
@@ -249,7 +249,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         }
     }
 
-    public function setPricingManager(PricingManagerInterface $pricingManager)
+    public function setPricingManager(PricingManagerInterface $pricingManager): void
     {
         $this->pricingManager = $pricingManager;
     }

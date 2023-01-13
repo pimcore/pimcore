@@ -61,7 +61,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
     protected PaymentManagerInterface $paymentManager;
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         // set language
         $user = $this->tokenResolver->getUser();

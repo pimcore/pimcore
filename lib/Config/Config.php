@@ -125,14 +125,9 @@ final class Config implements Countable, Iterator, ArrayAccess
      * Only allow setting of a property if $allowModifications  was set to true
      * on construction. Otherwise, throw an exception.
      *
-     * @param string|null $name
-     * @param  mixed  $value
-     *
-     * @return void
-     *
      * @throws Exception
      */
-    public function __set(?string $name, mixed $value)
+    public function __set(?string $name, mixed $value): void
     {
         if ($this->allowModifications) {
             if (is_array($value)) {

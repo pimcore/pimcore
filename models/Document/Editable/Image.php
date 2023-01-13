@@ -377,7 +377,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this;
     }
 
-    private function setData(array $data)
+    private function setData(array $data): void
     {
         $this->id = $data['id'] ?? null;
         $this->alt = (string)($data['alt'] ?? '');
@@ -396,7 +396,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->alt;
     }
 
-    public function setText(string $text)
+    public function setText(string $text): void
     {
         $this->alt = $text;
     }
@@ -651,7 +651,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropWidth;
     }
 
-    public function setHotspots(array $hotspots)
+    public function setHotspots(array $hotspots): void
     {
         $this->hotspots = $hotspots;
     }
@@ -661,7 +661,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->hotspots;
     }
 
-    public function setMarker(array $marker)
+    public function setMarker(array $marker): void
     {
         $this->marker = $marker;
     }
@@ -687,10 +687,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         }
     }
 
-    /**
-     * @return array
-     */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

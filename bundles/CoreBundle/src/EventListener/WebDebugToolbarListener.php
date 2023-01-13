@@ -56,7 +56,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelResponse(RequestEvent $event)
+    public function onKernelResponse(RequestEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

@@ -48,7 +48,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         $this->requestStack = $requestStack;
     }
 
-    protected function load()
+    protected function load(): void
     {
         if ($this->sessionLoaded || $this->isCli()) {
             return;
@@ -90,7 +90,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         return $this;
     }
 
-    public function clearEnvironment()
+    public function clearEnvironment(): void
     {
         parent::clearEnvironment();
 

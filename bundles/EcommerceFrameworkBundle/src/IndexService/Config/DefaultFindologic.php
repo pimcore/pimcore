@@ -33,7 +33,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
 
     protected array $clientConfig;
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         $options = $this->resolveOptions($options);
 
@@ -41,7 +41,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
         $this->clientConfig = $options['client_config'];
     }
 
-    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'client_config' => [],
@@ -104,7 +104,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
     /**
      * {@inheritdoc}
      */
-    public function setTenantWorker(WorkerInterface $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker): void
     {
         if (!$tenantWorker instanceof DefaultFindologicWorker) {
             throw new \InvalidArgumentException(sprintf(
@@ -151,7 +151,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      *
      * @return DefaultMockup
      */
-    public function createMockupObject(int $objectId, mixed $data, array $relations): DefaultMockup
+    public function createMockupObject(int $objectId, array $data, array $relations): DefaultMockup
     {
         return new DefaultMockup($objectId, $data, $relations);
     }

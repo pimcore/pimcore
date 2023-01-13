@@ -137,7 +137,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * may be overwritten in subclasses for additional logic
      *
      */
-    public function getOSIsBookable($quantityScale = 1): bool
+    public function getOSIsBookable(int $quantityScale = 1): bool
     {
         $price = $this->getOSPrice($quantityScale);
 

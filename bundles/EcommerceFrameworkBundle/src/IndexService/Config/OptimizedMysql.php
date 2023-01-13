@@ -35,7 +35,7 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
      *
      * @return DefaultMockup
      */
-    public function createMockupObject(int $objectId, mixed $data, array $relations): DefaultMockup
+    public function createMockupObject(int $objectId, array $data, array $relations): DefaultMockup
     {
         return new DefaultMockup($objectId, $data, $relations);
     }
@@ -59,7 +59,7 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setTenantWorker(WorkerInterface $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker): void
     {
         if (!$tenantWorker instanceof OptimizedMysqlWorker) {
             throw new \InvalidArgumentException(sprintf(

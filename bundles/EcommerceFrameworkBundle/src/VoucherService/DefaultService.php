@@ -46,13 +46,13 @@ class DefaultService implements VoucherServiceInterface
         $this->currentLocale = $localeService->getLocale();
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         $this->reservationMinutesThreshold = $options['reservation_minutes_threshold'];
         $this->statisticsDaysThreshold = $options['statistics_days_threshold'];
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired([
             'reservation_minutes_threshold',
@@ -253,12 +253,7 @@ class DefaultService implements VoucherServiceInterface
         return $tokenInformationList;
     }
 
-    /**
-     * @param int $seriesId
-     *
-     * @return bool
-     */
-    public function cleanUpReservations(string $seriesId = null): bool
+    public function cleanUpReservations(int $seriesId = null): bool
     {
         if (isset($seriesId)) {
             return Reservation::cleanUpReservations($this->reservationMinutesThreshold, $seriesId);
@@ -269,15 +264,10 @@ class DefaultService implements VoucherServiceInterface
 
     public function cleanUpVoucherSeries(\Pimcore\Model\DataObject\OnlineShopVoucherSeries $series): bool
     {
-        return Token\Listing::cleanUpAllTokens((string)$series->getId());
+        return Token\Listing::cleanUpAllTokens($series->getId());
     }
 
-    /**
-     * @param string|null $seriesId
-     *
-     * @return bool
-     */
-    public function cleanUpStatistics(string $seriesId = null): bool
+    public function cleanUpStatistics(int $seriesId = null): bool
     {
         if (isset($seriesId)) {
             return Statistic::cleanUpStatistics($this->statisticsDaysThreshold, $seriesId);

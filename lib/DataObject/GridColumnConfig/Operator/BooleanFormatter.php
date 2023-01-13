@@ -27,7 +27,7 @@ final class BooleanFormatter extends AbstractOperator
 
     private string $noValue;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -75,7 +75,7 @@ final class BooleanFormatter extends AbstractOperator
         return $this->yesValue;
     }
 
-    public function setYesValue(mixed $yesValue)
+    public function setYesValue(mixed $yesValue): void
     {
         $this->yesValue = $yesValue;
     }
@@ -85,7 +85,7 @@ final class BooleanFormatter extends AbstractOperator
         return $this->noValue;
     }
 
-    public function setNoValue(mixed $noValue)
+    public function setNoValue(mixed $noValue): void
     {
         $this->noValue = $noValue;
     }

@@ -45,7 +45,7 @@ trait Wrapper
      *
      * @throws \Exception
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         throw $this->getHardlinkError();
     }
@@ -53,7 +53,7 @@ trait Wrapper
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         throw $this->getHardlinkError();
     }
@@ -189,7 +189,7 @@ trait Wrapper
         return $this->sourceDocument;
     }
 
-    public function setSourceDocument(Document $sourceDocument): void
+    public function setSourceDocument(Document $sourceDocument): static
     {
         $this->sourceDocument = $sourceDocument;
 

@@ -84,7 +84,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         parent::__construct($tenantName, $attributes, $searchAttributes, $filterTypes, $options);
     }
 
-    protected function addAttribute(Attribute $attribute)
+    protected function addAttribute(Attribute $attribute): void
     {
         parent::addAttribute($attribute);
 
@@ -96,7 +96,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $this->fieldMapping[$attribute->getName()] = sprintf('%s.%s', $attributeType, $attribute->getName());
     }
 
-    protected function addSearchAttribute(string $searchAttribute)
+    protected function addSearchAttribute(string $searchAttribute): void
     {
         if (isset($this->attributes[$searchAttribute])) {
             $this->searchAttributes[] = $searchAttribute;
@@ -120,7 +120,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         ));
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         $options = $this->resolveOptions($options);
 
@@ -129,7 +129,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $this->indexSettings = $options['index_settings'];
     }
 
-    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver): void
     {
         $arrayFields = [
             'client_config',
@@ -295,7 +295,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /**
      * {@inheritdoc}
      */
-    public function setTenantWorker(WorkerInterface $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker): void
     {
         if (!$tenantWorker instanceof DefaultElasticSearchWorker) {
             throw new \InvalidArgumentException(sprintf(
@@ -316,7 +316,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      *
      * @return DefaultMockup
      */
-    public function createMockupObject(int $objectId, mixed $data, array $relations): DefaultMockup
+    public function createMockupObject(int $objectId, array $data, array $relations): DefaultMockup
     {
         return new DefaultMockup($objectId, $data, $relations);
     }

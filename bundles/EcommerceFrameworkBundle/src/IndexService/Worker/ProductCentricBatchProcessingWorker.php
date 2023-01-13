@@ -37,8 +37,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
     /**
      * returns name for store table
-     *
-     * @return string
      */
     abstract protected function getStoreTableName(): string;
 
@@ -47,17 +45,9 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
         return $this->getStoreTableName();
     }
 
-    /**
-     * @param int $objectId
-     * @param array|null $data
-     * @param array|null $metadata
-     */
-    abstract protected function doUpdateIndex(int $objectId, array $data = null, array $metadata = null);
+    abstract protected function doUpdateIndex(int $objectId, array $data = null, array $metadata = null): void;
 
-    /**
-     * @param int $objectId
-     */
-    public function updateItemInIndex($objectId): void
+    public function updateItemInIndex(int $objectId): void
     {
         $this->doUpdateIndex($objectId);
     }
@@ -70,7 +60,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     /**
      * creates store table
      */
-    protected function createOrUpdateStoreTable()
+    protected function createOrUpdateStoreTable(): void
     {
         $primaryIdColumnType = $this->tenantConfig->getIdColumnType(true);
         $idColumnType = $this->tenantConfig->getIdColumnType(false);
@@ -98,11 +88,8 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
     /**
      * Inserts the data do the store table
-     *
-     * @param array $data
-     * @param int $subObjectId
      */
-    protected function insertDataToIndex(array $data, int $subObjectId)
+    protected function insertDataToIndex(array $data, int $subObjectId): void
     {
         $currentEntry = $this->db->fetchAssociative('SELECT crc_current, in_preparation_queue FROM ' . $this->getStoreTableName() . ' WHERE id = ? AND tenant = ?', [$subObjectId, $this->name]);
         if (!$currentEntry) {
@@ -126,10 +113,8 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
     /**
      * deletes element from store table
-     *
-     * @param int $objectId
      */
-    protected function deleteFromStoreTable(int $objectId)
+    protected function deleteFromStoreTable(int $objectId): void
     {
         $this->db->delete($this->getStoreTableName(), ['id' => (string)$objectId, 'tenant' => $this->name]);
     }
@@ -137,11 +122,9 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     /**
      * fills queue based on path
      *
-     * @param IndexableInterface $object
-     *
      * @throws \Exception
      */
-    public function fillupPreparationQueue(IndexableInterface $object)
+    public function fillupPreparationQueue(IndexableInterface $object): void
     {
         if ($object instanceof Concrete) {
             //need check, if there are sub objects because update on empty result set is too slow
@@ -157,11 +140,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
     /**
      * prepare data for index creation and store is in store table
-     *
-     * @param IndexableInterface $object
-     * @param int $subObjectId
-     *
-     * @return array
      */
     protected function getDefaultDataForIndex(IndexableInterface $object, int $subObjectId): array
     {
@@ -426,12 +404,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     }
 
     /**
-     * @param \Closure $fn
-     * @param int $maxTries
-     * @param float $sleep
-     *
-     * @return bool
-     *
      * @throws \Exception
      */
     protected function executeTransactionalQuery(\Closure $fn, int $maxTries = 3, float $sleep = .5): bool

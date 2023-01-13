@@ -154,7 +154,7 @@ final class GroupConfig extends Model\AbstractModel
         return $this->parentId;
     }
 
-    public function setParentId(int $parentId)
+    public function setParentId(int $parentId): void
     {
         $this->parentId = $parentId;
     }
@@ -198,7 +198,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Deletes the key value group configuration
      */
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_DELETE);
         if ($this->getId()) {
@@ -212,7 +212,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Saves the group config
      */
-    public function save()
+    public function save(): void
     {
         $isUpdate = false;
 
@@ -225,15 +225,13 @@ final class GroupConfig extends Model\AbstractModel
             $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_ADD);
         }
 
-        $model = $this->getDao()->save();
+        $this->getDao()->save();
 
         if ($isUpdate) {
             $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_POST_UPDATE);
         } else {
             $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_POST_ADD);
         }
-
-        return $model;
     }
 
     public function setModificationDate(int $modificationDate): static
@@ -279,7 +277,7 @@ final class GroupConfig extends Model\AbstractModel
         return $this->storeId;
     }
 
-    public function setStoreId(int $storeId)
+    public function setStoreId(int $storeId): void
     {
         $this->storeId = $storeId;
     }

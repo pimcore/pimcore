@@ -54,7 +54,7 @@ class ClientIp implements ConditionInterface
         return $this->ip;
     }
 
-    public function setIp(int $ip)
+    public function setIp(int $ip): void
     {
         $this->ip = $ip;
     }

@@ -102,8 +102,6 @@ final class RedirectingPlugin
 
     /**
      * Invoked immediately after the Message is sent.
-     *
-     * @param Mail $message
      */
     public function sendPerformed(Mail $message): void
     {
@@ -163,7 +161,7 @@ final class RedirectingPlugin
     /**
      * Sets the sender and receiver information of the mail to keep the log searchable for the original data.
      */
-    private function setSenderAndReceiversParams($message): void
+    private function setSenderAndReceiversParams(Mail $message): void
     {
         $originalData = $message->getOriginalData();
 

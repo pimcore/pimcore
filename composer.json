@@ -127,7 +127,7 @@
     "symfony/yaml": "^6.1",
     "tijsverkoyen/css-to-inline-styles": "^2.2.3",
     "twig/extra-bundle": "^3.4.0",
-    "twig/twig": "^3.0.4",
+    "twig/twig": "^3.3.9",
     "twig/string-extra": "^3.0.4",
     "rybakit/twig-deferred-extension": "^3.0",
     "umpirsky/country-list": "^2.0.6",
@@ -161,7 +161,7 @@
     "elasticsearch/elasticsearch": "^8.0",
     "composer/composer": "*",
     "chrome-php/chrome": "^1.4.0",
-    "webmozarts/console-parallelization": "^2.0.0-beta.2"
+    "webmozarts/console-parallelization": "^2.1"
   },
   "suggest": {
     "ext-sockets": "*",

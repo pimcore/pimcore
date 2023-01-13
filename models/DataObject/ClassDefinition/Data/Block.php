@@ -542,7 +542,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @param Model\DataObject\ClassDefinition\Data\Block $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->disallowAddRemove = $masterDefinition->disallowAddRemove;
         $this->disallowReorder = $masterDefinition->disallowReorder;
@@ -588,7 +588,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @param Data|Layout $child
      */
-    public function addChild(mixed $child)
+    public function addChild(mixed $child): void
     {
         $this->children[] = $child;
         $this->fieldDefinitionsCache = null;
@@ -712,7 +712,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $fieldDefinition;
     }
 
-    public function setReferencedFields(array $referencedFields)
+    public function setReferencedFields(array $referencedFields): void
     {
         $this->referencedFields = $referencedFields;
         $this->fieldDefinitionsCache = null;
@@ -726,7 +726,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->referencedFields;
     }
 
-    public function addReferencedField(Data $field)
+    public function addReferencedField(Data $field): void
     {
         $this->referencedFields[] = $field;
         $this->fieldDefinitionsCache = null;
@@ -745,7 +745,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $vars = get_object_vars($this);
         $blockedVars = $this->getBlockedVarsForExport();
@@ -816,7 +816,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->collapsed;
     }
 
-    public function setCollapsed(bool $collapsed)
+    public function setCollapsed(bool $collapsed): void
     {
         $this->collapsed = (bool) $collapsed;
     }
@@ -826,7 +826,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->collapsible;
     }
 
-    public function setCollapsible(bool $collapsible)
+    public function setCollapsible(bool $collapsible): void
     {
         $this->collapsible = (bool) $collapsible;
     }
@@ -949,7 +949,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $data;
     }
 
-    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
     }
 
@@ -988,7 +988,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->maxItems;
     }
 
-    public function setMaxItems(?int $maxItems)
+    public function setMaxItems(?int $maxItems): void
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
     }
@@ -998,7 +998,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->disallowAddRemove;
     }
 
-    public function setDisallowAddRemove(bool $disallowAddRemove)
+    public function setDisallowAddRemove(bool $disallowAddRemove): void
     {
         $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
@@ -1008,7 +1008,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->disallowReorder;
     }
 
-    public function setDisallowReorder(bool $disallowReorder)
+    public function setDisallowReorder(bool $disallowReorder): void
     {
         $this->disallowReorder = (bool) $disallowReorder;
     }
@@ -1016,7 +1016,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck) {
             if (is_array($data)) {
@@ -1087,7 +1087,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved(DataObject\ClassDefinition $class, array $params = [])
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         $blockDefinitions = $this->getFieldDefinitions();
 
@@ -1113,7 +1113,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return '?array';
     }
 
-    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = []): void
+    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, array $params = []): void
     {
         if (!isset($params['owner'])) {
             throw new \Error('owner missing');
@@ -1212,12 +1212,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return null;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = new static();
         $obj->setValues($data);

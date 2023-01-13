@@ -37,7 +37,7 @@ class StateTableMarkingStore implements MarkingStoreInterface
      *
      * @return Marking
      */
-    public function getMarking($subject): Marking
+    public function getMarking(object $subject): Marking
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 
@@ -67,7 +67,7 @@ class StateTableMarkingStore implements MarkingStoreInterface
      *
      * @return void
      */
-    public function setMarking($subject, Marking $marking, array $context = [])
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         $subject = $this->checkIfSubjectIsValid($subject);
         $type = Service::getElementType($subject);

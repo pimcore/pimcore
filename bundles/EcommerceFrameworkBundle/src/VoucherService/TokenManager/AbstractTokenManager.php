@@ -29,7 +29,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
 {
     public AbstractVoucherTokenType $configuration;
 
-    public string|int|null $seriesId;
+    public int|null $seriesId;
 
     public AbstractVoucherSeries $series;
 
@@ -70,7 +70,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @throws VoucherServiceException When token for $code can't be found, series of token can't be found or if series isn't published.
      */
-    protected function checkVoucherSeriesIsPublished(string $code)
+    protected function checkVoucherSeriesIsPublished(string $code): void
     {
         $token = Token::getByCode($code);
         if (!$token) {
@@ -94,7 +94,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @throws VoucherServiceException
      */
-    protected function checkAllowOncePerCart(string $code, CartInterface $cart)
+    protected function checkAllowOncePerCart(string $code, CartInterface $cart): void
     {
         $cartCodes = $cart->getVoucherTokenCodes();
         if (method_exists($this->configuration, 'getAllowOncePerCart') && $this->configuration->getAllowOncePerCart()) {
@@ -117,7 +117,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @throws VoucherServiceException
      */
-    protected function checkOnlyToken(CartInterface $cart)
+    protected function checkOnlyToken(CartInterface $cart): void
     {
         $cartCodes = $cart->getVoucherTokenCodes();
         $cartVoucherCount = count($cartCodes);

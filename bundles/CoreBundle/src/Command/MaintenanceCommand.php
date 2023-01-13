@@ -33,7 +33,7 @@ class MaintenanceCommand extends AbstractCommand
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $description = 'Asynchronous maintenance jobs of pimcore (needs to be set up as cron job)';
 

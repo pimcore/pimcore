@@ -84,7 +84,7 @@ class VisitorInfo implements \IteratorAggregate
         $this->sessionId = $sessionId;
     }
 
-    public static function fromRequest(Request $request): self
+    public static function fromRequest(Request $request): static
     {
         $visitorId = $request->cookies->get(self::VISITOR_ID_COOKIE_NAME);
         if (!empty($visitorId)) {
@@ -139,7 +139,7 @@ class VisitorInfo implements \IteratorAggregate
     /**
      * @param Rule[] $targetingRules
      */
-    public function setMatchingTargetingRules(array $targetingRules = [])
+    public function setMatchingTargetingRules(array $targetingRules = []): void
     {
         $this->matchingTargetingRules = [];
         foreach ($targetingRules as $targetingRule) {
@@ -147,7 +147,7 @@ class VisitorInfo implements \IteratorAggregate
         }
     }
 
-    public function addMatchingTargetingRule(Rule $targetingRule)
+    public function addMatchingTargetingRule(Rule $targetingRule): void
     {
         if (!in_array($targetingRule, $this->matchingTargetingRules, true)) {
             $this->matchingTargetingRules[] = $targetingRule;
@@ -194,7 +194,7 @@ class VisitorInfo implements \IteratorAggregate
         return $this->targetGroupAssignments[$targetGroup->getId()];
     }
 
-    public function assignTargetGroup(TargetGroup $targetGroup, int $count = 1, bool $overwrite = false)
+    public function assignTargetGroup(TargetGroup $targetGroup, int $count = 1, bool $overwrite = false): void
     {
         if ($count < 1) {
             throw new \InvalidArgumentException('Count must be greater than 0');
@@ -214,7 +214,7 @@ class VisitorInfo implements \IteratorAggregate
         $this->sortedTargetGroupAssignments = null;
     }
 
-    public function clearAssignedTargetGroup(TargetGroup $targetGroup)
+    public function clearAssignedTargetGroup(TargetGroup $targetGroup): void
     {
         if (isset($this->targetGroupAssignments[$targetGroup->getId()])) {
             unset($this->targetGroupAssignments[$targetGroup->getId()]);
@@ -245,7 +245,7 @@ class VisitorInfo implements \IteratorAggregate
         return $this->frontendDataProviders;
     }
 
-    public function setFrontendDataProviders(array $providers)
+    public function setFrontendDataProviders(array $providers): void
     {
         $this->frontendDataProviders = [];
         foreach ($providers as $provider) {
@@ -253,7 +253,7 @@ class VisitorInfo implements \IteratorAggregate
         }
     }
 
-    public function addFrontendDataProvider(string $key)
+    public function addFrontendDataProvider(string $key): void
     {
         if (!in_array($key, $this->frontendDataProviders, true)) {
             $this->frontendDataProviders[] = $key;
@@ -270,7 +270,7 @@ class VisitorInfo implements \IteratorAggregate
         return $this->response;
     }
 
-    public function setResponse(Response $response)
+    public function setResponse(Response $response): void
     {
         $this->response = $response;
     }
@@ -280,7 +280,7 @@ class VisitorInfo implements \IteratorAggregate
         return $this->data;
     }
 
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
@@ -290,37 +290,22 @@ class VisitorInfo implements \IteratorAggregate
         return new \ArrayIterator($this->data);
     }
 
-    /**
-     * @param int|string $key
-     */
-    public function has($key): bool
+    public function has(int|string $key): bool
     {
         return isset($this->data[$key]);
     }
 
-    /**
-     * @param int|string $key
-     * @param mixed $default
-     *
-     * @return mixed
-     */
     public function get(int|string $key, mixed $default = null): mixed
     {
         return $this->data[$key] ?? $default;
     }
 
-    /**
-     * @param int|string $key
-     * @param mixed $value
-     *
-     * @return void
-     */
-    public function set($key, $value)
+    public function set(int|string $key, mixed $value): void
     {
         $this->data[$key] = $value;
     }
 
-    public function addAction(array $action)
+    public function addAction(array $action): void
     {
         $this->actions[] = $action;
     }

@@ -27,7 +27,7 @@ abstract class AbstractPayment implements PaymentInterface
 
     protected string $configurationKey;
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         if (isset($options['recurring_payment_enabled'])) {
             $this->recurringPaymentEnabled = (bool) $options['recurring_payment_enabled'];
@@ -48,26 +48,14 @@ abstract class AbstractPayment implements PaymentInterface
         return $this->recurringPaymentEnabled;
     }
 
-    /**
-     * @param AbstractOrder $sourceOrder
-     * @param object $paymentBrick
-     *
-     * @return void
-     */
-    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick)
+    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, object $paymentBrick): void
     {
-        throw new \RuntimeException('getRecurringPaymentDataProperties not implemented for ' . get_class($this));
+        throw new \RuntimeException('setRecurringPaymentSourceOrderData not implemented for ' . get_class($this));
     }
 
-    /**
-     * @param Concrete $orderListing
-     * @param array $additionalParameters
-     *
-     * @return void
-     */
-    public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = [])
+    public function applyRecurringPaymentCondition(Concrete $orderListing, array $additionalParameters = []): void
     {
-        throw new \RuntimeException('getRecurringPaymentDataProperties not implemented for ' . get_class($this));
+        throw new \RuntimeException('applyRecurringPaymentCondition not implemented for ' . get_class($this));
     }
 
     /**
@@ -78,7 +66,7 @@ abstract class AbstractPayment implements PaymentInterface
         return $this->configurationKey;
     }
 
-    public function setConfigurationKey(string $configurationKey)
+    public function setConfigurationKey(string $configurationKey): void
     {
         $this->configurationKey = $configurationKey;
     }

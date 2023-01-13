@@ -26,12 +26,7 @@ class AttributePriceInfo extends AbstractPriceInfo implements PriceInfoInterface
 
     protected PriceInterface $totalPrice;
 
-    /**
-     * @param PriceInterface $price
-     * @param int $quantity
-     * @param PriceInterface $totalPrice
-     */
-    public function __construct(PriceInterface $price, $quantity, PriceInterface $totalPrice)
+    public function __construct(PriceInterface $price, int $quantity, PriceInterface $totalPrice)
     {
         $this->price = $price;
         $this->totalPrice = $totalPrice;
@@ -50,13 +45,8 @@ class AttributePriceInfo extends AbstractPriceInfo implements PriceInfoInterface
 
     /**
      * Try to delegate all other functions to the product
-     *
-     * @param string $name
-     * @param array $arguments
-     *
-     * @return mixed
      */
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return $this->product->$name($arguments);
     }

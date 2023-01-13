@@ -25,7 +25,7 @@ final class IsEqual extends AbstractOperator
 {
     private bool $skipNull;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -88,7 +88,7 @@ final class IsEqual extends AbstractOperator
         return $this->skipNull;
     }
 
-    public function setSkipNull(bool $skipNull)
+    public function setSkipNull(bool $skipNull): void
     {
         $this->skipNull = $skipNull;
     }

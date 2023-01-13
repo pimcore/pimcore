@@ -555,7 +555,7 @@ class SettingsController extends AdminController
      *
      * @throws \Exception
      */
-    protected function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = [])
+    protected function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = []): void
     {
         if (isset($definitions[$source])) {
             $targets = explode(',', $definitions[$source]);
@@ -1608,7 +1608,7 @@ class SettingsController extends AdminController
      * @param string $language
      * @param string $dbName
      */
-    protected function deleteViews(string $language, string $dbName)
+    protected function deleteViews(string $language, string $dbName): void
     {
         $db = \Pimcore\Db::get();
         $views = $db->fetchAllAssociative('SHOW FULL TABLES IN ' . $db->quoteIdentifier($dbName) . " WHERE TABLE_TYPE LIKE 'VIEW'");

@@ -377,7 +377,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -582,7 +582,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
-    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $db = Db::get();
         $context = $params['context'] ?? null;
@@ -691,12 +691,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this->enableBatchEdit;
     }
 
-    public function setEnableBatchEdit(bool $enableBatchEdit)
+    public function setEnableBatchEdit(bool $enableBatchEdit): void
     {
         $this->enableBatchEdit = (bool) $enableBatchEdit;
     }
 
-    public function classSaved(DataObject\ClassDefinition $class, array $params = [])
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         /** @var DataObject\Data\ObjectMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
@@ -735,7 +735,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         if ($masterDefinition instanceof self) {
             $this->allowedClassId = $masterDefinition->getAllowedClassId();
@@ -892,7 +892,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      *
      * @return array
      */
-    protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = []): array
+    protected function processDiffDataForEditMode(mixed $originalData, mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data) {
             $data = $data[0];

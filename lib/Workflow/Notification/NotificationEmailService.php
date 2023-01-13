@@ -56,7 +56,7 @@ class NotificationEmailService extends AbstractNotificationService
      * @param string $mailType
      * @param string $mailPath
      */
-    public function sendWorkflowEmailNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action, string $mailType, string $mailPath)
+    public function sendWorkflowEmailNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action, string $mailType, string $mailPath): void
     {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles);
@@ -131,7 +131,7 @@ class NotificationEmailService extends AbstractNotificationService
      * @param string $mailPath
      * @param string $deeplink
      */
-    protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink)
+    protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): void
     {
         $mail = new \Pimcore\Mail(['document' => $mailPath, 'params' => $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)]);
 
@@ -152,7 +152,7 @@ class NotificationEmailService extends AbstractNotificationService
      * @param string $mailPath
      * @param string $deeplink
      */
-    protected function sendTemplateMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink)
+    protected function sendTemplateMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): void
     {
         $mail = new \Pimcore\Mail();
 

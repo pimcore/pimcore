@@ -99,7 +99,7 @@ class ItemTestBundleB extends AbstractPimcoreBundle
 
 class ItemTestBundleC extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection)
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
         $collection->add(new Item(new ItemTestBundleA()));
     }

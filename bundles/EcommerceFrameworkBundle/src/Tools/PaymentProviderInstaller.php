@@ -26,12 +26,12 @@ class PaymentProviderInstaller extends AbstractInstaller
     /**
      * @var string // json source path
      */
-    protected $bricksPath;
+    protected string $bricksPath;
 
     /**
-     * @var array //$brickKey => $brickImportJsonPath
+     * @var array<string, string> //$brickKey => $brickImportJsonPath
      */
-    protected $bricksToInstall = [];
+    protected array $bricksToInstall = [];
 
     /**
      * {@inheritdoc}
@@ -49,18 +49,14 @@ class PaymentProviderInstaller extends AbstractInstaller
         return $this->isInstalled();
     }
 
-    public function install(): bool
+    public function install(): void
     {
         $this->installBricks();
-
-        return true;
     }
 
-    public function uninstall(): bool
+    public function uninstall(): void
     {
         $this->unInstallBricks();
-
-        return true;
     }
 
     /**
@@ -90,14 +86,14 @@ class PaymentProviderInstaller extends AbstractInstaller
         return true;
     }
 
-    protected function installBricks()
+    protected function installBricks(): void
     {
         foreach ($this->bricksToInstall as $brickKey => $brickFile) {
             self::installBrick($brickKey, $this->bricksPath . $brickFile);
         }
     }
 
-    protected function unInstallBricks()
+    protected function unInstallBricks(): void
     {
         foreach ($this->bricksToInstall as $brickKey => $brickFile) {
             $brick = Objectbrick\Definition::getByKey($brickKey);
@@ -107,13 +103,7 @@ class PaymentProviderInstaller extends AbstractInstaller
         }
     }
 
-    /**
-     * @param string $brickKey
-     * @param string $filepath
-     *
-     * @return void
-     */
-    protected static function installBrick($brickKey, $filepath)
+    protected static function installBrick(string $brickKey, string $filepath): void
     {
         try {
             $brick = Objectbrick\Definition::getByKey($brickKey);

@@ -24,5 +24,5 @@ interface TrackEventInterface
      * @param string|null $eventLabel
      * @param int|null $eventValue
      */
-    public function trackEvent(string $eventCategory, string $eventAction, string $eventLabel = null, int $eventValue = null);
+    public function trackEvent(string $eventCategory, string $eventAction, string $eventLabel = null, int $eventValue = null): void;
 }

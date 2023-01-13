@@ -95,7 +95,7 @@ class OrderManager implements OrderManagerInterface
         $this->processOptions($resolver->resolve($options));
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         $this->customerClassName = $options['customer_class'];
         $this->orderClassName = $options['order_class'];
@@ -103,7 +103,7 @@ class OrderManager implements OrderManagerInterface
         $this->options = $options;
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $classProperties = ['customer_class', 'order_class', 'order_item_class', 'list_class', 'list_item_class'];
 
@@ -477,7 +477,7 @@ class OrderManager implements OrderManagerInterface
         return $event->getOrderItem();
     }
 
-    protected function buildOrderItemKey(CartItemInterface $item, bool $isGiftItem = false)
+    protected function buildOrderItemKey(CartItemInterface $item, bool $isGiftItem = false): string
     {
         $itemKey = File::getValidFilename(sprintf(
             '%s_%s%s',
@@ -492,13 +492,7 @@ class OrderManager implements OrderManagerInterface
         return $event->getArgument('itemKey');
     }
 
-    /**
-     * @param string $className
-     * @param array $params
-     *
-     * @return mixed
-     */
-    protected function buildModelClass($className, array $params = [])
+    protected function buildModelClass(string $className, array $params = []): mixed
     {
         if (null === $this->modelFactory) {
             throw new \RuntimeException('Model factory is not set. Please either configure the order manager service to be autowired or add a call to setModelFactory');
@@ -521,7 +515,7 @@ class OrderManager implements OrderManagerInterface
         return $this->orderAgentFactory->createAgent($order);
     }
 
-    public function setCustomerClass(string $classname)
+    public function setCustomerClass(string $classname): void
     {
         $this->customerClassName = $classname;
     }
@@ -534,7 +528,7 @@ class OrderManager implements OrderManagerInterface
         return $this->customerClassName;
     }
 
-    public function setOrderClass(string $classname)
+    public function setOrderClass(string $classname): void
     {
         $this->orderClassName = $classname;
     }
@@ -544,7 +538,7 @@ class OrderManager implements OrderManagerInterface
         return $this->orderClassName;
     }
 
-    public function setOrderItemClass(string $classname)
+    public function setOrderItemClass(string $classname): void
     {
         $this->orderItemClassName = $classname;
     }
@@ -559,7 +553,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    public function setParentOrderFolder(int|Folder $orderParentFolder)
+    public function setParentOrderFolder(int|Folder $orderParentFolder): void
     {
         if ($orderParentFolder instanceof Folder) {
             $this->orderParentFolder = $orderParentFolder;
@@ -621,7 +615,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    protected function cleanupZombieOrderItems(AbstractOrder $order)
+    protected function cleanupZombieOrderItems(AbstractOrder $order): void
     {
         $validItemIds = [];
         foreach ($order->getItems() ?: [] as $item) {
@@ -680,7 +674,7 @@ class OrderManager implements OrderManagerInterface
         return $orderItems;
     }
 
-    protected function applyVoucherTokens(AbstractOrder $order, CartInterface $cart)
+    protected function applyVoucherTokens(AbstractOrder $order, CartInterface $cart): void
     {
         $voucherTokens = $cart->getVoucherTokenCodes();
         if (is_array($voucherTokens)) {

@@ -23,12 +23,6 @@ interface MockupConfigInterface
 {
     /**
      * creates object mockup for given data
-     *
-     * @param int $objectId
-     * @param array $data
-     * @param array $relations
-     *
-     * @return mixed
      */
-    public function createMockupObject(int $objectId, mixed $data, array $relations): mixed;
+    public function createMockupObject(int $objectId, array $data, array $relations): mixed;
 }

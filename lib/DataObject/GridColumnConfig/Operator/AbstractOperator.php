@@ -55,7 +55,7 @@ abstract class AbstractOperator implements OperatorInterface
         return $this->context;
     }
 
-    public function setContext(array $context)
+    public function setContext(array $context): void
     {
         $this->context = $context;
     }
@@ -65,7 +65,7 @@ abstract class AbstractOperator implements OperatorInterface
         return $this->label;
     }
 
-    public function setLabel(string $label)
+    public function setLabel(string $label): void
     {
         $this->label = $label;
     }
