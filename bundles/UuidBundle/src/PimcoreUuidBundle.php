@@ -12,10 +12,6 @@ class PimcoreUuidBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
-    public function getComposerPackageName(): string
-    {
-        return 'pimcore/uuid-bundle';
-    }
     public function getPath(): string
     {
         return \dirname(__DIR__);
