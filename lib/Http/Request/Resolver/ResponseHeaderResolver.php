@@ -59,11 +59,7 @@ class ResponseHeaderResolver extends AbstractRequestResolver
         $responseHeaders = $this->getResponseHeaders($request);
 
         // manually add a @ResponseHeader config annotation to the list of headers
-        $responseHeaders[] = new ResponseHeader([
-            'key' => $key,
-            'values' => $values,
-            'replace' => $replace,
-        ]);
+        $responseHeaders[] = new ResponseHeader($key, $values, $replace);
 
         $request->attributes->set(static::ATTRIBUTE_RESPONSE_HEADER, $responseHeaders);
     }
