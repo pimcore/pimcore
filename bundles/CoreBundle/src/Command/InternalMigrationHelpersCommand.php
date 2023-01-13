@@ -33,7 +33,7 @@ class InternalMigrationHelpersCommand extends AbstractCommand
         parent::__construct($name);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setHidden(true)

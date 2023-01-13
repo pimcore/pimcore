@@ -125,7 +125,7 @@ class InstallCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $options = $this->getOptions();
 
@@ -184,7 +184,7 @@ class InstallCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         // no installer if Pimcore is already installed
         $configFile = Config::locateConfigFile('system.yaml');
@@ -247,7 +247,7 @@ class InstallCommand extends Command
      *
      * {@inheritdoc}
      */
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output): void
     {
         foreach ($this->getOptions() as $name => $config) {
             if (!$this->installerNeedsOption($config)) {

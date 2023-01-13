@@ -38,7 +38,7 @@ final class UsageRecorderSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onBuildEditableName(EditableNameEvent $event)
+    public function onBuildEditableName(EditableNameEvent $event): void
     {
         $this->recordedEditableNames[] = $event->getEditableName();
     }

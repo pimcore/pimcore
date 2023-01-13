@@ -217,7 +217,7 @@ class DocType extends Model\AbstractModel
 
     public function setPriority(int $priority): static
     {
-        $this->priority = (int) $priority;
+        $this->priority = $priority;
 
         return $this;
     }
@@ -229,7 +229,7 @@ class DocType extends Model\AbstractModel
 
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -241,7 +241,7 @@ class DocType extends Model\AbstractModel
 
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }

@@ -25,6 +25,9 @@ use Pimcore\Logger;
 
 class MySql
 {
+    /**
+     * @var string[]
+     */
     protected array $_sqlChangeLog = [];
 
     protected MysqlConfigInterface $tenantConfig;
@@ -37,7 +40,10 @@ class MySql
         $this->db = $db;
     }
 
-    public function getValidTableColumns($table)
+    /**
+     * @return string[]
+     */
+    public function getValidTableColumns(string $table): array
     {
         $cacheKey = 'plugin_ecommerce_productindex_columns_' . $table;
 
@@ -54,7 +60,7 @@ class MySql
         return Cache\RuntimeCache::load($cacheKey);
     }
 
-    public function doInsertData($data): void
+    public function doInsertData(array $data): void
     {
         $validColumns = $this->getValidTableColumns($this->tenantConfig->getTablename());
         foreach ($data as $column => $value) {
@@ -66,6 +72,9 @@ class MySql
         Helper::insertOrUpdate($this->db, $this->tenantConfig->getTablename(), $data);
     }
 
+    /**
+     * @return string[]
+     */
     public function getSystemAttributes(): array
     {
         return ['id', 'classId', 'parentId', 'virtualProductId', 'virtualProductActive', 'type', 'categoryIds', 'parentCategoryIds', 'priceSystemName', 'active', 'inProductList'];
@@ -168,13 +177,13 @@ class MySql
         }
     }
 
-    protected function dbexec($sql): void
+    protected function dbexec(string $sql): void
     {
         $this->logSql($sql);
         $this->db->executeQuery($sql);
     }
 
-    protected function logSql($sql): void
+    protected function logSql(string $sql): void
     {
         Logger::info($sql);
 

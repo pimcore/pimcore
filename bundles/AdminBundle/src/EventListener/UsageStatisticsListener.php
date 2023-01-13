@@ -53,7 +53,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -68,7 +68,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
         $this->logUsageStatistics($request);
     }
 
-    protected function logUsageStatistics(Request $request)
+    protected function logUsageStatistics(Request $request): void
     {
         if (!empty($this->config['general']['disable_usage_statistics'])) {
             return;

@@ -54,7 +54,7 @@ class Dao extends AbstractDao
     /**
      * Save notification
      */
-    public function save()
+    public function save(): void
     {
         $model = $this->getModel();
         $model->setModificationDate(date('Y-m-d H:i:s'));

@@ -24,7 +24,7 @@ use Pimcore\Maintenance\TaskInterface;
  */
 class CleanupVouchersTask implements TaskInterface
 {
-    public function execute()
+    public function execute(): void
     {
         Factory::getInstance()->getVoucherService()->cleanUpReservations();
         Factory::getInstance()->getVoucherService()->cleanUpStatistics();

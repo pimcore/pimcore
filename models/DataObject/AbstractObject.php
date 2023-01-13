@@ -268,7 +268,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param bool $hideUnpublished
      */
-    public static function setHideUnpublished(bool $hideUnpublished)
+    public static function setHideUnpublished(bool $hideUnpublished): void
     {
         self::$hideUnpublished = $hideUnpublished;
     }
@@ -288,7 +288,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param bool $getInheritedValues
      */
-    public static function setGetInheritedValues(bool $getInheritedValues)
+    public static function setGetInheritedValues(bool $getInheritedValues): void
     {
         self::$getInheritedValues = $getInheritedValues;
     }
@@ -565,14 +565,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @throws \Exception
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // delete children
         $children = $this->getChildren(self::$types, true);
-        if (count($children) > 0) {
-            foreach ($children as $child) {
-                $child->delete();
-            }
+        foreach ($children as $child) {
+            $child->delete();
         }
 
         // remove dependencies
@@ -586,7 +584,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
 
@@ -776,7 +774,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @throws \Exception|DuplicateFullPathException
      */
-    protected function correctPath()
+    protected function correctPath(): void
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
@@ -834,7 +832,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @internal
      */
-    protected function update(bool $isUpdate = null, array $params = [])
+    protected function update(bool $isUpdate = null, array $params = []): void
     {
         $this->updateModificationInfos();
 
@@ -874,7 +872,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
     }
 
-    public function clearDependentCache(array $additionalTags = [])
+    public function clearDependentCache(array $additionalTags = []): void
     {
         self::clearDependentCacheByObjectId($this->getId(), $additionalTags);
     }
@@ -885,7 +883,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @internal
      */
-    public static function clearDependentCacheByObjectId(int $objectId, array $additionalTags = [])
+    public static function clearDependentCacheByObjectId(int $objectId, array $additionalTags = []): void
     {
         if (!$objectId) {
             throw new \Exception('object ID missing');
@@ -906,7 +904,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @internal
      */
-    public function saveIndex(int $index)
+    public function saveIndex(int $index): void
     {
         $this->getDao()->saveIndex($index);
         $this->clearDependentCache();
@@ -992,7 +990,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    public function setChildrenSortBy(?string $childrenSortBy)
+    public function setChildrenSortBy(?string $childrenSortBy): void
     {
         if ($this->childrenSortBy !== $childrenSortBy) {
             $this->children = [];
@@ -1050,7 +1048,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return self::$doNotRestoreKeyAndPath;
     }
 
-    public static function setDoNotRestoreKeyAndPath(bool $doNotRestoreKeyAndPath)
+    public static function setDoNotRestoreKeyAndPath(bool $doNotRestoreKeyAndPath): void
     {
         self::$doNotRestoreKeyAndPath = (bool) $doNotRestoreKeyAndPath;
     }
@@ -1105,7 +1103,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param bool $disableDirtyDetection
      */
-    public static function setDisableDirtyDetection(bool $disableDirtyDetection)
+    public static function setDisableDirtyDetection(bool $disableDirtyDetection): void
     {
         self::$disableDirtyDetection = $disableDirtyDetection;
     }
@@ -1113,7 +1111,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      */
-    public static function disableDirtyDetection()
+    public static function disableDirtyDetection(): void
     {
         self::setDisableDirtyDetection(true);
     }
@@ -1121,7 +1119,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      */
-    public static function enableDirtyDetection()
+    public static function enableDirtyDetection(): void
     {
         self::setDisableDirtyDetection(false);
     }

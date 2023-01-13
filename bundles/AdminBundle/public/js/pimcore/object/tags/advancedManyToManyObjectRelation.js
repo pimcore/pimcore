@@ -100,9 +100,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list'),
                 extraParams: {
                     fieldConfig: JSON.stringify(this.fieldConfig),
-                    data: this.data.map(function(element) {
-                        return element.id;
-                    }).join(','),
+                    data: JSON.stringify(this.data.map(function(element) {
+                        return {id: element.id, type: element.type};
+                    })),
                 },
                 reader: {
                     type: 'json',

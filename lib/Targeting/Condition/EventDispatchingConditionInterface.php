@@ -24,17 +24,11 @@ interface EventDispatchingConditionInterface
 {
     /**
      * Executed before condition is matched
-     *
-     * @param VisitorInfo $visitorInfo
-     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function preMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher);
+    public function preMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher): void;
 
     /**
      * Executed after condition is matched
-     *
-     * @param VisitorInfo $visitorInfo
-     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function postMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher);
+    public function postMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher): void;
 }

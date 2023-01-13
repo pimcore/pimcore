@@ -66,7 +66,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         $this->staticPageResolver = $staticPageResolver;
     }
 
-    public function setForceHandleUnpublishedDocuments(bool $handle)
+    public function setForceHandleUnpublishedDocuments(bool $handle): void
     {
         $this->forceHandleUnpublishedDocuments = $handle;
     }
@@ -86,7 +86,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
      *
      * @deprecated will be removed in Pimcore 11
      */
-    public function addDirectRouteDocumentType(string $type)
+    public function addDirectRouteDocumentType(string $type): void
     {
         if (!in_array($type, $this->getDirectRouteDocumentTypes())) {
             $this->directRouteDocumentTypes[] = $type;
@@ -112,7 +112,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
+    public function matchRequest(RouteCollection $collection, DynamicRequestContext $context): void
     {
         $document = Document::getByPath($context->getPath());
 

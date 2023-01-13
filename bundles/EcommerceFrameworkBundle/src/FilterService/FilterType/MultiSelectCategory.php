@@ -39,20 +39,22 @@ class MultiSelectCategory extends AbstractFilterType
         if (method_exists($filterDefinition, 'getAvailableCategories') && $filterDefinition->getAvailableCategories()) {
             /** @var ElementInterface $rel */
             foreach ($filterDefinition->getAvailableCategories() as $rel) {
-                $availableRelations[(string) $rel->getId()] = true;
+                $availableRelations[$rel->getId()] = true;
             }
         }
 
         foreach ($rawValues as $v) {
-            $explode = explode(',', $v['value']);
-            foreach ($explode as $e) {
-                if (!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
-                    if (!empty($values[$e])) {
-                        $count = $values[$e]['count'] + $v['count'];
-                    } else {
-                        $count = $v['count'];
+            if ($v['value']) {
+                $explode = array_map('intval', explode(',', $v['value']));
+                foreach ($explode as $e) {
+                    if (empty($availableRelations) || ($availableRelations[$e] ?? false)) {
+                        if (!empty($values[$e])) {
+                            $count = $values[$e]['count'] + $v['count'];
+                        } else {
+                            $count = $v['count'];
+                        }
+                        $values[$e] = ['value' => $e, 'count' => $count];
                     }
-                    $values[$e] = ['value' => $e, 'count' => $count];
                 }
             }
         }

@@ -225,7 +225,7 @@ class EditableHandler implements LoggerAwareInterface
         return $html;
     }
 
-    protected function handleBrickActionResult(?Response $result)
+    protected function handleBrickActionResult(?Response $result): void
     {
         // if the action result is a response object, push it onto the
         // response stack. this response will be used by the ResponseStackListener

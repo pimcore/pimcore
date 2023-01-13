@@ -49,7 +49,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         $this->options = $optionsResolver->resolve($options);
     }
 
-    protected function configureOptions(OptionsResolver $options)
+    protected function configureOptions(OptionsResolver $options): void
     {
         $options->setDefaults([
             'rootId' => 1,
@@ -66,7 +66,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         $options->setAllowedTypes('garbageCollectThreshold', 'int');
     }
 
-    public function populate(UrlContainerInterface $urlContainer, string $section = null)
+    public function populate(UrlContainerInterface $urlContainer, string $section = null): void
     {
         if ($this->options['handleMainDomain'] && null === $section || $section === 'default') {
             $rootDocument = Document::getById($this->options['rootId']);

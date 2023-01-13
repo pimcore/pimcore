@@ -75,10 +75,10 @@ class RedisStorage implements TargetingStorageInterface
         return (bool)$result;
     }
 
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value): void
     {
         if (!$visitorInfo->hasVisitorId()) {
-            return false;
+            return;
         }
 
         $json = json_encode($value);
@@ -123,7 +123,7 @@ class RedisStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc }
      */
-    public function clear(VisitorInfo $visitorInfo, string $scope = null)
+    public function clear(VisitorInfo $visitorInfo, string $scope = null): void
     {
         $scopes = [];
         if (null !== $scope) {
@@ -138,7 +138,7 @@ class RedisStorage implements TargetingStorageInterface
         }
     }
 
-    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): void
     {
         // only allow migration if a visitor ID is available as otherwise the fallback
         // would clear the original storage although data was not stored

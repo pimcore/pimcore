@@ -35,7 +35,7 @@ trait AllowObjectRelationTrait
      */
     protected function allowObjectRelation(DataObject\AbstractObject $object): bool
     {
-        if (!$object instanceof DataObject\AbstractObject || $object->getId() <= 0) {
+        if ($object->getId() <= 0) {
             return false;
         }
 
@@ -44,18 +44,16 @@ trait AllowObjectRelationTrait
         if (!$this->getObjectsAllowed()) {
             $allowed = false;
         } elseif (count($allowedClasses) > 0) {
-            $allowedClassnames = [];
-            foreach ($allowedClasses as $c) {
-                $allowedClassnames[] = $c['classes'];
-            }
+            $allowedClassnames = array_column($allowedClasses, 'classes');
+
             //check for allowed classes
             if ($object instanceof DataObject\Concrete) {
                 $classname = $object->getClassName();
-                if (!in_array($classname, $allowedClassnames)) {
+                if (!in_array($classname, $allowedClassnames, true)) {
                     $allowed = false;
                 }
             } elseif ($object instanceof DataObject\Folder) {
-                if (!in_array('folder', $allowedClassnames)) {
+                if (!in_array('folder', $allowedClassnames, true)) {
                     $allowed = false;
                 }
             } else {

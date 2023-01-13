@@ -52,7 +52,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -69,7 +69,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
         }
     }
 
-    protected function setRequestedPerspective(User $user, Request $request)
+    protected function setRequestedPerspective(User $user, Request $request): void
     {
         // update perspective settings
         $requestedPerspective = $request->get('perspective');

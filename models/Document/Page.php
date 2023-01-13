@@ -74,7 +74,7 @@ class Page extends TargetingDocument
     /**
      * {@inheritdoc}
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
@@ -164,7 +164,7 @@ class Page extends TargetingDocument
      *
      * @param array|string $targetGroupIds
      */
-    public function setTargetGroupIds(array|string $targetGroupIds)
+    public function setTargetGroupIds(array|string $targetGroupIds): void
     {
         if (is_array($targetGroupIds)) {
             $targetGroupIds = implode(',', $targetGroupIds);
@@ -194,7 +194,7 @@ class Page extends TargetingDocument
      *
      * @param TargetGroup[]|int[] $targetGroups
      */
-    public function setTargetGroups(array $targetGroups)
+    public function setTargetGroups(array $targetGroups): void
     {
         $ids = array_map(function ($targetGroup) {
             if (is_numeric($targetGroup)) {
@@ -202,8 +202,6 @@ class Page extends TargetingDocument
             } elseif ($targetGroup instanceof TargetGroup) {
                 return $targetGroup->getId();
             }
-
-            return null;
         }, $targetGroups);
 
         $ids = array_filter($ids, function ($id) {

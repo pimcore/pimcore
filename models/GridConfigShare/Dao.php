@@ -31,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByGridConfigAndSharedWithId(int $gridConfigId, int $sharedWithUserId)
+    public function getByGridConfigAndSharedWithId(int $gridConfigId, int $sharedWithUserId): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM gridconfig_shares WHERE gridConfigId = ? AND sharedWithUserId = ?', [$gridConfigId, $sharedWithUserId]);
 
@@ -42,7 +42,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->assignVariablesToModel($data);
     }
 
-    public function save()
+    public function save(): void
     {
         $gridConfigFavourite = $this->model->getObjectVars();
         $data = [];
@@ -63,7 +63,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('gridconfig_shares', ['gridConfigId' => $this->model->getGridConfigId(), 'sharedWithUserId' => $this->model->getSharedWithUserId()]);
     }

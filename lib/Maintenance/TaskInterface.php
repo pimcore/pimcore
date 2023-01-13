@@ -21,5 +21,5 @@ interface TaskInterface
     /**
      * Execute the Task
      */
-    public function execute();
+    public function execute(): void;
 }

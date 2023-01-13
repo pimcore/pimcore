@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 final class CacheFallbackPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('pimcore.cache.pool')) {
             $alias = new Alias('pimcore.cache.adapter.doctrine_dbal_tag_aware', true);

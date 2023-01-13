@@ -23,31 +23,39 @@ interface BlockInterface
 
     /**
      * Is executed at the beginning of the loop and setup some general settings
+     *
+     * @return void|string
      */
     public function start();
 
     /**
      * Is executed at the end of the loop and removes the settings set in start()
+     *
+     * @return void|string
      */
     public function end();
 
     /**
      * Called before the block is rendered
      */
-    public function blockConstruct();
+    public function blockConstruct(): void;
 
     /**
      * Called when the block was rendered
      */
-    public function blockDestruct();
+    public function blockDestruct(): void;
 
     /**
      * Is called evertime a new iteration starts (new entry of the block while looping)
+     *
+     * @return void|string|array
      */
     public function blockStart();
 
     /**
      * Is called evertime a new iteration ends (new entry of the block while looping)
+     *
+     * @return void|string
      */
     public function blockEnd();
 

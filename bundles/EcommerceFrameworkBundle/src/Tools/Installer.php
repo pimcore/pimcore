@@ -144,7 +144,7 @@ class Installer extends AbstractInstaller
         parent::__construct();
     }
 
-    public function install()
+    public function install(): void
     {
         $this->installFieldCollections();
         $this->installClasses();
@@ -153,7 +153,7 @@ class Installer extends AbstractInstaller
         $this->installPermissions();
     }
 
-    public function uninstall()
+    public function uninstall(): void
     {
         $this->uninstallPermissions();
         $this->uninstallTables();

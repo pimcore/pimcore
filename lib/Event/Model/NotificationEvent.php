@@ -43,7 +43,7 @@ class NotificationEvent extends Event
         return $this->notification;
     }
 
-    public function setNotification(Notification $notification)
+    public function setNotification(Notification $notification): void
     {
         $this->notification = $notification;
     }

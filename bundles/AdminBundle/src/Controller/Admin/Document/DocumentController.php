@@ -294,7 +294,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 switch ($request->get('type')) {
                     case 'page':
-                        $document = Document\Page::create($request->get('parentId'), $createValues, false);
+                        $document = Document\Page::create($parentDocument->getId(), $createValues, false);
                         $document->setTitle($request->get('title', null));
                         $document->setProperty('navigation_name', 'text', $request->get('name', null), false, false);
                         $document->save();
@@ -302,27 +302,27 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                         break;
                     case 'snippet':
-                        $document = Document\Snippet::create($request->get('parentId'), $createValues);
+                        $document = Document\Snippet::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'email': //ckogler
-                        $document = Document\Email::create($request->get('parentId'), $createValues);
+                        $document = Document\Email::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'link':
-                        $document = Document\Link::create($request->get('parentId'), $createValues);
+                        $document = Document\Link::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'hardlink':
-                        $document = Document\Hardlink::create($request->get('parentId'), $createValues);
+                        $document = Document\Hardlink::create($parentDocument->getId(), $createValues);
                         $success = true;
 
                         break;
                     case 'folder':
-                        $document = Document\Folder::create($request->get('parentId'), $createValues);
+                        $document = Document\Folder::create($parentDocument->getId(), $createValues);
                         $document->setPublished(true);
 
                         try {
@@ -346,7 +346,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                         }
 
                         if (Tool::classExists($classname)) {
-                            $document = $classname::create($request->get('parentId'), $createValues);
+                            $document = $classname::create($parentDocument->getId(), $createValues);
 
                             try {
                                 $document->save();
@@ -671,8 +671,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function docTypesGetAction(Request $request): JsonResponse
     {
         // get list of types
-        $list = new Document\DocType\Listing();
-        $list->load();
+        $list = new DocType\Listing();
 
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
@@ -757,12 +756,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function getDocTypesAction(Request $request): JsonResponse
     {
-        $list = new Document\DocType\Listing();
+        $list = new DocType\Listing();
+
         if ($type = $request->get('type')) {
             if (!Document\Service::isValidType($type)) {
                 throw new BadRequestHttpException('Invalid type: ' . $type);
             }
-            $list->setFilter(function (Document\DocType $docType) use ($type) {
+            $list->setFilter(static function (DocType $docType) use ($type) {
                 return $docType->getType() === $type;
             });
         }
@@ -1517,7 +1517,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         return $nodeConfig;
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
