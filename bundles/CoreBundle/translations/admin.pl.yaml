@@ -1,1077 +1,1106 @@
 ---
-unsupported_feature: Unsupported feature! Please check system requirements!
-screen_size_to_small: Your screen is too small to display the desired preview.
-too_many_children_for_recyclebin: This element contains too many children to be moved
-  to the recycle bin so it will be deleted permanentely
-default: Default
-metadata: Metadata
-email_address: Email Address
-email_blacklist: Email Blacklist
+unsupported_feature: "Funkcja niewspierana. Sprawd\u017A wymagania systemowe."
+screen_size_to_small: "Tw\xF3j ekran jest za ma\u0142y, aby wy\u015Bwietli\u0107 podgl\u0105d"
+too_many_children_for_recyclebin: "Element zawiera zbyt wiele dzieci, aby m\xF3g\u0142
+  zosta\u0107 przeniesiony do kosza, zostanie usuni\u0119ty na sta\u0142e"
+default: "Domy\u015Blnie"
+metadata: Metadane
+email_address: Adres e-mail
+email_blacklist: Czarna lista e-mail
 OK: OK
-optional: optional
-search_replace_assignments_error: Please select items where to replace and a new target
-  item.
-replace_assignments_in_selected_elements: Replace assignments in selected elements
-search_replace_assignments: Search & Replace Assignments
-imageadvanced: Image Advanced
-filter_active_message: Do you want to export only the filtered values?
-close_others: Close Others
-close_all: Close All
-close_unmodified: Close Unmodified
-classid: Class ID
-parentid: Parent ID
-mimetype: MIME-Type
-creationdate: Creation Date
-usermodification: User Modification
-userowner: Owner
-languages: Languages
-password_was_not_changed: Password wasn't changed because it isn't secure enough
-marketing: Marketing
-clear_content_of_current_view: Clear content of current view
-highlight_editable_elements: Highlight editable elements
-continue: Continue
-you_have_unsaved_changes: You have unsaved changes.
+optional: opcjonalne
+search_replace_assignments_error: Zaznacz elementy do zmiany i wybierz nowy cel
+replace_assignments_in_selected_elements: "Zmie\u0144 przypisania w zaznaczonych elementach"
+search_replace_assignments: "Szukaj i zamie\u0144"
+imageadvanced: Obraz zaawansowane
+filter_active_message: "Czy chcesz wyeksportowa\u0107 tylko przefiltrowane warto\u015Bci?"
+close_others: Zamknij inne
+close_all: Zamknij wszystkie
+close_unmodified: Zamknij nie zmodyfikowane
+classid: Identyfikator klasy
+parentid: Identyfikator rodzica
+mimetype: Typ MME
+creationdate: Data utworzenia
+usermodification: "Modyfikacje u\u017Cytkownika"
+userowner: "W\u0142a\u015Bciciel"
+languages: "J\u0119zyki"
+password_was_not_changed: "Has\u0142o nie zostanie zmienione bo nie jest bezpieczne"
+marketing: |
+  Marketing
+clear_content_of_current_view: "Wyczy\u015Bci\u0107 zawarto\u015B\u0107 bie\u017C\u0105cego
+  widoku"
+highlight_editable_elements: "Zaznacz elementy, kt\xF3re mo\u017Cna edytowa\u0107"
+continue: Kontynuuj
+you_have_unsaved_changes: Masz niezapisane zmiany
 global_targeting_rule: Global Targeting Rule
-global_targeting_rules: Global Targeting Rules
-personalization: Personalization
-shared_translations: Shared Translations
-textfield: Textfield
-add_data: Add data
-add_hotspot: Add hotspot
-add_marker_or_hotspots: Add marker or hotspots
-custom_reports: Custom Reports
-start_date: Start date
-start_date_relative: Start date (relative to today)
-end_date: End date
-end_date_relative: End date (relative to today)
-relative_date_description: i.e. -1m +1d (d=days, m=months, y=years)
-source_definition: Source Definition
-clear_thumbnails: Clear Thumbnails
-recipients: Recipients
-newsletter_send_error: Can't send your newsletter, please contact your administrator!
-newsletter_sent_message: Your newsletter is now sent to all recipients, this process
-  is done in the background (you can close pimcore in the meantime) and can take up
-  to one hour.
-do_you_really_want_to_send_the_newsletter_to_all_recipients: Do you really want to
-  send the newsletter to all recipients
-send_test_newsletter: Send Test-Newsletter
-send_newsletter: Send Newsletter Now
-object_filter: Object Filter
-add_newsletter: Add Newsletter
+global_targeting_rules: Globalne zasady kierowania
+personalization: Personalizacja
+shared_translations: "Wsp\xF3lne t\u0142umaczenie"
+textfield: Pole tekstowe
+add_data: Dadaj date
+add_hotspot: Dodaj hotspot
+add_marker_or_hotspots: Dodaj znacznik lub hotspot
+custom_reports: "W\u0142asne raporty"
+start_date: "Data rozpocz\u0119cia"
+start_date_relative: "Dara rozpocz\u0119cia (relatywna)"
+end_date: "Data ko\u0144ca"
+end_date_relative: "Data ko\u0144cowa (relatywna)"
+relative_date_description: "-1m +1d (d=dzie\u0144, m=miesi\u0105c, y=rok)"
+source_definition: "Definicja \u017Ar\xF3d\u0142owa"
+clear_thumbnails: "Usu\u0144 miniatury"
+recipients: Odbiorcy
+newsletter_send_error: "Nie mo\u017Cesz wys\u0142a\u0107 newsletter'a, prosz\u0119
+  skontaktuj si\u0119 z administracj\u0105!"
+newsletter_sent_message: "Newsletter jest teraz wysy\u0142any do wszystkich odbiorc\xF3w,
+  proces ten odbywa si\u0119 w tle i mo\u017Ce to trwa\u0107 do godziny."
+do_you_really_want_to_send_the_newsletter_to_all_recipients: "Czy na pewno chcesz
+  wys\u0142a\u0107 newsletter do wszystkich odbiorc\xF3w ? "
+send_test_newsletter: "Wy\u015Blij Test-Newsletter"
+send_newsletter: "Wy\u015Blij teraz newsletter"
+object_filter: "Filtr obiekt\xF3w"
+add_newsletter: Dodaj newsletter'a
 newsletter: Newsletter
 crm: CRM
-notes_events: Notes &amp; Events
-delete_folder: Delete Folder
-home: Home
-subject: Subject
-poster_image: Poster-Image
-tablet: Tablet
-hardlink: Hardlink
-convert_to: Convert to
-replace: Replace
-targeting: Targeting
-paste_inheritance: Paste (inheritance)
-are_you_sure: Are you sure?
-all_content_will_be_lost: All content will be lost
-content_master_document: Content-Master Document
-overwrite: Overwrite
-click_right_to_overwrite: Click right to overwrite
-open_document_by_id: Open Document
-open_asset_by_id: Open Asset
-open_object_by_id: Open Object
-element_not_found: Element not found
-import_from_url: Import from URL
-do_you_really_want_to_leave_the_editmode: Do you really want to leave the editmode
-  (NO!)
-or_specify_an_asset_image_below: or specify an asset image below
+notes_events: Notatki i Zdarzenia
+delete_folder: "Usu\u0144 folder"
+home: "Strona g\u0142\xF3wna"
+subject: Temat
+poster_image: Obraz-plakat
+tablet: Tabket
+hardlink: "\u0141\u0105cze"
+convert_to: Konwertuj do
+replace: "Zamie\u0144"
+targeting: Namierzanie
+paste_inheritance: Wklej (dziedziczenie)
+are_you_sure: "Czy jeste\u015B pewien?"
+all_content_will_be_lost: "Ca\u0142a zawarto\u015B\u0107 b\u0119dzie utracona"
+content_master_document: "Dokument \u017Ar\xF3d\u0142owy tre\u015Bci"
+overwrite: Nadpisz
+click_right_to_overwrite: "Kliknij prawym przyciskiem myszy aby nadpisa\u0107"
+open_document_by_id: "Otw\xF3rz dokument po ID"
+open_asset_by_id: "Otw\xF3rz zas\xF3b po ID"
+open_object_by_id: "Otw\xF3rz obiekt po ID"
+element_not_found: Element nie znaleziony
+import_from_url: Import z URL
+do_you_really_want_to_leave_the_editmode: "Czy na pewno chcesz opu\u015Bcic tryb edycji?
+  (NIE!)"
+or_specify_an_asset_image_below: "lub wybierz zas\xF3b obrazu poni\u017Cej"
 medium: Medium
-saved_successfully: Saved successfully!
-qr_codes: QR-Codes
+saved_successfully: "Zapisano pomy\u015Blnie"
+qr_codes: Kody QR
 element: Element
-details_for_selected_event: Details for selected element
-fields: Fields
-not_possible_with_paging: Sorry, this is not possible in elements which are paged,
-  try to restructure your data to avoid pages in the tree
-inherited: Inherited
-length: Length
-show_in_tree: Show in Tree
-exactmatch: exact match
-desktop: Desktop
-drag_me: Drag Me
-serverVars: Server Variables
-attributes: Attributes
-code: Code
+details_for_selected_event: "Szczeg\xF3\u0142y zaznaczonego elementu"
+fields: Pola
+not_possible_with_paging: "Nie jest to mo\u017Cliwe w elementach stronicowanych, spr\xF3buj
+  restrukturyzowa\u0107 dane aby unikn\u0105\u0107 stron w drzewie"
+inherited: Odziedziczone
+length: "D\u0142ugo\u015B\u0107"
+show_in_tree: "Poka\u017C w drzewie"
+exactmatch: "dok\u0142adne dopasowanie"
+desktop: Pulpit
+drag_me: "Przeci\u0105gnij mnie"
+serverVars: Zmienne serwera
+attributes: Atrybuty
+code: Kod
 tag: Tag
-tags: Tags
-Click here to proceed: Click here to proceed
-Your browser is not supported. Please install the latest version of one of the following browsers.: Your
-  browser is not supported. Please install the latest version of one of the following
-  browsers.
-open_in_new_window: Open in new Window
-limit_reached: Limit reached
-casesensitive: case-sensitive
-path_aliases: Path Aliases
-pretty_url: Pretty URL
-pretty_url_label: Pretty URL (overrides path from tree-structure)
-password_cannot_be_changed: Password cannot be changed
-old_password: Old Password
-new_password: New Password
-retype_password: Retype Password
-reports: Reports
-roles: Roles
-Password: Password
-Forgot your password: Forgot your password
-Back to Login: Back to Login
-Enter your username and pimcore will send a login link to your email address: Enter
-  your username and Pimcore will send a login link to your email address
-Please check your mailbox.: Please check your mailbox.
-Login: Login
-Submit: Submit
-A temporary login link has been sent to your email address.: A temporary login link
-  has been sent to your email address.
-user_inactive: User is not active
-user_no_email_address: User has no email address
-user_no_password: User has no password
-user_unknown: User unknown
-lost_password_email_error: Could not send password recovery email
-use_current_player_position_as_preview: Use current player position as preview
-select_image_preview: Select Image Preview
-preview_not_available: Preview not available
+tags: Tagi
+Click here to proceed: "Kliknij aby kontynuowa\u0107"
+Your browser is not supported. Please install the latest version of one of the following browsers.: "Twoja
+  przegl\u0105darka nie jest obs\u0142ugiwana. Zainstaluj naj\u015Bwie\u017Csz\u0105
+  wersj\u0119 kt\xF3rej\u015B z nast\u0119puj\u0105cych przegl\u0105darek."
+open_in_new_window: "Otw\xF3rz w nowym oknie"
+limit_reached: "Limit osi\u0105gni\u0119ty"
+casesensitive: "wra\u017Cliwy na wielko\u015B\u0107 liter"
+path_aliases: "Aliasy \u015Bcie\u017Cki"
+pretty_url: "\u0141adny adres URL"
+pretty_url_label: "\u0141adny adres URL (zast\u0105pi \u015Bcie\u017Ck\u0119 ze struktury
+  drzewa)"
+password_cannot_be_changed: "Has\u0142o nie mo\u017Ce by\u0107 zmienione"
+old_password: "Stare has\u0142o"
+new_password: "Nowe has\u0142o"
+retype_password: "Potw\xF3rz has\u0142o"
+reports: Raporty
+roles: Grupy
+Password: "Has\u0142o"
+Forgot your password: "Zapomnia\u0142e\u015B has\u0142o?"
+Back to Login: "Powr\xF3t do strony logowania"
+Enter your username and pimcore will send a login link to your email address: "Wpisz
+  nazw\u0119 u\u017Cytkownika, a system wy\u015Ble link do logowania na Tw\xF3j adres
+  e-mail"
+Please check your mailbox.: "Sprawd\u017A poczt\u0119"
+Login: Logowanie
+Submit: "Wy\u015Blij"
+A temporary login link has been sent to your email address.: "Tymczasowy link do logowania
+  zosta\u0142 wys\u0142any na Tw\xF3j adres e-mail"
+user_inactive: "U\u017Cytkownik nieaktywny"
+user_no_email_address: "U\u017Cytkownik nie ma adresu email"
+user_no_password: "U\u017Cytkownik nie ma has\u0142a"
+user_unknown: "U\u017Cytkownik nieznany"
+lost_password_email_error: "Nie mo\u017Cna wys\u0142a\u0107 maila odzyskiwania has\u0142a"
+use_current_player_position_as_preview: "U\u017Cyj bierz\u0105cej pozycji odtwarzacza
+  jako podgl\u0105du"
+select_image_preview: "Wybierz podgl\u0105d obrazka"
+preview_not_available: "Podgl\u0105d niedost\u0119pny"
 status: Status
-video_preview_in_progress: The preview for this video is currently in progress.
-php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: PHP-CLI binary or FFMPEG is
-  not available, please ensure that both are installed/executable and configured in
-  the system settings!
-video_thumbnails: Video Thumbnails
-do_you_really_want_to_close_pimcore: Do you really want to close Pimcore?
-drop_element_here: Drop element here
-select_specific_area_of_image: Select specific area of image
-paste_recursive_updating_references: Paste recursive, updating references
-add_hardlink: Add Hardlink
-source_path: Source path
-properties_from_source: Use properties from source document
+video_preview_in_progress: "Podgl\u0105d wideo obecnie trwa."
+php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: "PHP-CLI lub FFMPEG niedost\u0119pne,
+  upewnij si\u0119 \u017Ce oba s\u0105 zainstalowane/wykonywalne i skonfigurowane
+  poprawnie w ustawieniach systemu!"
+video_thumbnails: "Miniatury film\xF3w"
+do_you_really_want_to_close_pimcore: "Czy na pewno chcesz zamkn\u0105\u0107 Pimcore?"
+drop_element_here: "Upu\u015B\u0107 element tutaj"
+select_specific_area_of_image: Wybierz fragment obrazka
+paste_recursive_updating_references: "Wklej rekursywnie, aktualizuj\u0105c referencje"
+add_hardlink: "Dodaj sztywny odno\u015Bnik"
+source_path: "\u015Acie\u017Cka \u017Ar\xF3d\u0142owa"
+properties_from_source: "U\u017Cyj W\u0142a\u015Bciwo\u015Bci aby przej\u015B\u0107
+  do \u017Ar\xF3d\u0142a dokumentu"
 children_from_source: Use children from source document
-click_right_for_more_options: Click right for more options
-move_to_tab: Move to Tab
-not_supported: Not supported
-edit_link: Edit Link
-resize: Resize
-scalebyheight: Scale by Height
-scalebywidth: Scale by Width
-crop: Crop
-cleanup: Cleanup
-this_element_cannot_be_edited: This element cannot be edited
-details: Details
-cannot_save_object_please_try_to_edit_the_object_in_detail_view: <b>Cannot save object!</b><br
-  />Please try to edit the object in the detail view.
-size: Size
-select_a_file: Select a file
-upload_compatibility_mode: Upload File (Compatibility Mode)
-the_system_is_in_maintenance_mode_please_wait: The system is in maintenance mode,
-  please wait
-activate: Activate
-image_is_too_small: Image is too small, please choose a bigger one.
-name_is_not_allowed: Name is not allowed
-import_from_server: Import from Server
-upload_files: Upload Files
-upload_zip: Upload ZIP Archive
-document_root: Document Root
-batch_change_selected: Batch edit selected
-download_as_zip: Download as ZIP
-locked: Locked
-element_cannot_be_move_because_it_is_locked: Element cannot be moved because it is
-  locked.
-element_cannot_be_moved: The element cannot be moved here
+click_right_for_more_options: "Kliknij prawym przyciskiem myszy aby wy\u015Bwietli\u0107
+  wi\u0119cej opcji"
+move_to_tab: "Przenie\u015B do zak\u0142adki"
+not_supported: "Nie jest obs\u0142ugiwane"
+edit_link: Edytuj link
+resize: "Zmie\u0144 rozmiar"
+scalebyheight: "Skaluj po wysoko\u015Bci"
+scalebywidth: "Skaluj po d\u0142ugo\u015Bci"
+crop: Kadruj
+cleanup: "Wyczy\u015B\u0107"
+this_element_cannot_be_edited: "Ten element nie mo\u017Ce by\u0107 edytowany"
+details: "Szczeg\xF3\u0142y "
+cannot_save_object_please_try_to_edit_the_object_in_detail_view: "<b>Nie mo\u017Cna
+  zapisa\u0107 obiektu</b><br/>Spr\xF3buj wyedytowa\u0107 obiekt w widoku szczeg\xF3\u0142\xF3w"
+size: Rozmiar
+select_a_file: Wybierz plik
+upload_compatibility_mode: "Za\u0142aduj plik (Tryb Kompatybilno\u015Bci)"
+the_system_is_in_maintenance_mode_please_wait: "System znajduje si\u0119 w trybie
+  konserwacji, prosz\u0119 czeka\u0107"
+activate: Uaktywnij
+image_is_too_small: "Obrazek jest zbyt ma\u0142y, prosz\u0119 wybra\u0107 wi\u0119kszy"
+name_is_not_allowed: Niedozwolona nazwa
+import_from_server: Importuj z serwera
+upload_files: "Za\u0142aduj pliki"
+upload_zip: "Za\u0142aduj archiwum ZIP"
+document_root: "Katalog g\u0142\xF3wny"
+batch_change_selected: "Zmie\u0144 dla zaznaczonych"
+download_as_zip: Pobierz jako plik ZIP
+locked: Zablokowany
+element_cannot_be_move_because_it_is_locked: "Element nie mo\u017Ce by\u0107 przeniesiony
+  poniewa\u017C jest zablokowany"
+element_cannot_be_moved: "Nie mo\u017Cna tu przenie\u015B\u0107 elementu"
 element_cannot_be_moved_because_target_is_paginated: The element cannot be dragged
   on a paginated tree/folder with manual indexing (Sort by index). Please change the
   sorting method or use "Search & Move" option under the "Advanced" context menu of
   the target to move the elements.
-no_collections_allowed: No Collections allowed
-filter_condition: Filter Condition
-all_types: All Types
+no_collections_allowed: "Brak dopuszczalnych po\u0142\u0105cze\u0144"
+filter_condition: Warunek filtrowania
+all_types: Wszystkie typy
 audio: Audio
-video: Video
-archive: Archive
-unknown: Unknown
-class: Class
-page: Page
+video: Wideo
+archive: Archiwum
+unknown: Nieznane
+class: Klasa
+page: Strona
 objectbrick: Objectbrick
 field_collection: Field-Collection
-snippet: Snippet
+snippet: Wycinek
 folder: Folder
-your_selection: Your Selection
-double_click_to_add_item_to_selection: Double-click an item on the left to add it
-  to this selection.
-label: Label
-error_auth_failed: Login failed!<br />Please try again.
-error_session_expired: Session expired!<br />Please login again.
-site: Site
-descending: Descending
-ascending: Ascending
-sort: Sort
-results: Results
-dimension: Dimension
-metric: Metric
+your_selection: "Tw\xF3j wyb\xF3r"
+double_click_to_add_item_to_selection: "Kliknij 2 razy na elemencie po prawej stronie,
+  aby doda\u0107 go do zaznaczenia."
+label: Etykieta
+error_auth_failed: "Nieudane logowanie! Prosz\u0119 spr\xF3bowa\u0107 ponownie."
+error_session_expired: "Sesja wygas\u0142a! Prosz\u0119 zalogowa\u0107 si\u0119 ponownie."
+site: Strona
+descending: "Malej\u0105co"
+ascending: "Rosn\u0105co"
+sort: Sortowanie
+results: Wyniki
+dimension: Wymiar
+metric: Metryka
 segment: Segment
-data_explorer: Data Explorer
-navigation: Navigation
-entrances: Entrances
-exits: Exits
-restore: Restore
-amount: Amount
-flush_recyclebin: Flush Recycle Bin
-recyclebin: Recycle Bin
-deletedby: Deleted By
-open_select_editor: Open Selection-Editor
-ignore: Ignore
+data_explorer: "Przegl\u0105daj dane"
+navigation: Nawigacja
+entrances: "Wej\u015Bcia"
+exits: "Wyj\u015Bcia"
+restore: "Przywr\xF3\u0107"
+amount: "Ilo\u015B\u0107"
+flush_recyclebin: "Opr\xF3\u017Cnij kosz"
+recyclebin: Kosz
+deletedby: "Usuni\u0119ty przez"
+open_select_editor: "Otw\xF3rz edytor zaznaczenia"
+ignore: ignoruj
 email_log: Email Log
-email_log_resend: Resend email
-email_log_resend_window_msg: Please confirm that you want to send the email again
-  to all recipients.
-select_site: Select a site
-main_site: Main Site
-filename: Filename
-unsupported_filetype: Unsupported Filetype
-email_log_resend_window_success_message: The email has been sent successfully to all
-  recipients.
-email_log_resend_window_error_message: An error occurred. The email has not been resent.
-error_jobs: The following jobs failed
-batch_change: Batch edit all
-batch_edit_field: Batch edit all field
-published: Published
-all: all
-items_per_page: Items per page
-reload_pimcore_changes: You have to reload Pimcore for the changes to take effect,
-  would you like to do this now?
-info: Info
-or: or
-paste_contents: Paste only contents here
-paste_as_child: Paste as child
+email_log_resend: "Wy\u015Blij e-mail"
+email_log_resend_window_msg: "Potwierd\u017A ponown\u0105 wysy\u0142k\u0119 e-maila
+  do wszystkich odbiorc\xF3w"
+select_site: "Wybierz stron\u0119"
+main_site: "Strona g\u0142\xF3wna"
+filename: Nazwa pliku
+unsupported_filetype: "Nieobs\u0142ugiwany typ pliku"
+email_log_resend_window_success_message: "E-mail zosta\u0142 pomy\u015Blnie wys\u0142any
+  do wszystkich odbiorc\xF3w"
+email_log_resend_window_error_message: "Wyst\u0105pi\u0142 b\u0142\u0105d. Nie wys\u0142ano
+  e-maila ponownie"
+error_jobs: "Zadania zako\u0144czone niepowodzeniem"
+batch_change: "Zmie\u0144 dla wszystkich"
+batch_edit_field: "Pakietowa modyfikacja p\xF3l"
+published: Opublikowano
+all: wszystko
+items_per_page: "Element\xF3w na stron\u0119"
+reload_pimcore_changes: "Zmiany wymagaj\u0105 prze\u0142adowania Pimcore. Czy chcesz
+  to zrobi\u0107 teraz?"
+info: Informacja
+or: lub
+paste_contents: "Wklej tylko zawarto\u015B\u0107"
+paste_as_child: "Wklej jako podleg\u0142e"
 paste_recursive_as_child: Paste as child (recursive)
-view_original: View Original
-feed: Feed
-no_items_found: No items found
-public_url: Public URL
-pageviews: Pageviews
-visits: Visits
-detail: Detail
-report_settings: Report Settings
-overview: Overview
-visitor_overview: Visitor Overview
-other: Other
+view_original: "Zobacz orygina\u0142"
+feed: "Kana\u0142 RSS"
+no_items_found: Nic nie znaleziono
+public_url: Publiczny URL
+pageviews: "Ods\u0142ony"
+visits: Odwiedziny
+detail: "Szczeg\xF3\u0142"
+report_settings: Ustawienia raportu
+overview: "Przegl\u0105d"
+visitor_overview: "Przegl\u0105d odwiedzin"
+other: Inny
 google_analytics: Google Analytics
-reports_and_marketing: Marketing & Reports
-save_only_scheduled_tasks: Save only scheduled tasks
-modified_assets: Modified Assets
-modification_statistic: Changes in the last 31 days
-add_portlet: Add Portlet
-modified_documents: Modified Documents
-modified_objects: Modified Objects
-welcome: Welcome
-save_and_publish: Save & Publish
-delete: Delete
-save: Save
-add_assets: Add Asset(s)
-preview: Preview
-advanced: Advanced
-basic: Basic
-list: List
-view: View
-publish: Publish
-rename: Rename
-settings: Settings
-properties: Properties
-versions: Versions
-add: Add
-date: Date
-user: User
-note: Note
-email_cc: Cc
-email_bcc: Bcc
-email_settings: Email Settings
-email_settings_receiver_description: 'Multiple recipients can be specified by separating
-  the email addresses with a semicolon. <br/>Example: receiver@pimcore.org; receiver2@pimcore.org<br/>For
-  ''From'' you can use additionally the syntax <i>My Name &lt;my-name@example.com&gt;</i>'
-email_logs: Sent Emails
-email_log_sent_Date: Date sent
-predefined_document_type: Predefined Document Type
-controller: Controller
-action: Action
-actions: Actions
-template: Template
+reports_and_marketing: Raporty i marketing
+save_only_scheduled_tasks: Zapisz tylko zadania z harmonogramu
+modified_assets: Modyfikowane zasoby
+modification_statistic: Zmiany za ostatnie 31 dni
+add_portlet: Dodaj portlet
+modified_documents: Modyfikowane dokumenty
+modified_objects: Modyfikowane obiekty
+welcome: Witaj
+save_and_publish: Zapisz i opublikuj
+delete: Skasuj
+save: Zapisz
+add_assets: "Dodaj zas\xF3b(y)"
+preview: "Podgl\u0105d"
+advanced: Zaawansowany
+basic: Podstawowy
+list: Lista
+view: Widok
+publish: Opublikuj
+rename: "Zmie\u0144 nazw\u0119"
+settings: Ustawienia
+properties: "W\u0142a\u015Bciwo\u015Bci"
+versions: Wersje
+add: Dodaj
+date: Data
+user: "U\u017Cytkownik"
+note: Notka
+email_cc: Kopia
+email_bcc: Ukryta kopia
+email_settings: Ustawienia poczty
+email_settings_receiver_description: "Oddziel adresy \u015Brednikiem aby wys\u0142a\u0107
+  e-mail do wielu adresat\xF3w:Przyk\u0142ad: odbiorca@pimcore.org; odbiorca2@pimcore.org"
+email_logs: "Wys\u0142ane maile"
+email_log_sent_Date: "Dta wys\u0142ania"
+predefined_document_type: "Preinstalowane typy dokument\xF3w"
+controller: Kontroler
+action: Akcja
+actions: Akcje
+template: Szablon
 staticroute: Static Route
-static_generator: Static Page Generator
-static_generator_enable: Enable server side static rendering
-static_generator_lifetime: Lifetime (in minutes) for static page (optional)
-last_generated: Last generated
-key: Key
-id: ID
-name: Name
-title: Title
-description: Description
-unpublish: Unpublish
-target: Target
-type: Type
-please_enter_the_new_name: Please enter the new name
-add_page: Add Page
-add_snippet: Add Snippet
-add_email: Add Email
-add_link: Add Link
-copy: Copy
-paste: Paste
-close_all_tabs: Close all tabs
-search: Search
+static_generator: Generator Stron Statycznych
+static_generator_enable: "W\u0142\u0105cz renderowanie statyczne po stronie serwera"
+static_generator_lifetime: "Czas \u017Cycia (w minutach) dla strony statycznej (opcjonalnie)"
+last_generated: Ostatnio wygenerowane
+key: Klucz
+id: Identyfikator
+name: Nazwa
+title: "Tytu\u0142"
+description: Opis
+unpublish: Odpublikuj
+target: Cel
+type: Typ
+please_enter_the_new_name: "Wprowad\u017A now\u0105 nazw\u0119:"
+add_page: "Dodaj stron\u0119"
+add_snippet: Dodaj wycinek
+add_email: Dodaj e-mail
+add_link: "Dodaj odno\u015Bnik"
+copy: Kopiuj
+paste: Wklej
+close_all_tabs: "Zamknij wszystkie zak\u0142adki"
+search: Szukaj
 import: Import
-export: Export
+export: Eksport
 document_type: Document Type
-document_types: Document Types
-predefined_properties: Predefined Properties
-users: Users
-profile: Profile
-my_profile: My Profile
-documentation: Documentation
-report_bugs: Report Bugs
-about: About
-file: File
-extras: Extras
-help: Help
-configuration: Configuration
-value: Value
-add_a_custom_property: Add a custom Property
+document_types: "Typy dokument\xF3w"
+predefined_properties: "Preinstalowane w\u0142a\u015Bciwo\u015Bci"
+users: "U\u017Cytkownicy"
+profile: "Profil u\u017Cytkownika"
+my_profile: "M\xF3j profil"
+documentation: Dokumentacja
+report_bugs: "Zg\u0142o\u015B b\u0142\u0119dy"
+about: O nas
+file: Plik
+extras: Dodatki
+help: Pomoc
+configuration: Konfiguracja
+value: "Warto\u015B\u0107"
+add_a_custom_property: "Dodaj w\u0142asn\u0105 warto\u015B\u0107"
 custom: Custom
-general: General
-language: Language
-quality: Quality
+general: "Og\xF3lne"
+language: "J\u0119zyk"
+quality: "Jako\u015B\u0107"
 format: Format
-documents: Documents
-assets: Assets
-upload: Upload
-width: Width
-height: Height
-empty: Empty
-workflow: Workflow
-modify: 'Modify '
-create: 'Create '
-edit: Edit
-logout: Logout
-refresh: Refresh
-input: Input
-checkbox: Checkbox
-textarea: Textarea
-image: Image
-select: Select
-base: Base
-add_object: Add Object
-border: Border
-document: Document
-asset: Asset
-object: Object
-remove: Remove
-hidden_dependencies: There are additional dependencies your user does not have the
-  permissions to see.
-open: Open
-days: Days
-seemode: Seemode
-edit_current_page: Edit this page
-close: Close
-name_already_in_use: Name is already in use, please choose a different one.
-name_and_key_must_be_defined: Name and Type must be defined
-mandatory_field_empty: Please fill all mandatory fields
-reload: Reload
-schedule: Schedule
-time: Time
-version: Version
-active: Active
-success: Success
-translations: Translations
-translation_simple: Simple Text
-translation_custom: ICU Format
-firstname: Firstname
-lastname: Lastname
+documents: Dokumenty
+assets: Zasoby
+upload: "Za\u0142aduj"
+width: "Szeroko\u015B\u0107"
+height: "Wysoko\u015B\u0107"
+empty: Pusty
+workflow: Organizacja pracy
+modify: Modyfikuj
+create: "Utw\xF3rz"
+edit: "Zmie\u0144"
+logout: Wyloguj
+refresh: "Od\u015Bwie\u017C"
+input: Pole tekstowe
+checkbox: Pole wyboru
+textarea: Pole tekstowe
+image: Obraz
+select: Wybierz
+base: Bazowy
+add_object: Dodaj obiekt
+border: Obramowanie
+document: Dokument
+asset: "Zas\xF3b"
+object: Obiekt
+remove: "Usu\u0144"
+hidden_dependencies: "Wykryto dodatkowe powi\u0105zania, do kt\xF3rych nie masz uprawnie\u0144."
+open: "Otw\xF3rz"
+days: Dni
+seemode: "Tryb podgl\u0105du"
+edit_current_page: "Zmie\u0144 t\u0119 stron\u0119"
+close: Zamknij
+name_already_in_use: "Nazwa jest ju\u017C w u\u017Cyciu"
+name_and_key_must_be_defined: "Nazwa i typ musz\u0105 by\u0107 okre\u015Blone"
+mandatory_field_empty: "Wype\u0142nij wszystkie pola obowi\u0105zkowe"
+reload: "Od\u015Bwie\u017C"
+schedule: Harmonogram
+time: Czas
+version: Wersja
+active: Aktywny
+success: Powodzenie
+translations: "T\u0142umaczenia"
+translation_simple: Prosty tekst
+translation_custom: Format ICU
+firstname: "Imi\u0119"
+lastname: Nazwisko
 email: Email
-cant_move_node_to_target: Moving node not possible
-error_moving_object: Object could not be moved
-translations_are_not_configured: Translation are not configured
-read_more_here: Read more about here
-publish_version: Publish version
-start: Start
-su: Su
-mo: Mo
-tu: Tu
-we: We
-th: Th
-fr: Fr
-sa: Sa
-session_error_text: It seems there is a problem with your session. We recommend to
-  reload this page in order to be save, but you can try to save your changes first.
-session_error: Session Error
-please_wait: Please wait ...
-download: Download
-inheritable: Inheritable
-redirects: Redirects
-source: Source
-link: Link
-abbr: Abbr.
-stop: Stop
-dependencies: Dependencies
-requires: Requires
-required_by: Required By
-search_edit: Search, Edit and Export
-subtype: Subtype
-initializing: Initializing ...
-please_select_a_type: Please select a type
-filter: Filter
-field: Field
+cant_move_node_to_target: "Nie mo\u017Cna przenie\u015B\u0107 w\u0119z\u0142a"
+error_moving_object: "Obiekt nie zosta\u0142 przeniesiony"
+translations_are_not_configured: "T\u0142umaczenia nie s\u0105 skonfigurowane"
+read_more_here: "Czytaj wi\u0119cej tutaj"
+publish_version: Wersja opublikowana
+start: "Pocz\u0105tek"
+su: Nie
+mo: Pon
+tu: Wto
+we: "\u015Aro"
+th: Czw
+fr: "Pi\u0105"
+sa: Sob
+session_error_text: "Wykryto b\u0142\u0105d z obs\u0142ug\u0105 sesji. Czy chcesz
+  pozosta\u0107 zalogowany?"
+session_error: "B\u0142\u0105d sesji"
+please_wait: Czekaj...
+download: Pobierz
+inheritable: "Dziedzicz\u0105cy"
+redirects: Przekierowania
+source: "\u0179r\xF3d\u0142o"
+link: "Odno\u015Bnik"
+abbr: Skracanie
+stop: Zatrzymaj
+dependencies: "Zale\u017Cno\u015Bci"
+requires: Wymaga
+required_by: Wymagane przez
+search_edit: "Znajd\u017A, zamie\u0144 i eksportuj"
+subtype: Podtyp
+initializing: Inicjalizacja...
+please_select_a_type: Wybierz typ
+filter: Filtr
+field: Pole
 operator: Operator
-apply: Apply
-show: Show
-public: Public
-maximum_2_versions: You can compare max. 2 versions
-error: Error
-element_is_locked: 'The desired element is currently opened by another person:'
-element_lock_question: Would you like to open it anyway?
-since: Since
-longitude: Longitude
-latitude: Latitude
-geopoint: Geographic Point
-cancel: Cancel
-open_search_editor: Open Search Editor
-parameters: Parameters
-anchor: Anchor
-accesskey: Accesskey
-relation: Relation
-tabindex: Tab-Index
-not_set: not set
-export_csv: CSV Export
-import_csv: CSV Import
-show_welcome_screen: Show welcome screen on startup
-importFileHasHeadRow: first row = headline
-overwrite_object_with_same_key_description: When overwrite is checked, instead of
-  creating a new object for each import row, objects with the same key are replaced.
-  Existing objects in your import folder with keys not contained in the import file
-  will remain untouched. Please be aware that all objects which have a matching key
-  in the import file will be replaced in the target folder. This is also true for
-  objects based on a different class or even object folders! Object fields which are
-  set to ignore in the field mapping keep their old value.
-object_import_filename_description: select the field which is used to generate the
-  object key
-save_pubish_close: Save, publish and close
-save_close: Save and close
-error_general: Server threw exception - could not perform action. Please reload the
-  admin interface and try again.
-owner_class: Owner class
-owner_field: Owner field
-nonownerobject_warning: The current object is not the owner of these relations, making
-  changes here might make saving the object slow
-element_implicit_edit_question: Would you still like to implicitly  modify it with
-  this action?
-element_open_message: The desired element is already open for editing.
-nonownerobjects_self_selection: In non owner objects a  relation to myself is not
-  possible, please use original field instead of non owner field.
-warning: Warning
-csv_object_export_warning: Please note that the CSV export does not support all data
-  types. Consequently, re-importing an exported CSV to pimcore might lead to data
-  loss. Press OK to continue with the export.
-navigation_exclude: Exclude from Navigation
-variants: Variants
-variant: Variant
-add_variant: Add variant
-delete_message_dependencies: There are dependencies, delete anyway?
-delete_message: Do you really want to delete this item?
+apply: Zastosuj
+show: "Poka\u017C"
+public: Publiczne
+maximum_2_versions: "Mo\u017Cesz por\xF3wna\u0107 tylko 2 wersje"
+error: "B\u0142\u0105d"
+element_is_locked: "Inna osoba u\u017Cywa tego elementu"
+element_lock_question: "Czy chcesz go otworzy\u0107 mimo to?"
+since: Od
+longitude: "D\u0142ugo\u015B\u0107 geograficzna"
+latitude: "Szeroko\u015B\u0107 geograficzna"
+geopoint: Punkt geograficzny
+cancel: Anuluj
+open_search_editor: "Otw\xF3rz edytor wyszukiwania"
+parameters: Parametry
+anchor: Kotwica
+accesskey: "Klucz dost\u0119pu"
+relation: Relacja
+tabindex: "Indeks zak\u0142adek"
+not_set: Brak wyboru
+export_csv: Eksport CSV
+import_csv: Import z pliku CSV
+show_welcome_screen: "Poka\u017C ekran powitalny po zalogowaniu"
+importFileHasHeadRow: "pierwszy wiersz = nag\u0142\xF3wek"
+overwrite_object_with_same_key_description: "Gdy nadpisywanie jest zaznaczone, Zamiast
+  tworzy\u0107 nowych obiekt\xF3w dla ka\u017Cdego importowanego wiersza, obiekty
+  o tych samych kluczach zostan\u0105 zast\u0105pione. Istniej\u0105ce obiekty w importowanym
+  folderze z kluczami kt\xF3re nie istniej\u0105 w importowanym pliku pozostan\u0105
+  niezmienione. Nale\u017Cy pami\u0119ta\u0107, \u017Ce wszystkie obiekty z pasuj\u0105cymi
+  kluczami w importowanym pliku zostan\u0105 zamienione w folderze docelowym. Dotyczy
+  to r\xF3wnie\u017C obiekt\xF3w tworzonych na innych clasach lub nawet w innych folderach
+  obiekt\xF3w! Pola obiekt\xF3w, kt\xF3re s\u0105 ustawione na pomijanie w polu mapowania
+  pozostan\u0105 niezmienione."
+object_import_filename_description: "Wska\u017C pole, kt\xF3re jest przeznaczone do
+  wygenerowaniania klucza."
+save_pubish_close: Zapisz, opublikuj i zamknij
+save_close: Zapisz i zamknij
+error_general: "Serwer wyrzuci\u0142 wyj\u0105tek - nie mo\u017Cna wykona\u0107 akcji"
+owner_class: "Klasa w\u0142a\u015Bciciela"
+owner_field: "Pole w\u0142a\u015Bciciela"
+nonownerobject_warning: "Aktualny obiekt nie jest w\u0142a\u015Bcicielem tych relacji,
+  Zmiany w tym miejscu mog\u0105 spowodowa\u0107 spowolnienie zapisu danych do obiektu."
+element_implicit_edit_question: "Czy nadal chcesz domy\u015Blnie modyfikowa\u0107
+  t\u0105 akcj\u0119?"
+element_open_message: "\u017B\u0105dany element jest ju\u017C otwarty do edycji."
+nonownerobjects_self_selection: "W obiektach nie w\u0142a\u015Bcicielach powi\u0105zanie
+  do samego siebie nie jest mo\u017Cliwe. U\u017Cyj oryginalnego pola zamiast pola
+  nie w\u0142a\u015Bciciela."
+warning: "Ostrze\u017Cenie"
+csv_object_export_warning: "Nale\u017Cy pami\u0119ta\u0107 \u017Ce eksport do pliku
+  CSV nie obs\u0142uguje wszystkich typ\xF3w danych. Ponowny import danych z pliku
+  CSV do pimcore mo\u017Ce spowodowa\u0107 utrat\u0119 cz\u0119\u015Bci danych. Naci\u015Bnij
+  OK aby kontynuowa\u0107 eksport."
+navigation_exclude: "Wy\u0142\u0105cz z nawigacji"
+variants: Warianty
+variant: Wariant
+add_variant: Dodaj wariant
+delete_message_dependencies: "Istniej\u0105 powi\u0105zania, usun\u0105\u0107 mimo
+  to?"
+delete_message: "Czy na pewno chcesz usun\u0105\u0107 ten element?"
 delete_message_advanced: Do you really want to delete %s '%s' ?
-delete_message_batch: Do you really want to delete these elements?
-delete_group_message: Do you really want to delete this group and all of its contents?
-no_further_objectbricks_allowed: No further objectbricks allowed
-grid_current_language: Current language
-object_columns: Object columns
-system_columns: System columns
-columns: Columns
-children_grid: Children Grid
-only_children: just direct children
-cut: Cut
-paste_cut_element: Paste cut-out element
-memorize_tabs: Memorize open tabs
-element_history: Recently Opened Elements
-dashboards: Dashboards
-portlet_customreport: Custom Report
-clear_marker_or_hotspots: Clear Marker, Hotspot and Cropping Data
-hotspots_cleared: Hotspots, Markers and Cropping Data cleared
+delete_message_batch: "Na pewno chcesz usun\u0105\u0107 te elementy?"
+delete_group_message: "Czy na pewno chcesz usun\u0105\u0107 t\u0119 grup\u0119 i ca\u0142\u0105
+  jej zawarto\u015B\u0107?"
+no_further_objectbricks_allowed: "Nie mo\u017Cna doda\u0107 wi\u0119cej klas"
+grid_current_language: "Aktualny j\u0119zyk"
+object_columns: Kolumny obiektu
+system_columns: Kolumny systemowe
+columns: kolumny
+children_grid: "Podrz\u0119dna tabela"
+only_children: "tylko obiekty podrz\u0119dne"
+cut: Wytnij
+paste_cut_element: "Wklej wyci\u0119ty element"
+memorize_tabs: "Zapami\u0119taj otwarte karty"
+element_history: Ostatnio otwarte elementy
+dashboards: "Tablica zg\u0142osze\u0144"
+portlet_customreport: Indywidualny raport
+clear_marker_or_hotspots: "Wyczy\u015B\u0107 Marker, Hotspot i Dane Ci\u0119cia"
+hotspots_cleared: "Hotspot, Markery i Dane Ci\u0119cia wyczyszczone"
 deeplink: Deeplink
-click_to_open: (click to open)
-add_metadata: Add Metadata
-pimcore_icon_edit_pdf_text: Edit text version
-chapter: Chapter
-search_and_move: Search & Move
-searching: Searching...
-predefined_asset_metadata: Predefined Asset Metadata
-add_predefined_metadata_definitions: Add predefined definitions
-scheduled: Scheduled
-naming_requirements_3chars: Name must be alphanumeric and at least 3 characters long
-there_are_more_columns: There are more columns than currently displayed
-merge_csv: Import &amp; Merge CSV
-translation_merger_current: Current Text
-translation_merger_csv: Text from CSV
-nothing_to_merge: There is nothing to merge
-csv_seperated_options: CSV seperated options
-csv_seperated_options_info: The list of available options can be specified as comma-seperated
-  list, as single-column values or  mixed. For the single-column way, the key will
-  also be used as the value.
-first_page: First Page
-previous_page: Previous Page
-next_page: Next Page
-last_page: Last Page
-no_data_to_display: No data to display
+click_to_open: "(kliknij aby otworzy\u0107)"
+add_metadata: Dodaj Metadane
+pimcore_icon_edit_pdf_text: "Edytuj wersj\u0119 tekstu"
+chapter: "Rozdzia\u0142"
+search_and_move: "Znajd\u017A i przesu\u0144"
+searching: Szukam...
+predefined_asset_metadata: "Predefiniowane Metadane Zasob\xF3w"
+add_predefined_metadata_definitions: Dodaj predefiniowane definicje
+scheduled: Zaplanowany
+naming_requirements_3chars: "Nazwa musi by\u0107 alfanumeryczna i mie\u0107 co najmniej
+  3 znaki"
+there_are_more_columns: "Jest wi\u0119cej kolumn ni\u017C aktualnie wy\u015Bwietlono"
+merge_csv: Importuj &amp; scal CSV
+translation_merger_current: Aktualny tekst
+translation_merger_csv: Tekst z CSV
+nothing_to_merge: Nie ma nic do scalenia
+csv_seperated_options: Ustawienia separatora CSV
+csv_seperated_options_info: "Lista dost\u0119pnych opcji mo\u017Ce by\u0107 okre\u015Blona
+  jako lista oddzielona przecinkami, jako warto\u015Bci jednokolumnowe lub mieszane.
+  Dla sposobu jednokolumnowego klucz b\u0119dzie r\xF3wnie\u017C u\u017Cywany jako
+  warto\u015B\u0107."
+first_page: Pierwsza strona
+previous_page: Poprzednia strona
+next_page: "Nast\u0119pna strona"
+last_page: Ostatnia strona
+no_data_to_display: "Brak danych do wy\u015Bwietlenia"
 classificationstore_property: Property
 classificationstore_group: Group
 classificationstore_relation: Relation
 classificationstore_collection: Collection
 classificationstore_collection_relation: Collection relation
-classificationstore_no_groups: No groups found
-classificationstore_no_keys: No keys found
-remove_group: Remove Group
-classificationstore_no_collections: No collections
-reference: Reference
-element_tag_configuration: Tag Configuration
-element_tag_all_tags: All Tags
-enter_new_name_of_the_tag: Enter new name of the Tag
-assigned_tags: Assigned Tags
-filter_tags: Filter for Tags
-consider_child_tags: Consider child tags too
-tags_assignment: Tags Assignment
-tags_search: Tags Search
-batch_applied: Batch applied
-apply_tags: Apply tags to Children
-remove_and_apply_tags: Remove and apply tags to children
-batch_assignment: Tag batch assignment
-batch_assignment_error: Tag batch assignment error
-no_children_found: No Children found.
-asset_search: Search Assets
-document_search: Search Documents
-object_search: Search Objects
-more: More
-open_translation: Open Translation
-link_existing_document: Link existing Document
-using_inheritance: Using Inheritance
-new_document: New Document
-update_available: Update Available
-target_document_needs_language: Target document needs a language set
-tools: Tools
-perspectives: Perspectives
-filter_active: Filter active!
-reset_config: Reset changes
-reset_config_tooltip: This will reset (and save) the grid column configuration for
-  this element to its default
-error_resetting_config: Error resetting configuration
-marketing_settings: Marketing Settings
-cross_tree_moves_not_supported: Cross tree moves not yet supported
-add_printpage: Add PrintPage
-add_printcontainer: Add PrintContainer
-web2print_preview_pdf: Generate & Preview PDF
-web2print_cancel_pdf_creation: Cancel PDF Creation
-web2print_generate_pdf: Generate PDF
-web2print_download_pdf: Download PDF
-web2print_last-generated: Last Generated
-web2print_last-generate-message: Last Generate Message
+classificationstore_no_groups: Brak grup
+classificationstore_no_keys: Nie znaleziono kluczy
+remove_group: "Usu\u0144 Grup\u0119"
+classificationstore_no_collections: Brak kolekcji
+reference: Odniesienie
+element_tag_configuration: "Konfiguracja tag\xF3w"
+element_tag_all_tags: Wszystkie tagi
+enter_new_name_of_the_tag: "Wprowad\u017A now\u0105 nazw\u0119 taga"
+assigned_tags: Przypisane tagi
+filter_tags: "Filtr dla tag\xF3w"
+consider_child_tags: "Bierz pod uwag\u0119 tagi dzieci"
+tags_assignment: "Przypisanie tag\xF3w"
+tags_search: "Szukaj tag\xF3w"
+batch_applied: Akcja masowa zastosowana
+apply_tags: Zastosuj tagi do dziecie
+remove_and_apply_tags: "Usu\u0144 i zastosuj tagi do dzieci"
+batch_assignment: "Masowe przypisywanie tag\xF3w"
+batch_assignment_error: "B\u0142\u0105d masowego przypisywania tag\xF3w"
+no_children_found: Nie znaleziono dzieci
+asset_search: Szukaj zasoby
+document_search: Szukaj dokumenty
+object_search: "Szukaj obiekt\xF3w"
+more: "Wi\u0119cej"
+open_translation: "Otw\xF3rz t\u0142umaczenie"
+link_existing_document: "Po\u0142\u0105cz istniej\u0105cy dokument"
+using_inheritance: "U\u017Cyj dziedziczenia"
+new_document: Nowy dokument
+update_available: "Aktualizacja mo\u017Cliwa"
+target_document_needs_language: "Dokument docelowy musi mie\u0107 ustawiony j\u0119zyk"
+tools: "Narz\u0119dzia"
+perspectives: Perspektywy
+filter_active: Filtr aktywny!
+reset_config: "Przywr\xF3\u0107 domy\u015Blne"
+reset_config_tooltip: "Zresetuje i zapisze ustawienie kolumn do domy\u015Blnych warto\u015Bci"
+error_resetting_config: "B\u0142\u0105d w resetowaniu ustawie\u0144"
+marketing_settings: |
+  Ustawienia marketingowe
+cross_tree_moves_not_supported: "Przeniesienia mi\u0119dzy drzewami nie s\u0105 jeszcze
+  obs\u0142ugiwane"
+add_printpage: Dodaj dokument druku
+add_printcontainer: Dodaj kontener druku
+web2print_preview_pdf: "Podgl\u0105d PDF"
+web2print_cancel_pdf_creation: "Anuluj kreacj\u0119 PDF"
+web2print_generate_pdf: Generuj PDF
+web2print_download_pdf: Pobierz PDF
+web2print_last-generated: Ostatnio wygenerowane
+web2print_last-generate-message: "Ostatnia wiadomo\u015B\u0107 z generowania"
 web2print: Web-to-Print
-web2print_prepare_pdf_generation: Prepare PDF Generation
-web2print_start_html_rendering: Start HTML Rendering
-web2print_finished_html_rendering: Finished HTML Rendering
-web2print_saved_html_file: Saved HTML File
-web2print_pdf_conversion: PDF Conversion
-web2print_saving_pdf_document: Save PDF Document
-web2print_author: Author
-web2print_printermarks: Printermarks
-web2print_bookmarks: Bookmarks
-close_tab: Close Tab
-web2print_only_published: Only possible with published documents.
-web2print_documents_changed: Documents changed since last pdf generation.
-about_pimcore: ABOUT PIMCORE PLATFORM
-phone: Phone
-workflow_additional_info: Additional Information
-workflow_perform_action: Perform Action
-workflow_notes_required: Notes (Required)
-workflow_notes_optional: Notes (Optional)
-please_enter_the_id_of_the_asset: Please enter the ID or Path (e.g. /images/logo.jpg)
-  of the asset
-please_enter_the_id_of_the_object: Please enter the ID or Path of the object
-please_enter_the_id_of_the_document: Please enter the ID, Path or URL (also including
-  http://) of the document
-element_has_unsaved_changes: Element has unsaved changes
-element_unsaved_changes_message: All unsaved changes will be lost, are you really
-  sure?
-newsletter_enableTrackingParameters: Add Tracking Parameters to Links
-newsletter_sendingMode: Sending Mode
-newsletter_sendingmode_single: Single (Render every Mail individually)
-newsletter_sendingmode_batch: Batch (Render Mail only once)
-newsletter_sendingPanel: Newsletter Sending Panel
-newsletter_dirty_warning: Newsletter is not saved yet. Please save first.
-newsletter_sending: Sending Newsletter
-newsletter_sourceAdapter: Address Source Adapter
-newsletter_default: Default Object List
-newsletter_csvList: CSV List
-newsletter_testsend: Newsletter Test Sending
-newsletter_test_sent_message: Test Newsletter sent successfully
-add_object_mbx_title: Add new Object of type %s
-newsletter_choose_report: Choose a report
-newsletter_email_field_name: Email field name
-mode: Mode
+web2print_prepare_pdf_generation: Przygotuj Generowanie PDF
+web2print_start_html_rendering: "Rozpocz\u0119to Renderowanie HTML"
+web2print_finished_html_rendering: "Uko\u0144czono Renderowanie HTML"
+web2print_saved_html_file: Zapisany Plik HTML
+web2print_pdf_conversion: Konwersja PDF
+web2print_saving_pdf_document: Zapisz Dokument PDF
+web2print_author: Autor
+web2print_printermarks: Znaczniki drukowania
+web2print_bookmarks: "Zak\u0142adki"
+close_tab: "Zamknij Kart\u0119"
+web2print_only_published: "Mo\u017Cliwe tylko z opublikowanymi dokumentami."
+web2print_documents_changed: "Dokumenty zmieni\u0142y si\u0119 od ostatniej generacji
+  plik\xF3w PDF."
+about_pimcore: O PIMCORE PLATFORM
+phone: Telefon
+workflow_additional_info: Dodatkowe Informacje
+workflow_perform_action: "Wykonaj Akcj\u0119"
+workflow_notes_required: Notatki (Wymagane)
+workflow_notes_optional: Notatki (Opcjonalne)
+please_enter_the_id_of_the_asset: "Podaj ID lub \u015Acie\u017Ck\u0119 (np. /images/logo.jpg)
+  zasobu"
+please_enter_the_id_of_the_object: "Podaj ID lub \u015Acie\u017Ck\u0119 obiektu"
+please_enter_the_id_of_the_document: "Podaj ID lub \u015Acie\u017Ck\u0119 lub URL
+  (z http://) dokumentu"
+element_has_unsaved_changes: Element ma niezapisane zmiany
+element_unsaved_changes_message: "Wszystkie niezapisane zmiany zostan\u0105 utracone,
+  jeste\u015B pewny?"
+newsletter_enableTrackingParameters: "Dodaj Parametr Opomiaruj\u0105cy do Link\xF3w"
+newsletter_sendingMode: "Tryb Wysy\u0142ania"
+newsletter_sendingmode_single: "Pojedynczo (Renderuj ka\u017Cd\u0105 poczt\u0119 indywidualnie)"
+newsletter_sendingmode_batch: Zadanie pakietowe (Renderuj emaila tylko raz)
+newsletter_sendingPanel: "Panel Wysy\u0142ania Newslettera"
+newsletter_dirty_warning: Newsletter nie jest zapisany. Zapisz najpierw.
+newsletter_sending: "Wysy\u0142anie Newslettera"
+newsletter_sourceAdapter: "Adapter \u0179r\xF3d\u0142owy Adres\xF3w"
+newsletter_default: "Domy\u015Blna Lista Obiekt\xF3w"
+newsletter_csvList: Lista CSV
+newsletter_testsend: "Wysy\u0142anie Testowego Newslettera"
+newsletter_test_sent_message: "Testowy Newsletter zosta\u0142 wys\u0142any pomy\u015Blnie"
+add_object_mbx_title: Dodaj nowy Obiekt typu %s
+newsletter_choose_report: Wybierz raport
+newsletter_email_field_name: Nazwa pola Email
+mode: Tryb
 custom_download: Custom Download
-original_file: Original File
-web_format: Web Format
-print_format: Print Format
-office_format: Office Format
-change_password: Change Password
-file_is_bigger_that_upload_limit: 'The following file is bigger than the actual upload
-  limit of your server:'
-send_test_email_success: Your test-email has been sent. Would you like to keep this
-  window open to send the email again?
-press_crtl_and_select_to_compare: 'Compare: Press CTRL + Click Version'
-clear_filters: Clear Filters
-tags_configuration: Tags Configuration
-export_csv_include_headers: CSV Export with headers
-open_data_object: Open Data Object
-data_objects: Data Objects
-asset_type_change_not_allowed: '<strong>Only assets of same type are allowed here.</strong><br/>[
-  type of uploaded asset: "%s" | type of existing asset: "%s" ]'
-clear_content_of_selected_target_group: Clear content of selected Target Group
-visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: Visitors
-  of this page will be automatically associated with the selected Target Groups
-assign_target_group: Assign Target Group
-assign_target_groups: Assign Target Groups
+original_file: Plik Oryginalny
+web_format: Format Web
+print_format: Format druku
+office_format: Format Office
+change_password: "Zmie\u0144 Has\u0142o"
+file_is_bigger_that_upload_limit: "Plik jest wi\u0119kszy ni\u017C aktualny limit
+  na Twoim serwerze:"
+send_test_email_success: "Tw\xF3j testowy e-mail zosta\u0142 wys\u0142any. Czy chcesz
+  zostawi\u0107 okno aby ponownie wys\u0142a\u0107 e-mail?"
+press_crtl_and_select_to_compare: "Por\xF3wnaj: Kliknij CTRL + Wersja"
+clear_filters: "Wyczy\u015B\u0107 filtry"
+tags_configuration: "Konfiguracja tag\xF3w"
+export_csv_include_headers: "Eksportuj CSV z nag\u0142\xF3wkami"
+open_data_object: "Otw\xF3rz obiekt"
+data_objects: Obiekty
+asset_type_change_not_allowed: "<strong>Tylko zasoby tego samego typy s\u0105 tu dozwolone.</strong><br/>[
+  typ wgranego zasobu: \"%s\" | typ istniej\u0105cego zasobu: \"%s\" ]\n"
+clear_content_of_selected_target_group: "Wyczy\u015B\u0107 tre\u015B\u0107 zaznaczonych
+  Grup Docelowych"
+visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: "Odwiedzaj\u0105cy
+  stron\u0119 b\u0119d\u0105 automatycznie powi\u0105zani z zaznaczon\u0105 Grup\u0105
+  Docelow\u0105"
+assign_target_group: "Przypisz Grup\u0119 Docelow\u0105"
+assign_target_groups: Przypisz grupy docelowe
 target_group: Target Group
-target_groups: Target Groups
-edit_content_for_target_group: Edit Content for Target Group
-email_reply_to: Reply To
-element_tag_filtered_tags: Filtered Tags
-web2print_addOverprint: Overprinting
-analyze_permissions: Analyze Permissions
-unique: Unique
-glue: Glue
-date_format: Date Format
-attribute: Attribute
-forward_attribute: Forward Attribute
-upper: Upper
-lower: Lower
-disabled: Disabled
-capitalization: Capitalization
-restrict_to_locales: Restrict to locales
-predefined: Predefined
-save_as_copy: Save as copy
-set_as_favourite: Set as favourite
-grid_configuration: Grid Configuration
-shared_users: Shared Users
-shared_roles: Shared Roles
-save_and_share: Save & Share
-save_copy_and_share: Save Copy & Share
-locale: Locale
-ellipses: Ellipses
-insensitive: Insensitive
-yes_value: Yes Value
-no_value: No Value
-count_empty: Count Empty
-as_array: As array
-metadata_field: Metadata field
-only_count: Only as count
-parameter: Parameter
-forward_parameter: Forward Parameter
-is_array: Array Type
-php_class: PHP Class
-additional_data: Additional Data
-flatten: Flatten
-return_last_result: Return last result
-skip_null: Skip Null
-expand_children: Expand children
-collapse_children: Collapse children
-multiply: Multiply
-divide: Divide
-apply_to_all_objects: Apply to all
-apply_to_all_objects_msg: There are other objects which already have their own favourite
-  settings. Do you want to apply this config to those as well?
-encode: Encode
-decode: Decode
-serialize: Serialize
-unserialize: Unserialize
+target_groups: Grupy docelowe
+edit_content_for_target_group: "Edytuj tre\u015B\u0107 dla grupy docelowej"
+email_reply_to: Odpowiedz Do
+element_tag_filtered_tags: Przefiltrowane Tagi
+web2print_addOverprint: Nadruki
+analyze_permissions: "Analiza dost\u0119p\xF3w"
+unique: Unikalny
+glue: "Z\u0142\u0105czenie"
+date_format: Format Daty
+attribute: Atrybut
+forward_attribute: Atrybut Forward
+upper: "Wy\u017Cszy"
+lower: "Ni\u017Cszy"
+disabled: "Wy\u0142\u0105czony"
+capitalization: Kapitalizacja
+restrict_to_locales: Ogranicz do lokalizacji
+predefined: Predefiniowane
+save_as_copy: Zapisz jako kopia
+set_as_favourite: Ustaw jako ulubione
+grid_configuration: Konfiguracja kolumn
+shared_users: "Udost\u0119pnieni U\u017Cytkownicy"
+shared_roles: "Udost\u0119pnione Role"
+save_and_share: "Zapisz i Udost\u0119pnij"
+save_copy_and_share: "Zapisz kopi\u0119 i udost\u0119pnij"
+locale: Lokalizacja
+ellipses: Elipsy
+insensitive: "Niewra\u017Cliwy"
+yes_value: "Warto\u015B\u0107 Tak"
+no_value: "Warto\u015B\u0107 Nie"
+count_empty: "Pusta Ilo\u015B\u0107"
+as_array: Jako tablica
+metadata_field: Pole metadanych
+only_count: "Tylko jako ilo\u015B\u0107"
+parameter: Parametr
+forward_parameter: Parametr Przekierowania
+is_array: Typ tablicy
+php_class: Klasa PHP
+additional_data: Dodatkowe Dane
+flatten: "Sp\u0142aszcz"
+return_last_result: "Zwr\xF3\u0107 ostatni wynik"
+skip_null: "Pomi\u0144 Null"
+expand_children: "Rozwi\u0144 dzieci"
+collapse_children: "Zwi\u0144 potomk\xF3w"
+multiply: Zwielokrotnij
+divide: Podziel
+apply_to_all_objects: Zastosuj do wszystkich
+apply_to_all_objects_msg: "Istniej\u0105 inne obiekty, kt\xF3re maj\u0105 ju\u017C
+  swoje ulubione ustawienia. Czy chcesz zastosowa\u0107 t\u0119 konfiguracj\u0119?"
+encode: Koduj
+decode: Dekoduj
+serialize: Serializuj
+unserialize: Odserializuj
 offset: Offset
-col_attribute: Collection Attribute
-brick_attribute: Brick Attribute
-csv_column_configuration: Column Configuration
-column: Column
-resolver_strategy: Resolver Strategy
-resolver_settings: Resolver Settings
-csv_settings: CSV Settings
-skipheadrow: Skip head row
-csv_file_preview: CSV File Preview
-save_as: Save as
-import_export_configuration: Import Export Configuration
-brick_type: Brick Type
-renderer: Renderer
+col_attribute: Atrybut zestawu
+brick_attribute: Atrybut budulca
+csv_column_configuration: Konfiguracja kolumny
+column: Kolumna
+resolver_strategy: Strategia Resolvera
+resolver_settings: Ustawienia Resolvera
+csv_settings: Ustawienia CSV
+skipheadrow: "Pomi\u0144 wiersz nag\u0142\xF3wka"
+csv_file_preview: "Podgl\u0105d pliku CSV"
+save_as: Zapisz jako
+import_export_configuration: "Importuj konfiguracj\u0119 eksportu"
+brick_type: Typ budulca
+renderer: Generator
 getter: Getter
-string: String
-row: Row
-import_report: Import Report
-import_errors: Some errors occurred. Check the import report!
-import_is_done: Import is done
-import_file_prefix: Prefix for new files
-create_parents: Create parents
-fullpath: Full Path
-create_on_demand: Create on demand
+string: "Ci\u0105g znak\xF3w"
+row: Wiersz
+import_report: Importuj raport
+import_errors: "Wyst\u0105pi\u0142y b\u0142\u0119dy. Sprawd\u017A raport importu."
+import_is_done: "Import zako\u0144czony"
+import_file_prefix: "Prefiks dla nowych plik\xF3w"
+create_parents: "Utw\xF3rz rodzic\xF3w"
+fullpath: "Pe\u0142na \u015Acie\u017Cka"
+create_on_demand: "Stw\xF3rz na \u017C\u0105danie"
 get_by_resolver: Get By Attribute
-direct: Direct
-skip_empty_values: Skip empty values
-do_not_overwrite: Do not overwrite
-never: Never
-if_not_empty: If not empty
-always: Always
-delimiter: Delimiter
-share_globally: Share globally
-gdpr_data_extractor: GDPR Data Extractor
-no_configuration: No Configuration
-share_configurations: Share configurations
-enable_inheritance: Enable Inheritance
-object_settings: Object Settings
-drop_me_here: Drag an item from the tree and drop it here
-clear_hotspots_msg: This image contains additional data like markers or hotspots.
-  Do you want to clear them as well?
-restore_failed: Restore failed
-subtract: Subtract
-batch_append_all: Batch append to all
-batch_append_selected: Batch append to selected
-batch_append_to: Append data to all
-login_token_invalid_user_error: Invalid user.
-login_token_as_admin_non_admin_user_error: Only admin users are allowed to login as
-  an admin user.
-login_token_no_password_error: User has no password set.
-targeting_toolbar: Targeting Toolbar
-sort_children_by: Sort Children By
-by_key: Key (A to Z)
-by_index: Index (Manual)
-successful_object_change_children_sort_to_index: Changed object children sorting to
-  Index
-successful_object_change_children_sort_to_key: Changed object children sorting to
-  Key
+direct: "Bezpo\u015Bredni"
+skip_empty_values: "Pomi\u0144 puste warto\u015Bci"
+do_not_overwrite: Nie nadpisuj
+never: Nigdy
+if_not_empty: "Je\u017Celi nie puste"
+always: Zawsze
+delimiter: Ogranicznik
+share_globally: "Udost\u0119pnij globalnie"
+gdpr_data_extractor: "Wyci\u0105gnij Dane RODO"
+no_configuration: Nie ma konfiguracji
+share_configurations: "Udost\u0119pnij konfiguracje"
+enable_inheritance: "W\u0142\u0105cz dziedziczenie"
+object_settings: Ustawienia obiektu
+drop_me_here: "Przeci\u0105gnij element z drzewa i upu\u015B\u0107 tu"
+clear_hotspots_msg: "Obrazek zawiera dodatkowe dane jak markery czy hotspoty. Czy
+  chcesz usun\u0105\u0107?"
+restore_failed: "B\u0142\u0105d przywracania"
+subtract: Odejmij
+batch_append_all: Dodaj do wszystkich
+batch_append_selected: Dodaj do zaznaczonych
+batch_append_to: Dodaj dane do
+login_token_invalid_user_error: "Nieprawid\u0142owy u\u017Cytkownik."
+login_token_as_admin_non_admin_user_error: "Tylko administratorzy mog\u0105 logowa\u0107
+  si\u0119 jako administrator."
+login_token_no_password_error: "U\u017Cytkownik nie ma ustawionego has\u0142a."
+targeting_toolbar: Pasek targetingu
+sort_children_by: "Sortuj potomk\xF3w wed\u0142ug"
+by_key: Klucz (Alfabetycznie)
+by_index: "Indeks (Sortowane R\u0119cznie)"
+successful_object_change_children_sort_to_index: "Sortowanie obiekt\xF3w dzieci zmienione
+  na Indeks"
+successful_object_change_children_sort_to_key: "Sortowanie obiekt\xF3w dzieci zmienione
+  na Klucz"
 successful_publish_document: Document successfully published
 successful_publish_object: Object successfully published
 successful_unpublish_document: Document successfully unpublished
 successful_unpublish_object: Object successfully unpublished
-error_object_change_children_sort_to_index: Sort Children by Index is not possible
-  on paginated folder/tree.
-error_object_change_children_sort_to_key: Unable to change object children sorting
-  to Key
+error_object_change_children_sort_to_index: "Nie mo\u017Cna zmieni\u0107 sortowania
+  dzieci na Indeks"
+error_object_change_children_sort_to_key: "Nie mo\u017Cna zmieni\u0107 sortowania
+  dzieci na Klucz"
 error_publish_document: Document could not be published
 error_publish_object: Object could not be published
 error_unpublish_document: Document could not be unpublished
 error_unpublish_object: Object could not be unpublished
-edit_as_html: Edit as HTML
-edit_as_plain_text: Edit as plain text
-error_empty_file_upload: File is empty!
-type_column: Type column
-keep: keep
-clear_version_message: Do you really want to delete all non-published versions of
-  this element?
-clear_all: Clear All
-unlink_existing_document: Unlink existing Document
-grid_options: Grid Options
-save_grid_options: Save Grid Options
-download_selected_as_zip: Download selected items as ZIP
-please_select_items_to_download: Please select items to download in the list
-key_bindings: Key Bindings
-keybinding_openClassEditor: Open Class Editor
-keybinding_showMetaInfo: Show Meta Info
-keybinding_clearAllCaches: Clear all Caches
-keybinding_clearDataCache: Clear Data Cache
-scheduled_block_delete_all_in_past: Delete all past entries
-scheduled_block_really_delete_past: Really delete all entries scheduled in the past?
-scheduled_block_delete_all: Delete all entries
-scheduled_block_really_delete_all: Really delete all scheduled entries, including
-  future entries?
-2fa_disable: Disable 2FA
-renew_2fa_secret: Renew Two Factor Secret
-two_factor_authentication: Two Factor Authentication
-2fa_alert_text: Please scan the QR-Code and add it to your Google Authenticator. <br>If
-  you don't have the Google Authenticator app installed on your mobile phone, please
-  download it from the App Store/Play Store.<br><br> You will need to reload Pimcore
-  and enter the code shown within the App afterwards!
-2fa_alert_submit: Reload Pimcore & Enter Code
-setup_two_factor: Setup Two Factor Authentication
-2fa_setup_message: Two Factor Authentication is required for your account! You have
-  to set it up in your profile settings, otherwise you will not be able to sign in
-  again.
-set_focal_point: Set Focal Point
-quicksearch: Quick Search
-standard_preview: Standard Preview
-upload_new_version: Upload new version
-360_viewer: "360\xB0 Viewer"
-invalid_name: Invalid name
-clone: Clone
-enter_the_name_of_the_new_item: Enter the name of the new item
+edit_as_html: Edytuj jako HTML
+edit_as_plain_text: "Edytuj jako zwyk\u0142y tekst"
+error_empty_file_upload: Plik jest pusty!
+type_column: Typ kolumny
+keep: trzymaj
+clear_version_message: "Czy na pewno chcesz usun\u0105\u0107 wszystkie nieopublikowane
+  wersje tego elementu?"
+clear_all: "Wyczy\u015B\u0107 Wszystko"
+unlink_existing_document: "Od\u0142\u0105cz istniej\u0105cy Dokument"
+grid_options: Ustawienia Siatki
+save_grid_options: Zapisz Ustawienia Siatki
+download_selected_as_zip: Pobierz zaznaczone elementy jako ZIP
+please_select_items_to_download: "Zaznacz elementy aby je pobra\u0107"
+key_bindings: "Skr\xF3ty Klawiszowe"
+keybinding_openClassEditor: "Otw\xF3rz Edytor Klas"
+keybinding_showMetaInfo: "Poka\u017C Informacje Meta"
+keybinding_clearAllCaches: "Wyczy\u015B\u0107 Ca\u0142y Cache"
+keybinding_clearDataCache: "Wyczy\u015B\u0107 Cache Podr\u0119czny"
+scheduled_block_delete_all_in_past: "Usu\u0144 wszystkie przesz\u0142e wpisy"
+scheduled_block_really_delete_past: "Czy na pewno chcesz usun\u0105\u0107 wszystkie
+  przesz\u0142e wpisy?"
+scheduled_block_delete_all: "Usu\u0144 wszystkie wpisy"
+scheduled_block_really_delete_all: "Na pewno usun\u0105\u0107 wszystkie wpisy, \u0142\u0105cznie
+  z przysz\u0142ymi?"
+2fa_disable: "Wy\u0142\u0105cz 2FA"
+renew_2fa_secret: "Odn\xF3w Klucz 2FA"
+two_factor_authentication: Autoryzacja 2FA
+2fa_alert_text: Zeskanuj kod QR i dodaj go do programu Google Authenticator.
+2fa_alert_submit: "Prze\u0142aduj Pimcore i Wpisz Kod"
+setup_two_factor: Ustawienia Autoryzacji 2FA
+2fa_setup_message: "Autoryzacja 2FA jest wymagana dla Twojego konta! Musisz je ustawi\u0107
+  w swoim profilu."
+set_focal_point: Ustaw Punkt Centralny
+quicksearch: Szybkie wyszukiwanie
+standard_preview: "Standardowy Podgl\u0105d"
+upload_new_version: "Wgraj now\u0105 wersj\u0119"
+360_viewer: "Widok 360\xB0"
+invalid_name: "B\u0142\u0119dna nazwa"
+clone: Klonuj
+enter_the_name_of_the_new_item: "Podaj nazw\u0119 nowego elementu"
 html_tags: HTML-Tags
-clear_temporary_files: Clear temporary files
-error_pasting_item: Unable to paste item
-modificationdate: Modification Date
-blank: Blank
-message: Message
-from: From
-to: To
+clear_temporary_files: "Wyczy\u015B\u0107 pliki tymczasowe"
+error_pasting_item: "B\u0142\u0105d w wklejaniu elementu"
+modificationdate: Data Modyfikacji
+blank: Pusty
+message: "Wiadomo\u015B\u0107"
+from: Od
+to: Do
 html: HTML
-text: Text
-create_folder: Add Folder
-error_deleting_item: Could not delete item
-error_renaming_item: There was an error while renaming the item.
-revert: Revert
-parent: Parent
-merge_translations: Merge Translations
-prefix: Prefix
-load: Load
-saving_failed: Saving failed!
-failed_to_create_new_item: Failed to create new item, please try again.
+text: Tekst
+create_folder: Dodaj Folder
+error_deleting_item: "Nie mo\u017Cna usun\u0105\u0107 elementu"
+error_renaming_item: "Wyst\u0105pi\u0142 b\u0142\u0105d podczas zmieniania nazwy elementu"
+revert: "Odwraca\u0107"
+parent: Rodzic
+merge_translations: "Po\u0142\u0105cz T\u0142umaczenia"
+prefix: Prefiks
+load: "Za\u0142aduj"
+saving_failed: "B\u0142\u0105d zapisu!"
+failed_to_create_new_item: "B\u0142\u0105d podczas tworzenia nowego elementu, spr\xF3buj
+  ponownie."
 bundle: Bundle
-product: Product
-index_field_selection_field: Index Field Selection
-indexFieldSelectionField: Index Field Selection
-indexFieldSelectionField_settings: Settings (Multi Index Field Selection Field)
-indexFieldSelectionFieldMulti: Multiple Index Field Selection
-index_field_selection_combo: Index Field Combobox
-indexFieldSelectionCombo: Index Field Combobox
-indexFieldSelectionCombo_settings: Settings (Index Field Combobox)
-specificPriceField: Specific Price Field
-showAllFields: Show all Fields
-considerTenants: Consider Tenants
-bundle_ecommerce_mainmenu: Online Shop
+product: Produkt
+index_field_selection_field: "Wyb\xF3r pola indeksu"
+indexFieldSelectionField: "Wyb\xF3r pola indeksu"
+indexFieldSelectionField_settings: "Ustawienia (pole wyboru wielu p\xF3l indeksu)"
+indexFieldSelectionFieldMulti: "Wyb\xF3r wielu p\xF3l indeksu"
+index_field_selection_combo: Pole Combo indeksu
+indexFieldSelectionCombo: Pole indeksowe Combobox
+indexFieldSelectionCombo_settings: Ustawienia (Combo pola indeksu)
+specificPriceField: Ustaw Pole Ceny
+showAllFields: "Poka\u017C wszystkie pola"
+considerTenants: "Rozwa\u017C Tenanty"
+bundle_ecommerce_mainmenu: Sklep Online
 bundle_ecommerce_pricing_rule: Pricing Rule
-bundle_ecommerce_pricing_rules: Pricing Rules
-bundle_ecommerce_pricing_config_behavior: Behavior
-bundle_ecommerce_pricing_config_additiv: Additiv
-bundle_ecommerce_pricing_config_stopExecute: Last rule
-bundle_ecommerce_pricing_config_condition_daterange: Date range
-bundle_ecommerce_pricing_config_condition_cart_amount: Cart amount
-bundle_ecommerce_pricing_config_condition_products: Products
-category: Category
+bundle_ecommerce_pricing_rules: "Regu\u0142y Cenowe"
+bundle_ecommerce_pricing_config_behavior: Behawiorystyka
+bundle_ecommerce_pricing_config_additiv: Addytywny
+bundle_ecommerce_pricing_config_stopExecute: "Ostatnia regu\u0142a"
+bundle_ecommerce_pricing_config_condition_daterange: "Przedzia\u0142 czasu"
+bundle_ecommerce_pricing_config_condition_cart_amount: "Warto\u015B\u0107 koszyka"
+bundle_ecommerce_pricing_config_condition_products: Produkty
+category: Kategoria
 bundle_ecommerce_pricing_config_condition_token: Token
-bundle_ecommerce_pricing_config_condition_sales: Sales
-bundle_ecommerce_pricing_config_condition_sold: Sold
-bundle_ecommerce_pricing_config_condition_sold_count: Count
-bundle_ecommerce_pricing_config_condition_sold_count_cart: Count Cart
-bundle_ecommerce_pricing_config_condition_voucherToken: Voucher
-bundle_ecommerce_pricing_config_condition_tenant: Tenant
-bundle_ecommerce_pricing_config_condition_targetgroup: Target Group
-bundle_ecommerce_pricing_config_condition_targetgroup_threshold: Threshold
-bundle_ecommerce_pricing_config_action_gift: Gift
-bundle_ecommerce_pricing_config_action_cart_discount: Cart discount
-bundle_ecommerce_pricing_config_action_cart_discount_percent: Discount in %
-bundle_ecommerce_pricing_config_action_cart_discount_amount: Absolute Discount
-bundle_ecommerce_pricing_config_action_product_discount: Product discount
-bundle_ecommerce_pricing_config_action_product_discount_percent: Discount in %
-bundle_ecommerce_pricing_config_action_product_discount_amount: Absolute Discount
-bundle_ecommerce_pricing_config_action_free_shipping: Free shipping
-bundle_ecommerce_pricing_rule_add: Add Pricing Rule
-bundle_ecommerce_pricing_rule_error: Error creating Pricing Rule
+bundle_ecommerce_pricing_config_condition_sales: "Sprzeda\u017Ce"
+bundle_ecommerce_pricing_config_condition_sold: Sprzedany
+bundle_ecommerce_pricing_config_condition_sold_count: "Ilo\u015B\u0107"
+bundle_ecommerce_pricing_config_condition_sold_count_cart: "Ilo\u015B\u0107 w Koszyku"
+bundle_ecommerce_pricing_config_condition_voucherToken: Kupon
+bundle_ecommerce_pricing_config_condition_tenant: Najemca
+bundle_ecommerce_pricing_config_condition_targetgroup: Grupa Docelowa
+bundle_ecommerce_pricing_config_condition_targetgroup_threshold: "Pr\xF3g"
+bundle_ecommerce_pricing_config_action_gift: Prezent
+bundle_ecommerce_pricing_config_action_cart_discount: "Zni\u017Cka koszyka"
+bundle_ecommerce_pricing_config_action_cart_discount_percent: "Zni\u017Cka w %"
+bundle_ecommerce_pricing_config_action_cart_discount_amount: "Zni\u017Cka kwotowa"
+bundle_ecommerce_pricing_config_action_product_discount: "Zni\u017Cka produktowa"
+bundle_ecommerce_pricing_config_action_product_discount_percent: "Zni\u017Cka w %"
+bundle_ecommerce_pricing_config_action_product_discount_amount: "Zni\u017Cka kwotowa"
+bundle_ecommerce_pricing_config_action_free_shipping: Darmowa dostawa
+bundle_ecommerce_pricing_rule_add: "Dodaj regu\u0142\u0119 cenow\u0105"
+bundle_ecommerce_pricing_rule_error: "B\u0142\u0105d podczas tworzenia regu\u0142y
+  cenowej"
 ecommerce: E-Commerce
-preSelectMode: Pre Select Mode
-remote_single: Single Select from Remote
-remote_multi: Multi Select from Remote
-local_single: Single Select from predefined List
-local_multi: Multi Select from predefined List
-indexFieldSelection: Index Field Selection
-indexFieldSelection_settings: Index Field Selection Settings
-filtergroups: Filter Groups
+preSelectMode: Tryb Pre Select
+remote_single: Jednokrotne Zaznaczenie ze Zdalnego
+remote_multi: Wielokrotne Zaznaczenie ze Zdalnego
+local_single: Jednokrotne Zaznaczenie z Predefiniowanej listy
+local_multi: Wielokrotne Zaznaczenie z Predefiniowanej listy
+indexFieldSelection: "Wyb\xF3r pola indeksu"
+indexFieldSelection_settings: "Ustawienia wyboru p\xF3l indeksu"
+filtergroups: "Grupy Filtr\xF3w"
 preSelect: Pre Select
-predefined_pre_select_options: Predefined pre select options
-bundle_ecommerce_clear_config_cache: Clear configuration cache
-bundle_ecommerce_back-office_order: Back Office - Ordering
-bundle_ecommerce_vouchertoolkit_tab: Voucher Details
-path: Path
-thumbnail: Thumbnail
-download_thumbnail: Download Thumbnail
-no_thumbnail_selected: No thumbnail selected
-list_thumbnail_in_download_section_on_image_detail_view: List as option in download
-  section on image detail view
-there_are_more_items: There are more items than displayed
-workflow_actions: Actions
-workflow_notes_requred_field_message: '"%s" is a required field.'
-workflow_transition_applied_successfully: Action applied successfully
-workflow_change_email_notification_subject: Workflow update for %s in workflow '%s'
-workflow_change_email_notification_text: For %s with ID %s the action "%s" was triggered
-  in workflow '%s'.
-workflow_change_email_notification_deeplink: Deeplink to the element.
-workflow_change_email_notification_note: 'Note Added:'
-workflow_details: Workflow Details
-workflow_graph: Workflow Graph
-workflow_current_state: Current State
-workflow_cmd_not_found: Please install the "%s" console executable on the server to
-  render the workflow graph.
-unit_width: Width Unit
-permission_missing: You need the '%s' permission to perform this action
-paste_as_language_variant: Paste as new language variant
-select_language_for_new_document: Select language for New Document
-source_document_language_missing: Set Language(Properties) in Source Document
-open_preview_in_new_window: Open preview in new window
-data: Data
-links: Links
-notes: Notes
-bool: Bool
-consent: Consent
-add_marker: Add marker
-identifier_warning: Be careful with the unique identifier because table names can
-  contain only up to 64 characters.
-unique_identifier: Unique identifier
-invalid_identifier: Invalid identifier
-identifier_already_exists: Identifier already exists
-content: Content
-send: Send
-you_can_only_drop_one_element_here: You can only drop one element here!
-translation: Translation
-delete_error_batch: Following items cannot be deleted, do you wanna proceed with deleting
-  the remaining?
-delete_error: 'The item cannot be deleted. Reason:'
-batch_edit_field_selected: Batch edit selected field
-batch_append_selected_to: Append data to selected
-enable_batch_edit_columns: Enable Batch Edit for Columns
-delete_all: Delete All
-open_linked_element: Open linked Element
-mark_as_read: Mark as read
-sender: Sender
-notifications: Notifications
-notifications_send: Send Notifications
-group: Group
-attachment: Attachment
-notification_has_been_sent: Notification has been sent
-recipient: Recipient
-this_field_is_required: This field is required
-paste_recursive_as_language_variant: Paste as new language variant (recursive)
-paste_no_new_language_error: All system languages already linked to source element.
+predefined_pre_select_options: "Wst\u0119pnie zdefiniowane opcje wyboru"
+bundle_ecommerce_clear_config_cache: "Wyczy\u015B\u0107 cache konfiguracji"
+bundle_ecommerce_back-office_order: "Zam\xF3wienia"
+bundle_ecommerce_vouchertoolkit_tab: "Szczeg\xF3\u0142y Kuponu"
+path: "\u015Acie\u017Cka"
+thumbnail: Miniaturka
+download_thumbnail: "Pobierz Miniaturk\u0119"
+no_thumbnail_selected: "\u017Badna miniaturka nie zaznaczona"
+list_thumbnail_in_download_section_on_image_detail_view: Lista opcji w sekcji pobierania
+  na stronie widoku obrazu
+there_are_more_items: "Istnieje wi\u0119cej wynik\xF3w ni\u017C te wy\u015Bwietlone"
+workflow_actions: Akcje
+workflow_notes_requred_field_message: '"%s" to pole wymagane.'
+workflow_transition_applied_successfully: "Dzia\u0142anie zosta\u0142o pomy\u015Blnie
+  wykonane"
+workflow_change_email_notification_subject: "Aktualizacja przep\u0142ywu pracy dla
+  \ s w przep\u0142ywie pracy \"%s\""
+workflow_change_email_notification_text: "Dla %s z identyfikatorem %s akcja \u201E%s\u201D
+  zosta\u0142a wywo\u0142ana w przep\u0142ywie pracy \u201E%s\u201D."
+workflow_change_email_notification_deeplink: Deeplink do elementu.
+workflow_change_email_notification_note: "Dodano notatk\u0119:"
+workflow_details: "Szczeg\xF3\u0142y przep\u0142ywu pracy"
+workflow_graph: "Wykres przep\u0142ywu pracy"
+workflow_current_state: Obecny status
+workflow_cmd_not_found: "Zainstaluj plik wykonywalny konsoli \u201E% s\u201D na serwerze,
+  aby wy\u015Bwietli\u0107 wykres przep\u0142ywu pracy."
+unit_width: "Szeroko\u015B\u0107 jednostki"
+permission_missing: "Aby wykona\u0107 t\u0119 czynno\u015B\u0107, potrzebujesz pozwolenia
+  \u201E% s\u201D"
+paste_as_language_variant: "Wklej jako nowy wariant j\u0119zyka"
+select_language_for_new_document: "Wybierz j\u0119zyk dla nowego dokumentu"
+source_document_language_missing: "Ustaw J\u0119zyk (W\u0142a\u015Bciwo\u015Bci) w
+  dokumencie \u017Ar\xF3d\u0142owym"
+open_preview_in_new_window: "Otw\xF3rz podgl\u0105d w nowym oknie"
+data: Dane
+links: Linki
+notes: Notatki
+bool: "Warto\u015B\u0107 Boolowska"
+consent: Zgoda
+add_marker: Dodaj znacznik
+identifier_warning: "B\u0105d\u017A ostro\u017Cny z unikalnym identyfikatorem, tabela
+  nazw mo\u017Ce zawiera\u0107 jedynie do 64 znak\xF3w."
+unique_identifier: Unikalny identyfikator
+invalid_identifier: "Nieprawid\u0142owy identyfikator"
+identifier_already_exists: "Identyfikator ju\u017C istnieje"
+content: "Zawarto\u015B\u0107"
+send: "Wy\u015Blij"
+you_can_only_drop_one_element_here: "Mo\u017Cesz opu\u015Bci\u0107 tu tylko jeden
+  element!"
+translation: "T\u0142umaczenie"
+delete_error_batch: "Nast\u0119puj\u0105cych element\xF3w nie mo\u017Cna usun\u0105\u0107,
+  czy chcesz kontynuowa\u0107 usuwanie pozosta\u0142ych?"
+delete_error: "Nie mo\u017Cna usun\u0105\u0107 elementu. Pow\xF3d:"
+batch_edit_field_selected: Edycja wsadowa wybranego pola
+batch_append_selected_to: "Do\u0142\u0105cz dane do wybranego"
+enable_batch_edit_columns: "W\u0142\u0105cz Edycj\u0119 wsadow\u0105 dla kolumn"
+delete_all: "Usu\u0144 wszystko"
+open_linked_element: "Otw\xF3rz po\u0142\u0105czony element"
+mark_as_read: Oznacz jako przeczytane
+sender: Nadawca
+notifications: Powiadomienia
+notifications_send: "Wy\u015Blij powiadomienia"
+group: Grupa
+attachment: "Za\u0142\u0105cznik"
+notification_has_been_sent: "Powiadomienie zosta\u0142o wys\u0142ane"
+recipient: Odbiorca
+this_field_is_required: To pole jest wymagane
+paste_recursive_as_language_variant: "Wklej jako nowy wariant j\u0119zyka (rekurencyjnie)"
+paste_no_new_language_error: "Wszystkie j\u0119zyki systemowe ju\u017C po\u0142\u0105czone
+  z elementem \u017Ar\xF3d\u0142owym."
 embedded_meta_data: Embedded Meta Info
-duration: Duration
-custom_metadata: Custom Metadata
-group_icon_class: Group Icon Class
-custom_report_permissions: Permission
-visible_to_users: Visible To Users
-visible_to_roles: Visible To Roles
-open_url: Open URL
-document_language_overview: Document Language Overview
+duration: Czas trwania
+custom_metadata: Niestandardowe metadane
+group_icon_class: Klasa ikony grupy
+custom_report_permissions: Pozwolenie
+visible_to_users: "Widoczne dla u\u017Cytkownik\xF3w"
+visible_to_roles: "Widoczne dla r\xF3l"
+open_url: "Otw\xF3rz URL"
+document_language_overview: "Przegl\u0105d j\u0119zyka dokument\xF3w"
 language_master: Master
-create_translation_inheritance: Create Translation (Inheritance)
-create_translation: Create Translation
-document_translation_parent_not_found: Parent document has no translation. Create
-  a translation for the parent first.
-paste_recursive_as_language_variant_updating_references: Paste language (recursive),
-  updating references
-redirects_expired_cleanup: Cleanup Expired Redirects
-redirects_cleanup_warning: Do you really want to cleanup expired redirects?
-redirects_cleanup_error: An error occurred while cleanup of expired redirects
-all_translations: All Translations
-only_unreferenced: only unreferenced
-split_view_settings: Split View Settings
-enable_split_view: Enable Split View
-disable_split_view: Disable Split View
-split_view_object_dirty_title: Please confirm
-split_view_object_dirty_msg: There are unsaved modifications. You will lose all changes.
-  Are you sure?
-converter_service: Converter service
-auto_convert: Automatic conversion
-web2print_enableDebugMode: Enable debug mode
-set_to_null: Empty (set to null)
-bundles: Bundles
-target_document_invalid: Please select a target document with valid language
-metainfo_copy_id: Copy ID to clipboard
-metainfo_copy_fullpath: Copy full path to clipboard
-metainfo_copy_deeplink: Copy deeplink to clipboard
-plain_text: Plain Text
-plain_text_email_part: Email Plain Text Part
-error_message: Error Message
-bundle_ecommerce_order_tab: Order Details
-access_denied: Access Denied!
-access_denied_description: You don't have sufficient permissions to open the element
-  or perform the desired action.
-validation_failed: Validation Failed!
-export_xlsx: XLSX Export
-object_export_warning: Please note that the export does not support all data types.
-  Press OK to continue with the export.
-web2print_enableLenientHttpsMode: Enable lenient HTTPS mode
-web2print_enableLenientHttpsMode_txt: Enable this option if PDFreactor fails to connect
-  successfully via HTTPS
-paste_clipboard: Paste Clipboard
-paste_here: Paste your clipboard data here
-asset_metadata: Asset Metadata
-predefined_metadata: Predefined Metadata
-default_metadata: Default Metadata
-asset_export_warning: Please note that the export does not support some fields(e.g.
-  preview, size). Press OK to continue with the export.
-share_via_notifications: Share via Notifications
-cannot_save_metadata_please_try_to_edit_the_metadata_in_asset: <b>Cannot save Metadata!</b><br
-  />Please try to edit the metadata in Asset.
-email_log_forward: Forward email
-sum: Sum
-area_brick_assign_info_message: Please use drag & drop to assign a brick to the desired
-  block
-batch_remove_all: Batch remove from all
-batch_remove_selected: Batch remove from selected
-batch_remove_from: Remove data from all
-batch_remove_selected_from: Remove data from selected
-unit_tooltip: Alternative units tooltip
-toggle_image_features_visibility: Toggle Image Feature Visibility
-detect_image_features: Detect Image Features
-remove_image_features: Remove Image Features
-available_sites: Available Sites
-fallback: Fallback
-add_site: Add Site
-domain_label_width: Domain label width
-complete_required_fields: 'Please complete following required fields to publish the
-  document:'
+create_translation_inheritance: "Utw\xF3rz t\u0142umaczenie (dziedziczenie)"
+create_translation: "Utw\xF3rz t\u0142umaczenie"
+document_translation_parent_not_found: "Dokument nadrz\u0119dny nie zawiera t\u0142umaczenia.
+  Najpierw utw\xF3rz t\u0142umaczenie dla rodzica."
+paste_recursive_as_language_variant_updating_references: "Wklej j\u0119zyk (rekurencyjny),
+  aktualizuj\u0105c odniesienia"
+redirects_expired_cleanup: "Czyszczenie Wygas\u0142e przekierowania"
+redirects_cleanup_warning: "Czy na pewno chcesz wyczy\u015Bci\u0107 wygas\u0142e przekierowania?"
+redirects_cleanup_error: "Wyst\u0105pi\u0142 b\u0142\u0105d podczas czyszczenia wygas\u0142ych
+  przekierowa\u0144"
+all_translations: "Wszystkie t\u0142umaczenia"
+only_unreferenced: tylko bez referencji
+split_view_settings: Ustawienia widoku podzielonego
+enable_split_view: "W\u0142\u0105cz widok podzielony"
+disable_split_view: "Wy\u0142\u0105cz widok podzielony"
+split_view_object_dirty_title: "Prosz\u0119 potwierdzi\u0107"
+split_view_object_dirty_msg: "Istniej\u0105 niezapisane modyfikacje. Stracisz wszystkie
+  zmiany. Jeste\u015B pewny?"
+converter_service: "Us\u0142uga konwertera"
+auto_convert: Automatyczna konwersja
+web2print_enableDebugMode: "W\u0142\u0105cz tryb debugowania"
+set_to_null: Puste (ustawione null)
+bundles: Rozszerzenia
+target_document_invalid: "Prosz\u0119 wybra\u0107 dokument docelowy we w\u0142a\u015Bciwym
+  j\u0119zyku."
+metainfo_copy_id: Skopiuj ID do schowka
+metainfo_copy_fullpath: "Skopiuj pe\u0142n\u0105 \u015Bcie\u017Ck\u0119 do schowka"
+metainfo_copy_deeplink: Skopiuj deeplink do schowka
+plain_text: "Zwyk\u0142y tekst"
+plain_text_email_part: Czysty tekst Emaila
+error_message: "Komunikat b\u0142\u0119du"
+bundle_ecommerce_order_tab: "Szczeg\xF3\u0142y zam\xF3wienia"
+access_denied: "Dost\u0119p zabroniony!"
+access_denied_description: "Nie posiadasz wystarczaj\u0105cych uprawnie\u0144 aby
+  otworzy\u0107 dany element, b\u0105d\u017A wykona\u0107 dan\u0105 akcj\u0119."
+validation_failed: "Walidacja nie powiod\u0142a si\u0119!"
+export_xlsx: Eksport XLSX
+object_export_warning: "Pami\u0119taj, \u017Ce eksport nie wspiera wszystkich typ\xF3w
+  danych. Naci\u015Bnij OK, \u017Ceby kontynuowa\u0107 eksport."
+web2print_enableLenientHttpsMode: "W\u0142\u0105cz tryb \"lenient\" dla HTTPS"
+web2print_enableLenientHttpsMode_txt: "Zaznacz t\u0119 opcj\u0119 je\u015Bli PDFreactor
+  nie mo\u017Ce po\u0142\u0105czy\u0107 si\u0119 przez HTTPS"
+paste_clipboard: "Wklej zawarto\u015B\u0107 schowka"
+paste_here: "Wklej zawarto\u015B\u0107 swojego schowka tutaj"
+asset_metadata: Metadane zasobu
+predefined_metadata: Predefiniowane metadane
+default_metadata: "Domy\u015Blne metadane"
+asset_export_warning: "Eksport nie wspiera niekt\xF3rych p\xF3l (np. podgl\u0105d,
+  rozmiar). Wci\u015Bnij OK aby kontunuowa\u0107 eksport."
+share_via_notifications: "Udost\u0119pnij przez notyfikacje"
+cannot_save_metadata_please_try_to_edit_the_metadata_in_asset: "<b>Nie uda\u0142o
+  si\u0119 zapisa\u0107 metadanych</b><br />Prosz\u0119 spr\xF3bowa\u0107 wyedytowa\u0107
+  metadane bezpo\u015Brednio w zasobie"
+email_log_forward: Przekierowanie emaila
+sum: Suma
+area_brick_assign_info_message: "U\u017Cyj przeci\u0105gania i upuszczania aby przypisa\u0107
+  brick do \u017C\u0105danego bloku"
+batch_remove_all: "Usu\u0144 ze wszystkich"
+batch_remove_selected: "Usu\u0144 z zaznaczonych"
+batch_remove_from: "Usu\u0144 dane ze wszystkich"
+batch_remove_selected_from: "Usu\u0144 dane z wybranych"
+unit_tooltip: "Wskaz\xF3wka do alternatywnych jednostek"
+toggle_image_features_visibility: "Prze\u0142\u0105cz widoczno\u015B\u0107 obrazk\xF3w"
+detect_image_features: Wykryj cechy obrazu
+remove_image_features: "Usu\u0144 cechy obrazu"
+available_sites: "Dost\u0119pne strony"
+fallback: Rezerwa
+add_site: "Dodaj stron\u0119"
+domain_label_width: "Szeroko\u015B\u0107 opisu domeny"
+complete_required_fields: "Prosz\u0119 wype\u0142ni\u0107 poni\u017Csze pola wymagane
+  do opublikowania dokumentu:"
 Uncategorized: Uncategorized
-skip_if_exists: Skip row if exists
-php_class_or_service: Class or service name
-redirect_performance_warning: Using this feature has very bad effects on the performance
-  of the entire application, do you really want to continue?
+skip_if_exists: "Pomi\u0144 wiersz, je\u015Bli istnieje"
+php_class_or_service: "Nazwa klasy lub us\u0142ugi"
+redirect_performance_warning: "U\u017Cywanie tej funkcji ma bardzo z\u0142y wp\u0142yw
+  na wydajno\u015B\u0107 ca\u0142ej aplikacji, czy naprawd\u0119 chcesz to kontynuowa\u0107?"
 test_url: Test URL
-create_redirects: Create redirects to keep URLs working (incl. children)?
-auto_create: Auto create
-methods: Methods
-batch_operation: Batch Operation
-move: Move
-property_name: Property name
-force_value: Force value
-enable_grid_locking: Enable grid locking
-export_configuration: Export Configuration As JSON
-composite_indices: Composite indices
-default_value_generator: Default value generator service / class
-no_value_set: no value set
-replace_assignments_in_all_elements: Replace assignments in all elements
-fieldlookup: Field Lookup
-show_fieldlookup: Show Field Lookup
-different_number_of_columns: Different number of columns
-brick_limit_reached: 'Limit ({bricklimit}) reached for brick: {brickname}'
+create_redirects: "Utworzy\u0107 przekierowania, aby utrzyma\u0107 dzia\u0142aj\u0105ce
+  adresy URL (w tym dzieci)?"
+auto_create: Automatyczne tworzenie
+methods: Metody
+batch_operation: Operacja wsadowa
+move: "Przesu\u0144"
+property_name: "Nazwa nieruchomo\u015Bci"
+force_value: "Warto\u015B\u0107 si\u0142y"
+enable_grid_locking: "W\u0142\u0105cz blokad\u0119 siatki"
+export_configuration: "Eksporuj Konfiguracj\u0119 jako JSON"
+composite_indices: "Indeksy z\u0142o\u017Cone"
+default_value_generator: "Warto\u015B\u0107 domy\u015Blna us\u0142uga generatora /
+  klasa"
+no_value_set: "nie ustawiono warto\u015Bci"
+replace_assignments_in_all_elements: "Zamie\u0144 przyporz\u0105dkowania we wszystkich
+  elementach"
+fieldlookup: Wyszukiwanie w terenie
+show_fieldlookup: "Poka\u017C pole wyszukiwania"
+different_number_of_columns: "R\xF3\u017Cna liczba kolumn"
+brick_limit_reached: "Limit ({bricklimit}) osi\u0105gni\u0119ty dla ceg\u0142y: {nazwa
+  ceg\u0142y}."
 generate_type_declarations: Generate Type Declarations
-batch_change_language: Batch update language
-preview_item: Preview Item
-by_key_reverse: Key (Z to A)
-deprecated: Deprecated
-version_currently_saved_in_database: Currently saved in database (but not published)
-deprecated_feature: '<span style=''color: orange;''>Deprecated feature. Use %s instead</span>'
-edit_as_custom_text: Edit as custom text
-symfony_translation_link: 'Translation Format: https://symfony.com/doc/current/translation/message_format.html'
-no_action_available: No action available
-bricks: Bricks
-draft: Draft
-auto_save: Auto save
-save_draft: Save draft
-selected_grid_columns: Selected grid columns
-ungrouped: ungrouped
-reindex_warning: Changing it from alphabetical sort order to index will reindex all
-  items. Do you want to continue?
-filter_by_relation: Filter by relation
-filter_by_relation_field: Filter by relation field
-clear_relation_filter: Clear active relation filter
-apply_filter: Apply filter
-config_not_writeable: Not writable, this can have several reasons. For details please
-  have a look into the docs.
-sites: Sites
-file_exists: File already exists
-asset_upload_want_to_overwrite: Do you want to overwrite file %s?
-asset_upload_overwrite: Overwrite
-asset_upload_keep_both: Keep both files
+batch_change_language: "J\u0119zyk aktualizacji wsadowej"
+preview_item: "Artyku\u0142 pogl\u0105dowy"
+by_key_reverse: Klucz (od Z do A)
+deprecated: "Przestarza\u0142e"
+version_currently_saved_in_database: Aktualnie zapisane w bazie danych (ale nie opublikowane)
+deprecated_feature: "<p style='color: orange;'>Nieaktualna funkcja. U\u017Cyj %s<br>zamiast
+  tego</p>"
+edit_as_custom_text: "Edytuj jako tekst w\u0142asny"
+symfony_translation_link: "Format t\u0142umaczenia: https://symfony.com/doc/current/translation/message_format.html"
+no_action_available: "Brak mo\u017Cliwo\u015Bci dzia\u0142ania"
+bricks: "Ceg\u0142y"
+draft: Projekt
+auto_save: Automatyczny zapis
+save_draft: Zapisz projekt
+selected_grid_columns: Wybrane kolumny siatki
+ungrouped: niepogrupowane
+reindex_warning: "Zmiana sortowania z alfabetycznej kolejno\u015Bci na indeks spowoduje
+  ponowne zindeksowanie wszystkich element\xF3w. Czy chcesz kontynuowa\u0107?"
+filter_by_relation: "Filtruj przez relacj\u0119"
+filter_by_relation_field: Filtruj przez pole relacyjne
+clear_relation_filter: "Wyczy\u015B\u0107 filtry relacji"
+apply_filter: "Zatwierd\u017A filtr"
+config_not_writeable: "Brak mo\u017Cliwo\u015Bci zapisu, mo\u017Ce to mie\u0107 kilka
+  przyczyn. Aby uzyska\u0107 szczeg\xF3\u0142owe informacje, zajrzyj do dokumentacji."
+sites: Strony
+file_exists: "Plik ju\u017C istnieje"
+asset_upload_want_to_overwrite: "Czy chcesz nadpisa\u0107 plik %s?"
+asset_upload_overwrite: Nadpisz
+asset_upload_keep_both: Zachowaj oba pliki
 asset_upload_apply_to_all: Apply to all
 asset_upload_skip: Skip
-could_not_open_zip_file: The uploaded zip file could not be opened.
+could_not_open_zip_file: "Nie mo\u017Cna otworzy\u0107 przes\u0142anego pliku ZIP."
 objects_sort_method: Change data objects sort method
 link_recursion_error: The link is redirecting to itself, causing an infinite loop
 no_further_classes_allowed: No further classes allowed

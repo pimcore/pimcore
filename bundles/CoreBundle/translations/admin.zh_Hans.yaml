@@ -1,1077 +1,1011 @@
 ---
-unsupported_feature: Unsupported feature! Please check system requirements!
-screen_size_to_small: Your screen is too small to display the desired preview.
-too_many_children_for_recyclebin: This element contains too many children to be moved
-  to the recycle bin so it will be deleted permanentely
-default: Default
-metadata: Metadata
-email_address: Email Address
-email_blacklist: Email Blacklist
-OK: OK
-optional: optional
-search_replace_assignments_error: Please select items where to replace and a new target
-  item.
-replace_assignments_in_selected_elements: Replace assignments in selected elements
-search_replace_assignments: Search & Replace Assignments
-imageadvanced: Image Advanced
-filter_active_message: Do you want to export only the filtered values?
-close_others: Close Others
-close_all: Close All
-close_unmodified: Close Unmodified
-classid: Class ID
-parentid: Parent ID
-mimetype: MIME-Type
-creationdate: Creation Date
-usermodification: User Modification
-userowner: Owner
-languages: Languages
-password_was_not_changed: Password wasn't changed because it isn't secure enough
-marketing: Marketing
-clear_content_of_current_view: Clear content of current view
-highlight_editable_elements: Highlight editable elements
-continue: Continue
-you_have_unsaved_changes: You have unsaved changes.
+unsupported_feature: "\u4E0D\u652F\u6301\u8BE5\u529F\u80FD\uFF01\u8BF7\u68C0\u67E5\u7CFB\u7EDF\u9700\u6C42\uFF01"
+screen_size_to_small: "\u60A8\u7684\u5C4F\u5E55\u592A\u5C0F\u4E0D\u80FD\u5B8C\u6210\u5236\u5B9A\u9884\u89C8"
+too_many_children_for_recyclebin: "\u8FD9\u4E2A\u5143\u7D20\u5305\u542B\u592A\u591A\u5B50\u5143\u7D20\uFF0C\u4EE5\u81F4\u4E0D\u80FD\u79FB\u52A8\u5230\u56DE\u6536\u7AD9"
+default: "\u9ED8\u8BA4"
+metadata: "\u5143\u6570\u636E"
+email_address: "\u7535\u5B50\u90AE\u4EF6"
+email_blacklist: "\u90AE\u4EF6\u9ED1\u540D\u5355"
+OK: "\u597D"
+optional: "\u53EF\u9009"
+search_replace_assignments_error: "\u8BF7\u4E3A\u66FF\u6362\u7684\u6761\u76EE\u9009\u62E9\u76EE\u6807\u6761\u76EE"
+replace_assignments_in_selected_elements: "\u9009\u62E9\u5143\u7D20\u66FF\u6362\u5206\u914D"
+search_replace_assignments: "\u641C\u7D22\u548C\u66FF\u6362\u5206\u914D"
+imageadvanced: "\u9AD8\u7EA7\u56FE\u50CF"
+filter_active_message: "\u60A8\u53EA\u5BFC\u51FA\u7B5B\u9009\u540E\u7684\u7ED3\u679C\uFF1F"
+close_others: "\u5173\u95ED\u5176\u4ED6"
+close_all: "\u5173\u95ED\u5168\u90E8"
+close_unmodified: "\u5173\u95ED\u672A\u4FEE\u6539\u7684"
+classid: "\u7C7B\u522B ID"
+parentid: "\u7236 ID"
+mimetype: "MIME\u7C7B\u578B"
+creationdate: "\u521B\u5EFA\u65E5\u671F"
+usermodification: "\u7528\u6237\u4FEE\u6539"
+userowner: "\u7528\u6237\u672C\u4EBA"
+languages: "\u8BED\u8A00"
+password_was_not_changed: "\u5BC6\u7801\u672A\u4FEE\u6539\uFF0C\u5C1D\u8BD5\u8BBE\u7F6E\u7684\u5BC6\u7801\u4E0D\u591F\u5B89\u5168\uFF0C\u4E3A\u4E86\u4FDD\u8BC1\u5B89\u5168\u5EFA\u8BAE\u4F7F\u7528\u5B57\u6BCD\u3001\u6570\u5B57\u3001\u7B26\u53F7\u7B49\u6DF7\u5408\u7EC4\u5408\u5BC6\u7801\u3002"
+marketing: "\u5E02\u573A"
+clear_content_of_current_view: "\u6E05\u9664\u5F53\u524D\u89C6\u56FE\u6240\u6709\u6570\u636E"
+highlight_editable_elements: "\u9AD8\u4EAE\u53EF\u4FEE\u6539\u5143\u7D20"
+continue: "\u7EE7\u7EED"
+you_have_unsaved_changes: "\u5305\u542B\u672A\u4FDD\u5B58\u7684\u4FEE\u6539"
 global_targeting_rule: Global Targeting Rule
-global_targeting_rules: Global Targeting Rules
-personalization: Personalization
-shared_translations: Shared Translations
-textfield: Textfield
-add_data: Add data
-add_hotspot: Add hotspot
-add_marker_or_hotspots: Add marker or hotspots
-custom_reports: Custom Reports
-start_date: Start date
-start_date_relative: Start date (relative to today)
-end_date: End date
-end_date_relative: End date (relative to today)
-relative_date_description: i.e. -1m +1d (d=days, m=months, y=years)
-source_definition: Source Definition
-clear_thumbnails: Clear Thumbnails
-recipients: Recipients
-newsletter_send_error: Can't send your newsletter, please contact your administrator!
-newsletter_sent_message: Your newsletter is now sent to all recipients, this process
-  is done in the background (you can close pimcore in the meantime) and can take up
-  to one hour.
-do_you_really_want_to_send_the_newsletter_to_all_recipients: Do you really want to
-  send the newsletter to all recipients
-send_test_newsletter: Send Test-Newsletter
-send_newsletter: Send Newsletter Now
-object_filter: Object Filter
-add_newsletter: Add Newsletter
-newsletter: Newsletter
+global_targeting_rules: "\u901A\u7528\u5B9A\u4F4D\u7B56\u7565"
+personalization: "\u4E2A\u6027\u5316"
+shared_translations: "\u5171\u4EAB\u8BD1\u6587"
+textfield: "\u6587\u672C\u6846"
+add_data: "\u6DFB\u52A0\u6570\u636E"
+add_hotspot: "\u6DFB\u52A0\u70ED\u70B9"
+add_marker_or_hotspots: "\u6DFB\u52A0\u6807\u8BB0\u6216\u70ED\u70B9"
+custom_reports: "\u81EA\u5B9A\u4E49\u62A5\u8868"
+start_date: "\u5F00\u59CB\u65E5\u671F"
+start_date_relative: "\u5F00\u59CB\u65E5\u671F\uFF08\u76F8\u5BF9\u4ECA\u5929\uFF09"
+end_date: "\u7ED3\u675F\u65E5\u671F"
+end_date_relative: "\u7ED3\u675F\u65E5\u671F\uFF08\u76F8\u5BF9\u4ECA\u5929\uFF09"
+relative_date_description: "\u4F8B\u5982\uFF1A -1m + 1d \uFF08d=\u5929\uFF0Cm=\u6708\uFF0Cy=\u5E74\uFF09"
+source_definition: "\u9650\u5B9A\u6765\u6E90"
+clear_thumbnails: "\u6E05\u7406\u7565\u7F29\u56FE"
+recipients: "\u6536\u4EF6\u4EBA"
+newsletter_send_error: "\u901A\u8BAF\u53D1\u9001\u5931\u8D25\uFF0C\u8BF7\u8054\u7CFB\u4F60\u7684\u7BA1\u7406\u5458\u3002"
+newsletter_sent_message: "\u4F60\u7684\u65B0\u8BAF\u606F\u6B63\u5728\u53D1\u9001\u7ED9\u6536\u4EF6\u4EBA\uFF0C\u8FD9\u4E2A\u8FC7\u7A0B\u9700\u8981\u4E00\u4E2A\u5C0F\u65F6\u53EF\u4EE5\u5728\u540E\u53F0\u5B8C\u6210(\u4F60\u53EF\u4EE5\u5173\u95EDPimcore)\u3002"
+do_you_really_want_to_send_the_newsletter_to_all_recipients: "\u786E\u8BA4\u53D1\u751F\u90AE\u4EF6\u7ED9\u6240\u6709\u63A5\u6536\u8005\uFF1F"
+send_test_newsletter: "\u53D1\u9001\u6D4B\u8BD5\u90AE\u4EF6"
+send_newsletter: "\u7ACB\u5373\u53D1\u9001\u90AE\u4EF6"
+object_filter: "\u5BF9\u8C61\u8FC7\u6EE4"
+add_newsletter: "\u6DFB\u52A0\u4FE1\u4EF6"
+newsletter: "\u77ED\u4FE1"
 crm: CRM
-notes_events: Notes &amp; Events
-delete_folder: Delete Folder
-home: Home
-subject: Subject
-poster_image: Poster-Image
-tablet: Tablet
-hardlink: Hardlink
-convert_to: Convert to
-replace: Replace
-targeting: Targeting
-paste_inheritance: Paste (inheritance)
-are_you_sure: Are you sure?
-all_content_will_be_lost: All content will be lost
-content_master_document: Content-Master Document
-overwrite: Overwrite
-click_right_to_overwrite: Click right to overwrite
-open_document_by_id: Open Document
-open_asset_by_id: Open Asset
-open_object_by_id: Open Object
-element_not_found: Element not found
-import_from_url: Import from URL
-do_you_really_want_to_leave_the_editmode: Do you really want to leave the editmode
-  (NO!)
-or_specify_an_asset_image_below: or specify an asset image below
-medium: Medium
-saved_successfully: Saved successfully!
-qr_codes: QR-Codes
-element: Element
-details_for_selected_event: Details for selected element
-fields: Fields
-not_possible_with_paging: Sorry, this is not possible in elements which are paged,
-  try to restructure your data to avoid pages in the tree
-inherited: Inherited
-length: Length
-show_in_tree: Show in Tree
-exactmatch: exact match
-desktop: Desktop
-drag_me: Drag Me
-serverVars: Server Variables
-attributes: Attributes
-code: Code
+notes_events: "\u65E5\u5FD7\u4E8B\u4EF6"
+delete_folder: "\u5220\u9664\u6587\u4EF6\u5939"
+home: "\u4E3B\u9875"
+subject: "\u4E3B\u9898"
+poster_image: "\u6D77\u62A5\u56FE\u7247"
+tablet: "\u5E73\u677F"
+hardlink: "\u786C\u94FE\u63A5"
+convert_to: "\u8F6C\u6362\u4E3A"
+replace: "\u66FF\u6362"
+targeting: "\u7784\u51C6"
+paste_inheritance: "\u7C98\u8D34\uFF08\u7EE7\u627F\uFF09"
+are_you_sure: "\u786E\u5B9A\u8FD9\u6837\u505A\uFF1F"
+all_content_will_be_lost: "\u6240\u6709\u5185\u5BB9\u5C06\u88AB\u4E22\u5F03"
+content_master_document: "\u4E3B\u5185\u5BB9\u6587\u6863"
+overwrite: "\u8986\u76D6"
+click_right_to_overwrite: "\u5355\u51FB\u53F3\u952E\u8986\u76D6"
+open_document_by_id: "\u6253\u5F00\u6587\u6863"
+open_asset_by_id: "\u6253\u5F00\u7D20\u6750"
+open_object_by_id: "\u6253\u5F00\u5BF9\u8C61"
+element_not_found: "\u5143\u7D20\u672A\u627E\u5230"
+import_from_url: "\u901A\u8FC7URL\u5BFC\u5165"
+do_you_really_want_to_leave_the_editmode: "\u4F60\u786E\u5B9A\u5E0C\u671B\u9000\u51FA\"\u7F16\u8F91\u6A21\u5F0F\"\uFF1F"
+or_specify_an_asset_image_below: "\u6216\u8005\u5236\u5B9A\u5230\u4E00\u4E2A\u56FE\u7247\u4E0B"
+medium: "\u4E2D\u7B49"
+saved_successfully: "\u4FDD\u5B58\u6210\u529F"
+qr_codes: "QR\u4E8C\u7EF4\u7801"
+element: "\u5143\u4EF6"
+details_for_selected_event: "\u9009\u62E9\u5143\u4EF6\u7EC6\u8282"
+fields: "\u4E13\u680F"
+not_possible_with_paging: "\u5BF9\u4E0D\u8D77\uFF0C\u5143\u4EF6\u4E0D\u80FD\u88AB\u5206\u9875\uFF0C\u8BF7\u8C03\u6574\u4F60\u7684\u6570\u636E"
+inherited: "\u7EE7\u627F\u7684"
+length: "\u957F\u5EA6"
+show_in_tree: "\u663E\u793A\u5206\u679D"
+exactmatch: "\u7CBE\u786E\u5339\u914D"
+desktop: "\u684C\u9762"
+drag_me: "\u62D6\u62FD\u6211"
+serverVars: "\u670D\u52A1\u5668\u53D8\u91CF"
+attributes: "\u5C5E\u6027"
+code: "\u4EE3\u7801"
 tag: Tag
-tags: Tags
-Click here to proceed: Click here to proceed
-Your browser is not supported. Please install the latest version of one of the following browsers.: Your
-  browser is not supported. Please install the latest version of one of the following
-  browsers.
-open_in_new_window: Open in new Window
-limit_reached: Limit reached
-casesensitive: case-sensitive
-path_aliases: Path Aliases
-pretty_url: Pretty URL
-pretty_url_label: Pretty URL (overrides path from tree-structure)
-password_cannot_be_changed: Password cannot be changed
-old_password: Old Password
-new_password: New Password
-retype_password: Retype Password
-reports: Reports
-roles: Roles
-Password: Password
-Forgot your password: Forgot your password
-Back to Login: Back to Login
-Enter your username and pimcore will send a login link to your email address: Enter
-  your username and Pimcore will send a login link to your email address
-Please check your mailbox.: Please check your mailbox.
-Login: Login
-Submit: Submit
-A temporary login link has been sent to your email address.: A temporary login link
-  has been sent to your email address.
-user_inactive: User is not active
-user_no_email_address: User has no email address
-user_no_password: User has no password
-user_unknown: User unknown
-lost_password_email_error: Could not send password recovery email
-use_current_player_position_as_preview: Use current player position as preview
-select_image_preview: Select Image Preview
-preview_not_available: Preview not available
-status: Status
-video_preview_in_progress: The preview for this video is currently in progress.
-php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: PHP-CLI binary or FFMPEG is
-  not available, please ensure that both are installed/executable and configured in
-  the system settings!
-video_thumbnails: Video Thumbnails
-do_you_really_want_to_close_pimcore: Do you really want to close Pimcore?
-drop_element_here: Drop element here
-select_specific_area_of_image: Select specific area of image
-paste_recursive_updating_references: Paste recursive, updating references
-add_hardlink: Add Hardlink
-source_path: Source path
-properties_from_source: Use properties from source document
+tags: "\u6807\u7B7E"
+Click here to proceed: "\u70B9\u51FB\u4FDD\u62A4"
+Your browser is not supported. Please install the latest version of one of the following browsers.: "\u4F60\u7684\u6D4F\u89C8\u5668\u7248\u672C\u592A\u4F4E\uFF0C\u8BF7\u5B89\u88C5\u4E0B\u9762\u4E00\u4E2A\u6700\u65B0\u7248\u672C\u7684\u6D4F\u89C8\u5668\u3002"
+open_in_new_window: "\u5728\u65B0\u7A97\u53E3\u4E2D\u6253\u5F00"
+limit_reached: "\u8FBE\u5230\u9650\u5236"
+casesensitive: "\u533A\u5206\u5927\u5C0F\u5199"
+path_aliases: "\u8DEF\u5F84\u522B\u540D"
+pretty_url: "\u7F8E\u5316URL"
+pretty_url_label: "\u7F8E\u5316URL\uFF08\u6BD4\u6811\u5F62\u7ED3\u6784\u4F18\u5148\u7684\u8DEF\u5F84\uFF09"
+password_cannot_be_changed: "\u5BC6\u7801\u4E0D\u80FD\u4FEE\u6539"
+old_password: "\u65E7\u5BC6\u7801"
+new_password: "\u65B0\u5BC6\u7801"
+retype_password: "\u518D\u6B21\u8F93\u5165\u5BC6\u7801"
+reports: "\u62A5\u544A"
+roles: "\u89D2\u8272"
+Password: "\u5BC6\u7801"
+Forgot your password: "\u5FD8\u8BB0\u5BC6\u7801"
+Back to Login: "\u8FD4\u56DE\u767B\u5F55"
+Enter your username and pimcore will send a login link to your email address: "\u8F93\u5165\u4F60\u7684\u7528\u6237\u540D\uFF0Cpimcore\u5C06\u53D1\u9001\u767B\u5F55\u8FDE\u63A5\u5230\u4F60\u7684\u90AE\u7BB1\u3002"
+Please check your mailbox.: "\u8BF7\u6FC0\u6D3B\u4F60\u7684\u90AE\u7BB1"
+Login: "\u767B\u5F55"
+Submit: "\u63D0\u4EA4"
+A temporary login link has been sent to your email address.: "\u4E00\u4E2A\u4E34\u65F6\u767B\u5F55\u94FE\u63A5\u5DF2\u7ECF\u53D1\u9001\u5230\u4F60\u7684\u90AE\u7BB1"
+user_inactive: "\u7528\u6237\u4E0D\u6D3B\u8DC3"
+user_no_email_address: "\u7528\u6237\u6CA1\u6709\u586B\u5199\u7535\u5B50\u90AE\u4EF6\u5730\u5740"
+user_no_password: "\u7528\u6237\u6CA1\u6709\u586B\u5199\u5BC6\u7801"
+user_unknown: "\u7528\u6237\u672A\u77E5"
+lost_password_email_error: "\u65E0\u6CD5\u53D1\u9001\u627E\u56DE\u5BC6\u7801\u7684\u90AE\u4EF6"
+use_current_player_position_as_preview: "\u4F7F\u7528\u5F53\u524D\u9884\u89C8\u7684\u64AD\u653E\u5668\u4F4D\u7F6E"
+select_image_preview: "\u9009\u62E9\u56FE\u7247\u9884\u89C8"
+preview_not_available: "\u56FE\u7247\u9884\u89C8\u4E0D\u53EF\u7528"
+status: "\u72B6\u6001"
+video_preview_in_progress: "\u89C6\u9891\u9884\u89C8\u6B63\u5728\u751F\u6210"
+php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: "PHP-CLI\u6216FFMPEG\u7684\u53EF\u6267\u884C\u6587\u4EF6\u4E0D\u53EF\u7528\uFF0C\u8BF7\u786E\u4FDD\u4E24\u8005\u6709\u5B89\u88C5\u5E76\u6709\u6267\u884C\u6743\u9650\uFF0C\u540C\u65F6\u9700\u8981\u786E\u8BA4\u7CFB\u7EDF\u8BBE\u7F6E\u4E2D\u8DEF\u5F84\u914D\u7F6E\u662F\u5426\u6B63\u786E\uFF01"
+video_thumbnails: "\u89C6\u9891\u7F29\u7565\u56FE"
+do_you_really_want_to_close_pimcore: "\u4F60\u786E\u5B9A\u4F60\u60F3\u5173\u95EDpimcore?"
+drop_element_here: "\u62D6\u52A8\u5143\u7D20\u5230\u8FD9\u91CC"
+select_specific_area_of_image: "\u9009\u62E9\u56FE\u7247\u7684\u7279\u522B\u533A\u57DF"
+paste_recursive_updating_references: "\u7C98\u8D34\u9012\u5F52\u3001\u66F4\u65B0\u53C2\u8003"
+add_hardlink: "\u6DFB\u52A0\u56FA\u5B9A\u94FE\u63A5"
+source_path: "\u6E90\u8DEF\u5F84"
+properties_from_source: "\u4F7F\u7528\u6E90\u6587\u4EF6\u7684\u5C5E\u6027"
 children_from_source: Use children from source document
-click_right_for_more_options: Click right for more options
-move_to_tab: Move to Tab
-not_supported: Not supported
-edit_link: Edit Link
-resize: Resize
-scalebyheight: Scale by Height
-scalebywidth: Scale by Width
-crop: Crop
-cleanup: Cleanup
-this_element_cannot_be_edited: This element cannot be edited
-details: Details
-cannot_save_object_please_try_to_edit_the_object_in_detail_view: <b>Cannot save object!</b><br
-  />Please try to edit the object in the detail view.
-size: Size
-select_a_file: Select a file
-upload_compatibility_mode: Upload File (Compatibility Mode)
-the_system_is_in_maintenance_mode_please_wait: The system is in maintenance mode,
-  please wait
-activate: Activate
-image_is_too_small: Image is too small, please choose a bigger one.
-name_is_not_allowed: Name is not allowed
-import_from_server: Import from Server
-upload_files: Upload Files
-upload_zip: Upload ZIP Archive
-document_root: Document Root
-batch_change_selected: Batch edit selected
-download_as_zip: Download as ZIP
-locked: Locked
-element_cannot_be_move_because_it_is_locked: Element cannot be moved because it is
-  locked.
-element_cannot_be_moved: The element cannot be moved here
+click_right_for_more_options: "\u5355\u51FB\u53F3\u952E\u8FDB\u884C\u66F4\u591A\u64CD\u4F5C"
+move_to_tab: "\u79FB\u5230\u6807\u7B7E"
+not_supported: "\u4E0D\u652F\u6301"
+edit_link: "\u7F16\u8F91\u94FE\u63A5"
+resize: "\u8C03\u6574\u5927\u5C0F"
+scalebyheight: "\u901A\u8FC7\u9AD8\u5EA6\u8C03\u6574"
+scalebywidth: "\u901A\u8FC7\u5BBD\u5EA6\u8C03\u6574"
+crop: "\u516C\u53F8"
+cleanup: "\u6E05\u9664"
+this_element_cannot_be_edited: "\u6B64\u5143\u7D20\u4E0D\u80FD\u7F16\u8F91"
+details: "\u8BE6\u60C5"
+cannot_save_object_please_try_to_edit_the_object_in_detail_view: "<b>\u4E0D\u80FD\u4FDD\u5B58\u5BF9\u8C61\uFF01</b>
+  <br />\u8BF7\u5C1D\u8BD5\u7684\u8BE6\u7EC6\u8BD5\u56FE\u7F16\u8F91\u8BE5\u5BF9\u8C61"
+size: "\u5927\u5C0F"
+select_a_file: "\u9009\u62E9\u4E00\u4E2A\u6587\u4EF6"
+upload_compatibility_mode: "\u4E0A\u4F20\u6587\u4EF6\uFF08\u517C\u5BB9\u6A21\u5F0F\uFF09"
+the_system_is_in_maintenance_mode_please_wait: "\u7CFB\u7EDF\u6B63\u5728\u7EF4\u62A4\uFF0C\u8BF7\u7A0D\u540E\u8BBF\u95EE"
+activate: "\u6FC0\u6D3B"
+image_is_too_small: "\u56FE\u7247\u592A\u5C0F\uFF0C\u8BF7\u9009\u62E9\u4E00\u4E2A\u66F4\u5927\u7684\u56FE\u7247"
+name_is_not_allowed: "\u540D\u5B57\u4E0D\u5141\u8BB8"
+import_from_server: "\u4ECE\u670D\u52A1\u7AEF\u5BFC\u5165"
+upload_files: "\u4E0A\u4F20\u6587\u4EF6"
+upload_zip: "\u4E0A\u4F20ZIP\u6587\u6863"
+document_root: "\u6587\u6863\u6839\u76EE\u5F55"
+batch_change_selected: "\u6279\u91CF\u66F4\u6539\u9009\u4E2D\u6761\u76EE"
+download_as_zip: "\u4E0B\u8F7D\u4E3AZIP\u683C\u5F0F"
+locked: "\u5DF2\u9501\u5B9A"
+element_cannot_be_move_because_it_is_locked: "\u5143\u7D20\u65E0\u6CD5\u79FB\u52A8\uFF0C\u5DF2\u88AB\u9501\u5B9A\u3002"
+element_cannot_be_moved: "\u5143\u4EF6\u4E0D\u80FD\u79FB\u5230\u5230\u8FD9\u91CC"
 element_cannot_be_moved_because_target_is_paginated: The element cannot be dragged
   on a paginated tree/folder with manual indexing (Sort by index). Please change the
   sorting method or use "Search & Move" option under the "Advanced" context menu of
   the target to move the elements.
-no_collections_allowed: No Collections allowed
-filter_condition: Filter Condition
-all_types: All Types
-audio: Audio
-video: Video
-archive: Archive
-unknown: Unknown
-class: Class
-page: Page
+no_collections_allowed: "\u6CA1\u6709\u8BB8\u53EF\u7684collections"
+filter_condition: "\u8FC7\u6EE4\u6761\u4EF6"
+all_types: "\u6240\u6709\u7C7B\u578B"
+audio: "\u58F0\u97F3"
+video: "\u89C6\u9891"
+archive: "\u5B58\u6863"
+unknown: "\u672A\u77E5"
+class: "\u7C7B"
+page: "\u9875"
 objectbrick: Objectbrick
 field_collection: Field-Collection
-snippet: Snippet
-folder: Folder
-your_selection: Your Selection
-double_click_to_add_item_to_selection: Double-click an item on the left to add it
-  to this selection.
-label: Label
-error_auth_failed: Login failed!<br />Please try again.
-error_session_expired: Session expired!<br />Please login again.
-site: Site
-descending: Descending
-ascending: Ascending
-sort: Sort
-results: Results
-dimension: Dimension
-metric: Metric
-segment: Segment
-data_explorer: Data Explorer
-navigation: Navigation
-entrances: Entrances
-exits: Exits
-restore: Restore
-amount: Amount
-flush_recyclebin: Flush Recycle Bin
-recyclebin: Recycle Bin
-deletedby: Deleted By
-open_select_editor: Open Selection-Editor
-ignore: Ignore
+snippet: "\u7247\u65AD"
+folder: "\u6587\u4EF6\u5939"
+your_selection: "\u4F60\u7684\u9009\u5B9A"
+double_click_to_add_item_to_selection: "\u53CC\u51FB\u4E00\u4E2A\u6761\u76EE\u4EE5\u6DFB\u52A0\u6B64\u9009\u5B9A\u3002"
+label: "\u6807\u7B7E"
+error_auth_failed: "\u767B\u9646\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5\uFF01"
+error_session_expired: "\u767B\u9646\u8D85\u65F6\uFF0C\u8BF7\u91CD\u65B0\u767B\uFF01"
+site: "\u7AD9\u70B9"
+descending: "\u964D\u5E8F"
+ascending: "\u5347\u5E8F"
+sort: "\u6392\u5E8F"
+results: "\u7ED3\u679C"
+dimension: "\u5C3A\u5BF8"
+metric: "\u5EA6\u91CF"
+segment: "\u5206\u7247"
+data_explorer: "\u6570\u636E\u6D4F\u89C8\u5668"
+navigation: "\u5BFC\u822A"
+entrances: "\u5165\u53E3"
+exits: "\u9000\u51FA"
+restore: "\u6062\u590D"
+amount: "\u91D1\u989D"
+flush_recyclebin: "\u6E05\u7A7A\u56DE\u6536\u7AD9"
+recyclebin: "\u56DE\u6536\u7AD9"
+deletedby: "\u7531...\u5220\u9664"
+open_select_editor: "\u6253\u5F00\u9009\u9879\u7F16\u8F91\u5668"
+ignore: "\u5FFD\u7565"
 email_log: Email Log
-email_log_resend: Resend email
-email_log_resend_window_msg: Please confirm that you want to send the email again
-  to all recipients.
-select_site: Select a site
-main_site: Main Site
-filename: Filename
-unsupported_filetype: Unsupported Filetype
-email_log_resend_window_success_message: The email has been sent successfully to all
-  recipients.
-email_log_resend_window_error_message: An error occurred. The email has not been resent.
-error_jobs: The following jobs failed
-batch_change: Batch edit all
-batch_edit_field: Batch edit all field
-published: Published
-all: all
-items_per_page: Items per page
-reload_pimcore_changes: You have to reload Pimcore for the changes to take effect,
-  would you like to do this now?
-info: Info
-or: or
-paste_contents: Paste only contents here
-paste_as_child: Paste as child
+email_log_resend: "\u53D1\u9001\u90AE\u4EF6"
+email_log_resend_window_msg: "\u786E\u5B9A\u91CD\u590D\u90AE\u4EF6\u81F3\u6240\u6709\u6536\u4EF6\u4EBA\uFF1F"
+select_site: "\u9009\u62E9\u4E00\u4E2A\u7AD9\u70B9"
+main_site: "\u4E3B\u7AD9"
+filename: "\u6587\u4EF6\u540D"
+unsupported_filetype: "\u4E0D\u652F\u6301\u7684\u6587\u4EF6\u683C\u5F0F"
+email_log_resend_window_success_message: "\u90AE\u4EF6\u5DF2\u7ECF\u6210\u529F\u53D1\u9001\u7ED9\u6240\u6709\u6536\u4EF6\u4EBA\u3002"
+email_log_resend_window_error_message: "\u53D1\u751F\u9519\u8BEF\u3002\u90AE\u4EF6\u91CD\u53D1\u5931\u8D25\u3002"
+error_jobs: "\u4EE5\u4E0B\u4EFB\u52A1\u5931\u8D25"
+batch_change: "\u6279\u5904\u7406\u4EFB\u52A1"
+batch_edit_field: "\u6279\u5904\u7406\u7F16\u8F91\u5B57\u6BB5"
+published: "\u5DF2\u53D1\u5E03"
+all: "\u6240\u6709"
+items_per_page: "\u6CA1\u6709\u7684\u6761\u6570"
+reload_pimcore_changes: "\u4E3A\u4F7F\u53D8\u52A8\u751F\u6548\uFF0C\u60A8\u9700\u8981\u91CD\u65B0\u52A0\u8F7D
+  Pimcore\uFF0C\u73B0\u5728\u5C31\u91CD\u8F7D\u5417\uFF1F"
+info: "\u4FE1\u606F"
+or: "\u6216"
+paste_contents: "\u5728\u8FD9\u91CC\u4EC5\u7C98\u8D34\u5185\u5BB9"
+paste_as_child: "\u4F5C\u4E3A\u5B50\u8282\u70B9\u7C98\u8D34"
 paste_recursive_as_child: Paste as child (recursive)
-view_original: View Original
-feed: Feed
-no_items_found: No items found
-public_url: Public URL
-pageviews: Pageviews
-visits: Visits
-detail: Detail
-report_settings: Report Settings
-overview: Overview
-visitor_overview: Visitor Overview
-other: Other
-google_analytics: Google Analytics
-reports_and_marketing: Marketing & Reports
-save_only_scheduled_tasks: Save only scheduled tasks
-modified_assets: Modified Assets
-modification_statistic: Changes in the last 31 days
-add_portlet: Add Portlet
-modified_documents: Modified Documents
-modified_objects: Modified Objects
-welcome: Welcome
-save_and_publish: Save & Publish
-delete: Delete
-save: Save
-add_assets: Add Asset(s)
-preview: Preview
-advanced: Advanced
-basic: Basic
-list: List
-view: View
-publish: Publish
-rename: Rename
-settings: Settings
-properties: Properties
-versions: Versions
-add: Add
-date: Date
-user: User
-note: Note
-email_cc: Cc
-email_bcc: Bcc
-email_settings: Email Settings
-email_settings_receiver_description: 'Multiple recipients can be specified by separating
-  the email addresses with a semicolon. <br/>Example: receiver@pimcore.org; receiver2@pimcore.org<br/>For
-  ''From'' you can use additionally the syntax <i>My Name &lt;my-name@example.com&gt;</i>'
-email_logs: Sent Emails
-email_log_sent_Date: Date sent
-predefined_document_type: Predefined Document Type
-controller: Controller
-action: Action
-actions: Actions
-template: Template
+view_original: "\u6D4F\u89C8\u539F\u89C6\u56FE"
+feed: "\u6E90"
+no_items_found: "\u6CA1\u6709\u627E\u5230\u9879\u76EE"
+public_url: "\u516C\u7528 URL \u5730\u5740"
+pageviews: "\u9875\u9762\u89C6\u56FE"
+visits: "\u8BBF\u95EE\u91CF"
+detail: "\u660E\u7EC6"
+report_settings: "\u62A5\u8868\u8BBE\u7F6E"
+overview: "\u9884\u89C8"
+visitor_overview: "\u8BBF\u95EE\u8005\u6982\u89C8"
+other: "\u5176\u4ED6"
+google_analytics: "Google\u5206\u6790\u5668"
+reports_and_marketing: "\u8425\u9500 & \u62A5\u544A"
+save_only_scheduled_tasks: "\u4EC5\u4FDD\u5B58\u8BA1\u5212\u4EFB\u52A1"
+modified_assets: "\u6539\u53D8\u7684\u7D20\u6750"
+modification_statistic: "\u8FC7\u53BB31\u5929\u7684\u66F4\u6539"
+add_portlet: "\u589E\u52A0\u95E8\u6237"
+modified_documents: "\u6539\u53D8\u7684\u6587\u6863"
+modified_objects: "\u6539\u53D8\u7684\u5BF9\u8C61"
+welcome: "\u6B22\u8FCE"
+save_and_publish: "\u4FDD\u5B58\u5E76\u53D1\u5E03"
+delete: "\u5220\u9664"
+save: "\u4FDD\u5B58"
+add_assets: "\u6DFB\u52A0\u7D20\u6750"
+preview: "\u9884\u89C8"
+advanced: "\u9AD8\u7EA7"
+basic: "\u57FA\u672C"
+list: "\u5217\u8868"
+view: "\u663E\u793A"
+publish: "\u53D1\u5E03"
+rename: "\u91CD\u547D\u540D"
+settings: "\u8BBE\u7F6E"
+properties: "\u5C5E\u6027"
+versions: "\u7248\u672C"
+add: "\u589E\u52A0"
+date: "\u65E5\u671F"
+user: "\u7528\u6237"
+note: "\u9644\u5F55"
+email_cc: "\u6284\u9001"
+email_bcc: "\u5BC6\u4EF6\u6284\u9001"
+email_settings: "Email\u8BBE\u7F6E"
+email_settings_receiver_description: "\u53EF\u4EE5\u901A\u8FC7\u7528\u5206\u53F7\u5206\u9694\u7535\u5B50\u90AE\u4EF6\u5730\u5740\u6765\u6307\u5B9A\u591A\u4E2A\u6536\u4EF6\u4EBA\u3002<br/>\u4F8B\u5982\uFF1Areceiver@pimcore.org;
+  receiver2@pimcore.org <br/>\u5BF9\u4E8E'\u53D1\u4EF6\u4EBA'\uFF0C\u4F60\u53EF\u4EE5\u53E6\u5916\u4F7F\u7528\u8BED\u6CD5<i>\u6211\u7684\u540D\u5B57<
+  my-name@example.com> </ i>"
+email_logs: "\u53D1\u9001\u90AE\u4EF6"
+email_log_sent_Date: "\u53D1\u9001\u65F6\u95F4"
+predefined_document_type: "\u9884\u5B9A\u4E49\u6587\u6863\u7C7B\u578B"
+controller: "\u63A7\u5236\u5668"
+action: "\u529F\u80FD"
+actions: "\u64CD\u4F5C"
+template: "\u6A21\u677F"
 staticroute: Static Route
-static_generator: Static Page Generator
-static_generator_enable: Enable server side static rendering
-static_generator_lifetime: Lifetime (in minutes) for static page (optional)
-last_generated: Last generated
-key: Key
-id: ID
-name: Name
-title: Title
-description: Description
-unpublish: Unpublish
-target: Target
-type: Type
-please_enter_the_new_name: Please enter the new name
-add_page: Add Page
-add_snippet: Add Snippet
-add_email: Add Email
-add_link: Add Link
-copy: Copy
-paste: Paste
-close_all_tabs: Close all tabs
-search: Search
-import: Import
-export: Export
+static_generator: "\u9759\u6001\u9875\u9762\u751F\u6210\u5668"
+static_generator_enable: "\u542F\u7528\u670D\u52A1\u5668\u7AEF\u9759\u6001\u6E32\u67D3"
+static_generator_lifetime: "\u9759\u6001\u9875\u9762\u7684\u751F\u547D\u5468\u671F\uFF08\u5206\u949F\uFF0C\u53EF\u9009\uFF09"
+last_generated: "\u6700\u540E\u751F\u6210"
+key: "\u5173\u952E\u5B57"
+id: "\u5E8F\u53F7"
+name: "\u540D\u79F0"
+title: "\u6807\u9898"
+description: "\u63CF\u8FF0"
+unpublish: "\u53D6\u6D88\u53D1\u5E03"
+target: "\u76EE\u6807\u5730\u5740"
+type: "\u7C7B\u578B"
+please_enter_the_new_name: "\u8BF7\u8F93\u5165\u4E00\u4E2A\u65B0\u7684\u540D\u79F0"
+add_page: "\u6DFB\u52A0\u9875"
+add_snippet: "\u589E\u52A0\u6458\u8981"
+add_email: "\u589E\u52A0email"
+add_link: "\u589E\u52A0\u94FE\u63A5"
+copy: "\u590D\u5236"
+paste: "\u7C98\u8D34"
+close_all_tabs: "\u5173\u95ED\u6240\u6709\u6807\u7B7E"
+search: "\u641C\u7D22"
+import: "\u5BFC\u5165"
+export: "\u8F93\u51FA"
 document_type: Document Type
-document_types: Document Types
-predefined_properties: Predefined Properties
-users: Users
-profile: Profile
-my_profile: My Profile
-documentation: Documentation
-report_bugs: Report Bugs
-about: About
-file: File
-extras: Extras
-help: Help
-configuration: Configuration
-value: Value
-add_a_custom_property: Add a custom Property
+document_types: "\u6587\u6863\u7C7B\u578B"
+predefined_properties: "\u9884\u5B9A\u4E49\u5C5E\u6027"
+users: "\u7528\u6237"
+profile: "\u7528\u6237\u8D44\u6599"
+my_profile: "\u6211\u7684\u7B80\u5386"
+documentation: "\u6587\u6863"
+report_bugs: "\u62A5\u544A\u95EE\u9898"
+about: "\u5173\u4E8E"
+file: "\u6587\u4EF6"
+extras: "\u9644\u52A0"
+help: "\u5E2E\u52A9"
+configuration: "\u914D\u7F6E"
+value: "\u6570\u503C"
+add_a_custom_property: "\u589E\u52A0\u4E00\u4E2A\u5B9A\u5236\u7684\u5C5E\u6027"
 custom: Custom
-general: General
-language: Language
-quality: Quality
-format: Format
-documents: Documents
-assets: Assets
-upload: Upload
-width: Width
-height: Height
-empty: Empty
-workflow: Workflow
-modify: 'Modify '
-create: 'Create '
-edit: Edit
-logout: Logout
-refresh: Refresh
-input: Input
-checkbox: Checkbox
-textarea: Textarea
-image: Image
-select: Select
-base: Base
-add_object: Add Object
-border: Border
-document: Document
-asset: Asset
-object: Object
-remove: Remove
-hidden_dependencies: There are additional dependencies your user does not have the
-  permissions to see.
-open: Open
-days: Days
-seemode: Seemode
-edit_current_page: Edit this page
-close: Close
-name_already_in_use: Name is already in use, please choose a different one.
-name_and_key_must_be_defined: Name and Type must be defined
-mandatory_field_empty: Please fill all mandatory fields
-reload: Reload
-schedule: Schedule
-time: Time
-version: Version
-active: Active
-success: Success
-translations: Translations
-translation_simple: Simple Text
-translation_custom: ICU Format
-firstname: Firstname
-lastname: Lastname
-email: Email
-cant_move_node_to_target: Moving node not possible
-error_moving_object: Object could not be moved
-translations_are_not_configured: Translation are not configured
-read_more_here: Read more about here
-publish_version: Publish version
-start: Start
-su: Su
-mo: Mo
-tu: Tu
-we: We
-th: Th
-fr: Fr
-sa: Sa
-session_error_text: It seems there is a problem with your session. We recommend to
-  reload this page in order to be save, but you can try to save your changes first.
-session_error: Session Error
-please_wait: Please wait ...
-download: Download
-inheritable: Inheritable
-redirects: Redirects
-source: Source
-link: Link
-abbr: Abbr.
-stop: Stop
-dependencies: Dependencies
-requires: Requires
-required_by: Required By
-search_edit: Search, Edit and Export
-subtype: Subtype
-initializing: Initializing ...
-please_select_a_type: Please select a type
-filter: Filter
-field: Field
-operator: Operator
-apply: Apply
-show: Show
-public: Public
-maximum_2_versions: You can compare max. 2 versions
-error: Error
-element_is_locked: 'The desired element is currently opened by another person:'
-element_lock_question: Would you like to open it anyway?
-since: Since
-longitude: Longitude
-latitude: Latitude
-geopoint: Geographic Point
-cancel: Cancel
-open_search_editor: Open Search Editor
-parameters: Parameters
-anchor: Anchor
-accesskey: Accesskey
-relation: Relation
-tabindex: Tab-Index
-not_set: not set
-export_csv: CSV Export
-import_csv: CSV Import
-show_welcome_screen: Show welcome screen on startup
-importFileHasHeadRow: first row = headline
-overwrite_object_with_same_key_description: When overwrite is checked, instead of
-  creating a new object for each import row, objects with the same key are replaced.
-  Existing objects in your import folder with keys not contained in the import file
-  will remain untouched. Please be aware that all objects which have a matching key
-  in the import file will be replaced in the target folder. This is also true for
-  objects based on a different class or even object folders! Object fields which are
-  set to ignore in the field mapping keep their old value.
-object_import_filename_description: select the field which is used to generate the
-  object key
-save_pubish_close: Save, publish and close
-save_close: Save and close
-error_general: Server threw exception - could not perform action. Please reload the
-  admin interface and try again.
-owner_class: Owner class
-owner_field: Owner field
-nonownerobject_warning: The current object is not the owner of these relations, making
-  changes here might make saving the object slow
-element_implicit_edit_question: Would you still like to implicitly  modify it with
-  this action?
-element_open_message: The desired element is already open for editing.
-nonownerobjects_self_selection: In non owner objects a  relation to myself is not
-  possible, please use original field instead of non owner field.
-warning: Warning
-csv_object_export_warning: Please note that the CSV export does not support all data
-  types. Consequently, re-importing an exported CSV to pimcore might lead to data
-  loss. Press OK to continue with the export.
-navigation_exclude: Exclude from Navigation
-variants: Variants
-variant: Variant
-add_variant: Add variant
-delete_message_dependencies: There are dependencies, delete anyway?
-delete_message: Do you really want to delete this item?
+general: "\u901A\u7528"
+language: "\u8BED\u8A00"
+quality: "\u8D28\u91CF"
+format: "\u683C\u5F0F\u5316"
+documents: "\u6587\u6863"
+assets: "\u7D20\u6750"
+upload: "\u4E0A\u4F20"
+width: "\u5BBD\u5EA6"
+height: "\u9AD8\u5EA6"
+empty: "\u7A7A\u7684"
+workflow: "\u5DE5\u4F5C\u6D41"
+modify: "\u4FEE\u6539"
+create: "\u521B\u5EFA"
+edit: "\u7F16\u8F91"
+logout: "\u9000\u51FA"
+refresh: "\u5237\u65B0"
+input: "\u5982\u6570"
+checkbox: "\u590D\u9009\u6846"
+textarea: "\u6587\u672C\u533A"
+image: "\u56FE\u50CF"
+select: "\u9009\u62E9"
+base: "\u57FA\u7840"
+add_object: "\u589E\u52A0\u5BF9\u8C61"
+border: "\u8FB9\u6846"
+document: "\u6587\u6863"
+asset: "\u7D20\u6750"
+object: "\u5BF9\u8C61"
+remove: "\u5220\u9664"
+hidden_dependencies: "\u60A8\u7684\u7528\u6237\u65E0\u6743\u67E5\u770B\u5176\u4ED6\u4F9D\u8D56\u9879"
+open: "\u6253\u5F00"
+days: "\u65E5\u671F"
+seemode: "\u9884\u89C8\u6A21\u5F0F"
+edit_current_page: "\u7F16\u8F91\u672C\u9875"
+close: "\u5173\u95ED"
+name_already_in_use: "\u540D\u79F0\u5DF2\u88AB\u4F7F\u7528"
+name_and_key_must_be_defined: "\u5FC5\u987B\u5B9A\u4E49\u540D\u79F0\u548C\u7C7B\u578B"
+mandatory_field_empty: "\u8BF7\u586B\u5199\u6240\u6709\u5FC5\u586B\u5B57\u6BB5"
+reload: "\u91CD\u65B0\u52A0\u8F7D"
+schedule: "\u8BA1\u5212\u8868"
+time: "\u65F6\u95F4"
+version: "\u7248\u672C"
+active: "\u6709\u6548"
+success: "\u6210\u529F"
+translations: "\u524D\u53F0\u8BED\u8A00\u63D2\u4EF6"
+translation_simple: "\u7B80\u5355\u6587\u672C"
+translation_custom: "\u56FD\u9645\u5316\u7EC4\u4EF6Unicode\u683C\u5F0F"
+firstname: "\u540D"
+lastname: "\u59D3"
+email: "\u7535\u5B50\u90AE\u4EF6"
+cant_move_node_to_target: "\u4E0D\u5141\u8BB8\u79FB\u52A8\u8282\u70B9"
+error_moving_object: "\u4E0D\u5141\u8BB8\u79FB\u52A8\u9879\u76EE"
+translations_are_not_configured: "\u7FFB\u8BD1\u8FD8\u6CA1\u6709\u914D\u7F6E"
+read_more_here: "\u4E86\u89E3\u66F4\u591A"
+publish_version: "\u53D1\u5E03\u7248\u672C"
+start: "\u5F00\u59CB"
+su: "\u5468\u65E5"
+mo: "\u5468\u4E00"
+tu: "\u5468\u4E8C"
+we: "\u5468\u4E09"
+th: "\u5468\u56DB"
+fr: "\u5468\u4E94"
+sa: "\u5468\u516D"
+session_error_text: "\u4F60\u7684\u4F1A\u8BDD\u4F3C\u4E4E\u6709\u95EE\u9898\u3002\u6211\u4EEC\u5EFA\u8BAE\u91CD\u65B0\u52A0\u8F7D\u8FD9\u4E2A\u9875\u9762\u4EE5\u4FDD\u5B58\uFF0C\u4F46\u662F\u60A8\u53EF\u4EE5\u5148\u5C1D\u8BD5\u4FDD\u5B58\u66F4\u6539"
+session_error: "\u7EBF\u7A0B\u9519\u8BEF"
+please_wait: "\u8BF7\u7A0D\u5019..."
+download: "\u4E0B\u8F7D"
+inheritable: "\u53EF\u7EE7\u627F\u7684"
+redirects: "\u8F6C\u5411"
+source: "\u6E90"
+link: "\u94FE\u63A5"
+abbr: "\u7F29\u5199"
+stop: "\u505C\u6B62"
+dependencies: "\u4F9D\u8D56\u5173\u7CFB"
+requires: "\u9700\u6C42"
+required_by: "\u9700\u6C42\u7684\u6709"
+search_edit: "\u641C\u7D22\uFF0C\u7F16\u8F91\u548C\u5BFC\u51FA"
+subtype: "\u5B50\u7C7B\u578B"
+initializing: "\u521D\u59CB\u5316\u4E2D\u2026\u2026"
+please_select_a_type: "\u8BF7\u9009\u62E9\u4E00\u4E2A\u7C7B\u578B"
+filter: "\u8FC7\u6EE4\u5668"
+field: "\u5B57\u6BB5"
+operator: "\u64CD\u4F5C"
+apply: "\u5E94\u7528"
+show: "\u663E\u793A"
+public: "\u516C\u5F00"
+maximum_2_versions: "\u60A8\u53EF\u4EE5\u6700\u591A\u5BF9\u6BD4\u4E24\u4E2A\u7248\u672C"
+error: "\u9519\u8BEF"
+element_is_locked: "\u5143\u7D20\u88AB\u53E6\u4E00\u4E2A\u4EBA\u4F7F\u7528"
+element_lock_question: "\u4F60\u60F3\u65E0\u8BBA\u5982\u4F55\u90FD\u8981\u6253\u5F00\u5B83\u5417\uFF1F"
+since: "\u5F00\u59CB\u4E8E"
+longitude: "\u7ECF\u5EA6"
+latitude: "\u7EAC\u5EA6"
+geopoint: "\u5730\u6807"
+cancel: "\u53D6\u6D88"
+open_search_editor: "\u6253\u5F00\u641C\u7D22\u6846"
+parameters: "\u53C2\u6570"
+anchor: "\u951A\u70B9"
+accesskey: "\u5FEB\u6377\u952E"
+relation: "\u5173\u7CFB"
+tabindex: "\u9875\u7B7E\u7D22\u5F15\u53F7"
+not_set: "\u672A\u8BBE\u7F6E"
+export_csv: "CSV\u5BFC\u51FA"
+import_csv: "CSV\u5BFC\u5165"
+show_welcome_screen: "\u542F\u52A8\u65F6\u663E\u793A\u6B22\u8FCE\u753B\u9762"
+importFileHasHeadRow: "\u7B2C\u4E00\u884C=\u6807\u9898"
+overwrite_object_with_same_key_description: "\u9009\u4E2D\u8986\u76D6\u65F6\uFF0C\u4E0D\u4F1A\u4E3A\u6BCF\u4E2A\u5BFC\u5165\u884C\u521B\u5EFA\u65B0\u5BF9\u8C61\uFF0C\u800C\u662F\u66FF\u6362\u5177\u6709\u76F8\u540C\u952E\u7684\u5BF9\u8C61\u3002\u5BFC\u5165\u6587\u4EF6\u5939\u4E2D\u5305\u542B\u672A\u5305\u542B\u5728\u5BFC\u5165\u6587\u4EF6\u4E2D\u7684\u952E\u7684\u73B0\u6709\u5BF9\u8C61\u5C06\u4FDD\u6301\u4E0D\u53D8\u3002\u8BF7\u6CE8\u610F\uFF0C\u5BFC\u5165\u6587\u4EF6\u4E2D\u5177\u6709\u5339\u914D\u952E\u7684\u6240\u6709\u5BF9\u8C61\u90FD\u5C06\u5728\u76EE\u6807\u6587\u4EF6\u5939\u4E2D\u66FF\u6362\u3002\u5BF9\u4E8E\u57FA\u4E8E\u4E0D\u540C\u7C7B\u751A\u81F3\u5BF9\u8C61\u6587\u4EF6\u5939\u7684\u5BF9\u8C61\u4E5F\u662F\u5982\u6B64\uFF01\u5728\u5B57\u6BB5\u6620\u5C04\u4E2D\u8BBE\u7F6E\u4E3A\u5FFD\u7565\u7684\u5BF9\u8C61\u5B57\u6BB5\u4FDD\u7559\u5176\u65E7\u503C\u3002"
+object_import_filename_description: "\u9009\u62E9\u7528\u4E8E\u751F\u6210\u5BF9\u8C61\u952E\u7684\u5B57\u6BB5"
+save_pubish_close: "\u4FDD\u5B58,\u53D1\u5E03\u5E76\u5173\u95ED"
+save_close: "\u4FDD\u5B58\u5E76\u5173\u95ED"
+error_general: "\u670D\u52A1\u5668\u629B\u51FA\u5F02\u5E38-\u65E0\u6CD5\u6267\u884C\u64CD\u4F5C\u3002\u8BF7\u91CD\u65B0\u52A0\u8F7D\u7BA1\u7406\u754C\u9762\uFF0C\u7136\u540E\u91CD\u8BD5\u3002"
+owner_class: "\u6240\u6709\u8005\u7C7B"
+owner_field: "\u6240\u6709\u8005\u5B57\u6BB5"
+nonownerobject_warning: "\u5F53\u524D\u5BF9\u8C61\u4E0D\u662F\u8FD9\u4E9B\u5173\u7CFB\u7684\u6240\u6709\u8005\uFF0C\u5728\u6B64\u5904\u8FDB\u884C\u66F4\u6539\u53EF\u80FD\u4F1A\u4F7F\u5BF9\u8C61\u4FDD\u5B58\u7F13\u6162"
+element_implicit_edit_question: "\u4F60\u8FD8\u60F3\u7528\u8FD9\u4E2A\u52A8\u4F5C\u9690\u5F0F\u4FEE\u6539\u5B83\u5417\uFF1F"
+element_open_message: "\u6240\u9700\u5143\u7D20\u5DF2\u6253\u5F00\u4EE5\u8FDB\u884C\u7F16\u8F91\u3002"
+nonownerobjects_self_selection: "\u5728\u975E\u6240\u6709\u8005\u5BF9\u8C61\u4E2D\uFF0C\u65E0\u6CD5\u4E0E\u81EA\u5DF1\u5EFA\u7ACB\u5173\u7CFB\uFF0C\u8BF7\u4F7F\u7528\u539F\u59CB\u5B57\u6BB5\u800C\u4E0D\u662F\u975E\u6240\u6709\u8005\u5B57\u6BB5\u3002"
+warning: "\u8B66\u544A"
+csv_object_export_warning: "\u8BF7\u6CE8\u610F\uFF0CCSV\u5BFC\u51FA\u4E0D\u652F\u6301\u6240\u6709\u6570\u636E\u7C7B\u578B\u3002\u56E0\u6B64\uFF0C\u5C06\u5BFC\u51FA\u7684CSV\u91CD\u65B0\u5BFC\u5165pimcore\u53EF\u80FD\u4F1A\u5BFC\u81F4\u6570\u636E\u4E22\u5931\u3002\u6309\u201C\u786E\u5B9A\u201D\u7EE7\u7EED\u5BFC\u51FA\u3002"
+navigation_exclude: "\u4ECE\u5BFC\u822A\u4E2D\u6392\u51FA"
+variants: "\u53D8\u79CD"
+variant: "\u53D8\u91CF"
+add_variant: "\u589E\u52A0\u53D8\u91CF"
+delete_message_dependencies: "\u6709\u4F9D\u8D56\u5173\u7CFB\uFF0C\u8FD8\u662F\u5220\u9664\uFF1F"
+delete_message: "\u4F60\u786E\u5B9E\u8981\u5220\u9664\u8FD9\u4E2A\u5143\u7D20\u5417\uFF1F"
 delete_message_advanced: Do you really want to delete %s '%s' ?
-delete_message_batch: Do you really want to delete these elements?
+delete_message_batch: "\u4F60\u771F\u7684\u60F3\u5220\u9664\u8FD9\u4E9B\u5143\u7D20\u5417\uFF1F"
 delete_group_message: Do you really want to delete this group and all of its contents?
-no_further_objectbricks_allowed: No further objectbricks allowed
-grid_current_language: Current language
-object_columns: Object columns
-system_columns: System columns
-columns: Columns
-children_grid: Children Grid
-only_children: just direct children
-cut: Cut
-paste_cut_element: Paste cut-out element
-memorize_tabs: Memorize open tabs
-element_history: Recently Opened Elements
-dashboards: Dashboards
-portlet_customreport: Custom Report
-clear_marker_or_hotspots: Clear Marker, Hotspot and Cropping Data
-hotspots_cleared: Hotspots, Markers and Cropping Data cleared
-deeplink: Deeplink
-click_to_open: (click to open)
-add_metadata: Add Metadata
-pimcore_icon_edit_pdf_text: Edit text version
-chapter: Chapter
-search_and_move: Search & Move
-searching: Searching...
-predefined_asset_metadata: Predefined Asset Metadata
-add_predefined_metadata_definitions: Add predefined definitions
-scheduled: Scheduled
-naming_requirements_3chars: Name must be alphanumeric and at least 3 characters long
-there_are_more_columns: There are more columns than currently displayed
-merge_csv: Import &amp; Merge CSV
-translation_merger_current: Current Text
-translation_merger_csv: Text from CSV
-nothing_to_merge: There is nothing to merge
-csv_seperated_options: CSV seperated options
-csv_seperated_options_info: The list of available options can be specified as comma-seperated
-  list, as single-column values or  mixed. For the single-column way, the key will
-  also be used as the value.
-first_page: First Page
-previous_page: Previous Page
-next_page: Next Page
-last_page: Last Page
-no_data_to_display: No data to display
+no_further_objectbricks_allowed: "\u4E0D\u5141\u8BB8\u66F4\u591A\u7684objectbricks"
+grid_current_language: "\u5F53\u524D\u8BED\u8A00"
+object_columns: "\u76EE\u6807\u5217"
+system_columns: "\u7CFB\u7EDF\u5217"
+columns: "\u5217"
+children_grid: "\u5B50\u7F51\u683C"
+only_children: "\u4EC5\u7528\u4E8E\u5B50\u9879\u76EE"
+cut: "\u526A\u5207"
+paste_cut_element: "\u7C98\u8D34\u526A\u5207\u5143\u7D20"
+memorize_tabs: "\u8BB0\u4F4F\u6253\u5F00\u7684\u6807\u7B7E\u9875"
+element_history: "\u6700\u8FD1\u6253\u5F00\u7684\u5143\u7D20"
+dashboards: "\u4EEA\u8868\u76D8"
+portlet_customreport: "\u81EA\u5B9A\u4E49\u62A5\u544A"
+clear_marker_or_hotspots: "\u6E05\u9664\u6807\u8BB0\uFF0C\u70ED\u70B9\u548C\u88C1\u526A\u6570\u636E"
+hotspots_cleared: "\u70ED\u70B9\uFF0C\u6807\u8BB0\u548C\u88C1\u526A\u6570\u636E\u5DF2\u6E05\u9664"
+deeplink: "\u6DF1\u5C42\u94FE\u63A5"
+click_to_open: "\uFF08\u70B9\u51FB\u6253\u5F00\uFF09"
+add_metadata: "\u6DFB\u52A0\u5143\u6570\u636E"
+pimcore_icon_edit_pdf_text: "\u7F16\u8F91\u6587\u672C\u7248\u672C"
+chapter: "\u7AE0\u8282"
+search_and_move: "\u641C\u7D22\u548C\u79FB\u52A8"
+searching: "\u641C\u7D22..."
+predefined_asset_metadata: "\u9884\u5B9A\u4E49\u7684\u7D20\u6750\u5143\u6570\u636E"
+add_predefined_metadata_definitions: "\u6DFB\u52A0\u9884\u5B9A\u4E49\u5B9A\u4E49"
+scheduled: "\u8BA1\u5212"
+naming_requirements_3chars: "\u540D\u79F0\u5FC5\u987B\u4E3A\u5B57\u6BCD\u6570\u5B57\u4E14\u957F\u5EA6\u81F3\u5C11\u4E3A3\u4E2A\u5B57\u7B26"
+there_are_more_columns: "\u5217\u6570\u591A\u4E8E\u5F53\u524D\u663E\u793A\u7684\u5217\u6570"
+merge_csv: "\u5BFC\u5165&\u5408\u5E76CSV"
+translation_merger_current: "\u5F53\u524D\u6587\u672C"
+translation_merger_csv: "CSV\u4E2D\u6587\u672C"
+nothing_to_merge: "\u6CA1\u6709\u4E1C\u897F\u9700\u8981\u5408\u5E76"
+csv_seperated_options: "CSV\u5206\u9694\u9009\u9879"
+csv_seperated_options_info: "\u53EF\u7528\u9009\u9879\u5217\u8868\u53EF\u4EE5\u6307\u5B9A\u4E3A\u9017\u53F7\u5206\u9694\u5217\u8868\uFF0C\u5355\u5217\u503C\u6216\u6DF7\u5408\u3002\u5BF9\u4E8E\u5355\u5217\u65B9\u5F0F\uFF0C\u8BE5\u952E\u4E5F\u5C06\u7528\u4F5C\u503C\u3002"
+first_page: "\u7B2C\u4E00\u9875"
+previous_page: "\u4E0A\u4E00\u9875"
+next_page: "\u4E0B\u4E00\u9875"
+last_page: "\u6700\u540E\u4E00\u9875"
+no_data_to_display: "\u6CA1\u6709\u6570\u636E\u663E\u793A"
 classificationstore_property: Property
 classificationstore_group: Group
 classificationstore_relation: Relation
 classificationstore_collection: Collection
 classificationstore_collection_relation: Collection relation
-classificationstore_no_groups: No groups found
-classificationstore_no_keys: No keys found
-remove_group: Remove Group
-classificationstore_no_collections: No collections
-reference: Reference
-element_tag_configuration: Tag Configuration
-element_tag_all_tags: All Tags
-enter_new_name_of_the_tag: Enter new name of the Tag
-assigned_tags: Assigned Tags
-filter_tags: Filter for Tags
-consider_child_tags: Consider child tags too
-tags_assignment: Tags Assignment
-tags_search: Tags Search
-batch_applied: Batch applied
-apply_tags: Apply tags to Children
-remove_and_apply_tags: Remove and apply tags to children
-batch_assignment: Tag batch assignment
-batch_assignment_error: Tag batch assignment error
-no_children_found: No Children found.
-asset_search: Search Assets
-document_search: Search Documents
-object_search: Search Objects
-more: More
-open_translation: Open Translation
-link_existing_document: Link existing Document
-using_inheritance: Using Inheritance
-new_document: New Document
-update_available: Update Available
-target_document_needs_language: Target document needs a language set
-tools: Tools
-perspectives: Perspectives
-filter_active: Filter active!
-reset_config: Reset changes
-reset_config_tooltip: This will reset (and save) the grid column configuration for
-  this element to its default
-error_resetting_config: Error resetting configuration
-marketing_settings: Marketing Settings
-cross_tree_moves_not_supported: Cross tree moves not yet supported
-add_printpage: Add PrintPage
-add_printcontainer: Add PrintContainer
-web2print_preview_pdf: Generate & Preview PDF
-web2print_cancel_pdf_creation: Cancel PDF Creation
-web2print_generate_pdf: Generate PDF
-web2print_download_pdf: Download PDF
-web2print_last-generated: Last Generated
-web2print_last-generate-message: Last Generate Message
-web2print: Web-to-Print
-web2print_prepare_pdf_generation: Prepare PDF Generation
-web2print_start_html_rendering: Start HTML Rendering
-web2print_finished_html_rendering: Finished HTML Rendering
-web2print_saved_html_file: Saved HTML File
-web2print_pdf_conversion: PDF Conversion
-web2print_saving_pdf_document: Save PDF Document
-web2print_author: Author
-web2print_printermarks: Printermarks
-web2print_bookmarks: Bookmarks
-close_tab: Close Tab
-web2print_only_published: Only possible with published documents.
-web2print_documents_changed: Documents changed since last pdf generation.
-about_pimcore: ABOUT PIMCORE PLATFORM
-phone: Phone
-workflow_additional_info: Additional Information
-workflow_perform_action: Perform Action
-workflow_notes_required: Notes (Required)
-workflow_notes_optional: Notes (Optional)
-please_enter_the_id_of_the_asset: Please enter the ID or Path (e.g. /images/logo.jpg)
-  of the asset
-please_enter_the_id_of_the_object: Please enter the ID or Path of the object
-please_enter_the_id_of_the_document: Please enter the ID, Path or URL (also including
-  http://) of the document
-element_has_unsaved_changes: Element has unsaved changes
-element_unsaved_changes_message: All unsaved changes will be lost, are you really
-  sure?
-newsletter_enableTrackingParameters: Add Tracking Parameters to Links
-newsletter_sendingMode: Sending Mode
-newsletter_sendingmode_single: Single (Render every Mail individually)
-newsletter_sendingmode_batch: Batch (Render Mail only once)
-newsletter_sendingPanel: Newsletter Sending Panel
-newsletter_dirty_warning: Newsletter is not saved yet. Please save first.
-newsletter_sending: Sending Newsletter
-newsletter_sourceAdapter: Address Source Adapter
-newsletter_default: Default Object List
-newsletter_csvList: CSV List
-newsletter_testsend: Newsletter Test Sending
-newsletter_test_sent_message: Test Newsletter sent successfully
-add_object_mbx_title: Add new Object of type %s
-newsletter_choose_report: Choose a report
-newsletter_email_field_name: Email field name
-mode: Mode
-custom_download: Custom Download
-original_file: Original File
-web_format: Web Format
-print_format: Print Format
-office_format: Office Format
-change_password: Change Password
-file_is_bigger_that_upload_limit: 'The following file is bigger than the actual upload
-  limit of your server:'
-send_test_email_success: Your test-email has been sent. Would you like to keep this
-  window open to send the email again?
-press_crtl_and_select_to_compare: 'Compare: Press CTRL + Click Version'
-clear_filters: Clear Filters
-tags_configuration: Tags Configuration
-export_csv_include_headers: CSV Export with headers
-open_data_object: Open Data Object
-data_objects: Data Objects
-asset_type_change_not_allowed: '<strong>Only assets of same type are allowed here.</strong><br/>[
-  type of uploaded asset: "%s" | type of existing asset: "%s" ]'
-clear_content_of_selected_target_group: Clear content of selected Target Group
-visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: Visitors
-  of this page will be automatically associated with the selected Target Groups
-assign_target_group: Assign Target Group
-assign_target_groups: Assign Target Groups
+classificationstore_no_groups: "\u6CA1\u6709\u627E\u5230\u4EFB\u4F55\u7EC4"
+classificationstore_no_keys: "\u627E\u4E0D\u5230\u952E"
+remove_group: "\u5220\u9664\u7EC4"
+classificationstore_no_collections: "\u6CA1\u6709\u6536\u85CF"
+reference: "\u53C2\u8003"
+element_tag_configuration: "\u6807\u7B7E\u914D\u7F6E"
+element_tag_all_tags: "\u6240\u6709\u6807\u7B7E"
+enter_new_name_of_the_tag: "\u8F93\u5165\u6807\u7B7E\u7684\u65B0\u540D\u79F0"
+assigned_tags: "\u5206\u914D\u6807\u7B7E"
+filter_tags: "\u8FC7\u6EE4\u6807\u7B7E"
+consider_child_tags: "\u4E5F\u8003\u8651\u5B50\u6807\u7B7E"
+tags_assignment: "\u6807\u7B7E\u5206\u914D"
+tags_search: "\u6807\u7B7E\u641C\u7D22"
+batch_applied: "\u6279\u91CF\u5E94\u7528"
+apply_tags: "\u5C06\u6807\u7B7E\u5E94\u7528\u4E8E\u5B50\u7EA7"
+remove_and_apply_tags: "\u5220\u9664\u6807\u7B7E\u5E76\u5C06\u5176\u5E94\u7528\u4E8E\u5B50\u7EA7"
+batch_assignment: "\u6807\u8BB0\u6279\u91CF\u5206\u914D"
+batch_assignment_error: "\u6807\u8BB0\u6279\u91CF\u5206\u914D\u9519\u8BEF"
+no_children_found: "\u672A\u627E\u5230\u5B50\u7EA7"
+asset_search: "\u641C\u7D22\u7D20\u6750"
+document_search: "\u641C\u7D22\u6587\u4EF6"
+object_search: "\u641C\u7D22\u5BF9\u8C61"
+more: "\u66F4\u591A"
+open_translation: "\u5F00\u653E\u7FFB\u8BD1"
+link_existing_document: "\u94FE\u63A5\u73B0\u6709\u6587\u6863"
+using_inheritance: "\u4F7F\u7528\u7EE7\u627F"
+new_document: "\u65B0\u6587\u4EF6"
+update_available: "\u66F4\u65B0\u53EF\u7528"
+target_document_needs_language: "\u76EE\u6807\u6587\u6863\u9700\u8981\u4E00\u5957\u8BED\u8A00"
+tools: "\u5DE5\u5177"
+perspectives: "\u5C55\u671B"
+filter_active: "\u5E38\u7528\u7B5B\u9009\uFF01"
+reset_config: Reset to default
+reset_config_tooltip: "\u8FD9\u5C06\u91CD\u7F6E\uFF08\u5E76\u4FDD\u5B58\uFF09\u6B64\u5143\u7D20\u7684\u7F51\u683C\u5217\u914D\u7F6E\u4E3A\u5176\u9ED8\u8BA4\u503C"
+error_resetting_config: "\u91CD\u7F6E\u914D\u7F6E\u65F6\u51FA\u9519"
+marketing_settings: "\u8425\u9500\u8BBE\u7F6E"
+cross_tree_moves_not_supported: "\u4EA4\u53C9\u6811\u79FB\u52A8\u5C1A\u672A\u652F\u6301"
+add_printpage: "\u6DFB\u52A0\u6253\u5370\u9875\u9762"
+add_printcontainer: "\u6DFB\u52A0\u6253\u5370\u5BB9\u5668"
+web2print_preview_pdf: "\u751F\u6210\u548C\u9884\u89C8PDF"
+web2print_cancel_pdf_creation: "\u53D6\u6D88PDF\u521B\u5EFA"
+web2print_generate_pdf: "\u751F\u6210PDF"
+web2print_download_pdf: "\u4E0B\u8F7DPDF"
+web2print_last-generated: "\u6700\u540E\u751F\u6210\u7684"
+web2print_last-generate-message: "\u6700\u540E\u751F\u6210\u6D88\u606F"
+web2print: "\u7F51\u7EDC\u5230\u6253\u5370"
+web2print_prepare_pdf_generation: "\u51C6\u5907PDF\u751F\u6210"
+web2print_start_html_rendering: "\u542F\u52A8HTML\u5448\u73B0"
+web2print_finished_html_rendering: "\u5B8C\u6210HTML\u6E32\u67D3"
+web2print_saved_html_file: "\u4FDD\u5B58\u7684HTML\u6587\u4EF6"
+web2print_pdf_conversion: "PDF\u8F6C\u6362"
+web2print_saving_pdf_document: "\u4FDD\u5B58PDF\u6587\u6863"
+web2print_author: "\u4F5C\u8005"
+web2print_printermarks: "\u6253\u5370\u6807\u8BB0"
+web2print_bookmarks: "\u4E66\u7B7E"
+close_tab: "\u5173\u95ED\u6807\u7B7E"
+web2print_only_published: "\u4EC5\u9002\u7528\u4E8E\u5DF2\u53D1\u5E03\u7684\u6587\u6863"
+web2print_documents_changed: "\u81EA\u4E0A\u6B21pdf\u751F\u6210\u4EE5\u6765\u6587\u6863\u5DF2\u66F4\u6539\u3002"
+about_pimcore: "\u5173\u4E8EPIMCORE"
+phone: "\u7535\u8BDD"
+workflow_additional_info: "\u9644\u52A0\u4FE1\u606F"
+workflow_perform_action: "\u6267\u884C\u64CD\u4F5C"
+workflow_notes_required: "\u5907\u6CE8\uFF08\u5FC5\u586B\uFF09"
+workflow_notes_optional: "\u5907\u6CE8\uFF08\u53EF\u9009\uFF09"
+please_enter_the_id_of_the_asset: "\u8BF7\u8F93\u5165\u7D20\u6750\u7684ID\u6216\u8005\u8DEF\u5F84(
+  (\u4F8B\u5982 /images/logo.jpg) )"
+please_enter_the_id_of_the_object: "\u8BF7\u8F93\u5165\u5BF9\u8C61\u7684ID\u6216\u8DEF\u5F84"
+please_enter_the_id_of_the_document: "\u8BF7\u8F93\u5165\u6587\u6863\u7684ID\uFF0C\u8DEF\u5F84\u6216URL\uFF08\u4E5F\u5305\u62EChttp\uFF1A//\uFF09"
+element_has_unsaved_changes: "\u5143\u7D20\u6709\u672A\u4FDD\u5B58\u7684\u66F4\u6539"
+element_unsaved_changes_message: "\u6240\u6709\u672A\u4FDD\u5B58\u7684\u66F4\u6539\u90FD\u5C06\u4E22\u5931\uFF0C\u60A8\u786E\u5B9A\u5417\uFF1F"
+newsletter_enableTrackingParameters: "\u5411\u94FE\u63A5\u6DFB\u52A0\u8DDF\u8E2A\u53C2\u6570"
+newsletter_sendingMode: "\u53D1\u9001\u6A21\u5F0F"
+newsletter_sendingmode_single: "\u5355\u4E2A\uFF08\u5355\u72EC\u6E32\u67D3\u6BCF\u4E2A\u90AE\u4EF6\uFF09"
+newsletter_sendingmode_batch: "\u6279\u91CF\uFF08\u4EC5\u6E32\u67D3\u4E00\u6B21\u90AE\u4EF6\uFF09"
+newsletter_sendingPanel: "\u901A\u8BAF\u53D1\u9001\u9762\u677F"
+newsletter_dirty_warning: "\u6D88\u606F\u5C1A\u672A\u4FDD\u5B58\u3002\u8BF7\u5148\u4FDD\u5B58\u3002"
+newsletter_sending: "\u53D1\u9001\u7B80\u62A5"
+newsletter_sourceAdapter: "\u5730\u5740\u6E90\u9002\u914D\u5668"
+newsletter_default: "\u9ED8\u8BA4\u5BF9\u8C61\u5217\u8868"
+newsletter_csvList: "CSV\u5217\u8868"
+newsletter_testsend: "\u901A\u8BAF\u6D4B\u8BD5\u53D1\u9001"
+newsletter_test_sent_message: "\u6D4B\u8BD5\u901A\u8BAF\u5DF2\u6210\u529F\u53D1\u9001"
+add_object_mbx_title: "\u6DFB\u52A0\u7C7B\u578B\u4E3A\uFF05s\u7684\u65B0\u5BF9\u8C61"
+newsletter_choose_report: "\u9009\u62E9\u4E00\u4EFD\u62A5\u544A"
+newsletter_email_field_name: "\u90AE\u4EF6\u5B57\u6BB5\u540D\u79F0"
+mode: "\u6A21\u5F0F"
+custom_download: "\u81EA\u5B9A\u4E49\u4E0B\u8F7D"
+original_file: "\u539F\u59CB\u6587\u4EF6"
+web_format: "\u7F51\u9875\u683C\u5F0F"
+print_format: "\u6253\u5370\u683C\u5F0F"
+office_format: "office\u683C\u5F0F"
+change_password: "\u4FEE\u6539\u5BC6\u7801"
+file_is_bigger_that_upload_limit: "\u4EE5\u4E0B\u6587\u4EF6\u5927\u4E8E\u670D\u52A1\u5668\u7684\u5B9E\u9645\u4E0A\u8F7D\u9650\u5236\uFF1A"
+send_test_email_success: "\u60A8\u7684\u6D4B\u8BD5\u7535\u5B50\u90AE\u4EF6\u5DF2\u53D1\u9001\u3002\u60A8\u662F\u5426\u8981\u6253\u5F00\u6B64\u7A97\u53E3\u518D\u6B21\u53D1\u9001\u7535\u5B50\u90AE\u4EF6\uFF1F"
+press_crtl_and_select_to_compare: "\u6309CTRL+\u5355\u51FB\u6BD4\u8F83"
+clear_filters: "\u6E05\u9664\u8FC7\u6EE4\u5668"
+tags_configuration: "\u6807\u7B7E\u914D\u7F6E"
+export_csv_include_headers: "\u5E26\u6807\u9898\u7684CSV\u5BFC\u51FA"
+open_data_object: "\u6253\u5F00\u6570\u636E\u5BF9\u8C61"
+data_objects: "\u6570\u636E\u5BF9\u8C61"
+asset_type_change_not_allowed: "<strong>\u6B64\u5904\u4EC5\u5141\u8BB8\u76F8\u540C\u7C7B\u578B\u7684\u6761\u4EF6</strong><br/>[\u4E0A\u4F20\u6761\u4EF6\u7684\u7C7B\u578B\uFF1A\u201C%s\u201D|\u73B0\u6709\u6761\u4EF6\u7684\u7C7B\u578B\uFF1A\u201C%s\u201D]"
+clear_content_of_selected_target_group: "\u6E05\u9664\u6240\u9009\u76EE\u6807\u7EC4\u7684\u5185\u5BB9"
+visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: "\u6B64\u9875\u9762\u7684\u8BBF\u95EE\u8005\u5C06\u81EA\u52A8\u4E0E\u6240\u9009\u76EE\u6807\u7EC4\u5173\u8054"
+assign_target_group: "\u5206\u914D\u76EE\u6807\u7EC4"
+assign_target_groups: "\u5206\u914D\u76EE\u6807\u7EC4"
 target_group: Target Group
-target_groups: Target Groups
-edit_content_for_target_group: Edit Content for Target Group
-email_reply_to: Reply To
-element_tag_filtered_tags: Filtered Tags
-web2print_addOverprint: Overprinting
-analyze_permissions: Analyze Permissions
-unique: Unique
-glue: Glue
-date_format: Date Format
-attribute: Attribute
-forward_attribute: Forward Attribute
-upper: Upper
-lower: Lower
-disabled: Disabled
-capitalization: Capitalization
-restrict_to_locales: Restrict to locales
-predefined: Predefined
-save_as_copy: Save as copy
-set_as_favourite: Set as favourite
-grid_configuration: Grid Configuration
-shared_users: Shared Users
-shared_roles: Shared Roles
-save_and_share: Save & Share
-save_copy_and_share: Save Copy & Share
-locale: Locale
-ellipses: Ellipses
-insensitive: Insensitive
-yes_value: Yes Value
-no_value: No Value
-count_empty: Count Empty
-as_array: As array
-metadata_field: Metadata field
-only_count: Only as count
-parameter: Parameter
-forward_parameter: Forward Parameter
-is_array: Array Type
-php_class: PHP Class
-additional_data: Additional Data
-flatten: Flatten
-return_last_result: Return last result
-skip_null: Skip Null
-expand_children: Expand children
-collapse_children: Collapse children
-multiply: Multiply
-divide: Divide
-apply_to_all_objects: Apply to all
-apply_to_all_objects_msg: There are other objects which already have their own favourite
-  settings. Do you want to apply this config to those as well?
-encode: Encode
-decode: Decode
-serialize: Serialize
-unserialize: Unserialize
-offset: Offset
-col_attribute: Collection Attribute
-brick_attribute: Brick Attribute
-csv_column_configuration: Column Configuration
-column: Column
-resolver_strategy: Resolver Strategy
-resolver_settings: Resolver Settings
-csv_settings: CSV Settings
-skipheadrow: Skip head row
-csv_file_preview: CSV File Preview
-save_as: Save as
-import_export_configuration: Import Export Configuration
-brick_type: Brick Type
-renderer: Renderer
-getter: Getter
-string: String
-row: Row
-import_report: Import Report
-import_errors: Some errors occurred. Check the import report!
-import_is_done: Import is done
-import_file_prefix: Prefix for new files
-create_parents: Create parents
-fullpath: Full Path
-create_on_demand: Create on demand
-get_by_resolver: Get By Attribute
-direct: Direct
-skip_empty_values: Skip empty values
-do_not_overwrite: Do not overwrite
-never: Never
-if_not_empty: If not empty
-always: Always
-delimiter: Delimiter
-share_globally: Share globally
-gdpr_data_extractor: GDPR Data Extractor
-no_configuration: No Configuration
-share_configurations: Share configurations
-enable_inheritance: Enable Inheritance
-object_settings: Object Settings
-drop_me_here: Drag an item from the tree and drop it here
-clear_hotspots_msg: This image contains additional data like markers or hotspots.
-  Do you want to clear them as well?
-restore_failed: Restore failed
-subtract: Subtract
-batch_append_all: Batch append to all
-batch_append_selected: Batch append to selected
-batch_append_to: Append data to all
-login_token_invalid_user_error: Invalid user.
-login_token_as_admin_non_admin_user_error: Only admin users are allowed to login as
-  an admin user.
-login_token_no_password_error: User has no password set.
-targeting_toolbar: Targeting Toolbar
-sort_children_by: Sort Children By
-by_key: Key (A to Z)
-by_index: Index (Manual)
-successful_object_change_children_sort_to_index: Changed object children sorting to
-  Index
-successful_object_change_children_sort_to_key: Changed object children sorting to
-  Key
+target_groups: "\u76EE\u6807\u7FA4\u4F53"
+edit_content_for_target_group: "\u7F16\u8F91\u76EE\u6807\u7EC4\u7684\u5185\u5BB9"
+email_reply_to: "\u56DE\u590D"
+element_tag_filtered_tags: "\u8FC7\u6EE4\u7684\u6807\u7B7E"
+web2print_addOverprint: "\u5957\u5370"
+analyze_permissions: "\u5206\u6790\u6743\u9650"
+unique: "\u72EC\u7279"
+glue: "\u9ECF\u5408"
+date_format: "\u65E5\u671F\u683C\u5F0F"
+attribute: "\u5C5E\u6027"
+forward_attribute: "\u8F6C\u53D1\u5C5E\u6027"
+upper: "\u5927\u5199"
+lower: "\u5C0F\u5199"
+disabled: "\u5931\u6548"
+capitalization: "\u5927\u5199"
+restrict_to_locales: "\u9650\u5236\u5230\u533A\u57DF\u8BBE\u7F6E"
+predefined: "\u9884\u5B9A\u4E49"
+save_as_copy: "\u53E6\u5B58\u4E3A\u526F\u672C"
+set_as_favourite: "\u8BBE\u7F6E\u4E3A\u504F\u597D"
+grid_configuration: "\u7F51\u683C\u914D\u7F6E"
+shared_users: "\u5171\u4EAB\u7528\u6237"
+shared_roles: "\u5171\u4EAB\u89D2\u8272"
+save_and_share: "\u4FDD\u5B58\u5E76\u5206\u4EAB"
+save_copy_and_share: "\u4FDD\u5B58\u590D\u5236\u548C\u5171\u4EAB"
+locale: "\u8BED\u8A00\u73AF\u5883"
+ellipses: "\u7701\u7565\u53F7"
+insensitive: "\u4E0D\u654F\u611F"
+yes_value: "\u662F\u7684"
+no_value: "\u4E0D\u662F"
+count_empty: "\u6570\u91CF\u6E05\u7A7A"
+as_array: "\u4F5C\u4E3A\u6570\u7EC4"
+metadata_field: "\u5143\u6570\u636E\u5B57\u6BB5"
+only_count: "\u53EA\u8BA1\u7B97\u6570\u91CF"
+parameter: "\u53C2\u6570"
+forward_parameter: "\u8F6C\u53D1\u53C2\u6570"
+is_array: "\u6570\u7EC4\u7C7B\u578B"
+php_class: "PHP\u7C7B"
+additional_data: "\u9644\u52A0\u6570\u636E"
+flatten: "\u53D8\u5E73"
+return_last_result: "\u8FD4\u56DE\u6700\u540E\u7684\u7ED3\u679C"
+skip_null: "\u8DF3\u8FC7\u7A7A\u503C"
+expand_children: "\u5C55\u5F00\u5B50\u8282\u70B9"
+collapse_children: "\u6298\u53E0\u5B50\u9879"
+multiply: "\u4E58\u4EE5"
+divide: "\u9664\u4EE5"
+apply_to_all_objects: "\u5E94\u7528\u5230\u6240\u6709"
+apply_to_all_objects_msg: "\u8FD8\u6709\u5176\u4ED6\u5BF9\u8C61\u5DF2\u7ECF\u62E5\u6709\u81EA\u5DF1\u559C\u6B22\u7684\u8BBE\u7F6E\u3002\u60A8\u662F\u5426\u4E5F\u60F3\u5C06\u6B64\u914D\u7F6E\u5E94\u7528\u4E8E\u8FD9\u4E9B\u914D\u7F6E\uFF1F"
+encode: "\u7F16\u7801"
+decode: "\u89E3\u7801"
+serialize: "\u8FDE\u8F7D"
+unserialize: "\u53CD\u5E8F\u5217\u5316"
+offset: "\u504F\u79FB\u91CF"
+col_attribute: "\u6536\u96C6\u5C5E\u6027"
+brick_attribute: "Brick\u5C5E\u6027"
+csv_column_configuration: "\u5217\u914D\u7F6E"
+column: "\u5217"
+resolver_strategy: "\u89E3\u6790\u5668\u7B56\u7565"
+resolver_settings: "\u89E3\u6790\u5668\u8BBE\u7F6E"
+csv_settings: "CSV\u8BBE\u7F6E"
+skipheadrow: "\u8DF3\u8FC7\u9876\u90E8\u884C"
+csv_file_preview: "CSV\u6587\u4EF6\u9884\u89C8"
+save_as: "\u53E6\u5B58\u4E3A"
+import_export_configuration: "\u5BFC\u5165\u5BFC\u51FA\u914D\u7F6E"
+brick_type: "Brick\u7C7B\u578B"
+renderer: "\u6E32\u67D3"
+getter: "\u83B7\u53D6"
+string: "\u5B57\u7B26\u4E32"
+row: "\u884C"
+import_report: "\u5BFC\u5165\u62A5\u544A"
+import_errors: "\u53D1\u751F\u4E86\u4E00\u4E9B\u9519\u8BEF\uFF0C\u8BF7\u68C0\u6D4B\u5BFC\u5165\u7684\u62A5\u544A\uFF01"
+import_is_done: "\u5BFC\u5165\u5B8C\u6210"
+import_file_prefix: "\u65B0\u6587\u4EF6\u524D\u7F00"
+create_parents: "\u521B\u5EFA\u7236\uFF08\u8282\u70B9\uFF09"
+fullpath: "\u5B8C\u6574\u8DEF\u5F84"
+create_on_demand: "\u6309\u9700\u521B\u5EFA"
+get_by_resolver: "\u6309\u5C5E\u6027\u503C\u83B7\u53D6"
+direct: "\u76F4\u63A5"
+skip_empty_values: "\u8DF3\u8FC7\u7A7A\u503C"
+do_not_overwrite: "\u8BF7\u52FF\u8986\u76D6"
+never: "\u4ECE\u4E0D"
+if_not_empty: "\u5982\u679C\u4E0D\u4E3A\u7A7A"
+always: "\u603B\u662F"
+delimiter: "\u5206\u9694\u7B26"
+share_globally: "\u5168\u5C40\u5206\u4EAB"
+gdpr_data_extractor: "GDPR\u6570\u636E\u63D0\u53D6\u5668"
+no_configuration: "\u6CA1\u6709\u914D\u7F6E"
+share_configurations: "\u5206\u4EAB\u914D\u7F6E"
+enable_inheritance: "\u542F\u7528\u7EE7\u627F"
+object_settings: "\u5BF9\u8C61\u8BBE\u7F6E"
+drop_me_here: "\u4ECE\u6811\u4E2D\u6293\u53D6\u4E00\u4E2A\u9879\u76EE\uFF0C\u5E76\u653E\u7F6E\u5728\u8FD9\u91CC"
+clear_hotspots_msg: "\u6B64\u56FE\u50CF\u5305\u542B\u6807\u8BB0\u6216\u70ED\u70B9\u7B49\u5176\u4ED6\u6570\u636E\u3002\u4F60\u60F3\u6E05\u9664\u5B83\u4EEC\u5417\uFF1F"
+restore_failed: "\u590D\u4F4D\u5931\u8D25\u4E86\u7684"
+subtract: "\u7B80\u4ECB"
+batch_append_all: "\u6279\u91CF\u6DFB\u52A0\u5230"
+batch_append_selected: "\u6279\u91CF\u6DFB\u52A0\u5230\u9009\u4E2D\u7684"
+batch_append_to: "\u5C06\u6570\u636E\u6DFB\u52A0\u5230"
+login_token_invalid_user_error: "\u65E0\u6548\u7684\u7528\u6237"
+login_token_as_admin_non_admin_user_error: "\u53EA\u6709\u7BA1\u7406\u5458\u7528\u6237\u624D\u80FD\u4EE5\u7BA1\u7406\u5458\u7528\u6237\u767B\u5F55"
+login_token_no_password_error: "\u7528\u6237\u672A\u8BBE\u7F6E\u5BC6\u7801"
+targeting_toolbar: "\u5B9A\u4F4D\u5DE5\u5177\u680F"
+sort_children_by: "\u5C06\u5B50\u7EA7\u6392\u5E8F\u4E3A"
+by_key: "\u952E\uFF08\u6309\u5B57\u6BCD\u987A\u5E8F\uFF09"
+by_index: "\u7D22\u5F15\uFF08\u624B\u52A8\u6392\u5E8F\uFF09"
+successful_object_change_children_sort_to_index: "\u5C06\u5BF9\u8C61\u5B50\u7EA7\u4EE5\u7D22\u5F15\u6392\u5E8F"
+successful_object_change_children_sort_to_key: "\u5C06\u5BF9\u8C61\u5B50\u7EA7\u4EE5\u952E\u6392\u5E8F"
 successful_publish_document: Document successfully published
 successful_publish_object: Object successfully published
 successful_unpublish_document: Document successfully unpublished
 successful_unpublish_object: Object successfully unpublished
-error_object_change_children_sort_to_index: Sort Children by Index is not possible
-  on paginated folder/tree.
-error_object_change_children_sort_to_key: Unable to change object children sorting
-  to Key
+error_object_change_children_sort_to_index: "\u65E0\u6CD5\u5C06\u5BF9\u8C61\u5B50\u7EA7\u6392\u5E8F\u66F4\u6539\u4E3A\u7D22\u5F15"
+error_object_change_children_sort_to_key: "\u65E0\u6CD5\u5C06\u5BF9\u8C61\u5B50\u9879\u6392\u5E8F\u66F4\u6539\u4E3A\u952E"
 error_publish_document: Document could not be published
 error_publish_object: Object could not be published
 error_unpublish_document: Document could not be unpublished
 error_unpublish_object: Object could not be unpublished
-edit_as_html: Edit as HTML
-edit_as_plain_text: Edit as plain text
-error_empty_file_upload: File is empty!
-type_column: Type column
-keep: keep
-clear_version_message: Do you really want to delete all non-published versions of
-  this element?
-clear_all: Clear All
-unlink_existing_document: Unlink existing Document
-grid_options: Grid Options
-save_grid_options: Save Grid Options
-download_selected_as_zip: Download selected items as ZIP
-please_select_items_to_download: Please select items to download in the list
-key_bindings: Key Bindings
-keybinding_openClassEditor: Open Class Editor
-keybinding_showMetaInfo: Show Meta Info
-keybinding_clearAllCaches: Clear all Caches
-keybinding_clearDataCache: Clear Data Cache
-scheduled_block_delete_all_in_past: Delete all past entries
-scheduled_block_really_delete_past: Really delete all entries scheduled in the past?
-scheduled_block_delete_all: Delete all entries
-scheduled_block_really_delete_all: Really delete all scheduled entries, including
-  future entries?
-2fa_disable: Disable 2FA
-renew_2fa_secret: Renew Two Factor Secret
-two_factor_authentication: Two Factor Authentication
-2fa_alert_text: Please scan the QR-Code and add it to your Google Authenticator. <br>If
-  you don't have the Google Authenticator app installed on your mobile phone, please
-  download it from the App Store/Play Store.<br><br> You will need to reload Pimcore
-  and enter the code shown within the App afterwards!
-2fa_alert_submit: Reload Pimcore & Enter Code
-setup_two_factor: Setup Two Factor Authentication
-2fa_setup_message: Two Factor Authentication is required for your account! You have
-  to set it up in your profile settings, otherwise you will not be able to sign in
-  again.
-set_focal_point: Set Focal Point
-quicksearch: Quick Search
-standard_preview: Standard Preview
-upload_new_version: Upload new version
-360_viewer: "360\xB0 Viewer"
-invalid_name: Invalid name
-clone: Clone
-enter_the_name_of_the_new_item: Enter the name of the new item
-html_tags: HTML-Tags
-clear_temporary_files: Clear temporary files
-error_pasting_item: Unable to paste item
-modificationdate: Modification Date
-blank: Blank
-message: Message
-from: From
-to: To
+edit_as_html: "\u7F16\u8F91\u4E3AHTML"
+edit_as_plain_text: "\u7F16\u8F91\u4E3A\u7EAF\u6587\u672C"
+error_empty_file_upload: "\u6587\u4EF6\u662F\u7A7A\u7684\uFF01"
+type_column: "\u952E\u5165\u5217"
+keep: "\u4FDD\u6301"
+clear_version_message: "\u60A8\u771F\u7684\u8981\u5220\u9664\u6B64\u5143\u7D20\u7684\u6240\u6709\u975E\u53D1\u5E03\u7248\u672C\u5417\uFF1F"
+clear_all: "\u5168\u90E8\u6E05\u9664"
+unlink_existing_document: "\u53D6\u6D88\u94FE\u63A5\u73B0\u6709\u6587\u6863"
+grid_options: "\u7F51\u683C\u9009\u9879"
+save_grid_options: "\u4FDD\u5B58\u7F51\u683C\u9009\u9879"
+download_selected_as_zip: "\u5C06\u6240\u9009\u9879\u76EE\u4E0B\u8F7D\u4E3A\u538B\u7F29\u6587\u4EF6"
+please_select_items_to_download: " \u8BF7\u5728\u5217\u8868\u4E2D\u9009\u62E9\u8981\u4E0B\u8F7D\u7684\u9879\u76EE"
+key_bindings: "\u952E\u7ED1\u5B9A"
+keybinding_openClassEditor: "\u6253\u5F00\u7C7B\u7F16\u8F91\u5668"
+keybinding_showMetaInfo: "\u663E\u793AMeta\u4FE1\u606F"
+keybinding_clearAllCaches: "\u6E05\u9664\u6240\u6709\u7F13\u5B58"
+keybinding_clearDataCache: "\u6E05\u9664\u6570\u636E\u7F13\u5B58"
+scheduled_block_delete_all_in_past: "\u5220\u9664\u6240\u6709\u901A\u8FC7\u7684\u6761\u76EE"
+scheduled_block_really_delete_past: "\u771F\u7684\u5220\u9664\u901A\u8FC7\u5B89\u6392\u7684\u6240\u6709\u6761\u76EE\u5417\uFF1F"
+scheduled_block_delete_all: "\u5220\u9664\u6240\u6709\u6761\u76EE"
+scheduled_block_really_delete_all: "\u771F\u7684\u8981\u5220\u9664\u6240\u6709\u9884\u5B9A\u6761\u76EE\uFF0C\u5305\u62EC\u672A\u6765\u7684\uFF1F"
+2fa_disable: "2FA \u5931\u6548"
+renew_2fa_secret: "\u66F4\u65B0\u53CC\u91CD\u5BC6\u7801"
+two_factor_authentication: "\u53CC\u91CD\u8BA4\u8BC1"
+2fa_alert_text: "\u8BF7\u626B\u63CFQR\u7801\u5E76\u5C06\u5176\u6DFB\u52A0\u5230\u60A8\u7684Google\u8EAB\u4EFD\u9A8C\u8BC1\u5668\u3002<br>\u5982\u679C\u60A8\u7684\u624B\u673A\u4E0A\u6CA1\u6709\u5B89\u88C5Google\u8EAB\u4EFD\u9A8C\u8BC1\u5668\u5E94\u7528\u7A0B\u5E8F\uFF0C\u8BF7\u4ECEApp
+  Store / Play\u5546\u5E97\u4E0B\u8F7D\u3002<br> <br>\u60A8\u9700\u8981\u91CD\u65B0\u52A0\u8F7DPimcore\u5E76\u8F93\u5165\u5E94\u7528\u7A0B\u5E8F\u4E2D\u663E\u793A\u7684\u4EE3\u7801\u7136\u540E\uFF01"
+2fa_alert_submit: "\u91CD\u65B0\u52A0\u8F7DPimcore\u5E76\u8F93\u5165\u4EE3\u7801"
+setup_two_factor: "\u8BBE\u7F6E\u53CC\u91CD\u8EAB\u4EFD\u9A8C\u8BC1"
+2fa_setup_message: "\u60A8\u7684\u5E10\u6237\u9700\u8981\u53CC\u91CD\u8EAB\u4EFD\u9A8C\u8BC1\uFF01\u60A8\u5FC5\u987B\u5728\u4E2A\u4EBA\u8D44\u6599\u8BBE\u7F6E\u4E2D\u8FDB\u884C\u8BBE\u7F6E\uFF0C\u5426\u5219\u60A8\u5C06\u65E0\u6CD5\u518D\u6B21\u767B\u5F55\u3002"
+set_focal_point: "\u8BBE\u7F6E\u7126\u70B9"
+quicksearch: "\u5FEB\u901F\u641C\u7D22"
+standard_preview: "\u6807\u51C6\u9884\u89C8"
+upload_new_version: "\u4E0A\u4F20\u65B0\u7248\u672C"
+360_viewer: "360\u5EA6\u89C6\u56FE"
+invalid_name: "\u540D\u79F0\u65E0\u6548"
+clone: "\u514B\u9686"
+enter_the_name_of_the_new_item: "\u8F93\u5165\u65B0\u9879\u76EE\u7684\u540D\u79F0"
+html_tags: " HTML\u6807\u7B7E"
+clear_temporary_files: "\u6E05\u9664\u4E34\u65F6\u6587\u4EF6"
+error_pasting_item: "\u65E0\u6CD5\u7C98\u8D34\u9879\u76EE"
+modificationdate: "\u4FEE\u6539\u65E5\u671F"
+blank: " \u7A7A\u767D"
+message: "\u4FE1\u606F"
+from: "\u4ECE"
+to: " \u81F3"
 html: HTML
-text: Text
-create_folder: Add Folder
-error_deleting_item: Could not delete item
-error_renaming_item: There was an error while renaming the item.
-revert: Revert
-parent: Parent
-merge_translations: Merge Translations
-prefix: Prefix
-load: Load
-saving_failed: Saving failed!
-failed_to_create_new_item: Failed to create new item, please try again.
-bundle: Bundle
-product: Product
-index_field_selection_field: Index Field Selection
-indexFieldSelectionField: Index Field Selection
-indexFieldSelectionField_settings: Settings (Multi Index Field Selection Field)
-indexFieldSelectionFieldMulti: Multiple Index Field Selection
-index_field_selection_combo: Index Field Combobox
-indexFieldSelectionCombo: Index Field Combobox
-indexFieldSelectionCombo_settings: Settings (Index Field Combobox)
-specificPriceField: Specific Price Field
-showAllFields: Show all Fields
-considerTenants: Consider Tenants
-bundle_ecommerce_mainmenu: Online Shop
+text: "\u6587\u672C"
+create_folder: "\u65B0\u589E\u6587\u4EF6\u5939"
+error_deleting_item: "\u65E0\u6CD5\u5220\u9664\u9879\u76EE"
+error_renaming_item: "\u91CD\u547D\u540D\u9879\u76EE\u65F6\u51FA\u9519\u3002"
+revert: "\u8FD8\u539F"
+parent: "\u7236"
+merge_translations: "\u5408\u5E76\u7FFB\u8BD1"
+prefix: "\u524D\u7F00"
+load: "\u52A0\u8F7D"
+saving_failed: "\u4FDD\u5B58\u5931\u8D25\uFF01"
+failed_to_create_new_item: "\u65E0\u6CD5\u521B\u5EFA\u65B0\u9879\u76EE\uFF0C\u8BF7\u91CD\u8BD5\u3002"
+bundle: "\u6346\u7ED1"
+product: "\u4EA7\u54C1"
+index_field_selection_field: "\u7D22\u5F15\u5B57\u6BB5\u9009\u62E9"
+indexFieldSelectionField: "\u7D22\u5F15\u5B57\u6BB5\u9009\u62E9"
+indexFieldSelectionField_settings: "\u8BBE\u7F6E\uFF08\u591A\u7D22\u5F15\u5B57\u6BB5\u9009\u62E9\u5B57\u6BB5\uFF09"
+indexFieldSelectionFieldMulti: "\u591A\u7D22\u5F15\u5B57\u6BB5\u9009\u62E9"
+index_field_selection_combo: "\u7D22\u5F15\u5B57\u6BB5\u7EC4\u5408\u6846"
+indexFieldSelectionCombo: "\u7D22\u5F15\u5B57\u6BB5\u7EC4\u5408\u6846"
+indexFieldSelectionCombo_settings: "\u8BBE\u7F6E\uFF08\u7D22\u5F15\u5B57\u6BB5\u7EC4\u5408\u6846\uFF09"
+specificPriceField: "\u7279\u6B8A\u4EF7\u683C\u5B57\u6BB5"
+showAllFields: "\u663E\u793A\u6240\u6709\u5B57\u6BB5"
+considerTenants: "\u8003\u91CF\u79DF\u6237"
+bundle_ecommerce_mainmenu: "\u7F51\u4E0A\u5546\u573A"
 bundle_ecommerce_pricing_rule: Pricing Rule
-bundle_ecommerce_pricing_rules: Pricing Rules
-bundle_ecommerce_pricing_config_behavior: Behavior
-bundle_ecommerce_pricing_config_additiv: Additiv
-bundle_ecommerce_pricing_config_stopExecute: Last rule
-bundle_ecommerce_pricing_config_condition_daterange: Date range
-bundle_ecommerce_pricing_config_condition_cart_amount: Cart amount
-bundle_ecommerce_pricing_config_condition_products: Products
-category: Category
+bundle_ecommerce_pricing_rules: "\u5B9A\u4EF7\u89C4\u5219"
+bundle_ecommerce_pricing_config_behavior: "\u884C\u4E3A"
+bundle_ecommerce_pricing_config_additiv: "\u7ED1\u5B9A\u5230\u7535\u5B50\u5546\u52A1\u5B9A\u4EF7\u7684\u9644\u52A0\u914D\u7F6E"
+bundle_ecommerce_pricing_config_stopExecute: "\u6700\u540E\u4E00\u6761\u89C4\u5219"
+bundle_ecommerce_pricing_config_condition_daterange: "\u65E5\u671F\u8303\u56F4"
+bundle_ecommerce_pricing_config_condition_cart_amount: "\u8D2D\u7269\u8F66\u91D1\u989D"
+bundle_ecommerce_pricing_config_condition_products: "\u4EA7\u54C1"
+category: "\u7C7B\u522B"
 bundle_ecommerce_pricing_config_condition_token: Token
-bundle_ecommerce_pricing_config_condition_sales: Sales
-bundle_ecommerce_pricing_config_condition_sold: Sold
-bundle_ecommerce_pricing_config_condition_sold_count: Count
-bundle_ecommerce_pricing_config_condition_sold_count_cart: Count Cart
-bundle_ecommerce_pricing_config_condition_voucherToken: Voucher
-bundle_ecommerce_pricing_config_condition_tenant: Tenant
-bundle_ecommerce_pricing_config_condition_targetgroup: Target Group
-bundle_ecommerce_pricing_config_condition_targetgroup_threshold: Threshold
-bundle_ecommerce_pricing_config_action_gift: Gift
-bundle_ecommerce_pricing_config_action_cart_discount: Cart discount
-bundle_ecommerce_pricing_config_action_cart_discount_percent: Discount in %
-bundle_ecommerce_pricing_config_action_cart_discount_amount: Absolute Discount
-bundle_ecommerce_pricing_config_action_product_discount: Product discount
-bundle_ecommerce_pricing_config_action_product_discount_percent: Discount in %
-bundle_ecommerce_pricing_config_action_product_discount_amount: Absolute Discount
-bundle_ecommerce_pricing_config_action_free_shipping: Free shipping
-bundle_ecommerce_pricing_rule_add: Add Pricing Rule
-bundle_ecommerce_pricing_rule_error: Error creating Pricing Rule
-ecommerce: E-Commerce
-preSelectMode: Pre Select Mode
-remote_single: Single Select from Remote
-remote_multi: Multi Select from Remote
-local_single: Single Select from predefined List
-local_multi: Multi Select from predefined List
-indexFieldSelection: Index Field Selection
-indexFieldSelection_settings: Index Field Selection Settings
-filtergroups: Filter Groups
-preSelect: Pre Select
-predefined_pre_select_options: Predefined pre select options
-bundle_ecommerce_clear_config_cache: Clear configuration cache
-bundle_ecommerce_back-office_order: Back Office - Ordering
-bundle_ecommerce_vouchertoolkit_tab: Voucher Details
-path: Path
-thumbnail: Thumbnail
-download_thumbnail: Download Thumbnail
-no_thumbnail_selected: No thumbnail selected
-list_thumbnail_in_download_section_on_image_detail_view: List as option in download
-  section on image detail view
-there_are_more_items: There are more items than displayed
-workflow_actions: Actions
-workflow_notes_requred_field_message: '"%s" is a required field.'
-workflow_transition_applied_successfully: Action applied successfully
-workflow_change_email_notification_subject: Workflow update for %s in workflow '%s'
-workflow_change_email_notification_text: For %s with ID %s the action "%s" was triggered
-  in workflow '%s'.
-workflow_change_email_notification_deeplink: Deeplink to the element.
-workflow_change_email_notification_note: 'Note Added:'
-workflow_details: Workflow Details
-workflow_graph: Workflow Graph
-workflow_current_state: Current State
-workflow_cmd_not_found: Please install the "%s" console executable on the server to
-  render the workflow graph.
-unit_width: Width Unit
-permission_missing: You need the '%s' permission to perform this action
-paste_as_language_variant: Paste as new language variant
-select_language_for_new_document: Select language for New Document
-source_document_language_missing: Set Language(Properties) in Source Document
-open_preview_in_new_window: Open preview in new window
-data: Data
-links: Links
-notes: Notes
-bool: Bool
-consent: Consent
-add_marker: Add marker
-identifier_warning: Be careful with the unique identifier because table names can
-  contain only up to 64 characters.
-unique_identifier: Unique identifier
-invalid_identifier: Invalid identifier
-identifier_already_exists: Identifier already exists
-content: Content
-send: Send
-you_can_only_drop_one_element_here: You can only drop one element here!
-translation: Translation
-delete_error_batch: Following items cannot be deleted, do you wanna proceed with deleting
-  the remaining?
-delete_error: 'The item cannot be deleted. Reason:'
-batch_edit_field_selected: Batch edit selected field
-batch_append_selected_to: Append data to selected
-enable_batch_edit_columns: Enable Batch Edit for Columns
-delete_all: Delete All
-open_linked_element: Open linked Element
-mark_as_read: Mark as read
-sender: Sender
-notifications: Notifications
-notifications_send: Send Notifications
-group: Group
-attachment: Attachment
-notification_has_been_sent: Notification has been sent
-recipient: Recipient
-this_field_is_required: This field is required
-paste_recursive_as_language_variant: Paste as new language variant (recursive)
-paste_no_new_language_error: All system languages already linked to source element.
-embedded_meta_data: Embedded Meta Info
-duration: Duration
-custom_metadata: Custom Metadata
-group_icon_class: Group Icon Class
-custom_report_permissions: Permission
-visible_to_users: Visible To Users
-visible_to_roles: Visible To Roles
-open_url: Open URL
-document_language_overview: Document Language Overview
-language_master: Master
-create_translation_inheritance: Create Translation (Inheritance)
-create_translation: Create Translation
-document_translation_parent_not_found: Parent document has no translation. Create
-  a translation for the parent first.
-paste_recursive_as_language_variant_updating_references: Paste language (recursive),
-  updating references
-redirects_expired_cleanup: Cleanup Expired Redirects
-redirects_cleanup_warning: Do you really want to cleanup expired redirects?
-redirects_cleanup_error: An error occurred while cleanup of expired redirects
-all_translations: All Translations
-only_unreferenced: only unreferenced
-split_view_settings: Split View Settings
-enable_split_view: Enable Split View
-disable_split_view: Disable Split View
-split_view_object_dirty_title: Please confirm
-split_view_object_dirty_msg: There are unsaved modifications. You will lose all changes.
-  Are you sure?
-converter_service: Converter service
-auto_convert: Automatic conversion
-web2print_enableDebugMode: Enable debug mode
-set_to_null: Empty (set to null)
-bundles: Bundles
-target_document_invalid: Please select a target document with valid language
-metainfo_copy_id: Copy ID to clipboard
-metainfo_copy_fullpath: Copy full path to clipboard
-metainfo_copy_deeplink: Copy deeplink to clipboard
-plain_text: Plain Text
-plain_text_email_part: Email Plain Text Part
-error_message: Error Message
-bundle_ecommerce_order_tab: Order Details
-access_denied: Access Denied!
-access_denied_description: You don't have sufficient permissions to open the element
-  or perform the desired action.
-validation_failed: Validation Failed!
-export_xlsx: XLSX Export
-object_export_warning: Please note that the export does not support all data types.
-  Press OK to continue with the export.
-web2print_enableLenientHttpsMode: Enable lenient HTTPS mode
-web2print_enableLenientHttpsMode_txt: Enable this option if PDFreactor fails to connect
-  successfully via HTTPS
-paste_clipboard: Paste Clipboard
-paste_here: Paste your clipboard data here
-asset_metadata: Asset Metadata
-predefined_metadata: Predefined Metadata
-default_metadata: Default Metadata
-asset_export_warning: Please note that the export does not support some fields(e.g.
-  preview, size). Press OK to continue with the export.
-share_via_notifications: Share via Notifications
-cannot_save_metadata_please_try_to_edit_the_metadata_in_asset: <b>Cannot save Metadata!</b><br
-  />Please try to edit the metadata in Asset.
-email_log_forward: Forward email
-sum: Sum
-area_brick_assign_info_message: Please use drag & drop to assign a brick to the desired
-  block
-batch_remove_all: Batch remove from all
-batch_remove_selected: Batch remove from selected
-batch_remove_from: Remove data from all
-batch_remove_selected_from: Remove data from selected
-unit_tooltip: Alternative units tooltip
-toggle_image_features_visibility: Toggle Image Feature Visibility
-detect_image_features: Detect Image Features
-remove_image_features: Remove Image Features
-available_sites: Available Sites
-fallback: Fallback
-add_site: Add Site
-domain_label_width: Domain label width
-complete_required_fields: 'Please complete following required fields to publish the
-  document:'
-Uncategorized: Uncategorized
-skip_if_exists: Skip row if exists
-php_class_or_service: Class or service name
-redirect_performance_warning: Using this feature has very bad effects on the performance
-  of the entire application, do you really want to continue?
-test_url: Test URL
-create_redirects: Create redirects to keep URLs working (incl. children)?
-auto_create: Auto create
-methods: Methods
-batch_operation: Batch Operation
-move: Move
-property_name: Property name
-force_value: Force value
-enable_grid_locking: Enable grid locking
-export_configuration: Export Configuration As JSON
-composite_indices: Composite indices
-default_value_generator: Default value generator service / class
-no_value_set: no value set
-replace_assignments_in_all_elements: Replace assignments in all elements
-fieldlookup: Field Lookup
-show_fieldlookup: Show Field Lookup
-different_number_of_columns: Different number of columns
-brick_limit_reached: 'Limit ({bricklimit}) reached for brick: {brickname}'
+bundle_ecommerce_pricing_config_condition_sales: "\u9500\u552E"
+bundle_ecommerce_pricing_config_condition_sold: "\u51FA\u552E"
+bundle_ecommerce_pricing_config_condition_sold_count: "\u6570\u91CF\n"
+bundle_ecommerce_pricing_config_condition_sold_count_cart: "\u8D2D\u7269\u8F66\u5185\u6570\u91CF"
+bundle_ecommerce_pricing_config_condition_voucherToken: "\u51ED\u8BC1"
+bundle_ecommerce_pricing_config_condition_tenant: "\u627F\u79DF\u4EBA"
+bundle_ecommerce_pricing_config_condition_targetgroup: "\u76EE\u6807\u7EC4"
+bundle_ecommerce_pricing_config_condition_targetgroup_threshold: "\u9608"
+bundle_ecommerce_pricing_config_action_gift: "\u793C\u7269"
+bundle_ecommerce_pricing_config_action_cart_discount: "\u8D2D\u7269\u8F66\u6298\u6263"
+bundle_ecommerce_pricing_config_action_cart_discount_percent: "\u6298\u6263\u7387"
+bundle_ecommerce_pricing_config_action_cart_discount_amount: "\u7EDD\u5BF9\u6298\u6263"
+bundle_ecommerce_pricing_config_action_product_discount: "\u4EA7\u54C1\u6298\u6263"
+bundle_ecommerce_pricing_config_action_product_discount_percent: "\u6298\u6263\u7387"
+bundle_ecommerce_pricing_config_action_product_discount_amount: "\u7EDD\u5BF9\u6298\u6263"
+bundle_ecommerce_pricing_config_action_free_shipping: "\u514D\u8D39\u9001\u8D27"
+bundle_ecommerce_pricing_rule_add: "\u6DFB\u52A0\u5B9A\u4EF7\u89C4\u5219"
+bundle_ecommerce_pricing_rule_error: "\u521B\u5EFA\u5B9A\u4EF7\u89C4\u5219\u65F6\u51FA\u9519"
+ecommerce: "\u7535\u5B50\u5546\u52A1"
+preSelectMode: "\u9884\u9009\u6A21\u5F0F"
+remote_single: "\u4ECE\u8FDC\u7A0B\u5355\u9009"
+remote_multi: "\u4ECE\u8FDC\u7A0B\u591A\u9009"
+local_single: "\u4ECE\u9884\u5B9A\u4E49\u5217\u8868\u4E2D\u5355\u9009"
+local_multi: "\u4ECE\u9884\u5B9A\u4E49\u5217\u8868\u4E2D\u591A\u9009"
+indexFieldSelection: "\u7D22\u5F15\u5B57\u6BB5\u9009\u62E9"
+indexFieldSelection_settings: "\u7D22\u5F15\u5B57\u6BB5\u9009\u62E9\u8BBE\u7F6E"
+filtergroups: "\u8FC7\u6EE4\u7EC4"
+preSelect: "\u9884\u9009\u62E9"
+predefined_pre_select_options: "\u9884\u5B9A\u4E49\u7684\u9884\u9009\u9009\u9879"
+bundle_ecommerce_clear_config_cache: "\u6E05\u9664\u914D\u7F6E\u7F13\u5B58"
+bundle_ecommerce_back-office_order: "\u540E\u53F0 - \u8BA2\u8D2D"
+bundle_ecommerce_vouchertoolkit_tab: "\u4F18\u60E0\u5238\u8BE6\u60C5"
+path: "\u8DEF\u5F84"
+thumbnail: "\u7F29\u7565\u56FE"
+download_thumbnail: "\u4E0B\u8F7D\u7F29\u7565\u56FE"
+no_thumbnail_selected: "\u672A\u9009\u62E9\u7F29\u7565\u56FE"
+list_thumbnail_in_download_section_on_image_detail_view: "\u5728\u56FE\u50CF\u8BE6\u7EC6\u4FE1\u606F\u89C6\u56FE\u7684\u4E0B\u8F7D\u90E8\u5206\u4E2D\u5217\u51FA\u9009\u9879"
+there_are_more_items: "\u9879\u76EE\u6570\u91CF\u591A\u4E8E\u663E\u793A\u7684\u6570\u91CF"
+workflow_actions: "\u64CD\u4F5C"
+workflow_notes_requred_field_message: "\u201C\uFF05s\u201D\u662F\u5FC5\u586B\u5B57\u6BB5\u3002"
+workflow_transition_applied_successfully: "\u64CD\u4F5C\u6210\u529F\u5E94\u7528"
+workflow_change_email_notification_subject: "\u5DE5\u4F5C\u6D41'\uFF05s'\u4E2D\uFF05s\u7684\u5DE5\u4F5C\u6D41\u7A0B\u66F4\u65B0"
+workflow_change_email_notification_text: "\u5BF9\u4E8EID\u4E3A\uFF05s\u7684\uFF05s\uFF0C\u5728\u5DE5\u4F5C\u6D41'\uFF05s'\u4E2D\u89E6\u53D1\u4E86\u64CD\u4F5C\u201C\uFF05s\u201D\u3002"
+workflow_change_email_notification_deeplink: "\u6DF1\u5C42\u94FE\u63A5\u5230\u5143\u7D20\u3002"
+workflow_change_email_notification_note: "\u6CE8\u610F\u5DF2\u6DFB\u52A0\uFF1A"
+workflow_details: "\u5DE5\u4F5C\u6D41\u8BE6\u7EC6\u4FE1\u606F"
+workflow_graph: "\u5DE5\u4F5C\u6D41\u7A0B\u56FE"
+workflow_current_state: "\u5F53\u524D\u72B6\u6001"
+workflow_cmd_not_found: "\u8BF7\u5728\u670D\u52A1\u5668\u4E0A\u5B89\u88C5\u201C\uFF05s\u201D\u63A7\u5236\u53F0\u53EF\u6267\u884C\u6587\u4EF6\u4EE5\u5448\u73B0\u5DE5\u4F5C\u6D41\u7A0B\u56FE\u3002"
+unit_width: "\u5BBD\u5EA6\u5355\u4F4D"
+permission_missing: "\u60A8\u9700\u8981 '%s'\u8BB8\u53EF\u4EE5\u7EE7\u7EED\u6B64\u64CD\u4F5C"
+paste_as_language_variant: "\u8F6C\u5E16\u4E3A\u65B0\u8BED\u8A00\u53D8\u91CF"
+select_language_for_new_document: "\u4E3A\u65B0\u6587\u4EF6\u9009\u62E9\u8BED\u8A00"
+source_document_language_missing: "\u5728\u6E90\u6587\u6863\u4E2D\u8BBE\u7F6E\u8BED\u8A00\uFF08\u5C5E\u6027\uFF09"
+open_preview_in_new_window: "\u5728\u65B0\u7A97\u53E3\u6253\u5F00\u9884\u89C8"
+data: "\u6570\u636E"
+links: "\u94FE\u63A5"
+notes: "\u7B14\u8BB0"
+bool: "\u5E03\u5C14"
+consent: "\u540C\u610F"
+add_marker: "\u6DFB\u52A0\u6807\u8BB0"
+identifier_warning: "\u8BF7\u6CE8\u610F\u552F\u4E00\u6807\u8BC6\u7B26\uFF0C\u56E0\u4E3A\u8868\u540D\u6700\u591A\u53EA\u80FD\u5305\u542B
+  64 \u4E2A\u5B57\u7B26\u3002 "
+unique_identifier: "\u552F\u4E00\u6807\u8BC6"
+invalid_identifier: "\u6709\u6548\u6807\u8BC6"
+identifier_already_exists: "\u6807\u8BC6\u5DF2\u7ECF\u5B58\u5728"
+content: "\u5185\u5BB9"
+send: "\u53D1\u9001"
+you_can_only_drop_one_element_here: "\u60A8\u53EA\u80FD\u5728\u6B64\u5904\u653E\u7F6E\u4E00\u4E2A\u5143\u7D20\uFF01"
+translation: "\u7FFB\u8BD1"
+delete_error_batch: "\u4EE5\u4E0B\u9879\u76EE\u65E0\u6CD5\u5220\u9664\uFF0C\u60A8\u8981\u7EE7\u7EED\u5220\u9664\u5176\u4F59\u9879\u76EE\u5417\uFF1F"
+delete_error: "\u6B64\u6761\u76EE\u4E0D\u80FD\u88AB\u5220\u9664\uFF0C\u539F\u56E0\uFF1A"
+batch_edit_field_selected: "\u6279\u91CF\u7F16\u8F91\u9009\u5B9A\u5B57\u6BB5"
+batch_append_selected_to: "\u5C06\u6570\u636E\u9644\u52A0\u5230\u9009\u5B9A"
+enable_batch_edit_columns: "\u4E3A\u5217\u542F\u7528\u6279\u91CF\u7F16\u8F91"
+delete_all: "\u5220\u9664\u5168\u90E8"
+open_linked_element: "\u6253\u5F00\u94FE\u63A5\u5143\u7D20"
+mark_as_read: "\u6807\u8BB0\u4E3A\u5DF2\u8BFB"
+sender: "\u53D1\u9001\u65B9"
+notifications: "\u901A\u77E5"
+notifications_send: "\u53D1\u9001\u901A\u77E5"
+group: "\u7EC4"
+attachment: "\u9644\u4EF6"
+notification_has_been_sent: "\u901A\u77E5\u5DF2\u7ECF\u53D1\u9001"
+recipient: "\u63A5\u6536\u65B9"
+this_field_is_required: "\u5FC5\u586B"
+paste_recursive_as_language_variant: "\u7C98\u8D34\u4E3A\u65B0\u7684\u8BED\u8A00\u53D8\u4F53\uFF08\u9012\u5F52\uFF09"
+paste_no_new_language_error: "\u6240\u6709\u7CFB\u7EDF\u8BED\u8A00\u90FD\u5DF2\u94FE\u63A5\u5230\u6E90\u5143\u7D20\u3002"
+embedded_meta_data: "\u5D4C\u5165\u5F0F\u5143\u4FE1\u606F"
+duration: "\u671F\u95F4"
+custom_metadata: "\u5BA2\u5236\u5316\u5143\u6570\u636E"
+group_icon_class: "\u7EC4\u56FE\u6807\u7C7B"
+custom_report_permissions: "\u5141\u8BB8"
+visible_to_users: "\u7528\u6237\u53EF\u89C1"
+visible_to_roles: "\u89D2\u8272\u53EF\u89C1"
+open_url: "\u6253\u5F00URL"
+document_language_overview: "\u6587\u4EF6\u8BED\u8A00\u9884\u89C8"
+language_master: "\u6BCD\u7248"
+create_translation_inheritance: "\u521B\u5EFA\u7FFB\u8BD1\uFF08\u7EE7\u627F\uFF09"
+create_translation: "\u521B\u5EFA\u7FFB\u8BD1"
+document_translation_parent_not_found: "\u7236\u6587\u6863\u6CA1\u6709\u7FFB\u8BD1\u3002
+  \u9996\u5148\u4E3A\u7236\u7EA7\u521B\u5EFA\u7FFB\u8BD1\u3002"
+paste_recursive_as_language_variant_updating_references: "\u7C98\u8D34\u8BED\u8A00\uFF08\u9012\u5F52\uFF09\uFF0C\u66F4\u65B0\u5F15\u7528"
+redirects_expired_cleanup: "\u6E05\u7406\u8FC7\u671F\u7684\u91CD\u5B9A\u5411"
+redirects_cleanup_warning: "\u60A8\u771F\u7684\u8981\u6E05\u7406\u8FC7\u671F\u7684\u91CD\u5B9A\u5411\u5417\uFF1F"
+redirects_cleanup_error: "\u6E05\u7406\u8FC7\u671F\u91CD\u5B9A\u5411\u65F6\u51FA\u9519"
+all_translations: "\u6240\u6709\u7FFB\u8BD1"
+only_unreferenced: "\u53EA\u6709\u672A\u5F15\u7528"
+split_view_settings: "\u5206\u89C6\u56FE\u8BBE\u7F6E"
+enable_split_view: "\u542F\u7528\u5206\u5272\u89C6\u56FE"
+disable_split_view: "\u7981\u7528\u5206\u5272\u89C6\u56FE"
+split_view_object_dirty_title: "\u8BF7\u786E\u8BA4"
+split_view_object_dirty_msg: "\u8FD8\u6709\u4E00\u4E9B\u672A\u7ECF\u4FDD\u5B58\u7684\u66F4\u6539"
+converter_service: "\u8F6C\u6362\u5668\u670D\u52A1"
+auto_convert: "\u81EA\u52A8\u8F6C\u6362"
+web2print_enableDebugMode: "\u5F00\u542F\u8C03\u8BD5\u6A21\u5F0F"
+set_to_null: "\u7A7A\u767D(\u8BBE\u7F6E\u4E3Anull)"
+bundles: "\u4E00\u6346"
+target_document_invalid: "\u8BF7\u9009\u62E9\u4E00\u4E2A\u5177\u6709\u6548\u8BED\u8A00\u7684\u76EE\u6807\u6587\u4EF6"
+metainfo_copy_id: "\u5C06ID\u590D\u5236\u5230\u526A\u8D34\u677F"
+metainfo_copy_fullpath: "\u5C06\u5168\u8DEF\u5F84\u590D\u5236\u5230\u526A\u8D34\u677F"
+metainfo_copy_deeplink: "\u5C06\u6DF1\u5C42\u94FE\u63A5\u590D\u5236\u5230\u526A\u8D34\u677F"
+plain_text: "\u7EAF\u6587\u672C"
+plain_text_email_part: "\u7535\u5B50\u90AE\u4EF6\u7684\u7EAF\u6587\u672C\u90E8\u5206"
+error_message: "\u9519\u8BEF\u6D88\u606F"
+bundle_ecommerce_order_tab: "\u8BA2\u5355\u660E\u7EC6"
+access_denied: "\u8BBF\u95EE\u88AB\u62D2\u7EDD\uFF01"
+access_denied_description: "\u60A8\u6CA1\u6709\u8DB3\u591F\u7684\u6743\u9650\u6253\u5F00\u5143\u7D20\u6216\u6267\u884C\u6240\u9700\u7684\u64CD\u4F5C\u3002"
+validation_failed: "\u6821\u9A8C\u5931\u8D25\uFF01"
+export_xlsx: "\u5BFC\u51FAxlsx"
+object_export_warning: "\u8BF7\u6CE8\u610F\uFF0C\u5BFC\u51FA\u64CD\u4F5C\u5E76\u4E0D\u652F\u6301\u6240\u6709\u7684\u6570\u636E\u7C7B\u578B\u3002
+  \u6309 OK \u7EE7\u7EED\u5BFC\u51FA\u3002"
+web2print_enableLenientHttpsMode: "\u542F\u7528\u5BBD\u677E\u7684 HTTPS \u6A21\u5F0F"
+web2print_enableLenientHttpsMode_txt: "\u5982\u679CPDF reactor \u65E0\u6CD5\u6210\u529F\u901A\u8FC7HTTPS\u8FDE\u63A5\uFF0C\u8BF7\u542F\u7528\u6B64\u9009\u9879\u3002"
+paste_clipboard: "\u7C98\u8D34\u81EA\u526A\u5207\u677F"
+paste_here: "\u628A\u4F60\u7684\u6570\u636E\u7C98\u8D34\u5230\u8FD9\u91CC"
+asset_metadata: "\u8D44\u4EA7\u5143\u6570\u636E"
+predefined_metadata: "\u9884\u5B9A\u4E49\u5143\u6570\u636E"
+default_metadata: "\u7F3A\u7701\u5143\u6570\u636E"
+asset_export_warning: "\u8BF7\u6CE8\u610F\uFF0C\u5BFC\u51FA\u64CD\u4F5C\u4E0D\u652F\u6301\u67D0\u4E9B\u5B57\u6BB5\uFF08\u4F8B\u5982\uFF1Apreview,
+  size\uFF09\u3002 \u6309 OK \u7EE7\u7EED\u5BFC\u51FA\u3002"
+share_via_notifications: "\u901A\u8FC7\u901A\u77E5\u5206\u4EAB"
+cannot_save_metadata_please_try_to_edit_the_metadata_in_asset: "<b>\u65E0\u6CD5\u4FDD\u5B58\u5143\u6570\u636E!</b><br/>\u8BF7\u5C1D\u8BD5\u7F16\u8F91\u8D44\u4EA7\u4E2D\u7684\u5143\u6570\u636E\u3002\n"
+email_log_forward: "\u8F6C\u53D1\u90AE\u4EF6"
+sum: "\u603B\u8BA1"
+area_brick_assign_info_message: "\u8BF7\u4F7F\u7528\u62D6\u653E\u5C06Brick\u5206\u914D\u7ED9\u6240\u9700\u7684\u533A\u5757"
+batch_remove_all: "\u6279\u91CF\u79FB\u9664\u6240\u6709"
+batch_remove_selected: "\u6279\u91CF\u79FB\u9664\u6240\u9009"
+batch_remove_from: "\u79FB\u9664\u6240\u6709\u6570\u636E"
+batch_remove_selected_from: "\u79FB\u9664\u6240\u9009\u6570\u636E"
+unit_tooltip: "\u66FF\u4EE3\u5355\u5143\u5DE5\u5177\u63D0\u793A"
+toggle_image_features_visibility: "\u5207\u6362\u56FE\u50CF\u529F\u80FD\u7684\u53EF\u89C1\u6027"
+detect_image_features: "\u5220\u9664\u56FE\u50CF\u529F\u80FD"
+remove_image_features: "\u79FB\u9664\u56FE\u50CF\u529F\u80FD"
+available_sites: "\u53EF\u7528\u7AD9\u70B9"
+fallback: "\u56DE\u9000"
+add_site: "\u6DFB\u52A0\u7AD9\u70B9"
+domain_label_width: "\u57DF\u6807\u7B7E\u5BBD\u5EA6"
+complete_required_fields: "\u8BF7\u586B\u5199\u4EE5\u4E0B\u5FC5\u586B\u5B57\u6BB5\u4EE5\u53D1\u5E03\u6587\u6863\uFF1A"
+Uncategorized: "\u672A\u5206\u7C7B"
+skip_if_exists: "\u5982\u679C\u5B58\u5728\u5219\u8DF3\u8FC7\u884C"
+php_class_or_service: "\u7C7B\u6216\u670D\u52A1\u540D\u79F0"
+redirect_performance_warning: "\u4F7F\u7528\u6B64\u529F\u80FD\u5C06\u4F1A\u5BF9\u6574\u4E2A\u5E94\u7528\u7A0B\u5E8F\u7684\u6027\u80FD\u9020\u6210\u4E0D\u826F\u5F71\u54CD\uFF0C\u60A8\u786E\u5B9A\u8981\u7EE7\u7EED\u5417\uFF1F"
+test_url: "\u6D4B\u8BD5URL"
+create_redirects: "\u521B\u5EFA\u91CD\u5B9A\u5411\u4EE5\u4FDD\u6301 URL \u6B63\u5E38\u5DE5\u4F5C\uFF08\u5305\u542B\u5B50\uFF09\uFF1F "
+auto_create: "\u81EA\u52A8\u521B\u5EFA"
+methods: "\u65B9\u6CD5"
+batch_operation: "\u6279\u91CF\u64CD\u4F5C"
+move: "\u79FB\u52A8"
+property_name: "\u5C5E\u6027\u540D\u79F0"
+force_value: "\u5F3A\u5236\u503C"
+enable_grid_locking: "\u542F\u7528\u7F51\u683C\u9501\u5B9A"
+export_configuration: "\u5C06\u914D\u7F6E\u5BFC\u51FA\u4E3AJSON"
+composite_indices: "\u7EFC\u5408\u6307\u6570"
+default_value_generator: "\u9ED8\u8BA4\u503C\u751F\u6210\u5668\u670D\u52A1\uFF08\u6216\u7C7B\uFF09"
+no_value_set: "\u672A\u8BBE\u7F6E\u503C"
+replace_assignments_in_all_elements: "\u66FF\u6362\u6240\u6709\u5143\u7D20\u4E2D\u7684\u5206\u914D"
+fieldlookup: "\u5B57\u6BB5\u67E5\u627E"
+show_fieldlookup: "\u663E\u793A\u5B57\u6BB5\u67E5\u627E"
+different_number_of_columns: "\u5217\u6570\u4E0D\u76F8\u7B49"
+brick_limit_reached: "{brickname}\u90E8\u4EF6\u8FBE\u5230\u9650\u5236\u6570 ({bricklimit})
+  \n"
 generate_type_declarations: Generate Type Declarations
-batch_change_language: Batch update language
-preview_item: Preview Item
-by_key_reverse: Key (Z to A)
-deprecated: Deprecated
-version_currently_saved_in_database: Currently saved in database (but not published)
-deprecated_feature: '<span style=''color: orange;''>Deprecated feature. Use %s instead</span>'
-edit_as_custom_text: Edit as custom text
-symfony_translation_link: 'Translation Format: https://symfony.com/doc/current/translation/message_format.html'
-no_action_available: No action available
+batch_change_language: "\u6279\u91CF\u66F4\u65B0\u8BED\u8A00"
+preview_item: "\u9884\u89C8\u9879\u76EE"
+by_key_reverse: "\u952E\uFF08Z\u5230A\uFF09"
+deprecated: "\u5DF2\u5F03\u7528"
+version_currently_saved_in_database: "\u5F53\u524D\u4FDD\u5B58\u8FDB\u6570\u636E\u5E93\uFF08\u4F46\u5E76\u672A\u53D1\u5E03\uFF09"
+deprecated_feature: "<p style='color: orange;'>\u5DF2\u5F03\u7528\u7684\u529F\u80FD\uFF0C\u8BF7\u6539\u7528\uFF1A%s</p>\n"
+edit_as_custom_text: "\u7F16\u8F91\u4E3A\u81EA\u5B9A\u4E49\u6587\u672C "
+symfony_translation_link: "\u7FFB\u8BD1\u683C\u5F0F\uFF1Ahttps://symfony.com/doc/current/translation/message_format.html\n"
+no_action_available: "\u6CA1\u6709\u53EF\u7528\u7684\u64CD\u4F5C"
 bricks: Bricks
-draft: Draft
-auto_save: Auto save
-save_draft: Save draft
-selected_grid_columns: Selected grid columns
-ungrouped: ungrouped
-reindex_warning: Changing it from alphabetical sort order to index will reindex all
-  items. Do you want to continue?
-filter_by_relation: Filter by relation
-filter_by_relation_field: Filter by relation field
-clear_relation_filter: Clear active relation filter
-apply_filter: Apply filter
-config_not_writeable: Not writable, this can have several reasons. For details please
-  have a look into the docs.
-sites: Sites
-file_exists: File already exists
-asset_upload_want_to_overwrite: Do you want to overwrite file %s?
-asset_upload_overwrite: Overwrite
-asset_upload_keep_both: Keep both files
+draft: "\u8349\u7A3F"
+auto_save: "\u81EA\u52A8\u4FDD\u5B58"
+save_draft: "\u4FDD\u5B58\u8349\u7A3F"
+selected_grid_columns: "\u6240\u9009\u7F51\u683C\u5217"
+ungrouped: "\u672A\u5206\u7EC4"
+reindex_warning: "\u5C06\u5176\u4ECE\u6309\u5B57\u6BCD\u6392\u5E8F\u987A\u5E8F\u6539\u4E3A\u7D22\u5F15\u7684\u8BDD\uFF0C\u5C06\u4F1A\u91CD\u65B0\u7D22\u5F15\u6240\u6709\u9879\u76EE\u3002
+  \u4F60\u786E\u5B9A\u8981\u7EE7\u7EED\u5417\uFF1F "
+filter_by_relation: "\u6309\u5173\u7CFB\u8FC7\u6EE4"
+filter_by_relation_field: "\u6309\u5173\u7CFB\u5B57\u6BB5\u8FC7\u6EE4"
+clear_relation_filter: "\u6E05\u9664\u6D3B\u52A8\u7684\u5173\u7CFB\u8FC7\u6EE4\u5668"
+apply_filter: "\u5E94\u7528\u8FC7\u6EE4\u5668"
+config_not_writeable: "\u65E0\u6CD5\u5199\u5165\uFF0C\u539F\u56E0\u53EF\u80FD\u6709\u5F88\u591A\u3002
+  \u6709\u5173\u8BE6\u7EC6\u4FE1\u606F\uFF0C\u8BF7\u67E5\u770B\u6587\u6863\u3002 "
+sites: "\u7AD9\u70B9"
+file_exists: "\u6587\u4EF6\u5DF2\u5B58\u5728"
+asset_upload_want_to_overwrite: "\u4F60\u786E\u5B9A\u8981\u8986\u76D6\u6587\u4EF6%s\u5417\uFF1F\n"
+asset_upload_overwrite: "\u8986\u76D6"
+asset_upload_keep_both: "\u4FDD\u7559\u4E24\u4E2A\u6587\u4EF6"
 asset_upload_apply_to_all: Apply to all
 asset_upload_skip: Skip
-could_not_open_zip_file: The uploaded zip file could not be opened.
+could_not_open_zip_file: "\u65E0\u6CD5\u6253\u5F00\u5DF2\u4E0A\u4F20\u7684zip\u6587\u4EF6\u3002"
 objects_sort_method: Change data objects sort method
 link_recursion_error: The link is redirecting to itself, causing an infinite loop
 no_further_classes_allowed: No further classes allowed

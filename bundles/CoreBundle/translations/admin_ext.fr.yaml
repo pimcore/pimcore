@@ -1,765 +1,805 @@
 ---
-invert_colors_on_login_screen: Invert Colors on Login Screen
-encrypt_data: Encrypt Data
-encrypt_data_description: Data-at-Rest/Tablespace Encryption needs to be enabled on
-  your Database Server
-many_to_one_relation: Many-To-One Relation
-many_to_many_relation: Many-To-Many Relation
-many_to_many_object_relation: Many-To-Many Object Relation
-advanced_many_to_many_relation: Advanced Many-To-Many Relation
-advanced_many_to_many_object_relation: Advanced Many-To-Many Object Relation
-reverse_object_relation: Reverse Object Relation
-url_slug: URL Slug
-url_slug_datatype_info: Enter the controller & action in the following format:<br>App\Controller\ProductController:slugAction
-controller_action: Controller & Action
-admin_interface: Admin Interface
-admin_interface_background: Admin Interface Background
-icon_library: Icon Library
-system_performance_stability_warning: Please do not perform this action unless you
-  are sure what you are doing.<br /><b style='color:red'>This action can have a major
-  impact onto the stability and performance of the entire system, and may causes an
-  overload or complete crash of the server!</b><br /><br />Are you sure?
-login_screen: Login Screen
-color_description: 'Use the HTML hex format, eg. #ffffff'
-colors: Colors
-media: Media
-custom_logo: Custom Logo
-custom_login_background_image: Custom Login Background Image
-branding_logo_description: Used on the login and start screen. We recommend to use
-  a SVG (JPG & PNG are supported as well).
-appearance_and_branding: Appearance & Branding
-brightness: Brightness
+invert_colors_on_login_screen: "Inverser les couleurs sur l'\xE9cran de connexion"
+encrypt_data: "Crypter les donn\xE9es"
+encrypt_data_description: "Data-at-Rest/Tablespace Encryption doit \xEAtre activ\xE9
+  sur votre serveur de base de donn\xE9es"
+many_to_one_relation: "Relation plusieurs \xE0 un"
+many_to_many_relation: "Relation plusieurs \xE0 plusieurs"
+many_to_many_object_relation: "Relation objet plusieurs \xE0 plusieurs"
+advanced_many_to_many_relation: "Relation avanc\xE9e plusieurs \xE0 plusieurs"
+advanced_many_to_many_object_relation: "Relation objet avanc\xE9e plusieurs \xE0 plusieurs"
+reverse_object_relation: "Relation objet invers\xE9e"
+url_slug: Slug URL
+url_slug_datatype_info: "Entrez le contr\xF4leur et l'action au format suivant : <br>AppBundle\\Controller\\ProductController:slugAction"
+controller_action: "Contr\xF4leur et action"
+admin_interface: Interface d'administration
+admin_interface_background: Fond de l'interface d'administration
+icon_library: "Biblioth\xE8que d'ic\xF4nes"
+system_performance_stability_warning: "Veuillez ne pas effectuer cette action, sauf
+  si vous \xEAtes s\xFBr de ce que vous faites. <br /><b style='color: red'>Cette
+  action peut avoir un impact majeur sur la stabilit\xE9 et les performances de l'ensemble
+  du syst\xE8me, et peut causer une surcharge ou crash complet du serveur !</b><br
+  /><br />Etes-vous s\xFBr ?"
+login_screen: Ecran de connexion
+color_description: "Utiliser le format HTML hexad\xE9cimal, par exemple #ffffff"
+colors: Couleurs
+media: "M\xE9dias"
+custom_logo: "Logo personnalis\xE9"
+custom_login_background_image: "Image de fond de connexion personnalis\xE9e"
+branding_logo_description: "Utilis\xE9 sur l'\xE9cran de connexion et de d\xE9marrage.
+  Nous recommandons d'utiliser un SVG (JPG et PNG sont \xE9galement support\xE9s)."
+appearance_and_branding: Apparence et image de marque
+brightness: "Luminosit\xE9"
 saturation: Saturation
-hue: Hue
-addoverlay_fit: Add Overlay Fit
-environments: Environments
+hue: Teinte
+addoverlay_fit: Ajouter Adaptation
+environments: Environnements
 test: Test
-colorspace: Colorspace
+colorspace: Espace de couleurs
 ratio: Ratio
-decimal_size: Decimal size
-decimal_precision: Decimal precision
-decimal_mysql_type_info: If decimal size or precision are specified, <code>DECIMAL(decimalSize,
-  decimalPrecision)</code> MySQL type is used. Default values if missing are <code>64</code>
-  as size and <code>0</code> as precision.
-decimal_mysql_type_naming_warning: Please note that in MySQL terms, the <code>decimalSize</code>
-  is called <code>precision</code> and the <code>decimalPrecision</code> is called
-  <code>scale</code>.
-only_unsigned: only unsigned
-integer: Integer
-static: Static
-object_regex_info: RegExp without delimiters, has to work in both JS and PHP
-regex_validation: Regular Expression Validation
-test_string: Test string
+decimal_size: "Taille d\xE9cimale"
+decimal_precision: "Pr\xE9cision d\xE9cimale"
+decimal_mysql_type_info: "Si la taille ou la pr\xE9cision d\xE9cimale est sp\xE9cifi\xE9e,
+  <code>DECIMAL(decimalSize, decimalPrecision)</ code> MySQL type est utilis\xE9.
+  Si non sp\xE9cifi\xE9, les valeurs par d\xE9faut  sont <code>64</ code> comme taille
+  et <code>0</ code> comme pr\xE9cision."
+decimal_mysql_type_naming_warning: "Veuillez noter qu'en termes de MySQL, le <code>decimalSize</
+  code> est appel\xE9 <code>precision</ code> et le <code>decimalPrecision</ code>
+  est appel\xE9 <code>scale</ code>."
+only_unsigned: Positif uniquement
+integer: Entier
+static: Statique
+object_regex_info: "Expression r\xE9guli\xE8re sans d\xE9limiteur, doit fonctionner
+  avec PHP et Javascript"
+regex_validation: "Validation d'expression r\xE9guli\xE8re"
+test_string: "Test cha\xEEne"
 regex: RegEx
-regex_flags: RegEx Flags
-code_before_init: Code before init
-code_after_pageview: Code after pageview
-code_before_pageview: Code before pageview
-select_presetting: Select a presetting
-good: Good
-best: Best
-1x1_pixel_placeholder: 1x1 Pixel Placeholder
-1x1_pixel_placeholder_description: Just returns a 1x1 pixel GIF base64 encoded, in
-  case you don't want to display an image for a certain condition
-average: Average
-enter_media_query: Please enter a valid CSS media query
-add_media_query: Add Media Query
-add_media_segment: Add Media Segment
-enter_media_segment: Please enter a valid bitrate(e.g. 400k, 1500k, 1M) for video
-  segment
-dash_media_message: This option generates a single .mpd file with media segments(bitrates)
-specific_settings: Specific Settings
-login_as_this_user_description: 'The following link is a temporary link that allows
-  you to login as this user in a different browser:'
-login_as_this_user: Login as this user in a different browser
-allowed_types_to_create: Allowed types to create
-defaults_to_all: Defaults to all
-analytics_universal_configuration: 'Universal/GTag Analytics Configuration eg. {''cookieDomain'':
+regex_flags: Drapeaux RegEx
+code_before_init: Code avant initialisation
+code_after_pageview: "Code apr\xE8s la vue de page"
+code_before_pageview: Code avant la vue de page
+select_presetting: "S\xE9lectionnez un pr\xE9-r\xE9glage"
+good: Bon
+best: Meilleur
+1x1_pixel_placeholder: Pixel 1x1 Placeholder
+1x1_pixel_placeholder_description: "Renvoie simplement un GIF de 1x1 pixel encod\xE9
+  en base64, au cas o\xF9 vous ne voudriez pas afficher une image pour une certaine
+  condition"
+average: Moyen
+enter_media_query: "Veuillez saisir une requ\xEAte m\xE9dia CSS valide"
+add_media_query: "Ajouter une requ\xEAte M\xE9dia"
+add_media_segment: "Ajouter un segment m\xE9dia"
+enter_media_segment: "Veuillez saisir un d\xE9bit valide (par exemple 400k, 1500k,
+  1M) pour le segment vid\xE9o"
+dash_media_message: "Cette option g\xE9n\xE8re un seul fichier .mpd avec des segments
+  m\xE9dia (d\xE9bits)"
+specific_settings: "Param\xE8tres sp\xE9cifiques"
+login_as_this_user_description: "Le lien suivant est un lien temporaire qui vous permet
+  de vous connecter comme utilisateur dans diff\xE9rents navigateur :"
+login_as_this_user: Se connecter en tant que cet utilisateur dans un autre navigateur
+allowed_types_to_create: "types autoris\xE9s \xE0 \xEAtre cr\xE9\xE9s"
+defaults_to_all: defaut pour tous
+analytics_universal_configuration: 'Configuration universelle Analytics ex. {''cookieDomain'':
   ''example.com''}'
-use_different_email_delivery_settings: Use different email delivery settings for newsletters
-action_scope: Action Scope
-hit: Hit
+use_different_email_delivery_settings: "Utiliser une configuration d'envoi d'E-mail
+  diff\xE9rente pour la newsletter"
+action_scope: Champ d'action
+hit: Toucher
 session: Session
-session_with_variables: Session (with variables)
-targeting_visitor: Visitor
-targeting_condition_visited_page_before_piwik_data_warning: This condition fetches
-  data synchronously from Piwik which can be quite slow. Use with care!
-targeting_condition_visited_page_before_piwik_not_configured_warning: This condition
-  cannot be matched as Piwik is not configured and will always resolve to false.
+session_with_variables: Session (avec variables)
+targeting_visitor: Visiteur
+targeting_condition_visited_page_before_piwik_data_warning: "Cette condition r\xE9cup\xE8re
+  les donn\xE9es de Piwik de fa\xE7on synchrone, ce qui peut \xEAtre assez lent. Utilisez
+  avec soin !"
+targeting_condition_visited_page_before_piwik_not_configured_warning: "Cette condition
+  ne peut pas \xEAtre mise en correspondance car Piwik n'est pas configur\xE9 et retournera
+  toujours false."
 targeting_condition_url_pattern: URL (RegExp)
-targeting_toolbar_browser_note: <b>NOTE:</b> Enabling the targeting toolbar affects
-  only the browser you are currently using. If you want to use the toolbar on another
-  browser you need to enable it again. See <a target='_blank' href='{targetingLink}'>the
-  documentation</a> for details.
-microsoft_word_export_notice: <ul><li>It is not possible to re-import this export</li><li>The
-  export file-format is HTML, which can be perfectly opened with Word</li><li>This
-  export doesn't include the full layout information (just basic text-formatting)</li><li>The
-  language selection is used to set the language for object's localized fields (only
-  localized fields are exported!)</li></ul>
-fallback_languages: Fallback Languages (CSV eg. de_CH,de)
-frontend_languages: Frontend Languages
-add_language: Add Language
-default_language: Default language
-wildcards_are_supported: Wildcards are supported
-localization_and_internationalization: Localization &amp; Internationalization
-code_settings: Code Settings
-advanced_integration: Advanced Integration
-assign_target_group_weight: Weight
-target_group: Target Group
-target_group_multiselect: Target Group Multiselect
-select_a_target_group: Select a Target Group
-turn_off_usage_statistics: Turn off usage statistics
-children: Children
-elements_to_export: Elements to Export
-xliff_export_documents: If you want to translate eg. the whole /en tree to a different
-  language, first create a copy of the /en tree. Afterwards use the copied tree in
-  the export and select the source language 'en' and the target language 'de'. When
-  importing the translated XLIFF file, the contents of the exported documents (in
-  this case the copied tree documents) will be overwritten by the German translations
-  in the XLIFF file.
-xliff_export_objects: Only fields inside a Localized Fields container are recognized.
-  When importing the translated XLIFF the source language will be untouched, only
-  the target language fields will be overwritten. Use Relations checkbox to include
-  Objects & Documents from Dependencies e.g. Relation fields, Properties etc.
-xliff_export_notice: Here you can select the documents and objects you want to export
-  for external translation.
-important_notice: Important Notice
-xliff_import_notice: Select a translated XLIFF file which was previously exported
-  by pimcore and then translated by a localization service provider (LSP) or by a
-  CAT application. Please aware that the import will overwrite the elements which
-  were selected by the import (read also export).
+targeting_toolbar_browser_note: "<b>REMARQUE :</ b> L'activation de la barre d'outils
+  de ciblage affecte uniquement le navigateur que vous utilisez actuellement. Si vous
+  souhaitez utiliser la barre d'outils sur un autre navigateur, vous devez l'activer
+  \xE0 nouveau. Voir <a target='_blank' href='https://pimcore.com/docs/5.1.x/Development_Documentation/Tools_and_Features/Targeting_and_Personalization/index.html#page_Debugging-Targeting-Data'>la
+  documentation</a> pour plus de d\xE9tails."
+microsoft_word_export_notice: "<ul><li>Il n'est pas possible de r\xE9-importer cet
+  export</ li><li>Le format du fichier d'exportation est HTML, qui peut \xEAtre parfaitement
+  ouvert avec Word</ li><li>Cet export n'inclut pas les informations de mise en page
+  compl\xE8tes (juste un formatage de base du texte)</ li><li>La s\xE9lection de la
+  langue est utilis\xE9e pour d\xE9finir la langue des champs localis\xE9s de l'objet
+  (seuls les champs localis\xE9s sont export\xE9s!)</ li></ ul>"
+fallback_languages: Langages de secours (CSV eg. de_CH,de)
+frontend_languages: Langages frontaux
+add_language: Ajouter une langue
+default_language: "Langue par d\xE9faut"
+wildcards_are_supported: Les wildcards sont pris en charge
+localization_and_internationalization: Localisation &amp; Internationalisation
+code_settings: "Param\xE8tres de code"
+advanced_integration: "Int\xE9gration avanc\xE9e"
+assign_target_group_weight: Poids
+target_group: Group Cible
+target_group_multiselect: Groupe Cible Multiselect
+select_a_target_group: "S\xE9lectionner un Groupe Cible"
+turn_off_usage_statistics: "D\xE9sactiver les statistiques d'utilisation"
+children: Enfants
+elements_to_export: "\xC9l\xE9ments \xE0 exporter"
+xliff_export_documents: "Si vous voulez traduire par exemple l'ensemble de l'arborescence
+  /en vers une autre langue, veuillez d'abord cr\xE9er une copie de /en, par exemple
+  /de, puis l'exporter pour le traduire. Lors de l'importation XLIFF le contenu anglais
+  dans /de sera remplac\xE9 par la traduction allemande dans le fichier XLIFF."
+xliff_export_objects: "Seuls les champs \xE0 l'int\xE9rieur d'un conteneur Champs
+  Localis\xE9s sont reconnus. Lors de l'importation des traductions XLIFF la langue
+  source restera intacte, seuls les champs de la langue cible seront \xE9cras\xE9es."
+xliff_export_notice: "Vous pouvez s\xE9lectionner ici les documents et objets que
+  vous souhaiter exporter pour traduction."
+important_notice: Notification importante
+xliff_import_notice: "S\xE9lectionnez un fichier XLIFF traduit qui a \xE9t\xE9 pr\xE9c\xE9demment
+  export\xE9 par Pimcore puis traduit par un fournisseur de services de traduction
+  (LSP) ou par une application de type CAT. Soyez conscient que l'importation va \xE9craser
+  les \xE9l\xE9ments qui ont \xE9t\xE9 s\xE9lectionn\xE9s par l'importation (idem
+  pour l'exportation)."
 composite: Composite
-origin: Origin
-high_resolution: High Resolution
-pass_through_params: Pass Through Params
-redirects_type_entire_uri: Entire URI
-redirects_type_path_query: Path and Query
-redirects_csv_import: Redirects CSV Import
+origin: Original
+high_resolution: "Haute r\xE9solution"
+pass_through_params: "Passage au travers des param\xE8tres"
+redirects_type_entire_uri: "URI enti\xE8re"
+redirects_type_path_query: "Chemin et param\xE8tres"
+redirects_csv_import: Importer CSV Redirections
 redirects_import_total: Total
-redirects_import_created: Created
-redirects_import_updated: Updated
-redirects_import_errored: Errored
-redirects_import_errors: Errors
-redirects_import_error_line: Line
-analytics_gtag_code: Use the gtag code for analytics
-analytics_retargeting_code: Use the retargeting-code for analytics (dc.js)
-analytics_asynchronous_code: Use the asynchronous code for analytics (ga.js)
+redirects_import_created: "Cr\xE9\xE9"
+redirects_import_updated: "Mis \xE0 jour"
+redirects_import_errored: En erreur
+redirects_import_errors: Erreurs
+redirects_import_error_line: Ligne
+analytics_gtag_code: Utilisez le code gtag pour analytics
+analytics_retargeting_code: Utiliser le code de redirection pour Analytics (dc.js)
+analytics_asynchronous_code: Utiliser le code asynchrone pour Analytics (ga.js)
 newsletter_active: Newsletter Active
-newsletter_confirmed: Newsletter Confirmed
-gender: Gender
-use_original_tiff: Use original TIFF (only PRINT)
-use_original_tiff_description: Use original TIFF when source format is a TIFF image
-  -> do not modify it.
+newsletter_confirmed: "Newsletter Valid\xE9e"
+gender: Sexe
+use_original_tiff: Utiliser le TIFF original (uniquement IMPRESSION)
+use_original_tiff_description: Utiliser le TIFF original lorsque la source est au
+  format image TIFF -> ne pas le modifier.
 port: Port
-delivery_settings: Delivery Settings
-generate_previews: Generate previews
-invalid_class_name: Invalid Class Name
-redirect_unknown_domains_to_main_domain: Redirect unknown domains (not used for a
-  site and for redirects, ...) to the main domain (above)
-hours: Hours
+delivery_settings: "Param\xE8tres d'envoi"
+generate_previews: "G\xE9n\xE9rer les apercus"
+invalid_class_name: Nom de classe invalide
+redirect_unknown_domains_to_main_domain: "Rediriger vos domaines inconnus (non utilis\xE9
+  pour un site et pour les redirections, ...) vers le domaine principal (ci-dessus)"
+hours: Heures
 minutes: Minutes
-seconds: Seconds
-operating_system: Operating System
-hardware_platform: Hardware Platform
-time_on_site: Time on site
-visited_pages_before_number: Visited n-pages before
-number: Number
-visited_page_before: Visited page before
-searchengine: Search Engine
-referrer: Referrer
-referring_site: Referring Site
-AND: AND
-OR: OR
-AND_NOT: AND NOT
-radius_in_km: Radius (km)
-redirect: Redirect
-code_snippet: Code-Snippet
-browser: Browser
+seconds: Secondes
+operating_system: "Syst\xE8me d'exploitation"
+hardware_platform: "Plate-forme Mat\xE9rielle"
+time_on_site: "Temps pass\xE9 sur le site"
+visited_pages_before_number: "Visit\xE9 n-pages avant"
+number: "Num\xE9ro"
+visited_page_before: "Page visit\xE9e avant"
+searchengine: Moteur de recherche
+referrer: "R\xE9f\xE9rent"
+referring_site: "Site r\xE9f\xE9rent"
+AND: ET
+OR: OU
+AND_NOT: ET NON
+radius_in_km: Rayon (km)
+redirect: Redirection
+code_snippet: Bout de code
+browser: Navigateur web
 conditions: Conditions
-save_order: Save Order
-debug_admin_translations: Debug Admin-Translations (wrapped in +)
-short_url: Short URL
-width_and_height_must_be_an_even_number: width and height must be an even number
-this_filter_has_no_settings: this filter has no settings
-mute: Mute
-effect: Effect
-colorChannelMixer: Color Channel Mixer
-setframerate: Set Framerate
-source_site: Source-Site
-target_site: Target-Site
-source_entire_url: Entire URL as Source
-analytics_internalid: GA Internal ID
-analytics_settings_description: To use the complete Google Analytics integration,
-  please configure the Google API Service Account in System Settings
-upload_path: Upload Path
-selection_options: Selection Options
-expiry: Expiry
-mobile: Mobile
-group_by_path: Group by path
-flush: Flush
-errors_from_the_last_7_days: Errors from the last 7 days
-show_close_warning: Show close warning
-matching_text: Matching Text
-any: Any
-http_method: HTTP Method
-url_pattern: URL Pattern<br />(RegExp eg. @success@i)
-beginning: Beginning
-element_css_selector: Element (CSS Selector)
-insert_position: Insert Position
-robots_txt_exists_on_filesystem: The robots.txt exists already in the document-root
-  on the filesystem
-only_required_for_reporting_in_pimcore_but_not_for_code_integration: The following
-  is only required if you want to use the reporting functionalities in pimcore, but
-  this is not required for the code integration.
-save_error: Cannot save data
-all_roles: All Roles
-add_role: Add Role
-role_creation_error: Could not create role
-workspaces: Workspaces
-Username: Username
-video_bitrate: Video Bitrate (kB/s)
-audio_bitrate: Audio Bitrate (kB/s)
-rasterize_svg: Rasterize SVGs
-rasterize_svg_info_text: SVGs get automatically rasterized when a transformation other
-  than resize or scale by width/height is used.
-preserve_animation: Preserve animations for GIF
-preserve_animation_info_text: 'Supported transformations are: Frame, Cover, Contain,
-  Resize, ScaleByWidth, ScaleByHeight'
-valid_languages_frontend_description: These settings are used in documents to specify
-  the content language (in properties tab), for objects in localized-fields, for shared
-  translations, ... simply everywhere the editor can choose or use a language for
-  the content.<br />Fallback languages are currently used in object's localized fields
-  and shared translations.
-delete_language_note: 'Note: Removing language from the list will not delete its respective
-  data. Please use console command ''pimcore:locale:delete-unused-tables'' for cleanup.'
-maximum_items: max. items
-collapsed: Collapsed
-url_to_custom_image_on_login_screen: URL to custom image for the login screen
-sepia: Sepia
-sharpen: Sharpen
-gaussianBlur: Gaussian Blur
-radius: Radius
+save_order: Sauvegarder la commande
+debug_admin_translations: "D\xE9boguer Traduction-Admin (entour\xE9 par +)"
+short_url: URL courte
+width_and_height_must_be_an_even_number: "La largeur et la hauteur doivent \xEAtre
+  un nombre entier"
+this_filter_has_no_settings: "ce filtre n'a pas de param\xE8tres"
+mute: Muet
+effect: Effet
+colorChannelMixer: "M\xE9langeur de canaux de couleur"
+setframerate: "D\xE9finir la fr\xE9quence d'images"
+source_site: Site-Source
+target_site: Site-Cible
+source_entire_url: "URL enti\xE8re en tant que source"
+analytics_internalid: Identifiant interne GA
+analytics_settings_description: "Pour garantir l'int\xE9gration compl\xE8te de Google
+  Analytics, veuillez configurer votre compte Google API Service dans les propri\xE9t\xE9s
+  syst\xE8mes"
+upload_path: "Chemin du t\xE9l\xE9chargement sur le serveur."
+selection_options: "Options de s\xE9lection"
+expiry: Expiration
+mobile: "T\xE9l\xE9phone portable"
+group_by_path: Grouper par chemin
+flush: Vider
+errors_from_the_last_7_days: Erreurs des 7 derniers jours
+show_close_warning: Montrer la notification de fermeture
+matching_text: Texte correspondant
+any: Tout
+http_method: Methode HTTP
+url_pattern: 'Format d''URL<br />(Expression rationnelle ex: @success@i)'
+beginning: "D\xE9but"
+element_css_selector: "El\xE9ment (selecteur CSS)"
+insert_position: "Ins\xE9rer la Position"
+robots_txt_exists_on_filesystem: "Le fichier robots.txt existe d\xE9j\xE0 \xE0 la
+  racine des fichiers"
+only_required_for_reporting_in_pimcore_but_not_for_code_integration: "Ce qui suit
+  n'est requis que si vous compter utiliser les fonctionnalit\xE9s de rapports de
+  pimcore, mais n'est pas n\xE9cessaire pour l'int\xE9gration"
+save_error: Impossible de sauvegarder
+all_roles: "Tous les R\xF4les"
+add_role: "Ajouter un R\xF4le"
+role_creation_error: "Le r\xF4le n'a pas \xE9t\xE9 cr\xE9\xE9"
+workspaces: Zone de travail
+Username: Login
+video_bitrate: "Taux d'\xE9chantillonnage vid\xE9o"
+audio_bitrate: "Taux d'\xE9chantillonnage audio"
+rasterize_svg: Rasteriser les SVG
+rasterize_svg_info_text: "Les SVG sont automatiquement pixelis\xE9s lorsqu'une transformation
+  autre que le redimensionnement ou le retaillage par largeur / hauteur est utilis\xE9e."
+preserve_animation: "Pr\xE9server les animations pour GIF"
+preserve_animation_info_text: 'Les transformations prises en charge sont : Cadre,
+  Couverture, Contient, Redimensionner, Retailler par Largeur, Retailler par Hauteur'
+valid_languages_frontend_description: "Ce param\xE8tre est utilis\xE9 dans les documents
+  pour sp\xE9cifier le langage du contenu (dans l'onglet propri\xE9t\xE9s) et pour
+  les objets dans les champs traduits,...en fait de partout o\xF9 l'utilisateur peut
+  choisir ou utiliser une langue pour un contenu donn\xE9.<br />Les langages de secours
+  sont actuellement utilis\xE9s dans les champs localis\xE9s des objets et les traductions
+  partag\xE9es."
+delete_language_note: "Remarque: supprimer une langue de la liste ne supprimera pas
+  ses donn\xE9es respectives. Veuillez utiliser la commande de console 'pimcore: locale:
+  delete -used-tables' pour les nettoyer."
+maximum_items: "nombre max. d'\xE9l\xE9ments"
+collapsed: "Referm\xE9"
+url_to_custom_image_on_login_screen: "URL d'une image pour l'\xE9cran de connection"
+sepia: "S\xE9pia"
+sharpen: Affiler
+gaussianBlur: Flou gaussien
+radius: Rayon
 sigma: Sigma
-threshold: Threshold
-tolerance: Tolerance
-grayscale: Grayscale
-nothing_to_configure: Nothing to configure
-opacity: Opacity
-applymask: Apply Mask
-addoverlay: Add Overlay
+threshold: Seuil
+tolerance: "Tol\xE9rance"
+grayscale: "D\xE9grad\xE9 de gris"
+nothing_to_configure: "Rien \xE0 configurer"
+opacity: "Opacit\xE9"
+applymask: Appliquer Mask
+addoverlay: Ajouter une couche
 transformations: Transformations
-you_can_drag_the_tabs_to_reorder_the_media_queries: You can drag the tabs to reorder
-  the priority of the media queries
-frame: Frame
-setbackgroundcolor: Set Backgroundcolor
-setbackgroundimage: Set Background Image
-roundcorners: Round Corners
-rotate: Rotate
-color: Color
-angle: Angle
-label_width: Label Width
-label_align: Label Align
-label_first_cell: Label First Cell
-enable: Enable
-disable: Disable
-configure: Configure
-beginning_with: Beginning with
-matching_exact: Matching exactly
-add_expert_mode: Add (Expert Mode)
-add_beginner_mode: Add (Beginner)
-lowest: lowest
-highest: highest
-override_all: override all
-deactivate: Deactivate
-countrymultiselect: Countries (Multiselect)
-languagemultiselect: Languages (Multiselect)
-"yes": "Yes"
-"no": "No"
-allow_trailing_slash_for_documents: Allow trailing Slash in URL
-localizedfields: Localized Fields
-new_folder: New Folder
-new_file: New File
-gridview: Grid View
-visibility_of_system_properties: Visibility of system properties
-translate: translate
-translations_admin_hint: 'HINT: Please Reload UI to apply translation changes!'
-allowed_types: Allowed Types
-columnlength: Columnlength
-visible_in_searchresult: Visible in Search Result
-visible_in_gridview: Visible in Grid View
-fieldcollections: Field-Collections
-block: Block
-tooltip: Tooltip
-decimalPrecision: Decimal-Precision
-css_style: CSS Style
-add_setting: Add Setting
-reverse: Reverse
-geopolygon: Geographic Polygon
-geopolyline: Geographic Polyline
-geobounds: Geographic Bounds
-sure_to_install_unstable_update: Are you sure that you want to install a potential
-  not working version?
-analytics_accountid: Account-ID (eg. 1234567)
-verification_filename_text: Verification Filename<br /><small>required for verification</small>
-analytics_notice: Please read the documentation about the Google Analytics integration
-  first, for the advanced mode you have to modify the Google Analytics settings.
-analytics_trackid_code: Track-ID (eg. UA-XXXXX-X)<br /><small>required for code integration</small>
-multiselect: Multiselection
-handler: Handler
+you_can_drag_the_tabs_to_reorder_the_media_queries: "Vous pouvez faire glisser les
+  onglets pour r\xE9organiser la priorit\xE9 des requ\xEAtes \nm\xE9dias"
+frame: Cadre
+setbackgroundcolor: Modifier la couleur de fond
+setbackgroundimage: Modifier l'image de fond
+roundcorners: Coins arrondis
+rotate: Rotation
+color: Couleur
+angle: Inclinaison
+label_width: "Largeur du libell\xE9"
+label_align: "Aligner les \xE9tiquettes"
+label_first_cell: "Premi\xE8re cellule du libell\xE9"
+enable: "Activ\xE9"
+disable: "D\xE9sactiv\xE9"
+configure: Configurer
+beginning_with: "Commen\xE7ant par"
+matching_exact: Correspondant exactement
+add_expert_mode: Rajouter (mode expert)
+add_beginner_mode: "Rajouter (d\xE9butant)"
+lowest: le plus petit
+highest: le plus haut
+override_all: "tout \xE9craser"
+deactivate: "D\xE9sactiver"
+countrymultiselect: "Pays (multis\xE9lection)"
+languagemultiselect: "Langues (multis\xE9lection)"
+"yes": Oui
+"no": Non
+allow_trailing_slash_for_documents: Autoriser les slashs en fin d'URL
+localizedfields: "Champs localis\xE9s"
+new_folder: Nouveau dossier
+new_file: Nouveau fichier
+gridview: Vue en liste
+visibility_of_system_properties: "Visibilit\xE9 des propri\xE9t\xE9 syst\xE8mes"
+translate: Traduire
+translations_admin_hint: Veuillez recharger l'application pour appliquer les changements
+  sur les traductions !
+allowed_types: "Types autoris\xE9s"
+columnlength: Largeur colonne
+visible_in_searchresult: "Visible dans les r\xE9sultats de recherche"
+visible_in_gridview: Visible sur la vue en "grille"
+fieldcollections: Ensemble de champs
+block: Bloc
+tooltip: Bulle d'aide
+decimalPrecision: "Pr\xE9cision d\xE9cimale"
+css_style: Style CSS
+add_setting: "Ajouter le param\xE8tre"
+reverse: Revenir
+geopolygon: "Polygone g\xE9ographique"
+geopolyline: "Polyligne g\xE9ographique"
+geobounds: "Limites g\xE9ographiques"
+sure_to_install_unstable_update: "Etes-vous s\xFBr que vous voulez installer une version
+  potentiellement non fonctionnelle ?"
+analytics_accountid: "Num\xE9ro de compte (ex. 1234567)"
+verification_filename_text: "Nom du fichier de v\xE9rification<br><small>n\xE9cessaire
+  pour la v\xE9rification</ small>"
+analytics_notice: "Lire la documentation sur les param\xE8tres d'int\xE9gration de
+  Google Analytics "
+analytics_trackid_code: "Track-ID (ex. UA-XXXXX-X)<br><small>n\xE9cessaire \xE0 l'int\xE9gration
+  du code</small>"
+multiselect: "Multi-s\xE9lection"
+handler: Gestionnaire
 invisible: Invisible
-only_configured_languages: Show only in system settings configured languages
+only_configured_languages: "Ne montrer que dans les langages configur\xE9s dans le
+  system"
 permissions: Permissions
-you_are_not_allowed_to_manage_admin_users: You are not allowed to manage admin users
-content_type: Content-Type
-new_property: New Property
-all_users: All Users
-admin: Admin
-new_document_type: New Document Type
-timezone: Timezone
-host: Host
-store_version_history_in_days: Store version history for x Days
-store_version_history_in_steps: Store version history for x Steps
-layout: Layout
-add_layout_component: Add Layout Component
-add_data_component: Add Data Component
-accordion: Accordion
-iframe: Preview / Iframe
-fieldset: Fieldset
-panel: Panel
-tabpanel: Tabpanel
-tab_position: Tab Position
-pattern: Pattern
+you_are_not_allowed_to_manage_admin_users: "Vous n'\xEAtes pas autoris\xE9s \xE0 g\xE9rer
+  les Administrateurs"
+content_type: Type de contenu
+new_property: "Nouvelle propri\xE9t\xE9"
+all_users: Tous les utilisateurs
+admin: Administration
+new_document_type: Nouveau type de document
+timezone: Fuseau horaire
+host: Serveur
+store_version_history_in_days: Historique des versions pour X Jours
+store_version_history_in_steps: "Historique des versions pour X \xE9tapes"
+layout: Mise en page
+add_layout_component: Ajouter un composant de mise en page
+add_data_component: Ajouter un champ
+accordion: "Accord\xE9on"
+iframe: Iframe
+fieldset: Ensemble de champs
+panel: Panneau
+tabpanel: Onglet
+tab_position: Position de l'onglet
+pattern: Motif
 variables: Variables
-defaults: Defaults
+defaults: "Valeurs par d\xE9faut"
 wysiwyg: WYSIWYG
-objects: Objects
-allow_inherit: Allow inheritance
-parent_php_class: Parent PHP Class
-implements_interfaces: Implements interface(s)
+objects: Objets
+allow_inherit: "Autoriser l'h\xE9ritage"
+parent_php_class: Classe PHP Parent
+implements_interfaces: "Impl\xE9mente interface(s)"
 use_traits: Use (traits)
-general_settings: General Settings
-layout_settings: Layout Settings (Pimcore Admin)
-region: Region
-collapsible: Collapsible
-allowed_classes: Allowed classes
-display_name: Display name
-not_editable: Not editable
-index: Indexed
-mandatoryfield: Mandatory field
-install: Install
-uninstall: Uninstall
-some_fields_cannot_be_saved: Some fields cannot be saved.
-icon: Icon
-slider: Slider
-domain: Domain (eg. example.org)
-datetime: Date & Time
-default_value: Default value
-button: Button
-priority: Priority
-end: End
-select_update: Select update
-stable_updates: Available stable updates
-non_stable_updates: Available non-stable updates
-latest_pimcore_version_already_installed: You have installed the latest version of
-  pimcore.
-table: Table
-rows: Rows
-language_admin: Default-Language in Admin-Interface
-exclude_patterns: Exclude Patterns
-cover: Cover
-contain: Contain
-min_value: min. Value
-max_value: max. Value
-increment: Increment Step
+general_settings: "Param\xE8tres g\xE9n\xE9raux"
+layout_settings: Configurations de la mise en page (Admin Pimcore)
+region: "R\xE9gion"
+collapsible: Etendre
+allowed_classes: "Classes autoris\xE9es"
+display_name: Afficher le nom
+not_editable: Non modifiable
+index: "index\xE9"
+mandatoryfield: Champ requis
+install: Installer
+uninstall: "D\xE9sinstaller"
+some_fields_cannot_be_saved: "Certains champs ne peuvent pas \xEAtre sauvegard\xE9s"
+icon: "Ic\xF4ne"
+slider: Curseur
+domain: Nom de domaine
+datetime: Date & Heure
+default_value: "Valeur par d\xE9faut"
+button: Bouton
+priority: "Priorit\xE9"
+end: Fin
+select_update: "S\xE9lectionner la mise \xE0 jour"
+stable_updates: "Mises \xE0 jour stables disponibles"
+non_stable_updates: "Mises \xE0 jour non stables disponibles"
+latest_pimcore_version_already_installed: "Vous avez install\xE9 la derni\xE8re version
+  de pimcore."
+table: Tableau
+rows: Lignes
+language_admin: "Langue par d\xE9faut de l'administration"
+exclude_patterns: "Mod\xE8les exclus"
+cover: Couverture
+contain: Contient
+min_value: Valeur min.
+max_value: Valeur max.
+increment: "Pas d'incr\xE9ment"
 vertical: Vertical
-country: Country
-zoom_level: Zoom level
-map_type: Map type
-roadmap: Roadmap
+country: Pays
+zoom_level: Niveau de zoom
+map_type: Type de carte
+roadmap: Feuille de route
 satellite: Satellite
-hybrid: Hybrid
-google_api_key_simple: Google API Key (Simple API Access for Maps, CSE, ...)
-document_restrictions: Document Restrictions
-asset_restrictions: Asset Restrictions
-object_restrictions: Object Restrictions
-allow_documents: allow Documents
-allow_assets: allow Assets
-allow_objects: allow Objects
-allowed_types_hint: (empty = allow all)
-allowed_document_types: Allowed Document Types
-allowed_asset_types: Allowed Asset Types
-allowed_video_types: Allowed Video Types
-website: Website
-user_creation_error: Could not create user
-email_debug_addresses: Debug Email Addresses
-user_object_dependencies_description: 'This user is referenced in the following objects:'
-user_admin_description: Admin users do not only automatically gain all permissions
-  listed below, they are also allowed to perform all actions on documents, assets
-  and objects without any restrictions.
-user_apikey_description: API key required for web service access by this user
-apikey: API Key
-lazy_loading: lazy loading
-non_owner_description: Non owner objects represent relations to an other object just
-  in the same way as objects do. The difference is, that a non-owner object field
-  is not the owner of the relation data, it is merely a view on data stored in other
-  objects. Please choose the owner and field name where the data is originally stored.
-allow_variants: Allow variants
-show_variants: Show variants in tree
-allowed_class_field: Allowed class/field
-structuredTable: Structured Table
+hybrid: Hybride
+google_api_key_simple: "Cl\xE9 Google API (Simple API Acc\xE8s pour Maps, CSE, ...)"
+document_restrictions: Restrictions du document
+asset_restrictions: "Restrictions de l'\xE9l\xE9ment"
+object_restrictions: Restrictions de l'objet
+allow_documents: Autoriser documents
+allow_assets: "Autoriser \xE9l\xE9ments"
+allow_objects: Autoriser objets
+allowed_types_hint: (vide = autoriser tout)
+allowed_document_types: "Types de documents autoris\xE9s"
+allowed_asset_types: "Types d'\xE9l\xE9ments autoris\xE9s"
+allowed_video_types: "Types de vid\xE9o autoris\xE9s"
+website: Site web
+user_creation_error: "Cr\xE9ation de l'usager impossible"
+email_debug_addresses: Adresses e-mail de debug
+user_object_dependencies_description: "Cet utilisateur est r\xE9f\xE9renc\xE9 dans
+  les objets suivants :"
+user_admin_description: "Les administrateurs n'obtiennent pas uniquement les droits
+  list\xE9s ci-dessous, ils sont aussi autoris\xE9s \xE0 faire toutes les actions
+  sur les documents, les \xE9l\xE9ments et les objets sans aucune restriction. De
+  plus, les administrateurs peuvent acc\xE9der \xE0 tous les \xE9l\xE9ments de Pimcore
+  au travers du WebDAV et l'API SOAP de Pimcore (dans la mesure o\xF9 ceux-ci sont
+  configur\xE9s et activ\xE9s dans la configuration syst\xE8me)."
+user_apikey_description: "La cl\xE9 API est n\xE9cessaire pour acc\xE9der au service
+  web pour cet utilisateur"
+apikey: "Cl\xE9 API"
+lazy_loading: chargement paresseux
+non_owner_description: "Objets propri\xE9taire non repr\xE9senter des relations d'un
+  objet autre que de la m\xEAme mani\xE8re que les objets ne. La diff\xE9rence est
+  que, d'un champ non propri\xE9taire objet n'est pas le propri\xE9taire des donn\xE9es
+  concernant, il s'agit simplement d'une vue sur les donn\xE9es stock\xE9es dans d'autres
+  objets. S'il vous pla\xEEt choisir le nom du propri\xE9taire et sur le terrain o\xF9
+  les donn\xE9es sont initialement stock\xE9es."
+allow_variants: "Permettre des d\xE9clinaisons"
+show_variants: "Montrer les d\xE9clinaisons dans l'arborescence"
+allowed_class_field: "Classe/Champ autoris\xE9s"
+structuredTable: "Tableau structur\xE9s"
 position: Position
-objectsMetadata_allowed_class: Allowed Class
-objectsMetadata_visible_fields: Visible Fields
-objectsMetadata_type_columnbool: Column Bool
+objectsMetadata_allowed_class: "Classes autoris\xE9es"
+objectsMetadata_visible_fields: Champs visibles
+objectsMetadata_type_columnbool: "Colonne bool\xE9en"
 objectsMetadata_type_multiselect: Multiselect
-file_explorer_saved_file_error: Cannot save file
-reserved_field_names_error: 'Please do not use the following reserved field names: '
-use_current_date: Use current date
-inherited_default_value_warning: The default value is used if either inheritance is
-  deactivated or if the parent value is empty
-restrict_selection_to: Restrict Selection To
-maximum_tabs: Maximum number of tabs
-algorithm: Algorithm
-salt: Salt
-saltlocation: Salt location
-custom_layout: Custom Layout
-custom_layout_definition: Custom Layout Definition
-configure_custom_layouts: Configure Custom Layouts
-add_layout: Add Layout
-delete_layout: Delete Layout
-special_settings: Special Settings
-custom_layouts: Custom Layouts
-new_definition: New Definition
-target_subtype: Target Type
-mandatory: Mandatory
-disallow_addremove: Disallow Add/Remove
-disallow_reorder: Disallow Reordering
-reload_definition: Reload Definition
-saving: Saving
-definition: Definition
-objectbrick: Object Brick
-select_all: Select All
-deselect_all: Deselect All
-definitions_saved: Definitions saved
-predefined_metadata_definitions: Predefined Metadata Definitions
-default_layout: Use as default layout
-hide_edit_image_tab: Hide Edit Image Tab
-are_you_sure_recursive: There child nodes which will be deleted as well! Are you sure?
-log_relatedobject: Related object
-log_component: Component
-log_search_form: Search parameter
-log_search_type: Logging type
-log_search_relatedobject: Related object (id)
-log_timestamp: Timestamp
-log_fileobject: File object
-log_detailinformation: Detail information
-classificationstore_group_definition: Groups
-classificationstore_group_limitation: Max. group items
-classificationstore_mbx_entergroup_title: New Group
-classificationstore_mbx_entergroup_prompt: Enter name
-classificationstore_error_addgroup_msg: Error adding group
-classificationstore_invalidname: Invalid name
-classificationstore_error_group_exists_msg: Group with this name already exists
-classificationstore_properties: Key Definitions
-classificationstore_mbx_enterkey_title: New Key
-classificationstore_detailed_configuration: Detailed Configuration
-classificationstore_detailed_config: Detailed Config
+file_explorer_saved_file_error: Impossible de sauvegarder le fichier
+reserved_field_names_error: "Svp n'utilisez pas les noms r\xE9serv\xE9s suivants :"
+use_current_date: Utiliser la date du jour
+inherited_default_value_warning: "La valeur par d\xE9faut est utilis\xE9e si l'h\xE9ritage
+  est d\xE9sactiv\xE9 ou si la valeur parent est vide"
+restrict_selection_to: "Restreindre la s\xE9lection \xE0"
+maximum_tabs: Nombre maximun d'onglets
+algorithm: Algorithme
+salt: Sel
+saltlocation: Emplacement Salt
+custom_layout: "Mise en page personnalis\xE9e"
+custom_layout_definition: "D\xE9finition Mise en page personnalis\xE9e"
+configure_custom_layouts: "Configurer les mises en page personalis\xE9es"
+add_layout: Ajouter une mise en page
+delete_layout: Effacer la mise en page
+special_settings: "Param\xE8tres sp\xE9ciaux"
+custom_layouts: "Mises en page personnalis\xE9es"
+new_definition: "Nouvelle d\xE9finition"
+target_subtype: Type cible
+mandatory: Obligatoire
+disallow_addremove: Interdire l'ajout/suppression
+disallow_reorder: "Interdire le r\xE9arrangement"
+reload_definition: "Recharger la d\xE9finition"
+saving: Sauvegarde en cours
+definition: "D\xE9finition"
+objectbrick: "Objet imbriqu\xE9"
+select_all: "Tout s\xE9lectionner"
+deselect_all: "Tout d\xE9s\xE9lectionner"
+definitions_saved: "D\xE9finition sauvegard\xE9e"
+predefined_metadata_definitions: "D\xE9finitions des metadonn\xE9es pr\xE9d\xE9finies"
+default_layout: "Utiliser comme mise en page par d\xE9faut"
+hide_edit_image_tab: "Cacher l'onglet d'\xE9dition image"
+are_you_sure_recursive: "Ces noeuds enfants seront \xE9galement effac\xE9s ! \xCAtes-vous
+  s\xFBr ?"
+log_relatedobject: Objet en relation
+log_component: Composant
+log_search_form: "Rechercher param\xE8tre"
+log_search_type: Type de journal
+log_search_relatedobject: Objet en relation (id)
+log_timestamp: Horodatage
+log_fileobject: Fichier Objet
+log_detailinformation: "D\xE9tail des informations"
+classificationstore_group_definition: Groupes
+classificationstore_group_limitation: "Max. \xE9l\xE9ments de groupe"
+classificationstore_mbx_entergroup_title: Nouveau Groupe
+classificationstore_mbx_entergroup_prompt: Entrer Nom
+classificationstore_error_addgroup_msg: Erreur pendant l'ajout du groupe
+classificationstore_invalidname: Nom invalide
+classificationstore_error_group_exists_msg: "Un groupe avec ce nom existe d\xE9j\xE0"
+classificationstore_properties: "D\xE9finition des cl\xE9s"
+classificationstore_mbx_enterkey_title: "Nouvelle cl\xE9"
+classificationstore_detailed_configuration: "Configuration d\xE9taill\xE9e"
+classificationstore_detailed_config: "Configuration d\xE9taill\xE9e"
 relations: Relations
-localized: Localized
-allowed_group_ids: Allowed Group Ids (csv)
-key_id: Key ID
-sorter: Sorter
-classificationstore_tooltip_sorter: Items with lower value will be listed first
-classificationstore_collection_definition: Group Collections
-group_id: Group ID
+localized: Localisation
+allowed_group_ids: "Groupe Ids authoris\xE9s (csv)"
+key_id: "Cl\xE9 ID"
+sorter: Ordre de sortie
+classificationstore_tooltip_sorter: "Les \xE9l\xE9ments avec une valeur faible seront
+  list\xE9s en premier"
+classificationstore_collection_definition: Collections de Groupe
+group_id: Groupe ID
 collection: Collection
-classificationstore_mbx_entercollection_title: New Collection
-class_field_name_error: Following field name has an error
-inputQuantityValue_field: Input Quantity Value
-abbreviation: Abbreviation
-longname: Longname
-baseunit: Base Unit
-quantityValue_units: QuantityValue Unit Definition
-valid_quantityValue_units: Valid units
-calculatedValue_calculatorclass: Calculator class
-calculatedValue_calculatortype: Calculator type
-calculatedValue_calculatortype_class: Class
+classificationstore_mbx_entercollection_title: Nouvelle collection
+class_field_name_error: Le nom du champ suivant a une erreur
+inputQuantityValue_field: "Champ de saisi Valeur de Quantit\xE9"
+abbreviation: "Abr\xE9viation"
+longname: Nom
+baseunit: "Unit\xE9 de Base"
+quantityValue_units: "D\xE9finition de l'unit\xE9 de Valeur de la Quantit\xE9 "
+valid_quantityValue_units: "Unit\xE9s Valides"
+calculatedValue_calculatorclass: Classe Calculateur
+calculatedValue_calculatortype: Type de calcul
+calculatedValue_calculatortype_class: Classe
 calculatedValue_calculatortype_expression: Expression
-calculatedValue_calculatorexpression: Calculator expression
-calculatedValue_explanation: See the official documentation to learn more about defining
-  expressions or classes
-calculatedValue_field: Calculated Value
-conversionFactor: Conversion Factor
-conversionOffset: Conversion Offset
-default_unit: Default Unit
-min_max_times: Min / Max Times
-reset: Reset
-password_hint: Password must contain at least 10 characters!
-editor_settings: Editor Settings
-language_order: Language Order
-preview_width: Preview Width
-preview_height: Preview Height
-url_width: URL Width
-externalImage: External Image
+calculatedValue_calculatorexpression: Expression de calcul
+calculatedValue_explanation: "Consultez la documentation officielle pour en savoir
+  plus sur les m\xE9thodes qui doivent \xEAtre mises en \u0153uvre"
+calculatedValue_field: "Valeur calcul\xE9e"
+conversionFactor: Facteur de Conversion
+conversionOffset: Offset Conversion
+default_unit: "Unit\xE9 par d\xE9faut"
+min_max_times: Min / Max Temps
+reset: "Remise \xE0 z\xE9ro"
+password_hint: "Le mot de passe doit contenir au moins 10 caract\xE8res !"
+editor_settings: "R\xE9glages Editeur"
+language_order: Ordre des langages
+preview_width: "Pr\xE9visualisation de la largeur"
+preview_height: "Pr\xE9visualisation de la hauteur"
+url_width: Largeur URL
+externalImage: "Image ext\xE9rieure"
 log_pid: PID
-search_console_settings_description: To use the Google Search Console integration,
-  please configure the Google API Service Account in System Settings
-fieldcontainer: Field Container
-store: Store
-edit_configuration: Edit Store Configuration
-classificationstore_mbx_enterstore_title: New Store
-classificationstore_mbx_enterstore_prompt: Enter store name
-classificationstore_error_addstore_msg: Error creating store
-search_for_key: Search Key
-width_explanation: The width of this component. A numeric value will be interpreted
-  as the number of pixels; a string value will be treated as a CSS value with units.
-height_explanation: The height of this component. A numeric value will be interpreted
-  as the number of pixels; a string value will be treated as a CSS value with units.
-web2print_enable_in_default_view: Enable Web2Print documents in default documents
-  view
-web2print_enable_in_default_view_txt: Enables Web2Print documents in default documents
-  view in default perspective. Either activate this or create custom views and perspectives
-  for managing Web2Print documents.
-web2print_tool: Tool
-web2print_save_mode: Document Save Mode
-web2print_save_mode_txt: Document Save Mode = cleanup deletes all not used document
-  elements for current document. This might be necessary for useage reports in print
-  documents.
-web2print_pdfreactor_settings: PDFreactor Settings
-web2print_server: Server
-web2print_baseURL: BaseURL
-web2print_baseURL_txt: BaseURL for PDFreactor. This is prefixed to each relative url
-  in print templates when creating PDFs.
-web2print_apiKey_txt: If the PDFreactor instance is set up to require API keys, you
-  can enter it here.
+search_console_settings_description: "Pour utiliser l'int\xE9gration Google Search
+  Console, veuillez configurer le compte de service de l'API Google (Google API Service
+  Account) dans les Param\xE8tres Syst\xE8me"
+fieldcontainer: Conteneur de champs
+store: Magasin
+edit_configuration: Editer la Configuration du Magasin
+classificationstore_mbx_enterstore_title: Nouveau Magasin
+classificationstore_mbx_enterstore_prompt: Entrer le nom du magasin
+classificationstore_error_addstore_msg: "Erreur lors de la cr\xE9ation du magasin"
+search_for_key: "Rechercher une cl\xE9"
+width_explanation: "La largeur de ce composant. Une valeur num\xE9rique sera interpr\xE9t\xE9e
+  comme le nombre de pixels; une cha\xEEne de caract\xE8res sera trait\xE9e comme
+  une valeur CSS avec des unit\xE9s."
+height_explanation: "La hauteur de ce composant. Une valeur num\xE9rique sera interpr\xE9t\xE9e
+  comme le nombre de pixels; une cha\xEEne de caract\xE8res sera trait\xE9e comme
+  une valeur CSS avec des unit\xE9s."
+web2print_enable_in_default_view: "Activer les documents Web2Print dans la vue par
+  d\xE9faut des documents"
+web2print_enable_in_default_view_txt: "Activer les documents Web2Print dans la vue
+  par d\xE9faut des documents dans la perspective par d\xE9faut"
+web2print_tool: Outil
+web2print_save_mode: Mode de sauvegarde document
+web2print_save_mode_txt: "Mode de sauvegarde document = nettoyage efface tous les
+  \xE9l\xE9ments du document non utilis\xE9s pour le document courant. Cela peut \xEAtre
+  n\xE9cessaire pour les rapports de traitement dans les documents d'impression."
+web2print_pdfreactor_settings: "Param\xE8tres PDFreactor"
+web2print_server: Serveur
+web2print_baseURL: URL de base
+web2print_baseURL_txt: "URL de base pour PDFreactor. Celle-ci est pr\xE9fix\xE9e \xE0
+  chaque url relative dans les mod\xE8les d'impression lors de la cr\xE9ation des
+  PDFs."
+web2print_apiKey_txt: "Si l'instance PDFreactor est configur\xE9e pour requ\xE9rir
+  des cl\xE9s API, vous pouvez l'entrer ici."
 web2print_licence: Licence
-web2print_wkhtmltopdf_settings: Wkhtmltopdf Settings
-web2print_wkhtmltopdf_binary: wkhtmltopdf Binary
+web2print_wkhtmltopdf_settings: "Param\xE8tres Wkhtmltopdf"
+web2print_wkhtmltopdf_binary: Executable wkhtmltopdf
 web2print_wkhtmltopdf_options: Options
-web2print_wkhtmltopdf_options_txt: One per line with '--' and whitespace between key
-  and value (e.g. --key value)
-web2print_headlesschrome_settings: Headless Chrome settings
-web2print_headlesschrome_json_converter: Open JSON converter/validator
-web2print_hostname: Hostname
-disable_tree_preview: Disable Tree Preview
-PHP Class Name: PHP Class Name
-editor_configuration: Editor Configuration
-allow_dirty_close: Disable unsaved content warning
-high_resolution_info_text: eg. for Web-to-Print or everywhere where srcset is not
-  possible/sufficient, not necessary for normal web-thumbnails, they automatically
-  get a srcset attribute with 1x and 2x
-advanced_settings: Advanced settings
-preserve_meta_data: Preserve meta data (don't strip)
-preserve_color: Preserve color (profile, space)
-thumbnail_preserve_info_text: '''Preserve meta data'' and ''preserve color'' only
-  works for transitions without compositions (frame, background color, ...) and color
-  modifications (greyscale, sepia, ...)'
-path_formatter_service: Formatter Service / Class
-separated: separated
-log_refresh_label: Refresh every
-website_translation_settings: Shared Translation Settings
-language_permissions: Language Permissions (no view permission means all)
-rendering_class: Custom Renderer class
-rendering_data: Data passed to renderer
-drag_object_preview: Drag Object for Preview
-web2print_protocol: Protocol
-rows_fixed: Rows fixed
-cols_fixed: Cols fixed
-force_resize: Force resize
-site_ids: Site IDs
-site_ids_tooltip: Provide a comma-seperated list of site IDs
-predefined_hotspot_data_templates: Predefined data templates
-hide_locale_labels_when_tabs_reached: Hide locale labels after number of tabs
-classificationstore_error_addkey_msg: Error adding Key
-classificationstore_dialog_keygroup_search: Key/Group Search
-options_provider_class: Options Provider Class or Service Name
-options_provider_data: Options Provider Data
-show_applogger_tab: Show App Logger Tab
-analyze: Analyze
-link_generator_reference: Link Provider Class or Service Name
-preview_generator_reference: Preview Generator Class or Service Name
-unique_qtip: Unique constraint will added. No need to check 'index' as well
-temporarily_disabled: Temporarily disabled
-enabled_in_editmode: Enabled in Editmode
-boolean_select: Boolean Select
-yes_label: Yes Display Name
-no_label: No Display Name
-empty_label: Empty Display Name
-gdpr_dataSource_sentMail_only_email: Search only based on E-Mail
-imageGallery: Image Gallery
-column_type: Column Type
-encryptedField: Encrypted Field
-datatype: Datatype
-used_by_class: 'Used by class:'
-uses_these_bricks: 'Uses these bricks:'
-last_login: Last Login
-multiselect_render_type: Render Type
-please_dont_forget_to_reload_pimcore: <b>Please don't forget to reload pimcore after
-  your modification!</b>
-2fa_required: Two Factor Authentication required
-2fa_reset_secret: Reset 2FA Secret
-2fa_reset_done: The 2FA secret was reset, the user can generate a new one after login
-  (My Profile section).
-focal_point_support: Focal Point Support
-default_positioning: Default Positioning
-thumbnail_focal_point_notice: The image is cropped automatically based on the focal
-  point set on the source image. If no focal point is present, the default positioning
-  setting below is used.
-iframe_url: IFrame URL
-deactivate_maintenance: Deactivate Maintenance
-maintenance_mode: Maintenance Mode
-maintenance_not_active: It seems that the maintenance isn't set up properly
-mail_settings_incomplete: It seems that the mail settings are incomplete
-bulk_export: Bulk Export
-bulk_import: Bulk Import
-warning_bulk_import: The Bulk Import will overwrite your class/fieldcollection/objectbrick
-  definitions without warning! Do you want to continue?
-environment: Environment
-local: Local
-example: Example
-send_as_html_mime: Send as HTML/Mime
-send_as_plain_text: Send as plain text
-send_test_email: Send Test-Email
-main_domain: Main Domain
-error_page: Error Page
-additional_domains: Additional Domains (one domain per line)
-redirect_to_main_domain: Redirect additional domains to main domain
-debug_mode_on: DEBUG MODE
-duration: Duration
-scope: Scope
-icon_class: Icon Class
-nice_name: Nice Name
-create_menu_shortcut: Create Shortcut in Menu
-group: Group
-display: Display
-order: Order
-filter_type: Filter Type
-generate_page_previews: Generate Page Previews
-success_generating_previews: Generating page previews in the background. Please reload
-  the admin interface after some time to take effect.
-error_generating_previews: Error generating page previews.
-custom_report_chart_settings: Chart Settings
-custom_report_charttype: Chart Type
-custom_report_charttype_none: None
-custom_report_charttype_pie: Pie Chart
-custom_report_charttype_line: Line Chart
-custom_report_charttype_bar: Bar Chart
-custom_report_chart_options: Type specific Chart Options
-custom_report_x_axis: X-Axis
-custom_report_y_axis: Y-Axis
-custom_report_datacolumn: Data Column
-custom_report_labelcolumn: Label Column
-custom_report_only_filter: Only Filter
-custom_report_filter_and_show: Filter and Show
-custom_report_filter_drilldown: Filter Drilldown
-no_further_sources_allowed: No further data sources allowed
-column_configuration: Manage & Share Column Configuration
-show_in_google_anaytics: Show in Google Analytics
+web2print_wkhtmltopdf_options_txt: "Une par ligne avec '--' et les espaces entre la
+  cl\xE9 et la valeur (exemple --cl\xE9 valeur)"
+web2print_headlesschrome_settings: "Param\xE8tres de Chrome Headless"
+web2print_headlesschrome_json_converter: Ouvrir le convertisseur/validateur JSON
+web2print_hostname: "Nom d'h\xF4te (Hostname)"
+disable_tree_preview: "D\xE9sactiver l'aper\xE7u de l'arborescence"
+PHP Class Name: Nom de la classe PHP
+editor_configuration: "Configuration de l'\xE9diteur"
+allow_dirty_close: "D\xE9sactiver l'alerte de contenu non sauvegard\xE9"
+high_resolution_info_text: "par exemple, pour Web-to-Print ou partout o\xF9 srcset
+  est impossible / suffisant, pas n\xE9cessaire pour miniatures web normales, ils
+  obtiennent automatiquement un attribut srcset avec 1x et 2x"
+advanced_settings: "Param\xE8tres avanc\xE9es"
+preserve_meta_data: "Conserver les m\xE9ta-donn\xE9es (ne pas enlever)"
+preserve_color: "Pr\xE9server la couleur (profil, espace)"
+thumbnail_preserve_info_text: "'Pr\xE9server les m\xE9ta-donn\xE9es' et 'pr\xE9server
+  la couleur' ne fonctionne que pour les transitions sans compositions (cadre, couleur
+  de fond, ...) et les modifications de couleurs (gris, s\xE9pia, ...)"
+path_formatter_service: Service / classe de formateur
+separated: "s\xE9par\xE9"
+log_refresh_label: Actualiser chaque
+website_translation_settings: "Param\xE8tres de traduction partag\xE9e"
+language_permissions: Autorisations de langue (aucune autorisation de vue signifie
+  tout)
+rendering_class: "Classe de rendu personnalis\xE9"
+rendering_data: "Donn\xE9e envoy\xE9 pour rendu"
+drag_object_preview: "Faites glisser l'objet pour l'aper\xE7u"
+web2print_protocol: Protocole
+rows_fixed: Lignes fixes
+cols_fixed: Cols fixes
+force_resize: Force redimensionner
+site_ids: IDs des sites
+site_ids_tooltip: "Fournir une liste s\xE9par\xE9e par des virgules des IDs des sites"
+predefined_hotspot_data_templates: "Mod\xE8les de donn\xE9es pr\xE9d\xE9finis"
+hide_locale_labels_when_tabs_reached: "Masquer les \xE9tiquettes des param\xE8tres
+  r\xE9gionaux apr\xE8s le nombre d'onglets"
+classificationstore_error_addkey_msg: "Erreur ajout Cl\xE9"
+classificationstore_dialog_keygroup_search: "Cl\xE9 / Groupe recherche"
+options_provider_class: Classe du fournisseur d'options ou nom du service
+options_provider_data: "Donn\xE9es du fournisseur d'options"
+show_applogger_tab: Afficher l'onglet Journaux de l'application
+analyze: Analyser
+link_generator_reference: Classe de fournisseur de liaison ou nom de service
+preview_generator_reference: "Aper\xE7u de la classe du g\xE9n\xE9rateur ou du nom
+  du service"
+unique_qtip: "Contrainte unique ajout\xE9e. Il n'y a pas besoin de v\xE9rifier les
+  'index' aussi."
+temporarily_disabled: "Temporairement d\xE9sactiv\xE9"
+enabled_in_editmode: "Activ\xE9 en mode \xE9dition"
+boolean_select: "S\xE9lecteur bool\xE9en"
+yes_label: Oui (nom d'affichage)
+no_label: Non (nom d'affichage)
+empty_label: Vide (nom d'affichage)
+gdpr_dataSource_sentMail_only_email: "Recherche uniquement bas\xE9e sur l'E-Mail"
+imageGallery: Galerie d'images
+column_type: Type de colonne
+encryptedField: "Champ encrypt\xE9"
+datatype: "Type de donn\xE9es"
+used_by_class: "Utilis\xE9 par la classe:"
+uses_these_bricks: 'Utilisent ces briques:'
+last_login: "Derni\xE8re connexion"
+multiselect_render_type: Type de rendu
+please_dont_forget_to_reload_pimcore: "<b>N'oubliez pas de recharger pimcore apr\xE8s
+  votre modification !</ b>"
+2fa_required: "Authentification \xE0 deux facteurs requise"
+2fa_reset_secret: "R\xE9initialiser le secret 2FA"
+2fa_reset_done: "Le secret 2FA a \xE9t\xE9 r\xE9initialis\xE9, l'utilisateur peut
+  en g\xE9n\xE9rer un nouveau apr\xE8s la connexion (section Mon profil)."
+focal_point_support: Prise en charge des points focaux
+default_positioning: "Positionnement par d\xE9faut"
+thumbnail_focal_point_notice: "L'image est recadr\xE9e automatiquement en fonction
+  du point focal d\xE9fini sur l'image source. Si aucun point focal n'est pr\xE9sent,
+  le param\xE8tre de positionnement par d\xE9faut ci-dessous est utilis\xE9."
+iframe_url: URL IFrame
+deactivate_maintenance: "D\xE9sactiver la maintenance"
+maintenance_mode: Mode maintenance
+maintenance_not_active: "Il semblerait que la maintenance ne soit pas correctement
+  configur\xE9e"
+mail_settings_incomplete: "Il semblerait que la configuration mail soit incompl\xE8te"
+bulk_export: Export en masse
+bulk_import: Import en masse
+warning_bulk_import: "L'import en masse \xE9crasera vos d\xE9finitions classe/ensemble
+  de champs/objet imbriqu\xE9 sans avertissement ! Voulez-vous continuer ?"
+environment: Environnement
+local: Localisation
+example: Exemple
+send_as_html_mime: Envoyer au format HTML
+send_as_plain_text: Envoyer au format texte
+send_test_email: Envoyer un e-mail de test
+main_domain: Domaine principal
+error_page: Page d'erreur
+additional_domains: "Domaines suppl\xE9mentaires (un domaine par ligne)"
+redirect_to_main_domain: "Rediriger les domains suppl\xE9mentaires vers le domaine
+  principal"
+debug_mode_on: MODE DEBUG
+duration: "Dur\xE9e"
+scope: "Port\xE9e"
+icon_class: "Classe de l'ic\xF4ne"
+nice_name: Joli nom
+create_menu_shortcut: "Cr\xE9er un raccourci dans le menu"
+group: Groupe
+display: Affichage
+order: Ordre
+filter_type: Type de filtre
+generate_page_previews: "G\xE9n\xE9rer les apercus de page"
+success_generating_previews: "G\xE9n\xE9ration d'aper\xE7us de page en arri\xE8re-plan.
+  Veuillez recharger l'interface d'administration apr\xE8s un certain temps pour qu'elle
+  prenne effet."
+error_generating_previews: "Erreur lors de la g\xE9n\xE9ration des aper\xE7us de page."
+custom_report_chart_settings: "R\xE9glages du graphique"
+custom_report_charttype: Type de graphique
+custom_report_charttype_none: Aucun
+custom_report_charttype_pie: Graphe Camembert
+custom_report_charttype_line: Graphes lignes
+custom_report_charttype_bar: Histogramme
+custom_report_chart_options: "Taper les Options de Graphique sp\xE9cifiques"
+custom_report_x_axis: Axe X
+custom_report_y_axis: Axe Y
+custom_report_datacolumn: "Colonne de donn\xE9e"
+custom_report_labelcolumn: "Colonne d'\xE9tiquette"
+custom_report_only_filter: Filtre seulement
+custom_report_filter_and_show: Filtrer et voir
+custom_report_filter_drilldown: Filtre Approfondi
+no_further_sources_allowed: "\nPas d'autres sources de donn\xE9es autoris\xE9es"
+column_configuration: Configuration des colonnes
+show_in_google_anaytics: Montrer dans Google Analytics
 style: Style
-foreground_color: Foreground Color
-background_color: Background Color
-use_current_player_position_as_preview: Use current player position as preview
-system_infos_and_tools: System Info & Tools
-server_info: Server Info
-database_administration: Database Administration
-important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality: 'IMPORTANT:
-  Use imagick PECL extension for best results, GDlib is just a fallback with limited
-  functionality and less quality!'
-trim: Trim
-server_fileexplorer: Server File Explorer
-add_user: Add User
-use_as_site: Use as site
-remove_site: Remove Site
-edit_site: Edit Site
-site_id: Site ID
-website_settings: Website Settings
-clear_cache: Clear Cache
+foreground_color: Couleur de premier plan
+background_color: "Couleur d'arri\xE8re-plan"
+use_current_player_position_as_preview: "Utiliser la position courante du lecteur
+  en tant que pr\xE9visualisation"
+system_infos_and_tools: "Outils & Infos syst\xE8me"
+server_info: Info Serveur
+database_administration: "Administration de la base de donn\xE9es"
+important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality: "IMPORTANT
+  : Utilisez l'extension PECL imagick pour de meilleurs r\xE9sultats, GDlib est simplement
+  une version de secours avec des fonctionnalit\xE9s limit\xE9s et une qualit\xE9
+  inf\xE9rieure !"
+trim: "R\xE9duire"
+server_fileexplorer: Explorateur de fichier serveur
+add_user: Ajouter un utilisateur
+use_as_site: Utiliser comme site
+remove_site: Retirer le site
+edit_site: Editer le site
+site_id: ID du site
+website_settings: "Param\xE8tres du site"
+clear_cache: Vider le cache
 extensions: Extensions
-update: Update
-system_settings: System Settings
-image_thumbnails: Image Thumbnails
-thumbnails: Thumbnails
+update: "Mettre \xE0 jour"
+system_settings: "Param\xE8tres syst\xE8me"
+image_thumbnails: Miniatures d'images
+thumbnails: Vignettes
 cache: Cache
 classes: Classes
-static_routes: Static Routes
-structured: Structured
-geo: Geographic
-loading: Loading
-steps: Steps
-database: Database
-location: Location
-every: Every
-categories: Categories
-revision: Build
-objectbricks: Objectbricks
-class_definitions: Class Definitions
-custom_layout_changed: Layout was changed in the meantime. Please reload the layout
-  and try again
-rule_violation: Rule Violation
-emails: Emails
-log_applicationlog: Application Logger
-classification_store: Classification Store
-quantityValue_field: Quantity Value
-expanded: Expanded
-display_type: Display Type
-custom_report_class: Report class
-hide: Hide
-clear_full_page_cache: Clear Full Page Cache
-all_caches: All Caches
-web2print_settings: Web-to-Print Settings
-admin_translations: Admin Translations
-lock: Lock
-unlock: Unlock
+static_routes: Routes statiques
+structured: "Structur\xE9"
+geo: "G\xE9ographique"
+loading: Chargement
+steps: Etapes
+database: "Base de donn\xE9es"
+location: Lieu
+every: Chaque
+categories: "Cat\xE9gories"
+revision: Construction
+objectbricks: "Objets imbriqu\xE9s"
+class_definitions: "D\xE9finition de la classe"
+custom_layout_changed: "La mise en page a \xE9t\xE9 modifi\xE9e dans l'intervalle.
+  S'il vous pla\xEEt recharger la mise en page et r\xE9essayer"
+rule_violation: "Violation d'une r\xE8gle"
+emails: E-mails
+log_applicationlog: Journal applicatif
+classification_store: Magasin de Classification
+quantityValue_field: "Valeur de Quantit\xE9"
+expanded: Etendu
+display_type: Type d'affichage
+custom_report_class: Classe rapport
+hide: Cacher
+clear_full_page_cache: "Vider le cache page enti\xE8re"
+all_caches: Tous les caches
+web2print_settings: "Param\xE8tres Web2Print"
+admin_translations: Traductions Admin
+lock: Verrouiller
+unlock: "D\xE9verrouiller"
 lock_and_propagate_to_children: Lock and propagate to children
-unlock_and_propagate_to_children: Unlock and propagate to children
-data_cache: Data Cache
+unlock_and_propagate_to_children: "D\xE9verrouiller et propager aux enfants"
+data_cache: "Cache de donn\xE9es"
 listing_use_traits: Listing Use (traits)
-listing_parent_php_class: Listing Parent PHP Class
-expand_cs_group: There are empty features not displayed here. Click to show them
-hide_empty_data: Hide empty data
-class_attributes: Class Attributes
-operator_group_other: Others
-operator_group_transformer: Transformers
-operator_group_extractor: Extractors
-operator_group_formatter: Formatters
-operator_group_renderer: Renderer
-operator_renderer_settings: Renderer Settings
-refresh_preview: Refresh Preview
-show_charcount: Show Character Count
-max_length: Max Length
-min_length: Min Length
-reports_config: Reports Config
-exclude_from_search_index: Exclude from Backend Full-Text Search
-left: left
-right: right
-top: top
-provide_split_view: Provide Split View
-allow_multiple_assignments: Allow Multiple Assignments
-enable_admin_async_load: Enable Async Load in Admin
-enable_text_selection: Enable Text Selection
-async_loading_warning_block: 'WARNING: Async Loading is NOT possible within Localized
-  Fields and Blocks'
-activate_column_configuration: Activate Column Configuration
-table_column_configuration: Column Configuration
-send_invitation_link: Send Invitation Link
-invitation_sent: Login Invitation sent
-invitation_link_sent: 'A temporary login link has been sent to email address: "%s" '
-classificationstore_group_by_key: Group by key
-allow_to_create_new_object: Allow to create a new object in relation field
+listing_parent_php_class: Listing Classe PHP Parent
+expand_cs_group: "Il y a des fonctionnalit\xE9s vides non affich\xE9es ici. Cliquez
+  pour les afficher"
+hide_empty_data: "Masquer les donn\xE9es vides"
+class_attributes: Attributs de classe
+operator_group_other: Autres
+operator_group_transformer: Transformateurs
+operator_group_extractor: Extracteurs
+operator_group_formatter: Formateurs
+operator_group_renderer: Rendu
+operator_renderer_settings: "Param\xE8tres de rendu"
+refresh_preview: "Actualiser l'aper\xE7u"
+show_charcount: "Afficher le nombre de caract\xE8res"
+max_length: Longueur maximum
+min_length: Longueur min
+reports_config: Rapports Config
+exclude_from_search_index: "Exclure de la recherche de texte int\xE9gral dans le backend"
+left: gauche
+right: droite
+top: haut
+provide_split_view: "Fournir une vue partag\xE9e"
+allow_multiple_assignments: Autoriser plusieurs affectations
+enable_admin_async_load: Activer le chargement asynchrone dans l'Admin
+enable_text_selection: "Activer la s\xE9lection du texte"
+async_loading_warning_block: "AVERTISSEMENT : le chargement asynchrone n'est PAS possible
+  dans les champs et les blocs localis\xE9s"
+activate_column_configuration: Activer la configuration de la colonne
+table_column_configuration: Configuration de la colonne
+send_invitation_link: Envoyer le lien d'invitation
+invitation_sent: "Invitation de connexion envoy\xE9e"
+invitation_link_sent: "Un lien de connexion temporaire a \xE9t\xE9 envoy\xE9 \xE0
+  l'adresse \xE9lectronique: \"%s\" "
+classificationstore_group_by_key: "Grouper par cl\xE9"
+allow_to_create_new_object: "Permettre de cr\xE9er un nouvel objet dans le champ relation"
 puppeteer_documentation: Puppeteer
-web2print_headlesschrome_documentation: Option Documentation
-web2print_headlesschrome_documentation_additions: Additional Options
-web2print_headlesschrome_documentation_additions_text: 'There are two additional options:
-  "header" and "footer". This options need a URL, which returns the header or footer
-  template.'
-json_converter: Formatting the Options
-json_converter_link: JSON Formatter
-max_characters: Maximum Characters
+web2print_headlesschrome_documentation: Documentation des options
+web2print_headlesschrome_documentation_additions: Options additionelles
+web2print_headlesschrome_documentation_additions_text: "Il existe deux options suppl\xE9mentaires
+  : \"header\" et \"footer\". Ces options n\xE9cessitent une URL, qui renvoie le mod\xE8le
+  d'en-t\xEAte ou de pied de page."
+json_converter: Formatage des options
+json_converter_link: Formateur JSON
+max_characters: "Nombre maximal de caract\xE8res"
 sites: Sites
-show_hide_areablock: Show or Hide on frontend
-asset_type_changed: Asset type was changed in the meantime. Please reload the admin
-  interface to see the latest changes.
-numeric_range: Numeric Range
-date_range: Date Range
-quantityValueRange_field: Quantity Value Range
+show_hide_areablock: Afficher ou masquer sur le frontend
+asset_type_changed: "Le type d'asset a \xE9t\xE9 modifi\xE9 entre-temps. Veuillez
+  recharger l'interface d'administration pour voir les derni\xE8res modifications."
+numeric_range: "Plage num\xE9rique"
+date_range: Plage de dates
+quantityValueRange_field: "Plage de valeurs de quantit\xE9"
 ...

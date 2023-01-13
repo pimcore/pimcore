@@ -1,1063 +1,1092 @@
 ---
-unsupported_feature: Unsupported feature! Please check system requirements!
-screen_size_to_small: Your screen is too small to display the desired preview.
-too_many_children_for_recyclebin: This element contains too many children to be moved
-  to the recycle bin so it will be deleted permanentely
-default: Default
-metadata: Metadata
-email_address: Email Address
-email_blacklist: Email Blacklist
+unsupported_feature: "Nem t\xE1mogatott funkci\xF3! K\xE9rj\xFCk, ellen\u0151rizze
+  a rendszerk\xF6vetelm\xE9nyeket!"
+screen_size_to_small: "T\xFAl kicsi k\xE9perny\u0151 a kiv\xE1lasztott el\u0151n\xE9zet
+  megjelen\xEDt\xE9s\xE9hez."
+too_many_children_for_recyclebin: "Ez az elem t\xFAl sok gyermeket tartalmaz ahhoz,
+  hogy \xE1thelyezhet\u0151 legyen a kuk\xE1ba, \xEDgy v\xE9glegesen t\xF6rl\u0151dik"
+default: "Alap\xE9rtelmezett"
+metadata: Metaadat
+email_address: "E-mail c\xEDm"
+email_blacklist: "E-mail tilt\xF3lista"
 OK: OK
-optional: optional
-search_replace_assignments_error: Please select items where to replace and a new target
-  item.
-replace_assignments_in_selected_elements: Replace assignments in selected elements
-search_replace_assignments: Search & Replace Assignments
-imageadvanced: Image Advanced
-filter_active_message: Do you want to export only the filtered values?
-close_others: Close Others
-close_all: Close All
-close_unmodified: Close Unmodified
-classid: Class ID
-parentid: Parent ID
+optional: "opcion\xE1lis"
+search_replace_assignments_error: "V\xE1lassza ki a cser\xE9lni k\xEDv\xE1nt elem(ek)et
+  \xE9s az \xFAj c\xE9lt."
+replace_assignments_in_selected_elements: "Hozz\xE1rendel\xE9sek cser\xE9je a kiv\xE1lasztott
+  elemekben"
+search_replace_assignments: "Hozz\xE1rendel\xE9sek keres\xE9se \xE9s cser\xE9je"
+imageadvanced: "Halad\xF3 K\xE9p"
+filter_active_message: "Csak a sz\u0171rt \xE9rt\xE9keket szeretn\xE9 export\xE1lni?"
+close_others: "T\xF6bbi bez\xE1r\xE1sa"
+close_all: "\xD6sszes bez\xE1r\xE1sa"
+close_unmodified: "V\xE1ltozatlanok bez\xE1r\xE1sa"
+classid: "Oszt\xE1ly Azonos\xEDt\xF3"
+parentid: "Sz\xFCl\u0151 Azonos\xEDt\xF3"
 mimetype: MIME-Type
-creationdate: Creation Date
-usermodification: User Modification
-userowner: Owner
-languages: Languages
-password_was_not_changed: Password wasn't changed because it isn't secure enough
+creationdate: "L\xE9trehoz\xE1s D\xE1tuma"
+usermodification: "Felhaszn\xE1l\xF3i m\xF3dos\xEDt\xE1sok"
+userowner: Tulajdonos
+languages: Nyelvek
+password_was_not_changed: "A jelsz\xF3 nem v\xE1ltozott, mert nem el\xE9g biztons\xE1gos."
 marketing: Marketing
-clear_content_of_current_view: Clear content of current view
-highlight_editable_elements: Highlight editable elements
-continue: Continue
-you_have_unsaved_changes: You have unsaved changes.
+clear_content_of_current_view: "Az aktu\xE1lis n\xE9zet tartalm\xE1nak t\xF6rl\xE9se"
+highlight_editable_elements: "Szerkeszthet\u0151 elemek megjel\xF6l\xE9se"
+continue: "Folytat\xE1s"
+you_have_unsaved_changes: "El nem mentett m\xF3dos\xEDt\xE1sai vannak."
 global_targeting_rule: Global Targeting Rule
 global_targeting_rules: Global Targeting Rules
-personalization: Personalization
-shared_translations: Shared Translations
-textfield: Textfield
-add_data: Add data
-add_hotspot: Add hotspot
-add_marker_or_hotspots: Add marker or hotspots
-custom_reports: Custom Reports
-start_date: Start date
-start_date_relative: Start date (relative to today)
-end_date: End date
-end_date_relative: End date (relative to today)
-relative_date_description: i.e. -1m +1d (d=days, m=months, y=years)
-source_definition: Source Definition
-clear_thumbnails: Clear Thumbnails
-recipients: Recipients
-newsletter_send_error: Can't send your newsletter, please contact your administrator!
-newsletter_sent_message: Your newsletter is now sent to all recipients, this process
-  is done in the background (you can close pimcore in the meantime) and can take up
-  to one hour.
-do_you_really_want_to_send_the_newsletter_to_all_recipients: Do you really want to
-  send the newsletter to all recipients
-send_test_newsletter: Send Test-Newsletter
-send_newsletter: Send Newsletter Now
-object_filter: Object Filter
-add_newsletter: Add Newsletter
-newsletter: Newsletter
+personalization: "Szem\xE9lyreszab\xE1s"
+shared_translations: "Osztott ford\xEDt\xE1sok"
+textfield: "Sz\xF6veges mez\u0151"
+add_data: "Adat hozz\xE1ad\xE1sa"
+add_hotspot: "Hotspot hozz\xE1ad\xE1sa"
+add_marker_or_hotspots: "Marker vagy Hotspot hozz\xE1ad\xE1sa"
+custom_reports: Egyedi riportok
+start_date: "Kezd\xE9s d\xE1tuma"
+start_date_relative: "Kezd\xE9s d\xE1tuma (mai naphoz relat\xEDv)"
+end_date: "Befejez\xE9s d\xE1tuma"
+end_date_relative: "Befejez\xE9s d\xE1tuma (mai naphoz relat\xEDv)"
+relative_date_description: "Pl..: -1m +1d (d=nap, m=h\xF3nap, y=\xE9v)"
+source_definition: "Forr\xE1s defin\xEDci\xF3"
+clear_thumbnails: "B\xE9lyegk\xE9pek t\xF6rl\xE9se"
+recipients: "C\xEDmzettek"
+newsletter_send_error: "A h\xEDrlev\xE9l k\xFCld\xE9se sikertelen, vegye fel a kapcsolatot
+  az adminisztr\xE1torral."
+newsletter_sent_message: "H\xEDrlevel\xE9t minden c\xEDmzettnek elk\xFCldj\xFCk, ez
+  a folyamat a h\xE1tt\xE9rben zajlik (id\u0151k\xF6zben bez\xE1rhatja a pimcore-t),
+  \xE9s ak\xE1r egy \xF3r\xE1t is ig\xE9nybe vehet."
+do_you_really_want_to_send_the_newsletter_to_all_recipients: "T\xE9nyleg el szeretn\xE9
+  k\xFCldeni a h\xEDrlevelet minden c\xEDmzettnek"
+send_test_newsletter: "Teszt h\xEDrlev\xE9l k\xFCld\xE9se"
+send_newsletter: "H\xEDrlev\xE9l k\xFCld\xE9se most"
+object_filter: "Objektum sz\u0171r\u0151"
+add_newsletter: "H\xEDrlev\xE9l hozz\xE1ad\xE1sa"
+newsletter: "H\xEDrlev\xE9l"
 crm: CRM
-notes_events: Notes &amp; Events
-delete_folder: Delete Folder
-home: Home
-subject: Subject
-poster_image: Poster-Image
+notes_events: "Megjegyz\xE9sek &amp; Esem\xE9nyek"
+delete_folder: "Mappa t\xF6rl\xE9se"
+home: "F\u0151"
+subject: "T\xE1rgy"
+poster_image: "Poszterk\xE9p"
 tablet: Tablet
 hardlink: Hardlink
-convert_to: Convert to
-replace: Replace
+convert_to: "\xC1tkonvert\xE1l\xE1s"
+replace: Csere
 targeting: Targeting
-paste_inheritance: Paste (inheritance)
-are_you_sure: Are you sure?
-all_content_will_be_lost: All content will be lost
-content_master_document: Content-Master Document
-overwrite: Overwrite
-click_right_to_overwrite: Click right to overwrite
-open_document_by_id: Open Document
-open_asset_by_id: Open Asset
-open_object_by_id: Open Object
-element_not_found: Element not found
-import_from_url: Import from URL
-do_you_really_want_to_leave_the_editmode: Do you really want to leave the editmode
-  (NO!)
-or_specify_an_asset_image_below: or specify an asset image below
-medium: Medium
-saved_successfully: Saved successfully!
-qr_codes: QR-Codes
-element: Element
-details_for_selected_event: Details for selected element
-fields: Fields
-not_possible_with_paging: Sorry, this is not possible in elements which are paged,
-  try to restructure your data to avoid pages in the tree
-inherited: Inherited
-length: Length
-show_in_tree: Show in Tree
-exactmatch: exact match
-desktop: Desktop
-drag_me: Drag Me
-serverVars: Server Variables
-attributes: Attributes
-code: Code
+paste_inheritance: "Besz\xFAr\xE1s (\xF6r\xF6kl\xE9s)"
+are_you_sure: Biztos?
+all_content_will_be_lost: Minden tartalom elveszik
+content_master_document: Content-Master Dokumentum
+overwrite: "Fel\xFCl\xEDr\xE1s"
+click_right_to_overwrite: "Jobb klikk a fel\xFCl\xEDr\xE1shoz"
+open_document_by_id: "Dokumentum megnyit\xE1sa"
+open_asset_by_id: "Asset megnyit\xE1sa"
+open_object_by_id: "Objektum megnyit\xE1sa"
+element_not_found: "Elem nem tal\xE1lhat\xF3"
+import_from_url: "Import\xE1l\xE1s URL-b\u0151l"
+do_you_really_want_to_leave_the_editmode: "T\xE9nyleg ki akarsz l\xE9pni a szerkeszt\u0151
+  m\xF3db\xF3l? (NEM!)"
+or_specify_an_asset_image_below: "vagy adj meg egy k\xE9p Assetet"
+medium: "M\xE9dium"
+saved_successfully: "Sikeres ment\xE9s!"
+qr_codes: "QR-K\xF3dok"
+element: Elem
+details_for_selected_event: "Kiv\xE1lasztott elemek r\xE9szletei"
+fields: "Mez\u0151k"
+not_possible_with_paging: "Eln\xE9z\xE9st, de a m\u0171velet nem lehets\xE9ges azokon
+  az elemeken, amelyek lapoz\xE1sra ker\xFCltek, pr\xF3b\xE1ld meg \xFAjrastrukt\xFAr\xE1lni
+  az adatokat, hogy elker\xFCld a lapoz\xE1st a f\xE1ban."
+inherited: "\xD6r\xF6k\xF6lt"
+length: Hossz
+show_in_tree: "Mutasd a f\xE1ban"
+exactmatch: "pontos tal\xE1lat"
+desktop: Asztal
+drag_me: "H\xFAzz"
+serverVars: "Szerver v\xE1ltoz\xF3k"
+attributes: "Attrib\xFAtumok"
+code: "K\xF3d"
 tag: Tag
-tags: Tags
-Click here to proceed: Click here to proceed
-Your browser is not supported. Please install the latest version of one of the following browsers.: Your
-  browser is not supported. Please install the latest version of one of the following
-  browsers.
-open_in_new_window: Open in new Window
-limit_reached: Limit reached
-casesensitive: case-sensitive
-path_aliases: Path Aliases
-pretty_url: Pretty URL
-pretty_url_label: Pretty URL (overrides path from tree-structure)
-password_cannot_be_changed: Password cannot be changed
-old_password: Old Password
-new_password: New Password
-retype_password: Retype Password
-reports: Reports
-roles: Roles
-Password: Password
-Forgot your password: Forgot your password
-Back to Login: Back to Login
-Enter your username and pimcore will send a login link to your email address: Enter
-  your username and Pimcore will send a login link to your email address
-Please check your mailbox.: Please check your mailbox.
-Login: Login
-Submit: Submit
-A temporary login link has been sent to your email address.: A temporary login link
-  has been sent to your email address.
+tags: Tag-ek
+Click here to proceed: "Kattintson ide a folytat\xE1shoz"
+Your browser is not supported. Please install the latest version of one of the following browsers.: "Nem
+  t\xE1mogatott b\xF6ng\xE9sz\u0151. K\xE9rj\xFCk telep\xEDtse a k\xF6vetkez\u0151
+  b\xF6ng\xE9sz\u0151k egyik\xE9nek leg\xFAjabb verzi\xF3j\xE1t."
+open_in_new_window: "Megnyit\xE1s \xFAj ablakban"
+limit_reached: "Limit el\xE9rve"
+casesensitive: "kis-nagybet\u0171 \xE9rz\xE9keny"
+path_aliases: "\xDAtvonal aliasok"
+pretty_url: "Sz\xE9p URL"
+pretty_url_label: "Sz\xE9p URL (fel\xFCl\xEDrja a fa-strukt\xFAr\xE1b\xF3l sz\xE1rmaz\xF3
+  \xFAtvonalat)"
+password_cannot_be_changed: "A jelsz\xF3 nem megv\xE1ltoztathat\xF3"
+old_password: "R\xE9gi jelsz\xF3"
+new_password: "\xDAj jelsz\xF3"
+retype_password: "Jelsz\xF3 \xFAjra"
+reports: Riportok
+roles: Szerepek
+Password: "Jelsz\xF3"
+Forgot your password: Elfelejtetted a jelszavad
+Back to Login: "Vissza a Bejelentkez\xE9sre"
+Enter your username and pimcore will send a login link to your email address: "Add
+  meg a felhaszn\xE1l\xF3neved \xE9s a Pimcore k\xFCld egy bejelentkez\xE9si linket
+  az email c\xEDmedre"
+Please check your mailbox.: "Ellen\u0151rizd az email fi\xF3kodat."
+Login: "Bejelentkez\xE9s"
+Submit: "Elk\xFCld\xE9s"
+A temporary login link has been sent to your email address.: "Egy ideiglenes bejelentkez\u0151
+  linket k\xFCldt\xFCnk az e-mail c\xEDmedre."
 user_inactive: User is not active
 user_no_email_address: User has no email address
 user_no_password: User has no password
 user_unknown: User unknown
 lost_password_email_error: Could not send password recovery email
-use_current_player_position_as_preview: Use current player position as preview
-select_image_preview: Select Image Preview
-preview_not_available: Preview not available
-status: Status
-video_preview_in_progress: The preview for this video is currently in progress.
-php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: PHP-CLI binary or FFMPEG is
-  not available, please ensure that both are installed/executable and configured in
-  the system settings!
-video_thumbnails: Video Thumbnails
-do_you_really_want_to_close_pimcore: Do you really want to close Pimcore?
-drop_element_here: Drop element here
-select_specific_area_of_image: Select specific area of image
-paste_recursive_updating_references: Paste recursive, updating references
-add_hardlink: Add Hardlink
-source_path: Source path
-properties_from_source: Use properties from source document
+use_current_player_position_as_preview: "Lej\xE1tsz\xF3 jelenlegi poz\xEDci\xF3j\xE1nak
+  haszn\xE1lata el\u0151n\xE9zetben"
+select_image_preview: "V\xE1lassz K\xE9p-el\u0151n\xE9zetet"
+preview_not_available: "El\u0151n\xE9zet nem el\xE9rhet\u0151"
+status: "St\xE1tusz"
+video_preview_in_progress: "A vide\xF3 el\u0151n\xE9zete m\xE9g folyamatban van."
+php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: "A PHP-CLI bin\xE1ris vagy
+  az FFMPEG nem el\xE9rhet\u0151, gy\u0151z\u0151dj meg r\xF3la, hogy mindkett\u0151
+  telep\xEDtve van \xE9s futtathat\xF3, valamint be van \xE1ll\xEDtva a rendszerben!"
+video_thumbnails: Video Thumbnailek
+do_you_really_want_to_close_pimcore: "T\xE9nyleg be akarod z\xE1rni a Pimcoret?"
+drop_element_here: Ide dobj egy elemet
+select_specific_area_of_image: "V\xE1laszd ki a k\xE9p egy r\xE9szlet\xE9t"
+paste_recursive_updating_references: "Beilleszt\xE9s rekurz\xEDvan, hivatkoz\xE1sok
+  friss\xEDt\xE9s\xE9vel"
+add_hardlink: "Hardlink hozz\xE1ad\xE1sa"
+source_path: "Forr\xE1s \xFAtvonal"
+properties_from_source: "Tulajdons\xE1gok haszn\xE1lata a forr\xE1s Dokumentumb\xF3l"
 children_from_source: Use children from source document
-click_right_for_more_options: Click right for more options
-move_to_tab: Move to Tab
-not_supported: Not supported
-edit_link: Edit Link
-resize: Resize
-scalebyheight: Scale by Height
-scalebywidth: Scale by Width
+click_right_for_more_options: "Jobb kattint\xE1s a tov\xE1bbi lehet\u0151s\xE9gek\xE9rt"
+move_to_tab: "Mozgat\xE1sra Tabra"
+not_supported: "Nem t\xE1mogatott"
+edit_link: "Link szerkeszt\xE9se"
+resize: "\xC1tm\xE9retez\xE9s"
+scalebyheight: "M\xE9retez\xE9s magass\xE1g szerint"
+scalebywidth: "M\xE9retez\xE9s sz\xE9less\xE9g szerint"
 crop: Crop
-cleanup: Cleanup
-this_element_cannot_be_edited: This element cannot be edited
-details: Details
-cannot_save_object_please_try_to_edit_the_object_in_detail_view: <b>Cannot save object!</b><br
-  />Please try to edit the object in the detail view.
-size: Size
-select_a_file: Select a file
-upload_compatibility_mode: Upload File (Compatibility Mode)
-the_system_is_in_maintenance_mode_please_wait: The system is in maintenance mode,
-  please wait
-activate: Activate
-image_is_too_small: Image is too small, please choose a bigger one.
-name_is_not_allowed: Name is not allowed
-import_from_server: Import from Server
-upload_files: Upload Files
-upload_zip: Upload ZIP Archive
-document_root: Document Root
-batch_change_selected: Batch edit selected
-download_as_zip: Download as ZIP
-locked: Locked
-element_cannot_be_move_because_it_is_locked: Element cannot be moved because it is
-  locked.
-element_cannot_be_moved: The element cannot be moved here
+cleanup: "Takar\xEDt\xE1s"
+this_element_cannot_be_edited: "Ez az elem nem szerkeszthet\u0151"
+details: "R\xE9szletek"
+cannot_save_object_please_try_to_edit_the_object_in_detail_view: "<b>Objektum nem
+  menthet\u0151!</b>Pr\xF3b\xE1ld meg szerkeszteni a r\xE9szletek alatt."
+size: "M\xE9ret"
+select_a_file: "V\xE1lassz filet"
+upload_compatibility_mode: "File felt\xF6lt\xE9se (Kompatibilit\xE1si m\xF3d)"
+the_system_is_in_maintenance_mode_please_wait: "A rendszer karbantart\xE1s alatt,
+  k\xE9rj\xFCk v\xE1rj"
+activate: "Aktiv\xE1l\xE1s"
+image_is_too_small: "A k\xE9p t\xFAl kicsi, k\xE9rj\xFCk v\xE1lassz nagyobbat"
+name_is_not_allowed: "Nem megengedett n\xE9v"
+import_from_server: "Import\xE1l\xE1s Szerverr\u0151l"
+upload_files: "Fileok felt\xF6lt\xE9se"
+upload_zip: "ZIP felt\xF6lt\xE9se"
+document_root: "Dokumentum Gy\xF6k\xE9r"
+batch_change_selected: "Kiv\xE1lasztott elemek szerkeszt\xE9se"
+download_as_zip: "Let\xF6lt\xE9s ZIP-ben"
+locked: "Z\xE1rolva"
+element_cannot_be_move_because_it_is_locked: "Az elem nem mozgathat\xF3, mivel z\xE1rolva
+  van."
+element_cannot_be_moved: "Az elem ide nem mozgathat\xF3"
 element_cannot_be_moved_because_target_is_paginated: The element cannot be dragged
   on a paginated tree/folder with manual indexing (Sort by index). Please change the
   sorting method or use "Search & Move" option under the "Advanced" context menu of
   the target to move the elements.
-no_collections_allowed: No Collections allowed
-filter_condition: Filter Condition
-all_types: All Types
+no_collections_allowed: "Kollekci\xF3 nem megengedett"
+filter_condition: "Sz\u0171r\xE9si felt\xE9tel"
+all_types: "Minden t\xEDpus"
 audio: Audio
 video: Video
-archive: Archive
-unknown: Unknown
-class: Class
-page: Page
+archive: "Arch\xEDvum"
+unknown: Ismeretlen
+class: "Oszt\xE1ly"
+page: Oldal
 objectbrick: Objectbrick
 field_collection: Field-Collection
-snippet: Snippet
-folder: Folder
-your_selection: Your Selection
-double_click_to_add_item_to_selection: Double-click an item on the left to add it
-  to this selection.
-label: Label
-error_auth_failed: Login failed!<br />Please try again.
-error_session_expired: Session expired!<br />Please login again.
-site: Site
-descending: Descending
-ascending: Ascending
-sort: Sort
-results: Results
-dimension: Dimension
-metric: Metric
-segment: Segment
-data_explorer: Data Explorer
-navigation: Navigation
-entrances: Entrances
-exits: Exits
-restore: Restore
-amount: Amount
-flush_recyclebin: Flush Recycle Bin
-recyclebin: Recycle Bin
-deletedby: Deleted By
-open_select_editor: Open Selection-Editor
-ignore: Ignore
+snippet: "R\xE9szlet"
+folder: Mappa
+your_selection: "Kiv\xE1lasztott"
+double_click_to_add_item_to_selection: "Dupla kattint\xE1ssal v\xE1laszd ki az elemet,
+  hogy hozz\xE1add a list\xE1hoz"
+label: "C\xEDmke"
+error_auth_failed: "Sikertelen bejelentkez\xE9s<br>Pr\xF3b\xE1ld \xFAjra."
+error_session_expired: "Lej\xE1rt a munkamenet!<br />Jelentkezz be \xFAjra."
+site: Oldal
+descending: "Cs\xF6kken\u0151"
+ascending: "N\xF6vekv\u0151"
+sort: "Rendez\xE9s"
+results: "Eredm\xE9nyek"
+dimension: "M\xE9retek"
+metric: "M\xE9rt\xE9k"
+segment: Szegmens
+data_explorer: "Adat b\xF6ng\xE9sz\u0151"
+navigation: "Navig\xE1ci\xF3"
+entrances: "Bej\xE1ratok"
+exits: "Kij\xE1ratok"
+restore: "Vissza\xE1ll\xEDt\xE1s"
+amount: "Mennyis\xE9g"
+flush_recyclebin: "Kuka \xFCr\xEDt\xE9se"
+recyclebin: Kuka
+deletedby: "T\xF6r\xF6lve"
+open_select_editor: "Kiv\xE1laszt\xE1s-Szerkeszt\u0151 megnyit\xE1sa"
+ignore: "Mell\u0151z\xE9s"
 email_log: Email Log
-email_log_resend: Resend email
-email_log_resend_window_msg: Please confirm that you want to send the email again
-  to all recipients.
-select_site: Select a site
-main_site: Main Site
-filename: Filename
-unsupported_filetype: Unsupported Filetype
-email_log_resend_window_success_message: The email has been sent successfully to all
-  recipients.
-email_log_resend_window_error_message: An error occurred. The email has not been resent.
-error_jobs: The following jobs failed
-batch_change: Batch edit all
-batch_edit_field: Batch edit all field
-published: Published
-all: all
-items_per_page: Items per page
-reload_pimcore_changes: You have to reload Pimcore for the changes to take effect,
-  would you like to do this now?
-info: Info
-or: or
-paste_contents: Paste only contents here
-paste_as_child: Paste as child
+email_log_resend: "Email \xFAjrak\xFCld\xE9se"
+email_log_resend_window_msg: "Er\u0151s\xEDtsd meg, hogy a leveled minden \xE9rintettnek
+  \xFAjra elk\xFClden\xE9d."
+select_site: "V\xE1lassz weboldalt"
+main_site: "F\u0151 Weboldal"
+filename: "Filen\xE9v"
+unsupported_filetype: "Nem t\xE1mogatott file form\xE1tum"
+email_log_resend_window_success_message: "Az emailt sikeresen elk\xFCldt\xFCk az \xF6ssze
+  c\xEDmre."
+email_log_resend_window_error_message: "Hiba t\xF6rt\xE9nt. Az email nem ker\xFClt
+  \xFAjrak\xFCld\xE9sre."
+error_jobs: "A k\xF6vetkez\u0151 folyamatok nem siker\xFCltek"
+batch_change: "\xD6sszes k\xF6tegelt szerkeszt\xE9se"
+batch_edit_field: "\xD6ssze mez\u0151 k\xF6tegelt szerkeszt\xE9se"
+published: "Publik\xE1lva"
+all: mind
+items_per_page: Elem/oldal
+reload_pimcore_changes: "\xDAjra kell t\xF6lteni a Pimcoret, hogy a v\xE1ltoz\xE1sok
+  \xE9rv\xE9nyre ker\xFCljenek, szeretn\xE9d most megtenni?"
+info: "Inf\xF3"
+or: vagy
+paste_contents: "Csak a tartalom besz\xFAr\xE1sa"
+paste_as_child: "Besz\xFAr\xE1s gyerekk\xE9nt"
 paste_recursive_as_child: Paste as child (recursive)
-view_original: View Original
-feed: Feed
-no_items_found: No items found
-public_url: Public URL
-pageviews: Pageviews
-visits: Visits
-detail: Detail
-report_settings: Report Settings
-overview: Overview
-visitor_overview: Visitor Overview
-other: Other
+view_original: "Eredeti megtekint\xE9se"
+feed: Csatorna
+no_items_found: "Nincs tal\xE1lat"
+public_url: Publikus URL
+pageviews: "Oldalmegtekint\xE9sek"
+visits: "L\xE1togat\xE1sok"
+detail: "R\xE9szletek"
+report_settings: "Riport Be\xE1ll\xEDt\xE1sok"
+overview: "\xD6sszefoglal\xF3"
+visitor_overview: "L\xE1togat\xF3 \xE1ttekint\xE9s"
+other: "Egy\xE9b"
 google_analytics: Google Analytics
-reports_and_marketing: Marketing & Reports
-save_only_scheduled_tasks: Save only scheduled tasks
-modified_assets: Modified Assets
-modification_statistic: Changes in the last 31 days
-add_portlet: Add Portlet
-modified_documents: Modified Documents
-modified_objects: Modified Objects
-welcome: Welcome
-save_and_publish: Save & Publish
-delete: Delete
-save: Save
-add_assets: Add Asset(s)
-preview: Preview
-advanced: Advanced
-basic: Basic
-list: List
-view: View
-publish: Publish
-rename: Rename
-settings: Settings
-properties: Properties
-versions: Versions
-add: Add
-date: Date
-user: User
-note: Note
+reports_and_marketing: Marketing & Riportok
+save_only_scheduled_tasks: "Csak az \xFCtemezett feladatok ment\xE9se"
+modified_assets: "V\xE1ltozott asset-ek"
+modification_statistic: "V\xE1ltoz\xE1sok az elm\xFAlt 31 napb\xF3l"
+add_portlet: "Portlet hozz\xE1ad\xE1sa"
+modified_documents: "M\xF3dos\xEDtott Dokumentumok"
+modified_objects: "M\xF3dos\xEDtott Objektumok"
+welcome: "\xDCdv"
+save_and_publish: "Ment\xE9s & Publik\xE1l\xE1s"
+delete: "T\xF6rl\xE9s"
+save: "Ment\xE9s"
+add_assets: "Asset(ek) hozz\xE1ad\xE1sa"
+preview: "El\u0151n\xE9zet"
+advanced: "Halad\xF3"
+basic: Alap
+list: Lista
+view: "Megtekint\xE9s"
+publish: "Publik\xE1l\xE1s"
+rename: "\xC1tnevez\xE9s"
+settings: "Be\xE1ll\xEDt\xE1sok"
+properties: "Tulajdont\xE1sok"
+versions: "Verzi\xF3k"
+add: "Hozz\xE1ad\xE1s"
+date: "D\xE1tum"
+user: "Felhaszn\xE1l\xF3"
+note: "Megjegyz\xE9s"
 email_cc: Cc
 email_bcc: Bcc
-email_settings: Email Settings
-email_settings_receiver_description: 'Multiple recipients can be specified by separating
-  the email addresses with a semicolon. <br/>Example: receiver@pimcore.org; receiver2@pimcore.org<br/>For
-  ''From'' you can use additionally the syntax <i>My Name &lt;my-name@example.com&gt;</i>'
-email_logs: Sent Emails
-email_log_sent_Date: Date sent
-predefined_document_type: Predefined Document Type
+email_settings: "Email be\xE1ll\xEDt\xE1sok"
+email_settings_receiver_description: "T\xF6bb c\xEDmzett is megadhat\xF3 pontosvessz\u0151vel
+  elv\xE1lasztva.<br>P\xE9ld\xE1ul: receiver@pimcore.org; receiver2@pimcore.org<br>\nA
+  'Felad\xF3' eset\xE9n a k\xF6vetkez\u0151 form\xE1tum is haszn\xE1lhat\xF3: <i>My
+  Name &lt;my-name@example.com&gt;</i>"
+email_logs: "Elk\xFCld\xF6tt emailek"
+email_log_sent_Date: "K\xFCld\xE9s d\xE1tuma"
+predefined_document_type: "El\u0151re defini\xE1lt Dokumentum T\xEDpusok"
 controller: Controller
 action: Action
-actions: Actions
+actions: "M\u0171veletek"
 template: Template
 staticroute: Static Route
 static_generator: Static Page Generator
 static_generator_enable: Enable server side static rendering
 static_generator_lifetime: Lifetime (in minutes) for static page (optional)
 last_generated: Last generated
-key: Key
+key: Kulcs
 id: ID
-name: Name
-title: Title
-description: Description
-unpublish: Unpublish
-target: Target
-type: Type
-please_enter_the_new_name: Please enter the new name
-add_page: Add Page
-add_snippet: Add Snippet
-add_email: Add Email
-add_link: Add Link
-copy: Copy
-paste: Paste
-close_all_tabs: Close all tabs
-search: Search
-import: Import
-export: Export
+name: "N\xE9v"
+title: "C\xEDm"
+description: "Le\xEDr\xE1s"
+unpublish: "Visszavon\xE1s"
+target: "C\xE9l"
+type: "T\xEDpus"
+please_enter_the_new_name: "Adj meg \xFAj nevet"
+add_page: "Oldal hozz\xE1ad\xE1sa"
+add_snippet: "Snippet hozz\xE1ad\xE1sa"
+add_email: "Email hozz\xE1ad\xE1sa"
+add_link: "Link hozz\xE1ad\xE1sa"
+copy: "M\xE1sol\xE1s"
+paste: "Beilleszt\xE9s"
+close_all_tabs: "Minden tab bez\xE1r\xE1sa"
+search: "Keres\xE9s"
+import: "Import\xE1l\xE1s"
+export: "Export\xE1l\xE1s"
 document_type: Document Type
-document_types: Document Types
-predefined_properties: Predefined Properties
-users: Users
-profile: Profile
-my_profile: My Profile
-documentation: Documentation
-report_bugs: Report Bugs
+document_types: "Dokumentum T\xEDpusok"
+predefined_properties: "Alap\xE9rtelmezett tulajdons\xE1gok"
+users: "Felhaszn\xE1l\xF3k"
+profile: Profil
+my_profile: Profilom
+documentation: "Dokument\xE1ci\xF3"
+report_bugs: "Hiba bejelent\xE9se"
 about: About
 file: File
-extras: Extras
-help: Help
-configuration: Configuration
-value: Value
-add_a_custom_property: Add a custom Property
+extras: "Extr\xE1k"
+help: "Seg\xEDts\xE9g"
+configuration: "Konfigur\xE1ci\xF3"
+value: "\xC9rt\xE9k"
+add_a_custom_property: "Egyedi tulajdons\xE1g hozz\xE1ad\xE1sa"
 custom: Custom
-general: General
-language: Language
-quality: Quality
-format: Format
-documents: Documents
-assets: Assets
-upload: Upload
-width: Width
-height: Height
-empty: Empty
-workflow: Workflow
-modify: 'Modify '
-create: 'Create '
-edit: Edit
-logout: Logout
-refresh: Refresh
+general: "\xC1ltal\xE1nos"
+language: Nyelv
+quality: "Min\u0151s\xE9g"
+format: "Form\xE1tum"
+documents: Dokumentumok
+assets: Assetek
+upload: "Felt\xF6lt\xE9s"
+width: "Sz\xE9less\xE9g"
+height: "Magass\xE1g"
+empty: "\xDCres"
+workflow: Folyamat
+modify: "M\xF3dos\xEDt\xE1s"
+create: "L\xE9trehoz\xE1s"
+edit: "Szerkeszt\xE9s"
+logout: "Kijelentkez\xE9s"
+refresh: "Friss\xEDt\xE9s"
 input: Input
 checkbox: Checkbox
 textarea: Textarea
-image: Image
+image: "K\xE9p"
 select: Select
-base: Base
-add_object: Add Object
+base: Alap
+add_object: "Objektum hozz\xE1ad\xE1sa"
 border: Border
-document: Document
+document: Dokumentum
 asset: Asset
-object: Object
-remove: Remove
-hidden_dependencies: There are additional dependencies your user does not have the
-  permissions to see.
-open: Open
-days: Days
-seemode: Seemode
-edit_current_page: Edit this page
-close: Close
-name_already_in_use: Name is already in use, please choose a different one.
-name_and_key_must_be_defined: Name and Type must be defined
-mandatory_field_empty: Please fill all mandatory fields
-reload: Reload
-schedule: Schedule
-time: Time
-version: Version
-active: Active
-success: Success
-translations: Translations
+object: Objektum
+remove: "Elt\xE1vol\xEDt\xE1s"
+hidden_dependencies: "Egy\xE9b f\xFCgg\u0151s\xE9gek is vannak, de nincs jogosults\xE1got
+  l\xE1tni \u0151ket."
+open: "Megnyit\xE1s"
+days: Napok
+seemode: "N\xE9zet"
+edit_current_page: "Oldal szerkeszt\xE9se"
+close: "Bez\xE1r\xE1s"
+name_already_in_use: "A n\xE9v m\xE1r haszn\xE1latban van, k\xE9rlek, v\xE1laszz m\xE1sikat."
+name_and_key_must_be_defined: "N\xE9v \xE9s t\xEDpus megad\xE1sa k\xF6telez\u0151"
+mandatory_field_empty: "K\xE9rlek, t\xF6ltsd ki az \xF6sszes k\xF6telez\u0151 mez\u0151t"
+reload: "\xDAjrat\xF6lt\xE9s"
+schedule: "\xDCtemez\xE9s"
+time: "Id\u0151"
+version: "Verzi\xF3"
+active: "Akt\xEDv"
+success: Siker
+translations: "Ford\xEDt\xE1sok"
 translation_simple: Simple Text
 translation_custom: ICU Format
-firstname: Firstname
-lastname: Lastname
-email: Email
-cant_move_node_to_target: Moving node not possible
-error_moving_object: Object could not be moved
-translations_are_not_configured: Translation are not configured
-read_more_here: Read more about here
-publish_version: Publish version
-start: Start
-su: Su
-mo: Mo
-tu: Tu
-we: We
-th: Th
-fr: Fr
-sa: Sa
-session_error_text: It seems there is a problem with your session. We recommend to
-  reload this page in order to be save, but you can try to save your changes first.
-session_error: Session Error
-please_wait: Please wait ...
-download: Download
-inheritable: Inheritable
-redirects: Redirects
-source: Source
+firstname: "Keresztn\xE9v"
+lastname: "Vezet\xE9kn\xE9v"
+email: E-mail
+cant_move_node_to_target: "Csom\xF3pont mozgat\xE1sa nem lehets\xE9ges"
+error_moving_object: "Objektum nem mozgathat\xF3"
+translations_are_not_configured: "A ford\xEDt\xE1sok nincsenek be\xE1ll\xEDtva"
+read_more_here: "Tov\xE1bbi inform\xE1ci\xF3k itt"
+publish_version: "Verzi\xF3 publik\xE1l\xE1sa"
+start: "Kezd\xE9s"
+su: Va
+mo: "H\xE9"
+tu: Ke
+we: Sze
+th: "Cs\xFCt"
+fr: "P\xE9"
+sa: Szo
+session_error_text: "\xDAgy t\u0171nik, van egy probl\xE9ma a munkameneteddel. Javasoljuk,
+  hogy t\xF6ltsd \xFAjra az oldalt a ment\xE9shez, de el\u0151bb megpr\xF3b\xE1lhatod
+  menteni a m\xF3dos\xEDt\xE1sokat."
+session_error: Munkamenet Hiba
+please_wait: "K\xE9rj\xFCk v\xE1rjon..."
+download: "Let\xF6lt\xE9s"
+inheritable: "\xD6r\xF6k\xF6lhet\u0151"
+redirects: "\xC1tir\xE1ny\xEDt\xE1sok"
+source: "Forr\xE1s"
 link: Link
-abbr: Abbr.
-stop: Stop
-dependencies: Dependencies
-requires: Requires
-required_by: Required By
-search_edit: Search, Edit and Export
-subtype: Subtype
-initializing: Initializing ...
-please_select_a_type: Please select a type
-filter: Filter
-field: Field
-operator: Operator
-apply: Apply
-show: Show
-public: Public
-maximum_2_versions: You can compare max. 2 versions
-error: Error
-element_is_locked: 'The desired element is currently opened by another person:'
-element_lock_question: Would you like to open it anyway?
-since: Since
-longitude: Longitude
-latitude: Latitude
-geopoint: Geographic Point
-cancel: Cancel
-open_search_editor: Open Search Editor
-parameters: Parameters
-anchor: Anchor
+abbr: "R\xF6vid\xEDt\xE9s"
+stop: "\xC1llj"
+dependencies: "F\xFCgg\u0151s\xE9gek"
+requires: "Ig\xE9nyel"
+required_by: "Sz\xFCks\xE9ges"
+search_edit: "Keres\xE9s, Szerkeszt\xE9s \xE9s Export\xE1l\xE1s"
+subtype: "Alt\xEDpus"
+initializing: "Inicializ\xE1l\xE1s ..."
+please_select_a_type: "V\xE1lassz t\xEDpust"
+filter: "Sz\u0171r\xE9s"
+field: "Mez\u0151"
+operator: "Oper\xE1tor"
+apply: "Alkalmaz\xE1s"
+show: Mutasd
+public: Publikus
+maximum_2_versions: "Maximum 2 verzi\xF3 hasonl\xEDthat\xF3 \xF6ssze"
+error: Hiba
+element_is_locked: "A kiv\xE1lasztott elem egy m\xE1sik felhaszn\xE1l\xF3 \xE1ltal
+  m\xE1r nyitva van:"
+element_lock_question: "Biztos meg akarod \xEDgy nyitni?"
+since: "\xD3ta"
+longitude: "Hossz\xFAs\xE1g"
+latitude: "Sz\xE9less\xE9g"
+geopoint: "Geogr\xE1fiai Pont"
+cancel: "M\xE9gsem"
+open_search_editor: "Keres\xE9s-szerkeszt\u0151 megnyit\xE1sa"
+parameters: "Param\xE9terek"
+anchor: Horgony
 accesskey: Accesskey
-relation: Relation
-tabindex: Tab-Index
-not_set: not set
-export_csv: CSV Export
-import_csv: CSV Import
-show_welcome_screen: Show welcome screen on startup
-importFileHasHeadRow: first row = headline
-overwrite_object_with_same_key_description: When overwrite is checked, instead of
-  creating a new object for each import row, objects with the same key are replaced.
-  Existing objects in your import folder with keys not contained in the import file
-  will remain untouched. Please be aware that all objects which have a matching key
-  in the import file will be replaced in the target folder. This is also true for
-  objects based on a different class or even object folders! Object fields which are
-  set to ignore in the field mapping keep their old value.
-object_import_filename_description: select the field which is used to generate the
-  object key
-save_pubish_close: Save, publish and close
-save_close: Save and close
-error_general: Server threw exception - could not perform action. Please reload the
-  admin interface and try again.
-owner_class: Owner class
-owner_field: Owner field
-nonownerobject_warning: The current object is not the owner of these relations, making
-  changes here might make saving the object slow
-element_implicit_edit_question: Would you still like to implicitly  modify it with
-  this action?
-element_open_message: The desired element is already open for editing.
+relation: Kapcsolat
+tabindex: Tab-index
+not_set: "nincs be\xE1ll\xEDtva"
+export_csv: "CSV Export\xE1l\xE1s"
+import_csv: "CSV Import\xE1l\xE1s"
+show_welcome_screen: "\xDCdv\xF6zl\u0151k\xE9perny\u0151 mutat\xE1sa"
+importFileHasHeadRow: "Els\u0151 sor = C\xEDmsor"
+overwrite_object_with_same_key_description: "Ha a fel\xFCl\xEDr\xE1s be van jel\xF6lve,
+  akkor l\xE9trehoz\xE1s helyett az azonos kulccsal rendelkez\u0151 objektumok fel\xFCl\xEDr\xE1sra
+  ker\xFClnek. Azok az objektumok, amelyek nem szerepelnek az importban nem m\xF3dosulnak.
+  Vedd figyelembe, hogy az import mapp\xE1b\xF3l sz\xE1rmaz\xF3 objektumok fel\xFCl\xEDrj\xE1k
+  a c\xE9lmapp\xE1ban l\xE9v\u0151ket. Ez igaz az egy\xE9b mapp\xE1kra is. Az ignor\xE1lt
+  mez\u0151k \xE9rt\xE9ke megtartja a r\xE9gi \xE9rt\xE9k\xE9t."
+object_import_filename_description: "V\xE1laszd ki a mez\u0151t, ami az objektum kulcs\xE1nak
+  gener\xE1l\xE1s\xE1\xE9rt felel\u0151s"
+save_pubish_close: "Ment\xE9s, publik\xE1l\xE1s \xE9s bez\xE1r\xE1s"
+save_close: "Ment\xE9s \xE9s bez\xE1r\xE1s"
+error_general: "Ismeretlen hiba t\xF6rt\xE9nt - nem lehet a m\u0171veletet elv\xE9gezni.
+  T\xF6ltsd \xFAjra az adminfel\xFCletet \xE9s pr\xF3b\xE1ld \xFAjra."
+owner_class: "Tulajdonos oszt\xE1ly"
+owner_field: "Tulajdonos mez\u0151"
+nonownerobject_warning: "A jelenlegi objektum nem a tulajdonosa ezeknek a rel\xE1ci\xF3knak,
+  v\xE1ltoztat\xE1sok itt lehet, hogy lass\xEDtj\xE1k a ment\xE9st."
+element_implicit_edit_question: "M\xE9gis szeretn\xE9d implicit m\xF3dos\xEDtani ezzel
+  a m\u0171velettel?"
+element_open_message: "A kiv\xE1laszott elem m\xE1r nyitva van."
 nonownerobjects_self_selection: In non owner objects a  relation to myself is not
   possible, please use original field instead of non owner field.
-warning: Warning
-csv_object_export_warning: Please note that the CSV export does not support all data
-  types. Consequently, re-importing an exported CSV to pimcore might lead to data
-  loss. Press OK to continue with the export.
-navigation_exclude: Exclude from Navigation
-variants: Variants
-variant: Variant
-add_variant: Add variant
-delete_message_dependencies: There are dependencies, delete anyway?
-delete_message: Do you really want to delete this item?
+warning: Figyelem
+csv_object_export_warning: "K\xE9rj\xFCk, vedd figyelembe, hogy a CSV export\xE1l\xE1s
+  nem t\xE1mogat minden adatt\xEDpust. Ebb\u0151l fagad\xF3an az import\xE1l\xE1sa
+  egy export\xE1lt CSV-nek adatveszt\xE9st okozhat. Kattints az OK-ra az export folytat\xE1s\xE1hoz."
+navigation_exclude: "Kiz\xE1r\xE1s a Navig\xE1ci\xF3b\xF3l"
+variants: "V\xE1ltozatok"
+variant: "V\xE1ltozat"
+add_variant: "V\xE1ltozat hozz\xE1d\xE1sa"
+delete_message_dependencies: "Vannak f\xFCgg\u0151s\xE9gek, \xEDgy is t\xF6rl\xF6d?"
+delete_message: "T\xE9nyleg t\xF6r\xF6lni akarod?"
 delete_message_advanced: Do you really want to delete %s '%s' ?
-delete_message_batch: Do you really want to delete these elements?
+delete_message_batch: "T\xE9nyleg t\xF6r\xF6lni akarod ezeket az elemeket?"
 delete_group_message: Do you really want to delete this group and all of its contents?
-no_further_objectbricks_allowed: No further objectbricks allowed
-grid_current_language: Current language
-object_columns: Object columns
-system_columns: System columns
-columns: Columns
-children_grid: Children Grid
-only_children: just direct children
-cut: Cut
-paste_cut_element: Paste cut-out element
-memorize_tabs: Memorize open tabs
-element_history: Recently Opened Elements
-dashboards: Dashboards
-portlet_customreport: Custom Report
-clear_marker_or_hotspots: Clear Marker, Hotspot and Cropping Data
-hotspots_cleared: Hotspots, Markers and Cropping Data cleared
+no_further_objectbricks_allowed: "Tov\xE1bbi objectbrick nem enged\xE9lyezett"
+grid_current_language: Jelenlegi nyelv
+object_columns: Objektum oszlopok
+system_columns: Rendszer oszlopok
+columns: Oszlopok
+children_grid: Gyermek Grid
+only_children: "Csak a k\xF6zvetlen gyermekek"
+cut: "Kiv\xE1g\xE1s"
+paste_cut_element: "Kiv\xE1gott elemek beilleszt\xE9se"
+memorize_tabs: "Nyitott tabok megjegyz\xE9se"
+element_history: "Nemr\xE9g megnyitott elemek"
+dashboards: "Ir\xE1ny\xEDt\xF3pultok"
+portlet_customreport: Egyedi riport
+clear_marker_or_hotspots: "Marker, hotspot \xE9s crop adatok t\xF6rl\xE9se"
+hotspots_cleared: "Hotspot, Marker \xE9s Crop adatok t\xF6r\xF6lve"
 deeplink: Deeplink
-click_to_open: (click to open)
-add_metadata: Add Metadata
-pimcore_icon_edit_pdf_text: Edit text version
-chapter: Chapter
-search_and_move: Search & Move
-searching: Searching...
-predefined_asset_metadata: Predefined Asset Metadata
-add_predefined_metadata_definitions: Add predefined definitions
-scheduled: Scheduled
-naming_requirements_3chars: Name must be alphanumeric and at least 3 characters long
-there_are_more_columns: There are more columns than currently displayed
-merge_csv: Import &amp; Merge CSV
-translation_merger_current: Current Text
-translation_merger_csv: Text from CSV
-nothing_to_merge: There is nothing to merge
-csv_seperated_options: CSV seperated options
+click_to_open: "(kattints a megnyit\xE1shoz)"
+add_metadata: "Metaadatok hozz\xE1ad\xE1sa"
+pimcore_icon_edit_pdf_text: "Sz\xF6veges verzi\xF3 szerkeszt\xE9se"
+chapter: Fejezet
+search_and_move: "Keres\xE9s & Mozgat\xE1s"
+searching: "Keres\xE9s..."
+predefined_asset_metadata: "El\u0151re defini\xE1lt Asset Metaadatok"
+add_predefined_metadata_definitions: "El\u0151re defini\xE1lt Defin\xEDci\xF3 hozz\xE1ad\xE1sa"
+scheduled: "\xDCtemezve"
+naming_requirements_3chars: "N\xE9v csak alfanumerikus lehet \xE9s legal\xE1bb 3 karakter"
+there_are_more_columns: "Tov\xE1bbi oszlopok vannak, melyek nem ker\xFCltek megjelen\xEDt\xE9sre"
+merge_csv: "CSV import\xE1l\xE1sa &amp; Egybevon\xE1sa"
+translation_merger_current: "Jelenlegi sz\xF6veg"
+translation_merger_csv: "Sz\xF6veg CSV-b\u0151l"
+nothing_to_merge: "Nincs mit \xF6sszevonni"
+csv_seperated_options: "CSV be\xE1ll\xEDt\xE1sok"
 csv_seperated_options_info: The list of available options can be specified as comma-seperated
   list, as single-column values or  mixed. For the single-column way, the key will
   also be used as the value.
-first_page: First Page
-previous_page: Previous Page
-next_page: Next Page
-last_page: Last Page
-no_data_to_display: No data to display
+first_page: "Els\u0151 Oldal"
+previous_page: "El\u0151z\u0151 Oldal"
+next_page: "K\xF6vetkez\u0151 Oldal"
+last_page: "Utols\xF3 Oldal"
+no_data_to_display: "Nincs megjelen\xEDthet\u0151 adat"
 classificationstore_property: Property
 classificationstore_group: Group
 classificationstore_relation: Relation
 classificationstore_collection: Collection
 classificationstore_collection_relation: Collection relation
-classificationstore_no_groups: No groups found
-classificationstore_no_keys: No keys found
-remove_group: Remove Group
-classificationstore_no_collections: No collections
-reference: Reference
-element_tag_configuration: Tag Configuration
-element_tag_all_tags: All Tags
-enter_new_name_of_the_tag: Enter new name of the Tag
-assigned_tags: Assigned Tags
-filter_tags: Filter for Tags
-consider_child_tags: Consider child tags too
-tags_assignment: Tags Assignment
-tags_search: Tags Search
+classificationstore_no_groups: "Nem tal\xE1lhat\xF3 csoport"
+classificationstore_no_keys: "Nem tal\xE1lhat\xF3 kulcs"
+remove_group: "Csoport t\xF6rl\xE9se"
+classificationstore_no_collections: "Nincsenek Kollekci\xF3k"
+reference: "Hivatkoz\xE1s"
+element_tag_configuration: "Tag Konfigur\xE1ci\xF3"
+element_tag_all_tags: Minden Tag
+enter_new_name_of_the_tag: "Adj meg \xFAj nevet a Tagnek"
+assigned_tags: "Hozz\xE1rendelt Tagek"
+filter_tags: "Sz\u0171r\xE9s Tagekre"
+consider_child_tags: Fontold meg a gyerek Tageket is
+tags_assignment: "Tagek hozz\xE1rendel\xE9se"
+tags_search: "Tag keres\xE9s"
 batch_applied: Batch applied
-apply_tags: Apply tags to Children
-remove_and_apply_tags: Remove and apply tags to children
-batch_assignment: Tag batch assignment
-batch_assignment_error: Tag batch assignment error
-no_children_found: No Children found.
-asset_search: Search Assets
-document_search: Search Documents
-object_search: Search Objects
-more: More
-open_translation: Open Translation
-link_existing_document: Link existing Document
-using_inheritance: Using Inheritance
-new_document: New Document
-update_available: Update Available
-target_document_needs_language: Target document needs a language set
-tools: Tools
-perspectives: Perspectives
-filter_active: Filter active!
-reset_config: Reset changes
-reset_config_tooltip: This will reset (and save) the grid column configuration for
-  this element to its default
-error_resetting_config: Error resetting configuration
-marketing_settings: Marketing Settings
-cross_tree_moves_not_supported: Cross tree moves not yet supported
-add_printpage: Add PrintPage
-add_printcontainer: Add PrintContainer
-web2print_preview_pdf: Generate & Preview PDF
-web2print_cancel_pdf_creation: Cancel PDF Creation
-web2print_generate_pdf: Generate PDF
-web2print_download_pdf: Download PDF
-web2print_last-generated: Last Generated
-web2print_last-generate-message: Last Generate Message
+apply_tags: "Tagek hozz\xE1rendel\xE9se a gyerekekhez"
+remove_and_apply_tags: "Tag t\xF6rl\xE9se \xE9s hozz\xE1rendel\xE9se a gyerekekhez"
+batch_assignment: "Tag k\xF6tegelt hozz\xE1rendel\xE9se"
+batch_assignment_error: "Tag k\xF6tegelt hozz\xE1rendel\xE9s hiba"
+no_children_found: "Nem tal\xE1lhat\xF3 gyermek"
+asset_search: "Assetek keres\xE9se"
+document_search: "Dokumentumok keres\xE9se"
+object_search: "Objektumok keres\xE9se"
+more: "T\xF6bb"
+open_translation: "Ford\xEDt\xE1s megnyit\xE1sa"
+link_existing_document: "L\xE9tez\u0151 Dokumentum kapcsol\xE1sa"
+using_inheritance: "\xD6r\xF6kl\xE9s haszn\xE1lata"
+new_document: "\xDAj Dokumentum"
+update_available: "Friss\xEDt\xE9s el\xE9rhet\u0151"
+target_document_needs_language: "A c\xE9ldokumentumnak sz\xFCks\xE9ges a nyelvi be\xE1ll\xEDt\xE1s"
+tools: "Eszk\xF6z\xF6k"
+perspectives: "N\xE9zetek"
+filter_active: "Sz\u0171r\xE9s akt\xEDv!"
+reset_config: "V\xE1ltoz\xE1sok visszavon\xE1sa"
+reset_config_tooltip: "Ez vissza fogja \xE1ll\xEDtani (\xE9s elmenteni) a grid be\xE1ll\xEDt\xE1st
+  ehhez az elemhez az alap\xE9rtelmezettre"
+error_resetting_config: "Hiba t\xF6rt\xE9nt a be\xE1ll\xEDt\xE1sok vissza\xE1ll\xEDt\xE9sa
+  sor\xE1n"
+marketing_settings: "Marketing be\xE1ll\xEDt\xE1sok"
+cross_tree_moves_not_supported: "F\xE1k k\xF6z\xF6tti mozgat\xE1s m\xE9g nem t\xE1mogatott"
+add_printpage: "Nyomtat\xE1si Oldal hozz\xE1ad\xE1sa"
+add_printcontainer: "Nyomtat\xE1si Kont\xE9ner hozz\xE1ad\xE1sa"
+web2print_preview_pdf: "PDF gener\xE1l\xE1sa & el\u0151n\xE9zet"
+web2print_cancel_pdf_creation: "PDF L\xE9trehoz\xE1s le\xE1ll\xEDt\xE1sa"
+web2print_generate_pdf: "PDF gener\xE1l\xE1sa"
+web2print_download_pdf: "PDF let\xF6lt\xE9se"
+web2print_last-generated: "Utols\xF3 gener\xE1l\xE1s"
+web2print_last-generate-message: "Utols\xF3 gener\xE1l\xE1s \xFCzenete"
 web2print: Web-to-Print
-web2print_prepare_pdf_generation: Prepare PDF Generation
-web2print_start_html_rendering: Start HTML Rendering
-web2print_finished_html_rendering: Finished HTML Rendering
-web2print_saved_html_file: Saved HTML File
-web2print_pdf_conversion: PDF Conversion
-web2print_saving_pdf_document: Save PDF Document
-web2print_author: Author
-web2print_printermarks: Printermarks
-web2print_bookmarks: Bookmarks
-close_tab: Close Tab
-web2print_only_published: Only possible with published documents.
-web2print_documents_changed: Documents changed since last pdf generation.
-about_pimcore: ABOUT PIMCORE PLATFORM
-phone: Phone
-workflow_additional_info: Additional Information
-workflow_perform_action: Perform Action
-workflow_notes_required: Notes (Required)
-workflow_notes_optional: Notes (Optional)
-please_enter_the_id_of_the_asset: Please enter the ID or Path (e.g. /images/logo.jpg)
-  of the asset
-please_enter_the_id_of_the_object: Please enter the ID or Path of the object
-please_enter_the_id_of_the_document: Please enter the ID, Path or URL (also including
-  http://) of the document
-element_has_unsaved_changes: Element has unsaved changes
-element_unsaved_changes_message: All unsaved changes will be lost, are you really
-  sure?
-newsletter_enableTrackingParameters: Add Tracking Parameters to Links
-newsletter_sendingMode: Sending Mode
-newsletter_sendingmode_single: Single (Render every Mail individually)
-newsletter_sendingmode_batch: Batch (Render Mail only once)
-newsletter_sendingPanel: Newsletter Sending Panel
-newsletter_dirty_warning: Newsletter is not saved yet. Please save first.
-newsletter_sending: Sending Newsletter
+web2print_prepare_pdf_generation: "PDF gener\xE1l\xE1s el\u0151k\xE9sz\xEDt\xE9se"
+web2print_start_html_rendering: "HTML gener\xE1l\xE1s elkezd\xE9se"
+web2print_finished_html_rendering: "HTML gener\xE1l\xE1s v\xE9ge"
+web2print_saved_html_file: Mentett HTML file
+web2print_pdf_conversion: "PDF konverzi\xF3"
+web2print_saving_pdf_document: "PDF ment\xE9se"
+web2print_author: "Szerz\u0151"
+web2print_printermarks: "V\xEDzjelek"
+web2print_bookmarks: "K\xF6nyvjelz\u0151k"
+close_tab: "Tab bez\xE1r\xE1sa"
+web2print_only_published: "Csak publik\xE1lt Dokumentumokn\xE1l lehets\xE9ges"
+web2print_documents_changed: "Megv\xE1ltozott a Dokumentum az utols\xF3 PDF gener\xE1l\xE1s
+  \xF3ta"
+about_pimcore: "A Pimcore Platformr\xF3l"
+phone: Telefon
+workflow_additional_info: "Tov\xE1bbi inform\xE1ci\xF3"
+workflow_perform_action: "M\u0171velet v\xE9grehajt\xE1sa"
+workflow_notes_required: "Megjegyz\xE9sek (K\xF6telez\u0151)"
+workflow_notes_optional: "Megjegyz\xE9sek (Opcion\xE1lis)"
+please_enter_the_id_of_the_asset: "Add meg az ID-j\xE1t vagy az \xDAtvonal\xE1t (pl.
+  /images/logo.jpg) az Assetnek"
+please_enter_the_id_of_the_object: "Add meg az ID-j\xE1t vagy az \xDAtvonal\xE1t az
+  Objektumnak"
+please_enter_the_id_of_the_document: "Add meg a Dokumentum ID-j\xE1t, \xDAtvonal\xE1t
+  vagy URL-j\xE9t (http://-el egy\xFCtt)"
+element_has_unsaved_changes: "Vannak el nem mentett v\xE1ltoztat\xE1sok"
+element_unsaved_changes_message: "Minden el nem mentett v\xE1ltoztat\xE1s el fog veszni,
+  folytatod?"
+newsletter_enableTrackingParameters: "K\xF6vet\u0151 param\xE9terek hozz\xE1ad\xE1sa
+  a linkekhez"
+newsletter_sendingMode: "K\xFCld\xE9s m\xF3dja"
+newsletter_sendingmode_single: "Egyenk\xE9nt (Minden email t\xF6rzs\xE9t \xFAjra,
+  egyes\xE9vel l\xE9trehozza)"
+newsletter_sendingmode_batch: "K\xF6tegelt (Csak egyszer j\xF6n l\xE9tre az email
+  t\xF6rzse)"
+newsletter_sendingPanel: "H\xEDrlev\xE9l k\xFCld\u0151 panel"
+newsletter_dirty_warning: "H\xEDrlev\xE9l nincs mentve. El\u0151bb mentsd el."
+newsletter_sending: "H\xEDrlev\xE9l k\xFCld\xE9se"
 newsletter_sourceAdapter: Address Source Adapter
-newsletter_default: Default Object List
-newsletter_csvList: CSV List
-newsletter_testsend: Newsletter Test Sending
-newsletter_test_sent_message: Test Newsletter sent successfully
-add_object_mbx_title: Add new Object of type %s
-newsletter_choose_report: Choose a report
-newsletter_email_field_name: Email field name
-mode: Mode
-custom_download: Custom Download
-original_file: Original File
-web_format: Web Format
-print_format: Print Format
-office_format: Office Format
-change_password: Change Password
-file_is_bigger_that_upload_limit: 'The following file is bigger than the actual upload
-  limit of your server:'
-send_test_email_success: Your test-email has been sent. Would you like to keep this
-  window open to send the email again?
-press_crtl_and_select_to_compare: 'Compare: Press CTRL + Click Version'
-clear_filters: Clear Filters
-tags_configuration: Tags Configuration
-export_csv_include_headers: CSV Export with headers
-open_data_object: Open Data Object
-data_objects: Data Objects
-asset_type_change_not_allowed: '<strong>Only assets of same type are allowed here.</strong><br/>[
-  type of uploaded asset: "%s" | type of existing asset: "%s" ]'
-clear_content_of_selected_target_group: Clear content of selected Target Group
-visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: Visitors
-  of this page will be automatically associated with the selected Target Groups
-assign_target_group: Assign Target Group
-assign_target_groups: Assign Target Groups
+newsletter_default: "Alap\xE9rtelmezett Objektum lista"
+newsletter_csvList: CSV lista
+newsletter_testsend: "H\xEDrlev\xE9l teszt k\xFCld\xE9s"
+newsletter_test_sent_message: "Teszt h\xEDrlev\xE9l sikeresen elk\xFCldve"
+add_object_mbx_title: "\xDAj %s t\xEDpus\xFA objektum hozz\xE1ad\xE1sa"
+newsletter_choose_report: "V\xE1lassz riportot"
+newsletter_email_field_name: "Email mez\u0151 neve"
+mode: "M\xF3d"
+custom_download: "Egyedi let\xF6lt\xE9s"
+original_file: Eredeti file
+web_format: "Web form\xE1tum"
+print_format: "Nyomtat\xE1si form\xE1tum"
+office_format: "Office form\xE1tum"
+change_password: "Jelsz\xF3 m\xF3dos\xEDt\xE1sa"
+file_is_bigger_that_upload_limit: "A k\xF6vetkez\u0151 file nagyobb, mint a szerver
+  \xE1ltal megengedett:"
+send_test_email_success: "A teszt email elk\xFCld\xE9sre ker\xFClt. Nyitva akarod
+  hagyni ezt az ablakot, hogy \xFAjra el tudd k\xFCldeni?"
+press_crtl_and_select_to_compare: "\xD6sszehasonl\xEDt\xE1s: CTRL + kattint\xE1s a
+  verzi\xF3kon"
+clear_filters: "Sz\u0171r\u0151k t\xF6rl\xE9se"
+tags_configuration: "Tagek Konfigur\xE1l\xE1sa"
+export_csv_include_headers: "CSV export\xE1l\xE1s fejl\xE9ccel"
+open_data_object: "Data Object megnyit\xE1sa"
+data_objects: Adat Objektumok
+asset_type_change_not_allowed: "<strong>Csak azonos t\xEDpus\xFA Assetek megengedettek
+  itt.</strong><br/>[ felt\xF6lt\xF6tt Asset t\xEDpusa: \"%s\" | l\xE9tez\u0151 Asset
+  t\xEDpusa: \"%s\" ]"
+clear_content_of_selected_target_group: "A kiv\xE1lasztott c\xE9lcsoport tartalm\xE1nak
+  t\xF6rl\xE9se"
+visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: "Ezen
+  oldal l\xE1togat\xF3i automatikusan beker\xFClnek a kiv\xE1lasztott C\xE9lcsoportba"
+assign_target_group: "C\xE9lcsoport hozz\xE1rendel\xE9s"
+assign_target_groups: "C\xE9lcsoportok hozz\xE1rendel\xE9se"
 target_group: Target Group
-target_groups: Target Groups
-edit_content_for_target_group: Edit Content for Target Group
+target_groups: "C\xE9lcsoportok"
+edit_content_for_target_group: "C\xE9lcsoport tartalm\xE1nak szerkeszt\xE9se"
 email_reply_to: Reply To
-element_tag_filtered_tags: Filtered Tags
+element_tag_filtered_tags: "Sz\u0171rt Tagek"
 web2print_addOverprint: Overprinting
-analyze_permissions: Analyze Permissions
-unique: Unique
-glue: Glue
-date_format: Date Format
-attribute: Attribute
+analyze_permissions: "Jogosults\xE1gok elemz\xE9se"
+unique: Egyedi
+glue: "\xD6sszef\u0171z\u0151"
+date_format: "D\xE1tum form\xE1tum"
+attribute: "Attrib\xFAtum"
 forward_attribute: Forward Attribute
-upper: Upper
-lower: Lower
-disabled: Disabled
-capitalization: Capitalization
-restrict_to_locales: Restrict to locales
-predefined: Predefined
-save_as_copy: Save as copy
-set_as_favourite: Set as favourite
-grid_configuration: Grid Configuration
-shared_users: Shared Users
-shared_roles: Shared Roles
-save_and_share: Save & Share
-save_copy_and_share: Save Copy & Share
-locale: Locale
-ellipses: Ellipses
-insensitive: Insensitive
-yes_value: Yes Value
-no_value: No Value
-count_empty: Count Empty
-as_array: As array
-metadata_field: Metadata field
-only_count: Only as count
-parameter: Parameter
+upper: "Fels\u0151"
+lower: "Als\xF3"
+disabled: Tiltva
+capitalization: "Nagybet\u0171s \xEDr\xE1s"
+restrict_to_locales: "Korl\xE1toz\xE1s nyelvekre"
+predefined: "El\u0151re meghat\xE1rozott"
+save_as_copy: "M\xE1solat ment\xE9se"
+set_as_favourite: "Kedvencnek jel\xF6l\xE9s"
+grid_configuration: "Grid be\xE1ll\xEDt\xE1sok"
+shared_users: "Osztott felhaszn\xE1l\xF3k"
+shared_roles: "Osztott szerepk\xF6r\xF6k"
+save_and_share: "Ment\xE9s & Megoszt\xE1s"
+save_copy_and_share: "M\xE1solat ment\xE9se & Megoszt\xE1s"
+locale: Nyelv
+ellipses: Ellipszis
+insensitive: "\xC9rz\xE9ketlen"
+yes_value: "Igen \xE9rt\xE9k"
+no_value: "Nem \xE9rt\xE9k"
+count_empty: "\xDCresek sz\xE1mol\xE1sa"
+as_array: "T\xF6mbk\xE9nt"
+metadata_field: "Metaadat mez\u0151"
+only_count: "Csak darabsz\xE1m"
+parameter: "Param\xE9ter"
 forward_parameter: Forward Parameter
-is_array: Array Type
+is_array: "Array t\xEDpus"
 php_class: PHP Class
-additional_data: Additional Data
-flatten: Flatten
-return_last_result: Return last result
-skip_null: Skip Null
-expand_children: Expand children
+additional_data: "Tov\xE1bbi adat"
+flatten: "Lap\xEDt\xE1s"
+return_last_result: "Utols\xF3 tal\xE1lat visszaad\xE1sa"
+skip_null: "Null kihagy\xE1sa"
+expand_children: "Gyerekek kinyit\xE1sa"
 collapse_children: Collapse children
-multiply: Multiply
-divide: Divide
-apply_to_all_objects: Apply to all
-apply_to_all_objects_msg: There are other objects which already have their own favourite
-  settings. Do you want to apply this config to those as well?
-encode: Encode
-decode: Decode
+multiply: "Szorz\xE1s"
+divide: "Oszt\xE1s"
+apply_to_all_objects: "\xC9rv\xE9nyes\xEDtsd mindre"
+apply_to_all_objects_msg: "Vannak egy\xE9b objektumok is, amik rendelkeznek saj\xE1t
+  kedvenc konfigur\xE1ci\xF3val. Ezekre is akarod \xE9rv\xE9nyes\xEDteni a be\xE1ll\xEDt\xE1sokat?"
+encode: "K\xF3dol\xE1s"
+decode: "Dek\xF3dol\xE1s"
 serialize: Serialize
 unserialize: Unserialize
-offset: Offset
-col_attribute: Collection Attribute
-brick_attribute: Brick Attribute
-csv_column_configuration: Column Configuration
-column: Column
-resolver_strategy: Resolver Strategy
-resolver_settings: Resolver Settings
-csv_settings: CSV Settings
-skipheadrow: Skip head row
-csv_file_preview: CSV File Preview
-save_as: Save as
-import_export_configuration: Import Export Configuration
-brick_type: Brick Type
-renderer: Renderer
+offset: "Eltol\xE1s"
+col_attribute: "Kollekci\xF3 Attrib\xFAtum"
+brick_attribute: "Brick Attrib\xFAtum"
+csv_column_configuration: "Oszlop Konfigur\xE1ci\xF3"
+column: Oszlop
+resolver_strategy: "Resolver Strat\xE9gia"
+resolver_settings: "Resolver Be\xE1ll\xEDt\xE1sok"
+csv_settings: "CSV be\xE1ll\xEDt\xE1sok"
+skipheadrow: "Els\u0151 sor kihagy\xE1sa"
+csv_file_preview: "CSV File el\u0151n\xE9zet"
+save_as: "Ment\xE9s m\xE1sk\xE9nt"
+import_export_configuration: "Import Export Konfigur\xE1ci\xF3"
+brick_type: "Brick t\xEDpusa"
+renderer: "Renderel\u0151"
 getter: Getter
 string: String
-row: Row
-import_report: Import Report
-import_errors: Some errors occurred. Check the import report!
-import_is_done: Import is done
-import_file_prefix: Prefix for new files
-create_parents: Create parents
-fullpath: Full Path
-create_on_demand: Create on demand
-get_by_resolver: Get By Attribute
-direct: Direct
-skip_empty_values: Skip empty values
-do_not_overwrite: Do not overwrite
-never: Never
-if_not_empty: If not empty
-always: Always
-delimiter: Delimiter
-share_globally: Share globally
-gdpr_data_extractor: GDPR Data Extractor
-no_configuration: No Configuration
-share_configurations: Share configurations
-enable_inheritance: Enable Inheritance
-object_settings: Object Settings
-drop_me_here: Drag an item from the tree and drop it here
-clear_hotspots_msg: This image contains additional data like markers or hotspots.
-  Do you want to clear them as well?
-restore_failed: Restore failed
-subtract: Subtract
-batch_append_all: Batch append to all
-batch_append_selected: Batch append to selected
-batch_append_to: Append data to all
-login_token_invalid_user_error: Invalid user.
-login_token_as_admin_non_admin_user_error: Only admin users are allowed to login as
-  an admin user.
-login_token_no_password_error: User has no password set.
+row: Sor
+import_report: "Riport imort\xE1l\xE1sa"
+import_errors: "Hiba t\xF6rt\xE9nt. Ellen\u0151rizd a riportot!"
+import_is_done: "Import\xE1l\xE1s befejez\u0151d\xF6tt"
+import_file_prefix: "El\u0151tag az \xFAj fileokhoz"
+create_parents: "Sz\xFCl\u0151k l\xE9trehoz\xE1sa"
+fullpath: "Teljes \xFAtvonal"
+create_on_demand: "L\xE9trehoz\xE1s ig\xE9ny szerint"
+get_by_resolver: "Attrib\xFAtum alapj\xE1n"
+direct: Direkt
+skip_empty_values: "\xDCres \xE9rt\xE9kek kihagy\xE1sa"
+do_not_overwrite: "Ne \xEDrd fel\xFCl"
+never: Soha
+if_not_empty: "Ha nem \xFCres"
+always: Mindig
+delimiter: "Elv\xE1laszt\xF3"
+share_globally: "Glob\xE1lis megoszt\xE1s"
+gdpr_data_extractor: GDPR Adatextraktor
+no_configuration: "Nincs konfigur\xE1ci\xF3"
+share_configurations: "Konfigur\xE1ci\xF3 megoszt\xE1sa"
+enable_inheritance: "\xD6r\xF6kl\xE9s enged\xE9lyez\xE9se"
+object_settings: "Objektum Be\xE1ll\xEDt\xE1sok"
+drop_me_here: "H\xFAzz \xE1t egy elemet a f\xE1b\xF3l \xE9s dobd be ide"
+clear_hotspots_msg: "A k\xE9p tartalmaz egy\xE9b adatokat (markerek \xE9s hotspotok).
+  Ezeket is el karaod t\xE1vol\xEDtani?"
+restore_failed: "Vissza\xE1ll\xEDt\xE1s sikertelen"
+subtract: "Kivon\xE1s"
+batch_append_all: "K\xF6tegelt hozz\xE1f\u0171z\xE9s mindhez"
+batch_append_selected: "K\xF6tegelt hozz\xE1f\u0171z\xE9s a kiv\xE1lasztottakhoz"
+batch_append_to: "Adat hozz\xE1f\u0171z\xE9se mindhez"
+login_token_invalid_user_error: "Hib\xE1s felhaszn\xE1l\xF3."
+login_token_as_admin_non_admin_user_error: "Csak Adminisztr\xE1tor felhaszn\xE1l\xF3k
+  l\xE9phetnek be Adminisztr\xE1tork\xE9nt."
+login_token_no_password_error: "M\xE9g nincs jelsz\xF3 be\xE1ll\xEDtva"
 targeting_toolbar: Targeting Toolbar
-sort_children_by: Sort Children By
-by_key: Key (A to Z)
-by_index: Index (Manual)
-successful_object_change_children_sort_to_index: Changed object children sorting to
-  Index
-successful_object_change_children_sort_to_key: Changed object children sorting to
-  Key
+sort_children_by: "Gyerekek rendez\xE9se"
+by_key: Kulcs (A-Z)
+by_index: "Index (k\xE9zi)"
+successful_object_change_children_sort_to_index: "Gyerekek sorrendez\xE9se Index alapj\xE1n"
+successful_object_change_children_sort_to_key: "Gyerekek sorrendez\xE9se Kulcs alapj\xE1n"
 successful_publish_document: Document successfully published
 successful_publish_object: Object successfully published
 successful_unpublish_document: Document successfully unpublished
 successful_unpublish_object: Object successfully unpublished
-error_object_change_children_sort_to_index: Sort Children by Index is not possible
-  on paginated folder/tree.
-error_object_change_children_sort_to_key: Unable to change object children sorting
-  to Key
+error_object_change_children_sort_to_index: "Gyerekek Index alap\xFA sorrendez\xE9se
+  sikertelen"
+error_object_change_children_sort_to_key: "Gyerekek Kulcs alap\xFA sorrendez\xE9se
+  sikertelen"
 error_publish_document: Document could not be published
 error_publish_object: Object could not be published
 error_unpublish_document: Document could not be unpublished
 error_unpublish_object: Object could not be unpublished
-edit_as_html: Edit as HTML
-edit_as_plain_text: Edit as plain text
-error_empty_file_upload: File is empty!
-type_column: Type column
-keep: keep
-clear_version_message: Do you really want to delete all non-published versions of
-  this element?
-clear_all: Clear All
-unlink_existing_document: Unlink existing Document
-grid_options: Grid Options
-save_grid_options: Save Grid Options
-download_selected_as_zip: Download selected items as ZIP
-please_select_items_to_download: Please select items to download in the list
-key_bindings: Key Bindings
-keybinding_openClassEditor: Open Class Editor
-keybinding_showMetaInfo: Show Meta Info
-keybinding_clearAllCaches: Clear all Caches
-keybinding_clearDataCache: Clear Data Cache
-scheduled_block_delete_all_in_past: Delete all past entries
-scheduled_block_really_delete_past: Really delete all entries scheduled in the past?
-scheduled_block_delete_all: Delete all entries
-scheduled_block_really_delete_all: Really delete all scheduled entries, including
-  future entries?
-2fa_disable: Disable 2FA
-renew_2fa_secret: Renew Two Factor Secret
-two_factor_authentication: Two Factor Authentication
-2fa_alert_text: Please scan the QR-Code and add it to your Google Authenticator. <br>If
-  you don't have the Google Authenticator app installed on your mobile phone, please
-  download it from the App Store/Play Store.<br><br> You will need to reload Pimcore
-  and enter the code shown within the App afterwards!
-2fa_alert_submit: Reload Pimcore & Enter Code
-setup_two_factor: Setup Two Factor Authentication
-2fa_setup_message: Two Factor Authentication is required for your account! You have
-  to set it up in your profile settings, otherwise you will not be able to sign in
-  again.
-set_focal_point: Set Focal Point
-quicksearch: Quick Search
-standard_preview: Standard Preview
-upload_new_version: Upload new version
-360_viewer: "360\xB0 Viewer"
-invalid_name: Invalid name
-clone: Clone
-enter_the_name_of_the_new_item: Enter the name of the new item
-html_tags: HTML-Tags
-clear_temporary_files: Clear temporary files
-error_pasting_item: Unable to paste item
-modificationdate: Modification Date
-blank: Blank
-message: Message
-from: From
-to: To
+edit_as_html: "Szerkeszt\xE9s HTML-k\xE9nt"
+edit_as_plain_text: "Szerkeszt\xE9s egyszer\u0171 sz\xF6vegk\xE9nt"
+error_empty_file_upload: "A file \xFCres!"
+type_column: "T\xEDpus oszlop"
+keep: "megtart\xE1s"
+clear_version_message: "Biztos minden nem publik\xE1lt verzi\xF3t t\xF6r\xF6lni akarsz?"
+clear_all: "\xD6sszes t\xF6rl\xE9se"
+unlink_existing_document: "L\xE9tez\u0151 Dokumentum Linkel\xE9s\xE9nek megsz\u0171ntet\xE9se"
+grid_options: "Grid Be\xE1ll\xEDt\xE1sok"
+save_grid_options: "Grid Be\xE1ll\xEDt\xE1sok ment\xE9se"
+download_selected_as_zip: "Kiv\xE1lasztott elemek let\xF6lt\xE9se ZIP-ben"
+please_select_items_to_download: "V\xE1laszd ki a let\xF6ltend\u0151 elemeket a list\xE1b\xF3l"
+key_bindings: "Billenty\u0171kombin\xE1ci\xF3k"
+keybinding_openClassEditor: "Class szerkeszt\u0151 megnyit\xE1sa"
+keybinding_showMetaInfo: "Meta Info mutat\xE1sa"
+keybinding_clearAllCaches: "Minden Cache \xFCr\xEDt\xE9se"
+keybinding_clearDataCache: "Adat Cache \xFCr\xEDt\xE9se"
+scheduled_block_delete_all_in_past: "R\xE9gi bejegyz\xE9sek t\xF6rl\xE9se"
+scheduled_block_really_delete_past: "Biztos minden r\xE9gi bejegyz\xE9st t\xF6r\xF6lni
+  akarsz?"
+scheduled_block_delete_all: "Minden bejegyz\xE9s t\xF6rl\xE9se"
+scheduled_block_really_delete_all: "Biztos minden \xFCtemezett bejegyz\xE9st t\xF6r\xF6lni
+  akarsz, bele\xE9rtve a j\xF6v\u0151belieket is?"
+2fa_disable: "2FA kikapcsol\xE1sa"
+renew_2fa_secret: "2FA meg\xFAj\xEDt\xE1sa"
+two_factor_authentication: "2FA Autentik\xE1ci\xF3"
+2fa_alert_text: "Szkenneld a QR-k\xF3dot a Google Authenticatorral. <br>Amennyiben
+  nincs telep\xEDtve a telefonodra, szerezd be az App Store/Play Store-b\xF3l.<br><br>\xDAjra
+  kell majd t\xF6ltened a Pimcoret \xE9s megadni a k\xF3dot, amit az App gener\xE1l
+  majd neked."
+2fa_alert_submit: "Pimcore \xFAjrat\xF6lt\xE9se & K\xF3d megad\xE1sa"
+setup_two_factor: "2FA be\xE1ll\xEDt\xE1sa"
+2fa_setup_message: "K\xE9tl\xE9pcs\u0151s hiteles\xEDt\xE9s sz\xFCks\xE9ges a felhaszn\xE1l\xF3i
+  fi\xF3kodhoz. Be kell \xE1ll\xEDtanod a profilbe\xE1ll\xEDt\xE1sokban, k\xFCl\xF6nben
+  nem fogsz tudni \xFAjra bejelentkezni."
+set_focal_point: "F\xF3kuszpont megad\xE1sa"
+quicksearch: "Gyorskeres\xE9s"
+standard_preview: "Norm\xE1t el\u0151n\xE9zet"
+upload_new_version: "\xDAj verzi\xF3 felt\xF6lt\xE9se"
+360_viewer: "360\xB0-os n\xE9z\u0151ke"
+invalid_name: "Hib\xE1s n\xE9v"
+clone: "Kl\xF3noz\xE1s"
+enter_the_name_of_the_new_item: "Add meg az \xFAj elem nev\xE9t"
+html_tags: HTML Tag-ek
+clear_temporary_files: "Ideiglenes file-ok t\xF6rl\xE9se"
+error_pasting_item: "SIkertelen beilleszt\xE9s"
+modificationdate: "M\xF3dos\xEDt\xE1s d\xE1tuma"
+blank: "\xDCres"
+message: "\xDCzenet"
+from: "Felad\xF3"
+to: "C\xEDmzett"
 html: HTML
-text: Text
-create_folder: Add Folder
-error_deleting_item: Could not delete item
-error_renaming_item: There was an error while renaming the item.
-revert: Revert
-parent: Parent
-merge_translations: Merge Translations
+text: "Sz\xF6veg"
+create_folder: "Mappa hozz\xE1ad\xE1sa"
+error_deleting_item: "Elem nem t\xF6r\xF6lhet\u0151"
+error_renaming_item: "Hiba t\xF6rt\xE9nt az elem \xE1tnevez\xE9se sor\xE1n."
+revert: "Visszavon\xE1s"
+parent: "Sz\xFCl\u0151"
+merge_translations: "Ford\xEDt\xE1sok \xF6sszevon\xE1sa"
 prefix: Prefix
-load: Load
-saving_failed: Saving failed!
-failed_to_create_new_item: Failed to create new item, please try again.
+load: "Bet\xF6lt\xE9s"
+saving_failed: "Ment\xE9s sikertelen!"
+failed_to_create_new_item: "\xDAj elem l\xE9trehoz\xE1sa sikertelen, pr\xF3b\xE1ld
+  \xFAjra!"
 bundle: Bundle
-product: Product
-index_field_selection_field: Index Field Selection
-indexFieldSelectionField: Index Field Selection
-indexFieldSelectionField_settings: Settings (Multi Index Field Selection Field)
+product: "Term\xE9k"
+index_field_selection_field: "Index mez\u0151 kiv\xE1laszt\xE1s"
+indexFieldSelectionField: "Index mez\u0151 kiv\xE1laszt\xE1s"
+indexFieldSelectionField_settings: "Be\xE1ll\xEDt\xE1s (Multi Index mez\u0151 kiv\xE1laszt\xE1s)"
 indexFieldSelectionFieldMulti: Multiple Index Field Selection
 index_field_selection_combo: Index Field Combobox
 indexFieldSelectionCombo: Index Field Combobox
-indexFieldSelectionCombo_settings: Settings (Index Field Combobox)
-specificPriceField: Specific Price Field
-showAllFields: Show all Fields
-considerTenants: Consider Tenants
-bundle_ecommerce_mainmenu: Online Shop
+indexFieldSelectionCombo_settings: "Be\xE1ll\xEDt\xE1sok (Index Field Combobox)"
+specificPriceField: "Pontos \xC1r mez\u0151"
+showAllFields: "Minden menz\u0151 mutat\xE1sa"
+considerTenants: "Tenant figyelembev\xE9tele"
+bundle_ecommerce_mainmenu: Online Bolt
 bundle_ecommerce_pricing_rule: Pricing Rule
-bundle_ecommerce_pricing_rules: Pricing Rules
-bundle_ecommerce_pricing_config_behavior: Behavior
-bundle_ecommerce_pricing_config_additiv: Additiv
-bundle_ecommerce_pricing_config_stopExecute: Last rule
-bundle_ecommerce_pricing_config_condition_daterange: Date range
-bundle_ecommerce_pricing_config_condition_cart_amount: Cart amount
-bundle_ecommerce_pricing_config_condition_products: Products
-category: Category
+bundle_ecommerce_pricing_rules: "\xC1raz\xE1si szab\xE1lyok"
+bundle_ecommerce_pricing_config_behavior: "Viselked\xE9s"
+bundle_ecommerce_pricing_config_additiv: "Addit\xEDv"
+bundle_ecommerce_pricing_config_stopExecute: "Utols\xF3 szab\xE1ly"
+bundle_ecommerce_pricing_config_condition_daterange: "Id\u0151intervallum"
+bundle_ecommerce_pricing_config_condition_cart_amount: "Kos\xE1r mennyis\xE9g"
+bundle_ecommerce_pricing_config_condition_products: "Term\xE9kek"
+category: "Kateg\xF3ria"
 bundle_ecommerce_pricing_config_condition_token: Token
-bundle_ecommerce_pricing_config_condition_sales: Sales
-bundle_ecommerce_pricing_config_condition_sold: Sold
-bundle_ecommerce_pricing_config_condition_sold_count: Count
-bundle_ecommerce_pricing_config_condition_sold_count_cart: Count Cart
-bundle_ecommerce_pricing_config_condition_voucherToken: Voucher
+bundle_ecommerce_pricing_config_condition_sales: "Elad\xE1sok"
+bundle_ecommerce_pricing_config_condition_sold: Eladva
+bundle_ecommerce_pricing_config_condition_sold_count: "Mennyis\xE9g"
+bundle_ecommerce_pricing_config_condition_sold_count_cart: "Kos\xE1r darabsz\xE1m"
+bundle_ecommerce_pricing_config_condition_voucherToken: "Utalv\xE1ny"
 bundle_ecommerce_pricing_config_condition_tenant: Tenant
-bundle_ecommerce_pricing_config_condition_targetgroup: Target Group
-bundle_ecommerce_pricing_config_condition_targetgroup_threshold: Threshold
-bundle_ecommerce_pricing_config_action_gift: Gift
-bundle_ecommerce_pricing_config_action_cart_discount: Cart discount
-bundle_ecommerce_pricing_config_action_cart_discount_percent: Discount in %
-bundle_ecommerce_pricing_config_action_cart_discount_amount: Absolute Discount
-bundle_ecommerce_pricing_config_action_product_discount: Product discount
-bundle_ecommerce_pricing_config_action_product_discount_percent: Discount in %
-bundle_ecommerce_pricing_config_action_product_discount_amount: Absolute Discount
-bundle_ecommerce_pricing_config_action_free_shipping: Free shipping
+bundle_ecommerce_pricing_config_condition_targetgroup: "C\xE9lcsoport"
+bundle_ecommerce_pricing_config_condition_targetgroup_threshold: "T\u0171r\xE9shat\xE1r"
+bundle_ecommerce_pricing_config_action_gift: "Aj\xE1nd\xE9k"
+bundle_ecommerce_pricing_config_action_cart_discount: "Kos\xE1r kedvezm\xE9ny"
+bundle_ecommerce_pricing_config_action_cart_discount_percent: "%-os kedvezm\xE9ny"
+bundle_ecommerce_pricing_config_action_cart_discount_amount: "Abszol\xFAt kedvezm\xE9ny"
+bundle_ecommerce_pricing_config_action_product_discount: "Term\xE9k kedvezm\xE9ny"
+bundle_ecommerce_pricing_config_action_product_discount_percent: "%-os kedvezm\xE9ny"
+bundle_ecommerce_pricing_config_action_product_discount_amount: "Abszol\xFAt kedvezm\xE9ny"
+bundle_ecommerce_pricing_config_action_free_shipping: "Ingyenes sz\xE1ll\xEDt\xE1s"
 bundle_ecommerce_pricing_rule_add: Add Pricing Rule
 bundle_ecommerce_pricing_rule_error: Error creating Pricing Rule
 ecommerce: E-Commerce
-preSelectMode: Pre Select Mode
-remote_single: Single Select from Remote
-remote_multi: Multi Select from Remote
-local_single: Single Select from predefined List
-local_multi: Multi Select from predefined List
+preSelectMode: "Pre Select m\xF3d"
+remote_single: "Sima Select k\xFCls\u0151 forr\xE1sb\xF3l"
+remote_multi: "T\xF6bbes (multi) Select k\xFCls\u0151 forr\xE1sb\xF3l"
+local_single: "Sima Select el\u0151redefini\xE1lt list\xE1b\xF3l"
+local_multi: "T\xF6bbes (multi) Select el\u0151redefini\xE1lt list\xE1b\xF3l"
 indexFieldSelection: Index Field Selection
-indexFieldSelection_settings: Index Field Selection Settings
-filtergroups: Filter Groups
+indexFieldSelection_settings: "Index Field Selection Be\xE1ll\xEDt\xE1sok"
+filtergroups: "Sz\u0171r\xE9si csoportok"
 preSelect: Pre Select
-predefined_pre_select_options: Predefined pre select options
-bundle_ecommerce_clear_config_cache: Clear configuration cache
-bundle_ecommerce_back-office_order: Back Office - Ordering
-bundle_ecommerce_vouchertoolkit_tab: Voucher Details
-path: Path
-thumbnail: Thumbnail
-download_thumbnail: Download Thumbnail
-no_thumbnail_selected: No thumbnail selected
-list_thumbnail_in_download_section_on_image_detail_view: List as option in download
-  section on image detail view
-there_are_more_items: There are more items than displayed
-workflow_actions: Actions
-workflow_notes_requred_field_message: '"%s" is a required field.'
-workflow_transition_applied_successfully: Action applied successfully
-workflow_change_email_notification_subject: Workflow update for %s in workflow '%s'
-workflow_change_email_notification_text: For %s with ID %s the action "%s" was triggered
-  in workflow '%s'.
-workflow_change_email_notification_deeplink: Deeplink to the element.
-workflow_change_email_notification_note: 'Note Added:'
-workflow_details: Workflow Details
-workflow_graph: Workflow Graph
-workflow_current_state: Current State
-workflow_cmd_not_found: Please install the "%s" console executable on the server to
-  render the workflow graph.
-unit_width: Width Unit
-permission_missing: You need the '%s' permission to perform this action
-paste_as_language_variant: Paste as new language variant
-select_language_for_new_document: Select language for New Document
-source_document_language_missing: Set Language(Properties) in Source Document
-open_preview_in_new_window: Open preview in new window
-data: Data
-links: Links
-notes: Notes
-bool: Bool
-consent: Consent
-add_marker: Add marker
-identifier_warning: Be careful with the unique identifier because table names can
-  contain only up to 64 characters.
-unique_identifier: Unique identifier
-invalid_identifier: Invalid identifier
-identifier_already_exists: Identifier already exists
-content: Content
-send: Send
-you_can_only_drop_one_element_here: You can only drop one element here!
-translation: Translation
-delete_error_batch: Following items cannot be deleted, do you wanna proceed with deleting
-  the remaining?
-delete_error: 'The item cannot be deleted. Reason:'
-batch_edit_field_selected: Batch edit selected field
-batch_append_selected_to: Append data to selected
-enable_batch_edit_columns: Enable Batch Edit for Columns
-delete_all: Delete All
-open_linked_element: Open linked Element
-mark_as_read: Mark as read
-sender: Sender
-notifications: Notifications
-notifications_send: Send Notifications
-group: Group
-attachment: Attachment
-notification_has_been_sent: Notification has been sent
-recipient: Recipient
-this_field_is_required: This field is required
-paste_recursive_as_language_variant: Paste as new language variant (recursive)
-paste_no_new_language_error: All system languages already linked to source element.
-embedded_meta_data: Embedded Meta Info
-duration: Duration
-custom_metadata: Custom Metadata
+predefined_pre_select_options: "El\u0151re\xE9rtelmezett pre select opci\xF3k"
+bundle_ecommerce_clear_config_cache: "Konfigur\xE1ci\xF3s cache t\xF6rl\xE9se"
+bundle_ecommerce_back-office_order: "Back Office - Rendel\xE9s"
+bundle_ecommerce_vouchertoolkit_tab: "Utalv\xE1ny r\xE9szletei"
+path: "\xDAtvonal"
+thumbnail: "B\xE9lyegk\xE9p"
+download_thumbnail: "B\xE9lyegk\xE9p let\xF6lt\xE9se"
+no_thumbnail_selected: "Nincs b\xE9lyegk\xE9p kiv\xE1lasztva"
+list_thumbnail_in_download_section_on_image_detail_view: "A k\xE9p r\xE9szletein\xE9l
+  megjelenik a let\xF6lthet\u0151 list\xE1ban"
+there_are_more_items: "T\xF6bb elem van, mint ami megjelen\xEDthet\u0151"
+workflow_actions: "M\u0171veletek"
+workflow_notes_requred_field_message: "\"%s\"-t k\xF6telez\u0151 megadni."
+workflow_transition_applied_successfully: "A m\u0171velet sikeresen elv\xE9gezve"
+workflow_change_email_notification_subject: "Folyamatv\xE1ltoz\xE1s %s-nak/nek a '%s'
+  folyamatban"
+workflow_change_email_notification_text: "%s elemen (ID: %s) a %s m\u0171velet ker\xFClt
+  kiv\xE1lt\xE1sra a '%s' folyamatban."
+workflow_change_email_notification_deeplink: Deeplink az elemhez
+workflow_change_email_notification_note: "Megjegyz\xE9s hozz\xE1adva:"
+workflow_details: "Folyamat r\xE9szletei"
+workflow_graph: "Folyamat gr\xE1f"
+workflow_current_state: "Jelenlegi \xE1ll\xEDpot"
+workflow_cmd_not_found: "Telep\xEDtsd a szerverre a \"%s\"-t, hogy le tudjuk gener\xE1lni
+  a folyamat gr\xE1fj\xE1t."
+unit_width: "Sz\xE9less\xE9g egys\xE9g"
+permission_missing: "Nem rendelkezel '%s' joggal, hogy elv\xE9gezhesd a m\u0171veletet."
+paste_as_language_variant: "\xDAj nyelvi vari\xE1nsk\xE9nt val\xF3 beilleszt\xE9s"
+select_language_for_new_document: "V\xE1lassz nyelvet az \xFAj dokumentumhoz"
+source_document_language_missing: "Nyelv be\xE1ll\xEDt\xE1sa (Tulajdons\xE1gok) a
+  Forr\xE1s Dokumentumban"
+open_preview_in_new_window: "El\u0151n\xE9zet \xFAj ablakba"
+data: Adat
+links: Linkek
+notes: "Megjegyz\xE9sek"
+bool: Logikai
+consent: "Hozz\xE1j\xE1rul\xE1s"
+add_marker: "Jel\xF6l\u0151 hozz\xE1ad\xE1sa"
+identifier_warning: "Vigy\xE1zz az egyedi n\xE9vvel, mert a t\xE1blanevek max 64 karakteresek
+  lehetnek."
+unique_identifier: "Egyedi azonos\xEDt\xF3"
+invalid_identifier: "\xC9rv\xE9nytelen azonos\xEDt\xF3"
+identifier_already_exists: "Azonos\xEDt\xF3 m\xE1r l\xE9tezik"
+content: Tartalom
+send: "K\xFCld\xE9s"
+you_can_only_drop_one_element_here: "Ide csak egy elem dobhat\xF3!"
+translation: "Ford\xEDt\xE1s"
+delete_error_batch: "A k\xF6vetkez\u0151 elemek nem t\xF6r\xF6lhet\u0151ek, folytatod
+  a t\xF6rl\xE9st a t\xF6bbivel?"
+delete_error: "A t\xE9tel nem t\xF6r\xF6lhet\u0151. Ok: "
+batch_edit_field_selected: "Kiv\xE1lasztott mez\u0151 k\xF6tegelt szerkeszt\xE9se"
+batch_append_selected_to: "Adat hozz\xE1f\u0171z\xE9se a kiv\xE1lasztottakhoz"
+enable_batch_edit_columns: "K\xF6tegelt szerkeszt\xE9s enged\xE9lyez\xE9se az oszlopokhoz"
+delete_all: "\xD6sszes t\xF6rl\xE9se"
+open_linked_element: "Linkelt elem megnyit\xE1sa"
+mark_as_read: "Olvasottnak jel\xF6l"
+sender: "K\xFCld\u0151"
+notifications: "\xDCzenetek"
+notifications_send: "\xDCzenetek k\xFCld\xE9se"
+group: Csoport
+attachment: "Csatolm\xE1ny"
+notification_has_been_sent: "\xDCzenet elk\xFCldve"
+recipient: "C\xEDmzett"
+this_field_is_required: "Ez a mez\u0151 k\xF6telez\u0151"
+paste_recursive_as_language_variant: "\xDAj nyelvi vari\xE1nsk\xE9nt val\xF3 beilleszt\xE9s
+  (rekurz\xEDv)"
+paste_no_new_language_error: "Minden rendszernyelv m\xE1r linkelve van a forr\xE1s
+  dokumentumban"
+embedded_meta_data: "Be\xE1gyazott meta info"
+duration: "Id\u0151tartam"
+custom_metadata: Egyedi Metaadat
 group_icon_class: Group Icon Class
-custom_report_permissions: Permission
-visible_to_users: Visible To Users
-visible_to_roles: Visible To Roles
-open_url: Open URL
-document_language_overview: Document Language Overview
+custom_report_permissions: "Enged\xE9ly"
+visible_to_users: "L\xE1that\xF3 felhaszn\xE1l\xF3knak"
+visible_to_roles: "L\xE1that\xF3 szerepk\xF6r\xF6knek"
+open_url: "URL megnyit\xE1sa"
+document_language_overview: "Dokumentum nyelvi \xE1ttekint\xE9se"
 language_master: Master
-create_translation_inheritance: Create Translation (Inheritance)
-create_translation: Create Translation
-document_translation_parent_not_found: Parent document has no translation. Create
-  a translation for the parent first.
-paste_recursive_as_language_variant_updating_references: Paste language (recursive),
-  updating references
-redirects_expired_cleanup: Cleanup Expired Redirects
-redirects_cleanup_warning: Do you really want to cleanup expired redirects?
-redirects_cleanup_error: An error occurred while cleanup of expired redirects
-all_translations: All Translations
-only_unreferenced: only unreferenced
-split_view_settings: Split View Settings
-enable_split_view: Enable Split View
-disable_split_view: Disable Split View
-split_view_object_dirty_title: Please confirm
-split_view_object_dirty_msg: There are unsaved modifications. You will lose all changes.
-  Are you sure?
-converter_service: Converter service
-auto_convert: Automatic conversion
-web2print_enableDebugMode: Enable debug mode
-set_to_null: Empty (set to null)
-bundles: Bundles
-target_document_invalid: Please select a target document with valid language
-metainfo_copy_id: Copy ID to clipboard
-metainfo_copy_fullpath: Copy full path to clipboard
-metainfo_copy_deeplink: Copy deeplink to clipboard
-plain_text: Plain Text
-plain_text_email_part: Email Plain Text Part
-error_message: Error Message
-bundle_ecommerce_order_tab: Order Details
-access_denied: Access Denied!
-access_denied_description: You don't have sufficient permissions to open the element
-  or perform the desired action.
-validation_failed: Validation Failed!
-export_xlsx: XLSX Export
-object_export_warning: Please note that the export does not support all data types.
-  Press OK to continue with the export.
-web2print_enableLenientHttpsMode: Enable lenient HTTPS mode
-web2print_enableLenientHttpsMode_txt: Enable this option if PDFreactor fails to connect
-  successfully via HTTPS
-paste_clipboard: Paste Clipboard
-paste_here: Paste your clipboard data here
-asset_metadata: Asset Metadata
-predefined_metadata: Predefined Metadata
-default_metadata: Default Metadata
-asset_export_warning: Please note that the export does not support some fields(e.g.
-  preview, size). Press OK to continue with the export.
-share_via_notifications: Share via Notifications
-cannot_save_metadata_please_try_to_edit_the_metadata_in_asset: <b>Cannot save Metadata!</b><br
-  />Please try to edit the metadata in Asset.
-email_log_forward: Forward email
-sum: Sum
-area_brick_assign_info_message: Please use drag & drop to assign a brick to the desired
-  block
-batch_remove_all: Batch remove from all
-batch_remove_selected: Batch remove from selected
-batch_remove_from: Remove data from all
-batch_remove_selected_from: Remove data from selected
-unit_tooltip: Alternative units tooltip
-toggle_image_features_visibility: Toggle Image Feature Visibility
-detect_image_features: Detect Image Features
-remove_image_features: Remove Image Features
-available_sites: Available Sites
-fallback: Fallback
-add_site: Add Site
+create_translation_inheritance: "Ford\xEDt\xE1s l\xE9trehoz\xE1sa (\xD6r\xF6kl\xE9s)"
+create_translation: "Ford\xEDt\xE1s l\xE9trehoz\xE1sa"
+document_translation_parent_not_found: "A sz\xFCl\u0151 dokumentumnak nincs ford\xEDt\xE1sa.
+  El\u0151bb hozz l\xE9tre azon egy ford\xEDt\xE1st."
+paste_recursive_as_language_variant_updating_references: "Nyelv beilleszt\xE9se (rekurz\xEDv),
+  hivatkoz\xE1sok friss\xEDt\xE9se"
+redirects_expired_cleanup: "Lej\xE1rt \xE1tir\xE1ny\xEDt\xE1sok t\xF6rl\xE9se"
+redirects_cleanup_warning: "Biztos t\xF6r\xF6lni akarja a lej\xE1rt \xE1tir\xE1ny\xEDt\xE1sokat?"
+redirects_cleanup_error: "Hiba t\xF6rt\xE9nt a lej\xE1rt \xE1tir\xE1ny\xEDt\xE1sok
+  t\xF6rl\xE9se sor\xE1n"
+all_translations: "Minden ford\xEDt\xE1s"
+only_unreferenced: Csak a nem hivatkozottak
+split_view_settings: "Osztott n\xE9zet be\xE1ll\xEDt\xE1sai"
+enable_split_view: "Osztott n\xE9zet enged\xE9lyez\xE9se"
+disable_split_view: "Osztott n\xE9zet tilt\xE1sa"
+split_view_object_dirty_title: "Er\u0151s\xEDtsd meg"
+split_view_object_dirty_msg: "El nem mentett m\xF3dos\xEDt\xE1sok vannak. Minden m\xF3dos\xEDt\xE1s
+  el fog veszni. Biztos?"
+converter_service: "\xC1talak\xEDt\xF3 service"
+auto_convert: "Automatikus konverzi\xF3"
+web2print_enableDebugMode: "Debug m\xF3d enged\xE9lyez\xE9se"
+set_to_null: "\xDCres (null \xE9rt\xE9k)"
+bundles: Bundle-k
+target_document_invalid: "V\xE1lassz egy \xE9rv\xE9nyes nyelvvel rendelkez\u0151 c\xE9ldokumentumot"
+metainfo_copy_id: "ID m\xE1sol\xE1sa v\xE1g\xF3lapra"
+metainfo_copy_fullpath: "Teljes \xFAtvonal m\xE1sol\xE1sa v\xE1g\xF3lapra"
+metainfo_copy_deeplink: "Deeplink m\xE1sol\xE1sa v\xE1g\xF3lapra"
+plain_text: "Egyszer\u0171 sz\xF6veg"
+plain_text_email_part: "Email egyszer\u0171 sz\xF6veg r\xE9sze"
+error_message: "Hiba\xFCzenet"
+bundle_ecommerce_order_tab: "Megrendel\xE9s r\xE9szletei"
+access_denied: "Hozz\xE1f\xE9r\xE9s megtagadva!"
+access_denied_description: "Nincs megfelel\u0151 jogod a k\xE9rt m\u0171velet elv\xE9gz\xE9s\xE9hez."
+validation_failed: "Ellen\u0151rz\xE9s sikertelen!"
+export_xlsx: "XLSX Export\xE1l\xE1s"
+object_export_warning: "K\xE9rj\xFCk vedd figyelembe, hogy az export\xE1l\xE1s nem
+  t\xE1mogat minden adatt\xEDpust. Kattints az OK-ra a folytat\xE1shoz."
+web2print_enableLenientHttpsMode: "Enged\xE9lyezd az enged\xE9keny HTTPS m\xF3dot"
+web2print_enableLenientHttpsMode_txt: "Enged\xE9lyezd ezt a be\xE1ll\xEDt\xE1st, ha
+  a PDFreactor nem tud kapcsol\xF3dni HTTPS-en kereszt\xFCl"
+paste_clipboard: "V\xE1g\xF3lap beilleszt\xE9se"
+paste_here: "Ide illeszt a v\xE1g\xF3lapr\xF3l az adatokat"
+asset_metadata: Asset metaadatok
+predefined_metadata: "El\u0151redefini\xE1lt metaadatok"
+default_metadata: "Alap\xE9rtelmezett metaadatok"
+asset_export_warning: "K\xE9rj\xFCk vedd figyelembe, hogy az export nem t\xE1mogat
+  n\xE9h\xE1ny mez\u0151t (pl. el\u0151n\xE9zet, m\xE9ret). Kattints az OK-ra a folytat\xE1shoz."
+share_via_notifications: "Megoszt\xE1s \xFCzenetben"
+cannot_save_metadata_please_try_to_edit_the_metadata_in_asset: "<b>Nem lehet menteni
+  a Metaadatokat!<b><br/>Pr\xF3b\xE1ld meg szerkeszteni a Metaadatokat az Assetben."
+email_log_forward: "Email tov\xE1bb\xEDt\xE1sa"
+sum: "\xD6sszeg"
+area_brick_assign_info_message: "Haszn\xE1ld a Drap&Drop-ot a brick k\xEDv\xE1nt blokkhoz
+  val\xF3 rendel\xE9s\xE9hez"
+batch_remove_all: "K\xF6tegelt elt\xE1vol\xEDt\xE1s mindenhonnan"
+batch_remove_selected: "K\xF6tegelt elt\xE1vol\xEDt\xE1s a kiv\xE1lasztottakb\xF3l"
+batch_remove_from: "Adat elt\xE1vol\xEDt\xE1sa mindenhonnan"
+batch_remove_selected_from: "Adat elt\xE1vol\xEDt\xE1sa a kiv\xE1lasztottakb\xF3l"
+unit_tooltip: "Alternat\xEDv egys\xE9gek tooltip"
+toggle_image_features_visibility: "K\xE9p jellemz\u0151k l\xE1that\xF3s\xE1g\xE1nak
+  \xE1ll\xEDt\xE1sa"
+detect_image_features: "K\xE9p Jellemz\u0151k detekt\xE1l\xE1sa"
+remove_image_features: "K\xE9p Jellemz\u0151k t\xF6rl\xE9se"
+available_sites: "El\xE9reht\u0151 oldalak"
+fallback: "Tartal\xE9k"
+add_site: "Oldal hozz\xE1ad\xE1sa"
 domain_label_width: Domain label width
-complete_required_fields: 'Please complete following required fields to publish the
-  document:'
-Uncategorized: Uncategorized
-skip_if_exists: Skip row if exists
-php_class_or_service: Class or service name
-redirect_performance_warning: Using this feature has very bad effects on the performance
-  of the entire application, do you really want to continue?
-test_url: Test URL
-create_redirects: Create redirects to keep URLs working (incl. children)?
-auto_create: Auto create
-methods: Methods
-batch_operation: Batch Operation
-move: Move
-property_name: Property name
-force_value: Force value
-enable_grid_locking: Enable grid locking
-export_configuration: Export Configuration As JSON
-composite_indices: Composite indices
-default_value_generator: Default value generator service / class
-no_value_set: no value set
-replace_assignments_in_all_elements: Replace assignments in all elements
-fieldlookup: Field Lookup
-show_fieldlookup: Show Field Lookup
-different_number_of_columns: Different number of columns
-brick_limit_reached: 'Limit ({bricklimit}) reached for brick: {brickname}'
+complete_required_fields: "A k\xF6vetkez\u0151 mez\u0151ket t\xF6ltsd ki, hogy publik\xE1lhasd
+  a Dokumentumot:"
+Uncategorized: "Nem kategoriz\xE1lt"
+skip_if_exists: "L\xE9tez\u0151 kihagy\xE1sa"
+php_class_or_service: "PHP oszt\xE1ly vagy Symfony Service neve"
+redirect_performance_warning: "A funkci\xF3 haszn\xE1lata jelent\u0151sen ronthatja
+  az alkalmaz\xE1s teljes\xEDtm\xE9ny\xE9t, biztos folytatod?"
+test_url: Teszt URL
+create_redirects: "L\xE9trehozzunk \xE1tir\xE1ny\xEDt\xE1sokat, hogy az URL-ek (a
+  gyekerek\xE9t bele\xE9rtve) tov\xE1bbra is m\u0171k\xF6djenek?"
+auto_create: "Automatikus l\xE9trehoz\xE1s"
+methods: "Met\xF3dusok"
+batch_operation: "K\xF6tegelt m\u0171velet"
+move: "Mozgat\xE1s"
+property_name: Adattag neve
+force_value: "\xC9rt\xE9k k\xE9nyszer\xEDt\xE9se"
+enable_grid_locking: "Grid z\xE1rol\xE1s enged\xE9lyez\xE9se"
+export_configuration: "Konfigur\xE1ci\xF3 export\xE1l\xE1sa JSON-be"
+composite_indices: "\xD6sszetett kulcsok"
+default_value_generator: "Alap\xE9rtelmezett \xE9rt\xE9k gener\xE1l\xF3 Service /
+  Class"
+no_value_set: "Nincs \xE9rt\xE9k be\xE1ll\xEDtva"
+replace_assignments_in_all_elements: "Feladatok cser\xE9je az \xF6sszes elemben"
+fieldlookup: "Mez\u0151 keres\xE9se"
+show_fieldlookup: "Mez\u0151 keres\xE9s mutat\xE1sa"
+different_number_of_columns: "K\xFCl\xF6nb\xF6z\u0151 sz\xE1m\xFA oszlopok"
+brick_limit_reached: "Limit ({bricklimit}) el\xE9rve a k\xF6vetkez\u0151 elemhez:
+  {brickname}"
 generate_type_declarations: Generate Type Declarations
-batch_change_language: Batch update language
-preview_item: Preview Item
-by_key_reverse: Key (Z to A)
-deprecated: Deprecated
-version_currently_saved_in_database: Currently saved in database (but not published)
-deprecated_feature: '<span style=''color: orange;''>Deprecated feature. Use %s instead</span>'
-edit_as_custom_text: Edit as custom text
-symfony_translation_link: 'Translation Format: https://symfony.com/doc/current/translation/message_format.html'
-no_action_available: No action available
-bricks: Bricks
-draft: Draft
-auto_save: Auto save
-save_draft: Save draft
-selected_grid_columns: Selected grid columns
-ungrouped: ungrouped
-reindex_warning: Changing it from alphabetical sort order to index will reindex all
-  items. Do you want to continue?
+batch_change_language: "Nyelv k\xF6tegelt friss\xEDt\xE9se"
+preview_item: "T\xE9tel el\u0151n\xE9zete"
+by_key_reverse: Kulcs (Z-A)
+deprecated: Elavult
+version_currently_saved_in_database: "Jelenleg adtb\xE1zisban mentett (de nem publik\xE1lt)"
+deprecated_feature: "<p style=\"color: orange;\">Elavult funkci\xF3. Haszn\xE1ld ezt:
+  %s<br>ink\xE1bb</p>"
+edit_as_custom_text: "Szerkeszt\xE9s egyedi sz\xFCvegk\xE9nt"
+symfony_translation_link: "Form\xE1tum:\nhttps://symfony.com/doc/current/translation/message_format.html\n"
+no_action_available: "Nincs m\u0171velet"
+bricks: "\xC9p\xEDt\u0151elemek"
+draft: Piszkozat
+auto_save: "Automaikus ment\xE9s"
+save_draft: "Piszkozat ment\xE9se"
+selected_grid_columns: "Kiv\xE1laszott r\xE1cs oszlopok"
+ungrouped: "nem csoportos\xEDtott"
+reindex_warning: "V\xE1lt\xE1s index alap\xFA sorrendre \xFAjraindexel\xE9st okoz.
+  Biztos folytatod?"
 filter_by_relation: Filter by relation
 filter_by_relation_field: Filter by relation field
 clear_relation_filter: Clear active relation filter
