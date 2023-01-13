@@ -44,7 +44,6 @@
     "ext-zip": "*",
     "ext-zlib": "*",
     "ext-curl": "*",
-    "amnuts/opcache-gui": "^3.0.1",
     "cbschuld/browser.php": "^1.9.6",
     "colinmollenhour/credis": "^1.10.0",
     "composer/ca-bundle": "^1.2",
@@ -185,7 +184,8 @@
       "Pimcore\\Bundle\\CoreBundle\\": "bundles/CoreBundle/src/",
       "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/",
       "Pimcore\\Bundle\\GlossaryBundle\\": "bundles/GlossaryBundle/src/",
-      "Pimcore\\Bundle\\SeoBundle\\": "bundles/SeoBundle/src/"
+      "Pimcore\\Bundle\\SeoBundle\\": "bundles/SeoBundle/src/",
+      "Pimcore\\Bundle\\SystemInfoBundle\\": "bundles/SystemInfoBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"

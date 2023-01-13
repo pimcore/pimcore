@@ -14,41 +14,53 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\SystemInfoBundle\Controller;
 
-use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Tool\Requirements;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/install")
+ * @Route("/opcache")
  *
  * @internal
  */
-class InstallController extends AdminController
+class OpcacheController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @Route("/check", name="pimcore_admin_install_check", methods={"GET", "POST"})
+     * @Route("/index", name="pimcore_bundle_systeminfo_opcache_index")
      *
      * @param Request $request
-     * @param Connection $db
      * @param Profiler|null $profiler
      *
      * @return Response
      */
-    public function checkAction(Request $request, Connection $db, ?Profiler $profiler): Response
+    public function indexAction(Request $request, ?Profiler $profiler): Response
     {
         if ($profiler) {
             $profiler->disable();
         }
 
-        $viewParams = Requirements::checkAll($db);
-        $viewParams['headless'] = $request->query->getBoolean('headless') || $request->request->getBoolean('headless');
+        $path = PIMCORE_COMPOSER_PATH . '/amnuts/opcache-gui';
 
-        return $this->render('@PimcoreAdmin/admin/install/check.html.twig', $viewParams);
+        ob_start();
+        include($path . '/index.php');
+        $content = ob_get_clean();
+
+        return new Response($content);
+    }
+
+    public function onKernelControllerEvent(ControllerEvent $event): void
+    {
+        if (!$event->isMainRequest()) {
+            return;
+        }
+
+        // only for admins
+        $this->checkPermission('opcache');
     }
 }
