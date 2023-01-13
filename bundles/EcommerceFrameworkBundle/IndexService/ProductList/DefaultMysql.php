@@ -553,6 +553,12 @@ class DefaultMysql implements ProductListInterface
         }
     }
 
+    /**
+     * @param bool $excludeConditions
+     * @param string|null $excludedFieldname
+     * @param string|null $variantMode
+     * @return string
+     */
     protected function buildQueryFromConditions($excludeConditions = false, $excludedFieldname = null, $variantMode = null)
     {
         if ($variantMode == null) {
@@ -626,6 +632,10 @@ class DefaultMysql implements ProductListInterface
         return $condition;
     }
 
+    /**
+     * @param string|null $excludedFieldname
+     * @return string
+     */
     protected function buildUserspecificConditions($excludedFieldname = null)
     {
         $condition = '';
@@ -708,6 +718,10 @@ class DefaultMysql implements ProductListInterface
         return null;
     }
 
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
     public function quote($value)
     {
         return $this->resource->quote($value);

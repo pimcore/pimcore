@@ -30,6 +30,11 @@ class CartCheckoutData extends AbstractCartCheckoutData
         $this->getDao()->save();
     }
 
+    /**
+     * @param string $key
+     * @param int|string $cartId
+     * @return AbstractCartCheckoutData|null
+     */
     public static function getByKeyCartId($key, $cartId)
     {
         $cacheKey = CartCheckoutData\Dao::TABLE_NAME . '_' . $key . '_' . $cartId;

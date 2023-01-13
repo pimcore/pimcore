@@ -42,6 +42,7 @@ interface CartPriceCalculatorInterface
     /**
      * Calculates cart sums and saves results
      *
+     * @param bool $ignorePricingRules
      * @return void
      */
     public function calculate($ignorePricingRules = false);

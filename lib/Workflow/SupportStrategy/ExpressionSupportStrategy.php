@@ -54,7 +54,8 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param WorkflowInterface $workflow
+     * @param object $subject
      */
     public function supports(WorkflowInterface $workflow, $subject): bool
     {

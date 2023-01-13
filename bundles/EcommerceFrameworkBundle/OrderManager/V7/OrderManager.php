@@ -538,6 +538,11 @@ class OrderManager implements OrderManagerInterface
         return $event->getArgument('itemKey');
     }
 
+    /**
+     * @param string $className
+     * @param array $params
+     * @return mixed
+     */
     protected function buildModelClass($className, array $params = [])
     {
         if (null === $this->modelFactory) {

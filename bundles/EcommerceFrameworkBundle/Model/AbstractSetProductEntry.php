@@ -30,6 +30,10 @@ class AbstractSetProductEntry
      */
     private $product;
 
+    /**
+     * @param CheckoutableInterface $product
+     * @param int $quantity
+     */
     public function __construct(CheckoutableInterface $product, $quantity = 1)
     {
         $this->product = $product;

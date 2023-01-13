@@ -27,11 +27,19 @@ class LazyLoadingPriceInfo extends AbstractPriceInfo implements PriceInfoInterfa
      */
     protected $priceRegistry = [];
 
+    /**
+     * @return static
+     */
     public static function getInstance()
     {
         return parent::getInstance();
     }
 
+    /**
+     * @param string $name
+     * @param array $arg
+     * @return mixed
+     */
     public function __call($name, $arg)
     {
         if (array_key_exists($name, $this->priceRegistry)) {

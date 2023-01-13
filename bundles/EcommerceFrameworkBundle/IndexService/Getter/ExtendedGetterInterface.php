@@ -22,5 +22,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
  */
 interface ExtendedGetterInterface extends GetterInterface
 {
+    /**
+     * @param object $object
+     * @param array $config
+     * @param int|null $subObjectId
+     * @param ConfigInterface|null $tenantConfig
+     * @return mixed
+     */
     public function get($object, $config = null, $subObjectId = null, ConfigInterface $tenantConfig = null);
 }

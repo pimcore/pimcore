@@ -16,10 +16,17 @@
 namespace Pimcore\Db;
 
 use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Types\Type;
 use Pimcore\Model\Element\ValidationException;
 
 class Helper
 {
+    /**
+     * @param ConnectionInterface|\Doctrine\DBAL\Connection $connection
+     * @param string $table
+     * @param array $data
+     * @return int|string
+     */
     public static function insertOrUpdate(ConnectionInterface|\Doctrine\DBAL\Connection $connection, $table, array $data)
     {
         // extract and quote col names from the array keys
@@ -53,6 +60,13 @@ class Helper
         return $connection->executeStatement($sql, $bind);
     }
 
+    /**
+     * @param ConnectionInterface|\Doctrine\DBAL\Connection $db
+     * @param string $sql
+     * @param array $params
+     * @param array $types
+     * @return array
+     */
     public static function fetchPairs(ConnectionInterface|\Doctrine\DBAL\Connection $db, $sql, array $params = [], $types = [])
     {
         $stmt = $db->executeQuery($sql, $params, $types);
@@ -66,6 +80,13 @@ class Helper
         return $data;
     }
 
+    /**
+     * @param ConnectionInterface|\Doctrine\DBAL\Connection $db
+     * @param string $table
+     * @param string $idColumn
+     * @param string $where
+     * @return void
+     */
     public static function selectAndDeleteWhere(ConnectionInterface|\Doctrine\DBAL\Connection $db, $table, $idColumn = 'id', $where = '')
     {
         $sql = 'SELECT ' . $db->quoteIdentifier($idColumn) . '  FROM ' . $table;
@@ -85,6 +106,13 @@ class Helper
         }
     }
 
+    /**
+     * @param ConnectionInterface|\Doctrine\DBAL\Connection $db
+     * @param string $sql
+     * @param array $exclusions
+     * @return \Doctrine\DBAL\Result|\Doctrine\DBAL\Driver\ResultStatement|null
+     * @throws ValidationException
+     */
     public static function queryIgnoreError(ConnectionInterface|\Doctrine\DBAL\Connection $db, $sql, $exclusions = [])
     {
         try {
@@ -101,6 +129,14 @@ class Helper
         return null;
     }
 
+    /**
+     * @param ConnectionInterface|\Doctrine\DBAL\Connection $db
+     * @param string $text
+     * @param mixed $value
+     * @param int|string|Type|null $type
+     * @param int|null $count
+     * @return array|string
+     */
     public static function quoteInto(ConnectionInterface|\Doctrine\DBAL\Connection $db, $text, $value, $type = null, $count = null)
     {
         if ($count === null) {
