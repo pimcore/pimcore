@@ -27,6 +27,8 @@ final class Console
     protected static array $executableCache = [];
 
     /**
+     * @return ($throwException is true ? string : string|false)
+     *
      * @throws \Exception
      */
     public static function getExecutable(string $name, bool $throwException = false): string|false
@@ -116,7 +118,7 @@ final class Console
     /**
      * @throws \Exception
      */
-    public static function getPhpCli(): string|false
+    public static function getPhpCli(): string
     {
         try {
             return self::getExecutable('php', true);
