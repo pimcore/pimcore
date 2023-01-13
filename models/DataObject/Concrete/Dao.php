@@ -37,12 +37,12 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
     protected ?Dao\InheritanceHelper $inheritanceHelper = null;
 
-    public function init()
+    public function init(): void
     {
         return;
     }
 
-    protected function getInheritanceHelper()
+    protected function getInheritanceHelper(): Dao\InheritanceHelper
     {
         if (!$this->inheritanceHelper) {
             $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->model->getClassId());
@@ -58,7 +58,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as locked FROM objects
             LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = 'object'
@@ -137,7 +137,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Get all data-elements for all fields that are not lazy-loaded.
      */
-    public function getData()
+    public function getData(): void
     {
         if (empty($this->model->getClass())) {
             return;
@@ -188,7 +188,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      *
      * @param bool|null $isUpdate
      */
-    public function update(bool $isUpdate = null)
+    public function update(bool $isUpdate = null): void
     {
         parent::update($isUpdate);
 
@@ -407,7 +407,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         DataObject::setGetInheritedValues($inheritedValues);
     }
 
-    public function saveChildData()
+    public function saveChildData(): void
     {
         $this->getInheritanceHelper()->doUpdate($this->model->getId(), false, [
             'inheritanceRelationContext' => [

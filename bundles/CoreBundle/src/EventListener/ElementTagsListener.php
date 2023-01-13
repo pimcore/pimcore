@@ -43,7 +43,7 @@ class ElementTagsListener implements EventSubscriberInterface
         ];
     }
 
-    public function onPostCopy(ElementEventInterface $e)
+    public function onPostCopy(ElementEventInterface $e): void
     {
         $elementType = Service::getElementType($e->getElement());
         $copiedElement = $e->getElement();
@@ -56,7 +56,7 @@ class ElementTagsListener implements EventSubscriberInterface
         );
     }
 
-    public function onPostAssetDelete(AssetEvent $e)
+    public function onPostAssetDelete(AssetEvent $e): void
     {
         $asset = $e->getAsset();
         \Pimcore\Model\Element\Tag::setTagsForElement('asset', $asset->getId(), []);

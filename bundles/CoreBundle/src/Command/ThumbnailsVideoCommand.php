@@ -32,7 +32,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
 {
     use Parallelization;
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         self::configureCommand($this);
@@ -132,7 +132,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         }
     }
 
-    protected function waitTillFinished(int $videoId, string|Asset\Video\Thumbnail\Config $thumbnail)
+    protected function waitTillFinished(int $videoId, string|Asset\Video\Thumbnail\Config $thumbnail): void
     {
         $finished = false;
 

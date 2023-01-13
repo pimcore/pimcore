@@ -21,10 +21,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
  */
 trait VarExport
 {
-    /**
-     * @var array
-     */
-    protected $blockedVarsForExport = [];
+    protected array $blockedVarsForExport = [];
 
     public function getBlockedVarsForExport(): array
     {
@@ -42,12 +39,7 @@ trait VarExport
         return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = new static();
         $obj->setValues($data);

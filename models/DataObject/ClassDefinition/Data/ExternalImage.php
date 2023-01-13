@@ -80,7 +80,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         return $this->previewWidth;
     }
 
-    public function setPreviewWidth(?int $previewWidth)
+    public function setPreviewWidth(?int $previewWidth): void
     {
         $this->previewWidth = $this->getAsIntegerCast($previewWidth);
     }
@@ -90,7 +90,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         return $this->previewHeight;
     }
 
-    public function setPreviewHeight(?int $previewHeight)
+    public function setPreviewHeight(?int $previewHeight): void
     {
         $this->previewHeight = $this->getAsIntegerCast($previewHeight);
     }
@@ -100,7 +100,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         return $this->inputWidth;
     }
 
-    public function setInputWidth(?int $inputWidth)
+    public function setInputWidth(?int $inputWidth): void
     {
         $this->inputWidth = $this->getAsIntegerCast($inputWidth);
     }
@@ -278,7 +278,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @param Model\DataObject\ClassDefinition\Data\ExternalImage $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->previewHeight = $masterDefinition->previewHeight;
         $this->previewWidth = $masterDefinition->previewWidth;
@@ -292,7 +292,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @throws Model\Element\ValidationException
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($this->getMandatory() && !$omitMandatoryCheck && $this->isEmpty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');

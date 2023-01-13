@@ -43,7 +43,7 @@ class ElementEvent extends Event implements ElementEventInterface
         return $this->element;
     }
 
-    public function setElement(ElementInterface $element)
+    public function setElement(ElementInterface $element): void
     {
         $this->element = $element;
     }

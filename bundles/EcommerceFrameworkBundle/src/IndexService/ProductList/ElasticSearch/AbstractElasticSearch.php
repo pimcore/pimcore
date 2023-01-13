@@ -172,7 +172,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @param array|string $condition
      * @param string $fieldname - must be set for elastic search
      */
-    public function addCondition(array|string $condition, string $fieldname = '')
+    public function addCondition(array|string $condition, string $fieldname = ''): void
     {
         $this->filterConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
@@ -197,7 +197,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @param string $fieldname
      * @param string|array $condition
      */
-    public function addRelationCondition(string $fieldname, string|array $condition)
+    public function addRelationCondition(string $fieldname, string|array $condition): void
     {
         $this->relationConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
@@ -207,7 +207,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * Resets all conditions of product list
      */
-    public function resetConditions()
+    public function resetConditions(): void
     {
         $this->relationConditions = [];
         $this->filterConditions = [];
@@ -224,7 +224,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @param string|array $condition
      * @param string $fieldname - must be set for elastic search
      */
-    public function addQueryCondition(string|array $condition, string $fieldname = '')
+    public function addQueryCondition(string|array $condition, string $fieldname = ''): void
     {
         $this->queryConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
@@ -236,7 +236,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @param string $fieldname
      */
-    public function resetQueryCondition(string $fieldname)
+    public function resetQueryCondition(string $fieldname): void
     {
         unset($this->queryConditions[$fieldname]);
         $this->preparedGroupByValuesLoaded = false;
@@ -249,7 +249,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @param float|null $from
      * @param float|null $to
      */
-    public function addPriceCondition(float $from = null, float $to = null)
+    public function addPriceCondition(float $from = null, float $to = null): void
     {
         $this->conditionPriceFrom = $from;
         $this->conditionPriceTo = $to;
@@ -798,7 +798,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @throws \Exception
      */
-    public function prepareGroupByValuesWithConfig(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true, array $aggregationConfig = [])
+    public function prepareGroupByValuesWithConfig(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true, array $aggregationConfig = []): void
     {
         if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             throw new \Exception('Custom sub aggregations are not supported for variant mode VARIANT_MODE_INCLUDE_PARENT_OBJECT');
@@ -939,7 +939,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @throws \Exception
      */
-    protected function doLoadGroupByValues()
+    protected function doLoadGroupByValues(): void
     {
         // create general filters and queries
         $toExcludeFieldnames = [];

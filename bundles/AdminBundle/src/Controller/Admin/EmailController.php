@@ -168,7 +168,7 @@ class EmailController extends AdminController
      * @param array $data
      * @param array|null $fullEntry
      */
-    protected function enhanceLoggingData(array &$data, array &$fullEntry = null)
+    protected function enhanceLoggingData(array &$data, array &$fullEntry = null): void
     {
         if (!empty($data['objectClass'])) {
             $class = '\\' . ltrim($data['objectClass'], '\\');

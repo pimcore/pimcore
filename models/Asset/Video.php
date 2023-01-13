@@ -38,7 +38,7 @@ class Video extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
             foreach (['duration', 'videoWidth', 'videoHeight'] as $key) {
@@ -53,7 +53,7 @@ class Video extends Model\Asset
         parent::update($params);
     }
 
-    public function clearThumbnails(bool $force = false)
+    public function clearThumbnails(bool $force = false): void
     {
         if ($this->getDataChanged() || $force) {
             // clear the thumbnail custom settings

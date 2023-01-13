@@ -18,7 +18,10 @@ namespace Pimcore\Model\Dao;
 
 interface DaoInterface
 {
-    public function setModel(\Pimcore\Model\AbstractModel $model);
+    /**
+     * @return $this
+     */
+    public function setModel(\Pimcore\Model\AbstractModel $model): static;
 
-    public function configure();
+    public function configure(): void;
 }

@@ -38,7 +38,7 @@ class UserRoleEvent extends Event
         return $this->userRole;
     }
 
-    public function setUserRole(AbstractUser $userRole)
+    public function setUserRole(AbstractUser $userRole): void
     {
         $this->userRole = $userRole;
     }

@@ -23,12 +23,10 @@ interface RecurringPaymentInterface extends PaymentInterface
 {
     /**
      * Payment supports recurring payment
-     *
-     * @return bool
      */
     public function isRecurringPaymentEnabled(): bool;
 
-    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, object $paymentBrick): mixed;
+    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, object $paymentBrick): void;
 
-    public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = []): Concrete;
+    public function applyRecurringPaymentCondition(Concrete $orderListing, array $additionalParameters = []): void;
 }

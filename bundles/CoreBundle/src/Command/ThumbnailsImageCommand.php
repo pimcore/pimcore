@@ -31,7 +31,7 @@ class ThumbnailsImageCommand extends AbstractCommand
 {
     use Parallelization;
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         self::configureCommand($this);

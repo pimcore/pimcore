@@ -50,7 +50,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
         }
     }
 
-    public function addHandler(DynamicRouteHandlerInterface $handler)
+    public function addHandler(DynamicRouteHandlerInterface $handler): void
     {
         if (!in_array($handler, $this->handlers, true)) {
             $this->handlers[] = $handler;
@@ -85,7 +85,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteByName($name): SymfonyRoute
+    public function getRouteByName(string $name): SymfonyRoute
     {
         foreach ($this->handlers as $handler) {
             try {

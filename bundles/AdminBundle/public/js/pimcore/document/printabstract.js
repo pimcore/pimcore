@@ -21,17 +21,22 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
     initialize: function(id, options) {
         this.id = intval(id);
         this.options = options;
+        this.addLoadingPanel();
 
         const preOpenDocument = new CustomEvent(pimcore.events.preOpenDocument, {
             detail: {
                 document: this,
                 type: this.getType()
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenDocument);
+        const isAllowed = document.dispatchEvent(preOpenDocument);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
-        this.addLoadingPanel();
         this.getData();
     },
 

@@ -26,5 +26,5 @@ interface ProductImpressionInterface
      * @param ProductInterface $product
      * @param string $list
      */
-    public function trackProductImpression(ProductInterface $product, string $list = 'default');
+    public function trackProductImpression(ProductInterface $product, string $list = 'default'): void;
 }

@@ -44,7 +44,7 @@ class GridConfigShare extends AbstractModel
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         $this->getDao()->save();
     }
@@ -52,7 +52,7 @@ class GridConfigShare extends AbstractModel
     /**
      * Delete this share
      */
-    public function delete()
+    public function delete(): void
     {
         $this->getDao()->delete();
     }
@@ -62,7 +62,7 @@ class GridConfigShare extends AbstractModel
         return $this->gridConfigId;
     }
 
-    public function setGridConfigId(int $gridConfigId)
+    public function setGridConfigId(int $gridConfigId): void
     {
         $this->gridConfigId = $gridConfigId;
     }
@@ -72,7 +72,7 @@ class GridConfigShare extends AbstractModel
         return $this->sharedWithUserId;
     }
 
-    public function setSharedWithUserId(int $sharedWithUserId)
+    public function setSharedWithUserId(int $sharedWithUserId): void
     {
         $this->sharedWithUserId = $sharedWithUserId;
     }

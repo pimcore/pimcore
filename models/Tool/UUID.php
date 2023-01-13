@@ -145,7 +145,7 @@ final class UUID extends Model\AbstractModel
         return $this->uuid;
     }
 
-    public function setUuid(string $uuid)
+    public function setUuid(string $uuid): void
     {
         $this->uuid = $uuid;
     }

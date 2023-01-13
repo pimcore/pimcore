@@ -87,7 +87,7 @@ class Tracker extends AbstractTracker
         return $this->defaultPath;
     }
 
-    public function setDefaultPath(string $defaultPath = null)
+    public function setDefaultPath(string $defaultPath = null): void
     {
         $this->defaultPath = $defaultPath;
     }
@@ -163,7 +163,7 @@ class Tracker extends AbstractTracker
         return $this->renderTemplate($event);
     }
 
-    private function getTrackerConfigurationFromJson($configValue = null, array $defaultConfig = []): array
+    private function getTrackerConfigurationFromJson(string $configValue = null, array $defaultConfig = []): array
     {
         $config = [];
         if (!empty($configValue)) {

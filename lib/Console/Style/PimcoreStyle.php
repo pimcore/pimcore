@@ -56,7 +56,7 @@ final class PimcoreStyle extends SymfonyStyle
      * @param string $underlineChar
      * @param string|null $style
      */
-    public function simpleSection(string $message, string $underlineChar = '-', string $style = null)
+    public function simpleSection(string $message, string $underlineChar = '-', string $style = null): void
     {
         $underline = str_repeat($underlineChar, Helper::width(Helper::removeDecoration($this->getFormatter(), $message)));
 

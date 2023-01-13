@@ -173,7 +173,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return HeadMeta
      */
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args): mixed
     {
         if (preg_match('/^(?P<action>set|(pre|ap)pend|offsetSet)(?P<type>Name|HttpEquiv|Property)$/', $method, $matches)) {
             $action = $matches['action'];

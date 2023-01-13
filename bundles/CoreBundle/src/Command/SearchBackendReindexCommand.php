@@ -30,7 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class SearchBackendReindexCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:search-backend-reindex')

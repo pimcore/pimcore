@@ -406,7 +406,7 @@ class WorkflowController extends AdminController implements KernelControllerEven
      *
      * @throws \Exception
      */
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

@@ -55,7 +55,7 @@ class DataObjectImportEvent extends Event
         return $this->config;
     }
 
-    public function setConfig(mixed $config)
+    public function setConfig(mixed $config): void
     {
         $this->config = $config;
     }
@@ -65,7 +65,7 @@ class DataObjectImportEvent extends Event
         return $this->originalFile;
     }
 
-    public function setOriginalFile(string $originalFile)
+    public function setOriginalFile(string $originalFile): void
     {
         $this->originalFile = $originalFile;
     }
@@ -75,7 +75,7 @@ class DataObjectImportEvent extends Event
         return $this->object;
     }
 
-    public function setObject(Concrete $object)
+    public function setObject(Concrete $object): void
     {
         $this->object = $object;
     }
@@ -85,7 +85,7 @@ class DataObjectImportEvent extends Event
         return $this->rowData;
     }
 
-    public function setRowData(mixed $rowData)
+    public function setRowData(mixed $rowData): void
     {
         $this->rowData = $rowData;
     }
@@ -95,7 +95,7 @@ class DataObjectImportEvent extends Event
         return $this->additionalData;
     }
 
-    public function setAdditionalData(mixed $additionalData)
+    public function setAdditionalData(mixed $additionalData): void
     {
         $this->additionalData = $additionalData;
     }
@@ -105,7 +105,7 @@ class DataObjectImportEvent extends Event
         return $this->context;
     }
 
-    public function setContext(mixed $context)
+    public function setContext(mixed $context): void
     {
         $this->context = $context;
     }

@@ -33,13 +33,13 @@ class PathsEvent extends Event
         return $this->paths;
     }
 
-    public function setPaths(array $paths)
+    public function setPaths(array $paths): void
     {
         $this->paths = [];
         $this->addPaths($paths);
     }
 
-    public function addPaths(array $paths)
+    public function addPaths(array $paths): void
     {
         $this->paths = array_merge($this->paths, $paths);
         $this->paths = array_unique($this->paths);

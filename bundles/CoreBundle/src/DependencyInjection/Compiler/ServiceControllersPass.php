@@ -33,7 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 final class ServiceControllersPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $serviceControllers = [];
 

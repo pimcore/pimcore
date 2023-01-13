@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\AbstractObject;
 
 class DefaultObjects implements RelationInterpreterInterface
 {
-    public function interpret($value, $config = null): array
+    public function interpret(mixed $value, ?array $config = null): array
     {
         $result = [];
 

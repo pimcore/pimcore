@@ -28,10 +28,15 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
             detail: {
                 document: this,
                 type: "link"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenDocumentLink);
+        const isAllowed = document.dispatchEvent(preOpenDocumentLink);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         this.getData();
     },
