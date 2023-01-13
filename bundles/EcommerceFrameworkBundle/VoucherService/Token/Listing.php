@@ -91,6 +91,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @param int $seriesId
+     *
      * @return bool|Listing
      */
     public static function getBySeriesId($seriesId)
@@ -118,6 +119,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
     /**
      * @param int $seriesId
      * @param array|null $params
+     *
      * @return bool|array
      */
     public static function getCodes($seriesId, $params)
@@ -178,6 +180,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
     /**
      * @param int $usages
      * @param int|null $seriesId
+     *
      * @return int|false
      */
     public static function getCountByUsages($usages = 1, $seriesId = null)
@@ -200,6 +203,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @param int $seriesId
+     *
      * @return int|false
      */
     public static function getCountBySeriesId($seriesId)
@@ -218,6 +222,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @param int $seriesId
+     *
      * @return int|false
      */
     public static function getCountByReservation($seriesId = null)

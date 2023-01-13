@@ -96,6 +96,7 @@ class Token extends AbstractModel
     /**
      * @param string $code
      * @param int $maxUsages
+     *
      * @return bool
      */
     public static function isUsedToken($code, $maxUsages = 1)
@@ -153,6 +154,7 @@ class Token extends AbstractModel
 
     /**
      * @param CartInterface $cart
+     *
      * @return bool
      */
     public function release($cart)
@@ -286,6 +288,7 @@ class Token extends AbstractModel
 
     /**
      * @param int $id
+     *
      * @return void
      */
     public function setId($id)

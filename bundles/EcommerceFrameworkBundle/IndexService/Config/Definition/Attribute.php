@@ -157,6 +157,7 @@ class Attribute
     /**
      * @param string $name
      * @param mixed $defaultValue
+     *
      * @return mixed
      */
     public function getOption(string $name, $defaultValue = null)

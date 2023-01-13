@@ -67,6 +67,7 @@ abstract class AbstractPayment implements PaymentInterface
     /**
      * @param AbstractOrder $sourceOrder
      * @param object $paymentBrick
+     *
      * @return void
      */
     public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick)
@@ -77,6 +78,7 @@ abstract class AbstractPayment implements PaymentInterface
     /**
      * @param Concrete $orderListing
      * @param array $additionalParameters
+     *
      * @return void
      */
     public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = [])

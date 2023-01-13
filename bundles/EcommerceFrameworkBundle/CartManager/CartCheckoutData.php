@@ -33,6 +33,7 @@ class CartCheckoutData extends AbstractCartCheckoutData
     /**
      * @param string $key
      * @param int|string $cartId
+     *
      * @return AbstractCartCheckoutData|null
      */
     public static function getByKeyCartId($key, $cartId)

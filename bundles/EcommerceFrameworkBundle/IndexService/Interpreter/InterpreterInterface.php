@@ -20,6 +20,7 @@ interface InterpreterInterface
     /**
      * @param mixed $value
      * @param array|null $config
+     *
      * @return mixed
      */
     public function interpret($value, $config = null);
