@@ -2,6 +2,8 @@
 A custom view is an additional custom tree representing a subset of elements of the corresponding original tree.
 Custom views can be configured for Documents, Assets and Objects. 
 
+To create or edit perspectives and custom views within the Pimcore backend UI use the [perspective editor](https://github.com/pimcore/perspective-editor) bundle.
+
 > **Security Note**    
 > Perspectives and Custom Views are not intended to be used to restrict access to data
 
