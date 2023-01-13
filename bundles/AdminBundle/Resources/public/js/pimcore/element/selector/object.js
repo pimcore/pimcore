@@ -418,7 +418,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                             }
                         })
                     }
-                },
+                }
             },
             cls: 'pimcore_object_grid_panel',
             selModel: this.getGridSelModel(),
