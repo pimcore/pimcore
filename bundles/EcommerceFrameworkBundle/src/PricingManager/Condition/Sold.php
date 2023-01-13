@@ -82,7 +82,7 @@ class Sold extends AbstractOrder implements ConditionInterface
         return $this->count;
     }
 
-    public function setCount(int $count)
+    public function setCount(int $count): void
     {
         $this->count = (int)$count;
     }

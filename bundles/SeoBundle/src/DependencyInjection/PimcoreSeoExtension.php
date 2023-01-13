@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class PimcoreSeoExtension extends Extension
 {
-    public function load(array $configs, \Symfony\Component\DependencyInjection\ContainerBuilder $container)
+    public function load(array $configs, \Symfony\Component\DependencyInjection\ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(
             $container,

@@ -29,7 +29,7 @@ final class TargetingOverrideHandlersPass implements CompilerPassInterface
 {
     use PriorityTaggedServiceTrait;
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $handlers = $this->findAndSortTaggedServices('pimcore.targeting.override_handler', $container);
 

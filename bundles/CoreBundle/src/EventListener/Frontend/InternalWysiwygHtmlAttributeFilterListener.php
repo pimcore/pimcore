@@ -41,7 +41,7 @@ class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInter
         ];
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         $request = $event->getRequest();
 

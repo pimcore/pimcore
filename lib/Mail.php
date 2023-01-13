@@ -165,7 +165,7 @@ class Mail extends Email
      *
      * @internal
      */
-    public function init(string $type = 'email')
+    public function init(string $type = 'email'): void
     {
         $config = Config::getSystemConfiguration($type);
 
@@ -352,7 +352,7 @@ class Mail extends Email
      *
      * @param bool $value
      */
-    public static function setForceDebugMode(bool $value)
+    public static function setForceDebugMode(bool $value): void
     {
         self::$forceDebugMode = $value;
     }
@@ -840,7 +840,7 @@ class Mail extends Email
      *
      * @internal
      */
-    public function setOriginalData(?array $originalData)
+    public function setOriginalData(?array $originalData): void
     {
         $this->originalData = $originalData;
     }
@@ -882,7 +882,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function addTo(...$addresses): static
+    public function addTo(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -894,7 +894,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function addCc(...$addresses): static
+    public function addCc(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -906,7 +906,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function addBcc(...$addresses): static
+    public function addBcc(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -918,7 +918,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function addFrom(...$addresses): static
+    public function addFrom(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -930,7 +930,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function addReplyTo(...$addresses): static
+    public function addReplyTo(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 

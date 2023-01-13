@@ -34,7 +34,7 @@ class RequirementsCheckCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:system:requirements:check')

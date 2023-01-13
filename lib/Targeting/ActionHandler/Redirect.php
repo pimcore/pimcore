@@ -27,7 +27,7 @@ class Redirect implements ActionHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
+    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null): void
     {
         $url = $action['url'] ?? null;
         if (!$url) {
@@ -66,7 +66,7 @@ class Redirect implements ActionHandlerInterface
         $visitorInfo->setResponse(new RedirectResponse($url, $code));
     }
 
-    private function addUrlParam(string $url, string $param, $value): string
+    private function addUrlParam(string $url, string $param, int $value): string
     {
         // add _ptr parameter
         if (false !== strpos($url, '?')) {

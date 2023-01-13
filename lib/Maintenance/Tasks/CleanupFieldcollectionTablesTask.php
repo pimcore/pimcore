@@ -36,7 +36,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $db = Db::get();
         $tasks = [

@@ -27,14 +27,14 @@ class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'uuids';
 
-    public function save()
+    public function save(): void
     {
         $data = $this->getValidObjectVars();
 
         Helper::insertOrUpdate($this->db, self::TABLE_NAME, $data);
     }
 
-    public function create()
+    public function create(): void
     {
         $data = $this->getValidObjectVars();
 
@@ -57,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $uuid = $this->model->getUuid();
         if (!$uuid) {

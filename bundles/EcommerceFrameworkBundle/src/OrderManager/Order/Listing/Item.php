@@ -30,14 +30,9 @@ class Item extends AbstractOrderListItem implements OrderListItemInterface
     }
 
     /**
-     * @param string $method
-     * @param array $args
-     *
-     * @return mixed
-     *
      * @throws \Exception
      */
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args): mixed
     {
         $field = substr($method, 3);
         if (substr($method, 0, 3) == 'get' && array_key_exists($field, $this->resultRow)) {

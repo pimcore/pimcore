@@ -59,7 +59,7 @@ class ApplicationLogger implements LoggerInterface
         return $logger;
     }
 
-    public function addWriter(object $writer)
+    public function addWriter(object $writer): void
     {
         if ($writer instanceof \Monolog\Handler\HandlerInterface) {
             if (!isset($this->loggers['default-monolog'])) {
@@ -72,7 +72,7 @@ class ApplicationLogger implements LoggerInterface
         }
     }
 
-    public function setComponent(string $component)
+    public function setComponent(string $component): void
     {
         $this->component = $component;
     }
@@ -83,7 +83,7 @@ class ApplicationLogger implements LoggerInterface
      * @deprecated
      *
      */
-    public function setFileObject(FileObject|string $fileObject)
+    public function setFileObject(FileObject|string $fileObject): void
     {
         $this->fileObject = $fileObject;
     }
@@ -93,7 +93,7 @@ class ApplicationLogger implements LoggerInterface
      *
      * @deprecated
      */
-    public function setRelatedObject(\Pimcore\Model\Asset|int|\Pimcore\Model\Document|\Pimcore\Model\DataObject\AbstractObject $relatedObject)
+    public function setRelatedObject(\Pimcore\Model\Asset|int|\Pimcore\Model\Document|\Pimcore\Model\DataObject\AbstractObject $relatedObject): void
     {
         $this->relatedObject = $relatedObject;
 
@@ -309,7 +309,7 @@ class ApplicationLogger implements LoggerInterface
         $this->handleLog('debug', $message, func_get_args());
     }
 
-    protected function handleLog(mixed $level, string $message, array $params)
+    protected function handleLog(mixed $level, string $message, array $params): void
     {
         $context = [];
 
@@ -344,7 +344,7 @@ class ApplicationLogger implements LoggerInterface
      * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
      * @param string|null $component
      */
-    public function logException(string $message, \Throwable $exceptionObject, ?string $priority = 'alert', \Pimcore\Model\DataObject\AbstractObject $relatedObject = null, string $component = null)
+    public function logException(string $message, \Throwable $exceptionObject, ?string $priority = 'alert', \Pimcore\Model\DataObject\AbstractObject $relatedObject = null, string $component = null): void
     {
         if (is_null($priority)) {
             $priority = 'alert';
@@ -372,7 +372,7 @@ class ApplicationLogger implements LoggerInterface
         int|string|Level $level = Level::Alert,
         \Pimcore\Model\DataObject\AbstractObject $relatedObject = null,
         array $context = []
-    ) {
+    ): void {
         $message .= ' : ' . $exception->getMessage();
 
         $fileObject = self::createExceptionFileObject($exception);

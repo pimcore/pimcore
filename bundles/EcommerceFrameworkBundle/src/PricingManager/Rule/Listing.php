@@ -28,7 +28,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     protected bool $validate = false;
 
-    public function setValidation(bool $state)
+    public function setValidation(bool $state): void
     {
         $this->validate = (bool)$state;
     }

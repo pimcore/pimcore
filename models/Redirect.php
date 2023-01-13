@@ -164,7 +164,7 @@ final class Redirect extends AbstractModel
      *
      * @param string $type
      */
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         if (!empty($type) && !in_array($type, self::TYPES)) {
             throw new \InvalidArgumentException(sprintf('Invalid type "%s"', $type));
@@ -225,7 +225,7 @@ final class Redirect extends AbstractModel
         return 'HTTP/1.1 ' . $statusCode . ' ' . $this->getStatusCodes()[$statusCode];
     }
 
-    public function clearDependentCache()
+    public function clearDependentCache(): void
     {
         // this is mostly called in Redirect\Dao not here
         try {
@@ -352,7 +352,7 @@ final class Redirect extends AbstractModel
         return $this->userOwner;
     }
 
-    public function setUserOwner(?int $userOwner)
+    public function setUserOwner(?int $userOwner): void
     {
         $this->userOwner = $userOwner;
     }
@@ -362,12 +362,12 @@ final class Redirect extends AbstractModel
         return $this->userModification;
     }
 
-    public function setUserModification(int $userModification)
+    public function setUserModification(int $userModification): void
     {
         $this->userModification = $userModification;
     }
 
-    public function save()
+    public function save(): void
     {
         $this->dispatchEvent(new RedirectEvent($this), RedirectEvents::PRE_SAVE);
         $this->getDao()->save();
@@ -375,7 +375,7 @@ final class Redirect extends AbstractModel
         $this->clearDependentCache();
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new RedirectEvent($this), RedirectEvents::PRE_DELETE);
         $this->getDao()->delete();

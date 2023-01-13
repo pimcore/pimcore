@@ -25,27 +25,16 @@ interface DataLoaderInterface
     /**
      * Loads data from given data providers while taking
      * data provider dependencies into account
-     *
-     * @param VisitorInfo $visitorInfo
-     * @param array|string $providerKeys
      */
-    public function loadDataFromProviders(VisitorInfo $visitorInfo, array|string $providerKeys);
+    public function loadDataFromProviders(VisitorInfo $visitorInfo, array|string $providerKeys): void;
 
     /**
      * Checks if a data provider is registered
-     *
-     * @param string $type
-     *
-     * @return bool
      */
     public function hasDataProvider(string $type): bool;
 
     /**
      * Returns the data provider instance identified by name
-     *
-     * @param string $type
-     *
-     * @return DataProviderInterface
      */
     public function getDataProvider(string $type): DataProviderInterface;
 }

@@ -18,7 +18,9 @@ namespace Pimcore\Security\Hasher\Factory;
 
 use Pimcore\Security\Exception\ConfigurationException;
 use Pimcore\Security\Hasher\UserAwarePasswordHasherInterface;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherAwareInterface;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -46,7 +48,7 @@ class UserAwarePasswordHasherFactory extends AbstractHasherFactory
     /**
      * {@inheritdoc}
      */
-    public function getPasswordHasher($user): PasswordHasherInterface
+    public function getPasswordHasher(string|PasswordAuthenticatedUserInterface|PasswordHasherAwareInterface $user): PasswordHasherInterface
     {
         if (!$user instanceof UserInterface) {
             throw new \RuntimeException(sprintf(

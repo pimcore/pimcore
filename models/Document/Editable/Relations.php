@@ -228,7 +228,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

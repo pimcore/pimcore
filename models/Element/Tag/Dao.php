@@ -31,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM tags WHERE id = ?', [$id]);
         if (!$data) {
@@ -99,7 +99,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->beginTransaction();
 
@@ -141,12 +141,12 @@ class Dao extends Model\Dao\AbstractDao
         return $tags;
     }
 
-    public function addTagToElement(string $cType, int $cId)
+    public function addTagToElement(string $cType, int $cId): void
     {
         $this->doAddTagToElement($this->model->getId(), $cType, $cId);
     }
 
-    protected function doAddTagToElement(int $tagId, string $cType, int $cId)
+    protected function doAddTagToElement(int $tagId, string $cType, int $cId): void
     {
         $data = [
             'tagid' => $tagId,
@@ -156,7 +156,7 @@ class Dao extends Model\Dao\AbstractDao
         Helper::insertOrUpdate($this->db, 'tags_assignment', $data);
     }
 
-    public function removeTagFromElement(string $cType, int $cId)
+    public function removeTagFromElement(string $cType, int $cId): void
     {
         $this->db->delete('tags_assignment', [
             'tagid' => $this->model->getId(),
@@ -172,7 +172,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function setTagsForElement(string $cType, int $cId, array $tags)
+    public function setTagsForElement(string $cType, int $cId, array $tags): void
     {
         $this->db->beginTransaction();
 
@@ -191,7 +191,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace)
+    public function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace): void
     {
         if ($replace) {
             $quotedCIds = [];

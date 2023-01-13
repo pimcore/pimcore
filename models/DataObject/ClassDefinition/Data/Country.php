@@ -50,7 +50,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         return true;
     }
 
-    public function setRestrictTo(array|string|null $restrictTo)
+    public function setRestrictTo(array|string|null $restrictTo): void
     {
         /**
          * @extjs6

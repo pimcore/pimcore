@@ -573,7 +573,7 @@ class AssetHelperController extends AdminController
      *
      * @throws \Exception
      */
-    protected function updateGridConfigShares(?GridConfig $gridConfig, array $metadata)
+    protected function updateGridConfigShares(?GridConfig $gridConfig, array $metadata): void
     {
         $user = $this->getAdminUser();
         if (!$gridConfig || !$user->isAllowed('share_configurations')) {
@@ -614,7 +614,7 @@ class AssetHelperController extends AdminController
      *
      * @throws \Exception
      */
-    protected function updateGridConfigFavourites(?GridConfig $gridConfig, array $metadata)
+    protected function updateGridConfigFavourites(?GridConfig $gridConfig, array $metadata): void
     {
         $currentUser = $this->getAdminUser();
 
