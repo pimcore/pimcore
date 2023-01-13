@@ -3,6 +3,7 @@ services:
         autowire: true
         autoconfigure: true
         public: false
+
     #
     # INSTALLER
     #

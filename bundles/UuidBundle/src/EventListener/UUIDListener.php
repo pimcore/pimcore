@@ -77,8 +77,8 @@ class UUIDListener implements EventSubscriberInterface
 
     protected function isEnabled(): bool
     {
-        $config = Config::getSystemConfiguration('general');
-        if (!empty($config['instance_identifier'])) {
+        $config = \Pimcore::getKernel()->getContainer()->getParameter('pimcore_uuid.instance_identifier');
+        if (!empty($config)) {
             return true;
         }
 
