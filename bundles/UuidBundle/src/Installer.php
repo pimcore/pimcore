@@ -19,7 +19,8 @@ class Installer extends SettingsStoreAwareInstaller
         parent::uninstall();
     }
 
-    private function runSqlQueries(array $sqlFileNames) {
+    private function runSqlQueries(array $sqlFileNames): void
+    {
         $sqlPath = __DIR__ . '/Resources/';
         $db = \Pimcore\Db::get();
 
@@ -29,11 +30,13 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
-    protected function installDatabaseTable() {
+    protected function installDatabaseTable(): void
+    {
         $this->runSqlQueries(['install/install.sql']);
     }
 
-    protected function uninstallDatabaseTable() {
+    protected function uninstallDatabaseTable(): void
+    {
         $this->runSqlQueries(['uninstall/uninstall.sql']);
     }
 

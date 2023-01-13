@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 class PimcoreUuidExtension extends ConfigurableExtension
 {
 
-    public function loadInternal(array $configs, ContainerBuilder $container)
+    public function loadInternal(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(
             $container,
