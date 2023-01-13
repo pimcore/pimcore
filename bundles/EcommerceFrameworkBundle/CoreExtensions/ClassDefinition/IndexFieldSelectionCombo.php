@@ -74,6 +74,7 @@ class IndexFieldSelectionCombo extends Select
 
     /**
      * @param bool $specificPriceField
+     *
      * @return void
      */
     public function setSpecificPriceField($specificPriceField)
@@ -91,6 +92,7 @@ class IndexFieldSelectionCombo extends Select
 
     /**
      * @param bool $showAllFields
+     *
      * @return void
      */
     public function setShowAllFields($showAllFields)
@@ -108,6 +110,7 @@ class IndexFieldSelectionCombo extends Select
 
     /**
      * @param bool $considerTenants
+     *
      * @return void
      */
     public function setConsiderTenants($considerTenants)

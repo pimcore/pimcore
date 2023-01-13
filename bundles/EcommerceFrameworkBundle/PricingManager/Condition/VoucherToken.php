@@ -63,6 +63,7 @@ class VoucherToken implements ConditionInterface
 
     /**
      * @param string $code
+     *
      * @return bool
      */
     public function checkVoucherCode($code)

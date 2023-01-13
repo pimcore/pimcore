@@ -64,6 +64,7 @@ class MySql
 
     /**
      * @param array $data
+     *
      * @return void
      */
     public function doInsertData($data)
@@ -182,6 +183,7 @@ class MySql
 
     /**
      * @param string $sql
+     *
      * @return void
      */
     protected function dbexec($sql)
@@ -192,6 +194,7 @@ class MySql
 
     /**
      * @param string $sql
+     *
      * @return void
      */
     protected function logSql($sql)

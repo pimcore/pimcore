@@ -541,6 +541,7 @@ class OrderManager implements OrderManagerInterface
     /**
      * @param string $className
      * @param array $params
+     *
      * @return mixed
      */
     protected function buildModelClass($className, array $params = [])

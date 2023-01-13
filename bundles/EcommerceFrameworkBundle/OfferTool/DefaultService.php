@@ -118,6 +118,7 @@ class DefaultService implements ServiceInterface
 
     /**
      * @param array $excludeItems
+     *
      * @return array
      */
     protected function getExcludedItemKeys($excludeItems)
@@ -281,6 +282,7 @@ class DefaultService implements ServiceInterface
      * @param CartInterface $cart
      * @param array $excludeItems
      * @param bool $save
+     *
      * @return AbstractOffer
      */
     public function updateOfferFromCart(AbstractOffer $offer, CartInterface $cart, array $excludeItems = [], $save = true)
@@ -365,6 +367,7 @@ class DefaultService implements ServiceInterface
     /**
      * @param ProductInterface $product
      * @param AbstractOffer $offer
+     *
      * @return void
      */
     public function createCustomOfferToolItem($product, $offer)

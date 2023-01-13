@@ -74,6 +74,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
 
     /**
      * @param bool $considerTenants
+     *
      * @return void
      */
     public function setConsiderTenants($considerTenants)

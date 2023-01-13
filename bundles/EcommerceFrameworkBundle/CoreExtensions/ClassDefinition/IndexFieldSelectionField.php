@@ -34,6 +34,7 @@ class IndexFieldSelectionField extends Textarea
 
     /**
      * @param bool $specificPriceField
+     *
      * @return void
      */
     public function setSpecificPriceField($specificPriceField)
@@ -51,6 +52,7 @@ class IndexFieldSelectionField extends Textarea
 
     /**
      * @param bool $showAllFields
+     *
      * @return void
      */
     public function setShowAllFields($showAllFields)
@@ -68,6 +70,7 @@ class IndexFieldSelectionField extends Textarea
 
     /**
      * @param bool $considerTenants
+     *
      * @return void
      */
     public function setConsiderTenants($considerTenants)

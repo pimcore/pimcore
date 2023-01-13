@@ -64,6 +64,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     /**
      * @param int $duration
      * @param int|null $seriesId
+     *
      * @return bool
      */
     public function cleanupReservations($duration = 0, $seriesId = null)
@@ -178,6 +179,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     /**
      * @param array $data
      * @param int|null $usagePeriod
+     *
      * @return void
      */
     protected function prepareUsageStatisticData(&$data, $usagePeriod)

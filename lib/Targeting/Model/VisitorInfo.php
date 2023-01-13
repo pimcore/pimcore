@@ -347,6 +347,7 @@ class VisitorInfo implements \IteratorAggregate
     /**
      * @param int|string $key
      * @param mixed $value
+     *
      * @return void
      */
     public function set($key, $value)

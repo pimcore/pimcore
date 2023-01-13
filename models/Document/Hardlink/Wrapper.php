@@ -215,6 +215,7 @@ trait Wrapper
 
     /**
      * @param Document $sourceDocument
+     *
      * @return $this
      */
     public function setSourceDocument(Document $sourceDocument): static
