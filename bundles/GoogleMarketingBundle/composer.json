@@ -1,0 +1,27 @@
+{
+  "name": "pimcore/google-marketing-bundle",
+  "license": "GPL-3.0+",
+  "type": "pimcore-bundle",
+  "description": "Pimcore Google Marketing Bundle provides additional tools for integrating google marketing tools.",
+  "config": {
+    "sort-packages": true
+  },
+  "prefer-stable": true,
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^8.0 || ^8.1",
+    "pimcore/pimcore": "^11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pimcore\\Bundle\\GoogleMarketingBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "pimcore": {
+      "bundles": [
+        "Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle"
+      ]
+    }
+  }
+}
