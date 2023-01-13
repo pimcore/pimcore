@@ -40,11 +40,9 @@ class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws LogicException
+     * @param object $subject
      */
-    public function getMarking($subject): Marking
+    public function getMarking(object $subject): Marking
     {
         $this->checkIfSubjectIsValid($subject);
 
@@ -59,12 +57,13 @@ class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
+     * @param Marking $marking
+     * @param array $context
      *
-     * @throws LogicException
-     * @throws \Exception
+     * @return void
      */
-    public function setMarking($subject, Marking $marking, array $context = [])
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 

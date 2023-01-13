@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.encryptedField");
+/**
+ * @private
+ */
 pimcore.object.tags.encryptedField = Class.create(pimcore.object.tags.abstract, {
 
     type: "encryptedField",

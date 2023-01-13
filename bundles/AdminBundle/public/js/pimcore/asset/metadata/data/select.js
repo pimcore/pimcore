@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.data.select");
+/**
+ * @private
+ */
 pimcore.asset.metadata.data.select = Class.create(pimcore.asset.metadata.data.data, {
 
     type: "select",

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.document_language_overview");
+/**
+ * @private
+ */
 pimcore.document.document_language_overview = Class.create({
 
     initialize: function (document) {

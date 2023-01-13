@@ -11,7 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-// some global helper functions
+/**
+ * @private
+ *
+ * some global helper functions
+ */
 pimcore.registerNS("pimcore.helpers.quantityValue.x");
 
 pimcore.helpers.quantityValue.storeLoaded = false;

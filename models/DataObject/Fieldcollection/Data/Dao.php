@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(Model\DataObject\Concrete $object, array $params = [], bool|array $saveRelationalData = true)
+    public function save(Model\DataObject\Concrete $object, array $params = [], bool|array $saveRelationalData = true): void
     {
         $tableName = $this->model->getDefinition()->getTableName($object->getClass());
         $data = [

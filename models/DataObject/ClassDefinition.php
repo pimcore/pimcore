@@ -346,7 +346,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @internal
      */
-    public function rename(string $name)
+    public function rename(string $name): void
     {
         $this->deletePhpClasses();
         $this->getDao()->updateClassNameInObjects($name);
@@ -360,7 +360,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @internal
      */
-    public static function cleanupForExport(mixed &$data)
+    public static function cleanupForExport(mixed &$data): void
     {
         if (!is_object($data)) {
             return;
@@ -402,7 +402,7 @@ final class ClassDefinition extends Model\AbstractModel
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
      */
-    public function save(bool $saveDefinitionFile = true)
+    public function save(bool $saveDefinitionFile = true): void
     {
         if ($saveDefinitionFile && !$this->isWritable()) {
             throw new DataObject\Exception\DefinitionWriteException();
@@ -492,7 +492,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @internal
      */
-    public function generateClassFiles(bool $generateDefinitionFile = true)
+    public function generateClassFiles(bool $generateDefinitionFile = true): void
     {
         \Pimcore::getContainer()->get(PHPClassDumperInterface::class)->dumpPHPClasses($this);
 
@@ -559,7 +559,7 @@ final class ClassDefinition extends Model\AbstractModel
         return $cd;
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_DELETE);
 
@@ -715,7 +715,7 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    public function setCreationDate(int $creationDate): static
+    public function setCreationDate(?int $creationDate): static
     {
         $this->creationDate = (int)$creationDate;
 
@@ -729,16 +729,16 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    public function setUserOwner(int $userOwner): static
+    public function setUserOwner(?int $userOwner): static
     {
-        $this->userOwner = (int)$userOwner;
+        $this->userOwner = $userOwner;
 
         return $this;
     }
 
-    public function setUserModification(int $userModification): static
+    public function setUserModification(?int $userModification): static
     {
-        $this->userModification = (int)$userModification;
+        $this->userModification = $userModification;
 
         return $this;
     }
@@ -944,7 +944,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @param array $tables
      */
-    public function addEncryptedTables(array $tables)
+    public function addEncryptedTables(array $tables): void
     {
         $this->encryptedTables = array_unique(array_merge($this->encryptedTables, $tables));
     }
@@ -954,7 +954,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @param array $tables
      */
-    public function removeEncryptedTables(array $tables)
+    public function removeEncryptedTables(array $tables): void
     {
         foreach ($tables as $table) {
             if (($key = array_search($table, $this->encryptedTables)) !== false) {

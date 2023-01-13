@@ -42,7 +42,7 @@ class LocaleListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -74,7 +74,7 @@ class LocaleListener implements EventSubscriberInterface
         }
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if ($this->lastLocale && $event->isMainRequest()) {
             $response = $event->getResponse();

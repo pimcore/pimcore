@@ -205,11 +205,7 @@ class Ffmpeg extends Adapter
         return $success;
     }
 
-    /**
-     * @param string $file
-     * @param int|null $timeOffset
-     */
-    public function saveImage(string $file, int $timeOffset = null)
+    public function saveImage(string $file, int $timeOffset = null): void
     {
         if (!is_numeric($timeOffset)) {
             $timeOffset = 5;
@@ -299,7 +295,7 @@ class Ffmpeg extends Adapter
         return null;
     }
 
-    public function destroy()
+    public function destroy(): void
     {
         if (file_exists($this->getConversionLogFile())) {
             Logger::debug("FFMPEG finished, last message was:\n" . file_get_contents($this->getConversionLogFile()));
@@ -374,7 +370,7 @@ class Ffmpeg extends Adapter
         return $this;
     }
 
-    public function resize(int $width, int $height)
+    public function resize(int $width, int $height): void
     {
         // ensure $width & $height are even (mp4 requires this)
         $width = ceil($width / 2) * 2;
@@ -382,14 +378,14 @@ class Ffmpeg extends Adapter
         $this->addArgument('-s', $width.'x'.$height);
     }
 
-    public function scaleByWidth(int $width)
+    public function scaleByWidth(int $width): void
     {
         // ensure $width is even (mp4 requires this)
         $width = ceil($width / 2) * 2;
         $this->videoFilter[] = 'scale='.$width.':trunc(ow/a/2)*2';
     }
 
-    public function scaleByHeight(int $height)
+    public function scaleByHeight(int $height): void
     {
         // ensure $height is even (mp4 requires this)
         $height = ceil($height / 2) * 2;

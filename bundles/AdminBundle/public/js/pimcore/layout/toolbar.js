@@ -11,8 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
- pimcore.registerNS("pimcore.layout.toolbar");
- pimcore.layout.toolbar = Class.create({
+pimcore.registerNS("pimcore.layout.toolbar");
+/**
+ * @private
+ */
+pimcore.layout.toolbar = Class.create({
 
      initialize: function() {
  
@@ -22,7 +25,7 @@
          var perspectiveCfg = pimcore.globalmanager.get("perspective");
 
          var menu = {};
- 
+
          if (perspectiveCfg.inToolbar("file")) {
              var fileItems = [];
  
@@ -287,7 +290,7 @@
          if (perspectiveCfg.inToolbar("extras")) {
  
              var extrasItems = [];
- 
+
              if (user.isAllowed("redirects") && perspectiveCfg.inToolbar("extras.redirects")) {
                  extrasItems.push({
                      text: t("redirects"),
@@ -406,43 +409,9 @@
                          handler: this.showMaintenance
                      });
                  }
- 
-                 if (perspectiveCfg.inToolbar("extras.systemtools")) {
-                     var systemItems = [];
- 
-                     if (perspectiveCfg.inToolbar("extras.systemtools.phpinfo")) {
-                         systemItems.push(
-                             {
-                                 text: t("php_info"),
-                                 iconCls: "pimcore_nav_icon_php",
-                                 itemId: 'pimcore_menu_extras_system_info_php_info',
-                                 handler: this.showPhpInfo
-                             }
-                         );
-                     }
- 
-                     if (perspectiveCfg.inToolbar("extras.systemtools.opcache")) {
-                         systemItems.push(
-                             {
-                                 text: t("php_opcache_status"),
-                                 iconCls: "pimcore_nav_icon_reports",
-                                 itemId: 'pimcore_menu_extras_system_info_php_opcache_status',
-                                 handler: this.showOpcacheStatus
-                             }
-                         );
-                     }
- 
-                     if (perspectiveCfg.inToolbar("extras.systemtools.requirements")) {
-                         systemItems.push(
-                             {
-                                 text: t("system_requirements_check"),
-                                 iconCls: "pimcore_nav_icon_systemrequirements",
-                                 itemId: 'pimcore_menu_extras_system_info_system_requirements_check',
-                                 handler: this.showSystemRequirementsCheck
-                             }
-                         );
-                     }
 
+                 var systemItems = [];
+                 if (perspectiveCfg.inToolbar("extras.systemtools")) {
                      if (perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")) {
                          systemItems.push(
                              {
@@ -453,19 +422,19 @@
                              }
                          );
                      }
- 
-                     extrasItems.push({
-                         text: t("system_infos_and_tools"),
-                         iconCls: "pimcore_nav_icon_info",
-                         hideOnClick: false,
-                         itemId: 'pimcore_menu_extras_system_info',
-                         menu: {
-                             cls: "pimcore_navigation_flyout",
-                             shadow: false,
-                             items: systemItems
-                         }
-                     });
                  }
+
+                 extrasItems.push({
+                     text: t("system_infos_and_tools"),
+                     iconCls: "pimcore_nav_icon_info",
+                     hideOnClick: false,
+                     itemId: 'pimcore_menu_extras_system_info',
+                     menu: {
+                         cls: "pimcore_navigation_flyout",
+                         shadow: false,
+                         items: systemItems
+                     }
+                 });
              }
 
              // adding menu even though extraItems can be empty
@@ -521,52 +490,7 @@
                      }
                  });
              }
- 
-             if (perspectiveCfg.inToolbar("marketing.seo")) {
-                 var seoMenu = [];
- 
-                 if (user.isAllowed("documents") && user.isAllowed("seo_document_editor") && perspectiveCfg.inToolbar("marketing.seo.documents")) {
-                     seoMenu.push({
-                         text: t("seo_document_editor"),
-                         iconCls: "pimcore_nav_icon_document_seo",
-                         itemId: 'pimcore_menu_marketing_seo_document_editor',
-                         handler: this.showDocumentSeo
-                     });
-                 }
- 
-                 if (user.isAllowed("robots.txt") && perspectiveCfg.inToolbar("marketing.seo.robots")) {
-                     seoMenu.push({
-                         text: "robots.txt",
-                         iconCls: "pimcore_nav_icon_robots",
-                         itemId: 'pimcore_menu_marketing_seo_robots_txt',
-                         handler: this.showRobotsTxt
-                     });
-                 }
- 
-                 if (user.isAllowed("http_errors") && perspectiveCfg.inToolbar("marketing.seo.httperrors")) {
-                     seoMenu.push({
-                         text: t("http_errors"),
-                         iconCls: "pimcore_nav_icon_httperrorlog",
-                         itemId: 'pimcore_menu_marketing_seo_http_errors',
-                         handler: this.showHttpErrorLog
-                     });
-                 }
- 
-                 if (seoMenu.length > 0) {
-                     marketingItems.push({
-                         text: t("search_engine_optimization"),
-                         iconCls: "pimcore_nav_icon_seo",
-                         itemId: 'pimcore_menu_marketing_seo',
-                         hideOnClick: false,
-                         menu: {
-                             cls: "pimcore_navigation_flyout",
-                             shadow: false,
-                             items: seoMenu
-                         }
-                     });
-                 }
-             }
- 
+
              if (user.isAllowed("reports_config")) {
                  if (perspectiveCfg.inToolbar("settings.customReports")) {
                      marketingItems.push({
@@ -589,14 +513,12 @@
                  }
              }
 
-             if (marketingItems.length > 0) {
-                 menu.marketing = {
-                     items: marketingItems,
-                     shadow: false,
-                     listeners: true,
-                     cls: "pimcore_navigation_flyout"
-                 };
-             }
+             menu.marketing = {
+                 items: marketingItems,
+                 shadow: false,
+                 listeners: true,
+                 cls: "pimcore_navigation_flyout"
+             };
          }
  
          if (perspectiveCfg.inToolbar("settings")) {
@@ -1320,10 +1242,14 @@
              detail: {
                  translation: this,
                  domain: domain ?? "website"
-             }
+             },
+             cancelable: true
          });
  
-         document.dispatchEvent(preEditTranslations);
+         const isAllowed = document.dispatchEvent(preEditTranslations);
+         if (!isAllowed){
+             return;
+         }
  
          try {
              pimcore.globalmanager.get("translationdomainmanager").activate();
@@ -1534,34 +1460,7 @@
              pimcore.globalmanager.add("objectbricks", new pimcore.object.objectbrick());
          }
      },
- 
-     showDocumentSeo: function () {
-         try {
-             pimcore.globalmanager.get("document_seopanel").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("document_seopanel", new pimcore.document.seopanel());
-         }
-     },
- 
-     showRobotsTxt: function () {
-         try {
-             pimcore.globalmanager.get("robotstxt").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("robotstxt", new pimcore.settings.robotstxt());
-         }
-     },
- 
-     showHttpErrorLog: function () {
-         try {
-             pimcore.globalmanager.get("http_error_log").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("http_error_log", new pimcore.settings.httpErrorLog());
-         }
-     },
- 
+
      clearCache: function (params) {
          Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
              if (btn == 'yes'){
@@ -1632,18 +1531,6 @@
          }
      },
  
-     showPhpInfo: function () {
-         pimcore.helpers.openGenericIframeWindow("phpinfo", Routing.generate('pimcore_admin_misc_phpinfo'), "pimcore_icon_php", "PHP Info");
-     },
- 
-     showOpcacheStatus: function () {
-         pimcore.helpers.openGenericIframeWindow("opcachestatus", Routing.generate('pimcore_admin_external_opcache_index'), "pimcore_icon_reports", "PHP OPcache Status");
-     },
- 
-     showSystemRequirementsCheck: function () {
-         pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_admin_install_check'), "pimcore_icon_systemrequirements", "System-Requirements Check");
-     },
-
      showElementHistory: function() {
          try {
              pimcore.globalmanager.get("element_history").activate();

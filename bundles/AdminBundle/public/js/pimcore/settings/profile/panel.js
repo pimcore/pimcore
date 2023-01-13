@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.profile.panel");
+/**
+ * @private
+ */
 pimcore.settings.profile.panel = Class.create({
 
     initialize: function () {

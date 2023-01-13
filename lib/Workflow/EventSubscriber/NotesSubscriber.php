@@ -51,7 +51,7 @@ class NotesSubscriber implements EventSubscriberInterface
      *
      * @throws ValidationException
      */
-    public function onWorkflowEnter(Event $event)
+    public function onWorkflowEnter(Event $event): void
     {
         if (!$this->checkEvent($event)) {
             return;
@@ -65,7 +65,7 @@ class NotesSubscriber implements EventSubscriberInterface
         $this->handleNotesPreWorkflow($transition, $subject);
     }
 
-    public function onWorkflowCompleted(Event $event)
+    public function onWorkflowCompleted(Event $event): void
     {
         if (!$this->checkEvent($event)) {
             return;
@@ -84,7 +84,7 @@ class NotesSubscriber implements EventSubscriberInterface
      *
      * @throws ValidationException
      */
-    public function onPreGlobalAction(GlobalActionEvent $event)
+    public function onPreGlobalAction(GlobalActionEvent $event): void
     {
         if (!$this->checkGlobalActionEvent($event)) {
             return;
@@ -96,7 +96,7 @@ class NotesSubscriber implements EventSubscriberInterface
         $this->handleNotesPreWorkflow($globalAction, $subject);
     }
 
-    public function onPostGlobalAction(GlobalActionEvent $event)
+    public function onPostGlobalAction(GlobalActionEvent $event): void
     {
         if (!$this->checkGlobalActionEvent($event)) {
             return;
@@ -205,7 +205,10 @@ class NotesSubscriber implements EventSubscriberInterface
         $this->additionalData = $additionalData;
     }
 
-    private function getAdditionalDataForField(array $fieldConfig)
+    /**
+     * @param array<string, mixed> $fieldConfig
+     */
+    private function getAdditionalDataForField(array $fieldConfig): mixed
     {
         $additional = $this->getAdditionalFields();
 

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.object.classes.data.quantityValueRange');
+/**
+ * @private
+ */
 pimcore.object.classes.data.quantityValueRange = Class.create(pimcore.object.classes.data.data, {
     type: 'quantityValueRange',
 

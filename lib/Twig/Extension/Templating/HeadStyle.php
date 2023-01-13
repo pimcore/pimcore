@@ -163,7 +163,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @throws Exception When no $content provided or invalid method
      */
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args): mixed
     {
         if (preg_match('/^(?P<action>set|(ap|pre)pend|offsetSet)(Style)$/', $method, $matches)) {
             $index = null;

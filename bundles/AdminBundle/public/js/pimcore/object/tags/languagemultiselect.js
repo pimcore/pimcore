@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.languagemultiselect");
+/**
+ * @private
+ */
 pimcore.object.tags.languagemultiselect = Class.create(pimcore.object.tags.multiselect, {
 
     type: "languagemultiselect"

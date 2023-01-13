@@ -596,6 +596,10 @@ class Installer
 
         $db->executeQuery('SET FOREIGN_KEY_CHECKS=1;');
 
+        // close connections and collection garbage ... in order to avoid too many connections error
+        // when installing demos
+        \Pimcore::collectGarbage();
+
         return $errors;
     }
 
@@ -606,7 +610,7 @@ class Installer
         return $files;
     }
 
-    protected function createOrUpdateUser($config = []): void
+    protected function createOrUpdateUser(array $config = []): void
     {
         $defaultConfig = [
             'username' => 'admin',

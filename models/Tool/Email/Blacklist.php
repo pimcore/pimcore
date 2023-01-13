@@ -45,7 +45,7 @@ class Blacklist extends Model\AbstractModel
         }
     }
 
-    public function setAddress(string $address)
+    public function setAddress(string $address): void
     {
         $this->address = $address;
     }
@@ -55,7 +55,7 @@ class Blacklist extends Model\AbstractModel
         return $this->address;
     }
 
-    public function setCreationDate(int $creationDate)
+    public function setCreationDate(int $creationDate): void
     {
         $this->creationDate = (int) $creationDate;
     }
@@ -69,7 +69,7 @@ class Blacklist extends Model\AbstractModel
         return $this->creationDate;
     }
 
-    public function setModificationDate(int $modificationDate)
+    public function setModificationDate(int $modificationDate): void
     {
         $this->modificationDate = (int) $modificationDate;
     }

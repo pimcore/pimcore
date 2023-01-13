@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.videothumbnail.panel");
+/**
+ * @private
+ */
 pimcore.settings.videothumbnail.panel = Class.create({
 
     initialize: function () {

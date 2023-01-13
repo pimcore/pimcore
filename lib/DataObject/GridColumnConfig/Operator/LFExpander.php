@@ -35,7 +35,7 @@ final class LFExpander extends AbstractOperator
 
     private bool $asArray;
 
-    public function __construct(LocaleServiceInterface $localeService, \stdClass $config, $context = null)
+    public function __construct(LocaleServiceInterface $localeService, \stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -110,7 +110,7 @@ final class LFExpander extends AbstractOperator
         return $this->asArray;
     }
 
-    public function setAsArray(bool $asArray)
+    public function setAsArray(bool $asArray): void
     {
         $this->asArray = $asArray;
     }

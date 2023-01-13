@@ -24,10 +24,6 @@ interface ResponseTransformingActionHandlerInterface
 {
     /**
      * Applies previously recorded actions to the response
-     *
-     * @param VisitorInfo $visitorInfo
-     * @param Response $response
-     * @param array $actions
      */
-    public function transformResponse(VisitorInfo $visitorInfo, Response $response, array $actions);
+    public function transformResponse(VisitorInfo $visitorInfo, Response $response, array $actions): void;
 }

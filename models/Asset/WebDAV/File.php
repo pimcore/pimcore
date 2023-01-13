@@ -66,7 +66,7 @@ class File extends DAV\File
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->asset->isAllowed('delete')) {
             Asset\Service::loadAllFields($this->asset);
@@ -104,7 +104,7 @@ class File extends DAV\File
      *
      * @return null
      */
-    public function put($data)
+    public function put($data): null
     {
         if ($this->asset->isAllowed('publish')) {
             // read from resource -> default for SabreDAV

@@ -538,7 +538,7 @@ class Service extends Model\Element\Service
         return $config;
     }
 
-    public static function calculateCellValue(AbstractObject $object, array $helperDefinitions, string $key, array $context = []): array|\stdClass|null
+    public static function calculateCellValue(AbstractObject $object, array $helperDefinitions, string $key, array $context = []): mixed
     {
         $config = static::getConfigForHelperDefinition($helperDefinitions, $key, $context);
         if (!$config) {
@@ -761,7 +761,7 @@ class Service extends Model\Element\Service
      *
      * @param AbstractObject $object
      */
-    public static function loadAllObjectFields(AbstractObject $object)
+    public static function loadAllObjectFields(AbstractObject $object): void
     {
         $object->getProperties();
 
@@ -1035,7 +1035,7 @@ class Service extends Model\Element\Service
         return $superLayout;
     }
 
-    public static function createSuperLayout(ClassDefinition\Data|ClassDefinition\Layout $layout)
+    public static function createSuperLayout(ClassDefinition\Data|ClassDefinition\Layout $layout): void
     {
         if ($layout instanceof ClassDefinition\Data) {
             $layout->setInvisible(false);
@@ -1096,7 +1096,7 @@ class Service extends Model\Element\Service
     /** Synchronizes a custom layout with its master layout
      * @param ClassDefinition\CustomLayout $customLayout
      */
-    public static function synchronizeCustomLayout(ClassDefinition\CustomLayout $customLayout)
+    public static function synchronizeCustomLayout(ClassDefinition\CustomLayout $customLayout): void
     {
         $classId = $customLayout->getClassId();
         $class = ClassDefinition::getById($classId);
@@ -1370,11 +1370,11 @@ class Service extends Model\Element\Service
      *
      * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout|null $layout
      * @param Concrete|null $object
-     * @param array $context additional contextual data
+     * @param array<string, mixed> $context additional contextual data
      *
      * @internal
      */
-    public static function enrichLayoutDefinition(ClassDefinition\Data|ClassDefinition\Layout|null &$layout, Concrete $object = null, array $context = [])
+    public static function enrichLayoutDefinition(ClassDefinition\Data|ClassDefinition\Layout|null &$layout, Concrete $object = null, array $context = []): void
     {
         if (is_null($layout)) {
             return;
@@ -1421,7 +1421,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function enrichLayoutPermissions(ClassDefinition\Data &$layout, array $allowedView, array $allowedEdit)
+    public static function enrichLayoutPermissions(ClassDefinition\Data &$layout, array $allowedView, array $allowedEdit): void
     {
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
             if (is_array($allowedView) && count($allowedView) > 0) {
@@ -1624,7 +1624,7 @@ class Service extends Model\Element\Service
         return self::$systemFields;
     }
 
-    public static function doResetDirtyMap(Model\AbstractModel $container, ClassDefinition|ClassDefinition\Data $fd)
+    public static function doResetDirtyMap(Model\AbstractModel $container, ClassDefinition|ClassDefinition\Data $fd): void
     {
         if (!method_exists($fd, 'getFieldDefinitions')) {
             return;
@@ -1648,7 +1648,7 @@ class Service extends Model\Element\Service
         }
     }
 
-    public static function recursiveResetDirtyMap(AbstractObject $object)
+    public static function recursiveResetDirtyMap(AbstractObject $object): void
     {
         if ($object instanceof DirtyIndicatorInterface) {
             $object->resetDirtyMap();
@@ -1820,17 +1820,9 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param string $fallbackLanguage
-     * @param string $field
-     * @param DataObject\Concrete $object
-     * @param string $requestedLanguage
-     * @param array $helperDefinitions
-     *
-     * @return mixed
-     *
      * @internal
      */
-    protected static function getCsvFieldData(string $fallbackLanguage, string $field, Concrete $object, string $requestedLanguage, array $helperDefinitions): mixed
+    protected static function getCsvFieldData(string $fallbackLanguage, string $field, Concrete $object, string $requestedLanguage, array $helperDefinitions): string
     {
         //check if field is systemfield
         $systemFieldMap = [
@@ -1846,7 +1838,7 @@ class Service extends Model\Element\Service
         if (in_array($field, array_keys($systemFieldMap))) {
             $getter = $systemFieldMap[$field];
 
-            return $object->$getter();
+            return (string) $object->$getter();
         } else {
             //check if field is standard object field
             $fieldDefinition = $object->getClass()->getFieldDefinition($field);
@@ -1865,7 +1857,7 @@ class Service extends Model\Element\Service
                             $cellValue = implode(',', $cellValue);
                         }
 
-                        return $cellValue;
+                        return (string) $cellValue;
                     }
                 } elseif (substr($field, 0, 1) == '~') {
                     $type = $fieldParts[1];
@@ -1972,7 +1964,7 @@ class Service extends Model\Element\Service
             }
         }
 
-        return null;
+        return '';
     }
 
     /**

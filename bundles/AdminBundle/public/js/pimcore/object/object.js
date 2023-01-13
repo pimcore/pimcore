@@ -12,23 +12,30 @@
  */
 
 pimcore.registerNS("pimcore.object.object");
+/**
+ * @private
+ */
 pimcore.object.object = Class.create(pimcore.object.abstract, {
     willClose: false,
     initialize: function (id, options) {
         this.id = intval(id);
         this.options = options;
+        this.addLoadingPanel();
 
         const preOpenObject = new CustomEvent(pimcore.events.preOpenObject, {
             detail: {
                 object: this,
                 type: "object"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenObject);
+        const isAllowed = document.dispatchEvent(preOpenObject);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
-
-        this.addLoadingPanel();
 
         var user = pimcore.globalmanager.get("user");
 

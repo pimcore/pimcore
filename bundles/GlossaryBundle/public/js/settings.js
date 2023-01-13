@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.bundle.glossary.settings");
+/**
+ * @private
+ */
 pimcore.bundle.glossary.settings = Class.create({
 
     initialize: function () {

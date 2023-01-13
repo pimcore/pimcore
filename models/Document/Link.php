@@ -382,14 +382,14 @@ class Link extends Model\Document
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         parent::update($params);
 
         $this->saveScheduledTasks();
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

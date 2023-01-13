@@ -107,7 +107,7 @@ class LocaleService implements LocaleServiceInterface
         return $this->locale;
     }
 
-    public function setLocale(?string $locale)
+    public function setLocale(?string $locale): void
     {
         $this->locale = $locale;
 

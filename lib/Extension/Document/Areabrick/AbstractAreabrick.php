@@ -35,7 +35,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
      *
      * @param EditableRenderer $editableRenderer
      */
-    public function setEditableRenderer(EditableRenderer $editableRenderer)
+    public function setEditableRenderer(EditableRenderer $editableRenderer): void
     {
         $this->editableRenderer = $editableRenderer;
     }
@@ -45,7 +45,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * {@inheritdoc}
      */
-    public function setId(string $id)
+    public function setId(string $id): void
     {
         // make sure ID is only set once
         if (null !== $this->id) {

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.reports");
+/**
+ * @private
+ */
 pimcore.document.reports = Class.create({
 
 

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.translation.editor");
+/**
+ * @private
+ */
 pimcore.settings.translation.editor = Class.create({
     
     initialize: function (context, field, translationType, editorType) {

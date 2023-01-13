@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @private
+ */
 Ext.define('pimcore.object.helpers.metadataMultiselectEditor', {
     extend: 'Ext.grid.CellEditor',
 
