@@ -35,8 +35,8 @@ You can restrict the access to certain perspectives via the user settings.
 
 ## The Configuration File
 
-Where the perspective configure is stored depends on your configuration.
-Per default, this will be the settings-store. 
+Format and location of the perspective configuration depends on your environment.
+Per default the symfony-config is used.
 If you want to change the default behaviour, have a look at the [environment](../21_Deployment/03_Configuration_Environments.md#page_Configuration-Storage-Locations-Fallbacks) configuration options. 
 
 Please refer to the [example configuration](14_Perspective_Example.md) for further details on how this can be set up.
