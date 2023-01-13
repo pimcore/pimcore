@@ -1,831 +1,851 @@
 ---
-unsupported_feature: Unsupported feature! Please check system requirements!
-screen_size_to_small: Your screen is too small to display the desired preview.
-too_many_children_for_recyclebin: This element contains too many children to be moved
-  to the recycle bin so it will be deleted permanentely
-default: Default
-metadata: Metadata
-email_address: Email Address
-email_blacklist: Email Blacklist
+unsupported_feature: "Nepodporovan\xE1 funkcia! Skontrolujte syst\xE9mov\xE9 po\u017Eiadavky
+  pros\xEDm!"
+screen_size_to_small: "Va\u0161a obrazovka je pr\xEDli\u0161 mal\xE1 pre zobrazenie
+  po\u017Eadovan\xE9ho n\xE1h\u013Eadu."
+too_many_children_for_recyclebin: "Element nemo\u017Ee by\u0165 presunut\xFD do ko\u0161a,
+  preto\u017Ee obsahuje pr\xEDli\u0161 ve\u013Ea potomkov."
+default: "Defaultn\xFD"
+metadata: "Metad\xE1ta"
+email_address: "E-mailov\xE1 adresa"
+email_blacklist: "Zoznam blokovan\xFDch e-mailov\xFDch adries"
 OK: OK
-optional: optional
-search_replace_assignments_error: Please select items where to replace and a new target
-  item.
-replace_assignments_in_selected_elements: Replace assignments in selected elements
-search_replace_assignments: Search & Replace Assignments
-imageadvanced: Image Advanced
-filter_active_message: Do you want to export only the filtered values?
-close_others: Close Others
-close_all: Close All
-close_unmodified: Close Unmodified
-classid: Class ID
-parentid: Parent ID
-mimetype: MIME-Type
-creationdate: Creation Date
-usermodification: User Modification
-userowner: Owner
-languages: Languages
-password_was_not_changed: Password wasn't changed because it isn't secure enough
+optional: "volite\u013En\xFD"
+search_replace_assignments_error: "Vyberte polo\u017Eky v ktor\xFDch chcete nahradzova\u0165
+  a vyberte nov\xFA cie\u013Eov\xFA polo\u017Eku."
+replace_assignments_in_selected_elements: "Zameni\u0165 v\xFDskyty vo vybran\xFDch
+  elementoch"
+search_replace_assignments: "Vyh\u013Eada\u0165 a nahradi\u0165"
+imageadvanced: "Pokro\u010Dil\xFD obr\xE1zok"
+filter_active_message: "Chcete exportova\u0165 len vyfiltrovan\xE9 polo\u017Eky?"
+close_others: "Zatvori\u0165 ostatn\xE9"
+close_all: "Zatvori\u0165 v\u0161etky"
+close_unmodified: "Zatvori\u0165 nezmenen\xE9"
+classid: ID Triedy
+parentid: "ID rodi\u010Da"
+mimetype: MIME-Typ
+creationdate: "D\xE1tum vytvorenia"
+usermodification: "U\u017E\xEDvate\u013Esk\xE1 zmena"
+userowner: "Vlastn\xEDk (u\u017E\xEDvate\u013E)"
+languages: Jazyky
+password_was_not_changed: "Heslo nebolo zmenen\xE9, preto\u017Ee nie je do dostato\u010Dne
+  bezpe\u010Dn\xE9"
 marketing: Marketing
-clear_content_of_current_view: Clear content of current view
-highlight_editable_elements: Highlight editable elements
-continue: Continue
-you_have_unsaved_changes: You have unsaved changes.
+clear_content_of_current_view: "Vy\u010Disti\u0165 obsah aktu\xE1lneho poh\u013Eadu"
+highlight_editable_elements: "Zv\xFDrazni\u0165 editovate\u013En\xE9 elementy"
+continue: "Pokra\u010Dova\u0165"
+you_have_unsaved_changes: "M\xE1te neulo\u017Een\xE9 zmeny."
 global_targeting_rule: Global Targeting Rule
-global_targeting_rules: Global Targeting Rules
-personalization: Personalization
-shared_translations: Shared Translations
-textfield: Textfield
-add_data: Add data
-add_hotspot: Add hotspot
-add_marker_or_hotspots: Add marker or hotspots
-custom_reports: Custom Reports
-start_date: Start date
-start_date_relative: Start date (relative to today)
-end_date: End date
-end_date_relative: End date (relative to today)
-relative_date_description: i.e. -1m +1d (d=days, m=months, y=years)
-source_definition: Source Definition
-clear_thumbnails: Clear Thumbnails
-recipients: Recipients
-newsletter_send_error: Can't send your newsletter, please contact your administrator!
-newsletter_sent_message: Your newsletter is now sent to all recipients, this process
-  is done in the background (you can close pimcore in the meantime) and can take up
-  to one hour.
-do_you_really_want_to_send_the_newsletter_to_all_recipients: Do you really want to
-  send the newsletter to all recipients
-send_test_newsletter: Send Test-Newsletter
-send_newsletter: Send Newsletter Now
-object_filter: Object Filter
-add_newsletter: Add Newsletter
+global_targeting_rules: "Glob\xE1lne pravidl\xE1 pre cielenie (Targeting)"
+personalization: "Personaliz\xE1cia"
+shared_translations: "Zdie\u013Ean\xE9 preklady"
+textfield: "Textov\xE9 pole"
+add_data: "Prida\u0165 d\xE1ta"
+add_hotspot: "Prida\u0165 hotspot"
+add_marker_or_hotspots: "Prida\u0165 marker alebo hotspoty"
+custom_reports: "Vlastn\xE9 reporty"
+start_date: "Po\u010Diato\u010Dn\xFD d\xE1tum"
+start_date_relative: "Po\u010Diato\u010Dn\xFD d\xE1tum (relativn\xFD k dne\u0161n\xE9mu)"
+end_date: "Kone\u010Dn\xFD d\xE1tum"
+end_date_relative: "Kone\u010Dn\xFD d\xE1tum (relativn\xFD k dne\u0161n\xE9mu)"
+relative_date_description: napr. -1m +1d(d=dni, m=mesiace, y=roky)
+source_definition: "Defin\xEDcia zdroju"
+clear_thumbnails: "Vymaza\u0165 n\xE1h\u013Eady"
+recipients: "Pr\xEDjemcovia"
+newsletter_send_error: "Newsletter sa nepodarilo odosla\u0165, pros\xEDm kontaktujte
+  svojho administr\xE1tora!"
+newsletter_sent_message: "Newsletter je teraz rozposielan\xFD v\u0161etk\xFDm pr\xEDjemcom
+  v procese na pozad\xED (m\xF4\u017Eete po\u010Das neho zatvori\u0165 administr\xE1ciu)
+  a m\xF4\u017Ee trva\u0165 a\u017E hodinu."
+do_you_really_want_to_send_the_newsletter_to_all_recipients: "Naozaj chcete odosla\u0165
+  newsletter v\u0161etk\xFDm pr\xEDjemcom"
+send_test_newsletter: "Odosla\u0165 testovac\xED newsletter"
+send_newsletter: "Odosla\u0165 newsletter"
+object_filter: "Filter z\xE1znamov"
+add_newsletter: "Prida\u0165 newsletter"
 newsletter: Newsletter
 crm: CRM
-notes_events: Notes &amp; Events
-delete_folder: Delete Folder
-home: Home
-subject: Subject
-poster_image: Poster-Image
+notes_events: "Pozn\xE1mky a udalosti"
+delete_folder: "Zmaza\u0165 zlo\u017Eku"
+home: "\xDAvod"
+subject: Predmet
+poster_image: "Plag\xE1t (Poster-Image)"
 tablet: Tablet
 hardlink: Hardlink
-convert_to: Convert to
-replace: Replace
-targeting: Targeting
-paste_inheritance: Paste (inheritance)
-are_you_sure: Are you sure?
-all_content_will_be_lost: All content will be lost
-content_master_document: Content-Master Document
-overwrite: Overwrite
-click_right_to_overwrite: Click right to overwrite
-open_document_by_id: Open Document
-open_asset_by_id: Open Asset
-open_object_by_id: Open Object
-element_not_found: Element not found
-import_from_url: Import from URL
-do_you_really_want_to_leave_the_editmode: Do you really want to leave the editmode
-  (NO!)
-or_specify_an_asset_image_below: or specify an asset image below
-medium: Medium
-saved_successfully: Saved successfully!
-qr_codes: QR-Codes
+convert_to: "Convertova\u0165 na"
+replace: "Nahradi\u0165"
+targeting: Cielenie (Targeting)
+paste_inheritance: "Vlo\u017Ei\u0165 (s dedi\u010Dnos\u0165ou)"
+are_you_sure: "Ste si ist\xFD?"
+all_content_will_be_lost: "V\u0161etok obsah bude zmazan\xFD"
+content_master_document: "Hlavn\xFD (master) dokument"
+overwrite: "Prep\xEDsa\u0165"
+click_right_to_overwrite: "Prav\xFD klik pre prep\xEDsanie"
+open_document_by_id: "Otvori\u0165 dokument pod\u013Ea ID"
+open_asset_by_id: "Otvori\u0165 s\xFAbor pod\u013Ea ID"
+open_object_by_id: "Otvori\u0165 z\xE1znam pod\u013Ea ID"
+element_not_found: "Element nebol n\xE1jden\xFD"
+import_from_url: "Importova\u0165 z URL"
+do_you_really_want_to_leave_the_editmode: "Naozaj chcete opusti\u0165 edita\u010Dn\xFD
+  m\xF3d (NIE!)"
+or_specify_an_asset_image_below: "alebo \u0161pecifikujte obr\xE1zok zo s\xFAborov
+  ni\u017E\u0161ie"
+medium: "Stredn\xFD (medium)"
+saved_successfully: "\xDAspe\u0161ne ulo\u017Een\xE9"
+qr_codes: "QR k\xF3dy"
 element: Element
-details_for_selected_event: Details for selected element
-fields: Fields
-not_possible_with_paging: Sorry, this is not possible in elements which are paged,
-  try to restructure your data to avoid pages in the tree
-inherited: Inherited
-length: Length
-show_in_tree: Show in Tree
-exactmatch: exact match
-desktop: Desktop
-drag_me: Drag Me
-serverVars: Server Variables
-attributes: Attributes
-code: Code
+details_for_selected_event: "Podrobnosti vybran\xE9ho elementu"
+fields: Polia (fields)
+not_possible_with_paging: "Prep\xE1\u010Dte, toto bohu\u017Eia\u013E nie je mo\u017En\xE9
+  s elementami ktor\xE9 s\xFA str\xE1nkovan\xE9. Sk\xFAste svoj obsah \u0161trukt\xFArova\u0165
+  tak, aby sa V\xE1m str\xE1nky v stromovej \u0161trukt\xFAre nevytv\xE1rali"
+inherited: "Zdeden\xE9"
+length: "D\u013A\u017Eka"
+show_in_tree: "Zobrazi\u0165 v strome"
+exactmatch: "presn\xE1 zhoda"
+desktop: "Stoln\xFD po\u010D\xEDta\u010D"
+drag_me: Potiahni ma
+serverVars: "Premenn\xE9 serveru"
+attributes: "Atrib\xFAty"
+code: "K\xF3d"
 tag: Tag
-tags: Tags
-Click here to proceed: Click here to proceed
-Your browser is not supported. Please install the latest version of one of the following browsers.: Your
-  browser is not supported. Please install the latest version of one of the following
-  browsers.
-open_in_new_window: Open in new Window
-limit_reached: Limit reached
-casesensitive: case-sensitive
-path_aliases: Path Aliases
-pretty_url: Pretty URL
-pretty_url_label: Pretty URL (overrides path from tree-structure)
-password_cannot_be_changed: Password cannot be changed
-old_password: Old Password
-new_password: New Password
-retype_password: Retype Password
-reports: Reports
-roles: Roles
-Password: Password
-Forgot your password: Forgot your password
-Back to Login: Back to Login
-Enter your username and pimcore will send a login link to your email address: Enter
-  your username and Pimcore will send a login link to your email address
-Please check your mailbox.: Please check your mailbox.
-Login: Login
-Submit: Submit
-A temporary login link has been sent to your email address.: A temporary login link
-  has been sent to your email address.
+tags: Tagy
+Click here to proceed: "Pre pokra\u010Dovanie kliknite sem"
+Your browser is not supported. Please install the latest version of one of the following browsers.: "V\xE1\u0161
+  prehliada\u010D nie je podporovan\xFD. Pros\xEDm nain\u0161talujte si najnov\u0161iu
+  verziu jedn\xE9ho z nasleduj\xFAcich prehliada\u010Dov."
+open_in_new_window: "Otvori\u0165 v novom okne"
+limit_reached: "Bol dosiahnut\xFD limit"
+casesensitive: "Z\xE1le\u017E\xED na ve\u013Ekosti p\xEDsmen (case-sensitive)"
+path_aliases: Aliasy cesty (path aliases)
+pretty_url: "Pekn\xE1 URL"
+pretty_url_label: "Pekn\xE1 URL (nahrad\xED cestu zo stromovej \u0161trukt\xFAry)"
+password_cannot_be_changed: "Heslo nem\xF4\u017Ee by\u0165 zmenen\xE9"
+old_password: "Star\xE9 heslo"
+new_password: "Nov\xE9 heslo"
+retype_password: "Zopakujte nov\xE9 heslo"
+reports: Reporty
+roles: Roly
+Password: Heslo
+Forgot your password: "Zabudnut\xE9 heslo"
+Back to Login: "Sp\xE4\u0165 na prihl\xE1senie"
+Enter your username and pimcore will send a login link to your email address: "Zadajte
+  u\u017E\xEDvate\u013Esk\xE9 meno a bude V\xE1m zaslan\xFD prihla\u0161ovac\xED odkaz
+  na Va\u0161u e-mailov\xE1 adresu"
+Please check your mailbox.: "Pros\xEDm skontrolujte si e-mailov\xFA schr\xE1nku."
+Login: "Prihl\xE1si\u0165"
+Submit: "Odosla\u0165"
+A temporary login link has been sent to your email address.: "Do\u010Dasn\xFD prihla\u0161ovac\xED
+  odkaz bol odoslan\xFD na Va\u0161u e-mailov\xFA adresu."
 user_inactive: User is not active
 user_no_email_address: User has no email address
 user_no_password: User has no password
 user_unknown: User unknown
 lost_password_email_error: Could not send password recovery email
-use_current_player_position_as_preview: Use current player position as preview
-select_image_preview: Select Image Preview
-preview_not_available: Preview not available
+use_current_player_position_as_preview: "Pou\u017Ei\u0165 aktu\xE1lny sn\xEDmok v
+  prehr\xE1va\u010Di ako n\xE1h\u013Ead"
+select_image_preview: "V\xFDberte n\xE1h\u013Eadov\xFD obr\xE1zok"
+preview_not_available: "N\xE1h\u013Ead nie je k dispoz\xEDcii"
 status: Status
-video_preview_in_progress: The preview for this video is currently in progress.
-php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: PHP-CLI binary or FFMPEG is
-  not available, please ensure that both are installed/executable and configured in
-  the system settings!
-video_thumbnails: Video Thumbnails
-do_you_really_want_to_close_pimcore: Do you really want to close Pimcore?
-drop_element_here: Drop element here
-select_specific_area_of_image: Select specific area of image
-paste_recursive_updating_references: Paste recursive, updating references
-add_hardlink: Add Hardlink
-source_path: Source path
-properties_from_source: Use properties from source document
+video_preview_in_progress: "N\xE1h\u013Ead pre toto video sa pr\xE1ve vytv\xE1ra."
+php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: "PHP-CLI bin\xE1rka alebo
+  FFMPEG nie je s\xFA dostupn\xE9. Skontrolujte \u010Di s\xFA obe nain\u0161talovan\xE9,
+  spustite\u013En\xE9 a nakonfigurovan\xE9 v syst\xE9mov\xFDch nastaveniach!"
+video_thumbnails: "Video n\xE1h\u013Eady"
+do_you_really_want_to_close_pimcore: "Skuto\u010Dne chcete zatvori\u0165 pimcore?"
+drop_element_here: Potiahnite elementy sem
+select_specific_area_of_image: "Vyberte konkr\xE9tnu oblas\u0165 obr\xE1zku"
+paste_recursive_updating_references: "Vlo\u017Ei\u0165 rekurz\xEDvne (s \xFApravou
+  referenci\xED)"
+add_hardlink: "Prida\u0165 hardlink"
+source_path: "Zdrojov\xE1 cesta"
+properties_from_source: "Pou\u017Ei\u0165 vlastnosti zo zdrojov\xE9ho dokumentu"
 children_from_source: Use children from source document
-click_right_for_more_options: Click right for more options
-move_to_tab: Move to Tab
-not_supported: Not supported
-edit_link: Edit Link
-resize: Resize
-scalebyheight: Scale by Height
-scalebywidth: Scale by Width
-crop: Crop
-cleanup: Cleanup
-this_element_cannot_be_edited: This element cannot be edited
-details: Details
-cannot_save_object_please_try_to_edit_the_object_in_detail_view: <b>Cannot save object!</b><br
-  />Please try to edit the object in the detail view.
-size: Size
-select_a_file: Select a file
-upload_compatibility_mode: Upload File (Compatibility Mode)
-the_system_is_in_maintenance_mode_please_wait: The system is in maintenance mode,
-  please wait
-activate: Activate
-image_is_too_small: Image is too small, please choose a bigger one.
-name_is_not_allowed: Name is not allowed
-import_from_server: Import from Server
-upload_files: Upload Files
-upload_zip: Upload ZIP Archive
-document_root: Document Root
-batch_change_selected: Batch edit selected
-download_as_zip: Download as ZIP
-locked: Locked
-element_cannot_be_move_because_it_is_locked: Element cannot be moved because it is
-  locked.
-element_cannot_be_moved: The element cannot be moved here
+click_right_for_more_options: "Prav\xFD klik pre viac mo\u017Enost\xED"
+move_to_tab: "Presun\xFA\u0165 do z\xE1lo\u017Eky"
+not_supported: "Nie je podporovan\xE9"
+edit_link: "Upravi\u0165 odkaz"
+resize: "Zmeni\u0165 ve\u013Ekos\u0165"
+scalebyheight: "\u0160k\xE1lova\u0165 pod\u013Ea v\xFD\u0161ky"
+scalebywidth: "\u0160k\xE1lova\u0165 pod\u013Ea \u0161\xEDrky"
+crop: "Oreza\u0165"
+cleanup: "Vy\u010Disti\u0165"
+this_element_cannot_be_edited: "Tento element nem\xF4\u017Ee by\u0165 upravovan\xFD"
+details: Podrobnosti
+cannot_save_object_please_try_to_edit_the_object_in_detail_view: "<b>Nem\xF4\u017Eem
+  ulo\u017Ei\u0165 z\xE1znam!</b><br/>Pros\xEDm sk\xFAste upravi\u0165 z\xE1znam v
+  detailnom zobrazen\xED."
+size: "Ve\u013Ekos\u0165"
+select_a_file: "V\xFDber s\xFAboru"
+upload_compatibility_mode: "Nahra\u0165 s\xFAbor (kompatibiln\xFD m\xF3d)"
+the_system_is_in_maintenance_mode_please_wait: "Pros\xEDm \u010Dakajte, syst\xE9m
+  je v stave \xFAdr\u017Eby"
+activate: "Aktivova\u0165"
+image_is_too_small: "Obr\xE1zok je pr\xEDli\u0161 mal\xFD, pros\xEDm pou\u017Eite
+  v\xE4\u010D\u0161\xED."
+name_is_not_allowed: "Meno nie je povolen\xE9"
+import_from_server: "Importova\u0165 zo serveru"
+upload_files: "Nahra\u0165 s\xFAbory"
+upload_zip: "Nahra\u0165 ZIP arch\xEDv"
+document_root: "Kore\u0148 dokumentov (Document root)"
+batch_change_selected: "Hromadne zmeni\u0165 vybran\xE9"
+download_as_zip: "Stiahnu\u0165 ako zip arch\xEDv"
+locked: "Uzamknut\xE9"
+element_cannot_be_move_because_it_is_locked: "Element nem\xF4\u017Ee by\u0165 presunut\xFD,
+  preto\u017Ee je uzamknut\xFD."
+element_cannot_be_moved: "Element nem\xF4\u017Ee by\u0165 presunut\xFD"
 element_cannot_be_moved_because_target_is_paginated: The element cannot be dragged
   on a paginated tree/folder with manual indexing (Sort by index). Please change the
   sorting method or use "Search & Move" option under the "Advanced" context menu of
   the target to move the elements.
-no_collections_allowed: No Collections allowed
-filter_condition: Filter Condition
-all_types: All Types
-audio: Audio
+no_collections_allowed: "Kolekcie nie s\xFA povolen\xE9"
+filter_condition: Podmienky filtru
+all_types: "V\u0161etky typy"
+audio: Zvuk
 video: Video
-archive: Archive
-unknown: Unknown
-class: Class
-page: Page
+archive: "Arch\xEDv"
+unknown: "Nezn\xE1my"
+class: Trieda
+page: "Str\xE1nka"
 objectbrick: Objectbrick
 field_collection: Field-Collection
-snippet: Snippet
-folder: Folder
-your_selection: Your Selection
-double_click_to_add_item_to_selection: Double-click an item on the left to add it
-  to this selection.
-label: Label
-error_auth_failed: Login failed!<br />Please try again.
-error_session_expired: Session expired!<br />Please login again.
-site: Site
-descending: Descending
-ascending: Ascending
-sort: Sort
-results: Results
-dimension: Dimension
-metric: Metric
+snippet: Fragment
+folder: "Zlo\u017Eka"
+your_selection: "V\xE1\u0161 v\xFDber"
+double_click_to_add_item_to_selection: "Dvojit\xFDm kliknut\xEDm na polo\u017Eku v
+  pravo ju prid\xE1te do v\xFDberu."
+label: "\u0160t\xEDtok"
+error_auth_failed: "Prihl\xE1senie zlyhalo!<br>Sk\xFAste to pros\xEDm znova."
+error_session_expired: "Syst\xE9m V\xE1s pre ne\u010Dinnos\u0165 automaticky odhl\xE1sil!<br/>Prihl\xE1ste
+  sa pros\xEDm znova."
+site: "Dom\xE9na (site)"
+descending: Zostupne
+ascending: Vzostupne
+sort: "Triedi\u0165 (sort)"
+results: "V\xFDsledky"
+dimension: Rozmer
+metric: "Metrick\xFD"
 segment: Segment
-data_explorer: Data Explorer
-navigation: Navigation
-entrances: Entrances
-exits: Exits
-restore: Restore
-amount: Amount
-flush_recyclebin: Flush Recycle Bin
-recyclebin: Recycle Bin
-deletedby: Deleted By
-open_select_editor: Open Selection-Editor
-ignore: Ignore
+data_explorer: "Prehliada\u010D d\xE1t"
+navigation: "Navig\xE1cia"
+entrances: "Pr\xEDstupy"
+exits: Odchody
+restore: "Obnovi\u0165 (zo z\xE1lohy)"
+amount: "Mno\u017Estvo"
+flush_recyclebin: "Vypr\xE1zdni\u0165 k\xF4\u0161"
+recyclebin: "K\xF4\u0161"
+deletedby: Zmazal
+open_select_editor: "Otvori\u0165 editor v\xFDberu"
+ignore: "ignorova\u0165"
 email_log: Email Log
-email_log_resend: Resend email
-email_log_resend_window_msg: Please confirm that you want to send the email again
-  to all recipients.
-select_site: Select a site
-main_site: Main Site
-filename: Filename
-unsupported_filetype: Unsupported Filetype
-email_log_resend_window_success_message: The email has been sent successfully to all
-  recipients.
-email_log_resend_window_error_message: An error occurred. The email has not been resent.
-error_jobs: The following jobs failed
-batch_change: Batch edit all
-batch_edit_field: Batch edit all field
-published: Published
-all: all
-items_per_page: Items per page
-reload_pimcore_changes: You have to reload Pimcore for the changes to take effect,
-  would you like to do this now?
+email_log_resend: "Odosla\u0165 e-mail"
+email_log_resend_window_msg: "Potvr\u010Fte, \u017Ee chcete e-mail znova odosla\u0165
+  v\u0161etk\xFDm pr\xEDjemcom."
+select_site: "Vybra\u0165 dom\xE9nu (site)"
+main_site: "Hlavn\xE1 dom\xE9na (site)"
+filename: "N\xE1zov s\xFAboru"
+unsupported_filetype: "Nepodporovan\xFD typ s\xFAboru"
+email_log_resend_window_success_message: "E-mail bol \xFAspe\u0161ne odoslan\xFD v\u0161etk\xFDm
+  pr\xEDjemcom."
+email_log_resend_window_error_message: "Vyskytla sa chyba. E-mail nemohol by\u0165
+  znovu odoslan\xFD."
+error_jobs: "Nasleduj\xFAce \xFAlohy zlyhali"
+batch_change: "Hromadn\xE9 priradenie"
+batch_edit_field: "Hromadn\xE1 \xFAprava po\u013Ea"
+published: "Publikovan\xE9"
+all: "v\u0161etko"
+items_per_page: "Po\u010Det polo\u017Eiek na str\xE1nke"
+reload_pimcore_changes: "Mus\xEDte obnovi\u0165 Pimcore, aby sa uplatnili zmeny. Chcete
+  tak urobi\u0165 teraz?"
 info: Info
-or: or
-paste_contents: Paste only contents here
-paste_as_child: Paste as child
+or: alebo
+paste_contents: "Vlo\u017Ei\u0165 sem len obsah"
+paste_as_child: "Vlo\u017Ei\u0165 ako potomka"
 paste_recursive_as_child: Paste as child (recursive)
-view_original: View Original
+view_original: "Zobrazi\u0165 origin\xE1l"
 feed: Feed
-no_items_found: No items found
-public_url: Public URL
-pageviews: Pageviews
-visits: Visits
+no_items_found: "Neboli n\xE1jden\xE9 \u017Eiadne polo\u017Eky"
+public_url: "Verejn\xE1 URL"
+pageviews: "Po\u010Det zhliadnut\xED str\xE1nky"
+visits: "N\xE1v\u0161tevy"
 detail: Detail
-report_settings: Report Settings
-overview: Overview
-visitor_overview: Visitor Overview
-other: Other
+report_settings: Nastavanie reportu
+overview: "Preh\u013Ead"
+visitor_overview: "Preh\u013Ead N\xE1v\u0161tevn\xEDkov"
+other: "Ostatn\xE9"
 google_analytics: Google Analytics
-reports_and_marketing: Marketing & Reports
-save_only_scheduled_tasks: Save only scheduled tasks
-modified_assets: Modified Assets
-modification_statistic: Changes in the last 31 days
-add_portlet: Add Portlet
-modified_documents: Modified Documents
-modified_objects: Modified Objects
-welcome: Welcome
-save_and_publish: Save & Publish
-delete: Delete
-save: Save
-add_assets: Add Asset(s)
-preview: Preview
-advanced: Advanced
-basic: Basic
-list: List
-view: View
-publish: Publish
-rename: Rename
-settings: Settings
-properties: Properties
-versions: Versions
-add: Add
-date: Date
-user: User
-note: Note
-email_cc: Cc
-email_bcc: Bcc
-email_settings: Email Settings
-email_settings_receiver_description: 'Multiple recipients can be specified by separating
-  the email addresses with a semicolon. <br/>Example: receiver@pimcore.org; receiver2@pimcore.org<br/>For
-  ''From'' you can use additionally the syntax <i>My Name &lt;my-name@example.com&gt;</i>'
-email_logs: Sent Emails
-email_log_sent_Date: Date sent
-predefined_document_type: Predefined Document Type
+reports_and_marketing: Marketing a reporty
+save_only_scheduled_tasks: "Ulo\u017Ei\u0165 len napl\xE1novan\xE9 \xFAlohy"
+modified_assets: "Upraven\xE9 s\xFAbory"
+modification_statistic: "Zmeny za posledn\xFDch 31 dn\xED"
+add_portlet: "Prida\u0165 portlet"
+modified_documents: "Upraven\xE9 dokumenty"
+modified_objects: "Upraven\xE9 z\xE1znamy"
+welcome: Vitajte
+save_and_publish: "Ulo\u017Ei\u0165 a publikova\u0165"
+delete: "Zmaza\u0165"
+save: "Ulo\u017Ei\u0165"
+add_assets: "Prida\u0165 s\xFAbor"
+preview: "N\xE1h\u013Ead"
+advanced: "Pokro\u010Dil\xFD"
+basic: "Z\xE1kladn\xFD"
+list: Zoznam
+view: "Zobrazi\u0165"
+publish: "Publikova\u0165"
+rename: "Premenova\u0165"
+settings: Nastavenia
+properties: Vlastnosti
+versions: Verzie
+add: "Prida\u0165"
+date: "D\xE1tum"
+user: "U\u017E\xEDvate\u013E"
+note: "Pozn\xE1mka"
+email_cc: "K\xF3pia (CC)"
+email_bcc: "Skryt\xE1 k\xF3pia (BCC)"
+email_settings: Nastavenie e-mailu
+email_settings_receiver_description: "Viacer\xFDch pr\xEDjemcov m\xF4\u017Eete zada\u0165
+  oddelen\xFDch bodko\u010Diarkou.<br/>Pr\xEDklad: prijemca1@pimcore.org; prijemca2@pimcore.org"
+email_logs: "Odoslan\xE9 e-maily"
+email_log_sent_Date: "D\xE1tum odoslania"
+predefined_document_type: "Preddefinovan\xFD typ dokumentov"
 controller: Controller
-action: Action
-actions: Actions
-template: Template
+action: Akcia
+actions: Akcie
+template: "\u0160abl\xF3na"
 staticroute: Static Route
 static_generator: Static Page Generator
 static_generator_enable: Enable server side static rendering
 static_generator_lifetime: Lifetime (in minutes) for static page (optional)
 last_generated: Last generated
-key: Key
+key: "K\u013E\xFA\u010D"
 id: ID
-name: Name
-title: Title
-description: Description
-unpublish: Unpublish
-target: Target
-type: Type
-please_enter_the_new_name: Please enter the new name
-add_page: Add Page
-add_snippet: Add Snippet
-add_email: Add Email
-add_link: Add Link
-copy: Copy
-paste: Paste
-close_all_tabs: Close all tabs
-search: Search
-import: Import
-export: Export
+name: "N\xE1zov"
+title: Nadpis
+description: Popis
+unpublish: "Skry\u0165"
+target: "Cie\u013E"
+type: Typ
+please_enter_the_new_name: "Pros\xEDm vlo\u017Ete nov\xFD n\xE1zov:"
+add_page: "Prida\u0165 str\xE1nku"
+add_snippet: "Prida\u0165 fragment"
+add_email: "Prida\u0165 e-mail"
+add_link: "Prida\u0165 odkaz"
+copy: "Kop\xEDrova\u0165"
+paste: "Vlo\u017Ei\u0165"
+close_all_tabs: "Zatvori\u0165 v\u0161etky z\xE1lo\u017Eky"
+search: "H\u013Eada\u0165"
+import: "Importova\u0165"
+export: "Exportova\u0165"
 document_type: Document Type
-document_types: Document Types
-predefined_properties: Predefined Properties
-users: Users
-profile: Profile
-my_profile: My Profile
-documentation: Documentation
-report_bugs: Report Bugs
-about: About
-file: File
-extras: Extras
-help: Help
-configuration: Configuration
-value: Value
-add_a_custom_property: Add a custom Property
+document_types: Typy dokumentov
+predefined_properties: "Preddefinovan\xE9 vlastnosti"
+users: "U\u017E\xEDvatelia"
+profile: "U\u017E\xEDvate\u013Esk\xFD profil"
+my_profile: "M\xF4j profil"
+documentation: "Dokument\xE1cia"
+report_bugs: "Nahl\xE1si\u0165 chybu"
+about: "O aplik\xE1cii"
+file: "S\xFAbor"
+extras: "Roz\u0161\xEDrenia"
+help: "Pomocn\xEDk"
+configuration: "Konfigur\xE1cia"
+value: Hodnota
+add_a_custom_property: "Prida\u0165 vlastnos\u0165"
 custom: Custom
-general: General
-language: Language
-quality: Quality
-format: Format
-documents: Documents
-assets: Assets
-upload: Upload
-width: Width
-height: Height
-empty: Empty
+general: "V\u0161eobecn\xE9"
+language: Jazyk
+quality: Kvalita
+format: "Form\xE1t"
+documents: Dokumenty
+assets: "S\xFAbory"
+upload: "Nahra\u0165"
+width: "\u0160\xEDrka"
+height: "V\xFD\u0161ka"
+empty: "Pr\xE1zdny"
 workflow: Workflow
-modify: 'Modify '
-create: 'Create '
-edit: Edit
-logout: Logout
-refresh: Refresh
+modify: "Modifikova\u0165 "
+create: "Vytvori\u0165 "
+edit: "Upravi\u0165"
+logout: "Odhl\xE1si\u0165"
+refresh: "Obnovi\u0165"
 input: Input
 checkbox: Checkbox
 textarea: Textarea
-image: Image
-select: Select
-base: Base
-add_object: Add Object
-border: Border
-document: Document
-asset: Asset
-object: Object
-remove: Remove
-hidden_dependencies: There are additional dependencies your user does not have the
-  permissions to see.
-open: Open
-days: Days
-seemode: Seemode
-edit_current_page: Edit this page
-close: Close
-name_already_in_use: Name is already in use, please choose a different one.
-name_and_key_must_be_defined: Name and Type must be defined
-mandatory_field_empty: Please fill all mandatory fields
-reload: Reload
-schedule: Schedule
-time: Time
-version: Version
-active: Active
-success: Success
-translations: Translations
+image: "Obr\xE1zok"
+select: "V\xFDberov\xE9 pole"
+base: "Z\xE1klad (Base)"
+add_object: "Prida\u0165 z\xE1znam"
+border: Okraj (Border)
+document: 'Dokument  '
+asset: "S\xFAbor"
+object: "Z\xE1znam"
+remove: "Odstr\xE1ni\u0165 "
+hidden_dependencies: "Existuj\xFA dodato\u010Dn\xE9 z\xE1vislosti, ktor\xE9 nem\xF4\u017Eete
+  zobrazi\u0165 k\xF4li ch\xFDbaj\xFAcim opr\xE1vneniam."
+open: "Otvori\u0165"
+days: "Dn\xED"
+seemode: "N\xE1h\u013Eadov\xFD re\u017Eim"
+edit_current_page: "Upravi\u0165 t\xFAto str\xE1nku"
+close: "Zatvori\u0165"
+name_already_in_use: "N\xE1zov sa u\u017E pou\u017E\xEDva"
+name_and_key_must_be_defined: "N\xE1zov a typ mus\xED by\u0165 definovan\xFD"
+mandatory_field_empty: "Pros\xEDm vyplnte v\u0161etky po\u017Eadovan\xE9 polia"
+reload: "Obnovi\u0165"
+schedule: "Pl\xE1nova\u010D"
+time: "\u010Cas"
+version: Verzia
+active: "Akt\xEDvny"
+success: Hotovo
+translations: Preklady webu
 translation_simple: Simple Text
 translation_custom: ICU Format
-firstname: Firstname
-lastname: Lastname
-email: Email
-cant_move_node_to_target: Moving node not possible
-error_moving_object: Object could not be moved
-translations_are_not_configured: Translation are not configured
-read_more_here: Read more about here
-publish_version: Publish version
-start: Start
-su: Su
-mo: Mo
-tu: Tu
-we: We
-th: Th
-fr: Fr
-sa: Sa
-session_error_text: It seems there is a problem with your session. We recommend to
-  reload this page in order to be save, but you can try to save your changes first.
-session_error: Session Error
-please_wait: Please wait ...
-download: Download
-inheritable: Inheritable
-redirects: Redirects
-source: Source
-link: Link
-abbr: Abbr.
-stop: Stop
-dependencies: Dependencies
-requires: Requires
-required_by: Required By
-search_edit: Search, Edit and Export
-subtype: Subtype
-initializing: Initializing ...
-please_select_a_type: Please select a type
+firstname: Meno
+lastname: Priezvisko
+email: E-mail
+cant_move_node_to_target: "Presunutie uzlu nie je mo\u017En\xE9"
+error_moving_object: "Z\xE1znam nemohol by\u0165 presunut\xFD"
+translations_are_not_configured: "Preklady nie s\xFA nakonfigurovan\xE9"
+read_more_here: "Pre\u010D\xEDta\u0165 si viac tu"
+publish_version: "Publikova\u0165 verziu"
+start: "Za\u010Diatok"
+su: Ne
+mo: Po
+tu: Ut
+we: St
+th: "\u0160t"
+fr: Pi
+sa: So
+session_error_text: "Zd\xE1 sa, \u017Ee sa vyskytol probl\xE9m s va\u0161ou rel\xE1ciou
+  (session). Doporu\u010Dujeme obnovi\u0165 str\xE1nku z bezpe\u010Dnostn\xFDch d\xF4vodov,
+  ale m\xF4\u017Eete najsk\xF4r sk\xFAsi\u0165 ulo\u017Eit svoje zmeny."
+session_error: Chyba session
+please_wait: "\u010Cakajte pros\xEDm ..."
+download: "Stiahnu\u0165"
+inheritable: "Dedite\u013En\xFD"
+redirects: Presmerovania
+source: Zdroj
+link: Odkaz
+abbr: Skratka
+stop: "Zastavi\u0165"
+dependencies: "Z\xE1vislosti"
+requires: "Vy\u017Eaduje"
+required_by: "Vy\u017Eadovan\xE9 z"
+search_edit: "H\u013Eada\u0165, upravi\u0165 a exportova\u0165"
+subtype: Podtyp
+initializing: Inicializujem ...
+please_select_a_type: "Pros\xEDm vyberte typ"
 filter: Filter
-field: Field
-operator: Operator
-apply: Apply
-show: Show
-public: Public
-maximum_2_versions: You can compare max. 2 versions
-error: Error
-element_is_locked: 'The desired element is currently opened by another person:'
-element_lock_question: Would you like to open it anyway?
-since: Since
-longitude: Longitude
-latitude: Latitude
-geopoint: Geographic Point
-cancel: Cancel
-open_search_editor: Open Search Editor
-parameters: Parameters
-anchor: Anchor
-accesskey: Accesskey
-relation: Relation
-tabindex: Tab-Index
-not_set: not set
-export_csv: CSV Export
+field: Pole
+operator: "Oper\xE1tor"
+apply: "Pou\u017Ei\u0165"
+show: "Zobrazi\u0165"
+public: "Verejn\xFD"
+maximum_2_versions: "M\xF4\u017Eete porovn\xE1va\u0165 maxim\xE1lne 2 verzie"
+error: Chyba
+element_is_locked: "Po\u017Eadovan\xFD element je moment\xE1lne upravovan\xFD in\xFDm
+  u\u017E\xEDvate\u013Eom:"
+element_lock_question: "Chcete napriek tomu otvori\u0165?"
+since: Od
+longitude: "Z. d\u013A\u017Eka"
+latitude: "Z. \u0161\xEDrka"
+geopoint: "Geografick\xFD bod"
+cancel: "Zru\u0161i\u0165"
+open_search_editor: "Otvori\u0165 editor vyh\u013Ead\xE1vania"
+parameters: Parametre
+anchor: Kotva
+accesskey: "K\u013E\xFA\u010D (accesskey)"
+relation: "Rel\xE1cia (Relation)"
+tabindex: Tab-index
+not_set: "nenastaven\xE9"
+export_csv: CVS Export
 import_csv: CSV Import
-show_welcome_screen: Show welcome screen on startup
-importFileHasHeadRow: first row = headline
-overwrite_object_with_same_key_description: When overwrite is checked, instead of
-  creating a new object for each import row, objects with the same key are replaced.
-  Existing objects in your import folder with keys not contained in the import file
-  will remain untouched. Please be aware that all objects which have a matching key
-  in the import file will be replaced in the target folder. This is also true for
-  objects based on a different class or even object folders! Object fields which are
-  set to ignore in the field mapping keep their old value.
-object_import_filename_description: select the field which is used to generate the
-  object key
-save_pubish_close: Save, publish and close
-save_close: Save and close
-error_general: Server threw exception - could not perform action. Please reload the
-  admin interface and try again.
-owner_class: Owner class
-owner_field: Owner field
-nonownerobject_warning: The current object is not the owner of these relations, making
-  changes here might make saving the object slow
-element_implicit_edit_question: Would you still like to implicitly  modify it with
-  this action?
-element_open_message: The desired element is already open for editing.
-nonownerobjects_self_selection: In non owner objects a  relation to myself is not
-  possible, please use original field instead of non owner field.
-warning: Warning
-csv_object_export_warning: Please note that the CSV export does not support all data
-  types. Consequently, re-importing an exported CSV to pimcore might lead to data
-  loss. Press OK to continue with the export.
-navigation_exclude: Exclude from Navigation
-variants: Variants
-variant: Variant
-add_variant: Add variant
-delete_message_dependencies: There are dependencies, delete anyway?
-delete_message: Do you really want to delete this item?
+show_welcome_screen: "Zobrazi\u0165 uv\xEDtaciu n\xE1stenku pri \u0161tarte"
+importFileHasHeadRow: "prv\xFD riadok = hlavi\u010Dka"
+overwrite_object_with_same_key_description: "Ak je zvolen\xE9 prepisovanie, bud\xFA
+  z\xE1znamy s rovnak\xFDm k\u013Eu\u010Dom upraven\xE9 (namiesto vytvorenia nov\xFDch
+  z\xE1znamov) pri\u010Dom sa nerozli\u0161uje typ z\xE1znamu. Polia, ktor\xE9 s\xFA
+  ozna\u010Den\xE9 ako ignorovan\xE9, ostan\xFA nezmenen\xE9. Existuj\xFAce z\xE1znamy
+  v importovanej zlo\u017Eke s k\u013E\xFA\u010Dami, ktor\xE9 nie s\xFA v importovanom
+  s\xFAboru ostan\xFA nezmenen\xE9."
+object_import_filename_description: "Vyberte pole, ktor\xE9 je pou\u017Eit\xE9 ku
+  generovaniu k\u013E\xFA\u010Du pre z\xE1znam"
+save_pubish_close: "Ulo\u017Ei\u0165, publikova\u0165 a zatvori\u0165"
+save_close: "Ulo\u017Ei\u0165 a zatvori\u0165"
+error_general: "Server vyvolal v\xFDnimku - akcia nemohla by\u0165 dokon\u010Den\xE1.
+  Sk\xFAste pros\xEDm obnovi\u0165 administr\xE1ciu."
+owner_class: "Trieda vlastn\xEDka"
+owner_field: "Pole vlastn\xEDka"
+nonownerobject_warning: "Aktu\xE1lny z\xE1znam nie je vlastn\xEDkom t\xFDchto rel\xE1cii,
+  \u010Do m\xF4\u017Ee sp\xF4sobi\u0165 pom\xE1l\xE9 ukladanie jeho zmien"
+element_implicit_edit_question: "Chcete ho napriek tomu implicitne modifikova\u0165
+  touto akciou?"
+element_open_message: "Po\u017Eadovan\xFD element u\u017E je otvoren\xFD pre \xFApravu."
+nonownerobjects_self_selection: "V z\xE1znamoch bez vlastn\xEDka nie je mo\u017En\xE9
+  vytvori\u0165 rel\xE1ciu k sebe sam\xE9mu. Pros\xEDm pou\u017Eite origin\xE1lne
+  pole namiesto po\u013Ea bez vlastn\xEDka."
+warning: Varovanie
+csv_object_export_warning: "Berte na vedomie, \u017Ee CSV export nepodporuje v\u0161etky
+  d\xE1tov\xE9 typy. V d\xF4sledku, re-importovanie exportovan\xE9ho CSV do pimcore
+  m\xF4\u017Ee sp\xF4sobi\u0165 stratu d\xE1t. Kliknite na OK pre pokra\u010Dovanie
+  v exporte."
+navigation_exclude: "Vyl\xFA\u010Di\u0165 z navig\xE1cie"
+variants: Varianty
+variant: Varianta
+add_variant: "Prida\u0165 variantu"
+delete_message_dependencies: "Existuj\xFA z\xE1vislosti, aj napriek tomu zmaza\u0165?"
+delete_message: "Naozaj chcete zmaza\u0165 tento element?"
 delete_message_advanced: Do you really want to delete %s '%s' ?
-delete_message_batch: Do you really want to delete these elements?
+delete_message_batch: "Naozaj chcete zmaza\u0165 tieto elementy?"
 delete_group_message: Do you really want to delete this group and all of its contents?
-no_further_objectbricks_allowed: No further objectbricks allowed
-grid_current_language: Current language
-object_columns: Object columns
-system_columns: System columns
-columns: Columns
-children_grid: Children Grid
-only_children: just direct children
-cut: Cut
-paste_cut_element: Paste cut-out element
-memorize_tabs: Memorize open tabs
-element_history: Recently Opened Elements
-dashboards: Dashboards
-portlet_customreport: Custom Report
-clear_marker_or_hotspots: Clear Marker, Hotspot and Cropping Data
-hotspots_cleared: Hotspots, Markers and Cropping Data cleared
+no_further_objectbricks_allowed: "\u010Eal\u0161ie podz\xE1znamy (object brick) nie
+  s\xFA povolen\xE9"
+grid_current_language: "Aktu\xE1lny jazyk"
+object_columns: "Z\xE1znamov\xE9 st\u013Apce"
+system_columns: "Syst\xE9mov\xE9 s\u013Apce"
+columns: "st\u013Apce"
+children_grid: "Tabu\u013Eka (grid) potomkov"
+only_children: len priami potomkovia
+cut: "Vystrihn\xFA\u0165"
+paste_cut_element: "Vlo\u017Ei\u0165 vystrihnut\xFD element"
+memorize_tabs: "Zapam\xE4ta\u0165 si otvoren\xE9 z\xE1lo\u017Eky"
+element_history: "Ned\xE1vno otvoren\xE9 elementy"
+dashboards: "N\xE1stenky"
+portlet_customreport: "Vlastn\xFD report"
+clear_marker_or_hotspots: "Vymaza\u0165 d\xE1ta pre Marker, Hotsport a orez"
+hotspots_cleared: "D\xE1ta pre Hotspot, Marker a orez boli vymazan\xE9"
 deeplink: Deeplink
-click_to_open: (click to open)
-add_metadata: Add Metadata
-pimcore_icon_edit_pdf_text: Edit text version
-chapter: Chapter
-search_and_move: Search & Move
-searching: Searching...
-predefined_asset_metadata: Predefined Asset Metadata
-add_predefined_metadata_definitions: Add predefined definitions
-scheduled: Scheduled
-naming_requirements_3chars: Name must be alphanumeric and at least 3 characters long
-there_are_more_columns: There are more columns than currently displayed
-merge_csv: Import &amp; Merge CSV
-translation_merger_current: Current Text
-translation_merger_csv: Text from CSV
-nothing_to_merge: There is nothing to merge
-csv_seperated_options: CSV seperated options
-csv_seperated_options_info: The list of available options can be specified as comma-seperated
-  list, as single-column values or  mixed. For the single-column way, the key will
-  also be used as the value.
-first_page: First Page
-previous_page: Previous Page
-next_page: Next Page
-last_page: Last Page
-no_data_to_display: No data to display
+click_to_open: "(kliknut\xEDm otvor\xEDte)"
+add_metadata: "Prida\u0165 metad\xE1ta"
+pimcore_icon_edit_pdf_text: "Upravi\u0165 textov\xFA verziu"
+chapter: Kapitola
+search_and_move: "Vyh\u013Eada\u0165 a presun\xFA\u0165"
+searching: "Vyh\u013Ead\xE1vam..."
+predefined_asset_metadata: "Preddefinovan\xE9 metad\xE1ta s\xFAborov"
+add_predefined_metadata_definitions: "Prida\u0165 preddefinovan\xE9 defin\xEDcie"
+scheduled: "Napl\xE1novan\xE9"
+naming_requirements_3chars: "N\xE1zov mus\xED by\u0165 alfanumerick\xFD a mus\xED
+  obsahova\u0165 aspo\u0148 3 znaky"
+there_are_more_columns: "Existuje viac st\u013Apcov ne\u017E je moment\xE1lne vidie\u0165"
+merge_csv: "Import &amp; Zl\xFA\u010Denie CSV"
+translation_merger_current: "Aktu\xE1lny text"
+translation_merger_csv: Text z CSV
+nothing_to_merge: "Nie je tu ni\u010D k zl\xFA\u010Deniu"
+csv_seperated_options: CSV nastavenia
+csv_seperated_options_info: "Nastavenia m\xF4\u017Eu by\u0165 uveden\xE9 ako zoznam
+  oddelen\xFD \u010Diarkami. Pri jednoduch\xFDch hodnot\xE1ch bude k\u013E\xFA\u010D
+  pou\u017Eit\xFD aj ako hodnota."
+first_page: "Prv\xE1 str\xE1nka"
+previous_page: "Predo\u0161l\xE1 str\xE1nka"
+next_page: "\u010Eal\u0161ia str\xE1nka"
+last_page: "Posledn\xE1 str\xE1nka"
+no_data_to_display: "\u017Diadne d\xE1ta k zobrazeniu"
 classificationstore_property: Property
 classificationstore_group: Group
 classificationstore_relation: Relation
 classificationstore_collection: Collection
 classificationstore_collection_relation: Collection relation
-classificationstore_no_groups: No groups found
-classificationstore_no_keys: No keys found
-remove_group: Remove Group
-classificationstore_no_collections: No collections
-reference: Reference
-element_tag_configuration: Tag Configuration
-element_tag_all_tags: All Tags
-enter_new_name_of_the_tag: Enter new name of the Tag
-assigned_tags: Assigned Tags
-filter_tags: Filter for Tags
-consider_child_tags: Consider child tags too
-tags_assignment: Tags Assignment
-tags_search: Tags Search
-batch_applied: Batch applied
-apply_tags: Apply tags to Children
-remove_and_apply_tags: Remove and apply tags to children
-batch_assignment: Tag batch assignment
-batch_assignment_error: Tag batch assignment error
-no_children_found: No Children found.
-asset_search: Search Assets
-document_search: Search Documents
-object_search: Search Objects
-more: More
-open_translation: Open Translation
-link_existing_document: Link existing Document
-using_inheritance: Using Inheritance
-new_document: New Document
-update_available: Update Available
-target_document_needs_language: Target document needs a language set
-tools: Tools
-perspectives: Perspectives
-filter_active: Filter active!
-reset_config: Reset changes
-reset_config_tooltip: This will reset (and save) the grid column configuration for
-  this element to its default
-error_resetting_config: Error resetting configuration
-marketing_settings: Marketing Settings
-cross_tree_moves_not_supported: Cross tree moves not yet supported
-add_printpage: Add PrintPage
-add_printcontainer: Add PrintContainer
-web2print_preview_pdf: Generate & Preview PDF
-web2print_cancel_pdf_creation: Cancel PDF Creation
-web2print_generate_pdf: Generate PDF
-web2print_download_pdf: Download PDF
-web2print_last-generated: Last Generated
-web2print_last-generate-message: Last Generate Message
-web2print: Web-to-Print
-web2print_prepare_pdf_generation: Prepare PDF Generation
-web2print_start_html_rendering: Start HTML Rendering
-web2print_finished_html_rendering: Finished HTML Rendering
-web2print_saved_html_file: Saved HTML File
-web2print_pdf_conversion: PDF Conversion
-web2print_saving_pdf_document: Save PDF Document
-web2print_author: Author
-web2print_printermarks: Printermarks
-web2print_bookmarks: Bookmarks
-close_tab: Close Tab
-web2print_only_published: Only possible with published documents.
-web2print_documents_changed: Documents changed since last pdf generation.
-about_pimcore: ABOUT PIMCORE PLATFORM
-phone: Phone
-workflow_additional_info: Additional Information
-workflow_perform_action: Perform Action
-workflow_notes_required: Notes (Required)
-workflow_notes_optional: Notes (Optional)
-please_enter_the_id_of_the_asset: Please enter the ID or Path (e.g. /images/logo.jpg)
-  of the asset
-please_enter_the_id_of_the_object: Please enter the ID or Path of the object
-please_enter_the_id_of_the_document: Please enter the ID, Path or URL (also including
-  http://) of the document
-element_has_unsaved_changes: Element has unsaved changes
-element_unsaved_changes_message: All unsaved changes will be lost, are you really
-  sure?
-newsletter_enableTrackingParameters: Add Tracking Parameters to Links
-newsletter_sendingMode: Sending Mode
-newsletter_sendingmode_single: Single (Render every Mail individually)
-newsletter_sendingmode_batch: Batch (Render Mail only once)
-newsletter_sendingPanel: Newsletter Sending Panel
-newsletter_dirty_warning: Newsletter is not saved yet. Please save first.
-newsletter_sending: Sending Newsletter
-newsletter_sourceAdapter: Address Source Adapter
-newsletter_default: Default Object List
-newsletter_csvList: CSV List
-newsletter_testsend: Newsletter Test Sending
-newsletter_test_sent_message: Test Newsletter sent successfully
-add_object_mbx_title: Add new Object of type %s
-newsletter_choose_report: Choose a report
-newsletter_email_field_name: Email field name
-mode: Mode
-custom_download: Custom Download
-original_file: Original File
-web_format: Web Format
-print_format: Print Format
-office_format: Office Format
-change_password: Change Password
-file_is_bigger_that_upload_limit: 'The following file is bigger than the actual upload
-  limit of your server:'
-send_test_email_success: Your test-email has been sent. Would you like to keep this
-  window open to send the email again?
-press_crtl_and_select_to_compare: 'Compare: Press CTRL + Click Version'
-clear_filters: Clear Filters
-tags_configuration: Tags Configuration
-export_csv_include_headers: CSV Export with headers
-open_data_object: Open Data Object
-data_objects: Data Objects
-asset_type_change_not_allowed: '<strong>Only assets of same type are allowed here.</strong><br/>[
-  type of uploaded asset: "%s" | type of existing asset: "%s" ]'
-clear_content_of_selected_target_group: Clear content of selected Target Group
-visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: Visitors
-  of this page will be automatically associated with the selected Target Groups
-assign_target_group: Assign Target Group
-assign_target_groups: Assign Target Groups
+classificationstore_no_groups: "\u017Diadne skupiny"
+classificationstore_no_keys: "Neboli n\xE1jden\xE9 \u017Eiadne k\u013E\xFA\u010De"
+remove_group: "Odstr\xE1ni\u0165 skupinu"
+classificationstore_no_collections: "\u017Diadne kolekcie"
+reference: Referencia
+element_tag_configuration: "Konfigur\xE1cia tagov"
+element_tag_all_tags: "V\u0161etky tagy"
+enter_new_name_of_the_tag: "Zadajte n\xE1zov nov\xE9ho tagu"
+assigned_tags: "Priraden\xE9 tagy"
+filter_tags: Filter tagov
+consider_child_tags: "Zoh\u013Ead\u0148ova\u0165 aj tagy potomkov"
+tags_assignment: Pridadenie tagov
+tags_search: "Vyh\u013Ead\xE1vanie tagov"
+batch_applied: "Hromadn\xE1 \xFAprava prebehla v poriadku"
+apply_tags: "Pou\u017Ei\u0165 tagy na potomkov"
+remove_and_apply_tags: "Odstr\xE1ni\u0165 a pou\u017Ei\u0165 tagy na potomkov"
+batch_assignment: "Hromadn\xE9 priradenie tagov"
+batch_assignment_error: "Chyba pri hromadnom priradzovan\xED tagov"
+no_children_found: "\u017Diadni potomkovia."
+asset_search: "Vyh\u013Ead\xE1vanie s\xFAborov"
+document_search: "Vyh\u013Ead\xE1vanie dokumentov"
+object_search: "Vyh\u013Ead\xE1vanie z\xE1znamov"
+more: Viac
+open_translation: "Otvori\u0165 preklad"
+link_existing_document: "Pou\u017Ei\u0165 existuj\xFAci dokument"
+using_inheritance: "S vyu\u017Eit\xEDm dedi\u010Dnosti"
+new_document: "Nov\xFD dokument"
+update_available: "Je k dispoz\xEDcii nov\xFD update"
+target_document_needs_language: "Cie\u013Eov\xFD dokument mus\xED ma\u0165 nastaven\xFD
+  jazyk"
+tools: "N\xE1stroje"
+perspectives: "Perspekt\xEDvy"
+filter_active: "Filter akt\xEDvny"
+reset_config: Reset
+reset_config_tooltip: "Resetuje a ulo\u017E\xED konfigur\xE1ciu tabu\u013Eky (gridu)
+  pre tento element"
+error_resetting_config: Chyba pri resete konfigurace
+marketing_settings: Nastavenia marketingu
+cross_tree_moves_not_supported: "Presun medzi stromami zatia\u013E nie je podporovan\xFD"
+add_printpage: "Prida\u0165 Print str\xE1nku"
+add_printcontainer: "Prida\u0165 Print kontajner"
+web2print_preview_pdf: "Generova\u0165 a prezrie\u0165 PDF"
+web2print_cancel_pdf_creation: "Zru\u0161i\u0165 generovanie PDF"
+web2print_generate_pdf: "Generova\u0165 PDF"
+web2print_download_pdf: "Stiahnu\u0165 PDF"
+web2print_last-generated: "Naposledy vygenerovan\xE9"
+web2print_last-generate-message: "Posledn\xE1 spr\xE1va"
+web2print: Web2Print
+web2print_prepare_pdf_generation: "Pr\xEDprava generovania PDF"
+web2print_start_html_rendering: "Za\u010Diatok HTML renderovania"
+web2print_finished_html_rendering: Koniec HTML renderovania
+web2print_saved_html_file: "Ulo\u017Eenie HTML s\xFAboru"
+web2print_pdf_conversion: PDF konverzia
+web2print_saving_pdf_document: Ukladanie PDF dokumentu
+web2print_author: Autor
+web2print_printermarks: "Tla\u010Dov\xE9 zna\u010Dky (printermarks)"
+web2print_bookmarks: "Z\xE1lo\u017Eky"
+close_tab: "Zatvori\u0165 tab"
+web2print_only_published: "Toto je mo\u017En\xE9 len s publikovan\xFDmi dokumentami."
+web2print_documents_changed: "Dokumenty boli od posledn\xE9ho generovania zmenen\xE9."
+about_pimcore: O Pimcore
+phone: "Telef\xF3n"
+workflow_additional_info: "Dodato\u010Dn\xE9 inform\xE1cie"
+workflow_perform_action: "Previes\u0165 akciu"
+workflow_notes_required: "Pozn\xE1mky (povinn\xE9)"
+workflow_notes_optional: "Pozn\xE1mky (volite\u013En\xE9)"
+please_enter_the_id_of_the_asset: Zadajte ID alebo cestu k zdroju
+please_enter_the_id_of_the_object: "Zadajte ID alebo cestu k z\xE1znamu"
+please_enter_the_id_of_the_document: "Zadajte ID, cestu alebo URL (vr\xE1tane http://)
+  dokumentu"
+element_has_unsaved_changes: "Element obsahuje neulo\u017Een\xE9 zmeny"
+element_unsaved_changes_message: "Naozaj? V\u0161etky neulo\u017Een\xE9 zmeny bud\xFA
+  zmazan\xE9."
+newsletter_enableTrackingParameters: "Prida\u0165 trackovacie parametre k odkazom"
+newsletter_sendingMode: "Odosielac\xED m\xF3d"
+newsletter_sendingmode_single: "Singl (Rendrova\u0165 dokument pre ka\u017Ed\xFD e-mail
+  individu\xE1lne)"
+newsletter_sendingmode_batch: "Hromadne (Rendrova\u0165 dokument len raz)"
+newsletter_sendingPanel: "Odosielac\xED panel newsletteru"
+newsletter_dirty_warning: "Newsletter najsk\xF4r ulo\u017Ete, pros\xEDm."
+newsletter_sending: Odosielanie newsletteru
+newsletter_sourceAdapter: "Adapt\xE9r zdroju adries"
+newsletter_default: "Defaultn\xFD zoznam z\xE1znamov (Object List)"
+newsletter_csvList: CSV zoznam
+newsletter_testsend: Odosielanie testovacieho newsletteru
+newsletter_test_sent_message: "Testovac\xED newsletter bol odoslan\xFD \xFAspe\u0161ne"
+add_object_mbx_title: "Prida\u0165 z\xE1znam typu "
+newsletter_choose_report: Vyberte report
+newsletter_email_field_name: Pole s e-mailom
+mode: "M\xF3d"
+custom_download: "Vlastn\xFD download"
+original_file: "Origin\xE1lny s\xFAbor"
+web_format: "Web form\xE1t"
+print_format: "Print form\xE1t"
+office_format: "Office form\xE1t"
+change_password: "Zmeni\u0165 heslo"
+file_is_bigger_that_upload_limit: "Nasleduj\xFAci s\xFAbor je vet\u0161\xED ne\u017E
+  upload limit na serveri"
+send_test_email_success: "Testovac\xED e-mail bol odoslan\xFD. Chcete toto okno necha\u0165
+  otvoren\xE9?"
+press_crtl_and_select_to_compare: 'Porovanie: Ctrl + Klik na verziu'
+clear_filters: "Zmaza\u0165 filtre"
+tags_configuration: "Konfigur\xE1cia tagov"
+export_csv_include_headers: CSV export s nadpismi
+open_data_object: "Otvori\u0165 z\xE1znam"
+data_objects: "Z\xE1znamy"
+asset_type_change_not_allowed: "<strong>Povolen\xE9 s\xFA len s\xFAbory rovnak\xE9ho
+  typu.</strong><br/>[ typ nahran\xFDch s\xFAborov: \"%s\" | typ s\xFAboru: \"%s\"
+  ]"
+clear_content_of_selected_target_group: "Zmaza\u0165 obsah vybranej Cie\u013Eovej
+  skupiny"
+visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: "N\xE1v\u0161tevn\xEDci
+  tejto str\xE1nky bud\xFA automaticky priraden\xED k vybranej Cie\u013Eovej skupine"
+assign_target_group: "Priradi\u0165 Cie\u013Eov\xFA skupinu"
+assign_target_groups: "Priradi\u0165 Cie\u013Eov\xE9 skupiny"
 target_group: Target Group
-target_groups: Target Groups
-edit_content_for_target_group: Edit Content for Target Group
-email_reply_to: Reply To
-element_tag_filtered_tags: Filtered Tags
+target_groups: "Cie\u013Eov\xE9 skupiny"
+edit_content_for_target_group: "Upravi\u0165 obsah pre Cie\u013Eov\xFA skupinu"
+email_reply_to: "Odpoveda\u0165 (komu)"
+element_tag_filtered_tags: "Filtrovan\xE9 tagy"
 web2print_addOverprint: Overprinting
-analyze_permissions: Analyze Permissions
-unique: Unique
-glue: Glue
-date_format: Date Format
-attribute: Attribute
-forward_attribute: Forward Attribute
-upper: Upper
-lower: Lower
-disabled: Disabled
-capitalization: Capitalization
-restrict_to_locales: Restrict to locales
-predefined: Predefined
-save_as_copy: Save as copy
-set_as_favourite: Set as favourite
-grid_configuration: Grid Configuration
-shared_users: Shared Users
-shared_roles: Shared Roles
-save_and_share: Save & Share
-save_copy_and_share: Save Copy & Share
-locale: Locale
-ellipses: Ellipses
-insensitive: Insensitive
-yes_value: Yes Value
-no_value: No Value
-count_empty: Count Empty
-as_array: As array
-metadata_field: Metadata field
-only_count: Only as count
+analyze_permissions: "Analyzova\u0165 opr\xE1vnenia"
+unique: "Unik\xE1tne"
+glue: Lepidlo
+date_format: "Form\xE1t d\xE1tumu"
+attribute: "Atrib\xFAt"
+forward_attribute: "Preposla\u0165 atrib\xFAt"
+upper: "Vrchn\xFD"
+lower: "Spodn\xFD"
+disabled: "Zak\xE1zan\xE9"
+capitalization: "Kapit\xE1lky"
+restrict_to_locales: "Obmedzi\u0165 na jazyky"
+predefined: "Preddefinovan\xE9"
+save_as_copy: "Ulo\u017Ei\u0165 ako k\xF3piu"
+set_as_favourite: "Nastavi\u0165 ako ob\u013E\xFAben\xE9"
+grid_configuration: "Konfigur\xE1cia tabu\u013Eky (gridu)"
+shared_users: "Zdie\u013Ean\xED u\u017E\xEDvatelia"
+shared_roles: "Zdie\u013Ean\xE9 roly"
+save_and_share: "Ulo\u017Ei\u0165 a zdie\u013Ea\u0165"
+save_copy_and_share: "Ulo\u017Ei\u0165 k\xF3piu a zdie\u013Ea\u0165"
+locale: Jazyk
+ellipses: Elipsy
+insensitive: "Nez\xE1le\u017E\xED na ve\u013Ekosti p\xEDsmen"
+yes_value: "Hodnota \xE1no"
+no_value: Hodnota nie
+count_empty: "Po\u010D\xEDta\u0165 pr\xE1zdne"
+as_array: Ako pole
+metadata_field: "Pole metad\xE1t"
+only_count: "Len ako po\u010Det"
 parameter: Parameter
-forward_parameter: Forward Parameter
-is_array: Array Type
-php_class: PHP Class
-additional_data: Additional Data
-flatten: Flatten
-return_last_result: Return last result
-skip_null: Skip Null
-expand_children: Expand children
+forward_parameter: "Preposla\u0165 parameter"
+is_array: Typ pole
+php_class: PHP trieda
+additional_data: "Dodato\u010Dn\xE9 d\xE1ta"
+flatten: "Vyrovna\u0165"
+return_last_result: "Vr\xE1ti\u0165 posledn\xFD v\xFDsledok"
+skip_null: "P\u0159esko\u010Di\u0165 nulov\xE9 (Null)"
+expand_children: "Zobrazi\u0165 potomkov"
 collapse_children: Collapse children
-multiply: Multiply
-divide: Divide
-apply_to_all_objects: Apply to all
-apply_to_all_objects_msg: There are other objects which already have their own favourite
-  settings. Do you want to apply this config to those as well?
-encode: Encode
-decode: Decode
-serialize: Serialize
-unserialize: Unserialize
+multiply: "Vyn\xE1sobi\u0165"
+divide: "Vydeli\u0165"
+apply_to_all_objects: "Pou\u017Ei\u0165 na v\u0161etko"
+apply_to_all_objects_msg: "Existuj\xFA in\xE9 objekty, kter\xE9 u\u017E maj\xFA svoje
+  ob\u013E\xFAben\xE9 nastavenia. Chcete na ne tie\u017E pou\u017E\xED\u0165 zmeny?"
+encode: "Zak\xF3dova\u0165"
+decode: "Dek\xF3dova\u0165"
+serialize: "Serializova\u0165"
+unserialize: "Deserializova\u0165"
 offset: Offset
-col_attribute: Collection Attribute
-brick_attribute: Brick Attribute
-csv_column_configuration: Column Configuration
-column: Column
-resolver_strategy: Resolver Strategy
-resolver_settings: Resolver Settings
-csv_settings: CSV Settings
-skipheadrow: Skip head row
-csv_file_preview: CSV File Preview
-save_as: Save as
-import_export_configuration: Import Export Configuration
-brick_type: Brick Type
+col_attribute: "Atrib\xFAt kolekcie"
+brick_attribute: "Atrib\xFAt bloku (brick)"
+csv_column_configuration: "Konfigur\xE1cia st\u013Apcov"
+column: "St\u013Apec"
+resolver_strategy: "Strat\xE9gia resolveru"
+resolver_settings: Nastavenia resolveru
+csv_settings: Nastavenia CSV
+skipheadrow: "Presko\u010Di\u0165 riadok s hlavi\u010Dkou"
+csv_file_preview: "N\xE1h\u013Ead s\xFAboru CSV"
+save_as: "Ulo\u017Ei\u0165 ako"
+import_export_configuration: "Konfigur\xE1cia Importu a Exportu"
+brick_type: Blok (brick) typ
 renderer: Renderer
-getter: Getter
-string: String
-row: Row
-import_report: Import Report
-import_errors: Some errors occurred. Check the import report!
-import_is_done: Import is done
-import_file_prefix: Prefix for new files
-create_parents: Create parents
-fullpath: Full Path
-create_on_demand: Create on demand
-get_by_resolver: Get By Attribute
-direct: Direct
-skip_empty_values: Skip empty values
-do_not_overwrite: Do not overwrite
-never: Never
-if_not_empty: If not empty
-always: Always
-delimiter: Delimiter
-share_globally: Share globally
-gdpr_data_extractor: GDPR Data Extractor
-no_configuration: No Configuration
-share_configurations: Share configurations
-enable_inheritance: Enable Inheritance
-object_settings: Object Settings
-drop_me_here: Drag an item from the tree and drop it here
-clear_hotspots_msg: This image contains additional data like markers or hotspots.
-  Do you want to clear them as well?
-restore_failed: Restore failed
-subtract: Subtract
-batch_append_all: Batch append to all
-batch_append_selected: Batch append to selected
-batch_append_to: Append data to all
-login_token_invalid_user_error: Invalid user.
-login_token_as_admin_non_admin_user_error: Only admin users are allowed to login as
-  an admin user.
-login_token_no_password_error: User has no password set.
-targeting_toolbar: Targeting Toolbar
-sort_children_by: Sort Children By
-by_key: Key (A to Z)
-by_index: Index (Manual)
-successful_object_change_children_sort_to_index: Changed object children sorting to
-  Index
-successful_object_change_children_sort_to_key: Changed object children sorting to
-  Key
+getter: "Na\u010D\xEDtanie (Getter)"
+string: "Re\u0165azec"
+row: Riadok
+import_report: Report z importu
+import_errors: Vyskytli sa chyby. Skontrolujte report z importu
+import_is_done: "Import je hotov\xFD"
+import_file_prefix: "Predpona pro nov\xE9 s\xFAbory"
+create_parents: "Vytvori\u0165 rodi\u010Dov"
+fullpath: "Cel\xE1 cesta"
+create_on_demand: "Vytvori\u0165 na vy\u017Eiadanie"
+get_by_resolver: "Na\u010D\xEDta\u0165 pod\u013Ea atrib\xFAtu"
+direct: Priamy
+skip_empty_values: "Presko\u010Di\u0165 pr\xE1zdne hodnoty"
+do_not_overwrite: "Neprepisova\u0165"
+never: Nikdy
+if_not_empty: "Pokia\u013E nie je pr\xE1zdny"
+always: "V\u017Edy"
+delimiter: "Odde\u013Eova\u010D"
+share_globally: "Zdiela\u0165 glob\xE1lne"
+gdpr_data_extractor: "Extraktor d\xE1t GDPR"
+no_configuration: "\u017Diadna konfigur\xE1cia"
+share_configurations: "Zdiela\u0165 konfigur\xE1cie"
+enable_inheritance: "Povoli\u0165 dedi\u010Dnos\u0165"
+object_settings: "Nastavenia z\xE1znamov"
+drop_me_here: "Potiahnite sem polo\u017Eku zo stromu"
+clear_hotspots_msg: "Tento obr\xE1zok obsahuje dodate\u010Dn\xE9 d\xE1ta ako ukazatele
+  a hotspoty. Chcete ich tie\u017E zmaza\u0165?"
+restore_failed: Obnovenie zlyhalo
+subtract: "Od\u010D\xEDta\u0165"
+batch_append_all: "Hromadne pripoji\u0165 ku v\u0161etk\xFDm"
+batch_append_selected: "Hromadn\u011B p\u0159ipojit k vybran\xFDm"
+batch_append_to: "Pripoji\u0165 d\xE1ta k"
+login_token_invalid_user_error: "Neplatn\xFD u\u017E\xEDvate\u013E."
+login_token_as_admin_non_admin_user_error: "Len administr\xE1tori sa m\xF4\u017Eu
+  prihl\xE1si\u0165 ako admin u\u017E\xEDvate\u013E."
+login_token_no_password_error: "U\u017E\xEDvate\u013E nem\xE1 nastaven\xE9 heslo."
+targeting_toolbar: Panel cielenia
+sort_children_by: "Triedi\u0165 potomkov pod\u013Ea"
+by_key: "K\u013E\xFA\u010Da (abecedne)"
+by_index: "Indexu (manu\xE1lne)"
+successful_object_change_children_sort_to_index: "Triedenie potomkov z\xE1znamu bolo
+  zmenen\xE9 na triedenie pod\u013Ea indexu"
+successful_object_change_children_sort_to_key: "Triedenie potomkov z\xE1znamu bolo
+  zmenen\xE9 na triedenie pod\u013Ea k\u013E\xFA\u010Du"
 successful_publish_document: Document successfully published
 successful_publish_object: Object successfully published
 successful_unpublish_document: Document successfully unpublished
 successful_unpublish_object: Object successfully unpublished
-error_object_change_children_sort_to_index: Sort Children by Index is not possible
-  on paginated folder/tree.
-error_object_change_children_sort_to_key: Unable to change object children sorting
-  to Key
+error_object_change_children_sort_to_index: "Triedenie potomkov z\xE1znamu pod\u013Ea
+  indexu sa nepodarilo nastavi\u0165"
+error_object_change_children_sort_to_key: "Triedenie potomkov z\xE1znamu pod\u013Ea
+  k\u013E\xFA\u010Du sa nepodarilo nastavi\u0165"
 error_publish_document: Document could not be published
 error_publish_object: Object could not be published
 error_unpublish_document: Document could not be unpublished
 error_unpublish_object: Object could not be unpublished
-edit_as_html: Edit as HTML
-edit_as_plain_text: Edit as plain text
-error_empty_file_upload: File is empty!
-type_column: Type column
-keep: keep
-clear_version_message: Do you really want to delete all non-published versions of
-  this element?
-clear_all: Clear All
-unlink_existing_document: Unlink existing Document
-grid_options: Grid Options
-save_grid_options: Save Grid Options
-download_selected_as_zip: Download selected items as ZIP
-please_select_items_to_download: Please select items to download in the list
-key_bindings: Key Bindings
-keybinding_openClassEditor: Open Class Editor
-keybinding_showMetaInfo: Show Meta Info
-keybinding_clearAllCaches: Clear all Caches
-keybinding_clearDataCache: Clear Data Cache
-scheduled_block_delete_all_in_past: Delete all past entries
-scheduled_block_really_delete_past: Really delete all entries scheduled in the past?
-scheduled_block_delete_all: Delete all entries
-scheduled_block_really_delete_all: Really delete all scheduled entries, including
-  future entries?
-2fa_disable: Disable 2FA
-renew_2fa_secret: Renew Two Factor Secret
-two_factor_authentication: Two Factor Authentication
-2fa_alert_text: Please scan the QR-Code and add it to your Google Authenticator. <br>If
-  you don't have the Google Authenticator app installed on your mobile phone, please
-  download it from the App Store/Play Store.<br><br> You will need to reload Pimcore
-  and enter the code shown within the App afterwards!
-2fa_alert_submit: Reload Pimcore & Enter Code
-setup_two_factor: Setup Two Factor Authentication
-2fa_setup_message: Two Factor Authentication is required for your account! You have
-  to set it up in your profile settings, otherwise you will not be able to sign in
-  again.
-set_focal_point: Set Focal Point
-quicksearch: Quick Search
-standard_preview: Standard Preview
-upload_new_version: Upload new version
-360_viewer: "360\xB0 Viewer"
-invalid_name: Invalid name
-clone: Clone
-enter_the_name_of_the_new_item: Enter the name of the new item
-html_tags: HTML-Tags
-clear_temporary_files: Clear temporary files
-error_pasting_item: Unable to paste item
-modificationdate: Modification Date
-blank: Blank
-message: Message
-from: From
-to: To
+edit_as_html: "Upravi\u0165 ako HTML"
+edit_as_plain_text: "Upravi\u0165 ako text"
+error_empty_file_upload: "S\xFAbor je pr\xE1zdny!"
+type_column: "St\u013Apec typ"
+keep: "zachova\u0165"
+clear_version_message: "Naozaj chcete zmaza\u0165 v\u0161etky nepublikovan\xE9 verzie
+  tohoto elementu?"
+clear_all: "Zmaza\u0165 v\u0161etko"
+unlink_existing_document: "Odpoji\u0165 existuj\xFAci dokument"
+grid_options: "Nastavenia tabu\u013Eky (gridu)"
+save_grid_options: "Ulo\u017Ei\u0165 nastavenia tabu\u013Eky (gridu)"
+download_selected_as_zip: "Stiahnu\u0165 vybran\xE9 polo\u017Eky ako ZIP"
+please_select_items_to_download: "Vyberte pros\xEDm polo\u017Eky ku stiahnutiu"
+key_bindings: "Kl\xE1vesov\xE9 skratky"
+keybinding_openClassEditor: "Otvori\u0165 editor tried"
+keybinding_showMetaInfo: "Zobrazi\u0165 meta inform\xE1cie"
+keybinding_clearAllCaches: "Zmaza\u0165 v\u0161etky vyrovn\xE1vacie pam\xE4te"
+keybinding_clearDataCache: "Zmaza\u0165 d\xE1tov\xFA vyrovn\xE1vaciu pam\xE4\u0165"
+scheduled_block_delete_all_in_past: "Zmaza\u0165 v\u0161etky predo\u0161l\xE9 z\xE1znamy"
+scheduled_block_really_delete_past: "Naozaj chcete zmaza\u0165 v\u0161etky z\xE1znamy
+  napl\xE1novan\xE9 v minulosti?"
+scheduled_block_delete_all: "Zmaza\u0165 v\u0161etky z\xE1znamy"
+scheduled_block_really_delete_all: "Naozaj chcete zmaza\u0165 v\u0161etky napl\xE1novan\xE9
+  z\xE1znamy vr\xE1tane bud\xFAcich?"
+2fa_disable: "Vypn\xFA\u0165 dvojf\xE1zov\xE9 overovanie."
+renew_2fa_secret: "Obnovi\u0165 dvojf\xE1zov\xE9 heslo"
+two_factor_authentication: "Dvojf\xE1zov\xE9 overovanie."
+2fa_alert_text: "Naskenujte pros\xEDm QR k\xF3d do svojho Google autentiz\xE1toru."
+2fa_alert_submit: "Obnovi\u0165 Pimcore a zada\u0165 k\xF3d"
+setup_two_factor: "Nastavit dvojf\xE1zov\xE9 overovanie"
+2fa_setup_message: "Na Va\u0161om \xFA\u010Dte je vy\u017Eadovan\xE9 dvojf\xE1zov\xE9
+  overovanie! Nastavte ho pros\xEDm vo svojom profile, v opa\u010Dnom pr\xEDpade sa
+  nebudete m\xF4c\u0165 znova prihl\xE1si\u0165."
+set_focal_point: "Nastavi\u0165 ohnisko"
+quicksearch: "R\xFDchle vyh\u013Ead\xE1vanie"
+standard_preview: "\u0160tandardn\xFD n\xE1h\u013Ead"
+upload_new_version: "Nahra\u0165 nov\xFA verziu"
+360_viewer: "360\xB0 prehliada\u010D"
+invalid_name: "Neplatn\xFD n\xE1zov"
+clone: "Klonova\u0165"
+enter_the_name_of_the_new_item: "Zadajte n\xE1zov novej polo\u017Eky"
+html_tags: HTML tagy
+clear_temporary_files: "Zmaza\u0165 do\u010Dasn\xE9 s\xFAbory"
+error_pasting_item: "Polo\u017Eku se nepodarilo vlo\u017Ei\u0165"
+modificationdate: "D\xE1tum modifik\xE1cie"
+blank: "Pr\xE1zdne"
+message: "Spr\xE1va"
+from: Od
+to: Komu
 html: HTML
 text: Text
-create_folder: Add Folder
-error_deleting_item: Could not delete item
-error_renaming_item: There was an error while renaming the item.
-revert: Revert
-parent: Parent
-merge_translations: Merge Translations
-prefix: Prefix
-load: Load
-saving_failed: Saving failed!
-failed_to_create_new_item: Failed to create new item, please try again.
-bundle: Bundle
-product: Product
+create_folder: "Prida\u0165 zlo\u017Eku"
+error_deleting_item: "Polo\u017Eku sa neporadilo zmaza\u0165"
+error_renaming_item: "Pri premenov\xE1van\xED polo\u017Eky do\u0161lo k chybe."
+revert: "Vr\xE1ti\u0165"
+parent: "Rodi\u010D"
+merge_translations: "Zl\xFA\u010Di\u0165 preklady"
+prefix: Predpona
+load: "Nahra\u0165"
+saving_failed: "Ulo\u017Eenie zlyhalo!"
+failed_to_create_new_item: "Vytvorenie novej polo\u017Eky zlyhalo, sk\xFAste to znova,
+  pros\xEDm."
+bundle: "Bal\xED\u010Dek (bundle)"
+product: Produkt
 index_field_selection_field: Index Field Selection
 indexFieldSelectionField: Index Field Selection
 indexFieldSelectionField_settings: Settings (Multi Index Field Selection Field)
@@ -853,8 +873,8 @@ bundle_ecommerce_pricing_config_condition_sold_count: Count
 bundle_ecommerce_pricing_config_condition_sold_count_cart: Count Cart
 bundle_ecommerce_pricing_config_condition_voucherToken: Voucher
 bundle_ecommerce_pricing_config_condition_tenant: Tenant
-bundle_ecommerce_pricing_config_condition_targetgroup: Target Group
-bundle_ecommerce_pricing_config_condition_targetgroup_threshold: Threshold
+bundle_ecommerce_pricing_config_condition_targetgroup: "Cie\u013Eov\xE1 skupina"
+bundle_ecommerce_pricing_config_condition_targetgroup_threshold: Prah
 bundle_ecommerce_pricing_config_action_gift: Gift
 bundle_ecommerce_pricing_config_action_cart_discount: Cart discount
 bundle_ecommerce_pricing_config_action_cart_discount_percent: Discount in %
@@ -869,20 +889,20 @@ ecommerce: E-Commerce
 preSelectMode: Pre Select Mode
 remote_single: Single Select from Remote
 remote_multi: Multi Select from Remote
-local_single: Single Select from predefined List
-local_multi: Multi Select from predefined List
+local_single: "Samostatn\xFD v\xFDber zo zoznamu preddefinovan\xFDch"
+local_multi: "Viacn\xE1sobn\xFD v\xFDber zo zoznamu preddefinovan\xFDch"
 indexFieldSelection: Index Field Selection
 indexFieldSelection_settings: Index Field Selection Settings
 filtergroups: Filter Groups
 preSelect: Pre Select
-predefined_pre_select_options: Predefined pre select options
-bundle_ecommerce_clear_config_cache: Clear configuration cache
+predefined_pre_select_options: "Zoznam preddefinovan\xFDch mo\u017Enost\xED"
+bundle_ecommerce_clear_config_cache: "Zmaza\u0165 vyrovn\xE1vaciu pam\xE4\u0165 konfigur\xE1cie"
 bundle_ecommerce_back-office_order: Back Office - Ordering
 bundle_ecommerce_vouchertoolkit_tab: Voucher Details
-path: Path
-thumbnail: Thumbnail
-download_thumbnail: Download Thumbnail
-no_thumbnail_selected: No thumbnail selected
+path: Cesta
+thumbnail: "N\xE1h\u013Ead"
+download_thumbnail: "Stiahnu\u0165 n\xE1h\u013Ead"
+no_thumbnail_selected: "Nie je vybran\xFD \u017Eiadny n\xE1h\u013Ead"
 list_thumbnail_in_download_section_on_image_detail_view: List as option in download
   section on image detail view
 there_are_more_items: There are more items than displayed

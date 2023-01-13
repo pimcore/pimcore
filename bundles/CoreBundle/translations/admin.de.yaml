@@ -1,1088 +1,1118 @@
 ---
-unsupported_feature: Unsupported feature! Please check system requirements!
-screen_size_to_small: Your screen is too small to display the desired preview.
-too_many_children_for_recyclebin: This element contains too many children to be moved
-  to the recycle bin so it will be deleted permanentely
-default: Default
-metadata: Metadata
-email_address: Email Address
-email_blacklist: Email Blacklist
-OK: OK
+unsupported_feature: "Nicht unterst\xFCtzte Funktion! Bitte \xFCberpr\xFCfen Sie die
+  Systemanforderungen!"
+screen_size_to_small: "Ihr Bildschirm ist zu klein, um die gew\xFCnschte Voransicht
+  anzuzeigen."
+too_many_children_for_recyclebin: "Das Element, das in den Papierkorb verschoben werden
+  soll, enth\xE4lt zu viele Unterelemente. Alle Elemente werden unwiderruflich gel\xF6scht."
+default: Standard
+metadata: Metadaten
+email_address: E-Mail-Adresse
+email_blacklist: E-Mail Blacklist
+OK: Ok
 optional: optional
-search_replace_assignments_error: Please select items where to replace and a new target
-  item.
-replace_assignments_in_selected_elements: Replace assignments in selected elements
-search_replace_assignments: Search & Replace Assignments
-imageadvanced: Image Advanced
-filter_active_message: Do you want to export only the filtered values?
-close_others: Close Others
-close_all: Close All
-close_unmodified: Close Unmodified
-classid: Class ID
+search_replace_assignments_error: "Bitte w\xE4hle die zu ersetzenden Items und das
+  neue Zielelement aus."
+replace_assignments_in_selected_elements: "Die Zuweisung in den ausgew\xE4hlten Elementen
+  ersetzen"
+search_replace_assignments: Suche & Ersetze Zuweisungen
+imageadvanced: Bild Erweitert
+filter_active_message: "M\xF6chten Sie nur die gefilterten Werte exportieren?"
+close_others: "Alle anderen schlie\xDFen"
+close_all: "Alle schlie\xDFen"
+close_unmodified: "Unbearbeitete schlie\xDFen"
+classid: Klassen ID
 parentid: Parent ID
-mimetype: MIME-Type
-creationdate: Creation Date
-usermodification: User Modification
-userowner: Owner
-languages: Languages
-password_was_not_changed: Password wasn't changed because it isn't secure enough
+mimetype: MIME-Typ
+creationdate: Erstellungsdatum
+usermodification: Benutzer bearbeiten
+userowner: "Eigent\xFCmer des Benutzers"
+languages: Sprachen
+password_was_not_changed: "Das Password wurde nicht ge\xE4ndert, da es nicht sicher
+  genug ist"
 marketing: Marketing
-clear_content_of_current_view: Clear content of current view
-highlight_editable_elements: Highlight editable elements
-continue: Continue
-you_have_unsaved_changes: You have unsaved changes.
-global_targeting_rule: Global Targeting Rule
-global_targeting_rules: Global Targeting Rules
-personalization: Personalization
-shared_translations: Shared Translations
-textfield: Textfield
-add_data: Add data
-add_hotspot: Add hotspot
-add_marker_or_hotspots: Add marker or hotspots
-custom_reports: Custom Reports
-start_date: Start date
-start_date_relative: Start date (relative to today)
-end_date: End date
-end_date_relative: End date (relative to today)
-relative_date_description: i.e. -1m +1d (d=days, m=months, y=years)
-source_definition: Source Definition
-clear_thumbnails: Clear Thumbnails
-recipients: Recipients
-newsletter_send_error: Can't send your newsletter, please contact your administrator!
-newsletter_sent_message: Your newsletter is now sent to all recipients, this process
-  is done in the background (you can close pimcore in the meantime) and can take up
-  to one hour.
-do_you_really_want_to_send_the_newsletter_to_all_recipients: Do you really want to
-  send the newsletter to all recipients
-send_test_newsletter: Send Test-Newsletter
-send_newsletter: Send Newsletter Now
-object_filter: Object Filter
-add_newsletter: Add Newsletter
+clear_content_of_current_view: "L\xF6sche Inhalt der aktuellen Ansicht"
+highlight_editable_elements: Editierbare Elemente hervorheben
+continue: Weiter
+you_have_unsaved_changes: "Es liegen ungesicherte \xC4nderungen vor."
+global_targeting_rule: Globale Targeting-Regel
+global_targeting_rules: Globale Segmentierungsregeln
+personalization: Personalisierung
+shared_translations: "Geteilte \xDCbersetzungen"
+textfield: Textfeld
+add_data: "Daten hinzuf\xFCgen"
+add_hotspot: "Hotspot hinzuf\xFCgen"
+add_marker_or_hotspots: "Markierung oder Hotspot hinzuf\xFCgen"
+custom_reports: Individueller Bericht
+start_date: Anfangsdatum
+start_date_relative: Anfangsdatum (relativ zu heute)
+end_date: Enddatum
+end_date_relative: Enddatum (relativ zu heute)
+relative_date_description: z.B. -1m +1d (d=Tage, m=Monate, y=Jahre)
+source_definition: Quelle Definition
+clear_thumbnails: "Miniaturbilder l\xF6schen"
+recipients: "Empf\xE4nger"
+newsletter_send_error: Der Newsletter kann nicht versendet werden, bitte informieren
+  Sie Ihren Administrator!
+newsletter_sent_message: "Der Newsletter wird nun im Hintergrund an alle Empf\xE4nger
+  versendet, dies kann bis zu einer Stunde dauern. (Sie k\xF6nnen pimcore derweil
+  schlie\xDFen)"
+do_you_really_want_to_send_the_newsletter_to_all_recipients: "Wollen Sie den Newsletter
+  wirklich an alle Empf\xE4nger versenden ?"
+send_test_newsletter: Newsletter Testversand
+send_newsletter: Newsletter JETZT versenden
+object_filter: Objekt Filter
+add_newsletter: "Newsletter hinzuf\xFCgen"
 newsletter: Newsletter
 crm: CRM
-notes_events: Notes &amp; Events
-delete_folder: Delete Folder
-home: Home
-subject: Subject
-poster_image: Poster-Image
+notes_events: Notizen und Termine
+delete_folder: "Ordner l\xF6schen"
+home: Start
+subject: Betreff
+poster_image: Vorschaubild
 tablet: Tablet
-hardlink: Hardlink
-convert_to: Convert to
-replace: Replace
-targeting: Targeting
-paste_inheritance: Paste (inheritance)
-are_you_sure: Are you sure?
-all_content_will_be_lost: All content will be lost
-content_master_document: Content-Master Document
-overwrite: Overwrite
-click_right_to_overwrite: Click right to overwrite
-open_document_by_id: Open Document
-open_asset_by_id: Open Asset
-open_object_by_id: Open Object
-element_not_found: Element not found
-import_from_url: Import from URL
-do_you_really_want_to_leave_the_editmode: Do you really want to leave the editmode
-  (NO!)
-or_specify_an_asset_image_below: or specify an asset image below
-medium: Medium
-saved_successfully: Saved successfully!
+hardlink: |
+  Hardlink
+convert_to: Konvertieren nach
+replace: Ersetzen
+targeting: Zielgruppenorientierung
+paste_inheritance: "Einf\xFCgen (Vererbung)"
+are_you_sure: Sind Sie sicher?
+all_content_will_be_lost: "S\xE4mtliche Inhalte werden verloren gehen"
+content_master_document: Content-Master Dokument
+overwrite: "\xDCberschreiben"
+click_right_to_overwrite: "Rechts-Klick zum \xDCberschreiben"
+open_document_by_id: "Dokument mit ID \xF6ffnen"
+open_asset_by_id: "\xD6ffne Asset via ID"
+open_object_by_id: "Objekt mit ID \xF6ffnen"
+element_not_found: Element nicht gefunden
+import_from_url: Von URL importieren
+do_you_really_want_to_leave_the_editmode: Wollen sie den Editmodus wirklich verlassen
+  (NEIN!)
+or_specify_an_asset_image_below: oder ein Bild angeben
+medium: mittel
+saved_successfully: Speichern erfolgreich
 qr_codes: QR-Codes
 element: Element
-details_for_selected_event: Details for selected element
-fields: Fields
-not_possible_with_paging: Sorry, this is not possible in elements which are paged,
-  try to restructure your data to avoid pages in the tree
-inherited: Inherited
-length: Length
-show_in_tree: Show in Tree
-exactmatch: exact match
+details_for_selected_event: "Details f\xFCr ausgew\xE4hltes Element"
+fields: Felder
+not_possible_with_paging: "Bedaure, doch dies ist nicht m\xF6glich bei Elementen die
+  als Seiten behandelt werden. Versuchen Sie die Daten neu zu ordnen, um Seiten in
+  der Baumstruktur zu vermeiden."
+inherited: Geerbt
+length: "L\xE4nge"
+show_in_tree: Baumstruktur anzeigen
+exactmatch: "perfekte \xDCbereinstimmung"
 desktop: Desktop
-drag_me: Drag Me
-serverVars: Server Variables
-attributes: Attributes
+drag_me: zieh mich
+serverVars: Server-Variablen
+attributes: Attribute
 code: Code
 tag: Tag
 tags: Tags
-Click here to proceed: Click here to proceed
-Your browser is not supported. Please install the latest version of one of the following browsers.: Your
-  browser is not supported. Please install the latest version of one of the following
-  browsers.
-open_in_new_window: Open in new Window
-limit_reached: Limit reached
-casesensitive: case-sensitive
-path_aliases: Path Aliases
-pretty_url: Pretty URL
-pretty_url_label: Pretty URL (overrides path from tree-structure)
-password_cannot_be_changed: Password cannot be changed
-old_password: Old Password
-new_password: New Password
-retype_password: Retype Password
-reports: Reports
-roles: Roles
-Password: Password
-Forgot your password: Forgot your password
-Back to Login: Back to Login
-Enter your username and pimcore will send a login link to your email address: Enter
-  your username and Pimcore will send a login link to your email address
-Please check your mailbox.: Please check your mailbox.
-Login: Login
-Submit: Submit
-A temporary login link has been sent to your email address.: A temporary login link
-  has been sent to your email address.
-user_inactive: User is not active
-user_no_email_address: User has no email address
-user_no_password: User has no password
-user_unknown: User unknown
-lost_password_email_error: Could not send password recovery email
-use_current_player_position_as_preview: Use current player position as preview
-select_image_preview: Select Image Preview
-preview_not_available: Preview not available
+Click here to proceed: Klicke hier um fortzufahren
+Your browser is not supported. Please install the latest version of one of the following browsers.: "Dein
+  Browser wird nicht unterst\xFCtzt. Bitte installieren Sie die aktuellste Version
+  von einem der aufgef\xFChrten Browser."
+open_in_new_window: "In neuem Fenster \xF6ffnen"
+limit_reached: Limit erreicht
+casesensitive: "Gro\xDF-/Kleinschreibung ber\xFCcksichtigen"
+path_aliases: Pfad-Alias
+pretty_url: "H\xFCbsche URL"
+pretty_url_label: "H\xFCbsche URL (\xFCberschreibt den Pfad der Baum-Struktur)"
+password_cannot_be_changed: "Passwort kann nicht ge\xE4ndert werden"
+old_password: Altes Passwort
+new_password: Neues Passwort
+retype_password: Passwort erneut eingeben
+reports: Berichte
+roles: Rollen
+Password: Kennwort
+Forgot your password: Kennwort vergessen
+Back to Login: "Zur\xFCck zum Login"
+Enter your username and pimcore will send a login link to your email address: Geben
+  Sie Ihren Benutzernamen ein und Pimcore sendet Ihnen einen Link zum Login per E-Mail
+Please check your mailbox.: "Bitte pr\xFCfen Sie Ihren Posteingang."
+Login: Anmelden
+Submit: Absenden
+A temporary login link has been sent to your email address.: "Ein tempor\xE4rer Login-Link
+  wurde an Ihre E-Mail-Adresse gesendet"
+user_inactive: Benutzer ist inaktiv
+user_no_email_address: Benutzer hat keine E-Mail-Adresse
+user_no_password: Benutzer hat kein Passwort
+user_unknown: Benutzer unbekannt
+lost_password_email_error: Konnte keine E-Mail zur Wiederherstellung versenden
+use_current_player_position_as_preview: Aktuelle Video-Position als Vorschau nutzen.
+select_image_preview: "W\xE4hle Bildvorschau"
+preview_not_available: Vorschau nicht vorhanden
 status: Status
-video_preview_in_progress: The preview for this video is currently in progress.
-php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: PHP-CLI binary or FFMPEG is
-  not available, please ensure that both are installed/executable and configured in
-  the system settings!
-video_thumbnails: Video Thumbnails
-do_you_really_want_to_close_pimcore: Do you really want to close Pimcore?
-drop_element_here: Drop element here
-select_specific_area_of_image: Select specific area of image
-paste_recursive_updating_references: Paste recursive, updating references
-add_hardlink: Add Hardlink
-source_path: Source path
-properties_from_source: Use properties from source document
+video_preview_in_progress: "Die Vorschau f\xFCr dieses Video wird gerade erstellt."
+php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: "Das PHP-Kommandozeilenprogramm
+  oder FFMPEG wurden nicht gefunden. Bitte stellen Sie sicher, dass beide installiert
+  sowie ausf\xFChrbar sind und konfigurieren Sie die entsprechenden Pfade in den Systemeinstellungen."
+video_thumbnails: Video Miniaturansichten
+do_you_really_want_to_close_pimcore: "Sind Sie sicher, dass Sie Pimcore schlie\xDFen
+  m\xF6chten?"
+drop_element_here: Lege das Element hier ab
+select_specific_area_of_image: "Einen Bereich im Bild w\xE4hlen"
+paste_recursive_updating_references: "Rekursiv einf\xFCgen und Referenzen aktualisieren"
+add_hardlink: "Hardlink hinzuf\xFCgen"
+source_path: Quellpfad
+properties_from_source: Verwende Eigenschaften des Quelldokuments
 children_from_source: Use children from source document
-click_right_for_more_options: Click right for more options
-move_to_tab: Move to Tab
-not_supported: Not supported
-edit_link: Edit Link
-resize: Resize
-scalebyheight: Scale by Height
-scalebywidth: Scale by Width
-crop: Crop
-cleanup: Cleanup
-this_element_cannot_be_edited: This element cannot be edited
+click_right_for_more_options: "Rechtsklick f\xFCr mehr Optionen"
+move_to_tab: "Als Tab hinzuf\xFCgen"
+not_supported: "Nicht unterst\xFCtzt"
+edit_link: Link bearbeiten
+resize: "Gr\xF6\xDFe \xE4ndern"
+scalebyheight: "Skaliere der H\xF6he nach"
+scalebywidth: Skaliere der Breite nach
+crop: Zuschneiden
+cleanup: Bereinigung
+this_element_cannot_be_edited: Dieses Element kann nicht editiert werden
 details: Details
-cannot_save_object_please_try_to_edit_the_object_in_detail_view: <b>Cannot save object!</b><br
-  />Please try to edit the object in the detail view.
-size: Size
-select_a_file: Select a file
-upload_compatibility_mode: Upload File (Compatibility Mode)
-the_system_is_in_maintenance_mode_please_wait: The system is in maintenance mode,
-  please wait
-activate: Activate
-image_is_too_small: Image is too small, please choose a bigger one.
-name_is_not_allowed: Name is not allowed
-import_from_server: Import from Server
-upload_files: Upload Files
-upload_zip: Upload ZIP Archive
-document_root: Document Root
-batch_change_selected: Batch edit selected
-download_as_zip: Download as ZIP
-locked: Locked
-element_cannot_be_move_because_it_is_locked: Element cannot be moved because it is
-  locked.
-element_cannot_be_moved: The element cannot be moved here
-element_cannot_be_moved_because_target_is_paginated: The element cannot be dragged
-  on a paginated tree/folder with manual indexing (Sort by index). Please change the
-  sorting method or use "Search & Move" option under the "Advanced" context menu of
-  the target to move the elements.
-no_collections_allowed: No Collections allowed
-filter_condition: Filter Condition
-all_types: All Types
+cannot_save_object_please_try_to_edit_the_object_in_detail_view: <b>Das Objekt kann
+  nicht gespeichert werden!</b><br />Bitte bearbeiten Sie das Objekt im Detail.
+size: "Gr\xF6\xDFe"
+select_a_file: "W\xE4hle eine Datei"
+upload_compatibility_mode: "Eine Datei hochladen (Kompatibilit\xE4tsmodus)"
+the_system_is_in_maintenance_mode_please_wait: Das System ist im Wartungsmodus, bitte
+  warten
+activate: Aktivieren
+image_is_too_small: "Bild ist zu klein, bitte w\xE4hle ein Gr\xF6\xDFeres."
+name_is_not_allowed: Name ist nicht erlaubt
+import_from_server: Von Server importieren
+upload_files: Dateien hochladen
+upload_zip: ZIP-Archiv hochladen
+document_root: Wurzelverzeichnis
+batch_change_selected: "Stapelzuweisung f\xFCr ausgew\xE4hlte Elemente"
+download_as_zip: Als ZIP herunterladen
+locked: Gesperrt
+element_cannot_be_move_because_it_is_locked: Das Element kann nicht verschoben werden,
+  da es gesperrt ist.
+element_cannot_be_moved: Das Element kann nicht hierher verschoben werden
+element_cannot_be_moved_because_target_is_paginated: "Das Element kann nicht auf einen
+  paginierten Baum/Ordner mit manueller Indizierung (Sortieren nach Index) gezogen
+  werden. Bitte \xE4ndern Sie die Sortiermethode oder verwenden Sie die Option \u201ESuchen
+  & Verschieben\u201C im Kontextmen\xFC \u201EErweitert\u201C des Ziels, um die Elemente
+  zu verschieben."
+no_collections_allowed: Keine Verbindungen erlaubt
+filter_condition: Filterbedingungen
+all_types: Alle Typen
 audio: Audio
 video: Video
-archive: Archive
-unknown: Unknown
-class: Class
-page: Page
-objectbrick: Objectbrick
-field_collection: Field-Collection
-snippet: Snippet
-folder: Folder
-your_selection: Your Selection
-double_click_to_add_item_to_selection: Double-click an item on the left to add it
-  to this selection.
+archive: Archiv
+unknown: Unbekannt
+class: Klasse
+page: Seite
+objectbrick: Objektbaustein
+field_collection: Feldsammlung
+snippet: Schnipsel
+folder: Ordner
+your_selection: Deine Auswahl
+double_click_to_add_item_to_selection: "Klicken Sie doppelt auf ein Element auf der
+  linken Seite, um es hier hinzuzuf\xFCgen"
 label: Label
-error_auth_failed: Login failed!<br />Please try again.
-error_session_expired: Session expired!<br />Please login again.
-site: Site
-descending: Descending
-ascending: Ascending
-sort: Sort
-results: Results
-dimension: Dimension
-metric: Metric
+error_auth_failed: Anmeldung fehlgeschlagen! Bitte versuchen Sie es erneut.
+error_session_expired: Sitzung abgelaufen! Bitte loggen Sie sich erneut ein.
+site: Seite
+descending: Absteigend
+ascending: Aufsteigend
+sort: Sortieren
+results: Ergebnis
+dimension: "Ma\xDF"
+metric: Metrisch
 segment: Segment
-data_explorer: Data Explorer
+data_explorer: Datei Explorer
 navigation: Navigation
-entrances: Entrances
-exits: Exits
-restore: Restore
-amount: Amount
-flush_recyclebin: Flush Recycle Bin
-recyclebin: Recycle Bin
-deletedby: Deleted By
-open_select_editor: Open Selection-Editor
-ignore: Ignore
-email_log: Email Log
-email_log_resend: Resend email
-email_log_resend_window_msg: Please confirm that you want to send the email again
-  to all recipients.
-select_site: Select a site
-main_site: Main Site
-filename: Filename
-unsupported_filetype: Unsupported Filetype
-email_log_resend_window_success_message: The email has been sent successfully to all
-  recipients.
-email_log_resend_window_error_message: An error occurred. The email has not been resent.
-error_jobs: The following jobs failed
-batch_change: Batch edit all
-batch_edit_field: Batch edit all field
-published: Published
-all: all
-items_per_page: Items per page
-reload_pimcore_changes: You have to reload Pimcore for the changes to take effect,
-  would you like to do this now?
+entrances: "Eing\xE4nge"
+exits: "Ausg\xE4nge"
+restore: Wiederherstellen
+amount: Anzahl
+flush_recyclebin: Papierkorb leeren
+recyclebin: Papierkorb
+deletedby: "Gel\xF6scht von"
+open_select_editor: "\xD6ffne Selektions-Editor"
+ignore: Ignorieren
+email_log: E-Mail Log
+email_log_resend: E-Mail versenden
+email_log_resend_window_msg: "Bitte best\xE4tige, dass du die E-Mail wiederholt an
+  alle Empf\xE4nger versenden m\xF6chtest."
+select_site: "W\xE4hlen Sie eine Seite"
+main_site: Hauptseite
+filename: Dateiname
+unsupported_filetype: "Nicht unterst\xFCtzes Dateiformat"
+email_log_resend_window_success_message: "Die E-Mail wurde erfolgreich an alle Empf\xE4nger
+  versendet."
+email_log_resend_window_error_message: Ein Fehler ist aufgetreten. Die E-Mail konnte
+  nicht versendet werden.
+error_jobs: Folgende Jobs schlugen fehl
+batch_change: "Stapelzuweisung f\xFCr alle Elemente"
+batch_edit_field: Batch Zuweisung des Feldes
+published: "Ver\xF6ffentlicht"
+all: alle
+items_per_page: Elemente pro Seite
+reload_pimcore_changes: "Pimcore muss nun neu geladen werden, damit die \xC4nderungen
+  wirksam werden, wollen Sie das jetzt tun?"
 info: Info
-or: or
-paste_contents: Paste only contents here
-paste_as_child: Paste as child
+or: oder
+paste_contents: "Hier nur Inhalte einf\xFCgen"
+paste_as_child: "Einf\xFCgen als Kindelement"
 paste_recursive_as_child: Paste as child (recursive)
-view_original: View Original
+view_original: "Original \xF6ffnen"
 feed: Feed
-no_items_found: No items found
-public_url: Public URL
-pageviews: Pageviews
-visits: Visits
+no_items_found: Keine Artikel gefunden
+public_url: "\xD6ffentliche URL"
+pageviews: Seitenaufrufe
+visits: Besucher
 detail: Detail
-report_settings: Report Settings
-overview: Overview
-visitor_overview: Visitor Overview
-other: Other
+report_settings: Report Einstellungen
+overview: "\xDCbersicht"
+visitor_overview: "Besucher \xDCbersicht"
+other: Sonstige
 google_analytics: Google Analytics
-reports_and_marketing: Marketing & Reports
-save_only_scheduled_tasks: Save only scheduled tasks
-modified_assets: Modified Assets
-modification_statistic: Changes in the last 31 days
-add_portlet: Add Portlet
-modified_documents: Modified Documents
-modified_objects: Modified Objects
-welcome: Welcome
-save_and_publish: Save & Publish
-delete: Delete
-save: Save
-add_assets: Add Asset(s)
-preview: Preview
-advanced: Advanced
-basic: Basic
-list: List
-view: View
-publish: Publish
-rename: Rename
-settings: Settings
-properties: Properties
-versions: Versions
-add: Add
-date: Date
-user: User
-note: Note
-email_cc: Cc
-email_bcc: Bcc
-email_settings: Email Settings
-email_settings_receiver_description: 'Multiple recipients can be specified by separating
-  the email addresses with a semicolon. <br/>Example: receiver@pimcore.org; receiver2@pimcore.org<br/>For
-  ''From'' you can use additionally the syntax <i>My Name &lt;my-name@example.com&gt;</i>'
-email_logs: Sent Emails
-email_log_sent_Date: Date sent
-predefined_document_type: Predefined Document Type
+reports_and_marketing: Berichte & Marketing
+save_only_scheduled_tasks: Nur Zeitplan speichern
+modified_assets: "Ge\xE4nderte Assets"
+modification_statistic: "\xC4nderungen in den letzen 31 Tagen"
+add_portlet: "Portlet hinzuf\xFCgen"
+modified_documents: "Ge\xE4nderte Dokumente"
+modified_objects: "Ge\xE4nderte Objekte"
+welcome: Willkommen
+save_and_publish: "Speichern & Ver\xF6ffentlichen"
+delete: "L\xF6schen"
+save: Speichern
+add_assets: "Asset(s) hinzuf\xFCgen"
+preview: Vorschau
+advanced: Fortgeschritten
+basic: Basis
+list: Auflistung
+view: Betrachten
+publish: "Ver\xF6ffentlichen"
+rename: Umbenennen
+settings: Einstellungen
+properties: Eigenschaften
+versions: Versionen
+add: "Hinzuf\xFCgen"
+date: Datum
+user: Benutzer
+note: Anmerkung
+email_cc: in Kopie
+email_bcc: in Blindkopie
+email_settings: E-Mail-Einstellung
+email_settings_receiver_description: "Mehrere Empf\xE4nger k\xF6nnen angegeben werden,
+  indem die E-Mail-Adressen mit einem Semikolon getrennt angegeben werden.<br />Beispiel:
+  receiver@pimcore.org; receiver2@pimcore.org\nF\xFCr 'Von' k\xF6nnen Sie zus\xE4tzlich
+  die Syntax <i>Mein Name & lt; mein-name@example.com&gt;</i> verwenden"
+email_logs: Versendete E-Mails
+email_log_sent_Date: Datum gesendet
+predefined_document_type: Vordefinierte Dokumenttypen
 controller: Controller
-action: Action
-actions: Actions
-template: Template
-staticroute: Static Route
-static_generator: Static Page Generator
-static_generator_enable: Enable server side static rendering
-static_generator_lifetime: Lifetime (in minutes) for static page (optional)
-last_generated: Last generated
-key: Key
+action: Aktion
+actions: Aktionen
+template: Vorlage
+staticroute: Statische Route
+static_generator: "Generator f\xFCr statische Seiten"
+static_generator_enable: Serverseitiges statisches Rendern aktivieren
+static_generator_lifetime: "Lebensdauer (in Minuten) f\xFCr statische Seite (optional)"
+last_generated: Zuletzt generiert
+key: "Schl\xFCssel"
 id: ID
 name: Name
-title: Title
-description: Description
-unpublish: Unpublish
-target: Target
-type: Type
-please_enter_the_new_name: Please enter the new name
-add_page: Add Page
-add_snippet: Add Snippet
-add_email: Add Email
-add_link: Add Link
-copy: Copy
-paste: Paste
-close_all_tabs: Close all tabs
-search: Search
-import: Import
-export: Export
-document_type: Document Type
-document_types: Document Types
-predefined_properties: Predefined Properties
-users: Users
-profile: Profile
-my_profile: My Profile
-documentation: Documentation
-report_bugs: Report Bugs
-about: About
-file: File
+title: Titel
+description: Beschreibung
+unpublish: "Unver\xF6ffentlichen"
+target: Ziel
+type: Typ
+please_enter_the_new_name: 'Bitte gib den neuen Namen ein:'
+add_page: Seite erstellen
+add_snippet: "Schnipsel einf\xFCgen"
+add_email: "E-Mail hinzuf\xFCgen"
+add_link: "Link hinzuf\xFCgen"
+copy: Kopieren
+paste: "Einf\xFCgen"
+close_all_tabs: "Schlie\xDFe alle Tabs"
+search: Suchen
+import: Importieren
+export: Exportieren
+document_type: Dokumenttyp
+document_types: Dokumenttypen
+predefined_properties: Vordefinierte Eigenschaften
+users: Benutzer
+profile: Benutzerprofil
+my_profile: Mein Profil
+documentation: Dokumentation
+report_bugs: Fehler melden
+about: "\xDCber"
+file: Datei
 extras: Extras
-help: Help
-configuration: Configuration
-value: Value
-add_a_custom_property: Add a custom Property
-custom: Custom
-general: General
-language: Language
-quality: Quality
+help: Hilfe
+configuration: Konfiguration
+value: Wert
+add_a_custom_property: Erstelle eine neue Eigenschaft
+custom: Benutzerdefiniert
+general: Allgemein
+language: Sprache
+quality: "Qualit\xE4t"
 format: Format
-documents: Documents
+documents: Dokumente
 assets: Assets
-upload: Upload
-width: Width
-height: Height
-empty: Empty
-workflow: Workflow
-modify: 'Modify '
-create: 'Create '
-edit: Edit
-logout: Logout
-refresh: Refresh
-input: Input
+upload: Hochladen
+width: Breite
+height: "H\xF6he"
+empty: Leer
+workflow: Arbeitsschritt
+modify: Modifizieren
+create: Erstellen
+edit: Bearbeiten
+logout: Ausloggen
+refresh: Neu laden
+input: Eingabefeld
 checkbox: Checkbox
-textarea: Textarea
-image: Image
-select: Select
-base: Base
-add_object: Add Object
-border: Border
-document: Document
-asset: Asset
-object: Object
-remove: Remove
-hidden_dependencies: There are additional dependencies your user does not have the
-  permissions to see.
-open: Open
-days: Days
-seemode: Seemode
-edit_current_page: Edit this page
-close: Close
-name_already_in_use: Name is already in use, please choose a different one.
-name_and_key_must_be_defined: Name and Type must be defined
-mandatory_field_empty: Please fill all mandatory fields
-reload: Reload
-schedule: Schedule
-time: Time
+textarea: Textfeld
+image: Bild
+select: Auswahl
+base: Basis
+add_object: "Objekt hinzuf\xFCgen"
+border: Rahmen
+document: Dokument
+asset: Assets
+object: Objekt
+remove: Entfernen
+hidden_dependencies: "Es gibt zus\xE4tzliche Abh\xE4ngigkeiten, die der aktuelle User
+  nicht sehen darf."
+open: "\xD6ffnen"
+days: Tage
+seemode: Vorschaumodus
+edit_current_page: Diese Seite bearbeiten
+close: "Schlie\xDFen"
+name_already_in_use: Name wird bereits verwendet
+name_and_key_must_be_defined: "Name und Typ m\xFCssen definiert sein"
+mandatory_field_empty: "Bitte alle Pflichtfelder ausf\xFCllen"
+reload: Neu laden
+schedule: Zeitplan
+time: Uhrzeit
 version: Version
-active: Active
-success: Success
-translations: Translations
-translation_simple: Simple Text
+active: Aktiv
+success: OK
+translations: "\xDCbersetzungen"
+translation_simple: Einfacher Text
 translation_custom: ICU Format
-firstname: Firstname
-lastname: Lastname
-email: Email
-cant_move_node_to_target: Moving node not possible
-error_moving_object: Object could not be moved
-translations_are_not_configured: Translation are not configured
-read_more_here: Read more about here
-publish_version: Publish version
-start: Start
-su: Su
+firstname: Vorname
+lastname: Nachname
+email: E-Mail
+cant_move_node_to_target: "Verschieben nicht m\xF6glich"
+error_moving_object: Objekt konnte nicht verschoben werden
+translations_are_not_configured: "\xDCbersetzungen sind nicht konfiguriert"
+read_more_here: Lesen Sie hier mehr dazu
+publish_version: "Version ver\xF6ffentlichen"
+start: Beginn
+su: So
 mo: Mo
-tu: Tu
-we: We
-th: Th
+tu: Di
+we: Mi
+th: Do
 fr: Fr
 sa: Sa
-session_error_text: It seems there is a problem with your session. We recommend to
-  reload this page in order to be save, but you can try to save your changes first.
-session_error: Session Error
-please_wait: Please wait ...
-download: Download
-inheritable: Inheritable
-redirects: Redirects
-source: Source
+session_error_text: "Es scheint, als w\xFCrde es ein Problem mit Ihrer Session geben,
+  wollten Sie trotzdem auf eigenes Risiko eingeloggt bleiben?"
+session_error: Session Fehler
+please_wait: Bitte warten ...
+download: Herunterladen
+inheritable: Vererbbar
+redirects: Weiterleitungen
+source: Quelle
 link: Link
-abbr: Abbr.
+abbr: "Abk\xFCrzung"
 stop: Stop
-dependencies: Dependencies
-requires: Requires
-required_by: Required By
-search_edit: Search, Edit and Export
-subtype: Subtype
-initializing: Initializing ...
-please_select_a_type: Please select a type
+dependencies: "Abh\xE4ngigkeiten"
+requires: Verwendet
+required_by: Wird verwendet von
+search_edit: Suchen, Bearbeiten und Exportieren
+subtype: Untertyp
+initializing: Initialisiere ...
+please_select_a_type: "Bitte w\xE4hlen Sie einen Typ"
 filter: Filter
-field: Field
+field: Feld
 operator: Operator
-apply: Apply
-show: Show
-public: Public
-maximum_2_versions: You can compare max. 2 versions
-error: Error
-element_is_locked: 'The desired element is currently opened by another person:'
-element_lock_question: Would you like to open it anyway?
-since: Since
-longitude: Longitude
-latitude: Latitude
-geopoint: Geographic Point
-cancel: Cancel
-open_search_editor: Open Search Editor
-parameters: Parameters
-anchor: Anchor
-accesskey: Accesskey
-relation: Relation
+apply: Anwenden
+show: Anzeigen
+public: "\xD6ffentlich"
+maximum_2_versions: "Sie k\xF6nnen max. 2 Versionen vergleichen"
+error: Fehler
+element_is_locked: Element wird gerade bearbeitet
+element_lock_question: "Wollen Sie das Element dennoch \xF6ffnen?"
+since: Seit
+longitude: "L\xE4ngengrad"
+latitude: Breitengrad
+geopoint: Geografischer Punkt
+cancel: Abbrechen
+open_search_editor: "Sucheditor \xF6ffnen"
+parameters: Parameter
+anchor: Anker
+accesskey: "Zugangsschl\xFCssel"
+relation: "Verkn\xFCpfung"
 tabindex: Tab-Index
-not_set: not set
+not_set: Nicht gesetzt
 export_csv: CSV Export
 import_csv: CSV Import
-show_welcome_screen: Show welcome screen on startup
-importFileHasHeadRow: first row = headline
-overwrite_object_with_same_key_description: When overwrite is checked, instead of
-  creating a new object for each import row, objects with the same key are replaced.
-  Existing objects in your import folder with keys not contained in the import file
-  will remain untouched. Please be aware that all objects which have a matching key
-  in the import file will be replaced in the target folder. This is also true for
-  objects based on a different class or even object folders! Object fields which are
-  set to ignore in the field mapping keep their old value.
-object_import_filename_description: select the field which is used to generate the
-  object key
-save_pubish_close: Save, publish and close
-save_close: Save and close
-error_general: Server threw exception - could not perform action. Please reload the
-  admin interface and try again.
-owner_class: Owner class
-owner_field: Owner field
-nonownerobject_warning: The current object is not the owner of these relations, making
-  changes here might make saving the object slow
-element_implicit_edit_question: Would you still like to implicitly  modify it with
-  this action?
-element_open_message: The desired element is already open for editing.
-nonownerobjects_self_selection: In non owner objects a  relation to myself is not
-  possible, please use original field instead of non owner field.
-warning: Warning
-csv_object_export_warning: Please note that the CSV export does not support all data
-  types. Consequently, re-importing an exported CSV to pimcore might lead to data
-  loss. Press OK to continue with the export.
-navigation_exclude: Exclude from Navigation
-variants: Variants
-variant: Variant
-add_variant: Add variant
-delete_message_dependencies: There are dependencies, delete anyway?
-delete_message: Do you really want to delete this item?
-delete_message_advanced: Do you really want to delete %s '%s' ?
-delete_message_batch: Do you really want to delete these elements?
-delete_group_message: Do you really want to delete this group and all of its contents?
-no_further_objectbricks_allowed: No further objectbricks allowed
-grid_current_language: Current language
-object_columns: Object columns
-system_columns: System columns
-columns: Columns
-children_grid: Children Grid
-only_children: just direct children
-cut: Cut
-paste_cut_element: Paste cut-out element
-memorize_tabs: Memorize open tabs
-element_history: Recently Opened Elements
-dashboards: Dashboards
-portlet_customreport: Custom Report
-clear_marker_or_hotspots: Clear Marker, Hotspot and Cropping Data
-hotspots_cleared: Hotspots, Markers and Cropping Data cleared
+show_welcome_screen: Willkommens-Bildschirm beim Start zeigen
+importFileHasHeadRow: "Erste Zeile ist \xDCberschrift"
+overwrite_object_with_same_key_description: "Wenn \xDCberschreiben aktiviert ist,
+  werden Objekte, bei denen der Schl\xFCssel bereits existiert, nicht neu angelegt,
+  sondern \xFCberschrieben. Objekte die, nicht in der CSV Datei enthalten sind, werden
+  nicht ver\xE4ndert. Achtung: Alle Objekte, deren Schl\xFCssel in der Import-Datei
+  enthalten ist, werden \xFCberschrieben. Das gilt auch f\xFCr Objekte abweichender
+  Klassen und sogar Objektverzeichnissen! Objektfelder, die im Mapping zum Ignorieren
+  markiert sind, behalten ihre Werte."
+object_import_filename_description: "W\xE4hle das Feld, welches f\xFCr den Objektschl\xFCssel
+  verwendet werden soll"
+save_pubish_close: "Speichern, ver\xF6ffentlichen und schlie\xDFen"
+save_close: "Speichern und Schlie\xDFen"
+error_general: "Es ist eine Ausnahme aufgetreten - der Vorgang konnte nicht durchgef\xFChrt
+  werden. Bitte laden Sie die Adminoberfl\xE4che neu und versuchen Sie es danach erneut."
+owner_class: Besitzer-Klasse
+owner_field: Besitzer-Feld
+nonownerobject_warning: "Das aktuelle Objekt ist nicht der Eigent\xFCmer der folgenden
+  Verkn\xFCpfungen. Wenn Sie hier \xC4nderungen machen kann es sein dass das Speichern
+  etwas l\xE4nger dauert."
+element_implicit_edit_question: "M\xF6chten es Sie noch immer mit dieser Aktion ver\xE4ndern?"
+element_open_message: "Das ausgew\xE4hlte Element ist bereits zum editieren ge\xF6ffnet"
+nonownerobjects_self_selection: "Bei diesem Feld ist eine Verkn\xFCpfung auf dieses
+  Objekt nicht m\xF6glich, bitte verwenden Sie das Objekte-Feld."
+warning: Warnung
+csv_object_export_warning: "Bitte beachten Sie dass der CSV Export nicht alle Datentypen
+  unterst\xFCtzt. Deshalb kann ein erneuter Import der Daten zu Verlust einiger Daten
+  f\xFChren. Bitte klicken Sie auf OK um fortzufahren."
+navigation_exclude: "Aus Navigation ausschlie\xDFen"
+variants: Objekt-Varianten
+variant: Objekt-Variante
+add_variant: "Variante hinzuf\xFCgen"
+delete_message_dependencies: "Es bestehen Abh\xE4ngigkeiten, trotzdem l\xF6schen?"
+delete_message: "Wollen Sie dieses Element wirklich l\xF6schen?"
+delete_message_advanced: "M\xF6chten Sie %s '%s' wirklich l\xF6schen?"
+delete_message_batch: "Wollen Sie diese Elemente wirklich l\xF6schen?"
+delete_group_message: "Sind Sie sich sicher, dass Sie diese Gruppe samt Inhalt l\xF6schen
+  m\xF6chten?"
+no_further_objectbricks_allowed: Keine weiteren Objektbausteine erlaubt
+grid_current_language: Aktuelle Sprache
+object_columns: Objekt Spalten
+system_columns: System Spalten
+columns: Spalten
+children_grid: Unterelemente Tabelle
+only_children: Nur direkte Unterelemente
+cut: Ausschneiden
+paste_cut_element: "Ausgeschnittenes Element einf\xFCgen"
+memorize_tabs: "Ge\xF6ffnete Tabs merken"
+element_history: "Zuletzt ge\xF6ffnete Elemente"
+dashboards: Dashboard
+portlet_customreport: Individueller Report
+clear_marker_or_hotspots: Markierungs-, Hotspot- und Zuschneidungsdaten
+hotspots_cleared: "Die Hotspot-, Markierungs- und Zuschneidungsdaten wurden gel\xF6scht"
 deeplink: Deeplink
-click_to_open: (click to open)
-add_metadata: Add Metadata
-pimcore_icon_edit_pdf_text: Edit text version
-chapter: Chapter
-search_and_move: Search & Move
-searching: Searching...
-predefined_asset_metadata: Predefined Asset Metadata
-add_predefined_metadata_definitions: Add predefined definitions
-scheduled: Scheduled
-naming_requirements_3chars: Name must be alphanumeric and at least 3 characters long
-there_are_more_columns: There are more columns than currently displayed
-merge_csv: Import &amp; Merge CSV
-translation_merger_current: Current Text
-translation_merger_csv: Text from CSV
-nothing_to_merge: There is nothing to merge
-csv_seperated_options: CSV seperated options
-csv_seperated_options_info: The list of available options can be specified as comma-seperated
-  list, as single-column values or  mixed. For the single-column way, the key will
-  also be used as the value.
-first_page: First Page
-previous_page: Previous Page
-next_page: Next Page
-last_page: Last Page
-no_data_to_display: No data to display
-classificationstore_property: Property
-classificationstore_group: Group
+click_to_open: "(zum \xD6ffnen klicken)"
+add_metadata: "Metadaten hinzuf\xFCgen"
+pimcore_icon_edit_pdf_text: Textversion bearbeiten
+chapter: Kapitel
+search_and_move: Suchen & Bewegen
+searching: Suche...
+predefined_asset_metadata: Vordefinierte Asset Metadaten
+add_predefined_metadata_definitions: "Vordefinierte Definitionen hinzuf\xFCgen"
+scheduled: Geplant
+naming_requirements_3chars: Der Name muss alphanumerisch und mindestens 3 Zeichen
+  lang sein
+there_are_more_columns: Mache Spalten sind ausgeblendet
+merge_csv: CSV importieren & vereinen
+translation_merger_current: Aktueller Text
+translation_merger_csv: Text aus CSV
+nothing_to_merge: Keine Konflikte vorhanden
+csv_seperated_options: CSV-getrennte Optionen
+csv_seperated_options_info: "Die Liste der verf\xFCgbaren Optionen k\xF6nnen als kommagetrennte
+  Liste, einspaltige Werte oder durchmischt definiert werden. Bei der einspaltigen
+  Variante, wird der Schl\xFCssel (Key) ebenfalls als Wert verwendet."
+first_page: Erste Seite
+previous_page: Vorherige Seite
+next_page: "N\xE4chste Seite"
+last_page: Letzte Seite
+no_data_to_display: Keine Daten zum anzeigen
+classificationstore_property: Eigenschaften
+classificationstore_group: Gruppe
 classificationstore_relation: Relation
-classificationstore_collection: Collection
-classificationstore_collection_relation: Collection relation
-classificationstore_no_groups: No groups found
-classificationstore_no_keys: No keys found
-remove_group: Remove Group
-classificationstore_no_collections: No collections
-reference: Reference
-element_tag_configuration: Tag Configuration
-element_tag_all_tags: All Tags
-enter_new_name_of_the_tag: Enter new name of the Tag
-assigned_tags: Assigned Tags
-filter_tags: Filter for Tags
-consider_child_tags: Consider child tags too
-tags_assignment: Tags Assignment
-tags_search: Tags Search
-batch_applied: Batch applied
-apply_tags: Apply tags to Children
-remove_and_apply_tags: Remove and apply tags to children
-batch_assignment: Tag batch assignment
-batch_assignment_error: Tag batch assignment error
-no_children_found: No Children found.
-asset_search: Search Assets
-document_search: Search Documents
-object_search: Search Objects
-more: More
-open_translation: Open Translation
-link_existing_document: Link existing Document
-using_inheritance: Using Inheritance
-new_document: New Document
-update_available: Update Available
-target_document_needs_language: Target document needs a language set
-tools: Tools
-perspectives: Perspectives
-filter_active: Filter active!
-reset_config: Reset changes
-reset_config_tooltip: This will reset (and save) the grid column configuration for
-  this element to its default
-error_resetting_config: Error resetting configuration
-marketing_settings: Marketing Settings
-cross_tree_moves_not_supported: Cross tree moves not yet supported
-add_printpage: Add PrintPage
-add_printcontainer: Add PrintContainer
-web2print_preview_pdf: Generate & Preview PDF
-web2print_cancel_pdf_creation: Cancel PDF Creation
-web2print_generate_pdf: Generate PDF
-web2print_download_pdf: Download PDF
-web2print_last-generated: Last Generated
-web2print_last-generate-message: Last Generate Message
+classificationstore_collection: Kollektion
+classificationstore_collection_relation: Sammelbeziehung
+classificationstore_no_groups: Keine Gruppen gefunden
+classificationstore_no_keys: "Keine Schl\xFCssel gefunden"
+remove_group: Gruppe entfernen
+classificationstore_no_collections: Keine Sammlungen
+reference: Bezugspunkt
+element_tag_configuration: Tag-Konfiguration
+element_tag_all_tags: Alle Tags
+enter_new_name_of_the_tag: Neuer Name des Tags eingeben
+assigned_tags: Zugewiesene Tags
+filter_tags: Nach Tags filtern
+consider_child_tags: Untertags ebenfalls beachten
+tags_assignment: Tags-Zuteilung
+tags_search: Tags-Suche
+batch_applied: Batch angewendet
+apply_tags: Tags auf untergeordnete Elemente anwenden
+remove_and_apply_tags: Tags auf untergeordneten Elementen entfernen und anwenden
+batch_assignment: Tag-Batch-Zuweisung
+batch_assignment_error: Fehler Tag-Batch-Zuweisung
+no_children_found: Keine Unterelemente gefunden.
+asset_search: Assets durchsuchen
+document_search: Dokumente durchsuchen
+object_search: Objekte durchsuchen
+more: Mehr
+open_translation: "\xDCbersetzung \xF6ffnen"
+link_existing_document: Existierendes Dokument verlinken
+using_inheritance: Vererbung nutzen
+new_document: Neues Dokument
+update_available: "Update verf\xFCgbar"
+target_document_needs_language: "Zieldokument ben\xF6tigt zugewiesene Sprache"
+tools: Werkzeuge
+perspectives: Perspektiven
+filter_active: Filter aktiv!
+reset_config: "Auf Standard zur\xFCcksetzen"
+reset_config_tooltip: "Dies wird die Tabellen-Konfiguration f\xFCr dieses Element
+  auf seine Standardeinstellungen zur\xFCcksetzen (und speichern)"
+error_resetting_config: "Fehler beim Zur\xFCcksetzen der Konfiguration"
+marketing_settings: Marketing-Einstellungen
+cross_tree_moves_not_supported: "Baumstruktur\xFCbergreifende Bewegungen werden noch
+  nicht unterst\xFCtzt"
+add_printpage: "Druckseite hinzuf\xFCgen"
+add_printcontainer: "Druckcontainer hinzuf\xFCgen"
+web2print_preview_pdf: PDF Erstellung & Vorschau
+web2print_cancel_pdf_creation: PDF-Erstellung abbrechen
+web2print_generate_pdf: PDF generieren
+web2print_download_pdf: PDF herunterladen
+web2print_last-generated: Zuletzt generiert
+web2print_last-generate-message: Letzte Generierungs-Nachricht
 web2print: Web-to-Print
-web2print_prepare_pdf_generation: Prepare PDF Generation
-web2print_start_html_rendering: Start HTML Rendering
-web2print_finished_html_rendering: Finished HTML Rendering
-web2print_saved_html_file: Saved HTML File
-web2print_pdf_conversion: PDF Conversion
-web2print_saving_pdf_document: Save PDF Document
-web2print_author: Author
-web2print_printermarks: Printermarks
-web2print_bookmarks: Bookmarks
-close_tab: Close Tab
-web2print_only_published: Only possible with published documents.
-web2print_documents_changed: Documents changed since last pdf generation.
-about_pimcore: ABOUT PIMCORE PLATFORM
-phone: Phone
-workflow_additional_info: Additional Information
-workflow_perform_action: Perform Action
-workflow_notes_required: Notes (Required)
-workflow_notes_optional: Notes (Optional)
-please_enter_the_id_of_the_asset: Please enter the ID or Path (e.g. /images/logo.jpg)
-  of the asset
-please_enter_the_id_of_the_object: Please enter the ID or Path of the object
-please_enter_the_id_of_the_document: Please enter the ID, Path or URL (also including
-  http://) of the document
-element_has_unsaved_changes: Element has unsaved changes
-element_unsaved_changes_message: All unsaved changes will be lost, are you really
-  sure?
-newsletter_enableTrackingParameters: Add Tracking Parameters to Links
-newsletter_sendingMode: Sending Mode
-newsletter_sendingmode_single: Single (Render every Mail individually)
-newsletter_sendingmode_batch: Batch (Render Mail only once)
-newsletter_sendingPanel: Newsletter Sending Panel
-newsletter_dirty_warning: Newsletter is not saved yet. Please save first.
-newsletter_sending: Sending Newsletter
-newsletter_sourceAdapter: Address Source Adapter
-newsletter_default: Default Object List
-newsletter_csvList: CSV List
-newsletter_testsend: Newsletter Test Sending
-newsletter_test_sent_message: Test Newsletter sent successfully
-add_object_mbx_title: Add new Object of type %s
-newsletter_choose_report: Choose a report
-newsletter_email_field_name: Email field name
-mode: Mode
-custom_download: Custom Download
-original_file: Original File
-web_format: Web Format
-print_format: Print Format
-office_format: Office Format
-change_password: Change Password
-file_is_bigger_that_upload_limit: 'The following file is bigger than the actual upload
-  limit of your server:'
-send_test_email_success: Your test-email has been sent. Would you like to keep this
-  window open to send the email again?
-press_crtl_and_select_to_compare: 'Compare: Press CTRL + Click Version'
-clear_filters: Clear Filters
-tags_configuration: Tags Configuration
-export_csv_include_headers: CSV Export with headers
-open_data_object: Open Data Object
-data_objects: Data Objects
-asset_type_change_not_allowed: '<strong>Only assets of same type are allowed here.</strong><br/>[
-  type of uploaded asset: "%s" | type of existing asset: "%s" ]'
-clear_content_of_selected_target_group: Clear content of selected Target Group
-visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: Visitors
-  of this page will be automatically associated with the selected Target Groups
-assign_target_group: Assign Target Group
-assign_target_groups: Assign Target Groups
-target_group: Target Group
-target_groups: Target Groups
-edit_content_for_target_group: Edit Content for Target Group
-email_reply_to: Reply To
-element_tag_filtered_tags: Filtered Tags
-web2print_addOverprint: Overprinting
-analyze_permissions: Analyze Permissions
-unique: Unique
-glue: Glue
-date_format: Date Format
-attribute: Attribute
-forward_attribute: Forward Attribute
-upper: Upper
-lower: Lower
-disabled: Disabled
-capitalization: Capitalization
-restrict_to_locales: Restrict to locales
-predefined: Predefined
-save_as_copy: Save as copy
-set_as_favourite: Set as favourite
-grid_configuration: Grid Configuration
-shared_users: Shared Users
-shared_roles: Shared Roles
-save_and_share: Save & Share
-save_copy_and_share: Save Copy & Share
-locale: Locale
-ellipses: Ellipses
-insensitive: Insensitive
-yes_value: Yes Value
-no_value: No Value
-count_empty: Count Empty
-as_array: As array
-metadata_field: Metadata field
-only_count: Only as count
+web2print_prepare_pdf_generation: PDF-Generierung vorbereiten
+web2print_start_html_rendering: HTML-Rendering starten
+web2print_finished_html_rendering: HTML-Rendering beendet
+web2print_saved_html_file: HTML-Datei gespeichert
+web2print_pdf_conversion: PDF-Umwandlung
+web2print_saving_pdf_document: PDF-Dokument speichern
+web2print_author: Autor
+web2print_printermarks: Druckermarken
+web2print_bookmarks: Lesezeichen
+close_tab: "Tab schlie\xDFen"
+web2print_only_published: "Nur mit ver\xF6ffentlichten Dokumenten m\xF6glich."
+web2print_documents_changed: "Dokumente wurden seit der letzten PDF-Generierung ver\xE4ndert."
+about_pimcore: "\xDCBER PIMCORE"
+phone: Telefon
+workflow_additional_info: "Zus\xE4tzliche Information"
+workflow_perform_action: "Aktion ausf\xFChren"
+workflow_notes_required: Hinweise (erforderlich)
+workflow_notes_optional: Hinweise (optional)
+please_enter_the_id_of_the_asset: Bitte geben Sie die ID oder den Pfad (z.B. /images/logo.jpg)
+  des Assets ein
+please_enter_the_id_of_the_object: Bitte geben Sie die ID oder den Pfad des Objekts
+  ein
+please_enter_the_id_of_the_document: Bitte geben Sie die ID, den Pfad oder die URL
+  (inklusive http://) des Dokuments ein
+element_has_unsaved_changes: "Element enth\xE4lt nicht gespeicherte \xC4nderungen"
+element_unsaved_changes_message: "Alle nicht gespeicherten \xC4nderungen werden verloren
+  gehen, sind Sie sich wirklich sicher?"
+newsletter_enableTrackingParameters: "Tracking-Parameter zu Links hinzuf\xFCgen"
+newsletter_sendingMode: Versand-Modus
+newsletter_sendingmode_single: Einzeln (Rendere jede E-Mail individuell)
+newsletter_sendingmode_batch: Batch (Rendere E-Mail nur einmal)
+newsletter_sendingPanel: Newsletter-Versandpanel
+newsletter_dirty_warning: Newsletter wurde noch nicht gespeichert. Bitte zuerst speichern.
+newsletter_sending: Sendet Newsletter
+newsletter_sourceAdapter: Adressquellen-Adapter
+newsletter_default: Standard-Objektliste
+newsletter_csvList: CSV-Liste
+newsletter_testsend: Newsletter-Testversand
+newsletter_test_sent_message: Test-Newsletter erfolgreich versendet
+add_object_mbx_title: "Objekt eines Typs hinzuf\xFCgen"
+newsletter_choose_report: "W\xE4hle ein Bericht"
+newsletter_email_field_name: E-Mail-Feldname
+mode: Modus
+custom_download: Benutzerdefinierter Download
+original_file: Originale Datei
+web_format: Web-Format
+print_format: Druck-Format
+office_format: Office-Format
+change_password: "Passwort \xE4ndern"
+file_is_bigger_that_upload_limit: "Die folgende Datei ist gr\xF6\xDFer als das aktuell
+  zugelassene Upload-Limit deines Servers:"
+send_test_email_success: "Ihre Test-E-Mail wurde versendet. M\xF6chten Sie dieses
+  Fenster ge\xF6ffnet lassen, um das E-Mail erneut zu versenden?"
+press_crtl_and_select_to_compare: "Vergleichen: CTRL dr\xFCcken + Version anklicken"
+clear_filters: Filter leeren
+tags_configuration: Tag Konfiguration
+export_csv_include_headers: CSV-Export mit Header
+open_data_object: "Datenobjekt \xF6ffnen"
+data_objects: Datenobjekte
+asset_type_change_not_allowed: '<strong>Nur Assets mit dem selben Typen sind hier
+  erlaubt.</strong><br/>[ Typ des hochgeladenen Assets: "%s" | Typ des existierenden
+  Assets: "%s" ]'
+clear_content_of_selected_target_group: "L\xF6sche Inhalt von ausgew\xE4hlter Zielgruppe"
+visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: "Besucher
+  dieser Seite werden automatisch mit der gew\xE4hlten Zielgruppe verkn\xFCpft"
+assign_target_group: Zielgruppe zuweisen
+assign_target_groups: Zielgruppen zuweisen
+target_group: Zielgruppe
+target_groups: Zielgruppen
+edit_content_for_target_group: "Inhalt f\xFCr Zielgruppe bearbeiten"
+email_reply_to: Antwort an
+element_tag_filtered_tags: Gefilterte Tags
+web2print_addOverprint: "\xDCberdrucken"
+analyze_permissions: Berechtigungen analysieren
+unique: Einmalig
+glue: Verbinderzeichen
+date_format: Datumsformat
+attribute: Attribut
+forward_attribute: Attribut weiterleiten
+upper: "gr\xF6\xDFer"
+lower: kleiner
+disabled: Deaktiviert
+capitalization: "Gro\xDFschreibung"
+restrict_to_locales: "Auf Gebiete beschr\xE4nken"
+predefined: Vordefiniert
+save_as_copy: Als Kopie speichern
+set_as_favourite: Als Favorit setzen
+grid_configuration: Tabellen-Konfiguration
+shared_users: Gemeinsame Benutzer
+shared_roles: Gemeinsame Rollen
+save_and_share: Speichern & Teilen
+save_copy_and_share: Kopie Speichern & Teilen
+locale: Lokale
+ellipses: Ellipsen
+insensitive: unsensitiv
+yes_value: Ja-Wert
+no_value: Nein-Wert
+count_empty: "Z\xE4hler leer"
+as_array: Als Array
+metadata_field: Metadatenfeld
+only_count: Nur als Anzahl
 parameter: Parameter
-forward_parameter: Forward Parameter
-is_array: Array Type
-php_class: PHP Class
-additional_data: Additional Data
-flatten: Flatten
-return_last_result: Return last result
-skip_null: Skip Null
-expand_children: Expand children
-collapse_children: Collapse children
-multiply: Multiply
-divide: Divide
-apply_to_all_objects: Apply to all
-apply_to_all_objects_msg: There are other objects which already have their own favourite
-  settings. Do you want to apply this config to those as well?
-encode: Encode
-decode: Decode
-serialize: Serialize
-unserialize: Unserialize
+forward_parameter: "Vorw\xE4rtsparameter"
+is_array: |
+  Array Typ
+php_class: PHP Klasse
+additional_data: "Zus\xE4tzliche Daten"
+flatten: Ebnen
+return_last_result: "Letztes Ergebnis zur\xFCckgeben"
+skip_null: "\xDCberspringe Null"
+expand_children: Unterelemente ausklappen
+collapse_children: Unterelemente zusammenklappen
+multiply: multiplizieren
+divide: dividieren
+apply_to_all_objects: Auf alle anwenden
+apply_to_all_objects_msg: "Andere Objekte besitzen bereits ihre eigenen bevorzugten
+  Einstellungen haben. M\xF6chtest du diese Konfiguration auch auf diese anwenden?"
+encode: kodieren
+decode: dekodieren
+serialize: Serialisieren
+unserialize: Deserialisieren
 offset: Offset
-col_attribute: Collection Attribute
-brick_attribute: Brick Attribute
-csv_column_configuration: Column Configuration
-column: Column
-resolver_strategy: Resolver Strategy
-resolver_settings: Resolver Settings
-csv_settings: CSV Settings
-skipheadrow: Skip head row
-csv_file_preview: CSV File Preview
-save_as: Save as
-import_export_configuration: Import Export Configuration
-brick_type: Brick Type
+col_attribute: Collection-Attribut
+brick_attribute: Baustein-Attribut
+csv_column_configuration: Spalten-Konfiguration
+column: Spalte
+resolver_strategy: Resolver-Strategie
+resolver_settings: Resolver-Einstellungen
+csv_settings: CSV Einstellungen
+skipheadrow: Ignoriere Kopfzeile
+csv_file_preview: CSV Datei Vorschau
+save_as: Speichern als
+import_export_configuration: Import/Export Configuration
+brick_type: Baustein-Typ
 renderer: Renderer
 getter: Getter
 string: String
-row: Row
-import_report: Import Report
-import_errors: Some errors occurred. Check the import report!
-import_is_done: Import is done
-import_file_prefix: Prefix for new files
-create_parents: Create parents
-fullpath: Full Path
-create_on_demand: Create on demand
-get_by_resolver: Get By Attribute
-direct: Direct
-skip_empty_values: Skip empty values
-do_not_overwrite: Do not overwrite
-never: Never
-if_not_empty: If not empty
-always: Always
-delimiter: Delimiter
-share_globally: Share globally
-gdpr_data_extractor: GDPR Data Extractor
-no_configuration: No Configuration
-share_configurations: Share configurations
-enable_inheritance: Enable Inheritance
-object_settings: Object Settings
-drop_me_here: Drag an item from the tree and drop it here
-clear_hotspots_msg: This image contains additional data like markers or hotspots.
-  Do you want to clear them as well?
-restore_failed: Restore failed
-subtract: Subtract
-batch_append_all: Batch append to all
-batch_append_selected: Batch append to selected
-batch_append_to: Append data to all
-login_token_invalid_user_error: Invalid user.
-login_token_as_admin_non_admin_user_error: Only admin users are allowed to login as
-  an admin user.
-login_token_no_password_error: User has no password set.
-targeting_toolbar: Targeting Toolbar
-sort_children_by: Sort Children By
-by_key: Key (A to Z)
-by_index: Index (Manual)
-successful_object_change_children_sort_to_index: Changed object children sorting to
-  Index
-successful_object_change_children_sort_to_key: Changed object children sorting to
-  Key
-successful_publish_document: Document successfully published
-successful_publish_object: Object successfully published
-successful_unpublish_document: Document successfully unpublished
-successful_unpublish_object: Object successfully unpublished
-error_object_change_children_sort_to_index: Sort Children by Index is not possible
-  on paginated folder/tree.
-error_object_change_children_sort_to_key: Unable to change object children sorting
-  to Key
-error_publish_document: Document could not be published
-error_publish_object: Object could not be published
-error_unpublish_document: Document could not be unpublished
-error_unpublish_object: Object could not be unpublished
-edit_as_html: Edit as HTML
-edit_as_plain_text: Edit as plain text
-error_empty_file_upload: File is empty!
-type_column: Type column
-keep: keep
-clear_version_message: Do you really want to delete all non-published versions of
-  this element?
-clear_all: Clear All
-unlink_existing_document: Unlink existing Document
-grid_options: Grid Options
-save_grid_options: Save Grid Options
-download_selected_as_zip: Download selected items as ZIP
-please_select_items_to_download: Please select items to download in the list
-key_bindings: Key Bindings
-keybinding_openClassEditor: Open Class Editor
-keybinding_showMetaInfo: Show Meta Info
-keybinding_clearAllCaches: Clear all Caches
-keybinding_clearDataCache: Clear Data Cache
-scheduled_block_delete_all_in_past: Delete all past entries
-scheduled_block_really_delete_past: Really delete all entries scheduled in the past?
-scheduled_block_delete_all: Delete all entries
-scheduled_block_really_delete_all: Really delete all scheduled entries, including
-  future entries?
-2fa_disable: Disable 2FA
-renew_2fa_secret: Renew Two Factor Secret
-two_factor_authentication: Two Factor Authentication
-2fa_alert_text: Please scan the QR-Code and add it to your Google Authenticator. <br>If
-  you don't have the Google Authenticator app installed on your mobile phone, please
-  download it from the App Store/Play Store.<br><br> You will need to reload Pimcore
-  and enter the code shown within the App afterwards!
-2fa_alert_submit: Reload Pimcore & Enter Code
-setup_two_factor: Setup Two Factor Authentication
-2fa_setup_message: Two Factor Authentication is required for your account! You have
-  to set it up in your profile settings, otherwise you will not be able to sign in
-  again.
-set_focal_point: Set Focal Point
-quicksearch: Quick Search
-standard_preview: Standard Preview
-upload_new_version: Upload new version
-360_viewer: "360\xB0 Viewer"
-invalid_name: Invalid name
-clone: Clone
-enter_the_name_of_the_new_item: Enter the name of the new item
+row: Spalte
+import_report: Importiere Report
+import_errors: "Es gab Fehler. Den Import-Bericht pr\xFCfen!"
+import_is_done: Import abgeschlossen
+import_file_prefix: "Pr\xE4fix f\xFCr neue Dateien"
+create_parents: Erstelle Eltern
+fullpath: Voller Pfad
+create_on_demand: Bei Bedarf erstellen
+get_by_resolver: nach Attribut suchen
+direct: Direkt
+skip_empty_values: "Leere Werte \xFCberspringen"
+do_not_overwrite: "Nicht \xFCberschreiben"
+never: Niemals
+if_not_empty: Wenn nicht leer
+always: Immer
+delimiter: Trennzeichen
+share_globally: Global teilen
+gdpr_data_extractor: DSGVO Daten Exporter
+no_configuration: Keine Konfiguration
+share_configurations: Konfigurationen teilen
+enable_inheritance: Vererbung aktivieren
+object_settings: Objekt Einstellungen
+drop_me_here: Ziehen Sie einen Artikel aus der Baumstruktur hierher
+clear_hotspots_msg: "Dieses Bild enth\xE4lt zus\xE4tzliche Daten wie Marker oder Hotspots.
+  M\xF6chten Sie sie auch l\xF6schen?"
+restore_failed: Wiederherstellung fehlgeschlagen
+subtract: Subtrahieren
+batch_append_all: "Daten an allen Elementen hinzuf\xFCgen"
+batch_append_selected: "Daten an ausgew\xE4hlte Elemente hinzuf\xFCgen"
+batch_append_to: Daten allen zuweisen
+login_token_invalid_user_error: "Ung\xFCltiger Benutzer."
+login_token_as_admin_non_admin_user_error: Nur Administratoren haben das Recht sich
+  als Administrator einzuloggen
+login_token_no_password_error: Der Benutzer hat kein Passwort gesetzt.
+targeting_toolbar: Targeting-Symbolleiste
+sort_children_by: Unterelemente sortieren nach
+by_key: "Schl\xFCssel (alphabetisch)"
+by_index: Index (manuell sortiert nach)
+successful_object_change_children_sort_to_index: "Ge\xE4nderte Unterelemente des Objekts
+  nach Index sortiert"
+successful_object_change_children_sort_to_key: "Ge\xE4nderte Unterelemente des Objekts
+  nach Key sortiert"
+successful_publish_document: "Dokument erfolgreich ver\xF6ffentlicht"
+successful_publish_object: "Dokument erfolgreich ver\xF6ffentlicht"
+successful_unpublish_document: "Ver\xF6ffentlichung des Dokuments erfolgreich aufgehoben"
+successful_unpublish_object: "Die Ver\xF6ffentlichung des Objekts wurde erfolgreich
+  aufgehoben"
+error_object_change_children_sort_to_index: "Die Sortierung der untergeordneten Objekte
+  im Index kann nicht ge\xE4ndert werden"
+error_object_change_children_sort_to_key: "Objektkinder, die nach Schl\xFCssel sortiert
+  werden, k\xF6nnen nicht ge\xE4ndert werden"
+error_publish_document: "Dokument konnte nicht ver\xF6ffentlicht werden"
+error_publish_object: Objekt konnte nicht publiziert werden
+error_unpublish_document: "Die Ver\xF6ffentlichung des Dokuments konnte nicht r\xFCckg\xE4ngig
+  gemacht werden"
+error_unpublish_object: "Die Ver\xF6ffentlichung des Objekts konnte nicht aufgehoben
+  werden"
+edit_as_html: Bearbeiten mit HTML
+edit_as_plain_text: Bearbeiten mit Text
+error_empty_file_upload: Die Datei ist leer!
+type_column: Spaltentyp
+keep: Behalten
+clear_version_message: "M\xF6chten Sie wirklich alle nicht-ver\xF6ffentlichten Versionen
+  dieses Elements l\xF6schen?"
+clear_all: "Alles L\xF6schen"
+unlink_existing_document: "Verkn\xFCpfung aufheben zu existierendem Dokument"
+grid_options: Tabellen-Optionen
+save_grid_options: Speichere Tabellen-Optionen
+download_selected_as_zip: "Ausgew\xE4hlte Elemente als ZIP-Datei herunterladen"
+please_select_items_to_download: "Bitte w\xE4hlen Sie aus der Liste Artikel zum Download"
+key_bindings: Tastenbelegungen
+keybinding_openClassEditor: "\xD6ffne Klasseneditor"
+keybinding_showMetaInfo: Zeige Meta-Infos
+keybinding_clearAllCaches: "Alle Caches l\xF6schen"
+keybinding_clearDataCache: "Daten Cache l\xF6schen"
+scheduled_block_delete_all_in_past: "Alle vergangenen Eintr\xE4ge l\xF6schen"
+scheduled_block_really_delete_past: "Wirklich alle in der Vergangenheit get\xE4tigten
+  Eintr\xE4ge l\xF6schen?"
+scheduled_block_delete_all: "L\xF6sche alle Eintr\xE4ge"
+scheduled_block_really_delete_all: "Wirklich alle Eintr\xE4ge l\xF6schen, inkl. zuk\xFCnftiger
+  Eintr\xE4ge?"
+2fa_disable: 2FA ausschalten
+renew_2fa_secret: "Zwei-Faktor-Schl\xFCssel erneuern"
+two_factor_authentication: Zwei-Faktor-Authentifizierung
+2fa_alert_text: "Bitte scannen Sie den QR-Code und f\xFCgen Sie ihn zu Ihrem Google
+  Authenticator hinzu. <br>Wenn Sie die Google Authenticator App nicht auf Ihrem Handy
+  installiert haben, laden Sie sie bitte aus dem App Store/Play Store herunter.<br><br>
+  Danach m\xFCssen Sie Pimcore neu laden und anschlie\xDFend den in der App angezeigten
+  Code eingeben!"
+2fa_alert_submit: Pimcore neu laden und Code eingeben
+setup_two_factor: Zwei-Faktor-Authentifizierung einrichten
+2fa_setup_message: "F\xFCr dein Konto ist eine Zwei-Faktor-Authentifizierung erforderlich!
+  Du musst es in deinen Profileinstellungen einrichten, sonst kannst du dich nicht
+  mehr anmelden."
+set_focal_point: Fokus setzen
+quicksearch: Schnellsuche
+standard_preview: Standardvorschau
+upload_new_version: Neue Version hochladen
+360_viewer: "360\xB0-Ansicht"
+invalid_name: "Ung\xFCltiger Name"
+clone: Klonen
+enter_the_name_of_the_new_item: Name des neuen Objekts eingeben
 html_tags: HTML-Tags
-clear_temporary_files: Clear temporary files
-error_pasting_item: Unable to paste item
-modificationdate: Modification Date
-blank: Blank
-message: Message
-from: From
-to: To
+clear_temporary_files: "Tempor\xE4re Dateien l\xF6schen"
+error_pasting_item: "Kann Element nicht einf\xFCgen"
+modificationdate: "\xC4nderungsdatum"
+blank: Leer
+message: Nachricht
+from: Von
+to: An
 html: HTML
 text: Text
-create_folder: Add Folder
-error_deleting_item: Could not delete item
-error_renaming_item: There was an error while renaming the item.
-revert: Revert
-parent: Parent
-merge_translations: Merge Translations
-prefix: Prefix
-load: Load
-saving_failed: Saving failed!
-failed_to_create_new_item: Failed to create new item, please try again.
+create_folder: "Ordner hinzuf\xFCgen"
+error_deleting_item: "Konnte Element nicht l\xF6schen"
+error_renaming_item: Fehler bei der Umbenennung des Items.
+revert: "Zur\xFCcksetzen"
+parent: Elternelement
+merge_translations: "\xDCbersetzungen zusammenf\xFChren"
+prefix: "Pr\xE4fix"
+load: Laden
+saving_failed: Speichern fehlgeschlagen!
+failed_to_create_new_item: Erstellen des Elements fehlgeschlagen, bitte erneut versuchen.
 bundle: Bundle
-product: Product
-index_field_selection_field: Index Field Selection
-indexFieldSelectionField: Index Field Selection
-indexFieldSelectionField_settings: Settings (Multi Index Field Selection Field)
-indexFieldSelectionFieldMulti: Multiple Index Field Selection
-index_field_selection_combo: Index Field Combobox
-indexFieldSelectionCombo: Index Field Combobox
-indexFieldSelectionCombo_settings: Settings (Index Field Combobox)
-specificPriceField: Specific Price Field
-showAllFields: Show all Fields
-considerTenants: Consider Tenants
+product: Produkt
+index_field_selection_field: Indexfeld Auswahl
+indexFieldSelectionField: Indexfeld Auswahl
+indexFieldSelectionField_settings: Einstellungen (Multi-Index-Feldauswahlfeld)
+indexFieldSelectionFieldMulti: Auswahl mehrerer Indexfelder
+index_field_selection_combo: Indexfeld Combobox
+indexFieldSelectionCombo: Indexfeld Combobox
+indexFieldSelectionCombo_settings: Einstellungen (Indexfeld Combobox)
+specificPriceField: Spezifisches Preisfeld
+showAllFields: Alle Felder anzeigen
+considerTenants: Mandanten in Betracht ziehen
 bundle_ecommerce_mainmenu: Online Shop
-bundle_ecommerce_pricing_rule: Pricing Rule
-bundle_ecommerce_pricing_rules: Pricing Rules
-bundle_ecommerce_pricing_config_behavior: Behavior
+bundle_ecommerce_pricing_rule: Preisregeln
+bundle_ecommerce_pricing_rules: Preisregeln
+bundle_ecommerce_pricing_config_behavior: Verhalten
 bundle_ecommerce_pricing_config_additiv: Additiv
-bundle_ecommerce_pricing_config_stopExecute: Last rule
-bundle_ecommerce_pricing_config_condition_daterange: Date range
-bundle_ecommerce_pricing_config_condition_cart_amount: Cart amount
-bundle_ecommerce_pricing_config_condition_products: Products
-category: Category
+bundle_ecommerce_pricing_config_stopExecute: Letzte Regel
+bundle_ecommerce_pricing_config_condition_daterange: Zeitraum
+bundle_ecommerce_pricing_config_condition_cart_amount: Warenkorb Betrag
+bundle_ecommerce_pricing_config_condition_products: Produkte
+category: Kategorie
 bundle_ecommerce_pricing_config_condition_token: Token
-bundle_ecommerce_pricing_config_condition_sales: Sales
-bundle_ecommerce_pricing_config_condition_sold: Sold
-bundle_ecommerce_pricing_config_condition_sold_count: Count
-bundle_ecommerce_pricing_config_condition_sold_count_cart: Count Cart
-bundle_ecommerce_pricing_config_condition_voucherToken: Voucher
-bundle_ecommerce_pricing_config_condition_tenant: Tenant
-bundle_ecommerce_pricing_config_condition_targetgroup: Target Group
-bundle_ecommerce_pricing_config_condition_targetgroup_threshold: Threshold
-bundle_ecommerce_pricing_config_action_gift: Gift
-bundle_ecommerce_pricing_config_action_cart_discount: Cart discount
-bundle_ecommerce_pricing_config_action_cart_discount_percent: Discount in %
-bundle_ecommerce_pricing_config_action_cart_discount_amount: Absolute Discount
-bundle_ecommerce_pricing_config_action_product_discount: Product discount
-bundle_ecommerce_pricing_config_action_product_discount_percent: Discount in %
-bundle_ecommerce_pricing_config_action_product_discount_amount: Absolute Discount
-bundle_ecommerce_pricing_config_action_free_shipping: Free shipping
-bundle_ecommerce_pricing_rule_add: Add Pricing Rule
-bundle_ecommerce_pricing_rule_error: Error creating Pricing Rule
+bundle_ecommerce_pricing_config_condition_sales: "Verk\xE4ufe"
+bundle_ecommerce_pricing_config_condition_sold: Verkauft
+bundle_ecommerce_pricing_config_condition_sold_count: Anzahl
+bundle_ecommerce_pricing_config_condition_sold_count_cart: "Z\xE4hler am Warenkorb"
+bundle_ecommerce_pricing_config_condition_voucherToken: Gutschein
+bundle_ecommerce_pricing_config_condition_tenant: Mandant
+bundle_ecommerce_pricing_config_condition_targetgroup: Zielgruppe
+bundle_ecommerce_pricing_config_condition_targetgroup_threshold: Schwellenwert
+bundle_ecommerce_pricing_config_action_gift: Geschenk
+bundle_ecommerce_pricing_config_action_cart_discount: Warenkorb Rabatt
+bundle_ecommerce_pricing_config_action_cart_discount_percent: Rabatt in %
+bundle_ecommerce_pricing_config_action_cart_discount_amount: Gesamter Rabatt
+bundle_ecommerce_pricing_config_action_product_discount: Produktrabatt
+bundle_ecommerce_pricing_config_action_product_discount_percent: Rabatt in %
+bundle_ecommerce_pricing_config_action_product_discount_amount: "Tats\xE4chlicher
+  Rabatt"
+bundle_ecommerce_pricing_config_action_free_shipping: gratis versand
+bundle_ecommerce_pricing_rule_add: "Preisregel hinzuf\xFCgen"
+bundle_ecommerce_pricing_rule_error: Fehler beim Erstellen einer Preisregel
 ecommerce: E-Commerce
-preSelectMode: Pre Select Mode
-remote_single: Single Select from Remote
-remote_multi: Multi Select from Remote
-local_single: Single Select from predefined List
-local_multi: Multi Select from predefined List
-indexFieldSelection: Index Field Selection
-indexFieldSelection_settings: Index Field Selection Settings
-filtergroups: Filter Groups
-preSelect: Pre Select
-predefined_pre_select_options: Predefined pre select options
-bundle_ecommerce_clear_config_cache: Clear configuration cache
-bundle_ecommerce_back-office_order: Back Office - Ordering
-bundle_ecommerce_vouchertoolkit_tab: Voucher Details
-path: Path
+preSelectMode: Voreingestellter Modus
+remote_single: Einfachauswahl von Remote
+remote_multi: Mehrfachauswahl von Remote
+local_single: "Einzeln aus vordefinierter Liste ausw\xE4hlen"
+local_multi: Mehrfachauswahl aus vordefinierter Liste
+indexFieldSelection: Indexfeld Auswahl
+indexFieldSelection_settings: "Einstellungen f\xFCr die Auswahl von Indexfeldern"
+filtergroups: Gruppen filtern
+preSelect: "Vorausgew\xE4hlt"
+predefined_pre_select_options: Vordefinierte Vorauswahloptionen
+bundle_ecommerce_clear_config_cache: "Konfigurationscache l\xF6schen"
+bundle_ecommerce_back-office_order: Back Office - Bestellung
+bundle_ecommerce_vouchertoolkit_tab: Gutschein Details
+path: Pfad
 thumbnail: Thumbnail
-download_thumbnail: Download Thumbnail
-no_thumbnail_selected: No thumbnail selected
-list_thumbnail_in_download_section_on_image_detail_view: List as option in download
-  section on image detail view
-there_are_more_items: There are more items than displayed
-workflow_actions: Actions
-workflow_notes_requred_field_message: '"%s" is a required field.'
-workflow_transition_applied_successfully: Action applied successfully
-workflow_change_email_notification_subject: Workflow update for %s in workflow '%s'
-workflow_change_email_notification_text: For %s with ID %s the action "%s" was triggered
-  in workflow '%s'.
-workflow_change_email_notification_deeplink: Deeplink to the element.
-workflow_change_email_notification_note: 'Note Added:'
+download_thumbnail: Thumbnail herunterladen
+no_thumbnail_selected: "Kein Thumbnail ausgew\xE4hlt"
+list_thumbnail_in_download_section_on_image_detail_view: Liste als Option im Download-Bereich
+  der Bilddetailansicht
+there_are_more_items: Es gibt mehr Elemente, als angezeigt werden
+workflow_actions: Aktionen
+workflow_notes_requred_field_message: '"%s" ist erforderlich.'
+workflow_transition_applied_successfully: Aktion erfolgreich angewendet
+workflow_change_email_notification_subject: "Workflow-Aktualisierung f\xFCr %s in
+  Workflow '%s'"
+workflow_change_email_notification_text: "F\xFCr %s mit der ID %s wurde die Aktion
+  \"%s\" im Ablauf '%s' ausgel\xF6st."
+workflow_change_email_notification_deeplink: Deep Link zum Element.
+workflow_change_email_notification_note: "Notiz hinzugef\xFCgt:"
 workflow_details: Workflow Details
-workflow_graph: Workflow Graph
-workflow_current_state: Current State
-workflow_cmd_not_found: Please install the "%s" console executable on the server to
-  render the workflow graph.
-unit_width: Width Unit
-permission_missing: You need the '%s' permission to perform this action
-paste_as_language_variant: Paste as new language variant
-select_language_for_new_document: Select language for New Document
-source_document_language_missing: Set Language(Properties) in Source Document
-open_preview_in_new_window: Open preview in new window
-data: Data
-links: Links
-notes: Notes
+workflow_graph: Workflow-Diagramm
+workflow_current_state: Aktueller Status
+workflow_cmd_not_found: "Bitte installieren Sie die ausf\xFChrbare Datei \"%s\" auf
+  dem Server, um das Workflow-Diagramm zu rendern."
+unit_width: Breite der Einheit
+permission_missing: "Sie ben\xF6tigen die Berechtigung '%s', um diese Aktion auszuf\xFChren"
+paste_as_language_variant: "Einf\xFCgen als neue Sprachvariante"
+select_language_for_new_document: "W\xE4hlen Sie die Sprache f\xFCr Neues Dokument"
+source_document_language_missing: Legen Sie die Sprache (Eigenschaften) im Quelldokument
+  fest
+open_preview_in_new_window: "Vorschau in neuem Fenster \xF6ffnen"
+data: Daten
+links: Verlinkungen
+notes: Notizen
 bool: Bool
-consent: Consent
-add_marker: Add marker
-identifier_warning: Be careful with the unique identifier because table names can
-  contain only up to 64 characters.
-unique_identifier: Unique identifier
-invalid_identifier: Invalid identifier
-identifier_already_exists: Identifier already exists
-content: Content
-send: Send
-you_can_only_drop_one_element_here: You can only drop one element here!
-translation: Translation
-delete_error_batch: Following items cannot be deleted, do you wanna proceed with deleting
-  the remaining?
-delete_error: 'The item cannot be deleted. Reason:'
-batch_edit_field_selected: Batch edit selected field
-batch_append_selected_to: Append data to selected
-enable_batch_edit_columns: Enable Batch Edit for Columns
-delete_all: Delete All
-open_linked_element: Open linked Element
-mark_as_read: Mark as read
-sender: Sender
-notifications: Notifications
-notifications_send: Send Notifications
-group: Group
-attachment: Attachment
-notification_has_been_sent: Notification has been sent
-recipient: Recipient
-this_field_is_required: This field is required
-paste_recursive_as_language_variant: Paste as new language variant (recursive)
-paste_no_new_language_error: All system languages already linked to source element.
-embedded_meta_data: Embedded Meta Info
-duration: Duration
-custom_metadata: Custom Metadata
-group_icon_class: Group Icon Class
-custom_report_permissions: Permission
-visible_to_users: Visible To Users
-visible_to_roles: Visible To Roles
-open_url: Open URL
-document_language_overview: Document Language Overview
+consent: Zustimmung
+add_marker: "Markierung hinzuf\xFCgen"
+identifier_warning: "Seien Sie vorsichtig mit dem eindeutigen Bezeichner, da Tabellennamen
+  nur aus bis zu 64 Zeichen bestehen k\xF6nnen."
+unique_identifier: Eindeutiger Bezeichner
+invalid_identifier: "Ung\xFCltiger Bezeichner"
+identifier_already_exists: Bezeichner existiert bereits
+content: Inhalt
+send: Senden
+you_can_only_drop_one_element_here: "Hier kann nur ein Element eingef\xFCgt werden!"
+translation: "\xDCbersetzung"
+delete_error_batch: "Die folgenden Elemente k\xF6nnen nicht gel\xF6scht werden. M\xF6chten
+  Sie mit dem L\xF6schen der verbleibenden Elemente fortfahren?"
+delete_error: "Das Element kann nicht gel\xF6scht werden. Grund:"
+batch_edit_field_selected: "Batch Ausgew\xE4hltes Feld bearbeiten"
+batch_append_selected_to: "Batch Daten an ausgew\xE4hlte Elemente hinzuf\xFCgen"
+enable_batch_edit_columns: "Massenbearbeitung f\xFCr Spalten aktivieren"
+delete_all: "Alle l\xF6schen"
+open_linked_element: "Verlinktes Element \xF6ffnen"
+mark_as_read: Als gelesen markieren
+sender: Absender
+notifications: Benachrichtigungen
+notifications_send: Sende Benachrichtigungen
+group: Gruppe
+attachment: Anhang
+notification_has_been_sent: Benachrichtigung wurde gesendet
+recipient: "Empf\xE4nger"
+this_field_is_required: Pflichtfeld
+paste_recursive_as_language_variant: "Als neue Sprachvariante einf\xFCgen (rekursiv)"
+paste_no_new_language_error: Alle Systemsprachen wurden bereits mit dem Quellelement
+  verlinkt.
+embedded_meta_data: Eingebettete Metainformationen
+duration: Dauer
+custom_metadata: Benutzerdefinierte Metadaten
+group_icon_class: Gruppensymbol-Klasse
+custom_report_permissions: Berechtigung
+visible_to_users: "Sichtbar f\xFCr Benutzer"
+visible_to_roles: "Sichtbar f\xFCr Rollen"
+open_url: "URL \xF6ffnen"
+document_language_overview: "\xDCbersicht Dokumentensprache"
 language_master: Master
-create_translation_inheritance: Create Translation (Inheritance)
-create_translation: Create Translation
-document_translation_parent_not_found: Parent document has no translation. Create
-  a translation for the parent first.
-paste_recursive_as_language_variant_updating_references: Paste language (recursive),
-  updating references
-redirects_expired_cleanup: Cleanup Expired Redirects
-redirects_cleanup_warning: Do you really want to cleanup expired redirects?
-redirects_cleanup_error: An error occurred while cleanup of expired redirects
-all_translations: All Translations
-only_unreferenced: only unreferenced
-split_view_settings: Split View Settings
-enable_split_view: Enable Split View
-disable_split_view: Disable Split View
-split_view_object_dirty_title: Please confirm
-split_view_object_dirty_msg: There are unsaved modifications. You will lose all changes.
-  Are you sure?
-converter_service: Converter service
-auto_convert: Automatic conversion
-web2print_enableDebugMode: Enable debug mode
-set_to_null: Empty (set to null)
-bundles: Bundles
-target_document_invalid: Please select a target document with valid language
-metainfo_copy_id: Copy ID to clipboard
-metainfo_copy_fullpath: Copy full path to clipboard
-metainfo_copy_deeplink: Copy deeplink to clipboard
-plain_text: Plain Text
-plain_text_email_part: Email Plain Text Part
-error_message: Error Message
-bundle_ecommerce_order_tab: Order Details
-access_denied: Access Denied!
-access_denied_description: You don't have sufficient permissions to open the element
-  or perform the desired action.
-validation_failed: Validation Failed!
+create_translation_inheritance: "\xDCbersetzungen erstellen (Vererbung)"
+create_translation: "\xDCbersetzung erstellen"
+document_translation_parent_not_found: "Elterndokument hat keine \xDCbersetzung. Erstelle
+  zuerst eine \xDCbersetzung f\xFCr das Elternelement."
+paste_recursive_as_language_variant_updating_references: "Sprache einf\xFCgen (rekursiv),
+  Referenzen aktualisieren"
+redirects_expired_cleanup: "Abgelaufene Weiterleitungen s\xE4ubern"
+redirects_cleanup_warning: "Wollen Sie wirklich abgelaufene Weiterleitungen s\xE4ubern"
+redirects_cleanup_error: "Fehler beim S\xE4ubern von abgelaufenen Weiterleitungen"
+all_translations: "Alle \xDCbersetzungen"
+only_unreferenced: Nur nicht referenzierte
+split_view_settings: Einstellungen geteilte Ansicht
+enable_split_view: Geteilte Ansicht aktivieren
+disable_split_view: Geteilte Ansicht deaktiveren
+split_view_object_dirty_title: "Bitte best\xE4tigen"
+split_view_object_dirty_msg: "Es gibt ungespeicherte \xC4nderungen. Du wirst alle
+  \xC4nderungen verlieren. Bist du sicher?"
+converter_service: Konvertierungsservice
+auto_convert: Automatische Konvertierung
+web2print_enableDebugMode: Debug-Modus aktivieren
+set_to_null: Leer (auf Null gesetzt)
+bundles: Pakete
+target_document_invalid: "W\xE4hle ein Zieldokument mit g\xFCltiger Sprache"
+metainfo_copy_id: ID kopieren
+metainfo_copy_fullpath: Kompletten Pfad kopieren
+metainfo_copy_deeplink: Kopiere den Deeplink in die Zwischenablage
+plain_text: Einfacher Text
+plain_text_email_part: E-Mail-Nur-Text-Teil
+error_message: Fehlernachricht
+bundle_ecommerce_order_tab: Bestelldetails
+access_denied: Zugriff verweigert!
+access_denied_description: "Du hast nicht gen\xFCgend Berechtigungen, um das Element
+  zu \xF6ffnen oder die gew\xFCnschte Aktion auszuf\xFChren."
+validation_failed: Validierung fehlgeschlagen!
 export_xlsx: XLSX Export
-object_export_warning: Please note that the export does not support all data types.
-  Press OK to continue with the export.
-web2print_enableLenientHttpsMode: Enable lenient HTTPS mode
-web2print_enableLenientHttpsMode_txt: Enable this option if PDFreactor fails to connect
-  successfully via HTTPS
-paste_clipboard: Paste Clipboard
-paste_here: Paste your clipboard data here
-asset_metadata: Asset Metadata
-predefined_metadata: Predefined Metadata
-default_metadata: Default Metadata
-asset_export_warning: Please note that the export does not support some fields(e.g.
-  preview, size). Press OK to continue with the export.
-share_via_notifications: Share via Notifications
-cannot_save_metadata_please_try_to_edit_the_metadata_in_asset: <b>Cannot save Metadata!</b><br
-  />Please try to edit the metadata in Asset.
-email_log_forward: Forward email
-sum: Sum
-area_brick_assign_info_message: Please use drag & drop to assign a brick to the desired
-  block
-batch_remove_all: Batch remove from all
-batch_remove_selected: Batch remove from selected
-batch_remove_from: Remove data from all
-batch_remove_selected_from: Remove data from selected
-unit_tooltip: Alternative units tooltip
-toggle_image_features_visibility: Toggle Image Feature Visibility
-detect_image_features: Detect Image Features
-remove_image_features: Remove Image Features
-available_sites: Available Sites
-fallback: Fallback
-add_site: Add Site
-domain_label_width: Domain label width
-complete_required_fields: 'Please complete following required fields to publish the
-  document:'
-Uncategorized: Uncategorized
-skip_if_exists: Skip row if exists
-php_class_or_service: Class or service name
-redirect_performance_warning: Using this feature has very bad effects on the performance
-  of the entire application, do you really want to continue?
+object_export_warning: "Bitte beachten Sie, dass der Export nicht alle Datentypen
+  unterst\xFCtzt. Klicken Sie auf OK, um mit dem Export fortzufahren."
+web2print_enableLenientHttpsMode: Aktivieren Sie nachsichtigen HTTPS-Modus
+web2print_enableLenientHttpsMode_txt: "Aktivieren Sie diese Option, wenn PDFreactor
+  \xFCber HTTPS keine Verbindung herstellen kann"
+paste_clipboard: "Zwischenablage einf\xFCgen"
+paste_here: "F\xFCgen Sie hier Ihre Daten aus der Zwischenablage ein"
+asset_metadata: Asset-Metadaten
+predefined_metadata: Vordefinierte Metadaten
+default_metadata: Standardmetadaten
+asset_export_warning: "Bitte beachten Sie, dass der Export einige Felder (z. B. Vorschau,
+  Gr\xF6\xDFe) nicht unterst\xFCtzt. Klicken Sie auf OK, um mit dem Export fortzufahren."
+share_via_notifications: "\xDCber Benachrichtigungen teilen"
+cannot_save_metadata_please_try_to_edit_the_metadata_in_asset: "<b>Metadaten k\xF6nnen
+  nicht gespeichert werden!</b><br />Versuchen Sie die Metadaten in Asset zu bearbeiten."
+email_log_forward: E-Mail weiterleiten
+sum: Addieren
+area_brick_assign_info_message: "Bitte ordnen Sie dem gew\xFCnschten Block per Drag
+  & Drop einen Baustein zu"
+batch_remove_all: Batch von Allen entfernen
+batch_remove_selected: "Batch von allen Ausgew\xE4hlten entfernen"
+batch_remove_from: Daten von allen Elementen entfernen
+batch_remove_selected_from: "Daten von ausgew\xE4hlten Elementen entfernen"
+unit_tooltip: "Tooltip f\xFCr alternative Einheiten"
+toggle_image_features_visibility: Schaltet die Sichtbarkeit der Bildfunktionen um
+detect_image_features: Bildmerkmale erkennen
+remove_image_features: Bildmerkmale entfernen
+available_sites: "Verf\xFCgbare Seiten"
+fallback: |2
+
+  Fallback
+add_site: "Seite hinzuf\xFCgen"
+domain_label_width: Domain Label Breite
+complete_required_fields: "Bitte f\xFCllen Sie die folgenden erforderlichen Felder
+  aus, um das Dokument zu ver\xF6ffentlichen:"
+Uncategorized: Nicht kategorisiert
+skip_if_exists: "Zeile \xFCberspringen, falls vorhanden"
+php_class_or_service: Klassen- oder Dienstname
+redirect_performance_warning: "Die Verwendung dieser Funktion hat sehr negative Auswirkungen
+  auf die Leistung der gesamten Anwendung. M\xF6chten Sie wirklich fortfahren?"
 test_url: Test URL
-create_redirects: Create redirects to keep URLs working (incl. children)?
-auto_create: Auto create
-methods: Methods
-batch_operation: Batch Operation
-move: Move
-property_name: Property name
-force_value: Force value
-enable_grid_locking: Enable grid locking
-export_configuration: Export Configuration As JSON
-composite_indices: Composite indices
-default_value_generator: Default value generator service / class
-no_value_set: no value set
-replace_assignments_in_all_elements: Replace assignments in all elements
-fieldlookup: Field Lookup
-show_fieldlookup: Show Field Lookup
-different_number_of_columns: Different number of columns
-brick_limit_reached: 'Limit ({bricklimit}) reached for brick: {brickname}'
-generate_type_declarations: Generate Type Declarations
-batch_change_language: Batch update language
-preview_item: Preview Item
-by_key_reverse: Key (Z to A)
-deprecated: Deprecated
-version_currently_saved_in_database: Currently saved in database (but not published)
-deprecated_feature: '<span style=''color: orange;''>Deprecated feature. Use %s instead</span>'
-edit_as_custom_text: Edit as custom text
-symfony_translation_link: 'Translation Format: https://symfony.com/doc/current/translation/message_format.html'
-no_action_available: No action available
-bricks: Bricks
-draft: Draft
-auto_save: Auto save
-save_draft: Save draft
-selected_grid_columns: Selected grid columns
-ungrouped: ungrouped
-reindex_warning: Changing it from alphabetical sort order to index will reindex all
-  items. Do you want to continue?
-filter_by_relation: Filter by relation
-filter_by_relation_field: Filter by relation field
-clear_relation_filter: Clear active relation filter
-apply_filter: Apply filter
-config_not_writeable: Not writable, this can have several reasons. For details please
-  have a look into the docs.
-sites: Sites
-file_exists: File already exists
-asset_upload_want_to_overwrite: Do you want to overwrite file %s?
-asset_upload_overwrite: Overwrite
-asset_upload_keep_both: Keep both files
-asset_upload_apply_to_all: Apply to all
-asset_upload_skip: Skip
-could_not_open_zip_file: The uploaded zip file could not be opened.
-objects_sort_method: Change data objects sort method
-link_recursion_error: The link is redirecting to itself, causing an infinite loop
-no_further_classes_allowed: No further classes allowed
-address_not_found: The entered address was not found
-possible_causes: Possible causes
-postal_code_format_error: "Postal code format, e.g. use \"5020 Salzburg, S\xF6llheimer
-  Stra\xDFe 16\" instead of \"A-5020 Salzburg, S\xF6llheimer Stra\xDFe 16\""
+create_redirects: "Weiterleitungen erstellen, damit URLs funktionieren (einschlie\xDFlich
+  Unterelemente)?"
+auto_create: Automatisch erstellen
+methods: Methoden
+batch_operation: Stapelverarbeitung
+move: Verschieben
+property_name: Eigenschaftsname
+force_value: Wert erzwingen
+enable_grid_locking: Rastersperre aktivieren
+export_configuration: Konfiguration als JSON exportieren
+composite_indices: Zusammengesetzte Indizes
+default_value_generator: Standardwertgenerator-Service / Klasse
+no_value_set: kein Wert gesetzt
+replace_assignments_in_all_elements: Ersetze Zuordnungen in allen Elementen
+fieldlookup: Feldsuche
+show_fieldlookup: Feldsuche anzeigen
+different_number_of_columns: Unterschiedliche Anzahl von Spalten
+brick_limit_reached: "Limit ({bricklimit}) f\xFCr Brick erreicht: {brickname}"
+generate_type_declarations: Generieren Sie Typdeklarationen
+batch_change_language: Batch-Update-Sprache
+preview_item: Vorschau des Elements
+by_key_reverse: "Schl\xFCssel (Z bis A)"
+deprecated: Veraltet
+version_currently_saved_in_database: "Gespeichert aber noch nicht ver\xF6ffentlicht"
+deprecated_feature: '<p style=''color: orange;''> Veraltete Funktion. Verwenden Sie
+  %s <br>stattdessen</p>'
+edit_as_custom_text: Als Custom-Text bearbeiten
+symfony_translation_link: "\xDCbersetzungsformat: https://symfony.com/doc/current/translation/message_format.html"
+no_action_available: "Keine Aktion verf\xFCgbar"
+bricks: Steine
+draft: Entwurf
+auto_save: Automatisch speichern
+save_draft: Entwurf speichern
+selected_grid_columns: "Ausgew\xE4hlte Grid-Spalten"
+ungrouped: nicht gruppiert
+reindex_warning: "Wenn Sie von der alphabetischen in die manuelle Sortierreihenfolge
+  \xE4ndern, werden alle Elemente neu indiziert. M\xF6chten Sie fortfahren?"
+filter_by_relation: "Nach Verkn\xFCpfung filtern"
+filter_by_relation_field: "Nach Verkn\xFCpfungsfeld filtern"
+clear_relation_filter: "Aktiven Verkn\xFCpfungsfilter entfernen"
+apply_filter: Filter anwenden
+config_not_writeable: "Nicht schreibbar. Dies k\xF6nnte mehrere Gr\xFCnde haben. F\xFCr
+  Details schaue bitte in die Dokumentation"
+sites: Seiten
+file_exists: Datei existiert bereits
+asset_upload_want_to_overwrite: "M\xF6chte Sie die Datei %s \xFCberschreiben?"
+asset_upload_overwrite: "\xDCberschreiben"
+asset_upload_keep_both: Beide Dateien behalten
+asset_upload_apply_to_all: Auf alle anwenden
+asset_upload_skip: "\xDCberspringen"
+could_not_open_zip_file: "Die hochgeladene ZIP Datei kann nicht ge\xF6ffnet werden."
+objects_sort_method: "Sortiermethode f\xFCr Datenobjekte \xE4ndern"
+link_recursion_error: Der Link leitet auf sich selbst um und verursacht eine Endlosschleife
+no_further_classes_allowed: Keine weiteren Klassen erlaubt
+address_not_found: Die eingegebene Adresse konnte nicht gefunden werden
+possible_causes: "M\xF6gliche Gr\xFCnde"
+postal_code_format_error: "Postleitzahlenformat, z.B. statt \"A-5020 Salzburg, S\xF6llheimer
+  Stra\xDFe 16\" benutze \"5020 Salzburg, S\xF6llheimer Stra\xDFe 16\" verwenden"
 delete_data_from_it: This will also delete all data from it.
-display_mode: Display Mode
+display_mode: Anzeigemodus
 display_mode_grid: Grid view
-display_mode_combo: Tag field
+display_mode_combo: Tag Feld
 batch_confirmation: You are about to update %s dataObjects. Do you want to continue
   ?
 ...

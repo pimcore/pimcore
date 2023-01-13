@@ -1,760 +1,801 @@
 ---
-invert_colors_on_login_screen: Invert Colors on Login Screen
-encrypt_data: Encrypt Data
-encrypt_data_description: Data-at-Rest/Tablespace Encryption needs to be enabled on
-  your Database Server
-many_to_one_relation: Many-To-One Relation
-many_to_many_relation: Many-To-Many Relation
-many_to_many_object_relation: Many-To-Many Object Relation
-advanced_many_to_many_relation: Advanced Many-To-Many Relation
-advanced_many_to_many_object_relation: Advanced Many-To-Many Object Relation
-reverse_object_relation: Reverse Object Relation
+invert_colors_on_login_screen: "Sz\xEDnek invert\xE1l\xE1sa a bejelentkez\xE9si k\xE9perny\u0151n"
+encrypt_data: "Adat titkos\xEDt\xE1sa"
+encrypt_data_description: "Data-at-Rest/Tablespace Titkos\xEDt\xE1st az adatb\xE1zis
+  szerveren kell bekapcsolni"
+many_to_one_relation: Many-To-One kapcsolat
+many_to_many_relation: Many-To-Many kapcsolat
+many_to_many_object_relation: Many-To-Many Objektum kapcsolat
+advanced_many_to_many_relation: "Halad\xF3 Many-To-Many kapcsolat "
+advanced_many_to_many_object_relation: "Halad\xF3 Many-To-Many Objektum kapcsolat"
+reverse_object_relation: "Ford\xEDtott Objektum Rel\xE1ci\xF3"
 url_slug: URL Slug
-url_slug_datatype_info: Enter the controller & action in the following format:<br>App\Controller\ProductController:slugAction
+url_slug_datatype_info: "A Controller & Action a k\xF6vetkez\u0151 form\xE1tumban
+  kell megadni:<br>\nAppBundle\\Controller\\ProductController:testAction"
 controller_action: Controller & Action
-admin_interface: Admin Interface
+admin_interface: "Admin interf\xE9sz"
 admin_interface_background: Admin Interface Background
-icon_library: Icon Library
-system_performance_stability_warning: Please do not perform this action unless you
-  are sure what you are doing.<br /><b style='color:red'>This action can have a major
-  impact onto the stability and performance of the entire system, and may causes an
-  overload or complete crash of the server!</b><br /><br />Are you sure?
-login_screen: Login Screen
-color_description: 'Use the HTML hex format, eg. #ffffff'
-colors: Colors
-media: Media
-custom_logo: Custom Logo
-custom_login_background_image: Custom Login Background Image
-branding_logo_description: Used on the login and start screen. We recommend to use
-  a SVG (JPG & PNG are supported as well).
-appearance_and_branding: Appearance & Branding
-brightness: Brightness
-saturation: Saturation
-hue: Hue
-addoverlay_fit: Add Overlay Fit
-environments: Environments
+icon_library: "Ikon k\xF6nyvt\xE1r"
+system_performance_stability_warning: "K\xE9rj\xFCk ne haszn\xE1ld ezt a funkci\xF3t,
+  kiv\xE9ve ha pontosan tudod, hogy mit csin\xE1lsz.<br /><b style='color:red'>Ez
+  a m\u0171velet jelent\u0151sen befoly\xE1solhatja a teljes rendszer stabilit\xE1s\xE1t
+  \xE9s teljes\xEDtm\xE9ny\xE9t, \xE9s okozhat t\xFAlterhel\xE9st vagy \xF6sszeoml\xE1st
+  a szerveren!</b><br /><br />Biztos?"
+login_screen: "Bejelentkez\xE9si k\xE9perny\u0151"
+color_description: "HTML hexa form\xE1tumot haszn\xE1lj, pl. #ffffff"
+colors: "Sz\xEDnek"
+media: "M\xE9dia"
+custom_logo: "Egyedi log\xF3"
+custom_login_background_image: "Egyedi Bejelentkez\u0151 fel\xFClet h\xE1tt\xE9rk\xE9p"
+branding_logo_description: "A bejelentkez\xE9si \xE9s a kezd\u0151lapon jelenik meg.
+  SVG haszn\xE1lat\xE1t javasoljuk (JPG \xE9s PNG is t\xE1mogatott)."
+appearance_and_branding: "Megjelen\xE9s & Branding"
+brightness: "F\xE9nyer\u0151ss\xE9g"
+saturation: "Szatur\xE1ci\xF3"
+hue: "Sz\xEDn\xE1rnyalat"
+addoverlay_fit: "Overlay hozz\xE1ad\xE1sa - Fit"
+environments: "K\xF6rnyezetek"
 test: Test
-colorspace: Colorspace
-ratio: Ratio
-decimal_size: Decimal size
-decimal_precision: Decimal precision
-decimal_mysql_type_info: If decimal size or precision are specified, <code>DECIMAL(decimalSize,
-  decimalPrecision)</code> MySQL type is used. Default values if missing are <code>64</code>
-  as size and <code>0</code> as precision.
-decimal_mysql_type_naming_warning: Please note that in MySQL terms, the <code>decimalSize</code>
-  is called <code>precision</code> and the <code>decimalPrecision</code> is called
-  <code>scale</code>.
-only_unsigned: only unsigned
-integer: Integer
+colorspace: "Sz\xEDnt\xE9r"
+ratio: "Ar\xE1ny"
+decimal_size: "Tizedes m\xE9ret"
+decimal_precision: "Tizedes pontoss\xE1g"
+decimal_mysql_type_info: "Amenyibten a tizedem m\xE9ret vagy pontoss\xE1g addot, <code>DECIMAL(decimalSIze,decimapPrecision)</code>
+  MySQL t\xEDpus ker\xFCl be\xE1ll\xEDt\xE1sra. Az alap\xE9rtelmezett \xE9rt\xE9kek:
+  <code>64</code> a m\xE9ret \xE9s <code>0</code> a pontoss\xE1g."
+decimal_mysql_type_naming_warning: "Felh\xEDvjuk figyelm\xE9t, hogy MySQL kifejez\xE9sekben
+  a <code>decimalSize</code>-t <code>precision</code>-nek, a <code>decimalPrecision</code>-t
+  pedig <code>scale</code>-nek h\xEDvj\xE1k."
+only_unsigned: "csak el\u0151jel n\xE9lk\xFCli"
+integer: "eg\xE9sz"
 static: Static
-object_regex_info: RegExp without delimiters, has to work in both JS and PHP
-regex_validation: Regular Expression Validation
-test_string: Test string
-regex: RegEx
+object_regex_info: "RegExp elv\xE1laszt\xF3k n\xE9lk\xFCl, JS-ben \xE9s PHP-ban is
+  m\u0171k\xF6dj\xF6n"
+regex_validation: "Regul\xE1ris Kifejez\xE9s valid\xE1ci\xF3"
+test_string: "Teszt sz\xF6veg"
+regex: Regex
 regex_flags: RegEx Flags
-code_before_init: Code before init
-code_after_pageview: Code after pageview
-code_before_pageview: Code before pageview
-select_presetting: Select a presetting
-good: Good
-best: Best
-1x1_pixel_placeholder: 1x1 Pixel Placeholder
-1x1_pixel_placeholder_description: Just returns a 1x1 pixel GIF base64 encoded, in
-  case you don't want to display an image for a certain condition
-average: Average
-enter_media_query: Please enter a valid CSS media query
-add_media_query: Add Media Query
-add_media_segment: Add Media Segment
-enter_media_segment: Please enter a valid bitrate(e.g. 400k, 1500k, 1M) for video
-  segment
-dash_media_message: This option generates a single .mpd file with media segments(bitrates)
-specific_settings: Specific Settings
-login_as_this_user_description: 'The following link is a temporary link that allows
-  you to login as this user in a different browser:'
-login_as_this_user: Login as this user in a different browser
-allowed_types_to_create: Allowed types to create
-defaults_to_all: Defaults to all
-analytics_universal_configuration: 'Universal/GTag Analytics Configuration eg. {''cookieDomain'':
-  ''example.com''}'
-use_different_email_delivery_settings: Use different email delivery settings for newsletters
-action_scope: Action Scope
+code_before_init: "K\xF3d inicializ\xE1l\xE1s el\u0151tt"
+code_after_pageview: "K\xF3d pageview ut\xE1n"
+code_before_pageview: "K\xF3d pageview el\u0151tt"
+select_presetting: "V\xE1lasszon egy el\u0151re be\xE1ll\xEDtott \xE9rt\xE9ket"
+good: "J\xF3"
+best: Legjobb
+1x1_pixel_placeholder: "1x1 Pixeles hely\u0151rz\u0151"
+1x1_pixel_placeholder_description: "Csak visszaad egy 1x1-es GIF-et base64 k\xF3dolva,
+  amennyiben nem szeretn\xE9d a k\xE9pet megjelen\xEDteni bizonyos esetekben"
+average: "\xC1tlagos"
+enter_media_query: "\xC9rv\xE9nyes CSS media query-t adj meg"
+add_media_query: "M\xE9dia query hozz\xE1ad\xE1sa"
+add_media_segment: "M\xE9dia szegmens hozz\xE1ad\xE1sa"
+enter_media_segment: "K\xE9rj\xFCk, adjon meg egy \xE9rv\xE9nyes bitr\xE1t\xE1t (pl.
+  400k, 1500k, 1M) a vide\xF3 szegmenshez"
+dash_media_message: "Ez az opci\xF3 egyetlen .mpd f\xE1jlt gener\xE1l m\xE9diaszegmensekkel
+  (bitr\xE1t\xE1kkal)"
+specific_settings: "Tov\xE1bbi be\xE1ll\xEDt\xE1sok"
+login_as_this_user_description: "Az al\xE1bbi egy ideiglenes link, ami a jelenlegi
+  felhaszn\xE1l\xF3val m\xE1sik b\xF6ng\xE9sz\u0151ben val\xF3 bel\xE9p\xE9sre szolg\xE1l"
+login_as_this_user: "M\xE1sik b\xF6ng\xE9sz\u0151ben val\xF3 bel\xE9p\xE9s ezzel a
+  felhaszn\xE1l\xF3val"
+allowed_types_to_create: "L\xE9trehoz\xE1skor enged\xE9lyezett t\xEDpusok"
+defaults_to_all: "Alap\xE9rtelmezetten az \xF6sszes"
+analytics_universal_configuration: "Univerz\xE1lis/GTag analitika konfigur\xE1ci\xF3,
+  pl.: {'cookieDomain': 'example.com'}"
+use_different_email_delivery_settings: "M\xE1s e-mail konfigur\xE1ci\xF3 haszn\xE1lata
+  a h\xEDrlev\xE9lhez"
+action_scope: "M\xE1velet hat\xF3k\xF6re"
 hit: Hit
 session: Session
-session_with_variables: Session (with variables)
-targeting_visitor: Visitor
-targeting_condition_visited_page_before_piwik_data_warning: This condition fetches
-  data synchronously from Piwik which can be quite slow. Use with care!
-targeting_condition_visited_page_before_piwik_not_configured_warning: This condition
-  cannot be matched as Piwik is not configured and will always resolve to false.
-targeting_condition_url_pattern: URL (RegExp)
-targeting_toolbar_browser_note: <b>NOTE:</b> Enabling the targeting toolbar affects
-  only the browser you are currently using. If you want to use the toolbar on another
-  browser you need to enable it again. See <a target='_blank' href='{targetingLink}'>the
-  documentation</a> for details.
-microsoft_word_export_notice: <ul><li>It is not possible to re-import this export</li><li>The
-  export file-format is HTML, which can be perfectly opened with Word</li><li>This
-  export doesn't include the full layout information (just basic text-formatting)</li><li>The
-  language selection is used to set the language for object's localized fields (only
-  localized fields are exported!)</li></ul>
-fallback_languages: Fallback Languages (CSV eg. de_CH,de)
+session_with_variables: "Session (v\xE1ltoz\xF3kkal)"
+targeting_visitor: "L\xE1togat\xF3"
+targeting_condition_visited_page_before_piwik_data_warning: "Ez a felt\xE9tel szinkron
+  m\xF3don t\xF6lti be az adatokat a Piwik-t\u0151l, ami meglehet\u0151sen lass\xFA
+  lehet. \xD3vatosan haszn\xE1lja!"
+targeting_condition_visited_page_before_piwik_not_configured_warning: "Ez a felt\xE9tel
+  nem egyeztethet\u0151 \xF6ssze, mivel a Piwik nincs konfigur\xE1lva, \xE9s mindig
+  hamisra eredm\xE9nyt ad."
+targeting_condition_url_pattern: "URL (Regur\xE1lis kifejez\xE9s)"
+targeting_toolbar_browser_note: "<b>Megjegyzs\xE9g:</b> A targeting toolbar enged\xE9lyez\xE9se
+  csak a jelenleg haszn\xE1lt b\xF6ng\xE9sz\u0151t befoly\xE1solja. Ha m\xE1sik b\xF6ng\xE9sz\u0151ben
+  is szeretn\xE9d haszn\xE1lni, akkor \xFAjra enged\xE9lyezned kell. Tov\xE1bbi inform\xE1ci\xF3k
+  a <a target='_blank' href='{targetingLink}'>dokument\xE1ci\xF3ban</a>."
+microsoft_word_export_notice: "<ul><li>Nem lehets\xE9ges \xFAjra-import\xE1lni ezt
+  az exportot</li><li>Az export form\xE1tuma HTML, ami t\xF6k\xE9letesen megnyithat\xF3
+  Word-del</li><li>Ez az export nem tartalmazza a teljes elrendez\xE9shez sz\xFCks\xE9ges
+  inform\xE1ci\xF3kat (csak sima form\xE1z\xE1st)</li><li>Ki volt v\xE1lasztva nyelv
+  a t\xF6bbnyelv\u0171s\xEDtett mez\u0151kh\xF6z (csak a t\xF6bbnyelv\u0171s\xEDtett
+  mez\u0151k ker\xFCltek export\xE1l\xE1sra!)</li></ul>"
+fallback_languages: 'Fallback nyelv (CSV, pl.: de_CH,de)'
 frontend_languages: Frontend Languages
-add_language: Add Language
-default_language: Default language
-wildcards_are_supported: Wildcards are supported
-localization_and_internationalization: Localization &amp; Internationalization
-code_settings: Code Settings
-advanced_integration: Advanced Integration
-assign_target_group_weight: Weight
-target_group: Target Group
-target_group_multiselect: Target Group Multiselect
-select_a_target_group: Select a Target Group
-turn_off_usage_statistics: Turn off usage statistics
-children: Children
-elements_to_export: Elements to Export
-xliff_export_documents: If you want to translate eg. the whole /en tree to a different
-  language, first create a copy of the /en tree. Afterwards use the copied tree in
-  the export and select the source language 'en' and the target language 'de'. When
-  importing the translated XLIFF file, the contents of the exported documents (in
-  this case the copied tree documents) will be overwritten by the German translations
-  in the XLIFF file.
-xliff_export_objects: Only fields inside a Localized Fields container are recognized.
-  When importing the translated XLIFF the source language will be untouched, only
-  the target language fields will be overwritten. Use Relations checkbox to include
-  Objects & Documents from Dependencies e.g. Relation fields, Properties etc.
-xliff_export_notice: Here you can select the documents and objects you want to export
-  for external translation.
-important_notice: Important Notice
-xliff_import_notice: Select a translated XLIFF file which was previously exported
-  by pimcore and then translated by a localization service provider (LSP) or by a
-  CAT application. Please aware that the import will overwrite the elements which
-  were selected by the import (read also export).
-composite: Composite
-origin: Origin
-high_resolution: High Resolution
-pass_through_params: Pass Through Params
-redirects_type_entire_uri: Entire URI
-redirects_type_path_query: Path and Query
-redirects_csv_import: Redirects CSV Import
-redirects_import_total: Total
-redirects_import_created: Created
-redirects_import_updated: Updated
-redirects_import_errored: Errored
-redirects_import_errors: Errors
-redirects_import_error_line: Line
-analytics_gtag_code: Use the gtag code for analytics
-analytics_retargeting_code: Use the retargeting-code for analytics (dc.js)
-analytics_asynchronous_code: Use the asynchronous code for analytics (ga.js)
-newsletter_active: Newsletter Active
-newsletter_confirmed: Newsletter Confirmed
-gender: Gender
-use_original_tiff: Use original TIFF (only PRINT)
-use_original_tiff_description: Use original TIFF when source format is a TIFF image
-  -> do not modify it.
+add_language: "Nyelv hozz\xE1ad\xE1sa"
+default_language: "Alap\xE9rtelmezett nyelv"
+wildcards_are_supported: "A helyettes\xEDt\u0151 karakterek t\xE1mogatottak"
+localization_and_internationalization: "Lokaliz\xE1ci\xF3 &amp; Internaci\xF3naliz\xE1ci\xF3"
+code_settings: "K\xF3d be\xE1ll\xEDt\xE1sok"
+advanced_integration: "Halad\xF3 integr\xE1ci\xF3"
+assign_target_group_weight: "S\xFAly"
+target_group: "C\xE9lcsoport"
+target_group_multiselect: "C\xE9lcsoport t\xF6bbsz\xF6r\xF6s v\xE1laszt\xF3"
+select_a_target_group: "V\xE1lassz c\xE9lcsoportot"
+turn_off_usage_statistics: "Haszn\xE1lati statisztika kikapcsol\xE1sa"
+children: Gyerekek
+elements_to_export: "Elemek export\xE1l\xE1sa"
+xliff_export_documents: "Ha le akarod ford\xEDtani pl. az eg\xE9sz /en f\xE1t egy
+  m\xE1sik nyelvre, el\u0151sz\xF6r m\xE1sold le az /en f\xE1t. Ezut\xE1n haszn\xE1ld
+  a m\xE1solatot az export\xE1l\xE1s sor\xE1n, \xE9s v\xE1laszd ki az \u201Een\u201D
+  forr\xE1snyelvet \xE9s a \u201Ede\u201D c\xE9lnyelvet. A leford\xEDtott XLIFF f\xE1jl
+  import\xE1l\xE1sakor az export\xE1lt dokumentumok (jelen esetben a m\xE1solt fa
+  dokumentumok) tartalm\xE1t fel\xFCl\xEDrj\xE1k a n\xE9met ford\xEDt\xE1sok az XLIFF
+  f\xE1jlban."
+xliff_export_objects: "Csak a Lokaliz\xE1lt mez\u0151k t\xE1rol\xF3ban l\xE9v\u0151
+  mez\u0151ket ismeri fel. A leford\xEDtott XLIFF import\xE1l\xE1sakor a forr\xE1snyelv
+  \xE9rintetlen, csak a c\xE9lnyelvi mez\u0151k \xEDr\xF3dnak fel\xFCl. Haszn\xE1ld
+  a Kapcsolatok checkboxot a f\xFCgg\u0151s\xE9gekb\u0151l sz\xE1rmaz\xF3 objektumok
+  \xE9s dokumentumok felv\xE9tel\xE9hez, pl. Kapcsolati mez\u0151k, Tulajdons\xE1gok
+  stb."
+xliff_export_notice: "Itt kiv\xE1laszhatod a dokumentumokat \xE9s objekteket, amiket
+  export\xE1lni szeretn\xE9l k\xFCls\u0151 ford\xEDt\xE1sra"
+important_notice: "Fontos \xE9rtes\xEDt\u0151"
+xliff_import_notice: "V\xE1lassz egy leford\xEDtott XLIFF f\xE1jlt, amelyet kor\xE1bban
+  a pimcore export\xE1lt, majd egy lokaliz\xE1ci\xF3s szolg\xE1ltat\xF3 (LSP) vagy
+  egy CAT alkalmaz\xE1s ford\xEDtott le. Felh\xEDvjuk figyelmed, hogy az import fel\xFCl\xEDrja
+  az import\xE1l\xE1s \xE1ltal kiv\xE1lasztott elemeket (ld. az export\xE1l\xE1s is)."
+composite: Kompozit
+origin: "Forr\xE1s"
+high_resolution: "Nagy felbont\xE1s\xFA"
+pass_through_params: "Param\xE9terek \xE1tad\xE1sa"
+redirects_type_entire_uri: Teljes URI
+redirects_type_path_query: "\xDAtvonal \xE9s Query"
+redirects_csv_import: "\xC1t\xEDr\xE1ny\xEDt\xE1sok CSV Import"
+redirects_import_total: Teljes
+redirects_import_created: "L\xE9trehozva"
+redirects_import_updated: "Friss\xEDtve"
+redirects_import_errored: "Hiba t\xF6rt\xE9nt"
+redirects_import_errors: "Hib\xE1k"
+redirects_import_error_line: Sor
+analytics_gtag_code: "gtag k\xF3d haszn\xE1lata az analytics-hez"
+analytics_retargeting_code: "A retargeting k\xF3d haszn\xE1lata analitik\xE1hoz (dc.js)"
+analytics_asynchronous_code: "Asynchronous k\xF3d haszn\xE1lata analitik\xE1hoz (ga.js)"
+newsletter_active: "H\xEDrlev\xE9l akt\xEDv"
+newsletter_confirmed: "H\xEDrlev\xE9l meger\u0151s\xEDtve"
+gender: Nem
+use_original_tiff: "Eredeti TIFF haszn\xE1lata"
+use_original_tiff_description: "Eredeti TIFF haszn\xE1lata, ha a forr\xE1sf\xE1jl
+  TIFF k\xE9p -> ne m\xF3dos\xEDtsa."
 port: Port
-delivery_settings: Delivery Settings
-generate_previews: Generate previews
-invalid_class_name: Invalid Class Name
-redirect_unknown_domains_to_main_domain: Redirect unknown domains (not used for a
-  site and for redirects, ...) to the main domain (above)
-hours: Hours
-minutes: Minutes
-seconds: Seconds
-operating_system: Operating System
+delivery_settings: "K\xE9zbes\xEDt\xE9si be\xE1ll\xEDt\xE1sok"
+generate_previews: "El\u0151n\xE9zetek gener\xE1l\xE1sa"
+invalid_class_name: "\xC9rv\xE9nytelen Class n\xE9v"
+redirect_unknown_domains_to_main_domain: "Ismeretlen domainek (nem haszn\xE1lt) \xE1tir\xE1ny\xEDt\xE1sa
+  a f\u0151 domainre (fentebb)"
+hours: "\xD3ra"
+minutes: Perc
+seconds: "M\xE1sodperc"
+operating_system: "Oper\xE1ci\xF3s rendszer"
 hardware_platform: Hardware Platform
-time_on_site: Time on site
-visited_pages_before_number: Visited n-pages before
-number: Number
-visited_page_before: Visited page before
-searchengine: Search Engine
+time_on_site: "Oldalon t\xF6lt\xF6tt id\u0151"
+visited_pages_before_number: "X oldalt m\xE1r megl\xE1togatott"
+number: "Sz\xE1m"
+visited_page_before: "L\xE1togatott oldal"
+searchengine: "Keres\u0151motor"
 referrer: Referrer
 referring_site: Referring Site
-AND: AND
-OR: OR
-AND_NOT: AND NOT
-radius_in_km: Radius (km)
-redirect: Redirect
+AND: "\xC9S"
+OR: VAGY
+AND_NOT: "\xC9S NEM"
+radius_in_km: "R\xE1diusz (km)"
+redirect: "\xC1tir\xE1ny\xEDt"
 code_snippet: Code-Snippet
-browser: Browser
-conditions: Conditions
-save_order: Save Order
-debug_admin_translations: Debug Admin-Translations (wrapped in +)
-short_url: Short URL
-width_and_height_must_be_an_even_number: width and height must be an even number
+browser: "B\xF6ng\xE9sz\u0151"
+conditions: "Felt\xE9telek"
+save_order: "Sorrend ment\xE9se"
+debug_admin_translations: "Admin ford\xEDt\xE1sok debugol\xE1sa (+-ba z\xE1rva)"
+short_url: "R\xF6vid URL"
+width_and_height_must_be_an_even_number: "sz\xE9less\xE9g \xE9s magass\xE1g eg\xE9sz
+  sz\xE1m kell legyen"
 this_filter_has_no_settings: this filter has no settings
 mute: Mute
 effect: Effect
 colorChannelMixer: Color Channel Mixer
 setframerate: Set Framerate
-source_site: Source-Site
-target_site: Target-Site
-source_entire_url: Entire URL as Source
+source_site: "Forr\xE1s oldal"
+target_site: "C\xE9l oldal"
+source_entire_url: "Teljes URL forr\xE1sk\xE9nt"
 analytics_internalid: GA Internal ID
-analytics_settings_description: To use the complete Google Analytics integration,
-  please configure the Google API Service Account in System Settings
-upload_path: Upload Path
-selection_options: Selection Options
-expiry: Expiry
-mobile: Mobile
-group_by_path: Group by path
-flush: Flush
-errors_from_the_last_7_days: Errors from the last 7 days
-show_close_warning: Show close warning
-matching_text: Matching Text
-any: Any
+analytics_settings_description: "A Google Analytics integr\xE1ci\xF3 haszn\xE1lat\xE1hoz
+  k\xE9rj\xFCk, \xE1ll\xEDtsd be a Google API Service Account-ot a Rendszerbe\xE1ll\xEDt\xE1sokban"
+upload_path: "Felt\xF6lt\xE9si \xFAtvonal"
+selection_options: "Kiv\xE1laszt\xE1si opci\xF3k"
+expiry: "Lej\xE1rat"
+mobile: Mobil
+group_by_path: "\xDAtvonal szerinti csoportos\xEDt\xE1s"
+flush: "\xDCr\xEDt\xE9s"
+errors_from_the_last_7_days: "AZ elm\xFAlt 7 nap hib\xE1i"
+show_close_warning: "Figyelmeztet\xE9s mutat\xE1sa bez\xE1r\xE1skor"
+matching_text: "Megfelel\u0151 sz\xF6veg"
+any: "B\xE1rmilyen"
 http_method: HTTP Method
 url_pattern: URL Pattern<br />(RegExp eg. @success@i)
-beginning: Beginning
+beginning: Kezdet
 element_css_selector: Element (CSS Selector)
-insert_position: Insert Position
-robots_txt_exists_on_filesystem: The robots.txt exists already in the document-root
-  on the filesystem
-only_required_for_reporting_in_pimcore_but_not_for_code_integration: The following
-  is only required if you want to use the reporting functionalities in pimcore, but
-  this is not required for the code integration.
-save_error: Cannot save data
-all_roles: All Roles
-add_role: Add Role
-role_creation_error: Could not create role
-workspaces: Workspaces
-Username: Username
-video_bitrate: Video Bitrate (kB/s)
-audio_bitrate: Audio Bitrate (kB/s)
-rasterize_svg: Rasterize SVGs
-rasterize_svg_info_text: SVGs get automatically rasterized when a transformation other
-  than resize or scale by width/height is used.
-preserve_animation: Preserve animations for GIF
-preserve_animation_info_text: 'Supported transformations are: Frame, Cover, Contain,
-  Resize, ScaleByWidth, ScaleByHeight'
-valid_languages_frontend_description: These settings are used in documents to specify
-  the content language (in properties tab), for objects in localized-fields, for shared
-  translations, ... simply everywhere the editor can choose or use a language for
-  the content.<br />Fallback languages are currently used in object's localized fields
-  and shared translations.
-delete_language_note: 'Note: Removing language from the list will not delete its respective
-  data. Please use console command ''pimcore:locale:delete-unused-tables'' for cleanup.'
-maximum_items: max. items
-collapsed: Collapsed
-url_to_custom_image_on_login_screen: URL to custom image for the login screen
-sepia: Sepia
-sharpen: Sharpen
+insert_position: "Beilleszt\xE9si poz\xEDci\xF3"
+robots_txt_exists_on_filesystem: "A robots.txt m\xE1r l\xE9tezik a f\xE1jl rendszer
+  root mapp\xE1j\xE1ban"
+only_required_for_reporting_in_pimcore_but_not_for_code_integration: "A k\xF6vetkez\u0151
+  csak akkor sz\xFCks\xE9ges, ha a jelent\xE9si funkci\xF3kat is szeretn\xE9d haszn\xE1lni,
+  a k\xF3d integr\xE1ci\xF3hoz nem sz\xFCks\xE9ges."
+save_error: "Adat nem menthet\u0151"
+all_roles: "Szerepk\xF6r\xF6k"
+add_role: "Szerepk\xF6r hozz\xE1ad\xE1sa"
+role_creation_error: "Sikertelen szerepk\xF6r kre\xE1l\xE1s"
+workspaces: "Munkater\xFCletek"
+Username: "Felhaszn\xE1l\xF3n\xE9v"
+video_bitrate: "Vide\xF3 bitr\xE1ta (kB/s)"
+audio_bitrate: "Audi\xF3 bitr\xE1ta (kB/s)"
+rasterize_svg: "SVG-k raszterez\xE9se"
+rasterize_svg_info_text: "Az SVG-k automatikusan raszteresednek, ha az \xE1tm\xE9retez\xE9sek
+  k\xEDv\xFCl egy\xE9b transzform\xE1ci\xF3t is t\xF6rt\xE9nik rajtuk."
+preserve_animation: "Anim\xE1ci\xF3k meg\u0151rz\xE9se GIF-hez"
+preserve_animation_info_text: "T\xE1mogatott transzform\xE1ci\xF3k: Keretez\xE9s,
+  Bor\xEDt\xE1s, Befoglal\xE1s, \xC1tm\xE9retez\xE9s, Sz\xE9less\xE9g szerinti sk\xE1l\xE1z\xE1s,
+  Magass\xE1g szerinti sk\xE1l\xE1z\xE1s"
+valid_languages_frontend_description: "Ezeket a be\xE1ll\xEDt\xE1sokat a dokumentumokban
+  haszn\xE1lj\xE1k a tartalom nyelv\xE9nek megad\xE1s\xE1ra (a Tulajdons\xE1gok f\xFCl\xF6n),
+  a lokaliz\xE1lt mez\u0151kben l\xE9v\u0151 objektumokhoz, a megosztott ford\xEDt\xE1sokhoz
+  ... egyszer\u0171en minden\xFCtt, ahol a szerkeszt\u0151 v\xE1laszthat vagy haszn\xE1lhat
+  nyelvet a tartalomhoz. A tartal\xE9knyelvek (fallback) jelenleg csak az objektum
+  lokaliz\xE1lt mez\u0151iben \xE9s megosztott ford\xEDt\xE1saiban ker\xFClnek felhaszn\xE1l\xE1sra."
+delete_language_note: "Megjegyz\xE9s: Nyelv t\xF6rl\xE9se a list\xE1b\xF3l nem t\xF6rli
+  az adatokat. Haszn\xE1ld a k\xF6vetkez\u0151 CLI parancsot a takar\xEDt\xE1shoz:
+  'pimcore:locale:delete-unused-tables'"
+maximum_items: "max. elemsz\xE1m"
+collapsed: "\xD6sszecsukott"
+url_to_custom_image_on_login_screen: "Egy\xE9ni k\xE9p URL-je a bel\xE9ptet\u0151
+  oldalhoz"
+sepia: "Sz\xE9pia"
+sharpen: "\xC9les\xEDt\xE9s"
 gaussianBlur: Gaussian Blur
-radius: Radius
-sigma: Sigma
-threshold: Threshold
-tolerance: Tolerance
+radius: "R\xE1diusz"
+sigma: Szigma
+threshold: "K\xFCsz\xF6b"
+tolerance: Tolerancia
 grayscale: Grayscale
-nothing_to_configure: Nothing to configure
+nothing_to_configure: "Nincs mit konfigur\xE1lni"
 opacity: Opacity
 applymask: Apply Mask
-addoverlay: Add Overlay
-transformations: Transformations
-you_can_drag_the_tabs_to_reorder_the_media_queries: You can drag the tabs to reorder
-  the priority of the media queries
+addoverlay: "Overlay hozz\xE1ad\xE1sa"
+transformations: "Transzform\xE1ci\xF3k"
+you_can_drag_the_tabs_to_reorder_the_media_queries: "H\xFAz\xE1ssal \xE1tsorrendezheted
+  a media query-k priorit\xE1s\xE1t"
 frame: Frame
-setbackgroundcolor: Set Backgroundcolor
-setbackgroundimage: Set Background Image
-roundcorners: Round Corners
-rotate: Rotate
-color: Color
-angle: Angle
-label_width: Label Width
-label_align: Label Align
-label_first_cell: Label First Cell
-enable: Enable
-disable: Disable
-configure: Configure
-beginning_with: Beginning with
-matching_exact: Matching exactly
-add_expert_mode: Add (Expert Mode)
-add_beginner_mode: Add (Beginner)
-lowest: lowest
-highest: highest
-override_all: override all
-deactivate: Deactivate
-countrymultiselect: Countries (Multiselect)
-languagemultiselect: Languages (Multiselect)
-"yes": "Yes"
-"no": "No"
-allow_trailing_slash_for_documents: Allow trailing Slash in URL
-localizedfields: Localized Fields
-new_folder: New Folder
-new_file: New File
-gridview: Grid View
-visibility_of_system_properties: Visibility of system properties
-translate: translate
-translations_admin_hint: 'HINT: Please Reload UI to apply translation changes!'
-allowed_types: Allowed Types
-columnlength: Columnlength
-visible_in_searchresult: Visible in Search Result
-visible_in_gridview: Visible in Grid View
+setbackgroundcolor: "H\xE1tt\xE9rsz\xEDn be\xE1ll\xEDt\xE1sa"
+setbackgroundimage: "H\xE1tt\xE9rk\xE9p be\xE1ll\xEDt\xE1sa"
+roundcorners: "Kerek\xEDtett sarkok"
+rotate: Forgat
+color: "Sz\xEDn"
+angle: "Sz\xF6g"
+label_width: "C\xEDmke sz\xE9less\xE9g"
+label_align: "C\xEDmke igaz\xEDt\xE1sa"
+label_first_cell: "C\xEDmke els\u0151 cella"
+enable: "Enged\xE9lyez"
+disable: Letilt
+configure: "Konfigur\xE1ci\xF3"
+beginning_with: "Ezzel kezd\u0151dik"
+matching_exact: "Pontos egyez\xE9s"
+add_expert_mode: "Hozz\xE1ad\xE1s (Szak\xE9rt\u0151 m\xF3d)"
+add_beginner_mode: "Hozz\xE1ad\xE1s (Kezd\u0151)"
+lowest: legkisebb
+highest: legnagyobb
+override_all: "\xF6sszes fel\xFCl\xEDr\xE1sa"
+deactivate: "Deaktiv\xE1l\xE1s"
+countrymultiselect: "Orsz\xE1gok (Multiselect)"
+languagemultiselect: Nyelvek (Multiselect)
+"yes": Igen
+"no": Nem
+allow_trailing_slash_for_documents: "Trailing Slash enged\xE9lyez\xE9se az URL-ben"
+localizedfields: "T\xF6bbnyelv\u0171 mez\u0151k"
+new_folder: "\xDAj mappa"
+new_file: "\xDAj f\xE1jl"
+gridview: "R\xE1cs n\xE9zet"
+visibility_of_system_properties: "Rendszer tulajdons\xE1gok l\xE1that\xF3s\xE1ga"
+translate: "ford\xEDt"
+translations_admin_hint: "TIPP: K\xE9rlek, friss\xEDts, hogy \xE9rv\xE9nybe l\xE9pjenek
+  a m\xF3dos\xEDt\xE1sok"
+allowed_types: "Enged\xE9lyezett t\xEDpusok"
+columnlength: Oszlop hossza
+visible_in_searchresult: "L\xE1that\xF3 a keres\xE9si tal\xE1latok k\xF6z\xF6tt"
+visible_in_gridview: "L\xE1that\xF3 r\xE1csn\xE9zetben"
 fieldcollections: Field-Collections
 block: Block
 tooltip: Tooltip
-decimalPrecision: Decimal-Precision
+decimalPrecision: "Tizedes-pontoss\xE1g"
 css_style: CSS Style
-add_setting: Add Setting
-reverse: Reverse
-geopolygon: Geographic Polygon
-geopolyline: Geographic Polyline
-geobounds: Geographic Bounds
-sure_to_install_unstable_update: Are you sure that you want to install a potential
-  not working version?
-analytics_accountid: Account-ID (eg. 1234567)
-verification_filename_text: Verification Filename<br /><small>required for verification</small>
-analytics_notice: Please read the documentation about the Google Analytics integration
-  first, for the advanced mode you have to modify the Google Analytics settings.
-analytics_trackid_code: Track-ID (eg. UA-XXXXX-X)<br /><small>required for code integration</small>
+add_setting: "Be\xE1ll\xEDt\xE1s hozz\xE1ad\xE1sa"
+reverse: "Ford\xEDtott"
+geopolygon: "F\xF6ldrajzi poligon"
+geopolyline: "F\xF6ldrajzi vonal"
+geobounds: "F\xF6ldrajzi hat\xE1rok"
+sure_to_install_unstable_update: "Biztos, hogy telep\xEDteni szeretn\xE9l egy potenci\xE1lisan
+  nem m\u0171k\xF6d\u0151 verzi\xF3t?"
+analytics_accountid: 'Account-ID (pl.: 1234567)'
+verification_filename_text: "Meger\u0151s\xEDt\xF3 f\xE1jln\xE9v<br /><small>sz\xFCks\xE9ges
+  a meger\u0151s\xEDt\xE9shez</small>"
+analytics_notice: "El\u0151sz\xF6r olvassa el a Google Analytics integr\xE1ci\xF3j\xE1val
+  kapcsolatos dokument\xE1ci\xF3t, a speci\xE1lis m\xF3dhoz m\xF3dos\xEDtania kell
+  a Google Analytics be\xE1ll\xEDt\xE1sait."
+analytics_trackid_code: "Track-ID (eg. UA-XXXXX-X)<br /><small>k\xF6telez\u0151 a
+  k\xF3d integr\xE1ci\xF3hoz</small>"
 multiselect: Multiselection
 handler: Handler
-invisible: Invisible
-only_configured_languages: Show only in system settings configured languages
-permissions: Permissions
-you_are_not_allowed_to_manage_admin_users: You are not allowed to manage admin users
+invisible: "L\xE1thatatlan"
+only_configured_languages: "Csak a rendszerbe\xE1ll\xEDt\xE1sokkal konfigur\xE1lt
+  nyelveken jelenjen meg"
+permissions: "Jogosults\xE1gok"
+you_are_not_allowed_to_manage_admin_users: "Nincs jogosults\xE1god adminok kezel\xE9s\xE9re"
 content_type: Content-Type
-new_property: New Property
-all_users: All Users
+new_property: "\xDAj tulajdons\xE1g"
+all_users: "Felhaszn\xE1l\xF3k"
 admin: Admin
-new_document_type: New Document Type
-timezone: Timezone
+new_document_type: "\xDAj dokumentum t\xEDpus"
+timezone: "Id\u0151z\xF3na"
 host: Host
-store_version_history_in_days: Store version history for x Days
-store_version_history_in_steps: Store version history for x Steps
+store_version_history_in_days: "Verzi\xF3 el\u0151zm\xE9nyek megtart\xE1sa X napig"
+store_version_history_in_steps: "Verzi\xF3 el\u0151zm\xE9nyek megtart\xE1sa X m\xF3dos\xEDt\xE1sig"
 layout: Layout
-add_layout_component: Add Layout Component
-add_data_component: Add Data Component
+add_layout_component: "Layout Component hozz\xE1ad\xE1sa"
+add_data_component: "Adat Component hozz\xE1ad\xE1sa"
 accordion: Accordion
-iframe: Preview / Iframe
+iframe: "El\u0151n\xE9zet / Iframe"
 fieldset: Fieldset
 panel: Panel
 tabpanel: Tabpanel
-tab_position: Tab Position
-pattern: Pattern
-variables: Variables
-defaults: Defaults
+tab_position: "Tab Poz\xEDci\xF3"
+pattern: Minta
+variables: "V\xE1ltoz\xF3k"
+defaults: "Alap\xE9rtelmezett"
 wysiwyg: WYSIWYG
-objects: Objects
-allow_inherit: Allow inheritance
+objects: Objectumok
+allow_inherit: "\xD6r\xF6kl\xE9s enged\xE9lyez\xE9se"
 parent_php_class: Parent PHP Class
-implements_interfaces: Implements interface(s)
+implements_interfaces: "Megval\xF3s\xEDt interface(ket)"
 use_traits: Use (traits)
-general_settings: General Settings
-layout_settings: Layout Settings (Pimcore Admin)
-region: Region
-collapsible: Collapsible
-allowed_classes: Allowed classes
-display_name: Display name
-not_editable: Not editable
-index: Indexed
-mandatoryfield: Mandatory field
-install: Install
-uninstall: Uninstall
-some_fields_cannot_be_saved: Some fields cannot be saved.
-icon: Icon
+general_settings: "\xC1ltal\xE1nos Be\xE1ll\xEDt\xE1sok"
+layout_settings: "Layout Be\xE1ll\xEDt\xE1sok (Pimcore Admin)"
+region: "R\xE9gi\xF3"
+collapsible: "\xD6sszecsukhat\xF3"
+allowed_classes: "Enged\xE9lyezett oszt\xE1lyok"
+display_name: "Megjelen\xE9si n\xE9v"
+not_editable: "Nem szerkeszthet\u0151"
+index: Indexelt
+mandatoryfield: "K\xF6telez\u0151 mez\u0151"
+install: "Telep\xEDt"
+uninstall: "Elt\xE1vol\xEDt"
+some_fields_cannot_be_saved: "N\xE9h\xE1ny mez\u0151 nem menthet\u0151."
+icon: Ikon
 slider: Slider
-domain: Domain (eg. example.org)
-datetime: Date & Time
-default_value: Default value
-button: Button
-priority: Priority
-end: End
-select_update: Select update
-stable_updates: Available stable updates
-non_stable_updates: Available non-stable updates
-latest_pimcore_version_already_installed: You have installed the latest version of
-  pimcore.
-table: Table
-rows: Rows
-language_admin: Default-Language in Admin-Interface
-exclude_patterns: Exclude Patterns
-cover: Cover
-contain: Contain
-min_value: min. Value
-max_value: max. Value
-increment: Increment Step
-vertical: Vertical
-country: Country
-zoom_level: Zoom level
-map_type: Map type
-roadmap: Roadmap
-satellite: Satellite
-hybrid: Hybrid
+domain: 'Domain (pl.: example.org)'
+datetime: "D\xE1tum & Id\u0151"
+default_value: "Alap\xE9rtelmezett \xE9rt\xE9k"
+button: Gomb
+priority: "Priorit\xE1s"
+end: "V\xE9ge"
+select_update: "V\xE1lassz friss\xEDt\xE9st"
+stable_updates: "El\xE9rhet\u0151 stabil friss\xEDt\xE9sek"
+non_stable_updates: "El\xE9rhet\u0151 nem stabil friss\xEDt\xE9sek"
+latest_pimcore_version_already_installed: "Telep\xEDtetted a legfrissebb pimcore verzi\xF3t."
+table: "T\xE1bl\xE1zat"
+rows: Sorok
+language_admin: "Alap\xE9rtelmezett nyelv az Admin fel\xFCleten"
+exclude_patterns: "Kiz\xE1rt mint\xE1k"
+cover: "Bor\xEDt\xF3"
+contain: Tartalmaz
+min_value: "min. \xE9rt\xE9k"
+max_value: "max. \xE9rt\xE9k"
+increment: "N\xF6vekm\xE9nyes l\xE9p\xE9s"
+vertical: "F\xFCgg\u0151leges"
+country: "Orsz\xE1g"
+zoom_level: "Nagy\xEDt\xE1s m\xE9rt\xE9ke"
+map_type: "T\xE9rk\xE9p t\xEDpus"
+roadmap: "\xDAti t\xE9rk\xE9p"
+satellite: "M\u0171hold"
+hybrid: Hibrid
 google_api_key_simple: Google API Key (Simple API Access for Maps, CSE, ...)
-document_restrictions: Document Restrictions
-asset_restrictions: Asset Restrictions
-object_restrictions: Object Restrictions
-allow_documents: allow Documents
-allow_assets: allow Assets
-allow_objects: allow Objects
-allowed_types_hint: (empty = allow all)
-allowed_document_types: Allowed Document Types
-allowed_asset_types: Allowed Asset Types
+document_restrictions: "Dokumentum korl\xE1toz\xE1sok"
+asset_restrictions: "Asset korl\xE1toz\xE1sok"
+object_restrictions: "Objectum korl\xE1toz\xE1sok"
+allow_documents: "Dokumentumok enged\xE9lyez\xE9se"
+allow_assets: "Assetek enged\xE9lyez\xE9se"
+allow_objects: "Objectumok enged\xE9lyez\xE9se"
+allowed_types_hint: "(\xFCres = \xF6sszes enged\xE9lyez\xE9se)"
+allowed_document_types: "Enged\xE9lyezett Dokumentum t\xEDpusok"
+allowed_asset_types: "Enged\xE9lyezett asset t\xEDpusok"
 allowed_video_types: Allowed Video Types
-website: Website
-user_creation_error: Could not create user
-email_debug_addresses: Debug Email Addresses
-user_object_dependencies_description: 'This user is referenced in the following objects:'
-user_admin_description: Admin users do not only automatically gain all permissions
-  listed below, they are also allowed to perform all actions on documents, assets
-  and objects without any restrictions.
-user_apikey_description: API key required for web service access by this user
-apikey: API Key
-lazy_loading: lazy loading
-non_owner_description: Non owner objects represent relations to an other object just
-  in the same way as objects do. The difference is, that a non-owner object field
-  is not the owner of the relation data, it is merely a view on data stored in other
-  objects. Please choose the owner and field name where the data is originally stored.
-allow_variants: Allow variants
-show_variants: Show variants in tree
-allowed_class_field: Allowed class/field
-structuredTable: Structured Table
-position: Position
-objectsMetadata_allowed_class: Allowed Class
-objectsMetadata_visible_fields: Visible Fields
-objectsMetadata_type_columnbool: Column Bool
+website: Webhely
+user_creation_error: "Felhaszn\xE1l\xF3 l\xE9trehoz\xE1sa sikertelen"
+email_debug_addresses: "Debug email c\xEDmek"
+user_object_dependencies_description: "Erre a felhaszn\xE1l\xF3ra a k\xF6vetkez\u0151
+  objektumok hivatkoznak:"
+user_admin_description: "Az adminisztr\xE1tori felhaszn\xE1l\xF3k nemcsak automatikusan
+  megszerzik az al\xE1bb felsorolt \xF6sszes enged\xE9lyt, hanem korl\xE1toz\xE1sok
+  n\xE9lk\xFCl elv\xE9gezhetnek minden m\u0171veletet a dokumentumokkal, eszk\xF6z\xF6kkel
+  \xE9s objektumokkal kapcsolatban."
+user_apikey_description: "API-kulcs sz\xFCks\xE9ges a webes szolg\xE1ltat\xE1shoz
+  val\xF3 hozz\xE1f\xE9r\xE9shez"
+apikey: API Kulcs
+lazy_loading: Lazy loading
+non_owner_description: "A nem tulajdonos objektumok ugyan\xFAgy k\xE9pviselik a kapcsolatokat
+  egy m\xE1sik objektummal, mint az objektumok. A k\xFCl\xF6nbs\xE9g az, hogy a nem
+  tulajdonos objektum mez\u0151 nem a rel\xE1ci\xF3s adatok tulajdonosa, csup\xE1n
+  m\xE1s objektumokban t\xE1rolt adatok n\xE9zete. K\xE9rj\xFCk, v\xE1laszd ki a tulajdonos
+  \xE9s a mez\u0151 nev\xE9t, ahol az adatokat eredetileg t\xE1rolj\xE1k."
+allow_variants: "Vari\xE1nsok enged\xE9lyez\xE9se"
+show_variants: "Vari\xE1nsok mutat\xE1sa a f\xE1ban"
+allowed_class_field: "Enged\xE9lyezett oszt\xE1ly/mez\u0151"
+structuredTable: "Strukt\xFAr\xE1lt T\xE1bla"
+position: "Poz\xEDci\xF3"
+objectsMetadata_allowed_class: "Enged\xE9lyezett Oszt\xE1lyok"
+objectsMetadata_visible_fields: "L\xE1that\xF3 mez\u0151k"
+objectsMetadata_type_columnbool: Boolean oszlop
 objectsMetadata_type_multiselect: Multiselect
-file_explorer_saved_file_error: Cannot save file
-reserved_field_names_error: 'Please do not use the following reserved field names: '
-use_current_date: Use current date
-inherited_default_value_warning: The default value is used if either inheritance is
-  deactivated or if the parent value is empty
-restrict_selection_to: Restrict Selection To
-maximum_tabs: Maximum number of tabs
-algorithm: Algorithm
-salt: Salt
-saltlocation: Salt location
-custom_layout: Custom Layout
-custom_layout_definition: Custom Layout Definition
-configure_custom_layouts: Configure Custom Layouts
-add_layout: Add Layout
-delete_layout: Delete Layout
-special_settings: Special Settings
-custom_layouts: Custom Layouts
-new_definition: New Definition
-target_subtype: Target Type
-mandatory: Mandatory
-disallow_addremove: Disallow Add/Remove
-disallow_reorder: Disallow Reordering
-reload_definition: Reload Definition
-saving: Saving
-definition: Definition
-objectbrick: Object Brick
-select_all: Select All
-deselect_all: Deselect All
-definitions_saved: Definitions saved
-predefined_metadata_definitions: Predefined Metadata Definitions
-default_layout: Use as default layout
-hide_edit_image_tab: Hide Edit Image Tab
-are_you_sure_recursive: There child nodes which will be deleted as well! Are you sure?
-log_relatedobject: Related object
-log_component: Component
-log_search_form: Search parameter
-log_search_type: Logging type
-log_search_relatedobject: Related object (id)
-log_timestamp: Timestamp
-log_fileobject: File object
-log_detailinformation: Detail information
-classificationstore_group_definition: Groups
-classificationstore_group_limitation: Max. group items
-classificationstore_mbx_entergroup_title: New Group
-classificationstore_mbx_entergroup_prompt: Enter name
-classificationstore_error_addgroup_msg: Error adding group
-classificationstore_invalidname: Invalid name
-classificationstore_error_group_exists_msg: Group with this name already exists
-classificationstore_properties: Key Definitions
-classificationstore_mbx_enterkey_title: New Key
-classificationstore_detailed_configuration: Detailed Configuration
-classificationstore_detailed_config: Detailed Config
-relations: Relations
-localized: Localized
-allowed_group_ids: Allowed Group Ids (csv)
-key_id: Key ID
-sorter: Sorter
-classificationstore_tooltip_sorter: Items with lower value will be listed first
-classificationstore_collection_definition: Group Collections
-group_id: Group ID
-collection: Collection
-classificationstore_mbx_entercollection_title: New Collection
-class_field_name_error: Following field name has an error
-inputQuantityValue_field: Input Quantity Value
-abbreviation: Abbreviation
-longname: Longname
-baseunit: Base Unit
-quantityValue_units: QuantityValue Unit Definition
-valid_quantityValue_units: Valid units
-calculatedValue_calculatorclass: Calculator class
+file_explorer_saved_file_error: "File ment\xE9se sikertelen"
+reserved_field_names_error: "K\xE9rj\xFCk ne haszn\xE1ld az alabbi foglalt mez\u0151neveket: "
+use_current_date: "Aktu\xE1lis d\xE1tum"
+inherited_default_value_warning: "Az alap\xE9rtelmezett \xE9rt\xE9k ker\xFCl haszn\xE1latra,
+  amennyiben az \xF6r\xF6kl\xE9s ki van kapcsolva vagy a sz\xFCl\u0151 \xE9rt\xE9k
+  \xFCres."
+restrict_selection_to: "Kiv\xE1laszt\xE1s korl\xE1toz\xE1sa:"
+maximum_tabs: "Tabok maxim\xE1lis sz\xE1ma"
+algorithm: Algoritmus
+salt: "S\xF3 (salt)"
+saltlocation: Salt helye
+custom_layout: "Egyedi Elrendez\xE9s"
+custom_layout_definition: "Egyedi Elrendez\xE9s Defin\xEDci\xF3"
+configure_custom_layouts: "Egyedi elrendez\xE9sek konfigur\xE1l\xE1sa"
+add_layout: "Elrendez\xE9s hozz\xE1ad\xE1sa"
+delete_layout: "Elrendez\xE9s t\xF6rl\xE9se"
+special_settings: "Speci\xE1lis Be\xE1ll\xEDt\xE1sok"
+custom_layouts: "Egyedi elrendez\xE9sek"
+new_definition: "\xDAj Defin\xEDci\xF3"
+target_subtype: "C\xE9l t\xEDpusa"
+mandatory: "K\xF6telez\u0151"
+disallow_addremove: "L\xE9trehoz\xE1s/T\xF6rl\xE9s tilt\xE1sa"
+disallow_reorder: "\xC1tsorrendez\xE9s tilt\xE1sa"
+reload_definition: "Defin\xEDci\xF3 \xFAjrat\xF6lt\xE9se"
+saving: "Ment\xE9s"
+definition: "Defin\xEDci\xF3"
+objectbrick: "Objektum \xE9p\xEDt\u0151kocka"
+select_all: "\xD6sszes kiv\xE1laszt\xE1sa"
+deselect_all: "\xD6sszes kiv\xE1laszt\xE1s\xE1nak megsz\u0171ntet\xE9se"
+definitions_saved: "Defin\xEDci\xF3k elmentve"
+predefined_metadata_definitions: "El\u0151redefini\xE1lt Metaadatok defin\xEDci\xF3i"
+default_layout: "Hszn\xE1ld alap\xE9rtelmezett elrendez\xE9sk\xE9nt"
+hide_edit_image_tab: "K\xE9pszerkeszt\u0151 Tab elrejt\xE9se"
+are_you_sure_recursive: "A gyerek csom\u0151pontok is t\xF6rl\u0151dnek. Biztos folytatod?"
+log_relatedobject: "Kapcsol\xF3d\xF3 objektumok"
+log_component: Komponens
+log_search_form: "Keres\xE9si param\xE9terek"
+log_search_type: "Log t\xEDpusa"
+log_search_relatedobject: "Kapcsol\xF3d\xF3 objektum (id)"
+log_timestamp: "Id\u0151b\xE9lyeg"
+log_fileobject: File objektum
+log_detailinformation: "R\xE9szletek"
+classificationstore_group_definition: Csoportok
+classificationstore_group_limitation: "Max. elemsz\xE1m"
+classificationstore_mbx_entergroup_title: "\xDAj csoport"
+classificationstore_mbx_entergroup_prompt: "N\xE9v megad\xE1sa"
+classificationstore_error_addgroup_msg: "Sikertelen csoport hozz\xE1ad\xE1s"
+classificationstore_invalidname: "Hib\xE1s n\xE9v"
+classificationstore_error_group_exists_msg: "Ilyen nev\u0171 csoport m\xE1r l\xE9tezik"
+classificationstore_properties: "Kulcs defin\xEDci\xF3k"
+classificationstore_mbx_enterkey_title: "\xDAj kulcs"
+classificationstore_detailed_configuration: "R\xE9szletes konfigur\xE1ci\xF3"
+classificationstore_detailed_config: "R\xE9szletes Konfigur\xE1ci\xF3"
+relations: Kapcsolatok
+localized: "Lokaliz\xE1lt"
+allowed_group_ids: "Enged\xE9lyezett Csoport ID-k (csv)"
+key_id: Kulcs ID
+sorter: "Sorrendez\u0151"
+classificationstore_tooltip_sorter: "Elemek kisebb \xE9rt\xE9kkel ker\xFClnek el\u0151re"
+classificationstore_collection_definition: "Csoport kollekci\xF3"
+group_id: Csoport ID
+collection: "Kollekci\xF3"
+classificationstore_mbx_entercollection_title: "\xDAj kollekci\xF3"
+class_field_name_error: "A k\xF6vetkez\u0151 mez\u0151k hib\xE1sak"
+inputQuantityValue_field: "Bemeneti mennyis\xE9g \xE9rt\xE9ke"
+abbreviation: "R\xF6vid\xEDt\xE9s"
+longname: "Hozz\xFA n\xE9v"
+baseunit: "Alap egys\xE9g"
+quantityValue_units: "Mennyis\xE9g\xE9rt\xE9k egys\xE9g defin\xEDci\xF3"
+valid_quantityValue_units: "\xC9rv\xE9nyes egys\xE9gek"
+calculatedValue_calculatorclass: "Sz\xE1m\xEDt\xF3 oszt\xE1ly"
 calculatedValue_calculatortype: Calculator type
 calculatedValue_calculatortype_class: Class
 calculatedValue_calculatortype_expression: Expression
 calculatedValue_calculatorexpression: Calculator expression
-calculatedValue_explanation: See the official documentation to learn more about defining
-  expressions or classes
-calculatedValue_field: Calculated Value
-conversionFactor: Conversion Factor
-conversionOffset: Conversion Offset
-default_unit: Default Unit
-min_max_times: Min / Max Times
-reset: Reset
-password_hint: Password must contain at least 10 characters!
-editor_settings: Editor Settings
-language_order: Language Order
-preview_width: Preview Width
-preview_height: Preview Height
-url_width: URL Width
-externalImage: External Image
+calculatedValue_explanation: "A hivatalos dokument\xE1ci\xF3ban t\xF6bbet megtudhatsz
+  arr\xF3l, hogy mely f\xFCggv\xE9nyeket kell megval\xF3s\xEDtani"
+calculatedValue_field: "Sz\xE1m\xEDtott \xE9rt\xE9k"
+conversionFactor: "Konverzi\xF3s Ar\xE1ny"
+conversionOffset: "Konverzi\xF3s Eltol\xE1s"
+default_unit: "Alap\xE9rtelmezett egys\xE9g"
+min_max_times: "Min / Max Id\u0151k"
+reset: "Vissza\xE1ll\xEDt\xE1s"
+password_hint: "A jelsz\xF3 legal\xE1bb 10 karaktert, egy kisbet\u0171t, egy nagybet\u0171t,
+  egy sz\xE1mot \xE9s egy speci\xE1lis karaktert kell tartalmaznia."
+editor_settings: "Szerkeszt\u0151 be\xE1ll\xEDt\xE1sok"
+language_order: Nyelvi sorrend
+preview_width: "El\u0151n\xE9zet sz\xE9less\xE9ge"
+preview_height: "El\u0151n\xE9zet magass\xE1ga"
+url_width: URL hossza
+externalImage: "K\xFCls\u0151 k\xE9p"
 log_pid: PID
-search_console_settings_description: To use the Google Search Console integration,
-  please configure the Google API Service Account in System Settings
-fieldcontainer: Field Container
-store: Store
-edit_configuration: Edit Store Configuration
-classificationstore_mbx_enterstore_title: New Store
-classificationstore_mbx_enterstore_prompt: Enter store name
-classificationstore_error_addstore_msg: Error creating store
-search_for_key: Search Key
-width_explanation: The width of this component. A numeric value will be interpreted
-  as the number of pixels; a string value will be treated as a CSS value with units.
-height_explanation: The height of this component. A numeric value will be interpreted
-  as the number of pixels; a string value will be treated as a CSS value with units.
-web2print_enable_in_default_view: Enable Web2Print documents in default documents
-  view
-web2print_enable_in_default_view_txt: Enables Web2Print documents in default documents
-  view in default perspective. Either activate this or create custom views and perspectives
-  for managing Web2Print documents.
-web2print_tool: Tool
-web2print_save_mode: Document Save Mode
-web2print_save_mode_txt: Document Save Mode = cleanup deletes all not used document
-  elements for current document. This might be necessary for useage reports in print
-  documents.
-web2print_pdfreactor_settings: PDFreactor Settings
-web2print_server: Server
-web2print_baseURL: BaseURL
-web2print_baseURL_txt: BaseURL for PDFreactor. This is prefixed to each relative url
-  in print templates when creating PDFs.
-web2print_apiKey_txt: If the PDFreactor instance is set up to require API keys, you
-  can enter it here.
-web2print_licence: Licence
-web2print_wkhtmltopdf_settings: Wkhtmltopdf Settings
-web2print_wkhtmltopdf_binary: wkhtmltopdf Binary
-web2print_wkhtmltopdf_options: Options
-web2print_wkhtmltopdf_options_txt: One per line with '--' and whitespace between key
-  and value (e.g. --key value)
+search_console_settings_description: "A Google Search Console integr\xE1l\xE1s\xE1hoz
+  konfigur\xE1ld a Goodle Api Service Accountot a Rendszerbe\xE1ll\xEDt\xE1sokban"
+fieldcontainer: "Mez\u0151 kont\xE9ner"
+store: "\xDCzlet"
+edit_configuration: "Bold Konfigur\xE1ci\xF3 szerkeszt\xE9se"
+classificationstore_mbx_enterstore_title: "\xDAj \xFCzlet"
+classificationstore_mbx_enterstore_prompt: "\xDCzlet neve"
+classificationstore_error_addstore_msg: "\xDCzlet l\xE9trehoz\xE1sa sikertelen"
+search_for_key: "Kulcs keres\xE9se"
+width_explanation: "A komponens sz\xE9less\xE9ge. Sz\xE1m eset\xE9n pixelk\xE9nt lesz
+  \xE9rtelmezva, ha sz\xF6veg, akkor, mint CSS \xE9rt\xE9k."
+height_explanation: "A komponens magass\xE1ga. Sz\xE1m eset\xE9n pixelk\xE9nt lesz
+  \xE9rtelmezva, ha sz\xF6veg, akkor, mint CSS \xE9rt\xE9k."
+web2print_enable_in_default_view: "Web2Print dokumentumok enged\xE9lyez\xE9se az alap\xE9rtelmezett
+  dokumentumn\xE9zeget\u0151ben"
+web2print_enable_in_default_view_txt: "Enged\xE9lyezi a Web2Print dokumentumokat az
+  alap\xE9rtelmezett dokumentum n\xE9zetben az alap\xE9rtelmezett perspekt\xEDv\xE1ban.
+  Vagy aktiv\xE1lja ezt, vagy hozzon l\xE9tre egyedi n\xE9zeteket \xE9s perspekt\xEDv\xE1kat
+  a Web2Print dokumentumok kezel\xE9s\xE9hez."
+web2print_tool: "Eszk\xF6z"
+web2print_save_mode: "Dokumentum ment\xE9si m\xF3dja"
+web2print_save_mode_txt: "Dokumentum ment\xE9si m\xF3d = tiszt\xEDt\xE1s t\xF6rli
+  az \xF6sszes nem haszn\xE1lt dokumentum elemet az aktu\xE1lis dokumentumhoz. Erre
+  sz\xFCks\xE9g lehet a nyomtatott dokumentumokban szerepl\u0151 jelent\xE9sek felhaszn\xE1l\xE1s\xE1hoz."
+web2print_pdfreactor_settings: "PDFreactor be\xE1ll\xEDt\xE1sok"
+web2print_server: Szerver
+web2print_baseURL: AlapURL
+web2print_baseURL_txt: "AlapURL a PDFreactornak. Ez minden relat\xEDv URL el\xE9 ker\xFCl
+  prefixk\xE9nt a PDF l\xE9trehoz\xE1sa sor\xE1n."
+web2print_apiKey_txt: "Ha a PDFreactor p\xE9ld\xE1ny API kulcsot haszn\xE1l, akkor
+  azt itt lehet megadni."
+web2print_licence: "Enged\xE9ly"
+web2print_wkhtmltopdf_settings: "Wkhtmltopdf Be\xE1ll\xEDt\xE1sok"
+web2print_wkhtmltopdf_binary: "wkhtmltopdf bin\xE1ris"
+web2print_wkhtmltopdf_options: "Be\xE1ll\xEDt\xE1sok"
+web2print_wkhtmltopdf_options_txt: "Soronk\xE9nt egy '--'-al \xE9s sz\xF3k\xF6zzel
+  a kulcs \xE9s \xE9rt\xE9k k\xF6z\xF6tt (pl. --key value)"
 web2print_headlesschrome_settings: Headless Chrome settings
 web2print_headlesschrome_json_converter: Open JSON converter/validator
-web2print_hostname: Hostname
-disable_tree_preview: Disable Tree Preview
-PHP Class Name: PHP Class Name
-editor_configuration: Editor Configuration
-allow_dirty_close: Disable unsaved content warning
-high_resolution_info_text: eg. for Web-to-Print or everywhere where srcset is not
-  possible/sufficient, not necessary for normal web-thumbnails, they automatically
-  get a srcset attribute with 1x and 2x
-advanced_settings: Advanced settings
-preserve_meta_data: Preserve meta data (don't strip)
-preserve_color: Preserve color (profile, space)
-thumbnail_preserve_info_text: '''Preserve meta data'' and ''preserve color'' only
-  works for transitions without compositions (frame, background color, ...) and color
-  modifications (greyscale, sepia, ...)'
-path_formatter_service: Formatter Service / Class
-separated: separated
-log_refresh_label: Refresh every
-website_translation_settings: Shared Translation Settings
-language_permissions: Language Permissions (no view permission means all)
-rendering_class: Custom Renderer class
-rendering_data: Data passed to renderer
+web2print_hostname: "Hosztn\xE9v"
+disable_tree_preview: "Fa el\u0151n\xE9zet kikapcsol\xE1sa"
+PHP Class Name: "PHP Oszt\xE1ly neve"
+editor_configuration: "Szerkeszt\u0151 Konfigur\xE1ci\xF3"
+allow_dirty_close: "El nem mentett v\xE1ltoztat\xE1sokra val\xF3 figyelmeztet\xE9s
+  kikapcsol\xE1sa"
+high_resolution_info_text: "Pl. Web-to-printnek vagy ahol az srcset nem el\xE9rhet\u0151/elegend\u0151,
+  nem felt\xE9tlen\xFCl norm\xE1l web b\xE9lyegk\xE9pek r\xE9sz\xE9re, automatikusan
+  megkapj\xE1k az 1x \xE9s 2x srcset attrib\xFAtumot"
+advanced_settings: "Halad\xF3 be\xE1ll\xEDt\xE1sok"
+preserve_meta_data: "Meta adatok meg\u0151rz\xE9se"
+preserve_color: "Sz\xEDn megtart\xE1sa (profil \xE9s t\xE9r)"
+thumbnail_preserve_info_text: "'Metaadatok megtart\xE1sa' \xE9s 'Sz\xEDn megtart\xE1sa'
+  csak olyan \xE1tmenetekn\xE9l m\u0171k\xF6dik, amelyekben nincs kompoz\xEDci\xF3
+  (frame, h\xE1tt\xE9rsz\xEDn, ...) vagy sz\xEDnm\xF3dos\xEDt\xE1s (sz\xFCrke\xE1rnyalatos,
+  ...)"
+path_formatter_service: "Form\xE1ci\xF3 Service / Class"
+separated: "elv\xE1lasztott"
+log_refresh_label: "Friss\xEDt\xE9s minden"
+website_translation_settings: "Ford\xEDt\xE1sok be\xE1ll\xEDt\xE1sai"
+language_permissions: "Nyelvi jogosults\xE1gok (ha nincs be\xE1ll\xEDtva, akkor mindent
+  jelent)"
+rendering_class: "Egyedi megjelen\xEDt\u0151 oszt\xE1ly"
+rendering_data: "Adatok a megjelen\xEDt\u0151nek"
 drag_object_preview: Drag Object for Preview
 web2print_protocol: Protocol
-rows_fixed: Rows fixed
-cols_fixed: Cols fixed
-force_resize: Force resize
-site_ids: Site IDs
-site_ids_tooltip: Provide a comma-seperated list of site IDs
-predefined_hotspot_data_templates: Predefined data templates
-hide_locale_labels_when_tabs_reached: Hide locale labels after number of tabs
-classificationstore_error_addkey_msg: Error adding Key
-classificationstore_dialog_keygroup_search: Key/Group Search
-options_provider_class: Options Provider Class or Service Name
-options_provider_data: Options Provider Data
-show_applogger_tab: Show App Logger Tab
-analyze: Analyze
-link_generator_reference: Link Provider Class or Service Name
-preview_generator_reference: Preview Generator Class or Service Name
-unique_qtip: Unique constraint will added. No need to check 'index' as well
-temporarily_disabled: Temporarily disabled
-enabled_in_editmode: Enabled in Editmode
-boolean_select: Boolean Select
-yes_label: Yes Display Name
-no_label: No Display Name
-empty_label: Empty Display Name
-gdpr_dataSource_sentMail_only_email: Search only based on E-Mail
-imageGallery: Image Gallery
-column_type: Column Type
-encryptedField: Encrypted Field
-datatype: Datatype
-used_by_class: 'Used by class:'
-uses_these_bricks: 'Uses these bricks:'
-last_login: Last Login
-multiselect_render_type: Render Type
-please_dont_forget_to_reload_pimcore: <b>Please don't forget to reload pimcore after
-  your modification!</b>
-2fa_required: Two Factor Authentication required
-2fa_reset_secret: Reset 2FA Secret
-2fa_reset_done: The 2FA secret was reset, the user can generate a new one after login
-  (My Profile section).
-focal_point_support: Focal Point Support
-default_positioning: Default Positioning
-thumbnail_focal_point_notice: The image is cropped automatically based on the focal
-  point set on the source image. If no focal point is present, the default positioning
-  setting below is used.
+rows_fixed: Fix sorok
+cols_fixed: Fix oszlopok
+force_resize: "\xC1tm\xE9retez\xE9s"
+site_ids: "Oldal azonos\xEDt\xF3k"
+site_ids_tooltip: "Adjon meg vessz\u0151vel elv\xE1lasztott oldal azonos\xEDt\xF3kat"
+predefined_hotspot_data_templates: "El\u0151redefini\xE1lt adat sablonok"
+hide_locale_labels_when_tabs_reached: "Nyelvi c\xEDmk\xE9k elrejt\xE9se ennyi f\xFCl
+  f\xF6l\xF6tt"
+classificationstore_error_addkey_msg: "Hiba t\xF6rt\xE9nt a Kulcs l\xE9trehoz\xE1s\xE1n\xE1l"
+classificationstore_dialog_keygroup_search: "Kulcs/Csoport keres\xE9s"
+options_provider_class: "Opci\xF3 szolg\xE1ltat\xF3 Oszt\xE1ly vagy Service"
+options_provider_data: "Opci\xF3 szolg\xE1ltat\xF3 adat"
+show_applogger_tab: "Alkalmaz\xE1snapl\xF3 f\xFCl mutat\xE1sa"
+analyze: "Analiz\xE1l\xE1s"
+link_generator_reference: "Link szolg\xE1ltat\xF3 Oszt\xE1ly vagy Service"
+preview_generator_reference: "El\u0151n\xE9zet gener\xE1l\xF3 oszt\xE1ly vagy szolg\xE1ltat\xE1s"
+unique_qtip: "Egyedi index ker\xFCl l\xE9trehoz\xE1sra. Nincs sz\xFCks\xE9g az 'index'-re
+  is."
+temporarily_disabled: Ideiglenesen kikapcsolva
+enabled_in_editmode: "Enged\xE9lyezett szerkeszt\u0151i m\xF3dban"
+boolean_select: "Igaz-hamis v\xE1laszt\xF3"
+yes_label: "Igen - megjelen\xEDtett n\xE9v"
+no_label: "Nem - megjelen\xEDtett n\xE9v"
+empty_label: "\xDCres - megjelen\xEDtett n\xE9v"
+gdpr_dataSource_sentMail_only_email: "Keres\xE9s csak e-mail alapj\xE1n"
+imageGallery: "K\xE9pgal\xE9ria"
+column_type: "Oszlop t\xEDpusa"
+encryptedField: "Titkos\xEDtott mez\u0151"
+datatype: "Adatt\xEDpus"
+used_by_class: "Ezek az oszt\xE1lyok haszn\xE1lj\xE1k:"
+uses_these_bricks: "Ezeket a brickeket haszn\xE1lja:"
+last_login: "Utols\xF3 bejelentkez\xE9s"
+multiselect_render_type: "Render T\xEDpus"
+please_dont_forget_to_reload_pimcore: "<b>Ne felejtsd el \xFAjrat\xF6lteni a Pimcore-t
+  a m\xF3dos\xEDt\xE1sok ut\xE1n!</b>"
+2fa_required: "K\xE9tl\xE9pcs\u0151s hiteles\xEDt\xE9s sz\xFCks\xE9ges"
+2fa_reset_secret: "2FA titok vissza\xE1ll\xEDt\xE1sa"
+2fa_reset_done: "A 2FA titok vissza lett \xE1ll\xEDtva, a felhaszn\xE1l\xF3 gener\xE1lhat
+  egy \xFAjat a bejelentkez\xE9se ut\xE1n. (Profilom szekci\xF3)"
+focal_point_support: "F\xF3kuszpont T\xE1mogat\xE1s"
+default_positioning: "Alap\xE9rtelmezett Poz\xEDci\xF3"
+thumbnail_focal_point_notice: "A k\xE9p automatikusan k\xF6rbev\xE1g\xF3dik a be\xE1ll\xEDtott
+  f\xF3kuszpont k\xF6r\xFCl. Ha nincs f\xF3kuszpont be\xE1ll\xEDtva, akkor az al\xE1bb
+  tal\xE1lhat\xF3 be\xE1ll\xEDt\xE1sok \xE9rv\xE9nyesek."
 iframe_url: IFrame URL
-deactivate_maintenance: Deactivate Maintenance
-maintenance_mode: Maintenance Mode
-maintenance_not_active: It seems that the maintenance isn't set up properly
-mail_settings_incomplete: It seems that the mail settings are incomplete
-bulk_export: Bulk Export
-bulk_import: Bulk Import
-warning_bulk_import: The Bulk Import will overwrite your class/fieldcollection/objectbrick
-  definitions without warning! Do you want to continue?
-environment: Environment
-local: Local
-example: Example
-send_as_html_mime: Send as HTML/Mime
-send_as_plain_text: Send as plain text
-send_test_email: Send Test-Email
-main_domain: Main Domain
-error_page: Error Page
-additional_domains: Additional Domains (one domain per line)
-redirect_to_main_domain: Redirect additional domains to main domain
+deactivate_maintenance: "Karbantart\xE1s kikapcsol\xE1sa"
+maintenance_mode: "Karbantart\xE1s m\xF3d"
+maintenance_not_active: "\xDAgy l\xE1tszik a karbantart\xE1s nincs megfelel\u0151en
+  be\xE1ll\xEDtva."
+mail_settings_incomplete: "\xDAgy l\xE1tszik a levelez\xE9s nincs megfelel\u0151en
+  be\xE1ll\xEDtva."
+bulk_export: "T\xF6meges export"
+bulk_import: "T\xF6meges import\xE1l\xE1s"
+warning_bulk_import: "A t\xF6meges import fel\xFCl fogja \xEDrni az oszt\xE1ly/mez\u0151kollekci\xF3/\xE9p\xEDt\u0151kocka
+  defin\xEDci\xF3kat figyelmeztet\xE9s n\xE9lk\xFCl! Biztos folytatod?"
+environment: "K\xF6rnyezet"
+local: "Lok\xE1lis"
+example: "P\xE9lda"
+send_as_html_mime: "K\xFCld\xE9s HTML/Mime-k\xE9nt"
+send_as_plain_text: "K\xFCld\xE9s sima sz\xF6vegk\xE9nt"
+send_test_email: "Teszt e-mail k\xFCld\xE9se"
+main_domain: "F\u0151 domain"
+error_page: Hiba oldal
+additional_domains: "Tov\xE1bbi domainek (soronk\xE9nt egy)"
+redirect_to_main_domain: "A tov\xE1bbi domainek \xE1tir\xE1ny\xEDt\xE1sa a f\u0151
+  domainre"
 debug_mode_on: DEBUG MODE
-duration: Duration
+duration: "Hossz (id\u0151)"
 scope: Scope
 icon_class: Icon Class
-nice_name: Nice Name
-create_menu_shortcut: Create Shortcut in Menu
-group: Group
-display: Display
-order: Order
-filter_type: Filter Type
-generate_page_previews: Generate Page Previews
+nice_name: "Sz\xE9p n\xE9v"
+create_menu_shortcut: "Parancsikon l\xE9trehoz\xE1sa a men\xFCbe"
+group: Csoport
+display: "Megjelen\xE9s"
+order: Sorrend
+filter_type: "Sz\u0171r\u0151 t\xEDpus"
+generate_page_previews: "Oldal el\u0151n\xE9zetek gener\xE1l\xE1sa"
 success_generating_previews: Generating page previews in the background. Please reload
   the admin interface after some time to take effect.
 error_generating_previews: Error generating page previews.
-custom_report_chart_settings: Chart Settings
-custom_report_charttype: Chart Type
-custom_report_charttype_none: None
-custom_report_charttype_pie: Pie Chart
-custom_report_charttype_line: Line Chart
-custom_report_charttype_bar: Bar Chart
-custom_report_chart_options: Type specific Chart Options
-custom_report_x_axis: X-Axis
-custom_report_y_axis: Y-Axis
-custom_report_datacolumn: Data Column
-custom_report_labelcolumn: Label Column
-custom_report_only_filter: Only Filter
-custom_report_filter_and_show: Filter and Show
-custom_report_filter_drilldown: Filter Drilldown
-no_further_sources_allowed: No further data sources allowed
-column_configuration: Manage & Share Column Configuration
-show_in_google_anaytics: Show in Google Analytics
-style: Style
-foreground_color: Foreground Color
-background_color: Background Color
-use_current_player_position_as_preview: Use current player position as preview
-system_infos_and_tools: System Info & Tools
-server_info: Server Info
-database_administration: Database Administration
-important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality: 'IMPORTANT:
-  Use imagick PECL extension for best results, GDlib is just a fallback with limited
-  functionality and less quality!'
-trim: Trim
-server_fileexplorer: Server File Explorer
-add_user: Add User
-use_as_site: Use as site
-remove_site: Remove Site
-edit_site: Edit Site
-site_id: Site ID
-website_settings: Website Settings
-clear_cache: Clear Cache
-extensions: Extensions
-update: Update
-system_settings: System Settings
-image_thumbnails: Image Thumbnails
-thumbnails: Thumbnails
-cache: Cache
-classes: Classes
-static_routes: Static Routes
-structured: Structured
-geo: Geographic
-loading: Loading
-steps: Steps
-database: Database
-location: Location
-every: Every
-categories: Categories
-revision: Build
-objectbricks: Objectbricks
-class_definitions: Class Definitions
-custom_layout_changed: Layout was changed in the meantime. Please reload the layout
-  and try again
-rule_violation: Rule Violation
-emails: Emails
-log_applicationlog: Application Logger
+custom_report_chart_settings: "Diagram be\xE1ll\xEDt\xE1sok"
+custom_report_charttype: "Diagram t\xEDpus"
+custom_report_charttype_none: Nincs
+custom_report_charttype_pie: "K\xF6rdiagram"
+custom_report_charttype_line: Vonaldiagram
+custom_report_charttype_bar: Oszlopdiagram
+custom_report_chart_options: "T\xEDpus specifikus diagram be\xE1ll\xEDt\xE1sok"
+custom_report_x_axis: X tengely
+custom_report_y_axis: Y tengely
+custom_report_datacolumn: Adat oszlop
+custom_report_labelcolumn: "C\xEDmke oszlop"
+custom_report_only_filter: "Csak sz\u0171r\xE9s"
+custom_report_filter_and_show: "Sz\u0171r\xE9s \xE9s mutat\xE1s"
+custom_report_filter_drilldown: "Sz\u0171r\xE9s lebont\xE1sa"
+no_further_sources_allowed: "Tov\xE1bbi adatforr\xE1sok nem enged\xE9lyezettek"
+column_configuration: "Oszlopkonfigur\xE1ci\xF3 kezel\xE9se \xE9s megoszt\xE1sa"
+show_in_google_anaytics: Mutasd Google Analytics-ben
+style: "St\xEDlus"
+foreground_color: "El\u0151t\xE9rsz\xEDn"
+background_color: "H\xE1tt\xE9rsz\xEDn"
+use_current_player_position_as_preview: "A lej\xE1tsz\xF3 jelenlegi poz\xEDci\xF3j\xE1nak
+  haszn\xE1lata el\u0151n\xE9zetben"
+system_infos_and_tools: "Rendszer inf\xF3 & eszk\xF6z\xF6k"
+server_info: Szerver Info
+database_administration: "Adatb\xE1zis Adminisztr\xE1ci\xF3"
+important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality: "FONTOS:
+  A legjobb eredm\xE9ny\xE9rt haszn\xE1ld az imagick PECL kiterjeszt\xE9st, a GDlib
+  csak tartal\xE9k limit\xE1lt funkcionalit\xE1ssal \xE9s rosszabb min\u0151s\xE9ggel!"
+trim: "V\xE1g\xE1s"
+server_fileexplorer: "Szerver f\xE1jl b\xF6ng\xE9sz\u0151"
+add_user: "Felhaszn\xE1l\xF3 hozz\xE1ad\xE1sa"
+use_as_site: "Be\xE1ll\xEDt\xE1s webhelyk\xE9nt"
+remove_site: "Webhely t\xF6rl\xE9se"
+edit_site: "Oldal szerkeszt\xE9se"
+site_id: "Oldal azonos\xEDt\xF3"
+website_settings: "Weboldal be\xE1ll\xEDt\xE1sok"
+clear_cache: "Gyors\xEDt\xF3t\xE1r \xFCr\xEDt\xE9se"
+extensions: "Kiterjeszt\xE9sek"
+update: "Friss\xEDt\xE9s"
+system_settings: "Rendszer be\xE1ll\xEDt\xE1sok"
+image_thumbnails: "K\xE9p indexk\xE9pek"
+thumbnails: "Indexk\xE9pek"
+cache: "Gyors\xEDt\xF3t\xE1r"
+classes: "Oszt\xE1lyok"
+static_routes: Statikus route-ok
+structured: "Strukt\xFAr\xE1lt"
+geo: "F\xF6ldrajzi"
+loading: "T\xF6lt\xE9s"
+steps: "L\xE9p\xE9sek"
+database: "Adatb\xE1zis"
+location: Hely
+every: Minden
+categories: "Kateg\xF3ri\xE1k"
+revision: "Rev\xEDzi\xF3"
+objectbricks: Objectbrick-ek
+class_definitions: "Oszt\xE1ly Defin\xEDci\xF3k"
+custom_layout_changed: "Elrendez\xE9s v\xE1ltozott. T\xF6lsd \xFAjra k\xE9rlek \xE9s
+  pr\xF3b\xE1ld \xFAjra."
+rule_violation: "Megszegett szab\xE1ly"
+emails: Emailek
+log_applicationlog: "Alkalmaz\xE1snapl\xF3"
 classification_store: Classification Store
-quantityValue_field: Quantity Value
-expanded: Expanded
-display_type: Display Type
-custom_report_class: Report class
-hide: Hide
-clear_full_page_cache: Clear Full Page Cache
-all_caches: All Caches
-web2print_settings: Web-to-Print Settings
-admin_translations: Admin Translations
-lock: Lock
-unlock: Unlock
+quantityValue_field: "Mennyis\xE9g\xE9rt\xE9k"
+expanded: Kiterjesztett
+display_type: "Megjelen\xEDt\xE9s t\xEDpusa"
+custom_report_class: Riport Class
+hide: "Elrejt\xE9s"
+clear_full_page_cache: "Full Page Cache t\xF6rl\xE9se"
+all_caches: Minden cache
+web2print_settings: "Web-to-Print be\xE1ll\xEDt\xE1sok"
+admin_translations: "Admin ford\xEDt\xE1sok"
+lock: "Lez\xE1r"
+unlock: Felold
 lock_and_propagate_to_children: Lock and propagate to children
-unlock_and_propagate_to_children: Unlock and propagate to children
-data_cache: Data Cache
-listing_use_traits: Listing Use (traits)
+unlock_and_propagate_to_children: "Felold a gyerekekkel egy\xFCtt"
+data_cache: Adat cache
+listing_use_traits: Listing use (traits)
 listing_parent_php_class: Listing Parent PHP Class
-expand_cs_group: There are empty features not displayed here. Click to show them
-hide_empty_data: Hide empty data
-class_attributes: Class Attributes
-operator_group_other: Others
-operator_group_transformer: Transformers
-operator_group_extractor: Extractors
-operator_group_formatter: Formatters
+expand_cs_group: "Vannak \xFCresen hagyott be\xE1ll\xEDt\xE1sok, amelyek nem l\xE1tszanak.
+  Kattints a megjelen\xEDt\xE9shez"
+hide_empty_data: "\xDCres adat elrejt\xE9se"
+class_attributes: "Class attrib\xFAtumok"
+operator_group_other: Egyebek
+operator_group_transformer: "\xC1talak\xEDt\xF3k"
+operator_group_extractor: Extraktorok
+operator_group_formatter: "Form\xE1z\xF3k"
 operator_group_renderer: Renderer
-operator_renderer_settings: Renderer Settings
-refresh_preview: Refresh Preview
-show_charcount: Show Character Count
-max_length: Max Length
+operator_renderer_settings: "Renderer Be\xE1ll\xEDt\xE1sai"
+refresh_preview: "El\u0151n\xE9zet friss\xEDt\xE9se"
+show_charcount: "Karaktersz\xE1m mutat\xE1sa"
+max_length: Max hossz
 min_length: Min Length
-reports_config: Reports Config
-exclude_from_search_index: Exclude from Backend Full-Text Search
-left: left
-right: right
-top: top
-provide_split_view: Provide Split View
-allow_multiple_assignments: Allow Multiple Assignments
-enable_admin_async_load: Enable Async Load in Admin
+reports_config: "Riportok Konfigur\xE1ci\xF3ja"
+exclude_from_search_index: "Kiz\xE1r\xE1s a Backed Full-Text keres\xE9sb\u0151l"
+left: bal
+right: jobb
+top: "tet\u0151"
+provide_split_view: "Osztott n\xE9zet biztos\xEDt\xE1sa"
+allow_multiple_assignments: "T\xF6bbes hozz\xE1rendel\xE9s enged\xE9lyez\xE9se"
+enable_admin_async_load: "Szinkron Bet\xF6lt\xE9s enged\xE9lyez\xE9se az Adminisztr\xE1ci\xF3s
+  fel\xFCleten"
 enable_text_selection: Enable Text Selection
-async_loading_warning_block: 'WARNING: Async Loading is NOT possible within Localized
-  Fields and Blocks'
-activate_column_configuration: Activate Column Configuration
-table_column_configuration: Column Configuration
-send_invitation_link: Send Invitation Link
-invitation_sent: Login Invitation sent
-invitation_link_sent: 'A temporary login link has been sent to email address: "%s" '
-classificationstore_group_by_key: Group by key
-allow_to_create_new_object: Allow to create a new object in relation field
+async_loading_warning_block: "FIGYELEM: Aszinkron Bet\xF6lt\xE9s nem el\xE9rhet\u0151
+  a T\xF6bbnyelv\u0171s\xEDtett Mez\u0151kn\xE9l \xE9s Blokkokn\xE1l"
+activate_column_configuration: "Oszlop Be\xE1ll\xEDt\xE1s aktiv\xE1l\xE1sa"
+table_column_configuration: "Oszlop Be\xE1ll\xEDt\xE1s"
+send_invitation_link: "Megh\xEDv\xF3 k\xFCld\xE9se"
+invitation_sent: "Bejelentkez\xE9si megh\xEDv\xF3 elk\xFCldve"
+invitation_link_sent: "Egy ideiglenes bejelentkez\xE9se link lett elk\xFCldve a k\xF6vetkez\u0151
+  email c\xEDme: \"%s\" "
+classificationstore_group_by_key: "Kulcs alapj\xE1n csoportos\xEDt\xE1s"
+allow_to_create_new_object: "\xDAj objektum l\xE9trehoz\xE1s\xE1nak enged\xE9lyez\xE9se
+  a kapcsolati mez\u0151ben"
 puppeteer_documentation: Puppeteer
-web2print_headlesschrome_documentation: Option Documentation
-web2print_headlesschrome_documentation_additions: Additional Options
-web2print_headlesschrome_documentation_additions_text: 'There are two additional options:
-  "header" and "footer". This options need a URL, which returns the header or footer
-  template.'
-json_converter: Formatting the Options
-json_converter_link: JSON Formatter
-max_characters: Maximum Characters
+web2print_headlesschrome_documentation: "Be\xE1ll\xEDt\xE1sok Dokument\xE1ci\xF3ja"
+web2print_headlesschrome_documentation_additions: "Tov\xE1bbi Be\xE1ll\xEDt\xE1sok"
+web2print_headlesschrome_documentation_additions_text: "K\xE9t tov\xE1bbi be\xE1ll\xEDt\xE1s:
+  \"fejl\xE9c\" \xE9s \"l\xE1bl\xE9c\". URL-t kell megadni, amelyik visszaadj\xE1k
+  a fejl\xE9c vagy l\xE1bl\xE9c sablonj\xE1t."
+json_converter: "Be\xE1ll\xEDt\xE1sok form\xE1z\xE1sa"
+json_converter_link: "JSON form\xE1z\xF3"
+max_characters: Maximum karakter
 sites: Sites
 show_hide_areablock: Show or Hide on frontend
 asset_type_changed: Asset type was changed in the meantime. Please reload the admin
