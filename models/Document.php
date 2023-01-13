@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
@@ -262,11 +263,32 @@ class Document extends Element\AbstractElement
             } catch (NotFoundException $e) {
                 return null;
             }
-            // Getting Typeloader from container
-            $loader = \Pimcore::getContainer()->get(TypeLoader::class);
 
-            /** @var Document $newDocument */
-            $newDocument = $loader->build($document->getType());
+            // check for if custom types are enabled. Will be removed in Pimcore 11
+            $config = Config::getSystemConfiguration('documents');
+
+            if($config['type_definitions_loader_enabled']) {
+                // Getting Typeloader from container
+                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
+                $newDocument = $loader->build($document->getType());
+            } else {
+                /**
+                 * @deprecated since Pimcore 10.6 and will be removed in Pimcore 11. Use type_definitions instead
+                 */
+                $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
+
+                // this is the fallback for custom document types using prefixes
+                // so we need to check if the class exists first
+                if (!Tool::classExists($className)) {
+                    $oldStyleClass = 'Document_' . ucfirst($document->getType());
+                    if (Tool::classExists($oldStyleClass)) {
+                        $className = $oldStyleClass;
+                    }
+                }
+
+                /** @var Document $newDocument */
+                $newDocument = self::getModelFactory()->build($className);
+            }
 
             if (get_class($document) !== get_class($newDocument)) {
                 $document = $newDocument;
