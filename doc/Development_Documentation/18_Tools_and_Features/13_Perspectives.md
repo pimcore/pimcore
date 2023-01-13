@@ -39,8 +39,7 @@ Where the perspective configure is stored depends on your configuration.
 Per default, this will be the settings-store. 
 If you want to change the default behaviour, have a look at the [environment](../21_Deployment/03_Configuration_Environments.md#page_Configuration-Storage-Locations-Fallbacks) configuration options. 
 
-Please refer to the [Example File](https://github.com/pimcore/skeleton/blob/11.x/var/config/perspectives/perspectives.example.yaml) 
-for further details on how this can be set up.
+Please refer to the [example configuration](14_Perspective_Example.md) for further details on how this can be set up.
 
 You can find out there how the default view is prepared and how to add a special perspective.
 
@@ -62,8 +61,8 @@ The table below, describes the most useful of available options in the configura
 
 ## Simple example
 
-In the [Example File](https://github.com/pimcore/skeleton/blob/11.x/var/config/perspectives/perspectives.example.yaml) you 
-can find advance usage. Below, I showed how to create the simple structure which would be use for catalog administrators.
+In the [example configuration](14_Perspective_Example.md) you can find advance usage. 
+Below, I showed how to create the simple structure which would be use for catalog administrators.
 
 We need only to see 
 * products (objects from a specific directory)
