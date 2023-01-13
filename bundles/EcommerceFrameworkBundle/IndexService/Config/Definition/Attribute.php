@@ -154,6 +154,11 @@ class Attribute
         return $this->options;
     }
 
+    /**
+     * @param string $name
+     * @param mixed $defaultValue
+     * @return mixed
+     */
     public function getOption(string $name, $defaultValue = null)
     {
         return $this->options[$name] ?? $defaultValue;

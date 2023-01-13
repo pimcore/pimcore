@@ -168,6 +168,9 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
+    /**
+     * @return array
+     */
     public function __sleep()
     {
         $vars = get_object_vars($this);

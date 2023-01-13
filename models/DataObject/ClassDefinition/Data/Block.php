@@ -1297,6 +1297,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return null;
     }
 
+    /**
+     * @param array $data
+     * @return static
+     */
     public static function __set_state($data)
     {
         $obj = new static();

@@ -33,6 +33,9 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return 'default';
     }
 
+    /**
+     * @param int $quantityScale
+     */
     public function getOSIsBookable($quantityScale = 1): bool
     {
         return false;

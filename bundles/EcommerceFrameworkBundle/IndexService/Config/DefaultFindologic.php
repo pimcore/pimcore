@@ -132,7 +132,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      * creates object mockup for given data
      *
      * @param int $objectId
-     * @param mixed $data
+     * @param array $data
      * @param array $relations
      *
      * @return DefaultMockup

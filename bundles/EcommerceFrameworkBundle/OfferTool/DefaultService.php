@@ -20,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Folder;
@@ -115,6 +116,10 @@ class DefaultService implements ServiceInterface
         return $offer;
     }
 
+    /**
+     * @param array $excludeItems
+     * @return array
+     */
     protected function getExcludedItemKeys($excludeItems)
     {
         $excludedItemKeys = [];
@@ -271,6 +276,13 @@ class DefaultService implements ServiceInterface
         return $offer;
     }
 
+    /**
+     * @param AbstractOffer $offer
+     * @param CartInterface $cart
+     * @param array $excludeItems
+     * @param bool $save
+     * @return AbstractOffer
+     */
     public function updateOfferFromCart(AbstractOffer $offer, CartInterface $cart, array $excludeItems = [], $save = true)
     {
         $excludedItemKeys = $this->getExcludedItemKeys($excludeItems);
@@ -350,6 +362,11 @@ class DefaultService implements ServiceInterface
         return $list->load();
     }
 
+    /**
+     * @param ProductInterface $product
+     * @param AbstractOffer $offer
+     * @return void
+     */
     public function createCustomOfferToolItem($product, $offer)
     {
     }

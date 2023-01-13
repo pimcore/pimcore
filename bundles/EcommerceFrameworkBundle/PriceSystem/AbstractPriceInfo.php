@@ -43,7 +43,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     protected $products;
 
     /**
-     * @return AbstractPriceInfo
+     * @return static
      */
     public static function getInstance()
     {
@@ -126,6 +126,10 @@ class AbstractPriceInfo implements PriceInfoInterface
         return $this->product;
     }
 
+    /**
+     * @param array $products
+     * @return void
+     */
     public function setProducts($products)
     {
         $this->products = $products;

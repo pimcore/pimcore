@@ -19,6 +19,11 @@ use Pimcore\Model\DataObject\AbstractObject;
 
 class ObjectId implements InterpreterInterface
 {
+    /**
+     * @param mixed $value
+     * @param array|null $config
+     * @return int|null
+     */
     public function interpret($value, $config = null)
     {
         if (!empty($value) && $value instanceof AbstractObject) {

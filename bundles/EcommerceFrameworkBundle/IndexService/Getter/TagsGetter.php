@@ -25,6 +25,11 @@ class TagsGetter implements GetterInterface
 {
     use OptionsResolverTrait;
 
+    /**
+     * @param object $element
+     * @param array $config
+     * @return mixed
+     */
     public function get($element, $config = null)
     {
         $config = $this->resolveOptions($config ?? []);

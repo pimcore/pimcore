@@ -47,6 +47,7 @@ interface CheckoutableInterface extends ProductInterface
     /**
      * checks if product is bookable
      *
+     * @param int $quantityScale
      * @return bool
      */
     public function getOSIsBookable($quantityScale = 1): bool;
