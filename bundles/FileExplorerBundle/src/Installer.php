@@ -10,6 +10,8 @@ class Installer extends SettingsStoreAwareInstaller
         'fileexplorer'
     ];
 
+    const USE_PERMISSION_CATEGORY = 'Pimcore File Explorer Bundle';
+
     public function install(): void
     {
         $this->addPermissions();
@@ -30,6 +32,7 @@ class Installer extends SettingsStoreAwareInstaller
         foreach (self::USER_PERMISSIONS as $permission) {
             $db->insert('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('category') => self::USE_PERMISSION_CATEGORY,
             ]);
         }
     }

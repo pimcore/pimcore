@@ -44,7 +44,7 @@ pimcore.bundle.file_explorer.startup = Class.create({
         var perspectiveCfg = pimcore.globalmanager.get("perspective");
 
         if (
-            (user.isAllowed('fileexplorer') || user.admin )&&
+            (user.isAllowed('fileexplorer') || user.admin) &&
             perspectiveCfg.inToolbar("extras") &&
             perspectiveCfg.inToolbar("extras.systemtools") &&
             perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")
