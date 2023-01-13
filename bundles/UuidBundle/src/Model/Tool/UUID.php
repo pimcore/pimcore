@@ -85,7 +85,7 @@ final class UUID extends Model\AbstractModel
      */
     public function setSystemInstanceIdentifier(): static
     {
-        $instanceIdentifier = \Pimcore::getKernel()->getContainer()->getParameter('pimcore_uuid.instance_identifier') ?? null;
+        $instanceIdentifier = \Pimcore::getKernel()->getContainer()->getParameter('pimcore_uuid.instance_identifier');
         if (empty($instanceIdentifier)) {
             throw new Exception('No instance identifier set in system config!');
         }
