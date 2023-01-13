@@ -34,21 +34,17 @@ class PimcoreFileExplorerBundle extends AbstractPimcoreBundle
         ];
     }
 
-    public function getContainerExtension(): ?ExtensionInterface
-    {
-        return new PimcoreFileExplorerExtension();
-    }
-
     public function getPath(): string
     {
         return dirname(__DIR__);
     }
 
+    /**
+     * @return Installer
+     */
     public function getInstaller(): Installer
     {
-        /** @var Installer $installer */
-        $installer = $this->container->get(Installer::class);
-        return $installer;
+        return $this->container->get(Installer::class);
     }
 
 }

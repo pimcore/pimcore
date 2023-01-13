@@ -10,7 +10,7 @@
   "minimum-stability": "dev",
   "require": {
     "php": "^8.0 || ^8.1",
-    "pimcore/pimcore": "^10.6 || ^11.0"
+    "pimcore/pimcore": "^11.0"
   },
   "autoload": {
     "psr-4": {

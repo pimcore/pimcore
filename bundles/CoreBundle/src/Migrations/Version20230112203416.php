@@ -31,11 +31,5 @@ final class Version20230112203416 extends AbstractMigration
         if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\FileExplorerBundle\\PimcoreFileExplorerBundle', 'pimcore')) {
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\FileExplorerBundle\\PimcoreFileExplorerBundle', false, 'bool', 'pimcore');
         }
-
-        $db = \Pimcore\Db::get();
-        $permissionsTable = `users_permission_definitions`;
-
-        $query = sprintf('DELETE FROM `%s` WHERE `key` IN (%s);', $permissionsTable, implode(',', ['fileexplorer']));
-        $db->executeQuery($query);
     }
 }

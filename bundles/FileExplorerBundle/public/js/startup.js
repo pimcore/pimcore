@@ -26,6 +26,7 @@ pimcore.bundle.file_explorer.startup = Class.create({
                 text: t("system_infos_and_tools"),
                 iconCls: "pimcore_nav_icon_info",
                 hideOnClick: false,
+                priority: 90,
                 itemId: 'pimcore_menu_extras_system_info',
                 menu: {
                     cls: "pimcore_navigation_flyout",
@@ -43,7 +44,7 @@ pimcore.bundle.file_explorer.startup = Class.create({
         var perspectiveCfg = pimcore.globalmanager.get("perspective");
 
         if (
-            (user.admin || user.isAllowed('fileexplorer')) &&
+            user.admin &&
             perspectiveCfg.inToolbar("extras") &&
             perspectiveCfg.inToolbar("extras.systemtools") &&
             perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")
@@ -52,7 +53,8 @@ pimcore.bundle.file_explorer.startup = Class.create({
                 text: t("pimcore_file_explorer_bundle_server_file_explorer"),
                 iconCls: "pimcore_nav_icon_fileexplorer",
                 itemId: 'pimcore_menu_extras_system_info_server_fileexplorer',
-                handler: this.showFileExplorer
+                handler: this.showFileExplorer,
+                priority: 50
             });
         }
 
