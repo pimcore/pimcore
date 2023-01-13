@@ -77,7 +77,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public string|int $maxCharacters = 0;
 
-    public function setToolbarConfig(string $toolbarConfig)
+    public function setToolbarConfig(string $toolbarConfig): void
     {
         $this->toolbarConfig = $toolbarConfig;
     }
@@ -104,7 +104,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->maxCharacters;
     }
 
-    public function setMaxCharacters(int|string $maxCharacters)
+    public function setMaxCharacters(int|string $maxCharacters): void
     {
         $this->maxCharacters = $maxCharacters;
     }
@@ -187,18 +187,16 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     *
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
-        return $data ?? '';
+        if ($data === '') {
+            return null;
+        }
+
+        return $data;
     }
 
     public function resolveDependencies(mixed $data): array
@@ -206,7 +204,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return Text::getDependenciesOfWysiwygText($data);
     }
 
-    public function getCacheTags(mixed $data, $tags = []): array
+    public function getCacheTags(mixed $data, array $tags = []): array
     {
         return Text::getCacheTagsOfWysiwygText($data, $tags);
     }
@@ -214,7 +212,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');

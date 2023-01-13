@@ -92,7 +92,7 @@ class EditableNameEvent extends Event
         return $this->editableName;
     }
 
-    public function setEditableName(string $editableName)
+    public function setEditableName(string $editableName): void
     {
         $this->editableName = $editableName;
     }

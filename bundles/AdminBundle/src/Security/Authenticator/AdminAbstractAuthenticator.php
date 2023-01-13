@@ -80,7 +80,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
     /**
      * {@inheritdoc}
      */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $securityUser = $token->getUser();
         if (!$securityUser instanceof User) {

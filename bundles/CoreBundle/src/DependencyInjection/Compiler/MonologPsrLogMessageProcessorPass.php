@@ -30,7 +30,7 @@ use Symfony\Component\DependencyInjection\Definition;
  */
 class MonologPsrLogMessageProcessorPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $processorId = 'monolog.processor.psr_log_message';
 

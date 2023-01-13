@@ -27,7 +27,7 @@ interface LayoutDefinitionEnrichmentInterface
      *
      *
      * @param Concrete|null $object
-     * @param array $context additional contextual data like fieldname etc.
+     * @param array<string, mixed> $context additional contextual data like fieldname etc.
      *
      * @return $this
      *

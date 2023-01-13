@@ -40,7 +40,7 @@ class IgnoredSessionKeysEvent extends Event
         return $this->keys;
     }
 
-    public function setKeys(array $keys)
+    public function setKeys(array $keys): void
     {
         $this->keys = $keys;
     }

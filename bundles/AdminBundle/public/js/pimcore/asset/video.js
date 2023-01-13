@@ -28,10 +28,15 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
             detail: {
                 object: this,
                 type: "video"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenAssetVideo);
+        const isAllowed = document.dispatchEvent(preOpenAssetVideo);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
 
         var user = pimcore.globalmanager.get("user");

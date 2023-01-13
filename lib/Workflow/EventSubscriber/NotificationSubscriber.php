@@ -62,7 +62,7 @@ class NotificationSubscriber implements EventSubscriberInterface
         $this->workflowManager = $workflowManager;
     }
 
-    public function onWorkflowCompleted(Event $event)
+    public function onWorkflowCompleted(Event $event): void
     {
         if (!$this->checkEvent($event)) {
             return;

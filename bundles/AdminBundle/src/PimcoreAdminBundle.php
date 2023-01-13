@@ -36,7 +36,7 @@ class PimcoreAdminBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         // auto-tag GDPR data providers
         $container

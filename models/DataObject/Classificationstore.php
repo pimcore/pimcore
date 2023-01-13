@@ -83,7 +83,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
     }
 
-    public function addItem(array $item)
+    public function addItem(array $item): void
     {
         $this->items[] = $item;
         $this->markFieldDirty('_self');
@@ -235,7 +235,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @param int $groupId
      */
-    public function removeGroupData(int $groupId)
+    public function removeGroupData(int $groupId): void
     {
         unset($this->items[$groupId]);
     }
@@ -253,7 +253,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->fieldname;
     }
 
-    public function setFieldname(string $fieldname)
+    public function setFieldname(string $fieldname): void
     {
         $this->fieldname = $fieldname;
     }
@@ -278,7 +278,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $newList;
     }
 
-    public function setActiveGroups(array $activeGroups)
+    public function setActiveGroups(array $activeGroups): void
     {
         $activeGroups = $this->sanitizeActiveGroups($activeGroups);
         $diff1 = array_diff(array_keys($activeGroups), array_keys($this->activeGroups));

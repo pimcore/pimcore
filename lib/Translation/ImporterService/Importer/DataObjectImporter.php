@@ -24,13 +24,9 @@ use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataE
 class DataObjectImporter extends AbstractElementImporter
 {
     /**
-     * @param Element\ElementInterface $element
-     * @param string $targetLanguage
-     * @param Attribute $attribute
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute)
+    protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute): void
     {
         parent::importAttribute($element, $targetLanguage, $attribute);
 
@@ -114,20 +110,20 @@ class DataObjectImporter extends AbstractElementImporter
     }
 
     /**
-     * @param DataObject\Concrete $element
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    protected function saveElement(Element\ElementInterface $element)
+    protected function saveElement(Element\ElementInterface $element): void
     {
-        $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
+        if ($element instanceof DataObject\Concrete) {
+            $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
 
-        try {
-            DataObject::disableDirtyDetection();
-            $element->setOmitMandatoryCheck(true);
-            parent::saveElement($element);
-        } finally {
-            DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            try {
+                DataObject::disableDirtyDetection();
+                $element->setOmitMandatoryCheck(true);
+                parent::saveElement($element);
+            } finally {
+                DataObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            }
         }
     }
 }

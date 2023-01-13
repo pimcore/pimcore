@@ -91,12 +91,8 @@ interface VoucherServiceInterface
     /**
      * Cleans the token reservations due to sysConfig duration settings, if no series Id is
      * set all reservations older than the set duration get removed.
-     *
-     * @param string|null $seriesId
-     *
-     * @return bool
      */
-    public function cleanUpReservations(string $seriesId = null): bool;
+    public function cleanUpReservations(int $seriesId = null): bool;
 
     /**
      * Removes all tokens from a voucher series and its reservations,
@@ -110,10 +106,6 @@ interface VoucherServiceInterface
 
     /**
      * Removes all statistics, optionally a seriesId can be passed, to only remove from one series.
-     *
-     * @param string|null $seriesId
-     *
-     * @return bool
      */
-    public function cleanUpStatistics(string $seriesId = null): bool;
+    public function cleanUpStatistics(int $seriesId = null): bool;
 }

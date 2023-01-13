@@ -21,7 +21,7 @@ use Pimcore\Navigation\Renderer\RendererInterface;
 
 class InvalidRendererException extends \LogicException
 {
-    public static function create(string $name, mixed $renderer): self
+    public static function create(string $name, mixed $renderer): static
     {
         $type = is_object($renderer) ? get_class($renderer) : gettype($renderer);
 

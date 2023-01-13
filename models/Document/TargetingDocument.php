@@ -29,7 +29,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * {@inheritdoc}
      */
-    public function setUseTargetGroup(int $useTargetGroup = null)
+    public function setUseTargetGroup(int $useTargetGroup = null): void
     {
         $this->useTargetGroup = $useTargetGroup;
     }
@@ -150,7 +150,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * {@inheritdoc}
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

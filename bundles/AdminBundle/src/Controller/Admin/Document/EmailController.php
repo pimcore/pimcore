@@ -118,11 +118,11 @@ class EmailController extends DocumentControllerBase
         }
     }
 
-    protected function setValuesToDocument(Request $request, Document $page): void
+    protected function setValuesToDocument(Request $request, Document $document): void
     {
-        $this->addSettingsToDocument($request, $page);
-        $this->addDataToDocument($request, $page);
-        $this->addPropertiesToDocument($request, $page);
-        $this->applySchedulerDataToElement($request, $page);
+        $this->addSettingsToDocument($request, $document);
+        $this->addDataToDocument($request, $document);
+        $this->addPropertiesToDocument($request, $document);
+        $this->applySchedulerDataToElement($request, $document);
     }
 }
