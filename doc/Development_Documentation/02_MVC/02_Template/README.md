@@ -19,15 +19,14 @@ Just use annotations or render the view directly to use Twig:
 namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 
 class MyController extends FrontendController
 {
     /**
      * The annotation will automatically resolve the view to MyController/myAnnotatedAction.html.twig
-     * 
-     * @Template() 
      */
+    #[Template('content/default.html.twig')]
     public function myAnnotatedAction()
     {   
     }
