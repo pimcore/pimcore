@@ -80,7 +80,7 @@ class ContentTemplateListener implements EventSubscriberInterface
             return;
         }
 
-        $parameters ??= $this->resolveParameters($event->controllerArgumentsEvent, $attribute->vars);
+        $parameters = $this->resolveParameters($event->controllerArgumentsEvent, $attribute->vars);
         $status = 200;
 
         foreach ($parameters as $k => $v) {

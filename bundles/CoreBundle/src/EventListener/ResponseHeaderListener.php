@@ -57,7 +57,7 @@ class ResponseHeaderListener implements EventSubscriberInterface
         }
     }
 
-    public function onKernelControllerArguments(ControllerArgumentsEvent $event)
+    public function onKernelControllerArguments(ControllerArgumentsEvent $event): void
     {
         $request = $event->getRequest();
         if (!\is_array($attributes = $event->getAttributes()[\Pimcore\Controller\Configuration\ResponseHeader::class] ?? null)) {
