@@ -37,8 +37,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
     /**
      * returns name for store table
-     *
-     * @return string
      */
     abstract protected function getStoreTableName(): string;
 
@@ -47,11 +45,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
         return $this->getStoreTableName();
     }
 
-    /**
-     * @param int $objectId
-     * @param array|null $data
-     * @param array|null $metadata
-     */
     abstract protected function doUpdateIndex(int $objectId, array $data = null, array $metadata = null): void;
 
     public function updateItemInIndex(int $objectId): void
@@ -95,9 +88,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
     /**
      * Inserts the data do the store table
-     *
-     * @param array $data
-     * @param int $subObjectId
      */
     protected function insertDataToIndex(array $data, int $subObjectId): void
     {
@@ -123,8 +113,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
     /**
      * deletes element from store table
-     *
-     * @param int $objectId
      */
     protected function deleteFromStoreTable(int $objectId): void
     {
@@ -133,8 +121,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
     /**
      * fills queue based on path
-     *
-     * @param IndexableInterface $object
      *
      * @throws \Exception
      */
@@ -154,11 +140,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
     /**
      * prepare data for index creation and store is in store table
-     *
-     * @param IndexableInterface $object
-     * @param int $subObjectId
-     *
-     * @return array
      */
     protected function getDefaultDataForIndex(IndexableInterface $object, int $subObjectId): array
     {
@@ -423,12 +404,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     }
 
     /**
-     * @param \Closure $fn
-     * @param int $maxTries
-     * @param float $sleep
-     *
-     * @return bool
-     *
      * @throws \Exception
      */
     protected function executeTransactionalQuery(\Closure $fn, int $maxTries = 3, float $sleep = .5): bool

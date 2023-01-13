@@ -354,7 +354,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param bool $return
      */
     public function start(bool $return = false)
     {
@@ -384,7 +384,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param bool $return
      */
     public function end(bool $return = false)
     {
@@ -403,7 +403,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Document\Editable\Area\Info $info
      */
     public function blockStart(Area\Info $info = null): array
     {

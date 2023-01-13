@@ -268,7 +268,9 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param bool $showControls
+     * @param bool $return
+     * @param string $additionalClass
      */
     public function blockStart(bool $showControls = true, bool $return = false, string $additionalClass = '')
     {
@@ -327,7 +329,7 @@ EOT;
     }
 
     /**
-     * {@inheritdoc}
+     * @param bool $return
      */
     public function blockEnd(bool $return = false)
     {

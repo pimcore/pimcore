@@ -136,9 +136,6 @@ class Reservation extends AbstractModel
 
     /**
      * @param int $duration in Minutes
-     * @param int|null $seriesId
-     *
-     * @return bool
      */
     public static function cleanUpReservations(int $duration, int $seriesId = null): bool
     {

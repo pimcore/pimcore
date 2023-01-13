@@ -88,6 +88,9 @@ class Statistic extends \Pimcore\Model\AbstractModel
         }
     }
 
+    /**
+     * @param int $duration days
+     */
     public static function cleanUpStatistics(int $duration, int $seriesId = null): bool
     {
         $query = 'DELETE FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' WHERE DAY(DATEDIFF(date, NOW())) >= ?';
