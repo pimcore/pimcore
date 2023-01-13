@@ -429,6 +429,9 @@ class Link extends Model\Document
         $this->saveScheduledTasks();
     }
 
+    /**
+     * @return array
+     */
     public function __sleep()
     {
         $finalVars = [];

@@ -89,6 +89,10 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
     }
 
+    /**
+     * @param int $seriesId
+     * @return bool|Listing
+     */
     public static function getBySeriesId($seriesId)
     {
         try {
@@ -111,6 +115,11 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         return $this->getData();
     }
 
+    /**
+     * @param int $seriesId
+     * @param array|null $params
+     * @return bool|array
+     */
     public static function getCodes($seriesId, $params)
     {
         $db = \Pimcore\Db::get();
@@ -166,6 +175,11 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         return $codes;
     }
 
+    /**
+     * @param int $usages
+     * @param int|null $seriesId
+     * @return int|false
+     */
     public static function getCountByUsages($usages = 1, $seriesId = null)
     {
         $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE usages >= ? ';
@@ -184,6 +198,10 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
     }
 
+    /**
+     * @param int $seriesId
+     * @return int|false
+     */
     public static function getCountBySeriesId($seriesId)
     {
         $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE voucherSeriesId = ?';
@@ -198,6 +216,10 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
     }
 
+    /**
+     * @param int $seriesId
+     * @return int|false
+     */
     public static function getCountByReservation($seriesId = null)
     {
         $query = 'SELECT COUNT(t.id) FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' as t
@@ -220,7 +242,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @param int $length
-     * @param string|int|null $seriesId
+     * @param int $seriesId
      *
      * @return null|int
      */
@@ -248,7 +270,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
      * Use with care, cleans all tokens of a series and the dependent
      * reservations.
      *
-     * @param string $seriesId
+     * @param int $seriesId
      *
      * @return bool
      */
@@ -258,7 +280,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
     }
 
     /**
-     * @param string $seriesId
+     * @param int $seriesId
      * @param array $filter
      * @param int $maxUsages
      *

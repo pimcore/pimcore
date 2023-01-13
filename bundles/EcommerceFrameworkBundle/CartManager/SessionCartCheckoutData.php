@@ -24,6 +24,11 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
         throw new \Exception('Not implemented, should not be needed for this cart type.');
     }
 
+    /**
+     * @param string $key
+     * @param int|string $cartId
+     * @return AbstractCartCheckoutData|null
+     */
     public static function getByKeyCartId($key, $cartId)
     {
         throw new \Exception('Not implemented, should not be needed for this cart type.');
@@ -56,11 +61,18 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
         return $this->cart;
     }
 
+    /**
+     * @return int|string|null
+     */
     public function getCartId()
     {
         return $this->cartId;
     }
 
+    /**
+     * @param int|string|null $cartId
+     * @return void
+     */
     public function setCartId($cartId)
     {
         $this->cartId = $cartId;

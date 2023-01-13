@@ -345,6 +345,11 @@ class BooleanSelect extends Data implements
         return $this;
     }
 
+    /**
+     * @param int $value
+     * @param string $label
+     * @return void
+     */
     public function setOptionsEntry($value, $label)
     {
         if (!is_array($this->options)) {
@@ -374,6 +379,10 @@ class BooleanSelect extends Data implements
         return $this->noLabel;
     }
 
+    /**
+     * @param string $noLabel
+     * @return $this
+     */
     public function setNoLabel($noLabel)
     {
         $this->noLabel = $noLabel;
@@ -390,6 +399,10 @@ class BooleanSelect extends Data implements
         return $this->emptyLabel;
     }
 
+    /**
+     * @param string $emptyLabel
+     * @return $this
+     */
     public function setEmptyLabel($emptyLabel)
     {
         $this->emptyLabel = $emptyLabel;

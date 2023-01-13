@@ -155,6 +155,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * default implementation checks if there is a price available and of the product is active.
      * may be overwritten in subclasses for additional logic
      *
+     * @param int $quantityScale
      * @return bool
      */
     public function getOSIsBookable($quantityScale = 1): bool

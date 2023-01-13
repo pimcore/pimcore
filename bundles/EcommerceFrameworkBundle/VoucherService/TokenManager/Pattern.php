@@ -661,6 +661,9 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         return $this->characterPools;
     }
 
+    /**
+     * @return string
+     */
     public function getCharacterPool()
     {
         return $this->characterPools[$this->configuration->getCharacterType()];
@@ -693,7 +696,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @param string|int|null $seriesId
+     * @param int|null $seriesId
      */
     public function setSeriesId($seriesId)
     {
@@ -701,7 +704,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @return string|int|null
+     * @return int|null
      */
     public function getSeriesId()
     {

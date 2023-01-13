@@ -37,8 +37,9 @@ interface RecurringPaymentInterface extends PaymentInterface
 
     /**
      * @param Concrete $orderListing
+     * @param array $additionalParameters
      *
-     * @return Concrete
+     * @return void
      */
     public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = []);
 }

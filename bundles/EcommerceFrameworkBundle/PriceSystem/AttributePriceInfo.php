@@ -32,6 +32,11 @@ class AttributePriceInfo extends AbstractPriceInfo implements PriceInfoInterface
      */
     protected $totalPrice;
 
+    /**
+     * @param PriceInterface $price
+     * @param int $quantity
+     * @param PriceInterface $totalPrice
+     */
     public function __construct(PriceInterface $price, $quantity, PriceInterface $totalPrice)
     {
         $this->price = $price;

@@ -338,6 +338,7 @@ interface CartInterface
     public function getPricingManagerTokenInformationDetails(): array;
 
     /**
+     * @param int $errorCode
      * @return bool
      */
     public function isVoucherErrorCode($errorCode);

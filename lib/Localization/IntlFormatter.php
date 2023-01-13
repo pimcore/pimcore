@@ -104,6 +104,7 @@ class IntlFormatter
     }
 
     /**
+     * @param string $locale
      * @return string
      */
     public function getCurrencyFormat($locale)

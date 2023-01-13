@@ -91,7 +91,7 @@ interface VoucherServiceInterface
      * Cleans the token reservations due to sysConfig duration settings, if no series Id is
      * set all reservations older than the set duration get removed.
      *
-     * @param null|string $seriesId
+     * @param int $seriesId
      *
      * @return bool
      */
@@ -110,7 +110,7 @@ interface VoucherServiceInterface
     /**
      * Removes all statistics, optionally a seriesId can be passed, to only remove from one series.
      *
-     * @param null|string $seriesId
+     * @param int $seriesId
      *
      * @return bool
      */

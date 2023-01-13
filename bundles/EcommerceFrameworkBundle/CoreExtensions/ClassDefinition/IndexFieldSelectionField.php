@@ -32,31 +32,52 @@ class IndexFieldSelectionField extends Textarea
 
     public $considerTenants = false;
 
+    /**
+     * @param bool $specificPriceField
+     * @return void
+     */
     public function setSpecificPriceField($specificPriceField)
     {
         $this->specificPriceField = $specificPriceField;
     }
 
+    /**
+     * @return bool
+     */
     public function getSpecificPriceField()
     {
         return $this->specificPriceField;
     }
 
+    /**
+     * @param bool $showAllFields
+     * @return void
+     */
     public function setShowAllFields($showAllFields)
     {
         $this->showAllFields = $showAllFields;
     }
 
+    /**
+     * @return bool
+     */
     public function getShowAllFields()
     {
         return $this->showAllFields;
     }
 
+    /**
+     * @param bool $considerTenants
+     * @return void
+     */
     public function setConsiderTenants($considerTenants)
     {
         $this->considerTenants = $considerTenants;
     }
 
+    /**
+     * @return bool
+     */
     public function getConsiderTenants()
     {
         return $this->considerTenants;
