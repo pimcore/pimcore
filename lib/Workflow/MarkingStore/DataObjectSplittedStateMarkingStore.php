@@ -47,13 +47,11 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
      *
      * @return Marking
-     *
-     * @throws LogicException
      */
-    public function getMarking($subject): Marking
+    public function getMarking(object $subject): Marking
     {
         $this->checkIfSubjectIsValid($subject);
 
@@ -81,12 +79,13 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
+     * @param Marking $marking
+     * @param array $context
      *
-     * @throws LogicException
-     * @throws \Exception
+     * @return void
      */
-    public function setMarking($subject, Marking $marking, array $context = [])
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         $subject = $this->checkIfSubjectIsValid($subject);
         $places = array_keys($marking->getPlaces());

@@ -77,7 +77,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         return $this->renderingClass;
     }
 
-    public function setRenderingClass(string $renderingClass)
+    public function setRenderingClass(string $renderingClass): void
     {
         $this->renderingClass = $renderingClass;
     }
@@ -87,7 +87,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         return $this->renderingData;
     }
 
-    public function setRenderingData(string $renderingData)
+    public function setRenderingData(string $renderingData): void
     {
         $this->renderingData = $renderingData;
     }

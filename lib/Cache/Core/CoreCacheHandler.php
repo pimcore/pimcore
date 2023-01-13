@@ -186,7 +186,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         return $this->enabled;
     }
 
-    protected function dispatchStatusEvent()
+    protected function dispatchStatusEvent(): void
     {
         $this->dispatcher->dispatch(new Event(),
             $this->isEnabled()

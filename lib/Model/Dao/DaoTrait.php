@@ -27,9 +27,6 @@ trait DaoTrait
      */
     protected $model;
 
-    /**
-     * @return $this
-     */
     public function setModel(AbstractModel $model): static
     {
         $this->model = $model;

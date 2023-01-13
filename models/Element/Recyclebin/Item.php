@@ -62,7 +62,7 @@ class Item extends Model\AbstractModel
      * @param Element\ElementInterface $element
      * @param Model\User|null $user
      */
-    public static function create(Element\ElementInterface $element, Model\User $user = null)
+    public static function create(Element\ElementInterface $element, Model\User $user = null): void
     {
         $item = new self();
         $item->setElement($element);
@@ -93,7 +93,7 @@ class Item extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function restore(Model\User $user = null)
+    public function restore(Model\User $user = null): void
     {
         $dummy = null;
         $raw = Storage::get('recycle_bin')->read($this->getStoreageFile());
@@ -161,7 +161,7 @@ class Item extends Model\AbstractModel
     /**
      * @param Model\User|null $user
      */
-    public function save(Model\User $user = null)
+    public function save(Model\User $user = null): void
     {
         $this->setType(Element\Service::getElementType($this->getElement()));
         $this->setSubtype($this->getElement()->getType());
@@ -204,7 +204,7 @@ class Item extends Model\AbstractModel
         $saveBinaryData($this->getElement(), $saveBinaryData, $this);
     }
 
-    public function delete()
+    public function delete(): void
     {
         $storage = Storage::get('recycle_bin');
         $storage->delete($this->getStoreageFile());
@@ -221,7 +221,7 @@ class Item extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-    public function loadChildren(Element\ElementInterface $element)
+    public function loadChildren(Element\ElementInterface $element): void
     {
         $this->amount++;
 
@@ -260,7 +260,7 @@ class Item extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    protected function doRecursiveRestore(Element\ElementInterface $element)
+    protected function doRecursiveRestore(Element\ElementInterface $element): void
     {
         $storage = Storage::get('recycle_bin');
         $restoreBinaryData = function (Element\ElementInterface $element, self $scope) use ($storage) {

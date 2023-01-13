@@ -55,7 +55,7 @@ class Dao extends AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
         if (empty($classRaw)) {
@@ -67,7 +67,7 @@ class Dao extends AbstractDao
     /**
      * Create a new record for the object in database
      */
-    public function create()
+    public function create(): void
     {
         $this->db->insert(self::TABLE_NAME, []);
         $this->model->setId((int) $this->db->lastInsertId());
@@ -129,7 +129,7 @@ class Dao extends AbstractDao
         $this->db->delete(self::TABLE_NAME, ['id' => $this->model->getId()]);
     }
 
-    public function setFieldsToSave(array $fields)
+    public function setFieldsToSave(array $fields): void
     {
         $this->fieldsToSave = $fields;
     }

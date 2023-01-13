@@ -25,5 +25,5 @@ interface CheckoutInterface
      *
      * @param CartInterface $cart
      */
-    public function trackCheckout(CartInterface $cart);
+    public function trackCheckout(CartInterface $cart): void;
 }

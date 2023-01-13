@@ -47,12 +47,12 @@ class DumpTranslationEntriesListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelTerminate(TerminateEvent $event)
+    public function onKernelTerminate(TerminateEvent $event): void
     {
         $this->dumper->dumpToDb();
     }
 
-    public function onConsoleTerminate(ConsoleTerminateEvent $event)
+    public function onConsoleTerminate(ConsoleTerminateEvent $event): void
     {
         $this->dumper->dumpToDb();
     }

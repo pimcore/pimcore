@@ -69,7 +69,7 @@ class Sales extends AbstractOrder implements ConditionInterface
         return $this->amount;
     }
 
-    public function setAmount(int $amount)
+    public function setAmount(int $amount): void
     {
         $this->amount = (int)$amount;
     }

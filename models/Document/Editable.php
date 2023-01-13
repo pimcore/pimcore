@@ -239,7 +239,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Sends data to the output stream
      */
-    protected function outputEditmode(string $value)
+    protected function outputEditmode(string $value): void
     {
         if ($this->getEditmode()) {
             echo $value . "\n";
@@ -256,6 +256,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -263,6 +266,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDocumentId(int $id): static
     {
         $this->documentId = (int) $id;
@@ -279,6 +285,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->documentId;
     }
 
+    /**
+     * @return $this
+     */
     public function setDocument(Document\PageSnippet $document): static
     {
         $this->document = $document;
@@ -301,6 +310,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->config;
     }
 
+    /**
+     * @return $this
+     */
     public function setConfig(array $config): static
     {
         $this->config = $config;
@@ -327,19 +339,14 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->realName;
     }
 
-    public function setRealName(string $realName)
+    public function setRealName(string $realName): void
     {
         $this->realName = $realName;
     }
 
-    final public function setParentBlockNames($parentNames)
+    final public function setParentBlockNames(array $parentNames): void
     {
-        if (is_array($parentNames)) {
-            // unfortunately we cannot make a type hint here, because of compatibility reasons
-            // old versions where 'parentBlockNames' was not excluded in __sleep() have still this property
-            // in the serialized data, and mostly with the value NULL, on restore this would lead to an error
-            $this->parentBlockNames = $parentNames;
-        }
+        $this->parentBlockNames = $parentNames;
     }
 
     final public function getParentBlockNames(): array
@@ -352,7 +359,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

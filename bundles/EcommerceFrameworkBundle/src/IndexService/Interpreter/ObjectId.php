@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\AbstractObject;
 
 class ObjectId implements InterpreterInterface
 {
-    public function interpret($value, $config = null): ?int
+    public function interpret(mixed $value, ?array $config = null): ?int
     {
         if (!empty($value) && $value instanceof AbstractObject) {
             return $value->getId();

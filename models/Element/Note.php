@@ -126,7 +126,7 @@ final class Note extends Model\AbstractModel
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         // check if there's a valid user
         if (!$this->getUser()) {

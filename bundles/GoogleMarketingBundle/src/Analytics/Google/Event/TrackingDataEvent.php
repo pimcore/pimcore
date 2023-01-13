@@ -66,7 +66,7 @@ class TrackingDataEvent extends Event
         return $this->data;
     }
 
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
@@ -93,7 +93,7 @@ class TrackingDataEvent extends Event
         return $this->template;
     }
 
-    public function setTemplate(string $template)
+    public function setTemplate(string $template): void
     {
         $this->template = $template;
     }

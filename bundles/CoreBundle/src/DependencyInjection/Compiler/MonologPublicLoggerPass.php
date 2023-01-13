@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 final class MonologPublicLoggerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $loggerPrefix = 'monolog.logger.';
         $serviceIds = array_filter($container->getServiceIds(), function (string $id) use ($loggerPrefix) {

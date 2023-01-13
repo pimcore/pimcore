@@ -18,14 +18,14 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\Star
 
 class AbstractRequest implements \ArrayAccess
 {
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         foreach ($data as $key => $value) {
             $this->{$key} = $value;
         }
     }
 
-    public function set(string $name, mixed $value)
+    public function set(string $name, mixed $value): void
     {
         $this->{$name} = $value;
     }

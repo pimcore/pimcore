@@ -23,17 +23,15 @@ interface LockableAttributeBagInterface extends AttributeBagInterface
     /**
      * Lock the attribute bag (disallow modifications)
      */
-    public function lock();
+    public function lock(): void;
 
     /**
      * Unlock the attribute bag
      */
-    public function unlock();
+    public function unlock(): void;
 
     /**
      * Get lock status
-     *
-     * @return bool
      */
     public function isLocked(): bool;
 }

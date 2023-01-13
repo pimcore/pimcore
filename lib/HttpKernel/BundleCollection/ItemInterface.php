@@ -37,10 +37,8 @@ interface ItemInterface
 
     /**
      * Registers dependent bundles if the bundle implements DependentBundleInterface
-     *
-     * @param BundleCollection $collection
      */
-    public function registerDependencies(BundleCollection $collection);
+    public function registerDependencies(BundleCollection $collection): void;
 
     public function matchesEnvironment(string $environment): bool;
 

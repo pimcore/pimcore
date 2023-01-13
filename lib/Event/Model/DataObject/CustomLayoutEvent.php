@@ -38,7 +38,7 @@ class CustomLayoutEvent extends Event
         return $this->customLayout;
     }
 
-    public function setCustomLayout(ClassDefinition\CustomLayout $customLayout)
+    public function setCustomLayout(ClassDefinition\CustomLayout $customLayout): void
     {
         $this->customLayout = $customLayout;
     }

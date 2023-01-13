@@ -33,7 +33,7 @@ final class LFExpanderFactory implements OperatorFactoryInterface
         $this->localeService = $localeService;
     }
 
-    public function build(\stdClass $configElement, $context = null): OperatorInterface
+    public function build(\stdClass $configElement, array $context = []): OperatorInterface
     {
         return new LFExpander($this->localeService, $configElement, $context);
     }

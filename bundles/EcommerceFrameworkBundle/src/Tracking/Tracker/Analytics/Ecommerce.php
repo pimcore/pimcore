@@ -25,7 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Ecommerce extends AbstractAnalyticsTracker implements CheckoutCompleteInterface
 {
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -39,7 +39,7 @@ class Ecommerce extends AbstractAnalyticsTracker implements CheckoutCompleteInte
      *
      * @param AbstractOrder $order
      */
-    public function trackCheckoutComplete(AbstractOrder $order)
+    public function trackCheckoutComplete(AbstractOrder $order): void
     {
         $transaction = $this->trackingItemBuilder->buildCheckoutTransaction($order);
         $items = $this->trackingItemBuilder->buildCheckoutItems($order);
