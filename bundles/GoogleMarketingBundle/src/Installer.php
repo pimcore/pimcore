@@ -9,7 +9,7 @@ class Installer extends SettingsStoreAwareInstaller
         'reports',
         'system_settings'
     ];
-    protected function addPermissions()
+    protected function addPermissions(): void
     {
         $db = \Pimcore\Db::get();
 
@@ -34,7 +34,7 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
-    protected function removePermissions()
+    protected function removePermissions(): void
     {
         $db = \Pimcore\Db::get();
 
@@ -45,14 +45,13 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
-    public function install()
+    public function install(): void
     {
         $this->addPermissions();
         parent::install();
     }
-
-
-    public function uninstall()
+    
+    public function uninstall(): void
     {
         $this->removePermissions();
         parent::uninstall();
