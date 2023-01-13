@@ -30,7 +30,7 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
      * creates object mockup for given data
      *
      * @param int $objectId
-     * @param mixed $data
+     * @param array $data
      * @param array $relations
      *
      * @return DefaultMockup

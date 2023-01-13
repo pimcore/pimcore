@@ -47,11 +47,9 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
      *
      * @return Marking
-     *
-     * @throws LogicException
      */
     public function getMarking($subject): Marking
     {
@@ -81,10 +79,11 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
+     * @param Marking $marking
+     * @param array $context
      *
-     * @throws LogicException
-     * @throws \Exception
+     * @return void
      */
     public function setMarking($subject, Marking $marking, array $context = [])
     {

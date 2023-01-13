@@ -23,6 +23,12 @@ class DefaultBrickGetter implements GetterInterface
 {
     use OptionsResolverTrait;
 
+    /**
+     * @param object $object
+     * @param array $config
+     *
+     * @return mixed
+     */
     public function get($object, $config = null)
     {
         $config = $this->resolveOptions($config ?? []);

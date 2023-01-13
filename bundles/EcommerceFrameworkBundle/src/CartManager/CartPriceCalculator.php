@@ -128,6 +128,10 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     }
 
     /**
+     * @param bool $ignorePricingRules
+     *
+     * @return void
+     *
      * @throws UnsupportedException
      */
     public function calculate($ignorePricingRules = false): void

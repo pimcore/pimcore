@@ -54,6 +54,9 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      */
     abstract protected function doUpdateIndex(int $objectId, array $data = null, array $metadata = null);
 
+    /**
+     * @param int $objectId
+     */
     public function updateItemInIndex($objectId): void
     {
         $this->doUpdateIndex($objectId);

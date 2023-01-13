@@ -245,7 +245,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @static
+     * @param ElementInterface|null $element
      *
      */
     public static function doHideUnpublished($element): bool

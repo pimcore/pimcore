@@ -73,6 +73,9 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
         return $options;
     }
 
+    /**
+     * @return string
+     */
     protected function hostForSite(Site $site)
     {
         $host = $site->getMainDomain();

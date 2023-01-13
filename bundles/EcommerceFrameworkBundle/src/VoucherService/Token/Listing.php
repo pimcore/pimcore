@@ -213,7 +213,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @param int $length
-     * @param int|string|null $seriesId
+     * @param int $seriesId
      *
      * @return null|int
      */
@@ -241,7 +241,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
      * Use with care, cleans all tokens of a series and the dependent
      * reservations.
      *
-     * @param string $seriesId
+     * @param int $seriesId
      *
      * @return bool
      */

@@ -136,7 +136,7 @@ class Reservation extends AbstractModel
 
     /**
      * @param int $duration in Minutes
-     * @param string|null $seriesId
+     * @param int $seriesId
      *
      * @return bool
      */

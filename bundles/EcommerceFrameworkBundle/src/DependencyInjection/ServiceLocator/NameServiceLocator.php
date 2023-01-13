@@ -31,6 +31,9 @@ abstract class NameServiceLocator
         $this->locator = $locator;
     }
 
+    /**
+     * @return mixed
+     */
     protected function locate(string $name = null)
     {
         $name = $this->resolveName($name);

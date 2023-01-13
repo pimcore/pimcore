@@ -634,6 +634,13 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * @internal
+     *
+     * @param mixed $originalData
+     * @param mixed $data
+     * @param Concrete $object
+     * @param array $params
+     *
+     * @return array
      */
     protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = []): array
     {
