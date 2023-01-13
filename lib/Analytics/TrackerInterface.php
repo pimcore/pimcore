@@ -40,5 +40,5 @@ interface TrackerInterface
      * @param bool $prepend       Whether to prepend the code to the code block
      * @param SiteId|null $siteId Restrict code to a specific site
      */
-    public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteId $siteId = null);
+    public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteId $siteId = null): void;
 }

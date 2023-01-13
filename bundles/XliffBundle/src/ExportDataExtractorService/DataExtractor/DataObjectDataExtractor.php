@@ -167,7 +167,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
      * @param AttributeSet $result
      * @param array|null $exportAttributes
      */
-    protected function addBlocksInLocalizedfields(Localizedfields $fd, Data $definition, DataObject\Concrete $object, AttributeSet $result, array $exportAttributes = null)
+    protected function addBlocksInLocalizedfields(Localizedfields $fd, Data $definition, DataObject\Concrete $object, AttributeSet $result, array $exportAttributes = null): void
     {
         $locale = str_replace('-', '_', $result->getSourceLanguage());
         if (!Tool::isValidLanguage($locale)) {

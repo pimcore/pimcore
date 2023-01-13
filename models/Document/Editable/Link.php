@@ -68,7 +68,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    protected function getEditmodeElementClasses($options = []): array
+    protected function getEditmodeElementClasses(array $options = []): array
     {
         // we don't want the class attribute being applied to the editable container element (<div>, only to the <a> tag inside
         // the default behavior of the parent method is to include the "class" attribute
@@ -302,7 +302,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data['text'] ?? '';
     }
 
-    public function setText(string $text)
+    public function setText(string $text): void
     {
         $this->data['text'] = $text;
     }

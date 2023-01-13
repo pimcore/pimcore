@@ -37,7 +37,7 @@ class ModelEvent extends Event implements ModelEventInterface
         return $this->modelInterface;
     }
 
-    public function setModel(ModelInterface $element)
+    public function setModel(ModelInterface $element): void
     {
         $this->modelInterface = $element;
     }

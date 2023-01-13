@@ -32,7 +32,7 @@ class InputQuantityValue extends QuantityValue
         parent::__construct($value, $unit);
     }
 
-    public function setValue(float|int|string|null $value)
+    public function setValue(float|int|string|null $value): void
     {
         $this->value = $value;
         $this->markMeDirty();

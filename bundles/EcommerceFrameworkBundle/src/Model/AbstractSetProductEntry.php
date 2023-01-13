@@ -21,14 +21,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 class AbstractSetProductEntry
 {
-    /**
-     * @var int
-     */
-    private mixed $quantity = null;
+    private int $quantity;
 
     private CheckoutableInterface $product;
 
-    public function __construct(CheckoutableInterface $product, $quantity = 1)
+    public function __construct(CheckoutableInterface $product, int $quantity = 1)
     {
         $this->product = $product;
         $this->quantity = $quantity;

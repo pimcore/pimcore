@@ -44,7 +44,7 @@ class MarkerHotspotItem implements \ArrayAccess
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -54,7 +54,7 @@ class MarkerHotspotItem implements \ArrayAccess
         return $this->type;
     }
 
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
@@ -64,7 +64,7 @@ class MarkerHotspotItem implements \ArrayAccess
         return $this->value;
     }
 
-    public function setValue(mixed $value)
+    public function setValue(mixed $value): void
     {
         $this->value = $value;
     }

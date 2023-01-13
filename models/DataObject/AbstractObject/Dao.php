@@ -36,7 +36,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as locked FROM objects
             LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = 'object'
@@ -56,7 +56,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPath(string $path)
+    public function getByPath(string $path): void
     {
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM objects WHERE `path` = :path AND `key` = :key', $params);
@@ -71,7 +71,7 @@ class Dao extends Model\Element\Dao
     /**
      * Create a new record for the object in database
      */
-    public function create()
+    public function create(): void
     {
         $this->db->insert('objects', Helper::quoteDataIdentifiers($this->db, [
             'key' => $this->model->getKey(),
@@ -89,7 +89,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Exception
      */
-    public function update(bool $isUpdate = null)
+    public function update(bool $isUpdate = null): void
     {
         $object = $this->model->getObjectVars();
 
@@ -142,7 +142,7 @@ class Dao extends Model\Element\Dao
         $this->db->delete('objects', ['id' => $this->model->getId()]);
     }
 
-    public function updateWorkspaces()
+    public function updateWorkspaces(): void
     {
         $this->db->update('users_workspaces_object', [
             'cpath' => $this->model->getRealFullPath(),
@@ -648,7 +648,7 @@ class Dao extends Model\Element\Dao
         return $permissions;
     }
 
-    public function saveIndex(int $index)
+    public function saveIndex(int $index): void
     {
         $this->db->update('objects', [
             'index' => $index,

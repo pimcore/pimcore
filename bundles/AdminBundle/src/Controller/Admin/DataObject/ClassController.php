@@ -1822,7 +1822,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         return $response;
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

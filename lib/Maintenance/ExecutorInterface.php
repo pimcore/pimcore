@@ -21,21 +21,21 @@ namespace Pimcore\Maintenance;
  */
 interface ExecutorInterface
 {
-    public function executeTask(string $name);
+    public function executeTask(string $name): void;
 
     /**
      * Execute the Maintenance Task
      *
-     * @param array $validJobs
-     * @param array $excludedJobs
+     * @param string[] $validJobs
+     * @param string[] $excludedJobs
      */
-    public function executeMaintenance(array $validJobs = [], array $excludedJobs = []);
+    public function executeMaintenance(array $validJobs = [], array $excludedJobs = []): void;
 
-    public function registerTask(string $name, TaskInterface $task);
+    public function registerTask(string $name, TaskInterface $task): void;
 
     public function getTaskNames(): array;
 
     public function getLastExecution(): int;
 
-    public function setLastExecution();
+    public function setLastExecution(): void;
 }

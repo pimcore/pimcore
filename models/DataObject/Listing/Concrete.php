@@ -130,7 +130,7 @@ abstract class Concrete extends Model\DataObject\Listing
      *
      * @throws \Exception
      */
-    public function addFieldCollection(string $type, string $fieldname = null)
+    public function addFieldCollection(string $type, string $fieldname = null): void
     {
         $this->setData(null);
 
@@ -177,7 +177,7 @@ abstract class Concrete extends Model\DataObject\Listing
      *
      * @throws \Exception
      */
-    public function addObjectbrick(string $type)
+    public function addObjectbrick(string $type): void
     {
         $this->setData(null);
 

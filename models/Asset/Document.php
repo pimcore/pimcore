@@ -33,7 +33,7 @@ class Document extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
             $this->removeCustomSetting('document_page_count');
@@ -51,7 +51,7 @@ class Document extends Model\Asset
      *
      * @internal
      */
-    public function processPageCount(string $path = null)
+    public function processPageCount(string $path = null): void
     {
         $pageCount = null;
         if (!\Pimcore\Document::isAvailable()) {

@@ -512,7 +512,7 @@ class TranslationController extends AdminController
         return $prefixedTranslations;
     }
 
-    protected function extendTranslationQuery(array $joins, Translation\Listing $list, string $tableName, array $filters)
+    protected function extendTranslationQuery(array $joins, Translation\Listing $list, string $tableName, array $filters): void
     {
         if ($joins) {
             $list->onCreateQueryBuilder(
@@ -555,7 +555,7 @@ class TranslationController extends AdminController
         }
     }
 
-    protected function getGridFilterCondition(Request $request, string $tableName, bool $languageMode = false, $admin = false): array|string|null
+    protected function getGridFilterCondition(Request $request, string $tableName, bool $languageMode = false, bool $admin = false): array|string|null
     {
         $joins = [];
         $conditions = [];

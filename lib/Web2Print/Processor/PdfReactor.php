@@ -226,7 +226,7 @@ class PdfReactor extends Processor
         return (array)$event->getArguments()['options'];
     }
 
-    protected function includeApi()
+    protected function includeApi(): void
     {
         include_once(__DIR__ . '/api/PDFreactor.class.php');
     }

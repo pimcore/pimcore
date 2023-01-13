@@ -41,7 +41,7 @@ class ResponseHeaderListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         $headers = $this->responseHeaderResolver->getResponseHeaders($event->getRequest());
 

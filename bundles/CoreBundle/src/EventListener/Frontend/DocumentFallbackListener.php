@@ -59,7 +59,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
         $this->options = $optionsResolver->resolve($options);
     }
 
-    protected function configureOptions(OptionsResolver $optionsResolver)
+    protected function configureOptions(OptionsResolver $optionsResolver): void
     {
         $optionsResolver->setDefaults([
             'nearestDocumentTypes' => ['page', 'snippet', 'hardlink', 'link', 'folder'],
@@ -87,7 +87,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
      *
      * @param RequestEvent $event
      */
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
@@ -142,7 +142,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
         }
     }
 
-    public function onKernelController(ControllerEvent $event)
+    public function onKernelController(ControllerEvent $event): void
     {
         $controller = $event->getController();
         if (is_array($controller) && isset($controller[0]) && $controller[0] instanceof PublicServicesController) {

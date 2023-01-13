@@ -44,7 +44,7 @@ interface CheckoutableInterface extends ProductInterface
     /**
      * checks if product is bookable
      */
-    public function getOSIsBookable($quantityScale = 1): bool;
+    public function getOSIsBookable(int $quantityScale = 1): bool;
 
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()

@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends DataObject\Data\AbstractMetadata\Dao
 {
-    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object')
+    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object'): void
     {
         $table = $this->getTablename($object);
 

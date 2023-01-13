@@ -52,13 +52,9 @@ class AbstractElementImporter implements ImporterInterface
     }
 
     /**
-     * @param Element\ElementInterface $element
-     * @param string $targetLanguage
-     * @param Attribute $attribute
-     *
      * @throws \Exception
      */
-    protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute)
+    protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute): void
     {
         if ($attribute->getType() === Attribute::TYPE_PROPERTY) {
             $property = $element->getProperty($attribute->getName(), true);
@@ -71,11 +67,9 @@ class AbstractElementImporter implements ImporterInterface
     }
 
     /**
-     * @param Element\ElementInterface $element
-     *
      * @throws \Exception
      */
-    protected function saveElement(Element\ElementInterface $element)
+    protected function saveElement(Element\ElementInterface $element): void
     {
         try {
             $element->save();

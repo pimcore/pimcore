@@ -32,13 +32,7 @@ interface GeneratorContextInterface extends \IteratorAggregate, \Countable
 
     public function keys(): array;
 
-    /**
-     * @param int|string $key
-     * @param mixed $default
-     *
-     * @return mixed
-     */
     public function get(int|string $key, mixed $default = null): mixed;
 
-    public function has($key): bool;
+    public function has(int|string $key): bool;
 }

@@ -38,7 +38,7 @@ class ClassDefinitionEvent extends Event
         return $this->classDefinition;
     }
 
-    public function setClassDefinition(ClassDefinition $classDefinition)
+    public function setClassDefinition(ClassDefinition $classDefinition): void
     {
         $this->classDefinition = $classDefinition;
     }

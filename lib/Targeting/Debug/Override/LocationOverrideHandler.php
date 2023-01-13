@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class LocationOverrideHandler implements OverrideHandlerInterface
 {
-    public function buildOverrideForm(FormBuilderInterface $form, Request $request)
+    public function buildOverrideForm(FormBuilderInterface $form, Request $request): void
     {
         $form->add('location', LocationType::class, [
             'label' => 'Location',
@@ -36,7 +36,7 @@ class LocationOverrideHandler implements OverrideHandlerInterface
         ]);
     }
 
-    public function overrideFromRequest(array $overrides, Request $request)
+    public function overrideFromRequest(array $overrides, Request $request): void
     {
         $location = $overrides['location'] ?? [];
         if (empty($location)) {

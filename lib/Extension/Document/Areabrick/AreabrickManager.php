@@ -43,7 +43,7 @@ class AreabrickManager implements AreabrickManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function register(string $id, AreabrickInterface $brick)
+    public function register(string $id, AreabrickInterface $brick): void
     {
         if (array_key_exists($id, $this->bricks)) {
             throw new ConfigurationException(sprintf(
@@ -71,7 +71,7 @@ class AreabrickManager implements AreabrickManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function registerService(string $id, string $serviceId)
+    public function registerService(string $id, string $serviceId): void
     {
         if (array_key_exists($id, $this->bricks)) {
             throw new ConfigurationException(sprintf(
@@ -182,7 +182,7 @@ class AreabrickManager implements AreabrickManagerInterface
     /**
      * Loads all brick instances registered as service definitions
      */
-    protected function loadServiceBricks()
+    protected function loadServiceBricks(): void
     {
         foreach ($this->brickServiceIds as $id => $serviceId) {
             $this->loadServiceBrick($id);

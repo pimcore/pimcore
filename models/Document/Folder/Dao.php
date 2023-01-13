@@ -27,7 +27,7 @@ class Dao extends Model\Document\Dao
     /**
      * Deletes the folder
      */
-    public function delete()
+    public function delete(): void
     {
         parent::delete();
     }

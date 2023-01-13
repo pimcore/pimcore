@@ -28,12 +28,6 @@ interface PaymentInterface
 
     /**
      * Starts payment
-     *
-     * @param OrderAgentInterface $orderAgent
-     * @param PriceInterface $price
-     * @param AbstractRequest $config
-     *
-     * @return StartPaymentResponseInterface
      */
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface;
 
@@ -44,43 +38,26 @@ interface PaymentInterface
 
     /**
      * Returns the authorized data from payment provider
-     *
-     * @return array
      */
     public function getAuthorizedData(): array;
 
     /**
      * Set authorized data from payment provider
-     *
-     * @param array $authorizedData
      */
-    public function setAuthorizedData(array $authorizedData);
+    public function setAuthorizedData(array $authorizedData): void;
 
     /**
      * Executes payment
-     *
-     * @param PriceInterface|null $price
-     * @param string|null $reference
-     *
-     * @return StatusInterface
      */
     public function executeDebit(PriceInterface $price = null, string $reference = null): StatusInterface;
 
     /**
      * Executes credit
-     *
-     * @param PriceInterface $price
-     * @param string $reference
-     * @param string $transactionId
-     *
-     * @return StatusInterface
      */
     public function executeCredit(PriceInterface $price, string $reference, string $transactionId): StatusInterface;
 
     /**
      * returns configuration key in yml configuration file
-     *
-     * @return string
      */
     public function getConfigurationKey(): string;
 }

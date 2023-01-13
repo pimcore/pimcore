@@ -25,7 +25,7 @@ final class ElementCounter extends AbstractOperator
 {
     private bool $countEmpty;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -76,7 +76,7 @@ final class ElementCounter extends AbstractOperator
         return $this->countEmpty;
     }
 
-    public function setCountEmpty(bool $countEmpty)
+    public function setCountEmpty(bool $countEmpty): void
     {
         $this->countEmpty = $countEmpty;
     }

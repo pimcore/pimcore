@@ -37,7 +37,7 @@ class SessionCartItem extends AbstractCartItem implements CartItemInterface
         throw new \Exception('Not implemented, should not be needed for this cart type.');
     }
 
-    public static function removeAllFromCart(int|string $cartId)
+    public static function removeAllFromCart(int|string $cartId): void
     {
         $cartItem = new self();
         $cart = $cartItem->getCart();
@@ -58,7 +58,7 @@ class SessionCartItem extends AbstractCartItem implements CartItemInterface
      *
      * @internal
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $vars = parent::__sleep();
 
