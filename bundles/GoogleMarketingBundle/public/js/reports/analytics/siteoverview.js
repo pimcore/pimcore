@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.analytics.overview");
+pimcore.registerNS("pimcore.google_marketing.report.analytics.overview");
 /**
  * @private
  */
-pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
+pimcore.google_marketing.report.analytics.overview = Class.create(pimcore.report.abstract, {
 
     matchType: function (type) {
 
@@ -168,4 +168,4 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
 
 // add to report broker
 pimcore.report.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
-pimcore.report.broker.addReport(pimcore.report.analytics.overview, "analytics");
+pimcore.report.broker.addReport(pimcore.google_marketing.report.analytics.overview, "analytics");

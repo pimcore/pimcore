@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.webmastertools.settings");
+pimcore.registerNS("pimcore.google_marketing.report.webmaster_tools.settings");
 /**
  * @private
  */
-pimcore.report.webmastertools.settings = Class.create({
+pimcore.google_marketing.report.webmaster_tools.settings = Class.create({
 
     initialize: function (parent) {
         this.parent = parent;
@@ -118,4 +118,4 @@ pimcore.report.webmastertools.settings = Class.create({
 });
 
 
-pimcore.report.settings.broker.push("pimcore.report.webmastertools.settings");
+pimcore.report.settings.broker.push("pimcore.google_marketing.report.webmaster_tools.settings");

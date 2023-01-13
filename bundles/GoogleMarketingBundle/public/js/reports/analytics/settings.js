@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.analytics.settings");
+pimcore.registerNS("pimcore.google_marketing.report.analytics.settings");
 /**
  * @private
  */
-pimcore.report.analytics.settings = Class.create({
+pimcore.google_marketing.report.analytics.settings = Class.create({
 
     initialize: function (parent) {
         this.parent = parent;
@@ -269,4 +269,4 @@ pimcore.report.analytics.settings = Class.create({
 });
 
 
-pimcore.report.settings.broker.push("pimcore.report.analytics.settings");
+pimcore.report.settings.broker.push("pimcore.google_marketing.report.analytics.settings");
