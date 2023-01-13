@@ -111,7 +111,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - Glossary has been moved into PimcoreGlossaryBundle
     - Xliff Translation Import/Export and related Events have been moved into PimcoreXliffBundle. Please check and adapt the Events' namespaces.
     - SEO Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
-
+- [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
