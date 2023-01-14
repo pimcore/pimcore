@@ -348,6 +348,8 @@ final class Version extends AbstractModel
      * @param bool $renewReferences
      *
      * @return mixed
+     *
+     * @throws \Exception
      */
     public function loadData($renewReferences = true)
     {

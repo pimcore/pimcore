@@ -323,12 +323,14 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     {
         $latestVersion = $document->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
-            $latestDoc = $latestVersion->loadData();
-            if ($latestDoc instanceof Model\Document\PageSnippet) {
-                $draftVersion = $latestVersion;
-
-                return $latestDoc;
-            }
+            try {
+                $latestDoc = $latestVersion->loadData();
+                if ($latestDoc instanceof Model\Document\PageSnippet) {
+                    $draftVersion = $latestVersion;
+    
+                    return $latestDoc;
+                }
+            } catch (\Exception) {}
         }
 
         return $document;
