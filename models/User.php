@@ -990,6 +990,11 @@ final class User extends User\UserRole
         return $this->keyBindings ? $this->keyBindings : self::getDefaultKeyBindings();
     }
 
+    /**
+     * @param list<array{action: string, key: int, alt?: bool, ctrl?: bool, shift?: bool}> $bindings
+     *
+     * @return list<array{action: string, key: int, alt: bool, ctrl: bool, shift: bool}>
+     */
     public static function strictKeybinds(array $bindings): array
     {
         foreach($bindings as $ind => $binding){
