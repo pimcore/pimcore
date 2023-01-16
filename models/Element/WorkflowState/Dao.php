@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPrimary(int $cid, string $ctype, string $workflow)
+    public function getByPrimary(int $cid, string $ctype, string $workflow): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflow = ?', [$cid, $ctype, $workflow]);
 
@@ -68,7 +68,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('element_workflow_state', [
             'cid' => $this->model->getCid(),

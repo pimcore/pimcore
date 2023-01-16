@@ -88,7 +88,7 @@ class DefaultMysql implements ProductListInterface
 
     protected ?float $conditionPriceTo = null;
 
-    public function addCondition(array|string $condition, string $fieldname = '')
+    public function addCondition(array|string $condition, string $fieldname = ''): void
     {
         $this->products = null;
         $this->conditions[$fieldname][] = $condition;
@@ -100,7 +100,7 @@ class DefaultMysql implements ProductListInterface
         unset($this->conditions[$fieldname]);
     }
 
-    public function addRelationCondition(string $fieldname, string|array $condition)
+    public function addRelationCondition(string $fieldname, string|array $condition): void
     {
         $this->products = null;
         $this->relationConditions[$fieldname][] = '`fieldname` = ' . $this->quote($fieldname) . ' AND '  . $condition;
@@ -109,7 +109,7 @@ class DefaultMysql implements ProductListInterface
     /**
      * resets all conditions of product list
      */
-    public function resetConditions()
+    public function resetConditions(): void
     {
         $this->conditions = [];
         $this->relationConditions = [];
@@ -127,7 +127,7 @@ class DefaultMysql implements ProductListInterface
      * @param string|array $condition
      * @param string $fieldname
      */
-    public function addQueryCondition(string|array $condition, string $fieldname = '')
+    public function addQueryCondition(string|array $condition, string $fieldname = ''): void
     {
         $this->products = null;
         $this->queryConditions[$fieldname][] = $condition;
@@ -138,7 +138,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @param string $fieldname
      */
-    public function resetQueryCondition(string $fieldname)
+    public function resetQueryCondition(string $fieldname): void
     {
         $this->products = null;
         unset($this->queryConditions[$fieldname]);
@@ -148,7 +148,7 @@ class DefaultMysql implements ProductListInterface
      * @param float|null $from
      * @param float|null $to
      */
-    public function addPriceCondition(?float $from = null, ?float $to = null)
+    public function addPriceCondition(?float $from = null, ?float $to = null): void
     {
         $this->products = null;
         $this->conditionPriceFrom = $from;
@@ -172,7 +172,7 @@ class DefaultMysql implements ProductListInterface
 
     protected bool $orderByPrice = false;
 
-    public function setOrder(string $order)
+    public function setOrder(string $order): void
     {
         $this->products = null;
         $this->order = $order;
@@ -186,7 +186,7 @@ class DefaultMysql implements ProductListInterface
     /**
      * @param array|string $orderKey either single field name, or array of field names or array of arrays (field name, direction)
      */
-    public function setOrderKey(array|string $orderKey)
+    public function setOrderKey(array|string $orderKey): void
     {
         $this->products = null;
         if ($orderKey == ProductListInterface::ORDERKEY_PRICE) {
@@ -203,7 +203,7 @@ class DefaultMysql implements ProductListInterface
         return $this->orderKey;
     }
 
-    public function setLimit(int $limit)
+    public function setLimit(int $limit): void
     {
         if ($this->limit != $limit) {
             $this->products = null;
@@ -216,7 +216,7 @@ class DefaultMysql implements ProductListInterface
         return $this->limit;
     }
 
-    public function setOffset(int $offset)
+    public function setOffset(int $offset): void
     {
         if ($this->offset != $offset) {
             $this->products = null;
@@ -229,7 +229,7 @@ class DefaultMysql implements ProductListInterface
         return $this->offset;
     }
 
-    public function setCategory(AbstractCategory $category)
+    public function setCategory(AbstractCategory $category): void
     {
         $this->products = null;
         $this->category = $category;
@@ -240,7 +240,7 @@ class DefaultMysql implements ProductListInterface
         return $this->category;
     }
 
-    public function setVariantMode(string $variantMode)
+    public function setVariantMode(string $variantMode): void
     {
         $this->products = null;
         $this->variantMode = $variantMode;
@@ -478,7 +478,7 @@ class DefaultMysql implements ProductListInterface
         }
     }
 
-    protected function buildQueryFromConditions($excludeConditions = false, $excludedFieldname = null, $variantMode = null): string
+    protected function buildQueryFromConditions(bool $excludeConditions = false, ?string $excludedFieldname = null, ?string $variantMode = null): string
     {
         if ($variantMode == null) {
             $variantMode = $this->getVariantMode();
@@ -551,7 +551,7 @@ class DefaultMysql implements ProductListInterface
         return $condition;
     }
 
-    protected function buildUserspecificConditions($excludedFieldname = null): string
+    protected function buildUserspecificConditions(?string $excludedFieldname = null): string
     {
         $condition = '';
         foreach ($this->relationConditions as $fieldname => $condArray) {
@@ -633,7 +633,7 @@ class DefaultMysql implements ProductListInterface
         return null;
     }
 
-    public function quote($value)
+    public function quote(mixed $value): mixed
     {
         return $this->resource->quote($value);
     }
@@ -739,7 +739,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @internal
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $vars = get_object_vars($this);
 
@@ -752,7 +752,7 @@ class DefaultMysql implements ProductListInterface
     /**
      * @internal
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if (empty($this->resource)) {
             $this->resource = new DefaultMysql\Dao($this, $this->logger);

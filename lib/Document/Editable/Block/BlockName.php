@@ -39,25 +39,16 @@ final class BlockName implements \JsonSerializable
 
     /**
      * Factory method to create an instance from strings
-     *
-     * @param string $name
-     * @param string $realName
-     *
-     * @return BlockName
      */
-    public static function createFromNames(string $name, string $realName): BlockName
+    public static function createFromNames(string $name, string $realName): self
     {
         return new self($name, $realName);
     }
 
     /**
      * Create an instance from a document editable
-     *
-     * @param Editable $editable
-     *
-     * @return BlockName
      */
-    public static function createFromEditable(Editable $editable): BlockName
+    public static function createFromEditable(Editable $editable): self
     {
         return new self($editable->getName(), $editable->getRealName());
     }

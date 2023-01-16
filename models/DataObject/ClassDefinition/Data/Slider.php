@@ -269,7 +269,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ] '.(string)$data);
@@ -291,7 +291,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * @param DataObject\ClassDefinition\Data\Slider $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->minValue = $masterDefinition->minValue;
         $this->maxValue = $masterDefinition->maxValue;

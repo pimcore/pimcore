@@ -273,7 +273,7 @@ final class Property extends AbstractModel
      *
      * @internal
      */
-    public function rewriteIds(array $idMapping)
+    public function rewriteIds(array $idMapping): void
     {
         if (!$this->isInherited()) {
             if (array_key_exists($this->getType(), $idMapping)) {

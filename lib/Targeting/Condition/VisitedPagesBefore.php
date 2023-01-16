@@ -79,7 +79,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     /**
      * {@inheritdoc}
      */
-    public function postMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher)
+    public function postMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher): void
     {
         // emit event which instructs VisitedPagesCountListener to increment the count after matching
         $eventDispatcher->dispatch(new GenericEvent(), TargetingEvents::VISITED_PAGES_COUNT_MATCH);
@@ -88,7 +88,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     /**
      * {@inheritdoc}
      */
-    public function preMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher)
+    public function preMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher): void
     {
         // noop
     }

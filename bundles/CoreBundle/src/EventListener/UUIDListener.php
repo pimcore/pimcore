@@ -49,7 +49,7 @@ class UUIDListener implements EventSubscriberInterface
         ];
     }
 
-    public function onPostAdd(Event $e)
+    public function onPostAdd(Event $e): void
     {
         if ($this->isEnabled()) {
             $element = $this->extractElement($e);
@@ -60,7 +60,7 @@ class UUIDListener implements EventSubscriberInterface
         }
     }
 
-    public function onPostDelete(Event $e)
+    public function onPostDelete(Event $e): void
     {
         if ($this->isEnabled()) {
             $element = $this->extractElement($e);

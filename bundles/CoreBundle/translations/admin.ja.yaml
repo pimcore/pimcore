@@ -1,0 +1,1024 @@
+---
+unsupported_feature: "\u30B5\u30DD\u30FC\u30C8\u3055\u308C\u3066\u3044\u306A\u3044\u6A5F\u80FD\u3067\u3059\u3002\u30B7\u30B9\u30C6\u30E0\u8981\u4EF6\u3092\u78BA\u8A8D\u3057\u3066\u304F\u3060\u3055\u3044\u3002"
+screen_size_to_small: "\u753B\u9762\u304C\u5C0F\u3055\u3059\u304E\u3066\u76EE\u7684\u306E\u30D7\u30EC\u30D3\u30E5\u30FC\u3092\u8868\u793A\u3067\u304D\u307E\u305B\u3093\u3002"
+too_many_children_for_recyclebin: "\u3053\u306E\u8981\u7D20\u306B\u306F\u3001\u3054\u307F\u7BB1\u306B\u79FB\u52D5\u3059\u308B\u306B\u306F\u591A\u3059\u304E\u308B\u5B50\u304C\u542B\u307E\u308C\u3066\u3044\u307E\u3059\u3002"
+default: "\u30C7\u30D5\u30A9\u30EB\u30C8"
+metadata: "\u30E1\u30BF\u30C7\u30FC\u30BF"
+email_address: "\u30E1\u30FC\u30EB\u30A2\u30C9\u30EC\u30B9"
+email_blacklist: "\u30E1\u30FC\u30EB\u3000\u30D6\u30E9\u30C3\u30AF\u30EA\u30B9\u30C8"
+OK: OK
+optional: "\u30AA\u30D7\u30B7\u30E7\u30F3"
+search_replace_assignments_error: "\u7F6E\u63DB\u3059\u308B\u30A2\u30A4\u30C6\u30E0\u3068\u65B0\u3057\u3044\u30BF\u30FC\u30B2\u30C3\u30C8\u30A2\u30A4\u30C6\u30E0\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044\u3002"
+replace_assignments_in_selected_elements: "\u9078\u629E\u3055\u308C\u305F\u8981\u7D20\u5185\u306E\u5272\u308A\u5F53\u3066\u3092\u7F6E\u63DB"
+search_replace_assignments: "\u691C\u7D22\u3068\u7F6E\u63DB\u5272\u308A\u5F53\u3066"
+imageadvanced: "\u9AD8\u5EA6\u306A\u753B\u50CF"
+filter_active_message: "\u30D5\u30A3\u30EB\u30BF\u30EA\u30F3\u30B0\u3055\u308C\u305F\u5024\u3060\u3051\u3092\u30A8\u30AF\u30B9\u30DD\u30FC\u30C8\u3057\u307E\u3059\u304B\uFF1F"
+close_others: "\u4ED6\u3092\u9589\u3058\u308B"
+close_all: "\u3059\u3079\u3066\u9589\u3058\u308B"
+close_unmodified: "\u672A\u5909\u66F4\u3092\u9589\u3058\u308B"
+classid: "\u30AF\u30E9\u30B9ID"
+parentid: "\u89AAID"
+mimetype: "MIME\u30BF\u30A4\u30D7"
+creationdate: "\u4F5C\u6210\u65E5"
+usermodification: "\u30E6\u30FC\u30B6\u30FC\u5909\u66F4"
+userowner: "\u30E6\u30FC\u30B6\u30FC\u30AA\u30FC\u30CA\u30FC"
+languages: "\u8A00\u8A9E"
+password_was_not_changed: "\u5145\u5206\u306B\u30BB\u30AD\u30E5\u30A2\u3067\u306F\u306A\u3044\u305F\u3081\u30D1\u30B9\u30EF\u30FC\u30C9\u306F\u5909\u66F4\u3055\u308C\u307E\u305B\u3093\u3067\u3057\u305F"
+marketing: "\u30DE\u30FC\u30B1\u30C6\u30A3\u30F3\u30B0"
+clear_content_of_current_view: "\u73FE\u5728\u306E\u30D3\u30E5\u30FC\u306E\u30B3\u30F3\u30C6\u30F3\u30C4\u3092\u30AF\u30EA\u30A2"
+highlight_editable_elements: "\u7DE8\u96C6\u53EF\u80FD\u306A\u8981\u7D20\u3092\u5F37\u8ABF"
+continue: "\u7D9A\u884C"
+you_have_unsaved_changes: "\u4FDD\u5B58\u3055\u308C\u3066\u3044\u306A\u3044\u5909\u66F4\u304C\u3042\u308A\u307E\u3059\u3002"
+global_targeting_rule: Global Targeting Rule
+global_targeting_rules: "\u30B0\u30ED\u30FC\u30D0\u30EB\u30BF\u30FC\u30B2\u30C6\u30A3\u30F3\u30B0\u30EB\u30FC\u30EB"
+personalization: "\u30D1\u30FC\u30BD\u30CA\u30E9\u30A4\u30BC\u30FC\u30B7\u30E7\u30F3"
+shared_translations: "\u5171\u6709\u7FFB\u8A33"
+textfield: "\u30C6\u30AD\u30B9\u30C8\u30D5\u30A3\u30FC\u30EB\u30C9"
+add_data: "\u30C7\u30FC\u30BF\u3092\u8FFD\u52A0"
+add_hotspot: "\u30DB\u30C3\u30C8\u30B9\u30DD\u30C3\u30C8\u3092\u8FFD\u52A0"
+add_marker_or_hotspots: "\u30DE\u30FC\u30AB\u30FC\u307E\u305F\u306F\u30DB\u30C3\u30C8\u30B9\u30DD\u30C3\u30C8\u3092\u8FFD\u52A0"
+custom_reports: "\u30AB\u30B9\u30BF\u30E0\u30EC\u30DD\u30FC\u30C8"
+start_date: "\u958B\u59CB\u65E5"
+start_date_relative: "\u958B\u59CB\u65E5\uFF08\u4ECA\u65E5\u3092\u57FA\u6E96\uFF09"
+end_date: "\u7D42\u4E86\u65E5"
+end_date_relative: "\u7D42\u4E86\u65E5\uFF08\u4ECA\u65E5\u3092\u57FA\u6E96\uFF09"
+relative_date_description: "i.e. -1m +1d (d=\u65E5, m=\u6708, y=\u5E74)"
+source_definition: "\u30BD\u30FC\u30B9\u5B9A\u7FA9"
+clear_thumbnails: "\u30B5\u30E0\u30CD\u30A4\u30EB\u3092\u30AF\u30EA\u30A2"
+recipients: "\u53D7\u4FE1\u8005"
+newsletter_send_error: "\u30CB\u30E5\u30FC\u30B9\u30EC\u30BF\u30FC\u3092\u9001\u4FE1\u3067\u304D\u307E\u305B\u3093\u3002\u7BA1\u7406\u8005\u306B\u9023\u7D61\u3057\u3066\u304F\u3060\u3055\u3044\uFF01"
+newsletter_sent_message: "\u3042\u306A\u305F\u306E\u30CB\u30E5\u30FC\u30B9\u30EC\u30BF\u30FC\u306F\u73FE\u5728\u3059\u3079\u3066\u306E\u53D7\u4FE1\u8005\u306B\u9001\u4FE1\u3055\u308C\u307E\u3059\u3002\u3053\u306E\u30D7\u30ED\u30BB\u30B9\u306F\u30D0\u30C3\u30AF\u30B0\u30E9\u30A6\u30F3\u30C9\u3067\u5B9F\u884C\u3055\u308C\uFF08\u305D\u306E\u9593\u306Bpimcore\u3092\u9589\u3058\u308B\u3053\u3068\u304C\u3067\u304D\u307E\u3059\uFF09\u30011\u6642\u9593\u307B\u3069\u304B\u304B\u308B\u5834\u5408\u304C\u3042\u308A\u307E\u3059\u3002"
+do_you_really_want_to_send_the_newsletter_to_all_recipients: "\u672C\u5F53\u306B\u3059\u3079\u3066\u306E\u53D7\u4FE1\u8005\u306B\u30CB\u30E5\u30FC\u30B9\u30EC\u30BF\u30FC\u3092\u9001\u4FE1\u3057\u307E\u3059\u304B"
+send_test_newsletter: "\u30C6\u30B9\u30C8\u30CB\u30E5\u30FC\u30B9\u30EC\u30BF\u30FC\u3092\u9001\u4FE1"
+send_newsletter: "\u4ECA\u3059\u3050\u30CB\u30E5\u30FC\u30B9\u30EC\u30BF\u30FC\u3092\u9001\u4FE1"
+object_filter: "\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u30D5\u30A3\u30EB\u30BF\u30FC"
+add_newsletter: "\u30CB\u30E5\u30FC\u30B9\u30EC\u30BF\u30FC\u3092\u8FFD\u52A0"
+newsletter: "\u30CB\u30E5\u30FC\u30B9\u30EC\u30BF\u30FC"
+crm: CRM
+notes_events: "\u30CE\u30FC\u30C8\u3068\u30A4\u30D9\u30F3\u30C8"
+delete_folder: "\u30D5\u30A9\u30EB\u30C0\u30FC\u3092\u524A\u9664"
+home: "\u30DB\u30FC\u30E0"
+subject: "\u4EF6\u540D"
+poster_image: "\u30DD\u30B9\u30BF\u30FC\u753B\u50CF"
+tablet: "\u30BF\u30D6\u30EC\u30C3\u30C8"
+hardlink: "\u30CF\u30FC\u30C9\u30EA\u30F3\u30AF"
+convert_to: "\u306B\u5909\u63DB\u3059\u308B"
+replace: "\u7F6E\u63DB"
+targeting: "\u30BF\u30FC\u30B2\u30C6\u30A3\u30F3\u30B0"
+paste_inheritance: "\u8CBC\u308A\u4ED8\u3051\uFF08\u7D99\u627F\uFF09"
+are_you_sure: "\u3088\u308D\u3057\u3044\u3067\u3059\u304B\uFF1F"
+all_content_will_be_lost: "\u3059\u3079\u3066\u306E\u5185\u5BB9\u306F\u5931\u308F\u308C\u307E\u3059"
+content_master_document: "\u30B3\u30F3\u30C6\u30F3\u30C4\u30DE\u30B9\u30BF\u30FC\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8"
+overwrite: "\u4E0A\u66F8\u304D"
+click_right_to_overwrite: "\u4E0A\u66F8\u304D\u306F\u53F3\u3092\u30AF\u30EA\u30C3\u30AF"
+open_document_by_id: "\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8\u3092\u958B\u304F"
+open_asset_by_id: "\u30A2\u30BB\u30C3\u30C8\u3092\u958B\u304F"
+open_object_by_id: "\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u958B\u304F"
+element_not_found: "\u8981\u7D20\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093"
+import_from_url: "URL\u304B\u3089\u53D6\u308A\u8FBC\u307F"
+do_you_really_want_to_leave_the_editmode: "\u672C\u5F53\u306B\u7DE8\u96C6\u30E2\u30FC\u30C9\u3092\u7D42\u4E86\u3057\u3066\u3088\u3044\u3067\u3059\u304B"
+or_specify_an_asset_image_below: "\u307E\u305F\u306F\u4E0B\u306E\u30A2\u30BB\u30C3\u30C8\u753B\u50CF\u3092\u6307\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044"
+medium: "\u30DF\u30C7\u30A3\u30A2\u30E0"
+saved_successfully: "\u6B63\u5E38\u306B\u4FDD\u5B58\u3055\u308C\u307E\u3057\u305F"
+qr_codes: "QR\u30B3\u30FC\u30C9"
+element: "\u30A8\u30EC\u30E1\u30F3\u30C8"
+details_for_selected_event: "\u9078\u629E\u3055\u308C\u305F\u30A8\u30EC\u30E1\u30F3\u30C8\u306E\u8A73\u7D30"
+fields: "\u30D5\u30A3\u30FC\u30EB\u30C9"
+not_possible_with_paging: "\u7533\u3057\u8A33\u3042\u308A\u307E\u305B\u3093\u304C\u3001\u3053\u308C\u306F\u30DA\u30FC\u30B8\u30F3\u30B0\u3055\u308C\u3066\u3044\u308B\u8981\u7D20\u3067\u306F\u4E0D\u53EF\u80FD\u306A\u306E\u3067\u3001\u30C4\u30EA\u30FC\u5185\u306E\u30DA\u30FC\u30B8\u3092\u907F\u3051\u308B\u305F\u3081\u306B\u30C7\u30FC\u30BF\u3092\u518D\u69CB\u7BC9\u3057\u3066\u307F\u3066\u304F\u3060\u3055\u3044"
+inherited: "\u7D99\u627F\u3055\u308C\u305F"
+length: "\u9577\u3055"
+show_in_tree: "\u30C4\u30EA\u30FC\u3067\u958B\u304F"
+exactmatch: "\u5B8C\u5168\u4E00\u81F4"
+desktop: "\u30C7\u30B9\u30AF\u30C8\u30C3\u30D7"
+drag_me: "\u30C9\u30E9\u30C3\u30B0\u3057\u3066\u304F\u3060\u3055\u3044"
+serverVars: "\u30B5\u30FC\u30D0\u30FC\u5909\u6570"
+attributes: "\u5C5E\u6027"
+code: "\u30B3\u30FC\u30C9"
+tag: Tag
+tags: "\u30BF\u30B0"
+Click here to proceed: "\u30AF\u30EA\u30C3\u30AF\u3057\u3066\u7D9A\u884C\u3059\u308B"
+Your browser is not supported. Please install the latest version of one of the following browsers.: "\u304A\u4F7F\u3044\u306E\u30D6\u30E9\u30A6\u30B6\u306F\u30B5\u30DD\u30FC\u30C8\u3055\u308C\u3066\u3044\u307E\u305B\u3093\u3002\u4E0B\u8A18\u306E\u30D6\u30E9\u30A6\u30B6\u306E\u6700\u65B0\u7248\u3092\u5229\u7528\u3057\u3066\u304F\u3060\u3055\u3044"
+open_in_new_window: "\u65B0\u898F\u30A6\u30A3\u30F3\u30C9\u30A6\u3092\u958B\u304F"
+limit_reached: "\u5236\u9650\u306B\u9054\u3057\u307E\u3057\u305F"
+casesensitive: "\u5927\u6587\u5B57\u5C0F\u6587\u5B57\u3092\u533A\u5225\u3059\u308B"
+path_aliases: "\u30D1\u30B9\u306E\u5225\u540D"
+pretty_url: "\u30D7\u30EA\u30C6\u30A3URL"
+pretty_url_label: "\u30D7\u30EA\u30C6\u30A3URL(\u30C4\u30EA\u30FC\u69CB\u9020\u306E\u30D1\u30B9\u3092\u4E0A\u66F8\u304D\u6307\u5B9A\u3059\u308B)"
+password_cannot_be_changed: "\u30D1\u30B9\u30EF\u30FC\u30C9\u306E\u5909\u66F4\u306B\u5931\u6557\u3057\u307E\u3057\u305F"
+old_password: "\u65E7\u30D1\u30B9\u30EF\u30FC\u30C9"
+new_password: "\u65B0\u30D1\u30B9\u30EF\u30FC\u30C9"
+retype_password: "\u30D1\u30B9\u30EF\u30FC\u30C9\u518D\u5165\u529B"
+reports: "\u30EC\u30DD\u30FC\u30C8"
+roles: "\u30ED\u30FC\u30EB"
+Password: "\u30D1\u30B9\u30EF\u30FC\u30C9"
+Forgot your password: "\u30D1\u30B9\u30EF\u30FC\u30C9\u3092\u5FD8\u308C\u305F"
+Back to Login: "\u30ED\u30B0\u30A4\u30F3\u753B\u9762\u306B\u623B\u308B"
+Enter your username and pimcore will send a login link to your email address: "\u30ED\u30B0\u30A4\u30F3URL\u3092\u30E1\u30FC\u30EB\u3067\u9001\u4FE1\u3059\u308B\u30E6\u30FC\u30B6\u540D\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044"
+Please check your mailbox.: "\u30E1\u30FC\u30EB\u30DC\u30C3\u30AF\u30B9\u3092\u30C1\u30A7\u30C3\u30AF\u3057\u3066\u304F\u3060\u3055\u3044"
+Login: "\u30ED\u30B0\u30A4\u30F3"
+Submit: "\u767B\u9332"
+A temporary login link has been sent to your email address.: "\u4E00\u6642\u7684\u306A\u30ED\u30B0\u30A4\u30F3URL\u304C\u30E1\u30FC\u30EB\u30A2\u30C9\u30EC\u30B9\u306B\u9001\u4FE1\u3055\u308C\u307E\u3059"
+user_inactive: User is not active
+user_no_email_address: User has no email address
+user_no_password: User has no password
+user_unknown: User unknown
+lost_password_email_error: Could not send password recovery email
+use_current_player_position_as_preview: "\u30D7\u30EC\u30D3\u30E5\u30FC\u3068\u3057\u3066\u73FE\u5728\u306E\u30D7\u30EC\u30A4\u30E4\u30FC\u306E\u4F4D\u7F6E\u3092\u4F7F\u7528"
+select_image_preview: "\u753B\u50CF\u30D7\u30EC\u30D3\u30E5\u30FC\u3092\u9078\u629E"
+preview_not_available: "\u30D7\u30EC\u30D3\u30E5\u30FC\u3067\u304D\u307E\u305B\u3093"
+status: "\u30B9\u30C6\u30FC\u30BF\u30B9"
+video_preview_in_progress: "\u3053\u306E\u52D5\u753B\u306E\u30D7\u30EC\u30D3\u30E5\u30FC\u306F\u73FE\u5728\u9032\u884C\u4E2D\u3067\u3059\u3002"
+php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: "PHP-CLI\u30D0\u30A4\u30CA\u30EA\u307E\u305F\u306FFFMPEG\u304C\u5229\u7528\u3067\u304D\u307E\u305B\u3093\u3002\u3044\u305A\u308C\u3082\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u3055\u308C\u5B9F\u884C\u53EF\u80FD\u3067\u3042\u308A\u3001\u30B7\u30B9\u30C6\u30E0\u8A2D\u5B9A\u3067\u8A2D\u5B9A\u3055\u308C\u3066\u3044\u308B\u3053\u3068\u3092\u78BA\u8A8D\u3057\u3066\u304F\u3060\u3055\u3044\uFF01"
+video_thumbnails: "\u30D3\u30C7\u30AA\u30B5\u30E0\u30CD\u30A4\u30EB"
+do_you_really_want_to_close_pimcore: "\u672C\u5F53\u306Bpimcore\u3092\u9589\u3058\u307E\u3059\u304B\uFF1F"
+drop_element_here: "\u3053\u3053\u306B\u8981\u7D20\u3092\u30C9\u30ED\u30C3\u30D7"
+select_specific_area_of_image: "\u753B\u50CF\u306E\u7279\u5B9A\u9818\u57DF\u3092\u9078\u629E"
+paste_recursive_updating_references: "\u518D\u5E30\u7684\u306A\u66F4\u65B0\u53C2\u7167\u3092\u8CBC\u308A\u4ED8\u3051\u308B"
+add_hardlink: "\u30CF\u30FC\u30C9\u30EA\u30F3\u30AF\u3092\u8FFD\u52A0"
+source_path: "\u30BD\u30FC\u30B9\u30D1\u30B9"
+properties_from_source: "\u30BD\u30FC\u30B9\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8\u304B\u3089\u30D7\u30ED\u30D1\u30C6\u30A3\u3092\u4F7F\u7528"
+children_from_source: Use children from source document
+click_right_for_more_options: "\u30AA\u30D7\u30B7\u30E7\u30F3\u306F\u53F3\u3092\u30AF\u30EA\u30C3\u30AF"
+move_to_tab: "\u30BF\u30D6\u3078\u79FB\u52D5"
+not_supported: "\u30B5\u30DD\u30FC\u30C8\u3055\u308C\u3066\u3044\u307E\u305B\u3093"
+edit_link: "\u30EA\u30F3\u30AF\u3092\u7DE8\u96C6"
+resize: "\u30EA\u30B5\u30A4\u30BA"
+scalebyheight: "\u9AD8\u3055\u30B9\u30B1\u30FC\u30EB"
+scalebywidth: "\u5E45\u30B9\u30B1\u30FC\u30EB"
+crop: "\u30C8\u30EA\u30DF\u30F3\u30B0"
+cleanup: "\u30AF\u30EA\u30FC\u30F3\u30CA\u30C3\u30D7"
+this_element_cannot_be_edited: "\u3053\u306E\u8981\u7D20\u306F\u7DE8\u96C6\u3067\u304D\u307E\u305B\u3093"
+details: "\u8A73\u7D30"
+cannot_save_object_please_try_to_edit_the_object_in_detail_view: "\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u4FDD\u5B58\u3067\u304D\u307E\u305B\u3093\uFF01\u8A73\u7D30\u30D3\u30E5\u30FC\u3067\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u7DE8\u96C6\u3057\u3066\u304F\u3060\u3055\u3044\u3002"
+size: "\u30B5\u30A4\u30BA"
+select_a_file: "\u30D5\u30A1\u30A4\u30EB\u3092\u9078\u629E"
+upload_compatibility_mode: "\u30D5\u30A1\u30A4\u30EB\u306E\u30A2\u30C3\u30D7\u30ED\u30FC\u30C9\uFF08\u4E92\u63DB\u30E2\u30FC\u30C9\uFF09"
+the_system_is_in_maintenance_mode_please_wait: "\u30B7\u30B9\u30C6\u30E0\u304C\u30E1\u30F3\u30C6\u30CA\u30F3\u30B9\u30E2\u30FC\u30C9\u306B\u306A\u3063\u3066\u3044\u307E\u3059\u3002\u3057\u3070\u3089\u304F\u304A\u5F85\u3061\u304F\u3060\u3055\u3044\u3002"
+activate: "\u30A2\u30AF\u30C6\u30A3\u30D9\u30FC\u30C8"
+image_is_too_small: "\u753B\u50CF\u304C\u5C0F\u3055\u3059\u304E\u307E\u3059\u3002\u5927\u304D\u3044\u3082\u306E\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044\u3002"
+name_is_not_allowed: "\u540D\u524D\u306F\u8A31\u53EF\u3055\u308C\u3066\u3044\u307E\u305B\u3093"
+import_from_server: "\u30B5\u30FC\u30D0\u30FC\u304B\u3089\u30A4\u30F3\u30DD\u30FC\u30C8"
+upload_files: "\u30D5\u30A1\u30A4\u30EB\u306E\u30A2\u30C3\u30D7\u30ED\u30FC\u30C9"
+upload_zip: "ZIP\u30A2\u30FC\u30AB\u30A4\u30D6\u306E\u30A2\u30C3\u30D7\u30ED\u30FC\u30C9"
+document_root: "\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8\u30EB\u30FC\u30C8"
+batch_change_selected: "\u30D0\u30C3\u30C1\u5909\u66F4\u304C\u9078\u3070\u308C\u307E\u3057\u305F"
+download_as_zip: "ZIP\u30D5\u30A1\u30A4\u30EB\u3068\u3057\u3066\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9"
+locked: "\u30ED\u30C3\u30AF"
+element_cannot_be_move_because_it_is_locked: "\u30ED\u30C3\u30AF\u3055\u308C\u3066\u3044\u308B\u305F\u3081\u8981\u7D20\u3092\u79FB\u52D5\u3067\u304D\u307E\u305B\u3093"
+element_cannot_be_moved: "\u8981\u7D20\u306F\u3053\u3053\u306B\u79FB\u52D5\u3067\u304D\u307E\u305B\u3093"
+element_cannot_be_moved_because_target_is_paginated: The element cannot be dragged
+  on a paginated tree/folder with manual indexing (Sort by index). Please change the
+  sorting method or use "Search & Move" option under the "Advanced" context menu of
+  the target to move the elements.
+no_collections_allowed: "\u8A31\u53EF\u3055\u308C\u305F\u30B3\u30EC\u30AF\u30B7\u30E7\u30F3\u306F\u3042\u308A\u307E\u305B\u3093"
+filter_condition: "\u30D5\u30A3\u30EB\u30BF\u306E\u8A2D\u5B9A\u5185\u5BB9"
+all_types: "\u3059\u3079\u3066\u306E\u30BF\u30A4\u30D7"
+audio: "\u97F3\u58F0"
+video: "\u6620\u50CF"
+archive: "\u30A2\u30FC\u30AB\u30A4\u30D6"
+unknown: "\u4E0D\u660E"
+class: "\u30AF\u30E9\u30B9"
+page: "\u30DA\u30FC\u30B8"
+objectbrick: Objectbrick
+field_collection: Field-Collection
+snippet: "\u30B9\u30CB\u30DA\u30C3\u30C8"
+folder: "\u30D5\u30A9\u30EB\u30C0"
+your_selection: "\u9078\u629E\u5185\u5BB9"
+double_click_to_add_item_to_selection: "\u3053\u306E\u9078\u629E\u5185\u5BB9\u306B\u8FFD\u52A0\u3059\u308B\u305F\u3081\u306B\u30A2\u30A4\u30C6\u30E0\u306E\u53F3\u5074\u3092\u30C0\u30D6\u30EB\u30AF\u30EA\u30C3\u30AF\u3057\u3066\u304F\u3060\u3055\u3044"
+label: "\u30E9\u30D9\u30EB"
+error_auth_failed: "\u30ED\u30B0\u30A4\u30F3\u306B\u5931\u6557\u3057\u307E\u3057\u305F!
+  \u3082\u3046\u4E00\u5EA6\u8A66\u3057\u3066\u304F\u3060\u3055\u3044\u3002"
+error_session_expired: "\u30BB\u30C3\u30B7\u30E7\u30F3\u306E\u6709\u52B9\u671F\u9650\u304C\u904E\u304E\u3066\u3044\u307E\u3059!
+  \ \u3082\u3046\u4E00\u5EA6\u30ED\u30B0\u30A4\u30F3\u3057\u3066\u4E0B\u3055\u3044\u3002"
+site: "\u30B5\u30A4\u30C8"
+descending: "\u964D\u9806"
+ascending: "\u6607\u9806"
+sort: "\u4E26\u3073\u66FF\u3048"
+results: "\u7D50\u679C"
+dimension: "\u5BF8\u6CD5"
+metric: "\u30E1\u30C8\u30EA\u30C3\u30AF"
+segment: "\u30BB\u30B0\u30E1\u30F3\u30C8"
+data_explorer: "\u30C7\u30FC\u30BF\u30A8\u30AF\u30B9\u30D7\u30ED\u30FC\u30E9\u30FC"
+navigation: "\u30CA\u30D3\u30B2\u30FC\u30B7\u30E7\u30F3"
+entrances: "\u6D41\u5165"
+exits: "\u6D41\u51FA"
+restore: "\u5FA9\u5143"
+amount: "\u7DCF\u8A08"
+flush_recyclebin: "\u3054\u307F\u7BB1\u3092\u7A7A\u306B\u3059\u308B"
+recyclebin: "\u3054\u307F\u7BB1"
+deletedby: "\u524A\u9664\u8005"
+open_select_editor: "\u9078\u629E\u30A8\u30C7\u30A3\u30BF\u30FC\u3092\u958B\u304F"
+ignore: "\u7121\u8996"
+email_log: Email Log
+email_log_resend: "\u30E1\u30FC\u30EB\u3092\u9001\u4FE1"
+email_log_resend_window_msg: "\u3059\u3079\u3066\u306E\u53D7\u4FE1\u8005\u306B\u30E1\u30FC\u30EB\u3092\u518D\u9001\u4FE1\u3059\u308B\u3053\u3068\u3092\u78BA\u8A8D\u3057\u3066\u304F\u3060\u3055\u3044\u3002"
+select_site: "\u30B5\u30A4\u30C8\u3092\u9078\u629E"
+main_site: "\u30E1\u30A4\u30F3\u30B5\u30A4\u30C8"
+filename: "\u30D5\u30A1\u30A4\u30EB\u540D"
+unsupported_filetype: "\u30B5\u30DD\u30FC\u30C8\u3055\u308C\u306A\u3044\u30D5\u30A1\u30A4\u30EB\u30BF\u30A4\u30D7"
+email_log_resend_window_success_message: "\u96FB\u5B50\u30E1\u30FC\u30EB\u304C\u3059\u3079\u3066\u306E\u53D7\u4FE1\u8005\u306B\u6B63\u5E38\u306B\u9001\u4FE1\u3055\u308C\u307E\u3057\u305F\u3002"
+email_log_resend_window_error_message: "\u30A8\u30E9\u30FC\u304C\u767A\u751F\u3057\u307E\u3057\u305F\u3002\u30E1\u30FC\u30EB\u306F\u518D\u9001\u4FE1\u3055\u308C\u3066\u3044\u307E\u305B\u3093\u3002"
+error_jobs: "\u4EE5\u4E0B\u306E\u30B8\u30E7\u30D6\u306B\u5931\u6557"
+batch_change: "\u30D0\u30C3\u30C1\u306E\u5272\u308A\u5F53\u3066"
+batch_edit_field: "\u30D0\u30C3\u30C1\u306E\u7DE8\u96C6\u30D5\u30A3\u30FC\u30EB\u30C9"
+published: "\u516C\u958B\u4E2D"
+all: "\u3059\u3079\u3066"
+items_per_page: "\u30DA\u30FC\u30B8\u6BCE\u306E\u9805\u76EE\u6570"
+reload_pimcore_changes: "\u5909\u66F4\u3092\u53CD\u6620\u3055\u305B\u308B\u306B\u306Fpimcore\u3092\u518D\u8AAD\u307F\u8FBC\u307F\u3059\u308B\u5FC5\u8981\u304C\u3042\u308A\u307E\u3059\u3002\u4ECA\u3059\u3050\u518D\u8AAD\u307F\u8FBC\u307F\u3057\u307E\u3059\u304B?"
+info: "\u60C5\u5831\u3092\u8868\u793A"
+or: "\u307E\u305F\u306F"
+paste_contents: "\u3053\u3053\u306B\u30B3\u30F3\u30C6\u30F3\u30C4\u306E\u307F\u8CBC\u308A\u4ED8\u3051"
+paste_as_child: "\u5B50\u3068\u3057\u3066\u8CBC\u308A\u4ED8\u3051"
+paste_recursive_as_child: Paste as child (recursive)
+view_original: "\u30AA\u30EA\u30B8\u30CA\u30EB\u3092\u8868\u793A"
+feed: "\u30D5\u30A3\u30FC\u30C9"
+no_items_found: "\u30A2\u30A4\u30C6\u30E0\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093"
+public_url: "\u516C\u958BURL"
+pageviews: "\u30DA\u30FC\u30B8\u30D3\u30E5\u30FC"
+visits: "\u8A2A\u554F\u6570"
+detail: "\u8A73\u7D30"
+report_settings: "\u30EC\u30DD\u30FC\u30C8\u306E\u8A2D\u5B9A"
+overview: "\u6982\u8981"
+visitor_overview: "\u8A2A\u554F\u8005\u306E\u6982\u8981"
+other: "\u305D\u306E\u4ED6"
+google_analytics: "Google \u30A2\u30CA\u30EA\u30C6\u30A3\u30AF\u30B9"
+reports_and_marketing: "\u30EC\u30DD\u30FC\u30C8\u3068\u30DE\u30FC\u30B1\u30C6\u30A3\u30F3\u30B0"
+save_only_scheduled_tasks: "\u30B9\u30B1\u30B8\u30E5\u30FC\u30EB\u3055\u308C\u305F\u30BF\u30B9\u30AF\u306E\u307F\u4FDD\u5B58"
+modified_assets: "\u4FEE\u6B63\u3057\u305F\u30A2\u30BB\u30C3\u30C8"
+modification_statistic: "\u6700\u8FD131\u65E5\u9593\u306E\u5909\u66F4"
+add_portlet: "\u30DD\u30FC\u30C8\u30EC\u30C3\u30C8\u3092\u8FFD\u52A0"
+modified_documents: "\u5909\u66F4\u3055\u308C\u305F\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8"
+modified_objects: "\u5909\u66F4\u3055\u308C\u305F\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8"
+welcome: "\u3088\u3046\u3053\u305D"
+save_and_publish: "\u4FDD\u5B58\u3068\u516C\u958B"
+delete: "\u524A\u9664"
+save: "\u4FDD\u5B58"
+add_assets: "\u30A2\u30BB\u30C3\u30C8\u3092\u8FFD\u52A0"
+preview: "\u30D7\u30EC\u30D3\u30E5\u30FC"
+advanced: "\u9AD8\u5EA6"
+basic: "\u57FA\u672C"
+list: "\u30EA\u30B9\u30C8"
+view: "\u30D3\u30E5\u30FC"
+publish: "\u516C\u958B"
+rename: "\u540D\u524D\u3092\u5909\u66F4"
+settings: "\u8A2D\u5B9A"
+properties: "\u5C5E\u6027"
+versions: "\u30D0\u30FC\u30B8\u30E7\u30F3"
+add: "\u8FFD\u52A0"
+date: "\u65E5\u4ED8"
+user: "\u30E6\u30FC\u30B6\u30FC"
+note: "\u30E1\u30E2"
+email_cc: CC
+email_bcc: BCC
+email_settings: "Email\u8A2D\u5B9A"
+email_settings_receiver_description: "\u8907\u6570\u306E\u53D7\u4FE1\u8005\u306F\u30BB\u30DF\u30B3\u30ED\u30F3\u3067\u96FB\u5B50\u30E1\u30FC\u30EB\u30A2\u30C9\u30EC\u30B9\u3092\u533A\u5207\u3063\u3066\u6307\u5B9A\u3059\u308B\u3053\u3068\u304C\u3067\u304D\u307E\u3059\u3002<br>\u4F8B:
+  receiver@pimcore.org; receiver2@pimcore.org"
+email_logs: "\u9001\u4FE1\u6E08\u307F\u30E1\u30FC\u30EB"
+email_log_sent_Date: "\u9001\u4FE1\u65E5"
+predefined_document_type: "\u4E88\u3081\u5B9A\u7FA9\u6E08\u307F\u306E\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8\u30BF\u30A4\u30D7"
+controller: "\u30B3\u30F3\u30C8\u30ED\u30FC\u30E9\u30FC"
+action: "\u30A2\u30AF\u30B7\u30E7\u30F3"
+actions: "\u30A2\u30AF\u30B7\u30E7\u30F3"
+template: "\u30C6\u30F3\u30D7\u30EC\u30FC\u30C8"
+staticroute: Static Route
+static_generator: Static Page Generator
+static_generator_enable: Enable server side static rendering
+static_generator_lifetime: Lifetime (in minutes) for static page (optional)
+last_generated: Last generated
+key: "\u30AD\u30FC"
+id: ID
+name: "\u540D\u524D"
+title: "\u984C\u540D"
+description: "\u8AAC\u660E"
+unpublish: "\u975E\u516C\u958B"
+target: "\u5BFE\u8C61"
+type: "\u30BF\u30A4\u30D7"
+please_enter_the_new_name: "\u65B0\u3057\u3044\u540D\u524D\u3092\u5165\u529B\u3057\u3066\u4E0B\u3055\u3044: "
+add_page: "\u30DA\u30FC\u30B8\u3092\u8FFD\u52A0"
+add_snippet: "\u30B9\u30CB\u30DA\u30C3\u30C8\u3092\u8FFD\u52A0"
+add_email: "Email\u3092\u8FFD\u52A0"
+add_link: "\u30EA\u30F3\u30AF\u3092\u8FFD\u52A0"
+copy: "\u8907\u88FD"
+paste: "\u8CBC\u308A\u4ED8\u3051"
+close_all_tabs: "\u3059\u3079\u3066\u306E\u30BF\u30D6\u3092\u9589\u3058\u308B"
+search: "\u691C\u7D22"
+import: "\u30A4\u30F3\u30DD\u30FC\u30C8"
+export: "\u30A8\u30AF\u30B9\u30DD\u30FC\u30C8"
+document_type: Document Type
+document_types: "\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8\u30BF\u30A4\u30D7"
+predefined_properties: "\u5B9A\u7FA9\u6E08\u307F\u306E\u5C5E\u6027"
+users: "\u30E6\u30FC\u30B6\u30FC"
+profile: "\u30E6\u30FC\u30B6\u30FC\u306E\u30D7\u30ED\u30D5\u30A3\u30FC\u30EB"
+my_profile: "My\u30D7\u30ED\u30D5\u30A3\u30FC\u30EB"
+documentation: "\u30C9\u30AD\u30E5\u30E1\u30F3\u30C6\u30FC\u30B7\u30E7\u30F3"
+report_bugs: "\u30D0\u30B0\u3092\u5831\u544A"
+about: "pimcore\u306B\u3064\u3044\u3066"
+file: "\u30D5\u30A1\u30A4\u30EB"
+extras: "\u8FFD\u52A0\u6A5F\u80FD"
+help: "\u30D8\u30EB\u30D7"
+configuration: "\u69CB\u6210"
+value: "\u5024"
+add_a_custom_property: "\u72EC\u81EA\u306E\u5C5E\u6027\u3092\u8FFD\u52A0"
+custom: Custom
+general: "\u4E00\u822C"
+language: "\u8A00\u8A9E"
+quality: "\u54C1\u8CEA"
+format: "\u5F62\u5F0F"
+documents: "\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8"
+assets: "\u30A2\u30BB\u30C3\u30C8"
+upload: "\u30A2\u30C3\u30D7\u30ED\u30FC\u30C9"
+width: "\u5E45"
+height: "\u9AD8\u3055"
+empty: "\u7A7A"
+workflow: "\u30EF\u30FC\u30AF\u30D5\u30ED\u30FC"
+modify: "\u4FEE\u6B63"
+create: "\u4F5C\u6210"
+edit: "\u7DE8\u96C6"
+logout: "\u30ED\u30B0\u30A2\u30A6\u30C8"
+refresh: "\u518D\u8868\u793A"
+input: "\u5165\u529B"
+checkbox: "\u30C1\u30A7\u30C3\u30AF\u30DC\u30C3\u30AF\u30B9"
+textarea: "\u30C6\u30AD\u30B9\u30C8\u30A8\u30EA\u30A2"
+image: "\u753B\u50CF"
+select: "\u9078\u629E"
+base: "\u30D9\u30FC\u30B9"
+add_object: "\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u8FFD\u52A0"
+border: "\u30DC\u30FC\u30C0\u30FC"
+document: "\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8"
+asset: "\u30A2\u30BB\u30C3\u30C8"
+object: "\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8"
+remove: "\u524A\u9664"
+hidden_dependencies: "\u3042\u306A\u305F\u306E\u30E6\u30FC\u30B6\u306E\u6A29\u9650\u3067\u306F\u898B\u308B\u3053\u3068\u304C\u3067\u304D\u306A\u3044\u3001\u3055\u3089\u306B\u4F9D\u5B58\u95A2\u4FC2\u304C\u3042\u308A\u307E\u3059\u3002"
+open: "\u958B\u304F"
+days: "\u65E5\u6570"
+seemode: "\u8868\u793A\u30E2\u30FC\u30C9"
+edit_current_page: "\u3053\u306E\u30DA\u30FC\u30B8\u3092\u7DE8\u96C6"
+close: "\u9589\u3058\u308B"
+name_already_in_use: "\u540D\u524D\u306F\u65E2\u306B\u4F7F\u7528\u3055\u308C\u3066\u3044\u307E\u3059"
+name_and_key_must_be_defined: "\u540D\u524D\u3068\u30BF\u30A4\u30D7\u306F\u5FC5\u305A\u8A2D\u5B9A\u3057\u3066\u304F\u3060\u3055\u3044"
+mandatory_field_empty: "\u3059\u3079\u3066\u306E\u5FC5\u9808\u9805\u76EE\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044"
+reload: "\u518D\u8AAD\u307F\u8FBC\u307F"
+schedule: "\u30B9\u30B1\u30B8\u30E5\u30FC\u30EB"
+time: "\u6642\u523B"
+version: "\u30D0\u30FC\u30B8\u30E7\u30F3"
+active: "\u6709\u52B9"
+success: "\u6210\u529F"
+translations: "\u7FFB\u8A33"
+translation_simple: Simple Text
+translation_custom: ICU Format
+firstname: "\u540D"
+lastname: "\u59D3"
+email: "\u96FB\u5B50\u30E1\u30FC\u30EB"
+cant_move_node_to_target: "\u30CE\u30FC\u30C9\u306E\u79FB\u52D5\u306F\u4E0D\u53EF\u80FD"
+error_moving_object: "\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306E\u79FB\u52D5\u306F\u4E0D\u53EF\u80FD"
+translations_are_not_configured: "\u7FFB\u8A33\u304C\u69CB\u6210\u3055\u308C\u3066\u3044\u307E\u305B\u3093\u3002"
+read_more_here: "\u3055\u3089\u306B\u7D9A\u304D\u3092\u8AAD\u3080"
+publish_version: "\u516C\u958B\u30D0\u30FC\u30B8\u30E7\u30F3"
+start: "\u958B\u59CB"
+su: "\u65E5"
+mo: "\u6708"
+tu: "\u706B"
+we: "\u6C34"
+th: "\u6728"
+fr: "\u91D1"
+sa: "\u571F"
+session_error_text: "\u30BB\u30C3\u30B7\u30E7\u30F3\u306B\u554F\u984C\u304C\u3042\u308B\u3088\u3046\u3067\u3059\u3002\u5371\u967A\u3092\u627F\u77E5\u306E\u4E0A\u3067\u30BB\u30C3\u30B7\u30E7\u30F3\u3092\u7D9A\u3051\u307E\u3059\u304B?"
+session_error: "\u30BB\u30C3\u30B7\u30E7\u30F3\u30A8\u30E9\u30FC"
+please_wait: "\u304A\u5F85\u3061\u304F\u3060\u3055\u3044..."
+download: "\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9"
+inheritable: "\u7D99\u627F\u53EF\u80FD"
+redirects: "\u30EA\u30C0\u30A4\u30EC\u30AF\u30C8"
+source: "\u30BD\u30FC\u30B9"
+link: "\u30EA\u30F3\u30AF"
+abbr: "\u7565\u79F0"
+stop: "\u505C\u6B62"
+dependencies: "\u4F9D\u5B58\u95A2\u4FC2"
+requires: "\u5FC5\u8981\u3068\u3059\u308B"
+required_by: "\u5FC5\u8981\u3068\u3055\u308C\u308B"
+search_edit: "\u691C\u7D22\u3001\u7DE8\u96C6\u3001\u30A8\u30AF\u30B9\u30DD\u30FC\u30C8"
+subtype: "\u30B5\u30D6\u30BF\u30A4\u30D7"
+initializing: "\u521D\u671F\u5316\u4E2D..."
+please_select_a_type: "\u30BF\u30A4\u30D7\u3092\u9078\u629E\u3057\u3066\u4E0B\u3055\u3044\u3002"
+filter: "\u30D5\u30A3\u30EB\u30BF\u30FC"
+field: "\u30D5\u30A3\u30FC\u30EB\u30C9"
+operator: "\u6F14\u7B97\u5B50"
+apply: "\u9069\u7528"
+show: "\u8868\u793A"
+public: "\u516C\u958B"
+maximum_2_versions: "\u6700\u5927\u30672\u3064\u306E\u30D0\u30FC\u30B8\u30E7\u30F3\u3092\u6BD4\u8F03\u3067\u304D\u307E\u3059"
+error: "\u30A8\u30E9\u30FC"
+element_is_locked: "\u69CB\u6210\u8981\u7D20\u306F\u4ED6\u306E\u30E6\u30FC\u30B6\u30FC\u304C\u4F7F\u7528\u3057\u3066\u3044\u307E\u3059\u3002"
+element_lock_question: "\u305D\u308C\u3067\u3082\u958B\u304D\u307E\u3059\u304B?"
+since: "\uFF5E\u304B\u3089"
+longitude: "\u7D4C\u5EA6"
+latitude: "\u7DEF\u5EA6"
+geopoint: "\u5730\u7406\u7684\u4F4D\u7F6E"
+cancel: "\u53D6\u308A\u6D88\u3057"
+open_search_editor: "\u691C\u7D22\u30A8\u30C7\u30A3\u30BF\u30FC\u3092\u958B\u304F"
+parameters: "\u30D1\u30E9\u30E1\u30FC\u30BF\u30FC"
+anchor: "\u30A2\u30F3\u30AB\u30FC"
+accesskey: "\u30A2\u30AF\u30BB\u30B9\u30AD\u30FC"
+relation: "\u95A2\u4FC2"
+tabindex: "\u30BF\u30D6\u30FB\u30A4\u30F3\u30C7\u30C3\u30AF\u30B9"
+not_set: "\u8A2D\u5B9A\u3055\u308C\u3066\u307E\u305B\u3093"
+export_csv: "CSV\u306B\u30A8\u30AF\u30B9\u30DD\u30FC\u30C8"
+import_csv: "CSV\u3092\u30A4\u30F3\u30DD\u30FC\u30C8"
+show_welcome_screen: "\u958B\u59CB\u6642\u306B\u300C\u3088\u3046\u3053\u305D\u300D\u753B\u9762\u3092\u8868\u793A"
+importFileHasHeadRow: "\u6700\u521D\u306E\u884C = \u898B\u51FA\u3057"
+overwrite_object_with_same_key_description: "\u4E0A\u66F8\u304D\u306B\u30C1\u30A7\u30C3\u30AF\u3059\u308B\u3068\u3001\u884C\u30A4\u30F3\u30DD\u30FC\u30C8\u306E\u90FD\u5EA6\u65B0\u3057\u3044\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3092\u4F5C\u6210\u3059\u308B\u306E\u3067\u306F\u306A\u304F\u3001\u540C\u3058\u30AD\u30FC\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u304C\u7F6E\u63DB\u3055\u308C\u308B\u3002\u30A4\u30F3\u30DD\u30FC\u30C8\u30D5\u30A9\u30EB\u30C0\u306B\u3042\u308B\u3001\u30A4\u30F3\u30DD\u30FC\u30C8\u30D5\u30A9\u30EB\u306B\u5B58\u5728\u3057\u306A\u3044\u30AD\u30FC\u3092\u6301\u3064\u65E2\u5B58\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306F\u3001\u305D\u306E\u307E\u307E\u306E\u72B6\u614B\u3067\u4FDD\u6301\u3055\u308C\u308B\u3002\u5BFE\u8C61\u30D5\u30A9\u30EB\u30C0\u306B\u304A\u3044\u3066\u3001\u30A4\u30F3\u30DD\u30FC\u30C8\u30D5\u30A1\u30A4\u30EB\u5185\u306E\u30AD\u30FC\u3068\u4E00\u81F4\u3059\u308B\u5168\u3066\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306F\u7F6E\u63DB\u3055\u308C\u308B\u3053\u3068\u306B\u6CE8\u610F\u3059\u308B\u3053\u3068\u3002\u3053\u308C\u306F\u7570\u306A\u308B\u30AF\u30E9\u30B9\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3084\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u30D5\u30A9\u30EB\u30C0\u30FC\u306B\u5BFE\u3057\u3066\u3082\u9069\u7528\u3055\u308C\u308B\uFF01\u30D5\u30A3\u30FC\u30EB\u30C9\u30DE\u30C3\u30D4\u30F3\u30B0\u306Bignore(\u7121\u8996)\u3068\u8A2D\u5B9A\u3055\u308C\u305F\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u30D5\u30A3\u30FC\u30EB\u30C9\u306F\u53E4\u3044\u5024\u3092\u4FDD\u6301\u3059\u308B\u3002"
+object_import_filename_description: "\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u30AD\u30FC\u751F\u6210\u306B\u4F7F\u308F\u308C\u305F\u30D5\u30A3\u30FC\u30EB\u30C9\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044"
+save_pubish_close: "\u4FDD\u5B58,\u516C\u958B\u3057\u3066\u9589\u3058\u308B"
+save_close: "\u4FDD\u5B58\u3057\u3066\u9589\u3058\u308B"
+error_general: "\u30B5\u30FC\u30D0\u304C\u4F8B\u5916\u3092\u7834\u68C4\u3001\u51E6\u7406\u306F\u53CD\u6620\u3055\u308C\u307E\u305B\u3093\u3067\u3057\u305F"
+owner_class: "\u6240\u6709\u8005\u306E\u30AF\u30E9\u30B9"
+owner_field: "\u6240\u6709\u8005\u306E\u30D5\u30A3\u30FC\u30EB\u30C9"
+nonownerobject_warning: "\u73FE\u5728\u306E\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306F\u3053\u306E\u30EA\u30EC\u30FC\u30B7\u30E7\u30F3\u306E\u6240\u6709\u8005\u3067\u306F\u306A\u304F\u3001\u3053\u3053\u3067\u5909\u66F4\u3092\u52A0\u3048\u308B\u3068\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306E\u4FDD\u5B58\u304C\u9045\u304F\u306A\u308B\u304B\u3082\u3057\u308C\u306A\u3044\u3002"
+element_implicit_edit_question: "\u305D\u308C\u3067\u3082\u3053\u306E\u64CD\u4F5C\u306B\u3088\u308A\u3042\u3048\u3066\u5909\u66F4\u3057\u307E\u3059\u304B\uFF1F"
+element_open_message: "\u8981\u6C42\u3055\u308C\u305F\u8981\u7D20\u306F\u7DE8\u96C6\u306E\u305F\u3081\u306B\u30AA\u30FC\u30D7\u30F3\u3055\u308C\u3066\u307E\u3059\u3002"
+nonownerobjects_self_selection: "\u6240\u6709\u8005\u7121\u3057\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u3067\u306F\u3001\u81EA\u5206\u81EA\u8EAB\u3078\u306E\u30EA\u30EC\u30FC\u30B7\u30E7\u30F3\u306F\u5F35\u308C\u307E\u305B\u3093\u3002\u6240\u6709\u8005\u7121\u3057\u30D5\u30A3\u30FC\u30EB\u30C9\u3067\u306F\u306A\u304F\u3066\u5143\u3005\u306E(original)\u30D5\u30A3\u30FC\u30EB\u30C9\u3092\u4F7F\u3046\u3053\u3068\u3002"
+warning: "\u8B66\u544A"
+csv_object_export_warning: "CSV\u30D5\u30A1\u30A4\u30EB\u306E\u30A8\u30AF\u30B9\u30DD\u30FC\u30C8\u306F\u3001\u3059\u3079\u3066\u306E\u30C7\u30FC\u30BF\u578B\u3092\u30B5\u30DD\u30FC\u30C8\u3057\u3066\u3044\u306A\u3044\u3053\u3068\u306B\u6CE8\u610F\u3057\u3066\u304F\u3060\u3055\u3044\u3002\u305D\u306E\u7D50\u679C\u3001pimcore\u306B\u30A8\u30AF\u30B9\u30DD\u30FC\u30C8\u306ECSV\u3092\u518D\u30A4\u30F3\u30DD\u30FC\u30C8\u3059\u308B\u3068\u30C7\u30FC\u30BF\u306E\u640D\u5931\u306B\u3064\u306A\u304C\u308B\u53EF\u80FD\u6027\u304C\u3042\u308A\u307E\u3059\u3002\u30A8\u30AF\u30B9\u30DD\u30FC\u30C8\u3092\u7D9A\u884C\u3059\u308B\u5834\u5408\u306FOK\u3092\u62BC\u3057\u3066\u304F\u3060\u3055\u3044\u3002"
+navigation_exclude: "\u30CA\u30D3\u30B2\u30FC\u30B7\u30E7\u30F3\u304B\u3089\u9664\u5916"
+variants: "\u30D0\u30EA\u30A2\u30F3\u30C8"
+variant: "\u30D0\u30EA\u30A2\u30F3\u30C8"
+add_variant: "\u30D0\u30EA\u30A2\u30F3\u30C8\u306E\u8FFD\u52A0"
+delete_message_dependencies: "\u4F9D\u5B58\u95A2\u4FC2\u304C\u3042\u308A\u307E\u3059\u304C\u3001\u3068\u306B\u304B\u304F\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F"
+delete_message: "\u3053\u306E\u8981\u7D20\u3092\u672C\u5F53\u306B\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F"
+delete_message_advanced: Do you really want to delete %s '%s' ?
+delete_message_batch: "\u3053\u308C\u3089\u306E\u8981\u7D20\u3092\u672C\u5F53\u306B\u524A\u9664\u3057\u307E\u3059\u304B\uFF1F"
+delete_group_message: Do you really want to delete this group and all of its contents?
+no_further_objectbricks_allowed: "\u3053\u308C\u4EE5\u4E0A\u306EObjectbrick\u306F\u8A31\u53EF\u3055\u308C\u3066\u3044\u307E\u305B\u3093"
+grid_current_language: "\u73FE\u5728\u306E\u8A00\u8A9E"
+object_columns: "\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8\u306E\u5217"
+system_columns: "\u30B7\u30B9\u30C6\u30E0\u306E\u5217"
+columns: "\u5217"
+children_grid: "\u5B50\u30B0\u30EA\u30C3\u30C9"
+only_children: only_children
+cut: "\u5207\u308A\u53D6\u308A"
+paste_cut_element: "\u5207\u308A\u53D6\u308A\u3057\u305F\u8981\u7D20\u306E\u8CBC\u308A\u4ED8\u3051"
+memorize_tabs: "\u958B\u3044\u3066\u3044\u308B\u30BF\u30D6\u3092\u8A18\u61B6"
+element_history: "\u6700\u8FD1\u958B\u3044\u305F\u8981\u7D20"
+dashboards: "\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9"
+portlet_customreport: "\u30AB\u30B9\u30BF\u30E0\u30EC\u30DD\u30FC\u30C8"
+clear_marker_or_hotspots: clear_marker_or_hotspots
+hotspots_cleared: hotspots_cleared
+deeplink: "\u30C7\u30A3\u30FC\u30D7\u30EA\u30F3\u30AF"
+click_to_open: "(\u30AF\u30EA\u30C3\u30AF\u3057\u3066\u958B\u304F)"
+add_metadata: "\u30E1\u30BF\u30C7\u30FC\u30BF\u3092\u8FFD\u52A0"
+pimcore_icon_edit_pdf_text: "\u30C6\u30AD\u30B9\u30C8\u30D0\u30FC\u30B8\u30E7\u30F3\u3092\u7DE8\u96C6"
+chapter: "\u30C1\u30E3\u30D7\u30BF\u30FC"
+search_and_move: "\u691C\u7D22 & \u79FB\u52D5"
+searching: "\u691C\u7D22\u4E2D..."
+predefined_asset_metadata: defined_asset_metadata
+add_predefined_metadata_definitions: add_predefined_metadata_definitions
+scheduled: "\u4E88\u5B9A\u306E"
+naming_requirements_3chars: naming_requirements_3chars
+there_are_more_columns: there_are_more_columns
+merge_csv: merge_csv
+translation_merger_current: translation_merger_current
+translation_merger_csv: translation_merger_csv
+nothing_to_merge: nothing_to_merge
+csv_seperated_options: csv_seperated_options
+csv_seperated_options_info: csv_seperated_options_info
+first_page: "\u6700\u521D\u306E\u30DA\u30FC\u30B8"
+previous_page: "\u524D\u306E\u30DA\u30FC\u30B8"
+next_page: "\u6B21\u306E\u30DA\u30FC\u30B8"
+last_page: "\u6700\u5F8C\u306E\u30DA\u30FC\u30B8"
+no_data_to_display: "\u8868\u793A\u3059\u308B\u30C7\u30FC\u30BF\u304C\u3042\u308A\u307E\u305B\u3093"
+classificationstore_property: Property
+classificationstore_group: Group
+classificationstore_relation: Relation
+classificationstore_collection: Collection
+classificationstore_collection_relation: Collection relation
+classificationstore_no_groups: "\u7A2E\u5225store_no_groups"
+classificationstore_no_keys: "\u7A2E\u5225store_no_keys"
+remove_group: remove_group
+classificationstore_no_collections: "\u7A2E\u5225store_no_collections"
+reference: "\u30EA\u30D5\u30A1\u30EC\u30F3\u30B9"
+element_tag_configuration: element_tag_configuration
+element_tag_all_tags: "\u3059\u3079\u3066\u306E\u30BF\u30B0"
+enter_new_name_of_the_tag: enter_new_name_of_the_tag
+assigned_tags: assigned_tags
+filter_tags: filter_tags
+consider_child_tags: think_child_tags
+tags_assignment: tags_assignment
+tags_search: tags_search
+batch_applied: batch_applied
+apply_tags: apply_tags
+remove_and_apply_tags: remove_and_apply_tags
+batch_assignment: batch_assignment
+batch_assignment_error: batch_assignment_error
+no_children_found: no_children_found
+asset_search: asset_search
+document_search: document_search
+object_search: object_search
+more: "\u3082\u3063\u3068"
+open_translation: open_translation
+link_existing_document: link_existing_document
+using_inheritance: using_inheritance
+new_document: new_document
+update_available: update_available
+target_document_needs_language: target_document_needs_language
+tools: "\u30C4\u30FC\u30EB"
+perspectives: "\u898B\u901A\u3057"
+filter_active: filter_active
+reset_config: Reset to default
+reset_config_tooltip: reset_config_tooltip
+error_resetting_config: error_resetting_config
+marketing_settings: marketing_settings
+cross_tree_moves_not_supported: cross_tree_moves_not_supported
+add_printpage: add_printpage
+add_printcontainer: add_printcontainer
+web2print_preview_pdf: web2print_preview_pdf
+web2print_cancel_pdf_creation: web2print_cancel_pdf_creation
+web2print_generate_pdf: web2print_generate_pdf
+web2print_download_pdf: web2print_download_pdf
+web2print_last-generated: "web2print_last\u304C\u751F\u6210\u3057\u307E\u3057\u305F"
+web2print_last-generate-message: web2print_last-generate-message
+web2print: web2print
+web2print_prepare_pdf_generation: web2print_prepare_pdf_generation
+web2print_start_html_rendering: web2print_start_html_rendering
+web2print_finished_html_rendering: web2print_finished_html_rendering
+web2print_saved_html_file: web2print_saved_html_file
+web2print_pdf_conversion: web2print_pdf_conversion
+web2print_saving_pdf_document: web2print_saving_pdf_document
+web2print_author: web2print_author
+web2print_printermarks: web2print_printermarks
+web2print_bookmarks: "\u30D6\u30C3\u30AF\u30DE\u30FC\u30AF"
+close_tab: "\u30BF\u30D6\u3092\u9589\u3058\u308B"
+web2print_only_published: web2print_only_published
+web2print_documents_changed: web2print_documents_changed
+about_pimcore: ABOUT PIMCORE
+phone: "\u96FB\u8A71"
+workflow_additional_info: workflow_additional_info
+workflow_perform_action: workflow_perform_action
+workflow_notes_required: workflow_notes_required
+workflow_notes_optional: workflow_notes_optional
+please_enter_the_id_of_the_asset: please_enter_the_id_of_the_asset
+please_enter_the_id_of_the_object: please_enter_the_id_of_the_object
+please_enter_the_id_of_the_document: please_enter_the_id_of_the_document
+element_has_unsaved_changes: element_has_unsaved_changes
+element_unsaved_changes_message: element_unsaved_changes_message
+newsletter_enableTrackingParameters: newsletter_enableTrackingParameters
+newsletter_sendingMode: newsletter_sendingMode
+newsletter_sendingmode_single: newsletter_sendingmode_single
+newsletter_sendingmode_batch: newsletter_sendingmode_batch
+newsletter_sendingPanel: newsletter_sendingPanel
+newsletter_dirty_warning: newsletter_dirty_warning
+newsletter_sending: newsletter_sending
+newsletter_sourceAdapter: newsletter_sourceAdapter
+newsletter_default: newsletter_default
+newsletter_csvList: newsletter_csvList
+newsletter_testsend: newsletter_testsend
+newsletter_test_sent_message: newsletter_test_sent_message
+add_object_mbx_title: add_object_mbx_title
+newsletter_choose_report: newsletter_choose_report
+newsletter_email_field_name: newsletter_email_field_name
+mode: "\u30E2\u30FC\u30C9"
+custom_download: custom_download
+original_file: original_file
+web_format: web_format
+print_format: print_format
+office_format: office_format
+change_password: "\u30D1\u30B9\u30EF\u30FC\u30C9\u3092\u5909\u66F4\u3059\u308B"
+file_is_bigger_that_upload_limit: file_is_bigger_that_upload_limit
+send_test_email_success: send_test_email_success
+press_crtl_and_select_to_compare: press_crtl_and_select_to_compare
+clear_filters: clear_filters
+tags_configuration: tags_configuration
+export_csv_include_headers: export_csv_include_headers
+open_data_object: open_data_object
+data_objects: "\u30C7\u30FC\u30BF\u30AA\u30D6\u30B8\u30A7\u30AF\u30C8"
+asset_type_change_not_allowed: asset_type_change_not_allowed
+clear_content_of_selected_target_group: clear_content_of_selected_target_group
+visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: "visit_of_this_page_will_be_\u81EA\u52D5\u7684\u306B\u95A2\u9023\u4ED8\u3051\u3089\u308C\u305F_with_the_selected_target_groups"
+assign_target_group: assign_target_group
+assign_target_groups: assign_target_groups
+target_group: Target Group
+target_groups: "\u30BF\u30FC\u30B2\u30C3\u30C8\u30B0\u30EB\u30FC\u30D7"
+edit_content_for_target_group: edit_content_for_target_group
+email_reply_to: email_reply_to
+element_tag_filtered_tags: element_tag_filtered_tags
+web2print_addOverprint: web2print_addOverprint
+analyze_permissions: analyze_permissions
+unique: "\u72EC\u7279\u306E"
+glue: "\u306E\u308A"
+date_format: date_format
+attribute: "\u5C5E\u6027"
+forward_attribute: forward_attribute
+upper: "\u30A2\u30C3\u30D1\u30FC"
+lower: "\u4E0B"
+disabled: "\u7121\u52B9"
+capitalization: "\u5927\u6587\u5B57\u306E\u4F7F\u7528"
+restrict_to_locales: restrict_to_locales
+predefined: "\u5B9A\u7FA9\u6E08\u307F"
+save_as_copy: save_as_copy
+set_as_favourite: set_as_favourite
+grid_configuration: grid_configuration
+shared_users: shared_users
+shared_roles: shared_roles
+save_and_share: "\u4FDD\u5B58\u3068\u5171\u6709"
+save_copy_and_share: save_copy_and_share
+locale: "\u30ED\u30B1\u30FC\u30EB"
+ellipses: "\u3060\u5186"
+insensitive: "\u920D\u611F"
+yes_value: yes_value
+no_value: "\u5024\u306A\u3057"
+count_empty: count_empty
+as_array: as_array
+metadata_field: metadata_field
+only_count: only_count
+parameter: "\u30D1\u30E9\u30E1\u30FC\u30BF"
+forward_parameter: forward_parameter
+is_array: is_array
+php_class: "PHP \u30AF\u30E9\u30B9"
+additional_data: "\u8FFD\u52A0\u30C7\u30FC\u30BF"
+flatten: "\u5E73\u3089\u306B\u3059\u308B"
+return_last_result: return_last_result
+skip_null: skip_null
+expand_children: expand_children
+collapse_children: Collapse children
+multiply: "\u304B\u3051\u308B"
+divide: "\u5206\u3051\u308B"
+apply_to_all_objects: apply_to_all_objects
+apply_to_all_objects_msg: apply_to_all_objects_msg
+encode: "\u30A8\u30F3\u30B3\u30FC\u30C9"
+decode: "\u30C7\u30B3\u30FC\u30C9"
+serialize: "\u30B7\u30EA\u30A2\u30E9\u30A4\u30BA"
+unserialize: "\u975E\u30B7\u30EA\u30A2\u30EB\u5316"
+offset: "\u30AA\u30D5\u30BB\u30C3\u30C8"
+col_attribute: col_attribute
+brick_attribute: brick_attribute
+csv_column_configuration: csv_column_configuration
+column: "\u30AB\u30E9\u30E0"
+resolver_strategy: resolver_strategy
+resolver_settings: resolver_settings
+csv_settings: csv_settings
+skipheadrow: "\u3068\u3093\u3061\u304D"
+csv_file_preview: csv_file_preview
+save_as: save_as
+import_export_configuration: import_export_configuration
+brick_type: brick_type
+renderer: "\u30EC\u30F3\u30C0\u30E9\u30FC"
+getter: "\u30B2\u30C3\u30BF\u30FC"
+string: "\u3072\u3082"
+row: "\u884C"
+import_report: import_report
+import_errors: import_errors
+import_is_done: import_is_done
+import_file_prefix: import_file_prefix
+create_parents: create_parents
+fullpath: "\u30D5\u30EB\u30D1\u30B9"
+create_on_demand: create_on_demand
+get_by_resolver: get_by_resolver
+direct: "\u76F4\u63A5"
+skip_empty_values: skip_empty_values
+do_not_overwrite: do_not_overwrite
+never: "\u6C7A\u3057\u3066"
+if_not_empty: if_not_empty
+always: "\u5E38\u306B"
+delimiter: "\u30C7\u30EA\u30DF\u30BF"
+share_globally: "\u30B0\u30ED\u30FC\u30D0\u30EB\u306B\u5171\u6709"
+gdpr_data_extractor: gdpr_data_extractor
+no_configuration: no_configuration
+share_configurations: share_configurations
+enable_inheritance: enable_inheritance
+object_settings: object_settings
+drop_me_here: drop_me_here
+clear_hotspots_msg: clear_hotspots_msg
+restore_failed: restore_failed
+subtract: "\u5F15\u304F"
+batch_append_all: batch_append_all
+batch_append_selected: batch_append_selected
+batch_append_to: batch_append_to
+login_token_invalid_user_error: login_token_invalid_user_error
+login_token_as_admin_non_admin_user_error: login_token_as_admin_non_admin_user_error
+login_token_no_password_error: login_token_no_password_error
+targeting_toolbar: "\u30BF\u30FC\u30B2\u30C6\u30A3\u30F3\u30B0\u30C4\u30FC\u30EB\u30D0\u30FC"
+sort_children_by: sort_children_by
+by_key: by_key
+by_index: by_index
+successful_object_change_children_sort_to_index: successful_object_change_children_sort_to_index
+successful_object_change_children_sort_to_key: successful_object_change_children_sort_to_key
+successful_publish_document: Document successfully published
+successful_publish_object: Object successfully published
+successful_unpublish_document: Document successfully unpublished
+successful_unpublish_object: Object successfully unpublished
+error_object_change_children_sort_to_index: error_object_change_children_sort_to_index
+error_object_change_children_sort_to_key: error_object_change_children_sort_to_key
+error_publish_document: Document could not be published
+error_publish_object: Object could not be published
+error_unpublish_document: Document could not be unpublished
+error_unpublish_object: Object could not be unpublished
+edit_as_html: edit_as_html
+edit_as_plain_text: edit_as_plain_text
+error_empty_file_upload: error_empty_file_upload
+type_column: type_column
+keep: "\u30AD\u30FC\u30D7"
+clear_version_message: clear_version_message
+clear_all: "\u3059\u3079\u3066\u30AF\u30EA\u30A2"
+unlink_existing_document: unlink_existing_document
+grid_options: grid_options
+save_grid_options: save_grid_options
+download_selected_as_zip: download_selected_as_zip
+please_select_items_to_download: please_select_items_to_download
+key_bindings: key_bindings
+keybinding_openClassEditor: keybinding_openClassEditor
+keybinding_showMetaInfo: keybinding_showMetaInfo
+keybinding_clearAllCaches: keybinding_clearAllCaches
+keybinding_clearDataCache: keybinding_clearDataCache
+scheduled_block_delete_all_in_past: schedule_block_delete_all_in_past
+scheduled_block_really_delete_past: schedule_block_really_delete_past
+scheduled_block_delete_all: schedule_block_delete_all
+scheduled_block_really_delete_all: schedule_block_really_delete_all
+2fa_disable: 2fa_disable
+renew_2fa_secret: renew_2fa_secret
+two_factor_authentication: two_factor_authentication
+2fa_alert_text: 2fa_alert_text
+2fa_alert_submit: 2fa_alert_submit
+setup_two_factor: setup_two_factor
+2fa_setup_message: 2fa_setup_message
+set_focal_point: set_focal_point
+quicksearch: "\u30AF\u30A4\u30C3\u30AF\u30B5\u30FC\u30C1"
+standard_preview: standard_preview
+upload_new_version: upload_new_version
+360_viewer: 360_viewer
+invalid_name: "\u7121\u52B9\u306A\u540D\u524D"
+clone: "\u30AF\u30ED\u30FC\u30F3"
+enter_the_name_of_the_new_item: enter_the_name_of_the_new_item
+html_tags: html_tags
+clear_temporary_files: clear_temporary_files
+error_pasting_item: error_pasting_item
+modificationdate: "\u66F4\u65B0\u65E5"
+blank: "\u30D6\u30E9\u30F3\u30AF"
+message: "\u30E1\u30C3\u30BB\u30FC\u30B8"
+from: "\u304B\u3089"
+to: "\u306B"
+html: html
+text: "\u30C6\u30AD\u30B9\u30C8"
+create_folder: "\u30D5\u30A9\u30EB\u30C0\u30FC\u3092\u4F5C\u308B"
+error_deleting_item: error_deleting_item
+error_renaming_item: error_renaming_item
+revert: "\u5143\u306B\u623B\u3059"
+parent: "\u89AA"
+merge_translations: merge_translations
+prefix: "\u63A5\u982D\u8F9E"
+load: "\u8CA0\u8377"
+saving_failed: saving_failed
+failed_to_create_new_item: failed_to_create_new_item
+bundle: "\u30D0\u30F3\u30C9\u30EB"
+product: "\u88FD\u54C1"
+index_field_selection_field: index_field_selection_field
+indexFieldSelectionField: indexFieldSelectionField
+indexFieldSelectionField_settings: indexFieldSelectionField_settings
+indexFieldSelectionFieldMulti: indexFieldSelectionFieldMulti
+index_field_selection_combo: index_field_selection_combo
+indexFieldSelectionCombo: indexFieldSelectionCombo
+indexFieldSelectionCombo_settings: indexFieldSelectionCombo_settings
+specificPriceField: specificPriceField
+showAllFields: showAllFields
+considerTenants: "\u30C6\u30CA\u30F3\u30C8"
+bundle_ecommerce_mainmenu: bundle_ecommerce_mainmenu
+bundle_ecommerce_pricing_rule: Pricing Rule
+bundle_ecommerce_pricing_rules: bundle_ecommerce_pricing_rules
+bundle_ecommerce_pricing_config_behavior: bundle_ecommerce_pricing_config_behavior
+bundle_ecommerce_pricing_config_additiv: bundle_ecommerce_pricing_config_additiv
+bundle_ecommerce_pricing_config_stopExecute: bundle_ecommerce_pricing_config_stopExecute
+bundle_ecommerce_pricing_config_condition_daterange: bundle_ecommerce_pricing_config_condition_daterange
+bundle_ecommerce_pricing_config_condition_cart_amount: bundle_ecommerce_pricing_config_condition_cart_amount
+bundle_ecommerce_pricing_config_condition_products: bundle_ecommerce_pricing_config_condition_products
+category: "\u30AB\u30C6\u30B4\u30EA\u30FC"
+bundle_ecommerce_pricing_config_condition_token: Token
+bundle_ecommerce_pricing_config_condition_sales: bundle_ecommerce_pricing_config_condition_sales
+bundle_ecommerce_pricing_config_condition_sold: bundle_ecommerce_pricing_config_condition_sold
+bundle_ecommerce_pricing_config_condition_sold_count: bundle_ecommerce_pricing_config_condition_sold_count
+bundle_ecommerce_pricing_config_condition_sold_count_cart: bundle_ecommerce_pricing_config_condition_sold_count_cart
+bundle_ecommerce_pricing_config_condition_voucherToken: bundle_ecommerce_pricing_config_condition_voucherToken
+bundle_ecommerce_pricing_config_condition_tenant: bundle_ecommerce_pricing_config_condition_tenant
+bundle_ecommerce_pricing_config_condition_targetgroup: bundle_ecommerce_pricing_config_condition_targetgroup
+bundle_ecommerce_pricing_config_condition_targetgroup_threshold: bundle_ecommerce_pricing_config_condition_targetgroup_threshold
+bundle_ecommerce_pricing_config_action_gift: bundle_ecommerce_pricing_config_action_gift
+bundle_ecommerce_pricing_config_action_cart_discount: bundle_ecommerce_pricing_config_action_cart_discount
+bundle_ecommerce_pricing_config_action_cart_discount_percent: bundle_ecommerce_pricing_config_action_cart_discount_percent
+bundle_ecommerce_pricing_config_action_cart_discount_amount: bundle_ecommerce_pricing_config_action_cart_discount_amount
+bundle_ecommerce_pricing_config_action_product_discount: bundle_ecommerce_pricing_config_action_product_discount
+bundle_ecommerce_pricing_config_action_product_discount_percent: bundle_ecommerce_pricing_config_action_product_discount_percent
+bundle_ecommerce_pricing_config_action_product_discount_amount: bundle_ecommerce_pricing_config_action_product_discount_amount
+bundle_ecommerce_pricing_config_action_free_shipping: bundle_ecommerce_pricing_config_action_free_shipping
+bundle_ecommerce_pricing_rule_add: Add Pricing Rule
+bundle_ecommerce_pricing_rule_error: Error creating Pricing Rule
+ecommerce: "e\u30B3\u30DE\u30FC\u30B9"
+preSelectMode: preSelectMode
+remote_single: remote_single
+remote_multi: remote_multi
+local_single: local_single
+local_multi: local_multi
+indexFieldSelection: indexFieldSelection
+indexFieldSelection_settings: indexFieldSelection_settings
+filtergroups: "\u30D5\u30A3\u30EB\u30BF\u30B0\u30EB\u30FC\u30D7"
+preSelect: "\u4E8B\u524D\u9078\u629E"
+predefined_pre_select_options: defined_pre_select_options
+bundle_ecommerce_clear_config_cache: bundle_ecommerce_clear_config_cache
+bundle_ecommerce_back-office_order: bundle_ecommerce_back-office_order
+bundle_ecommerce_vouchertoolkit_tab: bundle_ecommerce_vouchertoolkit_tab
+path: "\u30D1\u30B9"
+thumbnail: "\u30B5\u30E0\u30CD\u30A4\u30EB"
+download_thumbnail: download_thumbnail
+no_thumbnail_selected: no_thumbnail_selected
+list_thumbnail_in_download_section_on_image_detail_view: list_thumbnail_in_download_section_on_image_detail_view
+there_are_more_items: there_are_more_items
+workflow_actions: workflow_actions
+workflow_notes_requred_field_message: workflow_notes_requred_field_message
+workflow_transition_applied_successfully: workflow_transition_applied_successfully
+workflow_change_email_notification_subject: workflow_change_email_notification_subject
+workflow_change_email_notification_text: workflow_change_email_notification_text
+workflow_change_email_notification_deeplink: workflow_change_email_notification_deeplink
+workflow_change_email_notification_note: workflow_change_email_notification_note
+workflow_details: workflow_details
+workflow_graph: workflow_graph
+workflow_current_state: workflow_current_state
+workflow_cmd_not_found: workflow_cmd_not_found
+unit_width: unit_width
+permission_missing: permission_missing
+paste_as_language_variant: paste_as_language_variant
+select_language_for_new_document: select_language_for_new_document
+source_document_language_missing: source_document_language_missing
+open_preview_in_new_window: open_preview_in_new_window
+data: "\u30C7\u30FC\u30BF"
+links: "\u30EA\u30F3\u30AF\u96C6"
+notes: "\u30CE\u30FC\u30C8"
+bool: "\u30D6\u30FC\u30EB"
+consent: "\u540C\u610F"
+add_marker: add_marker
+identifier_warning: identifier_warning
+unique_identifier: unique_identifier
+invalid_identifier: "\u7121\u52B9\u306A\u8B58\u5225\u5B50"
+identifier_already_exists: identifier_already_exists
+content: "\u30B3\u30F3\u30C6\u30F3\u30C4"
+send: "\u9001\u308B"
+you_can_only_drop_one_element_here: you_can_only_drop_one_element_here
+translation: "\u7FFB\u8A33"
+delete_error_batch: delete_error_batch
+delete_error: delete_error
+batch_edit_field_selected: batch_edit_field_selected
+batch_append_selected_to: batch_append_selected_to
+enable_batch_edit_columns: enable_batch_edit_columns
+delete_all: "\u3059\u3079\u3066\u524A\u9664"
+open_linked_element: open_linked_element
+mark_as_read: "\u65E2\u8AAD\u306B\u3059\u308B"
+sender: "\u9001\u308A\u4E3B"
+notifications: "\u901A\u77E5"
+notifications_send: notifications_send
+group: "\u30B0\u30EB\u30FC\u30D7"
+attachment: "\u611B\u7740"
+notification_has_been_sent: notification_has_been_sent
+recipient: "\u53D7\u53D6\u4EBA"
+this_field_is_required: "\u3053\u306E\u9805\u76EE\u306F\u5FC5\u9808\u3067\u3059"
+paste_recursive_as_language_variant: paste_recursive_as_language_variant
+paste_no_new_language_error: paste_no_new_language_error
+embedded_meta_data: embedded_meta_data
+duration: "\u671F\u9593"
+custom_metadata: custom_metadata
+group_icon_class: group_icon_class
+custom_report_permissions: custom_report_permissions
+visible_to_users: visible_to_users
+visible_to_roles: visible_to_roles
+open_url: open_url
+document_language_overview: document_language_overview
+language_master: language_master
+create_translation_inheritance: create_translation_inheritance
+create_translation: create_translation
+document_translation_parent_not_found: document_translation_parent_not_found
+paste_recursive_as_language_variant_updating_references: "\u8A00\u8A9E\u306E\u8CBC\u308A\u4ED8\u3051\uFF08\u518D\u5E30\u7684\uFF09\u3001\u53C2\u7167\u306E\u66F4\u65B0\n"
+redirects_expired_cleanup: "\u671F\u9650\u5207\u308C\u306E\u30EA\u30C0\u30A4\u30EC\u30AF\u30C8\u306E\u30AF\u30EA\u30FC\u30F3\u30A2\u30C3\u30D7"
+redirects_cleanup_warning: "\u671F\u9650\u5207\u308C\u306E\u30EA\u30C0\u30A4\u30EC\u30AF\u30C8\u3092\u672C\u5F53\u306B\u30AF\u30EA\u30FC\u30F3\u30A2\u30C3\u30D7\u3057\u307E\u3059\u304B\uFF1F"
+redirects_cleanup_error: "\u671F\u9650\u5207\u308C\u306E\u30EA\u30C0\u30A4\u30EC\u30AF\u30C8\u306E\u30AF\u30EA\u30FC\u30F3\u30A2\u30C3\u30D7\u4E2D\u306B\u30A8\u30E9\u30FC\u304C\u767A\u751F\u3057\u307E\u3057\u305F"
+all_translations: "\u3059\u3079\u3066\u306E\u7FFB\u8A33"
+only_unreferenced: "\u672A\u53C2\u7167\u306E\u307F"
+split_view_settings: "\u5206\u5272\u30D3\u30E5\u30FC\u8A2D\u5B9A"
+enable_split_view: "\u5206\u5272\u8868\u793A\u3092\u6709\u52B9\u306B\u3059\u308B"
+disable_split_view: "\u5206\u5272\u8868\u793A\u3092\u7121\u52B9\u306B\u3059\u308B"
+split_view_object_dirty_title: "\u3054\u78BA\u8A8D\u304F\u3060\u3055\u3044"
+split_view_object_dirty_msg: "\u672A\u4FDD\u5B58\u306E\u5909\u66F4\u304C\u3042\u308A\u307E\u3059\u3002
+  \u3042\u306A\u305F\u306F\u3059\u3079\u3066\u306E\u5909\u66F4\u3092\u5931\u3046\u3067\u3057\u3087\u3046\u3002
+  \u672C\u6C17\u3067\u3059\u304B\uFF1F"
+converter_service: "\u5909\u63DB\u30B5\u30FC\u30D3\u30B9"
+auto_convert: "\u81EA\u52D5\u5909\u63DB"
+web2print_enableDebugMode: "\u30C7\u30D0\u30C3\u30B0\u30E2\u30FC\u30C9\u3092\u6709\u52B9\u306B\u3059\u308B"
+set_to_null: "\u7A7A\uFF08null\u306B\u8A2D\u5B9A\uFF09"
+bundles: "\u30D0\u30F3\u30C9\u30EB"
+target_document_invalid: Please select a target document with valid language
+metainfo_copy_id: Copy ID to clipboard
+metainfo_copy_fullpath: Copy full path to clipboard
+metainfo_copy_deeplink: Copy deeplink to clipboard
+plain_text: Plain Text
+plain_text_email_part: Email Plain Text Part
+error_message: Error Message
+bundle_ecommerce_order_tab: Order Details
+access_denied: Access Denied!
+access_denied_description: You don't have sufficient permissions to open the element
+  or perform the desired action.
+validation_failed: Validation Failed!
+export_xlsx: XLSX Export
+object_export_warning: Please note that the export does not support all data types.
+  Press OK to continue with the export.
+web2print_enableLenientHttpsMode: Enable lenient HTTPS mode
+web2print_enableLenientHttpsMode_txt: Enable this option if PDFreactor fails to connect
+  successfully via HTTPS
+paste_clipboard: Paste Clipboard
+paste_here: Paste your clipboard data here
+asset_metadata: Asset Metadata
+predefined_metadata: Predefined Metadata
+default_metadata: Default Metadata
+asset_export_warning: Please note that the export does not support some fields(e.g.
+  preview, size). Press OK to continue with the export.
+share_via_notifications: Share via Notifications
+cannot_save_metadata_please_try_to_edit_the_metadata_in_asset: <b>Cannot save Metadata!</b><br
+  />Please try to edit the metadata in Asset.
+email_log_forward: Forward email
+sum: Sum
+area_brick_assign_info_message: Please use drag & drop to assign a brick to the desired
+  block
+batch_remove_all: Batch remove from all
+batch_remove_selected: Batch remove from selected
+batch_remove_from: Remove data from all
+batch_remove_selected_from: Remove data from selected
+unit_tooltip: Alternative units tooltip
+toggle_image_features_visibility: Toggle Image Feature Visibility
+detect_image_features: Detect Image Features
+remove_image_features: Remove Image Features
+available_sites: Available Sites
+fallback: Fallback
+add_site: Add Site
+domain_label_width: Domain label width
+complete_required_fields: 'Please complete following required fields to publish the
+  document:'
+Uncategorized: Uncategorized
+skip_if_exists: Skip row if exists
+php_class_or_service: Class or service name
+redirect_performance_warning: Using this feature has very bad effects on the performance
+  of the entire application, do you really want to continue?
+test_url: Test URL
+create_redirects: Create redirects to keep URLs working (incl. children)?
+auto_create: Auto create
+methods: Methods
+batch_operation: Batch Operation
+move: Move
+property_name: Property name
+force_value: Force value
+enable_grid_locking: Enable grid locking
+export_configuration: Export Configuration As JSON
+composite_indices: Composite indices
+default_value_generator: Default value generator service / class
+no_value_set: no value set
+replace_assignments_in_all_elements: Replace assignments in all elements
+fieldlookup: Field Lookup
+show_fieldlookup: Show Field Lookup
+different_number_of_columns: Different number of columns
+brick_limit_reached: 'Limit ({bricklimit}) reached for brick: {brickname}'
+generate_type_declarations: Generate Type Declarations
+batch_change_language: Batch update language
+preview_item: Preview Item
+by_key_reverse: Key (Z to A)
+deprecated: Deprecated
+version_currently_saved_in_database: Currently saved in database (but not published)
+deprecated_feature: '<span style=''color: orange;''>Deprecated feature. Use %s instead</span>'
+edit_as_custom_text: Edit as custom text
+symfony_translation_link: 'Translation Format: https://symfony.com/doc/current/translation/message_format.html'
+no_action_available: No action available
+bricks: Bricks
+draft: Draft
+auto_save: Auto save
+save_draft: Save draft
+selected_grid_columns: Selected grid columns
+ungrouped: ungrouped
+reindex_warning: Changing it from alphabetical sort order to index will reindex all
+  items. Do you want to continue?
+filter_by_relation: Filter by relation
+filter_by_relation_field: Filter by relation field
+clear_relation_filter: Clear active relation filter
+apply_filter: Apply filter
+config_not_writeable: Not writable, this can have several reasons. For details please
+  have a look into the docs.
+sites: Sites
+file_exists: File already exists
+asset_upload_want_to_overwrite: Do you want to overwrite file %s?
+asset_upload_overwrite: Overwrite
+asset_upload_keep_both: Keep both files
+asset_upload_apply_to_all: Apply to all
+asset_upload_skip: Skip
+could_not_open_zip_file: The uploaded zip file could not be opened.
+objects_sort_method: Change data objects sort method
+link_recursion_error: The link is redirecting to itself, causing an infinite loop
+no_further_classes_allowed: No further classes allowed
+address_not_found: The entered address was not found
+possible_causes: Possible causes
+postal_code_format_error: "Postal code format, e.g. use \"5020 Salzburg, S\xF6llheimer
+  Stra\xDFe 16\" instead of \"A-5020 Salzburg, S\xF6llheimer Stra\xDFe 16\""
+delete_data_from_it: This will also delete all data from it.
+display_mode: Display Mode
+display_mode_grid: Grid view
+display_mode_combo: Tag field
+batch_confirmation: You are about to update %s dataObjects. Do you want to continue
+  ?
+...

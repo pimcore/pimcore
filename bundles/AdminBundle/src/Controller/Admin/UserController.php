@@ -1014,7 +1014,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         ]);
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

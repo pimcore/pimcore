@@ -36,13 +36,14 @@ framework:
             pimcore_core: "doctrine://default?queue_name=pimcore_core"
             pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
+            pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
         routing:
             'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
             'Pimcore\Messenger\SearchBackendMessage': pimcore_core
             'Pimcore\Messenger\SanityCheckMessage': pimcore_core
-            'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_core
+            'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_asset_update
             'Pimcore\Messenger\AssetPreviewImageMessage': pimcore_core
             'Pimcore\Messenger\GeneratePagePreviewMessage': pimcore_core
             'Pimcore\Messenger\GenerateWeb2PrintPdfMessage': pimcore_core

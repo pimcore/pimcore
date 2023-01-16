@@ -82,7 +82,7 @@ final class Staticroute extends AbstractModel
      *
      * @param Staticroute|null $route
      */
-    public static function setCurrentRoute(?Staticroute $route)
+    public static function setCurrentRoute(?Staticroute $route): void
     {
         self::$_currentRoute = $route;
     }

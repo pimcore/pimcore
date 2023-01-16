@@ -382,7 +382,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    public function onKernelResponseEvent(ResponseEvent $event)
+    public function onKernelResponseEvent(ResponseEvent $event): void
     {
         $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);
     }

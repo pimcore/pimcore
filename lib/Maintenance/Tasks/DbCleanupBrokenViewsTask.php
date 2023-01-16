@@ -38,7 +38,7 @@ class DbCleanupBrokenViewsTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $tables = $this->db->fetchAllAssociative('SHOW FULL TABLES');
         foreach ($tables as $table) {

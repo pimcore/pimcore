@@ -171,7 +171,7 @@ class LazyLoadedItemTestBundleB extends AbstractPimcoreBundle
 
 class LazyLoadedItemTestBundleC extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection)
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
         $collection->add(new LazyLoadedItem(LazyLoadedItemTestBundleA::class));
     }

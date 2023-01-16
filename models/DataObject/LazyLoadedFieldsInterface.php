@@ -20,7 +20,7 @@ interface LazyLoadedFieldsInterface
 {
     const LAZY_KEY_SEPARATOR = '~~';
 
-    public function markLazyKeyAsLoaded(string $key);
+    public function markLazyKeyAsLoaded(string $key): void;
 
     public function isLazyKeyLoaded(string $key): bool;
 

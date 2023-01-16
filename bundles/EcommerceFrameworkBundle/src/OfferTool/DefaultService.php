@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Folder;
@@ -104,13 +105,11 @@ class DefaultService implements ServiceInterface
         return $offer;
     }
 
-    protected function getExcludedItemKeys($excludeItems): array
+    protected function getExcludedItemKeys(array $excludeItems): array
     {
         $excludedItemKeys = [];
-        if ($excludeItems) {
-            foreach ($excludeItems as $item) {
-                $excludedItemKeys[$item->getItemKey()] = $item->getItemKey();
-            }
+        foreach ($excludeItems as $item) {
+            $excludedItemKeys[$item->getItemKey()] = $item->getItemKey();
         }
 
         return $excludedItemKeys;
@@ -246,7 +245,7 @@ class DefaultService implements ServiceInterface
         return $offer;
     }
 
-    public function updateOfferFromCart(AbstractOffer $offer, CartInterface $cart, array $excludeItems = [], $save = true): AbstractOffer
+    public function updateOfferFromCart(AbstractOffer $offer, CartInterface $cart, array $excludeItems = [], bool $save = true): AbstractOffer
     {
         $excludedItemKeys = $this->getExcludedItemKeys($excludeItems);
 
@@ -325,7 +324,7 @@ class DefaultService implements ServiceInterface
         return $list->load();
     }
 
-    public function createCustomOfferToolItem($product, $offer)
+    public function createCustomOfferToolItem(ProductInterface $product, AbstractOffer $offer): void
     {
     }
 }

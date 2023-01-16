@@ -93,7 +93,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param Document $translation
      * @param string|null $language
      */
-    public function addTranslation(Document $document, Document $translation, string $language = null)
+    public function addTranslation(Document $document, Document $translation, string $language = null): void
     {
         $sourceId = $this->getTranslationSourceId($document);
 
@@ -108,7 +108,7 @@ class Dao extends Model\Dao\AbstractDao
         ]);
     }
 
-    public function removeTranslation(Document $document)
+    public function removeTranslation(Document $document): void
     {
         // if $document is a source-document, we need to move them over to a new document
         $newSourceId = $this->db->fetchOne('SELECT id FROM documents_translations WHERE sourceId = ?', [$document->getId()]);
@@ -118,7 +118,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function removeTranslationLink(Document $document, Document $targetDocument)
+    public function removeTranslationLink(Document $document, Document $targetDocument): void
     {
         $sourceId = $this->getTranslationSourceId($document);
 

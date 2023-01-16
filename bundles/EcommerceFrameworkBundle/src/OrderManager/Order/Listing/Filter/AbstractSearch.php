@@ -76,7 +76,7 @@ abstract class AbstractSearch implements OrderListFilterInterface
      *
      * @param OrderListInterface $orderList
      */
-    protected function prepareApply(OrderListInterface $orderList)
+    protected function prepareApply(OrderListInterface $orderList): void
     {
     }
 }

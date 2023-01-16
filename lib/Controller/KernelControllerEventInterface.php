@@ -20,5 +20,5 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 
 interface KernelControllerEventInterface
 {
-    public function onKernelControllerEvent(ControllerEvent $event);
+    public function onKernelControllerEvent(ControllerEvent $event): void;
 }

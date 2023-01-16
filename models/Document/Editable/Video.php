@@ -220,9 +220,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
-    protected function getDataEditmode()
+    protected function getDataEditmode(): mixed
     {
         $data = $this->getData();
 

@@ -57,7 +57,7 @@ class VoucherToken implements ConditionInterface
         return false;
     }
 
-    public function checkVoucherCode($code): bool
+    public function checkVoucherCode(string $code): bool
     {
         if (in_array(VoucherServiceToken::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
             return true;
@@ -125,7 +125,7 @@ class VoucherToken implements ConditionInterface
     /**
      * @param int[] $whiteListIds
      */
-    public function setWhiteListIds(array $whiteListIds)
+    public function setWhiteListIds(array $whiteListIds): void
     {
         $this->whiteListIds = $whiteListIds;
     }
@@ -141,7 +141,7 @@ class VoucherToken implements ConditionInterface
     /**
      * @param \stdClass[] $whiteList
      */
-    public function setWhiteList(array $whiteList)
+    public function setWhiteList(array $whiteList): void
     {
         $this->whiteList = $whiteList;
     }

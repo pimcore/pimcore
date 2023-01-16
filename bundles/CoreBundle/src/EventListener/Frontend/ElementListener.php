@@ -65,7 +65,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         ];
     }
 
-    public function onKernelController(ControllerEvent $event)
+    public function onKernelController(ControllerEvent $event): void
     {
         if ($event->isMainRequest()) {
             $request = $event->getRequest();
@@ -128,7 +128,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function applyTargetGroups(Request $request, Document $document)
+    protected function applyTargetGroups(Request $request, Document $document): void
     {
         if (!$document instanceof Document\Targeting\TargetingDocumentInterface) {
             return;
@@ -234,7 +234,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function handleObjectParams(Request $request)
+    protected function handleObjectParams(Request $request): void
     {
         // object preview
         if ($objectId = $request->get('pimcore_object_preview')) {

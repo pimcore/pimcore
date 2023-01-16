@@ -110,7 +110,7 @@ class Composer
      *
      * @internal
      */
-    protected static function executeCommand(Event $event, $consoleDir, array $cmd, $timeout = 900, $writeBuffer = true): Process
+    protected static function executeCommand(Event $event, string $consoleDir, array $cmd, int $timeout = 900, bool $writeBuffer = true): Process
     {
         $command = [static::getPhp(false)];
         $command = array_merge($command, static::getPhpArguments());
@@ -140,7 +140,7 @@ class Composer
     /**
      * @internal
      */
-    protected static function getPhp($includeArgs = true): string
+    protected static function getPhp(bool $includeArgs = true): string
     {
         $phpFinder = new PhpExecutableFinder();
         if (!$phpPath = $phpFinder->find($includeArgs)) {
@@ -192,17 +192,17 @@ class Composer
         return $options;
     }
 
-    protected static function getConsoleDir(Event $event, $actionName)
+    protected static function getConsoleDir(Event $event, string $actionName): ?string
     {
         $options = static::getOptions($event);
         if (!static::hasDirectory($event, 'bin-dir', $options['bin-dir'], $actionName)) {
-            return;
+            return null;
         }
 
         return $options['bin-dir'];
     }
 
-    protected static function hasDirectory(Event $event, $configName, $path, $actionName): bool
+    protected static function hasDirectory(Event $event, string $configName, string $path, string $actionName): bool
     {
         if (!is_dir($path)) {
             $event->getIO()->write(sprintf('The %s (%s) specified in composer.json was not found in %s, can not %s.', $configName, $path, getcwd(), $actionName));

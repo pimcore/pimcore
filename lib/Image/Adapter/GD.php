@@ -134,7 +134,7 @@ class GD extends Adapter
     /**
      * {@inheritdoc}
      */
-    protected function destroy()
+    protected function destroy(): void
     {
         if ($this->resource) {
             imagedestroy($this->resource);

@@ -106,7 +106,7 @@ class Attribute
         return $this->options;
     }
 
-    public function getOption(string $name, $defaultValue = null)
+    public function getOption(string $name, mixed $defaultValue = null): mixed
     {
         return $this->options[$name] ?? $defaultValue;
     }

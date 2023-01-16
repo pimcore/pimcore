@@ -23,12 +23,8 @@ interface ConditionInterface
 {
     /**
      * Create an instance from a config array
-     *
-     * @param array $config
-     *
-     * @return ConditionInterface
      */
-    public static function fromConfig(array $config): ConditionInterface;
+    public static function fromConfig(array $config): self;
 
     /**
      * Determines if the condition is able to match. E.g. if a country condition

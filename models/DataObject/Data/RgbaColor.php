@@ -136,7 +136,7 @@ class RgbaColor implements OwnerAwareFieldInterface
      *
      * @throws \Exception
      */
-    public function setHex(string $hexValue)
+    public function setHex(string $hexValue): void
     {
         $hexValue = ltrim($hexValue, '#');
         $length = strlen($hexValue);
@@ -163,7 +163,7 @@ class RgbaColor implements OwnerAwareFieldInterface
      * @param int|null $b
      * @param int|null $a
      */
-    public function setRgba(int $r = null, int $g = null, int $b = null, int $a = null)
+    public function setRgba(int $r = null, int $g = null, int $b = null, int $a = null): void
     {
         $this->setR($r);
         $this->setG($g);

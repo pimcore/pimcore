@@ -85,7 +85,7 @@ class ToolbarListener implements EventSubscriberInterface
         ];
     }
 
-    public function onPreResolve(TargetingEvent $event)
+    public function onPreResolve(TargetingEvent $event): void
     {
         $request = $event->getRequest();
         if (!$this->requestCanDebug($request)) {
@@ -96,7 +96,7 @@ class ToolbarListener implements EventSubscriberInterface
         $this->overrideHandler->handleRequest($request);
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

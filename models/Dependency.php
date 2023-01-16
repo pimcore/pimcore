@@ -67,7 +67,7 @@ class Dependency extends AbstractModel
      * @param int $id
      * @param string $type
      */
-    public function addRequirement(int $id, string $type)
+    public function addRequirement(int $id, string $type): void
     {
         $this->requires[] = [
             'type' => $type,
@@ -81,7 +81,7 @@ class Dependency extends AbstractModel
      *
      * @param Element\ElementInterface $element
      */
-    public function cleanAllForElement(Element\ElementInterface $element)
+    public function cleanAllForElement(Element\ElementInterface $element): void
     {
         $this->getDao()->cleanAllForElement($element);
     }
@@ -90,7 +90,7 @@ class Dependency extends AbstractModel
      * Cleanup the dependencies for current source id.
      * Can be used for updating the dependencies.
      */
-    public function clean()
+    public function clean(): void
     {
         $this->requires = [];
         $this->getDao()->clear();

@@ -25,14 +25,14 @@ use Symfony\Component\HttpFoundation\Request;
 
 class LanguageOverrideHandler implements OverrideHandlerInterface
 {
-    public function buildOverrideForm(FormBuilderInterface $form, Request $request)
+    public function buildOverrideForm(FormBuilderInterface $form, Request $request): void
     {
         $form->add('language', LanguageType::class, [
             'required' => false,
         ]);
     }
 
-    public function overrideFromRequest(array $overrides, Request $request)
+    public function overrideFromRequest(array $overrides, Request $request): void
     {
         $language = $overrides['language'] ?? null;
         if (empty($language)) {

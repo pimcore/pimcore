@@ -277,7 +277,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * delete item
      */
-    public function delete()
+    public function delete(): void
     {
         $this->getDao()->delete();
     }

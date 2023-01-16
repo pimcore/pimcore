@@ -43,7 +43,7 @@ class AdminSessionBagListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -59,7 +59,7 @@ class AdminSessionBagListener implements EventSubscriberInterface
         $this->configure($session);
     }
 
-    public function configure(SessionInterface $session)
+    public function configure(SessionInterface $session): void
     {
         foreach ($this->config['session']['attribute_bags'] as $name => $config) {
             $bag = new LockableAttributeBag($config['storage_key']);
