@@ -324,10 +324,6 @@ final class Staticroute extends AbstractModel
 
     public function getSiteId(): array
     {
-        if ($this->siteId && !is_array($this->siteId)) {
-            $this->siteId = explode(',', (string)$this->siteId);
-        }
-
         return $this->siteId;
     }
 
@@ -490,10 +486,6 @@ final class Staticroute extends AbstractModel
 
     public function getMethods(): array
     {
-        if ($this->methods && is_string($this->methods)) {
-            $this->methods = explode(',', $this->methods);
-        }
-
         return $this->methods;
     }
 

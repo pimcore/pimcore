@@ -65,7 +65,8 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
-    private function removeRoutesFromSettingsStore() {
+    private function removeRoutesFromSettingsStore(): void
+    {
         $staticRoutes = SettingsStore::getIdsByScope(self::SETTINGS_STORE_SCOPE);
         if(!empty($staticRoutes)) {
             foreach($staticRoutes as $staticRoute) {
