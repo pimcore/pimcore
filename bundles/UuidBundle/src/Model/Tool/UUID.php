@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\UuidBundle\Model\Tool;
 
 use Exception;
 use Pimcore\Bundle\UuidBundle\Model\Tool\UUID\Dao;
-use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
 

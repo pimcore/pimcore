@@ -16,9 +16,9 @@
 namespace Pimcore\Bundle\UuidBundle\Model\Tool\UUID\Listing;
 
 use Exception;
+use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 use Pimcore\Bundle\UuidBundle\Model\Tool\UUID\Listing;
 use Pimcore\Model;
-use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 
 /**
  * @internal

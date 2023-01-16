@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\UuidBundle\EventListener;
 
 use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
-use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\DataObjectEvents;
