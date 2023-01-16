@@ -14,4 +14,7 @@ return [
     "Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle" => [
+        "all" => TRUE
+    ],
 ];

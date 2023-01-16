@@ -13,15 +13,17 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\UUID;
+namespace Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 
+use Exception;
+use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Tool\UUID $model
+ * @property UUID $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
@@ -55,13 +57,13 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(): void
     {
         $uuid = $this->model->getUuid();
         if (!$uuid) {
-            throw new \Exception("Couldn't delete UUID - no UUID specified.");
+            throw new Exception("Couldn't delete UUID - no UUID specified.");
         }
 
         $itemId = $this->model->getItemId();
@@ -70,10 +72,10 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete(self::TABLE_NAME, ['itemId' => $itemId, 'type' => $type, 'uuid' => $uuid]);
     }
 
-    public function getByUuid(string $uuid): Model\Tool\UUID
+    public function getByUuid(string $uuid): UUID
     {
         $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME ." where uuid='" . $uuid . "'");
-        $model = new Model\Tool\UUID();
+        $model = new UUID();
         $model->setValues($data);
 
         return $model;
