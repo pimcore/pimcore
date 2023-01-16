@@ -374,6 +374,7 @@ class UserController extends AdminController implements KernelControllerEventInt
                 $tmpArray[] = json_decode($item, true);
             }
             $tmpArray = array_values(array_filter($tmpArray));
+            $tmpArray = User::strictKeybinds($tmpArray);
             $tmpArray = json_encode($tmpArray);
 
             $user->setKeyBindings($tmpArray);
