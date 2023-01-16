@@ -58,12 +58,12 @@ abstract class Tracker implements TrackerInterface
         $this->checkoutTenants = $checkoutTenants;
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         $this->templatePrefix = $options['template_prefix'];
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['template_prefix']);
 

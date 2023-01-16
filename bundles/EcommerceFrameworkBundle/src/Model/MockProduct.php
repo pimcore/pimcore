@@ -37,7 +37,7 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return 'default';
     }
 
-    public function getOSIsBookable($quantityScale = 1): bool
+    public function getOSIsBookable(int $quantityScale = 1): bool
     {
         return false;
     }
@@ -115,7 +115,7 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return 0;
     }
 
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args): mixed
     {
         return null;
     }

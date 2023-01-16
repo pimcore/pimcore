@@ -154,8 +154,6 @@ return [
     'Pimcore\\Model\\Tool\\Targeting\\TargetGroup' => 'Pimcore\\Model\\Tool\\Targeting\\TargetGroup\\Dao',
     'Pimcore\\Model\\Tool\\Targeting\\TargetGroup\\Listing' => 'Pimcore\\Model\\Tool\\Targeting\\TargetGroup\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\TmpStore' => 'Pimcore\\Model\\Tool\\TmpStore\\Dao',
-    'Pimcore\\Model\\Tool\\UUID' => 'Pimcore\\Model\\Tool\\UUID\\Dao',
-    'Pimcore\\Model\\Tool\\UUID\\Listing' => 'Pimcore\\Model\\Tool\\UUID\\Listing\\Dao',
     'Pimcore\\Model\\Translation' => 'Pimcore\\Model\\Translation\\Dao',
     'Pimcore\\Model\\Translation\\Listing' => 'Pimcore\\Model\\Translation\\Listing\\Dao',
     'Pimcore\\Model\\User' => 'Pimcore\\Model\\User\\Dao',

@@ -39,7 +39,7 @@ class EventedControllerListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelController(ControllerEvent $event)
+    public function onKernelController(ControllerEvent $event): void
     {
         $callable = $event->getController();
         if (!is_array($callable)) {
@@ -56,7 +56,7 @@ class EventedControllerListener implements EventSubscriberInterface
         }
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         $request = $event->getRequest();
         $eventController = $request->attributes->get('_event_controller');

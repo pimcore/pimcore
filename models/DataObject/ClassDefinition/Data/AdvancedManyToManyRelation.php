@@ -482,7 +482,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -673,7 +673,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
-    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $db = Db::get();
         $context = $params['context'] ?? null;
@@ -752,7 +752,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this->columnKeys;
     }
 
-    public function classSaved(DataObject\ClassDefinition $class, array $params = [])
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         /** @var DataObject\Data\ElementMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
@@ -794,7 +794,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * @param DataObject\ClassDefinition\Data\AdvancedManyToManyRelation $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         parent::synchronizeWithMasterDefinition($masterDefinition);
         $this->columns = $masterDefinition->columns;
@@ -990,7 +990,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this->optimizedAdminLoading;
     }
 
-    public function setOptimizedAdminLoading(bool $optimizedAdminLoading)
+    public function setOptimizedAdminLoading(bool $optimizedAdminLoading): void
     {
         $this->optimizedAdminLoading = (bool) $optimizedAdminLoading;
     }
@@ -1012,7 +1012,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this->enableBatchEdit;
     }
 
-    public function setEnableBatchEdit(bool $enableBatchEdit)
+    public function setEnableBatchEdit(bool $enableBatchEdit): void
     {
         $this->enableBatchEdit = (bool) $enableBatchEdit;
     }

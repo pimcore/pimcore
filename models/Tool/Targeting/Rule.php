@@ -180,7 +180,7 @@ class Rule extends Model\AbstractModel
         return $this->conditions;
     }
 
-    public function setScope(string $scope)
+    public function setScope(string $scope): void
     {
         if (!empty($scope)) {
             $this->scope = $scope;
@@ -192,7 +192,7 @@ class Rule extends Model\AbstractModel
         return $this->scope;
     }
 
-    public function setActive(bool $active)
+    public function setActive(bool $active): void
     {
         $this->active = (bool) $active;
     }
@@ -207,7 +207,7 @@ class Rule extends Model\AbstractModel
         return $this->prio;
     }
 
-    public function setPrio(int $prio)
+    public function setPrio(int $prio): void
     {
         $this->prio = $prio;
     }

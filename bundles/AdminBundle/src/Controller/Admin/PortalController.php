@@ -43,7 +43,7 @@ class PortalController extends AdminController implements KernelControllerEventI
         return $this->dashboardHelper->getDashboard($request->get('key'));
     }
 
-    protected function saveConfiguration(Request $request, array $config)
+    protected function saveConfiguration(Request $request, array $config): void
     {
         $this->dashboardHelper->saveDashboard($request->get('key'), $config);
     }
@@ -410,7 +410,7 @@ class PortalController extends AdminController implements KernelControllerEventI
         return $this->adminJson(['data' => $data]);
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

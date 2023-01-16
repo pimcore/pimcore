@@ -1568,7 +1568,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         return $this->adminJson(['success' => true, 'page' => $page]);
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

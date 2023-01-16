@@ -21,11 +21,17 @@ use Pimcore\Model\Element\ElementInterface;
 
 interface WrapperInterface extends ElementInterface
 {
-    public function setHardLinkSource(Document\Hardlink $hardLinkSource);
+    /**
+     * @return $this
+     */
+    public function setHardLinkSource(Document\Hardlink $hardLinkSource): static;
 
     public function getHardLinkSource(): Document\Hardlink;
 
-    public function setSourceDocument(Document $sourceDocument);
+    /**
+     * @return $this
+     */
+    public function setSourceDocument(Document $sourceDocument): static;
 
     public function getSourceDocument(): ?Document;
 }

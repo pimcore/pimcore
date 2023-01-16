@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DeviceOverrideHandler implements OverrideHandlerInterface
 {
-    public function buildOverrideForm(FormBuilderInterface $form, Request $request)
+    public function buildOverrideForm(FormBuilderInterface $form, Request $request): void
     {
         $form->add('device', DeviceType::class, [
             'label' => 'Device',
@@ -36,7 +36,7 @@ class DeviceOverrideHandler implements OverrideHandlerInterface
         ]);
     }
 
-    public function overrideFromRequest(array $overrides, Request $request)
+    public function overrideFromRequest(array $overrides, Request $request): void
     {
         $device = $overrides['device'] ?? [];
         if (empty($device)) {

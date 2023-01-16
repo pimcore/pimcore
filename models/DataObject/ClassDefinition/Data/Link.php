@@ -229,7 +229,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data instanceof DataObject\Data\Link) {
             if ((int)$data->getInternal() > 0) {

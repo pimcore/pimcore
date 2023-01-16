@@ -13,5 +13,8 @@ return [
     ],
     "Pimcore\\Bundle\\FileExplorerBundle\\PimcoreFileExplorerBundle" => [
         "all" => TRUE
-    ]
+    ],
+    "Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle" => [
+        "all" => TRUE
+    ],
 ];

@@ -34,7 +34,7 @@ final class GDPRDataProviderPass implements CompilerPassInterface
      *
      * @param ContainerBuilder $container
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $providers = $container->findTaggedServiceIds('pimcore.gdpr.data-provider');
 

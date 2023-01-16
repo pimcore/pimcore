@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface CustomRecyclingMarshalInterface
 {
-    public function marshalRecycleData(Concrete $object, mixed $data);
+    public function marshalRecycleData(Concrete $object, mixed $data): mixed;
 
-    public function unmarshalRecycleData(Concrete $object, mixed $data);
+    public function unmarshalRecycleData(Concrete $object, mixed $data): mixed;
 }

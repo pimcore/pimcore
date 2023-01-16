@@ -61,7 +61,7 @@ class SessionStorage implements TargetingStorageInterface
         return $bag->has($name);
     }
 
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value): void
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
         if (null === $bag) {
@@ -89,7 +89,7 @@ class SessionStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc }
      */
-    public function clear(VisitorInfo $visitorInfo, string $scope = null)
+    public function clear(VisitorInfo $visitorInfo, string $scope = null): void
     {
         if (null !== $scope) {
             $bag = $this->getSessionBag($visitorInfo, $scope, true);
@@ -106,7 +106,7 @@ class SessionStorage implements TargetingStorageInterface
         }
     }
 
-    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): void
     {
         // only allow migration if a session bag is available as otherwise the fallback
         // would clear the original storage although data was not stored
