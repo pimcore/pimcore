@@ -390,6 +390,6 @@ final class Config implements Countable, Iterator, ArrayAccess
             return '';
         }
 
-        return is_string($this->data) ? (string)$this->data : json_encode($this->data, JSON_PRETTY_PRINT);
+        return json_encode($this->data, JSON_PRETTY_PRINT);
     }
 }
