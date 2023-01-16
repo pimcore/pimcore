@@ -20,7 +20,7 @@ use Pimcore\Model\Element\ElementInterface;
 
 class ObjectIdSum implements InterpreterInterface
 {
-    public function interpret($value, $config = null): ?int
+    public function interpret(mixed $value, ?array $config = null): ?int
     {
         $sum = 0;
         if (is_array($value)) {

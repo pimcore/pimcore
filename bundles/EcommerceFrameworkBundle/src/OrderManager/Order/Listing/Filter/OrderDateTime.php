@@ -72,7 +72,7 @@ class OrderDateTime implements OrderListFilterInterface
         return $this->column;
     }
 
-    public function setColumn(string $column)
+    public function setColumn(string $column): void
     {
         $this->column = $column;
     }

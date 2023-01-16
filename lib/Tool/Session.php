@@ -198,10 +198,10 @@ final class Session
      *
      * @deprecated
      */
-    public static function writeClose()
+    public static function writeClose(): void
     {
         trigger_deprecation('pimcore/pimcore', '10.6', sprintf('Usage of method %s is deprecated since version 10.6 and will be removed in Pimcore 11. No alternative given.', __METHOD__));
 
-        return self::getSessionHandler()->writeClose();
+        self::getSessionHandler()->writeClose();
     }
 }

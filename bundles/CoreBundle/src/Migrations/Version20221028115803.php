@@ -41,7 +41,7 @@ final class Version20221028115803 extends AbstractMigration
     /**
      * @throws \Exception
      */
-    private function regenerateClassesWithFieldCollections()
+    private function regenerateClassesWithFieldCollections(): void
     {
         $listing = new Listing();
         foreach ($listing->getClasses() as $class) {

@@ -40,13 +40,6 @@ class GeoLocation
         $this->altitude = $altitude;
     }
 
-    /**
-     * @param float $latitude
-     * @param float $longitude
-     * @param float|null $altitude
-     *
-     * @return self
-     */
     public static function build(float $latitude, float $longitude, float $altitude = null): self
     {
         return new self(

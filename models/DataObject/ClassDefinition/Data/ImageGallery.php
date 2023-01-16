@@ -86,7 +86,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public string $predefinedDataTemplates;
 
-    public function setRatioX(int $ratioX)
+    public function setRatioX(int $ratioX): void
     {
         $this->ratioX = $ratioX;
     }
@@ -96,7 +96,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $this->ratioX;
     }
 
-    public function setRatioY(int $ratioY)
+    public function setRatioY(int $ratioY): void
     {
         $this->ratioY = $ratioY;
     }
@@ -111,7 +111,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $this->predefinedDataTemplates;
     }
 
-    public function setPredefinedDataTemplates(string $predefinedDataTemplates)
+    public function setPredefinedDataTemplates(string $predefinedDataTemplates): void
     {
         $this->predefinedDataTemplates = $predefinedDataTemplates;
     }
@@ -121,7 +121,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $this->uploadPath;
     }
 
-    public function setUploadPath(string $uploadPath)
+    public function setUploadPath(string $uploadPath): void
     {
         $this->uploadPath = $uploadPath;
     }
@@ -409,7 +409,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @throws Element\ValidationException
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (
             $this->getMandatory() && !$omitMandatoryCheck &&

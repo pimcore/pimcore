@@ -33,7 +33,7 @@ interface LocaleServiceInterface
 
     public function getLocale(): ?string;
 
-    public function setLocale(?string $locale);
+    public function setLocale(?string $locale): void;
 
     public function hasLocale(): bool;
 }

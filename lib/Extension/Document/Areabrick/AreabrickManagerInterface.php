@@ -25,7 +25,7 @@ interface AreabrickManagerInterface
      * @param string $id
      * @param AreabrickInterface $brick
      */
-    public function register(string $id, AreabrickInterface $brick);
+    public function register(string $id, AreabrickInterface $brick): void;
 
     /**
      * Registers a lazy loaded area brick service on the manager
@@ -33,7 +33,7 @@ interface AreabrickManagerInterface
      * @param string $id
      * @param string $serviceId
      */
-    public function registerService(string $id, string $serviceId);
+    public function registerService(string $id, string $serviceId): void;
 
     /**
      * Fetches a brick by ID

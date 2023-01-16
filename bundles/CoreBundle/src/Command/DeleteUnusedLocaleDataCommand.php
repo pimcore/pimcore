@@ -31,7 +31,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
 {
     use DryRun;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:locale:delete-unused-tables')

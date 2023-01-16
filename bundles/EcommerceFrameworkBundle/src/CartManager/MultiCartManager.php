@@ -64,7 +64,7 @@ class MultiCartManager implements CartManagerInterface
     /**
      * checks if cart manager is initialized and if not, do so
      */
-    protected function checkForInit()
+    protected function checkForInit(): void
     {
         if (!$this->initialized) {
             $this->initSavedCarts();
@@ -72,7 +72,7 @@ class MultiCartManager implements CartManagerInterface
         }
     }
 
-    protected function initSavedCarts()
+    protected function initSavedCarts(): void
     {
         $carts = $this->getAllCartsForCurrentUser();
 

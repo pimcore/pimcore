@@ -140,7 +140,7 @@ class NumericRange extends Data implements
         return $this->minValue;
     }
 
-    public function setMinValue(?float $minValue)
+    public function setMinValue(?float $minValue): void
     {
         $this->minValue = $minValue;
     }

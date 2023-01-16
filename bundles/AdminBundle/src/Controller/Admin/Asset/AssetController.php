@@ -926,7 +926,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     /**
      * @Route("/webdav{path}", name="pimcore_admin_webdav", requirements={"path"=".*"})
      */
-    public function webdavAction()
+    public function webdavAction(): void
     {
         $homeDir = Asset::getById(1);
 
@@ -1108,6 +1108,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if (!$version) {
             throw $this->createNotFoundException('Version not found');
         }
+
+        /** @var Asset $asset */
         $asset = $version->loadData();
 
         if (!$asset->isAllowed('versions')) {
@@ -1120,6 +1122,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             '@PimcoreAdmin/admin/asset/show_version_' . strtolower($asset->getType()) . '.html.twig',
             [
                 'asset' => $asset,
+                'version' => $version,
                 'loader' => $loader,
             ]
         );
@@ -1590,7 +1593,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         return $response;
     }
 
-    protected function addThumbnailCacheHeaders(Response $response)
+    protected function addThumbnailCacheHeaders(Response $response): void
     {
         $lifetime = 300;
         $date = new \DateTime('now');
@@ -2472,7 +2475,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         ]);
     }
 
-    protected function checkForPharStreamWrapper($path)
+    protected function checkForPharStreamWrapper(string $path): void
     {
         if (stripos($path, 'phar://') !== false) {
             throw $this->createAccessDeniedException('Using PHAR files is not allowed!');
@@ -2812,7 +2815,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         throw $this->createAccessDeniedHttpException();
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

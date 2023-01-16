@@ -57,7 +57,7 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -98,7 +98,7 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
         return $session;
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
