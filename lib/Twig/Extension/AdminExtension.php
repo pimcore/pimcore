@@ -30,6 +30,9 @@ use Twig\TwigFunction;
  */
 class AdminExtension extends AbstractExtension
 {
+    private EditmodeResolver $editmodeResolver;
+    private UserLoader $userLoader;
+
     public function __construct(private UrlGeneratorInterface $generator, EditmodeResolver $editmodeResolver, UserLoader $userLoader)
     {
         $this->editmodeResolver = $editmodeResolver;
@@ -55,10 +58,11 @@ class AdminExtension extends AbstractExtension
     }
 
     /**
-     * @return string
+     * @return ?string
      */
     public function getAdminLanguage()
     {
+        $pimcoreUser = null;
         if ($this->editmodeResolver->isEditmode()) {
             $pimcoreUser = $this->userLoader->getUser();
         }
