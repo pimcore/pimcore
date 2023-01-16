@@ -449,15 +449,13 @@ class Service extends Model\Element\Service
                         $type = $keyParts[1];
 
                         if ($type === 'classificationstore') {
-                            $parent = self::hasInheritableParentObject($object);
 
-                            if (!empty($parent)) {
-                                $data[$dataKey] = self::getStoreValueForObject($parent, $key, $requestedLanguage);
-                                $data['inheritedFields'][$dataKey] = ['inherited' => $parent->getId() != $object->getId(), 'objectid' => $parent->getId()];
+                            if (!empty($inheritedData = self::getInheritedData($object, $key, $requestedLanguage))) {
+                                $data[$dataKey] = $inheritedData['value'];
+                                $data['inheritedFields'][$dataKey] = ['inherited' => $inheritedData['parent']->getId() != $object->getId(), 'objectid' => $inheritedData['parent']->getId()];
                             }
                         }
                     }
-
                     if ($needLocalizedPermissions) {
                         if (!$user->isAdmin()) {
                             $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
@@ -483,7 +481,6 @@ class Service extends Model\Element\Service
                 }
             }
         }
-
         return $data;
     }
 
@@ -2088,5 +2085,19 @@ class Service extends Model\Element\Service
         }
 
         return null;
+    }
+
+    protected static function getInheritedData(Concrete $object, string $key, string $requestedLanguage): array
+    {
+        if (!$parent = self::hasInheritableParentObject($object)) return [];
+
+        if ($inheritedValue = self::getStoreValueForObject($parent, $key, $requestedLanguage)){
+            return [
+                'parent' => $parent,
+                'value' => $inheritedValue
+            ];
+        }
+
+        return self::getInheritedData($parent, $key, $requestedLanguage);
     }
 }
