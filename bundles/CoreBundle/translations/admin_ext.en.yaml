@@ -690,9 +690,6 @@ foreground_color: Foreground Color
 background_color: Background Color
 use_current_player_position_as_preview: Use current player position as preview
 system_infos_and_tools: System Info & Tools
-php_info: PHP Info
-php_opcache_status: PHP OPcache Status
-system_requirements_check: System-Requirements Check
 server_info: Server Info
 database_administration: Database Administration
 important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality: >-
