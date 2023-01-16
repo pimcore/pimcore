@@ -78,9 +78,6 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\SearchBackendListener: ~
 
-    Pimcore\Bundle\CoreBundle\EventListener\UUIDListener: ~
-
-
     #
     # EXCEPTION HANDLING
     #

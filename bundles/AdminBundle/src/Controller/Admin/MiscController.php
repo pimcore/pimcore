@@ -566,33 +566,6 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/phpinfo", name="pimcore_admin_misc_phpinfo", methods={"GET"})
-     *
-     * @param Request $request
-     * @param Profiler|null $profiler
-     *
-     * @throws \Exception
-     *
-     * @return Response
-     */
-    public function phpinfoAction(Request $request, ?Profiler $profiler): Response
-    {
-        if ($profiler) {
-            $profiler->disable();
-        }
-
-        if (!$this->getAdminUser()->isAdmin()) {
-            throw new \Exception('Permission denied');
-        }
-
-        ob_start();
-        phpinfo();
-        $content = ob_get_clean();
-
-        return new Response($content);
-    }
-
-    /**
      * @Route("/get-language-flag", name="pimcore_admin_misc_getlanguageflag", methods={"GET"})
      *
      * @param Request $request
