@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
+use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Tool\Admin;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
@@ -28,14 +30,17 @@ use Twig\TwigFunction;
  */
 class AdminExtension extends AbstractExtension
 {
-    public function __construct(private UrlGeneratorInterface $generator)
+    public function __construct(private UrlGeneratorInterface $generator, EditmodeResolver $editmodeResolver, UserLoader $userLoader)
     {
+        $this->editmodeResolver = $editmodeResolver;
+        $this->userLoader = $userLoader;
     }
 
     public function getFunctions(): array
     {
         return [
             new TwigFunction('pimcore_minimize_scripts', [$this, 'minimize']),
+            new TwigFunction('pimcore_editmode_admin_language', [$this, 'getAdminLanguage']),
         ];
     }
 
@@ -47,6 +52,17 @@ class AdminExtension extends AbstractExtension
         return [
             new TwigFilter('pimcore_inline_icon', [$this, 'inlineIcon']),
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdminLanguage()
+    {
+        if ($this->editmodeResolver->isEditmode()) {
+            $pimcoreUser = $this->userLoader->getUser();
+        }
+        return $pimcoreUser?->getLanguage();
     }
 
     public function minimize(array $paths): string
