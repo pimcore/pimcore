@@ -83,22 +83,22 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     protected $chartType = '';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $pieColumn = '';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $pieLabelColumn = '';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $xAxis = '';
 
     /**
-     * @var string|array
+     * @var string|array|null
      */
     protected $yAxis = [];
 
@@ -178,7 +178,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param \stdClass $configuration
+     * @param \stdClass|null $configuration
      * @param Config|null $fullConfig
      *
      * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
@@ -372,7 +372,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param string $pieColumn
+     * @param string|null $pieColumn
      */
     public function setPieColumn($pieColumn)
     {
@@ -380,7 +380,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPieColumn()
     {
@@ -388,7 +388,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param string $xAxis
+     * @param string|null $xAxis
      */
     public function setXAxis($xAxis)
     {
@@ -396,7 +396,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getXAxis()
     {
@@ -404,7 +404,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param array|string $yAxis
+     * @param array|string|null $yAxis
      */
     public function setYAxis($yAxis)
     {
@@ -412,7 +412,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @return array|string
+     * @return array|string|null
      */
     public function getYAxis()
     {
@@ -420,7 +420,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param string $pieLabelColumn
+     * @param string|null $pieLabelColumn
      */
     public function setPieLabelColumn($pieLabelColumn)
     {
@@ -428,7 +428,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPieLabelColumn()
     {

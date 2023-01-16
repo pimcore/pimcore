@@ -265,7 +265,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @static
+     * @param ElementInterface|null $element
      *
      * @return bool
      */
@@ -504,7 +504,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @param  string $type
-     * @param  int $id
+     * @param  int|string $id
      * @param  array|bool $force
      *
      * @return Asset|AbstractObject|Document|null
@@ -1114,6 +1114,8 @@ class Service extends Model\AbstractModel
 
         // replace all 4 byte unicode characters
         $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
+        // replace left to right marker characters ( lrm )
+        $key = preg_replace('/(\x{200e}|\x{200f})/u', '-', $key);
         // replace slashes with a hyphen
         $key = str_replace('/', '-', $key);
 
@@ -1644,7 +1646,7 @@ class Service extends Model\AbstractModel
      * @internal
      *
      * @param string $type
-     * @param int|string $id
+     * @param int|string|null $id
      *
      * @return string
      */

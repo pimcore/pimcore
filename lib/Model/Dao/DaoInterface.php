@@ -19,6 +19,8 @@ interface DaoInterface
 {
     /**
      * @param \Pimcore\Model\AbstractModel $model
+     *
+     * @return $this
      */
     public function setModel($model);
 

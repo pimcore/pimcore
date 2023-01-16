@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
@@ -57,7 +58,7 @@ class Token extends AbstractModel
     public $usages;
 
     /**
-     * @var int
+     * @var string
      */
     public $timestamp;
 
@@ -92,6 +93,12 @@ class Token extends AbstractModel
         return false;
     }
 
+    /**
+     * @param string $code
+     * @param int $maxUsages
+     *
+     * @return bool
+     */
     public static function isUsedToken($code, $maxUsages = 1)
     {
         $db = Db::get();
@@ -145,6 +152,11 @@ class Token extends AbstractModel
         return true;
     }
 
+    /**
+     * @param CartInterface $cart
+     *
+     * @return bool
+     */
     public function release($cart)
     {
         return Reservation::releaseToken($this->getToken(), $cart);
@@ -171,7 +183,7 @@ class Token extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getTimestamp()
     {
@@ -179,7 +191,7 @@ class Token extends AbstractModel
     }
 
     /**
-     * @param int $timestamp
+     * @param string $timestamp
      */
     public function setTimestamp($timestamp)
     {
@@ -274,6 +286,11 @@ class Token extends AbstractModel
         return $this->id;
     }
 
+    /**
+     * @param int $id
+     *
+     * @return void
+     */
     public function setId($id)
     {
         $this->id = $id;

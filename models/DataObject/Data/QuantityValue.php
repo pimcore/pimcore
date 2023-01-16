@@ -24,13 +24,13 @@ class QuantityValue extends AbstractQuantityValue
     use ObjectVarTrait;
 
     /**
-     * @var float|int|null
+     * @var float|int|null|string
      */
     protected $value;
 
     /**
-     * @param float|int|null $value
-     * @param Unit|string|null $unit
+     * @param float|int|string|null $value
+     * @param string|Unit|null $unit
      */
     public function __construct($value = null, $unit = null)
     {
@@ -39,7 +39,7 @@ class QuantityValue extends AbstractQuantityValue
     }
 
     /**
-     * @param float|int|null $value
+     * @param float|int|string|null $value
      */
     public function setValue($value)
     {
@@ -48,7 +48,7 @@ class QuantityValue extends AbstractQuantityValue
     }
 
     /**
-     * @return float|int|null
+     * @return float|int|string|null
      */
     public function getValue()
     {

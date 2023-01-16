@@ -18,57 +18,57 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 class Transaction extends AbstractData
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $type;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $affiliation;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $total;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $subTotal;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $tax;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $shipping;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $coupon;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $list;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $step;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $option;
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getType()
     {
@@ -88,7 +88,7 @@ class Transaction extends AbstractData
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getAffiliation()
     {
@@ -108,7 +108,7 @@ class Transaction extends AbstractData
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getTotal()
     {
@@ -128,7 +128,7 @@ class Transaction extends AbstractData
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getSubTotal()
     {
@@ -148,7 +148,7 @@ class Transaction extends AbstractData
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getTax()
     {
@@ -168,7 +168,7 @@ class Transaction extends AbstractData
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getShipping()
     {
@@ -188,7 +188,7 @@ class Transaction extends AbstractData
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getCoupon()
     {
@@ -208,7 +208,7 @@ class Transaction extends AbstractData
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getList()
     {
@@ -228,7 +228,7 @@ class Transaction extends AbstractData
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getStep()
     {
@@ -248,7 +248,7 @@ class Transaction extends AbstractData
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOption()
     {

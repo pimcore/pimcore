@@ -18,13 +18,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface, ClassSavedInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -47,7 +46,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $name;
 
@@ -68,7 +67,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $title;
 
@@ -182,9 +181,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Classificationstore|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
      */
@@ -342,9 +341,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param array $containerData
+     * @param mixed $containerData
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Classificationstore
      */
@@ -406,7 +405,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param mixed $data
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
@@ -419,9 +418,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Classificationstore|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */
@@ -477,7 +476,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\Classificationstore|null $data
+     * @param mixed $data
      *
      * @return bool
      */
@@ -524,7 +523,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param Data|Layout $child
+     * @param mixed $child
      */
     public function addChild($child)
     {
@@ -603,7 +602,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved($class, $params = [])
+    public function classSaved($class/**, $params = []**/)
     {
         $classificationStore = new DataObject\Classificationstore();
         $classificationStore->setClass($class);
@@ -611,7 +610,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
     {
@@ -850,7 +849,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @throws \Exception
      */
@@ -862,7 +861,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @throws \Exception
      */
@@ -1428,6 +1427,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $code;
     }
 
+    /**
+     * @param array $data
+     *
+     * @return static
+     */
     public static function __set_state($data)
     {
         $obj = new static();

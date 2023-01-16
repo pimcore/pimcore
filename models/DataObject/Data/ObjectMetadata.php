@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
 
 /**
  * @method \Pimcore\Model\DataObject\Data\ObjectMetadata\Dao getDao()
@@ -26,16 +27,18 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
 
-    /** @var DataObject\AbstractObject|null */
+    /**
+     * @var DataObject\AbstractObject|null
+     */
     protected $object;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $objectId;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $fieldname;
 
@@ -50,9 +53,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     protected $data = [];
 
     /**
-     * @param string $fieldname
+     * @param string|null $fieldname
      * @param array $columns
-     * @param DataObject\Concrete|null $object
+     * @param Concrete|null $object
      */
     public function __construct($fieldname, $columns = [], $object = null)
     {
@@ -62,11 +65,11 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param DataObject\Concrete|null $object
+     * @param Concrete|null $object
      *
      * @return $this
      */
-    public function setObject(?DataObject\Concrete $object)
+    public function setObject(?Concrete $object)
     {
         $this->markMeDirty();
 
@@ -119,7 +122,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param Concrete $object
      * @param string $ownertype
      * @param string $ownername
      * @param string $position
@@ -131,7 +134,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param DataObject\Concrete $source
+     * @param Concrete $source
      * @param int $destinationId
      * @param string $fieldname
      * @param string $ownertype
@@ -141,7 +144,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      *
      * @return ObjectMetadata|null
      */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
+    public function load(Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
     {
         $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index);
         $this->markMeDirty(false);
@@ -163,7 +166,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFieldname()
     {
@@ -171,12 +174,12 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return DataObject\Concrete|null
+     * @return Concrete|null
      */
     public function getObject()
     {
         if ($this->getObjectId()) {
-            $object = DataObject\Concrete::getById($this->getObjectId());
+            $object = Concrete::getById($this->getObjectId());
             if (!$object) {
                 Logger::info('object ' . $this->getObjectId() . ' does not exist anymore');
             }
@@ -188,7 +191,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param DataObject\Concrete $element
+     * @param Concrete $element
      *
      * @return $this
      */
@@ -200,7 +203,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return DataObject\Concrete|null
+     * @return Concrete|null
      */
     public function getElement()
     {

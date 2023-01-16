@@ -184,8 +184,8 @@ class IndexController extends AdminController implements KernelResponseEventInte
      */
     protected function addPluginAssets(array &$templateParams)
     {
-        $templateParams['pluginJsPaths'] = $this->getBundleManager()->getJsPaths();
-        $templateParams['pluginCssPaths'] = $this->getBundleManager()->getCssPaths();
+        $templateParams['pluginJsPaths'] = $this->bundleManager->getJsPaths();
+        $templateParams['pluginCssPaths'] = $this->bundleManager->getCssPaths();
 
         return $this;
     }

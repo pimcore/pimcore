@@ -37,7 +37,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     }
 
     /**
-     * @return Hotspotimage|false
+     * @return Hotspotimage|bool|null
      */
     #[\ReturnTypeWillChange]
     public function current()// : Hotspotimage|false

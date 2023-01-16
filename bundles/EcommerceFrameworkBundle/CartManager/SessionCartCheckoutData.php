@@ -24,6 +24,12 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
         throw new \Exception('Not implemented, should not be needed for this cart type.');
     }
 
+    /**
+     * @param string $key
+     * @param int|string $cartId
+     *
+     * @return AbstractCartCheckoutData|null
+     */
     public static function getByKeyCartId($key, $cartId)
     {
         throw new \Exception('Not implemented, should not be needed for this cart type.');
@@ -32,7 +38,10 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
     public static function removeAllFromCart($cartId)
     {
         $checkoutDataItem = new self();
-        $checkoutDataItem->getCart()->checkoutData = [];
+        $cart = $checkoutDataItem->getCart();
+        if ($cart instanceof SessionCart) {
+            $cart->checkoutData = [];
+        }
     }
 
     public function setCart(CartInterface $cart)
@@ -41,6 +50,9 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
         $this->cartId = $cart->getId();
     }
 
+    /**
+     * @return CartInterface|null
+     */
     public function getCart()
     {
         if (empty($this->cart)) {
@@ -50,11 +62,19 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
         return $this->cart;
     }
 
+    /**
+     * @return int|string|null
+     */
     public function getCartId()
     {
         return $this->cartId;
     }
 
+    /**
+     * @param int|string|null $cartId
+     *
+     * @return void
+     */
     public function setCartId($cartId)
     {
         $this->cartId = $cartId;

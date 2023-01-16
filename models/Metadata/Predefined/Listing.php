@@ -100,7 +100,7 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
 
     /**
      * @param string $key
-     * @param string $language
+     * @param string|null $language
      * @param string|null $targetSubtype
      *
      * @return \Pimcore\Model\Metadata\Predefined|null

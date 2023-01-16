@@ -312,7 +312,7 @@ final class Config extends Model\AbstractModel
      *
      * @param string $name
      * @param array $parameters
-     * @param string $media
+     * @param string|null $media
      *
      * @return bool
      */
@@ -340,7 +340,7 @@ final class Config extends Model\AbstractModel
      * @param int $position
      * @param string $name
      * @param array $parameters
-     * @param string $media
+     * @param string|null $media
      *
      * @return bool
      */
@@ -499,7 +499,7 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @param float $highResolution
+     * @param float|null $highResolution
      */
     public function setHighResolution($highResolution)
     {

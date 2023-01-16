@@ -42,7 +42,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
      *
      * @internal
      *
-     * @var Document\Snippet|null
+     * @var Document\Snippet|Model\Element\ElementDescriptor|null
      */
     protected $snippet = null;
 
@@ -55,7 +55,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
     public function getData()
     {
@@ -79,7 +79,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     }
 
     /**
-     * {@inheritdoc}
+     * @return array|null
      */
     public function getDataEditmode() /** : mixed */
     {
@@ -246,7 +246,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function rewriteIds($idMapping) /** : void */
     {
@@ -268,7 +268,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     }
 
     /**
-     * @return Document\Snippet
+     * @return Document\Snippet|null
      */
     public function getSnippet()
     {

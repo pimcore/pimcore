@@ -32,7 +32,7 @@ use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 
 /**
- * @property \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern $configuration
+ * @property VoucherTokenTypePattern $configuration
  */
 class Pattern extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
@@ -227,7 +227,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * may be reached several queries are generated.
      * returns the generated voucher codes if it was successfully - otherwise false
      *
-     * @return bool | array  - bool failed - array if codes are generated
+     * @return bool | array | string  - bool failed - array if codes are generated
      */
     public function insertOrUpdateVoucherSeries()
     {
@@ -638,7 +638,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      */
 
     /**
-     * @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
+     * @return VoucherTokenTypePattern
      */
     public function getConfiguration()
     {
@@ -646,7 +646,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @param \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern $configuration
+     * @param VoucherTokenTypePattern $configuration
      */
     public function setConfiguration($configuration)
     {
@@ -661,6 +661,9 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         return $this->characterPools;
     }
 
+    /**
+     * @return string
+     */
     public function getCharacterPool()
     {
         return $this->characterPools[$this->configuration->getCharacterType()];
@@ -693,7 +696,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @param string|int|null $seriesId
+     * @param int|null $seriesId
      */
     public function setSeriesId($seriesId)
     {
@@ -701,7 +704,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @return string|int|null
+     * @return int|null
      */
     public function getSeriesId()
     {

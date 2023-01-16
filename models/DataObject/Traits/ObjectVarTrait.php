@@ -44,13 +44,13 @@ trait ObjectVarTrait
     }
 
     /**
-     * @param string $var
+     * @param string|null $var
      *
      * @return mixed
      */
     public function getObjectVar($var)
     {
-        if (!property_exists($this, $var)) {
+        if (!$var || !property_exists($this, $var)) {
             return null;
         }
 

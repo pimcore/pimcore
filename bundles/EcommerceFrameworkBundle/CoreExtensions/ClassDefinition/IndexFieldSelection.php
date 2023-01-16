@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
@@ -71,11 +72,19 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     {
     }
 
+    /**
+     * @param bool $considerTenants
+     *
+     * @return void
+     */
     public function setConsiderTenants($considerTenants)
     {
         $this->considerTenants = $considerTenants;
     }
 
+    /**
+     * @return bool
+     */
     public function getConsiderTenants()
     {
         return $this->considerTenants;
@@ -92,7 +101,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @param bool $multiPreSelect
+     * @param string $multiPreSelect
      */
     public function setMultiPreSelect($multiPreSelect)
     {
@@ -100,7 +109,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @return bool
+     * @return string
      */
     public function getMultiPreSelect()
     {
@@ -124,13 +133,13 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param ObjectData\IndexFieldSelection|null $data
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
+     * @param mixed $data
+     * @param null|AbstractObject $object
      * @param array $params
      *
      * @return array
+     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -150,13 +159,13 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param mixed $data
+     * @param null|AbstractObject $object
+     * @param array $params
      *
      * @return ObjectData\IndexFieldSelection|null
+     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -168,13 +177,13 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param ObjectData\IndexFieldSelection|null $data
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param mixed $data
+     * @param null|AbstractObject $object
+     * @param array $params
      *
      * @return array
+     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -182,13 +191,13 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param ObjectData\IndexFieldSelection|null $data
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param mixed $data
+     * @param null|AbstractObject $object
+     * @param array $params
      *
      * @return array|null
+     *
+     * @see Data::getDataForEditmode
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -204,13 +213,13 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
      * @param array $data
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
+     * @param null|AbstractObject $object
      * @param array $params
      *
      * @return ObjectData\IndexFieldSelection|null
+     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {

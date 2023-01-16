@@ -108,7 +108,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
 
     /**
      * @param int $duration days
-     * @param string|null $seriesId
+     * @param int $seriesId
      *
      * @return bool
      */

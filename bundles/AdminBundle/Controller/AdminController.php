@@ -27,6 +27,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
+use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AdminController extends Controller implements AdminControllerInterface
@@ -45,6 +46,24 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @var PimcoreBundleManager
      */
     protected $bundleManager;
+
+    #[Required]
+    public function setTranslator(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
+    }
+
+    #[Required]
+    public function setBundleManager(PimcoreBundleManager $bundleManager): void
+    {
+        $this->bundleManager = $bundleManager;
+    }
+
+    #[Required]
+    public function setTokenResolver(TokenStorageUserResolver $tokenResolver): void
+    {
+        $this->tokenResolver = $tokenResolver;
+    }
 
     /**
      * @return string[]
@@ -76,19 +95,52 @@ abstract class AdminController extends Controller implements AdminControllerInte
         return true;
     }
 
+    /**
+     * @deprecated
+     *
+     * @return TranslatorInterface
+     */
     public function getTranslator()
     {
-        return $this->container->get('translator');
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6',
+            sprintf('%s is deprecated, please use $this->translator instead. Will be removed in Pimcore 11', __METHOD__)
+        );
+
+        return $this->translator;
     }
 
+    /**
+     * @deprecated
+     *
+     * @return PimcoreBundleManager
+     */
     public function getBundleManager()
     {
-        return $this->container->get(PimcoreBundleManager::class);
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6',
+            sprintf('%s is deprecated, please use $this->bundleManager instead. Will be removed in Pimcore 11', __METHOD__)
+        );
+
+        return $this->bundleManager;
     }
 
+    /**
+     * @deprecated
+     *
+     * @return TokenStorageUserResolver
+     */
     public function getTokenResolver()
     {
-        return $this->container->get(TokenStorageUserResolver::class);
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6',
+            sprintf('%s is deprecated, please use $this->tokenResolver instead. Will be removed in Pimcore 11', __METHOD__)
+        );
+
+        return $this->tokenResolver;
     }
 
     /**
@@ -101,10 +153,10 @@ abstract class AdminController extends Controller implements AdminControllerInte
     protected function getAdminUser($proxyUser = false)
     {
         if ($proxyUser) {
-            return $this->getTokenResolver()->getUserProxy();
+            return $this->tokenResolver->getUserProxy();
         }
 
-        return $this->getTokenResolver()->getUser();
+        return $this->tokenResolver->getUser();
     }
 
     /**
@@ -280,6 +332,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     public function trans($id, array $parameters = [], $domain = 'admin', $locale = null)
     {
-        return $this->getTranslator()->trans($id, $parameters, $domain, $locale);
+        return $this->translator->trans($id, $parameters, $domain, $locale);
     }
 }

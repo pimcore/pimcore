@@ -41,12 +41,12 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public $implementsInterfaces;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $title;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $group;
 
@@ -106,7 +106,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getTitle()
     {
@@ -114,7 +114,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @param string $title
+     * @param string|null $title
      *
      * @return $this
      */
@@ -226,7 +226,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getGroup()
     {
@@ -234,7 +234,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @param string $group
+     * @param string|null $group
      *
      * @return $this
      */
@@ -291,7 +291,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      * @param Data $fieldDefinition
      * @param array $context
      *
-     * @return mixed
+     * @return Data
      */
     abstract protected function doEnrichFieldDefinition($fieldDefinition, $context = []);
 }

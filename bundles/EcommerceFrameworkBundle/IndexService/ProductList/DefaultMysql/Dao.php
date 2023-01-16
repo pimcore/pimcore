@@ -54,7 +54,17 @@ class Dao
         $this->logger = $logger;
     }
 
-    public function load($condition, $orderBy = null, $limit = null, $offset = null)
+    /**
+     * @param string $condition
+     * @param string|null $orderBy
+     * @param int|null $limit
+     * @param int $offset
+     *
+     * @return array
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function load($condition, $orderBy = null, $limit = null, $offset = 0)
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -98,6 +108,13 @@ class Dao
         return $result;
     }
 
+    /**
+     * @param string $fieldname
+     * @param string $condition
+     * @param bool $countValues
+     *
+     * @return array
+     */
     public function loadGroupByValues($fieldname, $condition, $countValues = false)
     {
         if ($condition) {
@@ -136,6 +153,13 @@ class Dao
         }
     }
 
+    /**
+     * @param string $fieldname
+     * @param string $condition
+     * @param bool $countValues
+     *
+     * @return array
+     */
     public function loadGroupByRelationValues($fieldname, $condition, $countValues = false)
     {
         if ($condition) {
@@ -184,7 +208,15 @@ class Dao
         }
     }
 
-    public function getCount($condition, $orderBy = null, $limit = null, $offset = null)
+    /**
+     * @param string $condition
+     * @param string|null $orderBy
+     * @param int|null $limit
+     * @param int $offset
+     *
+     * @return int
+     */
+    public function getCount($condition, $orderBy = null, $limit = null, $offset = 0)
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -221,6 +253,11 @@ class Dao
         return $result;
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return mixed
+     */
     public function quote($value)
     {
         return $this->db->quote($value);

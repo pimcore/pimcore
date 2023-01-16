@@ -64,7 +64,7 @@ final class Translation extends AbstractModel
     protected $domain = self::DOMAIN_DEFAULT;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $type = 'simple';
 
@@ -91,7 +91,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     * @param string $type
+     * @param string|null $type
      */
     public function setType($type): void
     {
