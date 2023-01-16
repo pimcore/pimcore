@@ -32,7 +32,14 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle
     public function getJsPaths(): array
     {
         return [
-            '/bundles/pimcoretinymce/js/startup.js'
+            '/bundles/pimcoretinymce/js/editor.js'
+        ];
+    }
+
+    public function getEditmodeJsPaths(): array
+    {
+        return [
+            '/bundles/pimcoretinymce/js/editor.js'
         ];
     }
 

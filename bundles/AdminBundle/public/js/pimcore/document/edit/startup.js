@@ -48,11 +48,13 @@ if (typeof pimcore == "object") {
     pimcore.registerNS("pimcore.globalmanager");
     pimcore.registerNS("pimcore.helpers");
     pimcore.registerNS("pimcore.treenodelocator");
+    pimcore.registerNS("pimcore.events");
 
     pimcore.globalmanager = parent.pimcore.globalmanager;
     pimcore.helpers = parent.pimcore.helpers;
     pimcore.settings = parent.pimcore.settings;
     pimcore.treenodelocator = parent.pimcore.treenodelocator;
+    pimcore.events = parent.pimcore.events;
 }
 
 if (pimcore_document_id) {
