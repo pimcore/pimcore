@@ -979,6 +979,7 @@ final class User extends User\UserRole
                 'shift' => true,
             ],
         ];
+
         return json_encode(self::strictKeybinds($bindings));
     }
 
@@ -997,13 +998,15 @@ final class User extends User\UserRole
      */
     public static function strictKeybinds(array $bindings): array
     {
-        foreach($bindings as $ind => $binding){
+        foreach ($bindings as $ind => $binding) {
             $bindings[$ind]['ctrl'] ??= false;
             $bindings[$ind]['alt'] ??= false;
             $bindings[$ind]['shift'] ??= false;
         }
+
         return $bindings;
     }
+
     /**
      * @param string $keyBindings
      */
