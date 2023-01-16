@@ -139,10 +139,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getData(): void
     {
-        if (empty($this->model->getClass())) {
-            return;
-        }
-
         if (!$data = $this->db->fetchAssociative('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()])) {
             return;
         }
@@ -423,11 +419,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     public function delete(): void
     {
         // delete fields which have their own delete algorithm
-        if ($this->model->getClass()) {
-            foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
-                if ($fd instanceof CustomResourcePersistingInterface) {
-                    $fd->delete($this->model);
-                }
+        foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
+            if ($fd instanceof CustomResourcePersistingInterface) {
+                $fd->delete($this->model);
             }
         }
 

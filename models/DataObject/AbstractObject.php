@@ -384,6 +384,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     throw new Model\Exception\NotFoundException('No entry for object id ' . $id);
                 }
             } catch (Model\Exception\NotFoundException $e) {
+                Logger::error($e->getMessage());
                 return null;
             }
         } else {

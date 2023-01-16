@@ -134,6 +134,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [DataObjects] Text data types now set their corresponding database columns to `null` instead of `''` (empty string) when empty.
 - [Ecommerce][Product Interfaces] Changed return type-hints of `CheckoutableInterface` methods `getOSPrice`, `getOSPriceInfo`, `getOSAvailabilityInfo`, `getPriceSystemName`, `getAvailabilitySystemName`, `getPriceSystemImplementation`, `getAvailabilitySystemImplementation` to be non-nullable.
 - [Elements] Removed the deprecated `Pimcore\Model\Element\Service::getType()`, use `Pimcore\Model\Element\Service::getElementType()` instead.
+- [DataObjects] Method `Concrete::getClass()` throws NotFoundException if class is not found for an object.
 - [Asset] Asset/Asset Thumbnail Update messages are now routed to different queue
   instead of `pimcore_core`. please add option `pimcore_asset_update` to command `bin/console messenger:consume pimcore_core... pimcore_asset_update` to post process assets on update.
   Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
