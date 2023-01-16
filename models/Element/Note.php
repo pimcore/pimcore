@@ -16,8 +16,8 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Event\ElementEvents;
-use Pimcore\Event\NoteEvents;
 use Pimcore\Event\Model\ElementEvent;
+use Pimcore\Event\NoteEvents;
 use Pimcore\Model;
 
 /**
@@ -156,7 +156,7 @@ final class Note extends Model\AbstractModel
         $this->getDao()->save();
 
         if (!$isUpdate) {
-            if(\Pimcore::getEventDispatcher()->hasListeners(ElementEvents::POST_ADD)) {
+            if (\Pimcore::getEventDispatcher()->hasListeners(ElementEvents::POST_ADD)) {
                 \Pimcore::getEventDispatcher()->dispatch(new ElementEvent($this), ElementEvents::POST_ADD);
                 trigger_deprecation(
                     'pimcore/pimcore',
