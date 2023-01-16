@@ -368,14 +368,15 @@ class DataObjectHelperController extends AdminController
 
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
-                $request->get('no_system_columns', false),
+                $request->query->getBoolean('no_system_columns'),
                 $class,
                 $gridType,
-                $request->get('no_brick_columns', false),
+                $request->query->getBoolean('no_brick_columns'),
                 $fields,
                 $context,
                 $objectId,
-                $types);
+                $types
+            );
         } else {
             $savedColumns = $gridConfig['columns'];
             foreach ($savedColumns as $key => $sc) {
@@ -555,18 +556,9 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @param bool $noSystemColumns
-     * @param DataObject\ClassDefinition|null $class
-     * @param string $gridType
-     * @param bool $noBrickColumns
-     * @param DataObject\ClassDefinition\Data[] $fields
-     * @param array $context
-     * @param int $objectId
-     * @param array $types
-     *
-     * @return array
+     * @param DataObject\ClassDefinition\Data[]|null $fields
      */
-    public function getDefaultGridFields(bool $noSystemColumns, ?DataObject\ClassDefinition $class, string $gridType, bool $noBrickColumns, array $fields, array $context, int $objectId, array $types = []): array
+    public function getDefaultGridFields(bool $noSystemColumns, ?DataObject\ClassDefinition $class, string $gridType, bool $noBrickColumns, ?array $fields, array $context, int $objectId, array $types = []): array
     {
         $count = 0;
         $availableFields = [];
@@ -648,7 +640,7 @@ class DataObjectHelperController extends AdminController
      * @param int $objectId
      * @param array|null $context
      */
-    protected function appendBrickFields(DataObject\ClassDefinition\Data $field, array $brickFields, array &$availableFields, string $gridType, int &$count, string $brickType, DataObject\ClassDefinition $class, int $objectId, array $context = null)
+    protected function appendBrickFields(DataObject\ClassDefinition\Data $field, array $brickFields, array &$availableFields, string $gridType, int &$count, string $brickType, DataObject\ClassDefinition $class, int $objectId, array $context = null): void
     {
         if (!empty($brickFields)) {
             foreach ($brickFields as $bf) {
@@ -768,7 +760,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridConfigApplyToAllAction(Request $request): JsonResponse
     {
-        $objectId = $request->get('objectId');
+        $objectId = $request->request->getInt('objectId');
         $object = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
@@ -885,7 +877,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridSaveColumnConfigAction(Request $request): JsonResponse
     {
-        $objectId = $request->get('id');
+        $objectId = $request->request->getInt('id');
         $object   = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
@@ -978,7 +970,7 @@ class DataObjectHelperController extends AdminController
      *
      * @throws \Exception
      */
-    protected function updateGridConfigShares(?GridConfig $gridConfig, array $metadata)
+    protected function updateGridConfigShares(?GridConfig $gridConfig, array $metadata): void
     {
         $user = $this->getAdminUser();
         if (!$gridConfig || !$user->isAllowed('share_configurations')) {
@@ -1020,7 +1012,7 @@ class DataObjectHelperController extends AdminController
      *
      * @throws \Exception
      */
-    protected function updateGridConfigFavourites(?GridConfig $gridConfig, array $metadata, int $objectId)
+    protected function updateGridConfigFavourites(?GridConfig $gridConfig, array $metadata, int $objectId): void
     {
         $currentUser = $this->getAdminUser();
 
@@ -1228,36 +1220,6 @@ class DataObjectHelperController extends AdminController
         return $response;
     }
 
-    private function getDataPreview($originalFile, $dialect): array
-    {
-        $count = 0;
-        $data = [];
-        if (($handle = fopen($originalFile, 'r')) !== false) {
-            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                $tmpData = [];
-
-                foreach ($rowData as $key => $value) {
-                    $tmpData['field_' . $key] = $value;
-                }
-
-                $tmpData['rowId'] = $count + 1;
-                $data[] = $tmpData;
-
-                $count++;
-
-                /**
-                 * Reached the number or rows for the preview
-                 */
-                if ($count > 18) {
-                    break;
-                }
-            }
-            fclose($handle);
-        }
-
-        return $data;
-    }
-
     protected function extractLanguage(Request $request): string
     {
         $requestedLanguage = $request->get('language');
@@ -1420,9 +1382,8 @@ class DataObjectHelperController extends AdminController
         return $this->adminJson(['success' => true]);
     }
 
-    public function encodeFunc($value): string
+    public function encodeFunc(string $value): string
     {
-        $value = $value['data'];
         $value = str_replace('"', '""', $value);
         //force wrap value in quotes and return
         return '"' . $value . '"';
@@ -1817,7 +1778,7 @@ class DataObjectHelperController extends AdminController
      * @param bool $firstOne
      * @param DataObject\ClassDefinition\Data[] $commonFields
      */
-    protected function processAvailableFieldDefinitions(array $fds, bool &$firstOne, array &$commonFields)
+    protected function processAvailableFieldDefinitions(array $fds, bool &$firstOne, array &$commonFields): void
     {
         foreach ($fds as $fd) {
             if ($fd instanceof DataObject\ClassDefinition\Data\Fieldcollections || $fd instanceof DataObject\ClassDefinition\Data\Objectbricks

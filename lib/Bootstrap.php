@@ -73,10 +73,6 @@ class Bootstrap
         @ini_set('max_execution_time', '-1');
         @ini_set('max_input_time', '-1');
 
-        // Error reporting is enabled in CLI
-        @ini_set('display_errors', 'On');
-        @ini_set('display_startup_errors', 'On');
-
         // Pimcore\Console handles maintenance mode through the AbstractCommand
         $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
         if (!$pimcoreConsole) {
@@ -121,7 +117,6 @@ class Bootstrap
         \Pimcore::setAutoloader($loader);
         self::autoload();
 
-        ini_set('error_log', PIMCORE_PHP_ERROR_LOG);
         ini_set('log_errors', '1');
 
         // load a startup file if it exists - this is a good place to preconfigure the system

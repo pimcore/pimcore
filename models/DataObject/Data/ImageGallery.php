@@ -73,7 +73,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     /**
      * @param Hotspotimage[] $items
      */
-    public function setItems(array $items)
+    public function setItems(array $items): void
     {
         if (!is_array($items)) {
             $items = [];

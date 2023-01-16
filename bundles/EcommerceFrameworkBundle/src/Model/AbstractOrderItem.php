@@ -27,31 +27,52 @@ abstract class AbstractOrderItem extends Concrete
 {
     abstract public function getProduct(): ?AbstractElement;
 
-    abstract public function setProduct(?AbstractElement $product);
+    /**
+     * @return $this
+     */
+    abstract public function setProduct(?AbstractElement $product): static;
 
     abstract public function getProductNumber(): ?string;
 
-    abstract public function setProductNumber(?string $productNumber);
+    /**
+     * @return $this
+     */
+    abstract public function setProductNumber(?string $productNumber): static;
 
     abstract public function getProductName(): ?string;
 
-    abstract public function setProductName(?string $productName);
+    /**
+     * @return $this
+     */
+    abstract public function setProductName(?string $productName): static;
 
     abstract public function getAmount(): ?float;
 
-    abstract public function setAmount(?float $amount): mixed;
+    /**
+     * @return $this
+     */
+    abstract public function setAmount(?float $amount): static;
 
     abstract public function getTotalPrice(): ?string;
 
-    abstract public function setTotalPrice(?string $totalPrice);
+    /**
+     * @return $this
+     */
+    abstract public function setTotalPrice(?string $totalPrice): static;
 
     abstract public function getTotalNetPrice(): ?string;
 
-    abstract public function setTotalNetPrice(?string $totalNetPrice);
+    /**
+     * @return $this
+     */
+    abstract public function setTotalNetPrice(?string $totalNetPrice): static;
 
     abstract public function getTaxInfo(): array;
 
-    abstract public function setTaxInfo(?array $taxInfo);
+    /**
+     * @return $this
+     */
+    abstract public function setTaxInfo(?array $taxInfo): static;
 
     /**
      * @return AbstractOrderItem[]
@@ -60,19 +81,30 @@ abstract class AbstractOrderItem extends Concrete
 
     /**
      * @param AbstractOrderItem[] $subItems
+     *
+     * @return $this
      */
-    abstract public function setSubItems(?array $subItems);
+    abstract public function setSubItems(?array $subItems): static;
 
     abstract public function getPricingRules(): ?Fieldcollection;
 
+    /**
+     * @return $this
+     */
     abstract public function setPricingRules(?Fieldcollection $pricingRules): static;
 
     abstract public function getOrderState(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setOrderState(?string $orderState): static;
 
     abstract public function getComment(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setComment(?string $comment): static;
 
     /**

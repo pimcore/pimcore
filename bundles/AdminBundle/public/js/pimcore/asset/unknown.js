@@ -28,10 +28,15 @@ pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
             detail: {
                 object: this,
                 type: "unknown"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenAssetUnknown);
+        const isAllowed = document.dispatchEvent(preOpenAssetUnknown);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
 
         var user = pimcore.globalmanager.get("user");

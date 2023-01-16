@@ -392,7 +392,9 @@ final class User extends User\UserRole
         return sprintf('/user-image/user-%s.png', $this->getId());
     }
 
-    // @internal
+    /**
+     * @internal
+     */
     protected function getThumbnailImageStoragePath(): string
     {
         return sprintf('/user-image/user-thumbnail-%s.png', $this->getId());

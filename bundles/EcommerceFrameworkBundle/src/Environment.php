@@ -61,19 +61,19 @@ class Environment implements EnvironmentInterface
         $this->processOptions($resolver->resolve($options));
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         $this->defaultCurrency = new Currency((string)$options['defaultCurrency']);
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['defaultCurrency']);
         $resolver->setAllowedTypes('defaultCurrency', 'string');
         $resolver->setDefaults(['defaultCurrency' => 'EUR']);
     }
 
-    protected function load()
+    protected function load(): void
     {
     }
 
@@ -100,7 +100,7 @@ class Environment implements EnvironmentInterface
         return $defaultValue;
     }
 
-    public function setCustomItem(string $key, mixed $value)
+    public function setCustomItem(string $key, mixed $value): void
     {
         $this->load();
 
@@ -133,14 +133,14 @@ class Environment implements EnvironmentInterface
         return $this->getCurrentUserId() !== self::USER_ID_NOT_SET;
     }
 
-    public function removeCustomItem(string $key)
+    public function removeCustomItem(string $key): void
     {
         $this->load();
 
         unset($this->customItems[$key]);
     }
 
-    public function clearEnvironment()
+    public function clearEnvironment(): void
     {
         $this->load();
 
@@ -153,7 +153,7 @@ class Environment implements EnvironmentInterface
         $this->useGuestCart = null;
     }
 
-    public function setDefaultCurrency(Currency $currency)
+    public function setDefaultCurrency(Currency $currency): void
     {
         $this->defaultCurrency = $currency;
     }
@@ -172,7 +172,7 @@ class Environment implements EnvironmentInterface
         return $this->useGuestCart;
     }
 
-    public function setUseGuestCart(bool $useGuestCart)
+    public function setUseGuestCart(bool $useGuestCart): void
     {
         $this->load();
 
@@ -184,7 +184,7 @@ class Environment implements EnvironmentInterface
      *
      * @param string|null $tenant
      */
-    public function setCurrentAssortmentTenant(?string $tenant)
+    public function setCurrentAssortmentTenant(?string $tenant): void
     {
         $this->load();
 
@@ -208,7 +208,7 @@ class Environment implements EnvironmentInterface
      *
      * @param string|null $subTenant
      */
-    public function setCurrentAssortmentSubTenant(?string $subTenant)
+    public function setCurrentAssortmentSubTenant(?string $subTenant): void
     {
         $this->load();
 
@@ -233,7 +233,7 @@ class Environment implements EnvironmentInterface
      * @param string $tenant
      * @param bool $persistent - if set to false, tenant is not stored to session and only valid for current process
      */
-    public function setCurrentCheckoutTenant(string $tenant, bool $persistent = true)
+    public function setCurrentCheckoutTenant(string $tenant, bool $persistent = true): void
     {
         $this->load();
 

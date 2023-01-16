@@ -145,7 +145,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         //TODO
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {

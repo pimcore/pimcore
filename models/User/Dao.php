@@ -25,7 +25,7 @@ class Dao extends UserRole\Dao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         parent::delete();
 

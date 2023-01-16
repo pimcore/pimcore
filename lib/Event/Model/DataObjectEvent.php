@@ -43,7 +43,7 @@ class DataObjectEvent extends Event implements ElementEventInterface
         return $this->object;
     }
 
-    public function setObject(AbstractObject $object)
+    public function setObject(AbstractObject $object): void
     {
         $this->object = $object;
     }

@@ -362,7 +362,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function getAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $objectId = (int)$request->get('id');
+        $objectId = $request->query->getInt('id');
         $objectFromDatabase = DataObject\Concrete::getById($objectId);
         if ($objectFromDatabase === null) {
             return $this->adminJson(['success' => false, 'message' => 'element_not_found'], JsonResponse::HTTP_NOT_FOUND);
@@ -379,7 +379,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 return $this->getEditLockResponse($objectId, 'object');
             }
 
-            Element\Editlock::lock($request->get('id'), 'object');
+            Element\Editlock::lock($objectId, 'object');
         }
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
@@ -557,25 +557,64 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function optionsAction(Request $request): JsonResponse
     {
-        $fieldConfig = json_decode($request->get('fieldConfig'), true);
-
-        $options = [];
-        $classes = [];
-        if (count($fieldConfig['classes']) > 0) {
-            foreach ($fieldConfig['classes'] as $classData) {
-                $classes[] = $classData['classes'];
-            }
+        $fieldConfigData = json_decode($request->get('fieldConfig'), true);
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
+        if (!$loader->supports($fieldConfigData['fieldtype'])) {
+            return new JsonResponse([]);
         }
 
-        $visibleFields = is_array($fieldConfig['visibleFields']) ? $fieldConfig['visibleFields'] : explode(',', $fieldConfig['visibleFields']);
+        /** @var AbstractRelations $fieldConfig */
+        $fieldConfig = $loader->build($fieldConfigData['fieldtype']);
+        $fieldConfig->setValues($fieldConfigData);
+
+        $visibleFields = null;
+        if (method_exists($fieldConfig, 'getVisibleFields')) {
+            $visibleFields = is_array($fieldConfig->getVisibleFields()) ? $fieldConfig->getVisibleFields() : explode(',', $fieldConfig->getVisibleFields());
+        }
 
         if (!$visibleFields) {
             $visibleFields = ['id', 'fullpath', 'classname'];
         }
 
         $searchRequest = $request;
-        $searchRequest->request->set('type', 'object');
-        $searchRequest->request->set('subtype', 'object,variant');
+
+        $allowedTypes = [];
+        $subTypes = [];
+        $classes = [];
+        $allowClasses = true;
+
+        if ($fieldConfig->getAssetsAllowed()) {
+            $allowedTypes[] = 'asset';
+            $allowClasses = false;
+
+            foreach ($fieldConfig->getAssetTypes() as $subType) {
+                $subTypes[] = $subType['assetTypes'];
+            }
+        }
+
+        if (method_exists($fieldConfig, 'getDocumentsAllowed') && $fieldConfig->getDocumentsAllowed()) {
+            $allowedTypes[] = 'document';
+            $allowClasses = false;
+
+            foreach ($fieldConfig->getDocumentTypes() as $subType) {
+                $subTypes[] = $subType['documentTypes'];
+            }
+        }
+
+        if (method_exists($fieldConfig, 'getObjectsAllowed') && $fieldConfig->getObjectsAllowed()) {
+            $allowedTypes[] = 'object';
+
+            if ($allowClasses) {
+                $subTypes = array_merge($subTypes, ['object', 'variant']);
+
+                foreach ($fieldConfig->getClasses() as $classData) {
+                    $classes[] = $classData['classes'];
+                }
+            }
+        }
+
+        $searchRequest->request->set('type', implode(',', $allowedTypes));
+        $searchRequest->request->set('subtype', implode(',', $subTypes));
         $searchRequest->request->set('class', implode(',', $classes));
         $searchRequest->request->set('fields', $visibleFields);
         $searchRequest->attributes->set('unsavedChanges', $request->get('unsavedChanges', ''));
@@ -583,38 +622,74 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $objects = json_decode($res->getContent(), true)['data'];
 
         if ($request->get('data')) {
-            foreach (explode(',', $request->get('data')) as $preSelectedElementId) {
-                $objects[] = ['id' => $preSelectedElementId];
+            foreach (json_decode($request->get('data'), true) as $preSelectedElement) {
+                if (isset($preSelectedElement['id'], $preSelectedElement['type'])) {
+                    $objects[] = ['id' => $preSelectedElement['id'], 'type' => $preSelectedElement['type']];
+                }
             }
         }
 
+        $options = [];
         foreach ($objects as $objectData) {
             $option = [
                 'id' => $objectData['id'],
+                'type' => $objectData['type'],
             ];
 
             $visibleFieldValues = [];
             foreach ($visibleFields as $visibleField) {
+                if ($visibleField === 'fullpath' && $fieldConfig instanceof DataObject\ClassDefinition\PathFormatterAwareInterface) {
+                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
+                    if (!$object instanceof Element\ElementInterface) {
+                        continue;
+                    }
+
+                    $formatter = $fieldConfig->getPathFormatterClass();
+
+                    if (null !== $formatter) {
+                        $pathFormatter = DataObject\ClassDefinition\Helper\PathFormatterResolver::resolvePathFormatter(
+                            $fieldConfig->getPathFormatterClass()
+                        );
+
+                        if ($pathFormatter instanceof DataObject\ClassDefinition\PathFormatterInterface) {
+                            $formattedPath = $pathFormatter->formatPath(
+                                [],
+                                $object,
+                                [$objectData],
+                                [
+                                    'fd' => $fieldConfig,
+                                    'context' => [],
+                                ]
+                            )[0] ?? null;
+                            if ($formattedPath) {
+                                $objectData['fullpath'] = $formattedPath;
+                            }
+                        }
+                    }
+                }
+
                 if (isset($objectData[$visibleField])) {
                     $visibleFieldValues[] = $objectData[$visibleField];
                 } else {
+                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
+                    if (!$object instanceof Element\ElementInterface) {
+                        continue;
+                    }
+
                     $inheritValues = DataObject\Concrete::getGetInheritedValues();
                     $fallbackValues = DataObject\Localizedfield::getGetFallbackValues();
 
                     DataObject\Concrete::setGetInheritedValues(true);
                     DataObject\Localizedfield::setGetFallbackValues(true);
 
-                    $object = DataObject\Concrete::getById($objectData['id']);
-                    if (!$object instanceof DataObject\Concrete) {
-                        continue;
-                    }
-
                     $getter = 'get'.ucfirst($visibleField);
-                    $visibleFieldValue = $object->$getter();
-                    if (count($classes) > 1 && $visibleField == 'key') {
-                        $visibleFieldValue .= ' ('.$object->getClassName().')';
+                    if (method_exists($object, $getter)) {
+                        $visibleFieldValue = $object->$getter();
+                        if ($visibleField === 'key' && $object instanceof DataObject\Concrete && count($classes) > 1) {
+                            $visibleFieldValue .= ' ('.$object->getClassName().')';
+                        }
+                        $visibleFieldValues[] = $visibleFieldValue;
                     }
-                    $visibleFieldValues[] = $visibleFieldValue;
 
                     DataObject\Concrete::setGetInheritedValues($inheritValues);
                     DataObject\Localizedfield::setGetFallbackValues($fallbackValues);
@@ -640,7 +715,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function getSelectOptions(Request $request): JsonResponse
     {
-        $objectId = $request->get('objectId');
+        $objectId = $request->query->getInt('objectId');
         $object = DataObject\Concrete::getById($objectId);
         if (!$object instanceof DataObject\Concrete) {
             return new JsonResponse(['success'=> false, 'message' => 'Object not found.']);
@@ -969,14 +1044,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object->setClassId($request->get('classId'));
 
         if ($request->get('variantViaTree')) {
-            $parentId = $request->get('parentId');
+            $parentId = $request->request->getInt('parentId');
             $parent = DataObject\Concrete::getById($parentId);
             $object->setClassId($parent->getClass()->getId());
         }
 
-        $object->setClassName($request->get('className'));
-        $object->setParentId($request->get('parentId'));
-        $object->setKey($request->get('key'));
+        $object->setClassName($request->request->get('className'));
+        $object->setParentId($request->request->getInt('parentId'));
+        $object->setKey($request->request->get('key'));
         $object->setCreationDate(time());
         $object->setUserOwner($this->getAdminUser()->getId());
         $object->setUserModification($this->getAdminUser()->getId());
@@ -1294,7 +1369,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
     }
 
-    protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder)
+    protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder): void
     {
         $fn = function () use ($parentObject, $currentSortOrder) {
             $list = new DataObject\Listing();
@@ -1628,7 +1703,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         throw $this->createAccessDeniedHttpException();
     }
 
-    protected function assignPropertiesFromEditmode(Request $request, DataObject\AbstractObject $object)
+    protected function assignPropertiesFromEditmode(Request $request, DataObject\AbstractObject $object): void
     {
         if ($request->get('properties')) {
             $properties = [];
@@ -2058,7 +2133,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function previewAction(Request $request): RedirectResponse|Response
     {
-        $id = $request->get('id');
+        $id = $request->query->getInt('id');
         $object = DataObject\Service::getElementFromSession('object', $id);
 
         if ($object instanceof DataObject\Concrete) {
@@ -2084,7 +2159,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
     }
 
-    protected function processRemoteOwnerRelations(DataObject\Concrete $object, array $toDelete, array $toAdd, string $ownerFieldName)
+    protected function processRemoteOwnerRelations(DataObject\Concrete $object, array $toDelete, array $toAdd, string $ownerFieldName): void
     {
         $getter = 'get' . ucfirst($ownerFieldName);
         $setter = 'set' . ucfirst($ownerFieldName);
@@ -2166,7 +2241,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return $diff;
     }
 
-    protected function getLatestVersion(DataObject\Concrete $object, &$draftVersion = null): DataObject\Concrete
+    protected function getLatestVersion(DataObject\Concrete $object, ?DataObject\Concrete &$draftVersion = null): DataObject\Concrete
     {
         $latestVersion = $object->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
@@ -2181,7 +2256,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return $object;
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

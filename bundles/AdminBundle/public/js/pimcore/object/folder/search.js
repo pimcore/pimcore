@@ -240,10 +240,14 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         const preCreateObjectGrid = new CustomEvent(pimcore.events.preCreateObjectGrid, {
             detail: {
                 eventData: eventData
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preCreateObjectGrid);
+        const isAllowed = document.dispatchEvent(preCreateObjectGrid);
+        if (!isAllowed) {
+            return;
+        }
 
         var gridHelper = new pimcore.object.helpers.grid(
             klass.data.text,

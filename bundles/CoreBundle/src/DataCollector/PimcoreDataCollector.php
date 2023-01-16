@@ -33,7 +33,7 @@ class PimcoreDataCollector extends DataCollector implements ResetInterface
     ) {
     }
 
-    public function collect(Request $request, Response $response, ?\Throwable $exception = null)
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
         $this->data = [
             'version' => Version::getVersion(),
@@ -42,7 +42,7 @@ class PimcoreDataCollector extends DataCollector implements ResetInterface
         ];
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->data = [];
     }

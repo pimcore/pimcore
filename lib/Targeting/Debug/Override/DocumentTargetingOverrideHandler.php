@@ -34,7 +34,7 @@ class DocumentTargetingOverrideHandler implements OverrideHandlerInterface
         $this->documentTargetingConfigurator = $documentTargetingConfigurator;
     }
 
-    public function buildOverrideForm(FormBuilderInterface $form, Request $request)
+    public function buildOverrideForm(FormBuilderInterface $form, Request $request): void
     {
         $form->add('documentTargetGroup', ChoiceType::class, [
             'label' => 'Document Target Group',
@@ -51,7 +51,7 @@ class DocumentTargetingOverrideHandler implements OverrideHandlerInterface
         ]);
     }
 
-    public function overrideFromRequest(array $overrides, Request $request)
+    public function overrideFromRequest(array $overrides, Request $request): void
     {
         $targetGroup = $overrides['documentTargetGroup'] ?? null;
         if ($targetGroup && $targetGroup instanceof TargetGroup) {

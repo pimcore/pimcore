@@ -29,7 +29,7 @@ class CartItem extends AbstractCartItem implements CartItemInterface
 {
     protected int $sortIndex = 0;
 
-    public function setSortIndex(int $sortIndex)
+    public function setSortIndex(int $sortIndex): void
     {
         $this->sortIndex = (int)$sortIndex;
     }
@@ -82,7 +82,7 @@ class CartItem extends AbstractCartItem implements CartItemInterface
         return $cartItem;
     }
 
-    public static function removeAllFromCart(int|string $cartId)
+    public static function removeAllFromCart(int|string $cartId): void
     {
         $cartItem = new static();
         $cartItem->getDao()->removeAllFromCart($cartId);

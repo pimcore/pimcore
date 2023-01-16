@@ -33,7 +33,7 @@ interface UserAwarePasswordHasherInterface extends PasswordHasherInterface
      * @throws RuntimeException
      *      if the user is already set to prevent overwriting the scoped user object
      */
-    public function setUser(UserInterface $user);
+    public function setUser(UserInterface $user): void;
 
     /**
      * Get the user object
