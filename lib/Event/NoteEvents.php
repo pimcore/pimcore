@@ -15,14 +15,13 @@
 
 namespace Pimcore\Event;
 
-final class ElementEvents
+final class NoteEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\ElementEvent")
+     * @Event("Pimcore\Event\Model\Noteevent")
      *
      * @var string
      *
-     * @deprecated Remove with Pimcore 11
      */
-    const POST_ADD = 'pimcore.element.note.postAdd';
+    const POST_ADD = 'pimcore.note.postAdd';
 }
