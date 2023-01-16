@@ -55,7 +55,6 @@ pimcore.bundle.seo.robotstxt = Class.create({
         var items = [];
 
         pimcore.globalmanager.get("sites").load(function(records) {
-            console.log(records);
             Ext.each(records, function(record) {
                 items.push(this.getEditPanel(record))
             }.bind(this));
