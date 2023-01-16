@@ -11,4 +11,7 @@ return [
     "Pimcore\\Bundle\\SeoBundle\\PimcoreSeoBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle" => [
+        "all" => TRUE
+    ],
 ];

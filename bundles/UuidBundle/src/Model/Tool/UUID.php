@@ -14,13 +14,16 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool;
+namespace Pimcore\Bundle\UuidBundle\Model\Tool;
 
+use Exception;
+use Pimcore\Bundle\UuidBundle\Model\Tool\UUID\Dao;
+use Pimcore\Config;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
 
 /**
- * @method \Pimcore\Model\Tool\UUID\Dao getDao()
+ * @method Dao getDao()
  * @method void delete()
  * @method void save()
  */
@@ -78,13 +81,13 @@ final class UUID extends Model\AbstractModel
      *
      * @return $this
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function setSystemInstanceIdentifier(): static
     {
-        $instanceIdentifier = \Pimcore\Config::getSystemConfiguration('general')['instance_identifier'] ?? null;
+        $instanceIdentifier = \Pimcore::getKernel()->getContainer()->getParameter('pimcore_uuid.instance_identifier');
         if (empty($instanceIdentifier)) {
-            throw new \Exception('No instance identifier set in system config!');
+            throw new Exception('No instance identifier set in system config!');
         }
         $this->setInstanceIdentifier($instanceIdentifier);
 
@@ -120,12 +123,12 @@ final class UUID extends Model\AbstractModel
      *
      * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function createUuid(): string
     {
         if (!$this->getInstanceIdentifier()) {
-            throw new \Exception('No instance identifier specified.');
+            throw new Exception('No instance identifier specified.');
         }
 
         // namespace originally used from \Ramsey\Uuid\Uuid::NAMESPACE_DNS
@@ -170,7 +173,7 @@ final class UUID extends Model\AbstractModel
      *
      * @return UUID
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getByItem(mixed $item): UUID
     {
@@ -193,7 +196,7 @@ final class UUID extends Model\AbstractModel
      *
      * @return static
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function create(mixed $item): static
     {
