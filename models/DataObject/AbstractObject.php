@@ -385,6 +385,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 }
             } catch (Model\Exception\NotFoundException $e) {
                 Logger::error($e->getMessage());
+
                 return null;
             }
         } else {
