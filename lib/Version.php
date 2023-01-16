@@ -26,7 +26,8 @@ final class Version
 
     private const MAJOR_VERSION = 10;
 
-    public static function getMajorVersion(): string {
+    public static function getMajorVersion(): int
+    {
         return self::MAJOR_VERSION;
     }
 
