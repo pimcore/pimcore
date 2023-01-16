@@ -92,7 +92,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 if (value) {
                     var result = [];
                     var i;
-                    for (i = 0; i < value.length && i < 10; i++) {
+                    for (i = 0; i < value.length && i < this.maxRenderItemsInGrid; i++) {
                         var item = value[i];
                         result.push(item[1]);
                     }

@@ -17,6 +17,8 @@ pimcore.registerNS("pimcore.object.tags.abstractRelations");
  */
 pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstract, {
 
+    maxRenderItemsInGrid: 10,
+
     getFilterEditToolbarItems: function () {
         return [
             {

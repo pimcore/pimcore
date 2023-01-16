@@ -512,11 +512,10 @@ pimcore.object.helpers.grid = Class.create({
                     console.log("could not resolve field type " + fieldType);
                 }
             }
-
         }
     },
 
-    advancedRelationGridRenderer: function (field, pathProperty, value, metaData, record) {
+    advancedRelationGridRenderer: function (field, pathProperty, value, metaData, record, maxRenderItems = 10) {
         var key = field.key;
         this.applyPermissionStyle(key, value, metaData, record);
 
@@ -540,7 +539,7 @@ pimcore.object.helpers.grid = Class.create({
                 result += '</tr>';
 
 
-                for (let i = 0; i < value.length && i < 10; i++) {
+                for (let i = 0; i < value.length && i < maxRenderItems; i++) {
                     result += '<tr>';
 
                     result += '<td style="padding: 0 5px 0 5px; border-bottom: 1px solid #d0d0d0;  border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0;">';
@@ -580,7 +579,7 @@ pimcore.object.helpers.grid = Class.create({
                 result += '</table>';
             } else {
                 result = [];
-                for (let i = 0; i < value.length && i < 10; i++) {
+                for (let i = 0; i < value.length && i < maxRenderItems; i++) {
                     var item = value[i];
                     result.push(item[pathProperty]);
                 }
