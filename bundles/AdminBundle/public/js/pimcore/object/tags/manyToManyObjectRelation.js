@@ -106,8 +106,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
                     if (value && value.length > 0) {
 
-                        // only show 10 relations in the grid
-                        var maxAmount = 10;
+                        // only show xy relations in the grid
+                        var maxAmount = this.maxRenderItemsInGrid;
                         var result = [];
                         var i;
                         for (i = 0; i < value.length && i < maxAmount; i++) {

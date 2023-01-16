@@ -995,7 +995,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             getRelationFilter: this.getRelationFilter,
-            renderer: pimcore.object.helpers.grid.prototype.advancedRelationGridRenderer.bind(this, field, "path"),
+            renderer: pimcore.object.helpers.grid.prototype.advancedRelationGridRenderer.bind(this, field, "path", undefined, undefined, undefined, this.maxRenderItemsInGrid),
         };
     },
 
