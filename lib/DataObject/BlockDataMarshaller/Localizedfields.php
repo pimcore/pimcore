@@ -87,7 +87,9 @@ class Localizedfields implements MarshallerInterface
             foreach ($value as $language => $items) {
                 $result[$language] = [];
                 foreach ($items as $key => $normalizedData) {
-                    if (!isset($childDefs[$key])) continue;
+                    if (!isset($childDefs[$key])) {
+                        continue;
+                    }
 
                     $childDef = $childDefs[$key];
 
