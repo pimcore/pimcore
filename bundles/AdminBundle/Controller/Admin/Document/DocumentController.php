@@ -1146,6 +1146,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $versionFrom = Version::getById($from);
         $docFrom = $versionFrom?->loadData();
 
+        if (!$docFrom) {
+            throw $this->createNotFoundException('Version with id [' . $from . "] doesn't exist");
+        }
+
         $prefix = Config::getSystemConfiguration('documents')['preview_url_prefix'];
         if (empty($prefix)) {
             $prefix = $request->getSchemeAndHttpHost();
