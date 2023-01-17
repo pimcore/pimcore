@@ -17,6 +17,7 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ElementEvent;
+use Pimcore\Event\Model\ModelEvent;
 use Pimcore\Event\NoteEvents;
 use Pimcore\Model;
 
@@ -164,7 +165,7 @@ final class Note extends Model\AbstractModel
                     'pimcore.element.note.postAdd was deprecated. Please use pimcore.note.postAdd instead.'
                 );
             }
-            \Pimcore::getEventDispatcher()->dispatch(new ElementEvent($this), NoteEvents::POST_ADD);
+            \Pimcore::getEventDispatcher()->dispatch(new ModelEvent($this), NoteEvents::POST_ADD);
         }
     }
 
