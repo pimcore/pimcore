@@ -1568,11 +1568,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function publishVersionAction(Request $request)
     {
-        $version = Model\Version::getById((int) $request->get('id'));
-        if (!$version) {
-            throw $this->createNotFoundException();
+        $id = (int)$request->get('id');
+        $version = Model\Version::getById($id);
+        $object = $version?->loadData();
+        if (!$object) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
-        $object = $version->loadData();
 
         $currentObject = DataObject::getById($object->getId());
         if ($currentObject->isAllowed('publish')) {
@@ -1613,7 +1614,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
-        $object = $version->loadData();
+        $object = $version?->loadData();
 
         if ($object) {
             if (method_exists($object, 'getLocalizedFields')) {
@@ -1658,18 +1659,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $id2 = (int)$to;
 
         $version1 = Model\Version::getById($id1);
-        $object1 = $version1->loadData();
+        $object1 = $version1?->loadData();
 
-        if (method_exists($object1, 'getLocalizedFields')) {
+        if ($object1 && method_exists($object1, 'getLocalizedFields')) {
             /** @var DataObject\Localizedfield $localizedFields1 */
             $localizedFields1 = $object1->getLocalizedFields();
             $localizedFields1->setLoadedAllLazyData();
         }
 
         $version2 = Model\Version::getById($id2);
-        $object2 = $version2->loadData();
+        $object2 = $version2?->loadData();
 
-        if (method_exists($object2, 'getLocalizedFields')) {
+        if ($object2 && method_exists($object2, 'getLocalizedFields')) {
             /** @var DataObject\Localizedfield $localizedFields2 */
             $localizedFields2 = $object2->getLocalizedFields();
             $localizedFields2->setLoadedAllLazyData();

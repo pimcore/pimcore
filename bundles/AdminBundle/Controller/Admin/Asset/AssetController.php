@@ -1095,24 +1095,29 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function publishVersionAction(Request $request)
     {
-        $version = Model\Version::getById((int) $request->get('id'));
+        $id = (int)$request->get('id');
+        $version = Model\Version::getById($id);
         $asset = $version->loadData();
 
-        $currentAsset = Asset::getById($asset->getId());
-        if ($currentAsset->isAllowed('publish')) {
-            try {
-                $asset->setUserModification($this->getAdminUser()->getId());
-                $asset->save();
+        if ($asset) {
+            $currentAsset = Asset::getById($asset->getId());
+            if ($currentAsset->isAllowed('publish')) {
+                try {
+                    $asset->setUserModification($this->getAdminUser()->getId());
+                    $asset->save();
 
-                $treeData = $this->getTreeNodeConfig($asset);
+                    $treeData = $this->getTreeNodeConfig($asset);
 
-                return $this->adminJson(['success' => true, 'treeData' => $treeData]);
-            } catch (\Exception $e) {
-                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                    return $this->adminJson(['success' => true, 'treeData' => $treeData]);
+                } catch (\Exception $e) {
+                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                }
             }
+
+            throw $this->createAccessDeniedHttpException();
         }
 
-        throw $this->createAccessDeniedHttpException();
+        throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
     }
 
     /**
@@ -1126,10 +1131,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
-        if (!$version) {
-            throw $this->createNotFoundException('Version not found');
+        $asset = $version?->loadData();
+        if (!$asset) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
-        $asset = $version->loadData();
 
         if (!$asset->isAllowed('versions')) {
             throw $this->createAccessDeniedHttpException('Permission denied, version id [' . $id . ']');
