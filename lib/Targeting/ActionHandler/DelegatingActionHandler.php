@@ -40,7 +40,7 @@ class DelegatingActionHandler implements ActionHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
+    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null): void
     {
         /** @var string $type */
         $type = $action['type'] ?? null;

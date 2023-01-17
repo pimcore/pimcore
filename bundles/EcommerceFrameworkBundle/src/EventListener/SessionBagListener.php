@@ -53,7 +53,7 @@ class SessionBagListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -69,7 +69,7 @@ class SessionBagListener implements EventSubscriberInterface
         $this->configure($session);
     }
 
-    public function configure(SessionInterface $session)
+    public function configure(SessionInterface $session): void
     {
         $bagNames = $this->getBagNames();
 
@@ -86,7 +86,7 @@ class SessionBagListener implements EventSubscriberInterface
      *
      * @param SessionInterface $session
      */
-    public function clearSession(SessionInterface $session)
+    public function clearSession(SessionInterface $session): void
     {
         $bagNames = $this->getBagNames();
 

@@ -49,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function delete(string $id)
+    public function delete(string $id): void
     {
         $this->db->delete('tmp_store', ['id' => $id]);
     }

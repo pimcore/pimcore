@@ -25,7 +25,7 @@ final class Anonymizer extends AbstractOperator
 {
     private string $mode;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 

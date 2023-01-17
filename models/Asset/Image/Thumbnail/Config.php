@@ -288,7 +288,7 @@ final class Config extends Model\AbstractModel
         return $thumbnail;
     }
 
-    protected function createMediaIfNotExists(string $name)
+    protected function createMediaIfNotExists(string $name): void
     {
         if (!array_key_exists($name, $this->medias)) {
             $this->medias[$name] = [];
@@ -352,7 +352,7 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      */
-    public function resetItems()
+    public function resetItems(): void
     {
         $this->items = [];
         $this->medias = [];
@@ -441,7 +441,7 @@ final class Config extends Model\AbstractModel
         return $this->quality;
     }
 
-    public function setHighResolution(?float $highResolution)
+    public function setHighResolution(?float $highResolution): void
     {
         $this->highResolution = $highResolution;
     }
@@ -451,7 +451,7 @@ final class Config extends Model\AbstractModel
         return $this->highResolution;
     }
 
-    public function setMedias(array $medias)
+    public function setMedias(array $medias): void
     {
         $this->medias = $medias;
     }
@@ -466,7 +466,7 @@ final class Config extends Model\AbstractModel
         return !empty($this->medias);
     }
 
-    public function setFilenameSuffix(string $filenameSuffix)
+    public function setFilenameSuffix(string $filenameSuffix): void
     {
         $this->filenameSuffix = $filenameSuffix;
     }
@@ -696,7 +696,7 @@ final class Config extends Model\AbstractModel
         return $this->modificationDate;
     }
 
-    public function setModificationDate(int $modificationDate)
+    public function setModificationDate(int $modificationDate): void
     {
         $this->modificationDate = $modificationDate;
     }
@@ -706,7 +706,7 @@ final class Config extends Model\AbstractModel
         return $this->creationDate;
     }
 
-    public function setCreationDate(int $creationDate)
+    public function setCreationDate(int $creationDate): void
     {
         $this->creationDate = $creationDate;
     }
@@ -716,7 +716,7 @@ final class Config extends Model\AbstractModel
         return $this->preserveColor;
     }
 
-    public function setPreserveColor(bool $preserveColor)
+    public function setPreserveColor(bool $preserveColor): void
     {
         $this->preserveColor = $preserveColor;
     }
@@ -726,7 +726,7 @@ final class Config extends Model\AbstractModel
         return $this->preserveMetaData;
     }
 
-    public function setPreserveMetaData(bool $preserveMetaData)
+    public function setPreserveMetaData(bool $preserveMetaData): void
     {
         $this->preserveMetaData = $preserveMetaData;
     }

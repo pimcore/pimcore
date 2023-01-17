@@ -24,7 +24,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class LocationType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('country', CountryType::class, [
             'label' => 'Country',

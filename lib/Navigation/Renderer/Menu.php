@@ -347,7 +347,7 @@ class Menu extends AbstractRenderer
         return $this->_template;
     }
 
-    public function setTemplate(array|string $template)
+    public function setTemplate(array|string $template): void
     {
         $this->_template = $template;
     }

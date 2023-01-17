@@ -41,7 +41,7 @@ final class Version20221129084031 extends AbstractMigration
     /**
      * @throws \Exception
      */
-    private function regenerateObjectBricks()
+    private function regenerateObjectBricks(): void
     {
         $list = new Listing();
         foreach ($list->load() as $brickDefinition) {

@@ -32,7 +32,7 @@ class ClassesRebuildCommand extends AbstractCommand
 {
     protected ClassDefinitionManager $classDefinitionManager;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:deployment:classes-rebuild')

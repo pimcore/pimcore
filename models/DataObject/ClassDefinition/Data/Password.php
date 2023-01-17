@@ -92,7 +92,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->minimumLength = $minimumLength;
     }
 
-    public function setAlgorithm(string $algorithm)
+    public function setAlgorithm(string $algorithm): void
     {
         $this->algorithm = $algorithm;
     }
@@ -102,7 +102,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->algorithm;
     }
 
-    public function setSalt(string $salt)
+    public function setSalt(string $salt): void
     {
         $this->salt = $salt;
     }
@@ -112,7 +112,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->salt;
     }
 
-    public function setSaltlocation(string $saltlocation)
+    public function setSaltlocation(string $saltlocation): void
     {
         $this->saltlocation = $saltlocation;
     }
@@ -387,7 +387,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @param DataObject\ClassDefinition\Data\Password $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->algorithm = $masterDefinition->algorithm;
         $this->salt = $masterDefinition->salt;
@@ -421,7 +421,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @throws Model\Element\ValidationException|\Exception
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && ($this->getMinimumLength() && is_string($data) && strlen($data) < $this->getMinimumLength())) {
             throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength() . ' characters');

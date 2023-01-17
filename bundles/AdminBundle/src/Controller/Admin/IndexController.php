@@ -144,7 +144,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         try {
             $data = [
                 'instanceId' => $this->getInstanceId(),
-                'pimcore_major_version' => 11,
+                'pimcore_major_version' => Version::getMajorVersion(),
                 'pimcore_version' => Version::getVersion(),
                 'pimcore_hash' => Version::getRevision(),
                 'php_version' => PHP_VERSION,
@@ -383,7 +383,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    public function onKernelResponseEvent(ResponseEvent $event)
+    public function onKernelResponseEvent(ResponseEvent $event): void
     {
         $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);
     }

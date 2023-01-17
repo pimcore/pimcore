@@ -130,16 +130,16 @@ class NewsletterController extends DocumentControllerBase
         }
     }
 
-    protected function setValuesToDocument(Request $request, Document $page)
+    protected function setValuesToDocument(Request $request, Document $document): void
     {
-        $this->addSettingsToDocument($request, $page);
-        $this->addDataToDocument($request, $page);
-        $this->addPropertiesToDocument($request, $page);
+        $this->addSettingsToDocument($request, $document);
+        $this->addDataToDocument($request, $document);
+        $this->addPropertiesToDocument($request, $document);
 
         // plaintext
         if ($request->get('plaintext')) {
             $plaintext = $this->decodeJson($request->get('plaintext'));
-            $page->setValues($plaintext);
+            $document->setValues($plaintext);
         }
     }
 

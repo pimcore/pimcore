@@ -99,7 +99,7 @@ interface AdminSessionHandlerInterface
     /**
      * Saves the session if it is the last admin session which was opened
      */
-    public function writeClose();
+    public function writeClose(): void;
 
     /**
      * Check if the request has a cookie or a param matching the session name.

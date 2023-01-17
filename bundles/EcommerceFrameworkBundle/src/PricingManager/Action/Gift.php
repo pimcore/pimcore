@@ -80,7 +80,7 @@ class Gift implements GiftInterface
      *
      * @internal
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         if (is_object($this->product)) {
             $this->productPath = $this->product->getFullPath();
@@ -94,7 +94,7 @@ class Gift implements GiftInterface
      *
      * @internal
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->productPath !== '') {
             $this->product = AbstractProduct::getByPath($this->productPath);

@@ -23,5 +23,5 @@ interface MaintenanceStorageInterface
      * Runs maintenance tasks which can be potentially heavy and should only be executed
      * asynchronously (e.g. in maintenance task).
      */
-    public function maintenance();
+    public function maintenance(): void;
 }

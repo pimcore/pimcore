@@ -30,11 +30,11 @@ interface OrderManagerInterface
 
     public function createOrderAgent(AbstractOrder $order): OrderAgentInterface;
 
-    public function setParentOrderFolder(int|Folder $orderParentFolder);
+    public function setParentOrderFolder(int|Folder $orderParentFolder): void;
 
-    public function setOrderClass(string $classname);
+    public function setOrderClass(string $classname): void;
 
-    public function setOrderItemClass(string $classname);
+    public function setOrderItemClass(string $classname): void;
 
     /**
      * Looks if order object for given cart already exists, otherwise creates it

@@ -37,7 +37,7 @@ final class AnyGetter extends AbstractOperator
 
     private bool $returnLastResult;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         if (!Admin::getCurrentUser()->isAdmin()) {
             throw new \Exception('AnyGetter only allowed for admin users');
@@ -155,7 +155,7 @@ final class AnyGetter extends AbstractOperator
         return $this->attribute;
     }
 
-    public function setAttribute(string $attribute)
+    public function setAttribute(string $attribute): void
     {
         $this->attribute = $attribute;
     }
@@ -165,7 +165,7 @@ final class AnyGetter extends AbstractOperator
         return $this->param1;
     }
 
-    public function setParam1(string $param1)
+    public function setParam1(string $param1): void
     {
         $this->param1 = $param1;
     }
@@ -175,7 +175,7 @@ final class AnyGetter extends AbstractOperator
         return $this->forwardAttribute;
     }
 
-    public function setForwardAttribute(string $forwardAttribute)
+    public function setForwardAttribute(string $forwardAttribute): void
     {
         $this->forwardAttribute = $forwardAttribute;
     }
@@ -185,7 +185,7 @@ final class AnyGetter extends AbstractOperator
         return $this->forwardParam1;
     }
 
-    public function setForwardParam1(string $forwardParam1)
+    public function setForwardParam1(string $forwardParam1): void
     {
         $this->forwardParam1 = $forwardParam1;
     }
@@ -195,7 +195,7 @@ final class AnyGetter extends AbstractOperator
         return $this->isArrayType;
     }
 
-    public function setIsArrayType(bool $isArrayType)
+    public function setIsArrayType(bool $isArrayType): void
     {
         $this->isArrayType = $isArrayType;
     }
@@ -205,7 +205,7 @@ final class AnyGetter extends AbstractOperator
         return $this->returnLastResult;
     }
 
-    public function setReturnLastResult(bool $returnLastResult)
+    public function setReturnLastResult(bool $returnLastResult): void
     {
         $this->returnLastResult = $returnLastResult;
     }

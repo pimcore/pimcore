@@ -41,7 +41,7 @@ final class Executor implements ExecutorInterface
         $this->logger = $logger;
     }
 
-    public function executeTask(string $name)
+    public function executeTask(string $name): void
     {
         if (!in_array($name, $this->getTaskNames(), true)) {
             throw new \Exception(sprintf('Task with name "%s" not found', $name));
@@ -69,7 +69,7 @@ final class Executor implements ExecutorInterface
     /**
      * {@inheritdoc}
      */
-    public function executeMaintenance(array $validJobs = [], array $excludedJobs = [])
+    public function executeMaintenance(array $validJobs = [], array $excludedJobs = []): void
     {
         $this->setLastExecution();
 
@@ -109,7 +109,7 @@ final class Executor implements ExecutorInterface
         return $this->tasks;
     }
 
-    public function setLastExecution()
+    public function setLastExecution(): void
     {
         TmpStore::set($this->pidFileName, time());
     }
@@ -125,7 +125,7 @@ final class Executor implements ExecutorInterface
         return 0;
     }
 
-    public function registerTask(string $name, TaskInterface $task)
+    public function registerTask(string $name, TaskInterface $task): void
     {
         if (array_key_exists($name, $this->tasks)) {
             throw new \InvalidArgumentException(sprintf('Task with name %s has already been registered', $name));

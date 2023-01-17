@@ -34,7 +34,7 @@ class GenerateStaticPagesCommand extends AbstractCommand
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:documents:generate-static-pages')

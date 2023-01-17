@@ -53,7 +53,7 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -75,7 +75,7 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
         }
     }
 
-    protected function handleHardlink(Request $request, Response $response, Document $document)
+    protected function handleHardlink(Request $request, Response $response, Document $document): void
     {
         $canonical = null;
 

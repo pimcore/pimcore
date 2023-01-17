@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE id = ?', [$id]);
         if (empty($data['id'])) {
@@ -44,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getByRootId(int $id)
+    public function getByRootId(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE rootId = ?', [$id]);
         if (empty($data['id'])) {
@@ -58,7 +58,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getByDomain(string $domain)
+    public function getByDomain(string $domain): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?', [$domain, '%"' . $domain . '"%']);
         if (empty($data['id'])) {
@@ -98,7 +98,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
             $this->create();
@@ -110,7 +110,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      */
-    public function create()
+    public function create(): void
     {
         $ts = time();
         $this->model->setCreationDate($ts);
@@ -122,7 +122,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save changes to database, it's a good idea to use save() instead
      */
-    public function update()
+    public function update(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);
@@ -150,7 +150,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes site from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('sites', ['id' => $this->model->getId()]);
         //clean slug table

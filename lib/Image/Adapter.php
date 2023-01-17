@@ -326,7 +326,7 @@ abstract class Adapter
     /**
      * @abstract
      */
-    abstract protected function destroy();
+    abstract protected function destroy(): void;
 
     abstract public function getContentOptimizedFormat(): string;
 

@@ -33,10 +33,7 @@ class DataObjects extends Elements implements DataProviderInterface
 {
     protected array $exportIds = [];
 
-    /**
-     * @var array
-     */
-    protected $config = [];
+    protected array $config = [];
 
     public function __construct(array $config)
     {
@@ -90,7 +87,7 @@ class DataObjects extends Elements implements DataProviderInterface
         return $exportResult;
     }
 
-    protected function fillIds(ElementInterface $element)
+    protected function fillIds(ElementInterface $element): void
     {
         $this->exportIds[$element->getType()][$element->getId()] = true;
 
