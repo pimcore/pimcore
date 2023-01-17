@@ -55,10 +55,7 @@ class AdminExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @return ?string
-     */
-    public function getAdminLanguage()
+    public function getAdminLanguage(): ?string
     {
         $pimcoreUser = null;
         if ($this->editmodeResolver->isEditmode()) {
