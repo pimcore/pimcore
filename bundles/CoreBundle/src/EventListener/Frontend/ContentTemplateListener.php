@@ -55,7 +55,7 @@ class ContentTemplateListener implements EventSubscriberInterface
      *
      * @param ViewEvent $event
      */
-    public function onKernelView(ViewEvent $event)
+    public function onKernelView(ViewEvent $event): void
     {
         $request = $event->getRequest();
 

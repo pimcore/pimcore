@@ -61,12 +61,9 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @param string|null $key
-     * @param bool $forceDetection
-     *
      * @throws \Exception
      */
-    public function initDao(string $key = null, bool $forceDetection = false)
+    public function initDao(string $key = null, bool $forceDetection = false): void
     {
         $myClass = get_class($this);
         $cacheKey = $myClass . ($key ? ('-' . $key) : '');
@@ -201,7 +198,7 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $blockedVars = ['dao', 'dirtyFields', 'activeDispatchingEvents'];
 
@@ -211,12 +208,9 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @param string $method
-     * @param array $args
-     *
-     * @return mixed
-     *
      * @throws \Exception
+     *
+     * @return mixed|void
      */
     public function __call(string $method, array $args)
     {
@@ -271,7 +265,7 @@ abstract class AbstractModel implements ModelInterface
      *
      * @throws \Exception
      */
-    protected static function checkCreateData(array $data)
+    protected static function checkCreateData(array $data): void
     {
         if (isset($data['id'])) {
             throw new \Exception(sprintf('Calling %s including `id` key in the data-array is not supported, use setId() instead.', __METHOD__));

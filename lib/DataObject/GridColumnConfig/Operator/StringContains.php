@@ -27,7 +27,7 @@ final class StringContains extends AbstractOperator
 
     private bool $insensitive;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -100,7 +100,7 @@ final class StringContains extends AbstractOperator
         return $this->search;
     }
 
-    public function setSearch(string $search)
+    public function setSearch(string $search): void
     {
         $this->search = $search;
     }
@@ -110,7 +110,7 @@ final class StringContains extends AbstractOperator
         return $this->insensitive;
     }
 
-    public function setInsensitive(bool $insensitive)
+    public function setInsensitive(bool $insensitive): void
     {
         $this->insensitive = $insensitive;
     }

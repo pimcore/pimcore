@@ -28,5 +28,5 @@ interface CartProductActionAddInterface
      * @param ProductInterface $product
      * @param float|int $quantity
      */
-    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, float|int $quantity = 1);
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, float|int $quantity = 1): void;
 }

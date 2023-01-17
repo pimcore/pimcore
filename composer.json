@@ -44,7 +44,6 @@
     "ext-zip": "*",
     "ext-zlib": "*",
     "ext-curl": "*",
-    "amnuts/opcache-gui": "^3.0.1",
     "cbschuld/browser.php": "^1.9.6",
     "colinmollenhour/credis": "^1.10.0",
     "composer/ca-bundle": "^1.2",
@@ -127,7 +126,7 @@
     "symfony/yaml": "^6.1",
     "tijsverkoyen/css-to-inline-styles": "^2.2.3",
     "twig/extra-bundle": "^3.4.0",
-    "twig/twig": "^3.0.4",
+    "twig/twig": "^3.3.9",
     "twig/string-extra": "^3.0.4",
     "rybakit/twig-deferred-extension": "^3.0",
     "umpirsky/country-list": "^2.0.6",
@@ -153,13 +152,13 @@
     "codeception/codeception": "^5.0.3",
     "codeception/module-symfony": "^3.1.0",
     "codeception/phpunit-wrapper": "^9",
-    "phpstan/phpstan": "^1.9.5",
-    "phpstan/phpstan-symfony": "^1.2.19",
+    "phpstan/phpstan": "^1.9.11",
+    "phpstan/phpstan-symfony": "^1.2.20",
     "phpunit/phpunit": "^9.3",
     "spiritix/php-chrome-html2pdf": "^1.6",
     "composer/composer": "*",
     "chrome-php/chrome": "^1.4.0",
-    "webmozarts/console-parallelization": "^2.0.0-beta.2"
+    "webmozarts/console-parallelization": "^2.1"
   },
   "suggest": {
     "ext-sockets": "*",
@@ -182,8 +181,11 @@
       "Pimcore\\Bundle\\InstallBundle\\": "bundles/InstallBundle/src/",
       "Pimcore\\Bundle\\CoreBundle\\": "bundles/CoreBundle/src/",
       "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/",
+      "Pimcore\\Bundle\\UuidBundle\\": "bundles/UuidBundle/src/",
       "Pimcore\\Bundle\\GlossaryBundle\\": "bundles/GlossaryBundle/src/",
-      "Pimcore\\Bundle\\SeoBundle\\": "bundles/SeoBundle/src/"
+      "Pimcore\\Bundle\\SeoBundle\\": "bundles/SeoBundle/src/",
+      "Pimcore\\Bundle\\SystemInfoBundle\\": "bundles/SystemInfoBundle/src/",
+      "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"

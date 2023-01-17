@@ -31,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id = null)
+    public function getById(int $id = null): void
     {
         if (null !== $id) {
             $this->model->setId($id);
@@ -53,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByName(string $name = null)
+    public function getByName(string $name = null): void
     {
         if (null !== $name) {
             $this->model->setName($name);
@@ -71,7 +71,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
             $this->create();
@@ -80,12 +80,12 @@ class Dao extends Model\Dao\AbstractDao
         $this->update();
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('targeting_target_groups', ['id' => $this->model->getId()]);
     }
 
-    public function update()
+    public function update(): void
     {
         $type = $this->model->getObjectVars();
         $data = [];
@@ -107,7 +107,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->update('targeting_target_groups', $data, ['id' => $this->model->getId()]);
     }
 
-    public function create()
+    public function create(): void
     {
         $this->db->insert('targeting_target_groups', []);
         $this->model->setId((int) $this->db->lastInsertId());

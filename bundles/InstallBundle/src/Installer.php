@@ -610,7 +610,7 @@ class Installer
         return $files;
     }
 
-    protected function createOrUpdateUser($config = []): void
+    protected function createOrUpdateUser(array $config = []): void
     {
         $defaultConfig = [
             'username' => 'admin',

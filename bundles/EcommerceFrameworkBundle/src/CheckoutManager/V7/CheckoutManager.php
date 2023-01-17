@@ -109,7 +109,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * @param CheckoutStepInterface[] $checkoutSteps
      */
-    protected function setCheckoutSteps(array $checkoutSteps)
+    protected function setCheckoutSteps(array $checkoutSteps): void
     {
         if (empty($checkoutSteps)) {
             return;
@@ -122,13 +122,13 @@ class CheckoutManager implements CheckoutManagerInterface
         $this->initializeStepState();
     }
 
-    protected function addCheckoutStep(CheckoutStepInterface $checkoutStep)
+    protected function addCheckoutStep(CheckoutStepInterface $checkoutStep): void
     {
         $this->checkoutStepOrder[] = $checkoutStep;
         $this->checkoutSteps[$checkoutStep->getName()] = $checkoutStep;
     }
 
-    protected function initializeStepState()
+    protected function initializeStepState(): void
     {
         // getting state information for checkout from custom environment items
         $this->finished = (bool) ($this->environment->getCustomItem(self::FINISHED . '_' . $this->cart->getId(), false));
@@ -282,7 +282,7 @@ class CheckoutManager implements CheckoutManagerInterface
      *
      * @param AbstractOrder|null $order
      */
-    protected function updateEnvironmentAfterOrderCommit(?AbstractOrder $order)
+    protected function updateEnvironmentAfterOrderCommit(?AbstractOrder $order): void
     {
         $this->validateCheckoutSteps();
 
@@ -345,7 +345,7 @@ class CheckoutManager implements CheckoutManagerInterface
      *
      * @throws \Exception
      */
-    protected function verifyRecurringPayment(RecurringPaymentInterface $provider, AbstractOrder $sourceOrder, string $customerId)
+    protected function verifyRecurringPayment(RecurringPaymentInterface $provider, AbstractOrder $sourceOrder, string $customerId): void
     {
         $orderManager = $this->orderManagers->getOrderManager();
 
@@ -532,7 +532,7 @@ class CheckoutManager implements CheckoutManagerInterface
         return $this->currentStep;
     }
 
-    protected function validateCheckoutSteps()
+    protected function validateCheckoutSteps(): void
     {
         if (empty($this->checkoutSteps)) {
             throw new \RuntimeException('Checkout manager does not define any checkout steps');

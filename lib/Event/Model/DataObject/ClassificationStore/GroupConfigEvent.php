@@ -38,7 +38,7 @@ class GroupConfigEvent extends Event
         return $this->groupConfig;
     }
 
-    public function setGroupConfig(GroupConfig $groupConfig)
+    public function setGroupConfig(GroupConfig $groupConfig): void
     {
         $this->groupConfig = $groupConfig;
     }

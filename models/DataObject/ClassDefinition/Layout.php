@@ -234,7 +234,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
      *
      * @param Data|Layout $child
      */
-    public function addChild(mixed $child)
+    public function addChild(mixed $child): void
     {
         $this->children[] = $child;
     }
@@ -329,7 +329,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * {@inheritdoc}
      */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = new static();
         $obj->setValues($data);

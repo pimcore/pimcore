@@ -37,7 +37,7 @@ class Video implements OwnerAwareFieldInterface
 
     protected string $description;
 
-    public function setData(Asset|int|string $data)
+    public function setData(Asset|int|string $data): void
     {
         $this->data = $data;
         $this->markMeDirty();
@@ -48,7 +48,7 @@ class Video implements OwnerAwareFieldInterface
         return $this->data;
     }
 
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
         $this->markMeDirty();
@@ -59,7 +59,7 @@ class Video implements OwnerAwareFieldInterface
         return $this->type;
     }
 
-    public function setDescription(string $description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
         $this->markMeDirty();
@@ -70,7 +70,7 @@ class Video implements OwnerAwareFieldInterface
         return $this->description;
     }
 
-    public function setPoster(Asset|int|string|null $poster)
+    public function setPoster(Asset|int|string|null $poster): void
     {
         $this->poster = $poster;
         $this->markMeDirty();
@@ -81,7 +81,7 @@ class Video implements OwnerAwareFieldInterface
         return $this->poster;
     }
 
-    public function setTitle(string $title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
         $this->markMeDirty();

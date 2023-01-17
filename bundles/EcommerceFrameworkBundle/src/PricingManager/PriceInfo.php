@@ -178,9 +178,9 @@ class PriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setQuantity(int|string $quantity)
+    public function setQuantity(int|string $quantity): void
     {
-        return $this->priceInfo->setQuantity($quantity);
+        $this->priceInfo->setQuantity($quantity);
     }
 
     /**
@@ -225,13 +225,8 @@ class PriceInfo implements PriceInfoInterface
 
     /**
      * loop through any other calls
-     *
-     * @param string $name
-     * @param array $arguments
-     *
-     * @return mixed
      */
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return call_user_func_array([$this->priceInfo, $name], $arguments);
     }

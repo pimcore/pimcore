@@ -36,7 +36,7 @@ class MessengerClearRuntimeCacheListener implements EventSubscriberInterface
         ];
     }
 
-    public function handle(WorkerMessageReceivedEvent $event)
+    public function handle(WorkerMessageReceivedEvent $event): void
     {
         RuntimeCache::clear();
     }

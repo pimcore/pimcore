@@ -31,7 +31,7 @@ use Symfony\Component\Console\Question\Question;
  */
 class ResetPasswordCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:user:reset-password')
@@ -82,7 +82,7 @@ class ResetPasswordCommand extends AbstractCommand
         return 0;
     }
 
-    protected function askForPassword(InputInterface $input, OutputInterface $output)
+    protected function askForPassword(InputInterface $input, OutputInterface $output): mixed
     {
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
