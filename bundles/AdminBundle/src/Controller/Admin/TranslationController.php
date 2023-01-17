@@ -27,11 +27,6 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
-use Pimcore\Translation\ExportService\Exporter\ExporterInterface;
-use Pimcore\Translation\ExportService\ExportServiceInterface;
-use Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface;
-use Pimcore\Translation\ImporterService\ImporterServiceInterface;
-use Pimcore\Translation\TranslationItemCollection\TranslationItemCollection;
 use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -693,6 +688,7 @@ class TranslationController extends AdminController
         $source = $request->get('source', '');
         $target = $request->get('target', '');
         $type = $request->get('type');
+        $jobUrl = $request->get('job_url', $request->getBaseUrl() . '/admin/translation/' . $type . '-export');
 
         $source = str_replace('_', '-', $source);
         $target = str_replace('_', '-', $target);
@@ -774,7 +770,7 @@ class TranslationController extends AdminController
         $elements = array_chunk($elements, $elementsPerJob);
         foreach ($elements as $chunk) {
             $jobs[] = [[
-                'url' => $request->getBaseUrl() . '/admin/translation/' . $type . '-export',
+                'url' => $jobUrl,
                 'method' => 'POST',
                 'params' => [
                     'id' => $exportId,
@@ -792,134 +788,6 @@ class TranslationController extends AdminController
                 'id' => $exportId,
             ]
         );
-    }
-
-    /**
-     * @Route("/xliff-export", name="pimcore_admin_translation_xliffexport", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ExportServiceInterface $exportService
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function xliffExportAction(Request $request, ExportServiceInterface $exportService): JsonResponse
-    {
-        $id = $request->get('id');
-        $data = $this->decodeJson($request->get('data'));
-        $source = $request->get('source');
-        $target = $request->get('target');
-
-        $translationItems = new TranslationItemCollection();
-
-        foreach ($data as $el) {
-            $element = Element\Service::getElementById($el['type'], $el['id']);
-            $translationItems->addPimcoreElement($element);
-        }
-
-        $exportService->exportTranslationItems($translationItems, $source, [$target], $id);
-
-        return $this->adminJson([
-            'success' => true,
-        ]);
-    }
-
-    /**
-     * @Route("/xliff-export-download", name="pimcore_admin_translation_xliffexportdownload", methods={"GET"})
-     *
-     *
-     */
-    public function xliffExportDownloadAction(Request $request, ExporterInterface $translationExporter, ExportServiceInterface $exportService): BinaryFileResponse
-    {
-        $id = $request->get('id');
-        $exportFile = $exportService->getTranslationExporter()->getExportFilePath($id);
-
-        $response = new BinaryFileResponse($exportFile);
-        $response->headers->set('Content-Type', $translationExporter->getContentType());
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($exportFile));
-        $response->deleteFileAfterSend(true);
-
-        return $response;
-    }
-
-    /**
-     * @Route("/xliff-import-upload", name="pimcore_admin_translation_xliffimportupload", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ImportDataExtractorInterface $importDataExtractor
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function xliffImportUploadAction(Request $request, ImportDataExtractorInterface $importDataExtractor): JsonResponse
-    {
-        $jobs = [];
-        $id = uniqid();
-        $importFile = $importDataExtractor->getImportFilePath($id);
-        copy($_FILES['file']['tmp_name'], $importFile);
-
-        $steps = $importDataExtractor->countSteps($id);
-
-        for ($i = 0; $i < $steps; $i++) {
-            $jobs[] = [[
-                'url' => $this->generateUrl('pimcore_admin_translation_xliffimportelement'),
-                'method' => 'POST',
-                'params' => [
-                    'id' => $id,
-                    'step' => $i,
-                ],
-            ]];
-        }
-
-        $response = $this->adminJson([
-            'success' => true,
-            'jobs' => $jobs,
-            'id' => $id,
-        ]);
-        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
-        // Ext.form.Action.Submit and mark the submission as failed
-        $response->headers->set('Content-Type', 'text/html');
-
-        return $response;
-    }
-
-    /**
-     * @Route("/xliff-import-element", name="pimcore_admin_translation_xliffimportelement", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ImportDataExtractorInterface $importDataExtractor
-     * @param ImporterServiceInterface $importerService
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function xliffImportElementAction(Request $request, ImportDataExtractorInterface $importDataExtractor, ImporterServiceInterface $importerService): JsonResponse
-    {
-        $id = $request->get('id');
-        $step = (int) $request->get('step');
-
-        try {
-            $attributeSet = $importDataExtractor->extractElement($id, $step);
-            if ($attributeSet) {
-                $importerService->import($attributeSet);
-            } else {
-                Logger::warning(sprintf('Could not resolve element %s', $id));
-            }
-        } catch (\Exception $e) {
-            Logger::err($e->getMessage());
-
-            return $this->adminJson([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ]);
-        }
-
-        return $this->adminJson([
-            'success' => true,
-        ]);
     }
 
     /**

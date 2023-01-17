@@ -109,27 +109,7 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
 
-                        ->arrayNode('data_object')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->arrayNode('translation_extractor')
-                                    ->children()
-                                        ->arrayNode('attributes')
-                                            ->info('Can be used to restrict the extracted localized fields (e.g. used by XLIFF exporter in the Pimcore backend)')
-                                            ->prototype('array')
-                                                ->prototype('scalar')->end()
-                                            ->end()
-                                            ->example(
-                                                [
-                                                    'Product' => ['name', 'description'],
-                                                    'Brand' => ['name'],
-                                                ]
-                                            )
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
+
                     ->end()
                 ->end()
                 ->arrayNode('maps')

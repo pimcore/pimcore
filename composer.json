@@ -185,6 +185,7 @@
       "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/",
       "Pimcore\\Bundle\\UuidBundle\\": "bundles/UuidBundle/src/",
       "Pimcore\\Bundle\\GlossaryBundle\\": "bundles/GlossaryBundle/src/",
+      "Pimcore\\Bundle\\XliffBundle\\": "bundles/XliffBundle/src/",
       "Pimcore\\Bundle\\SeoBundle\\": "bundles/SeoBundle/src/",
       "Pimcore\\Bundle\\SystemInfoBundle\\": "bundles/SystemInfoBundle/src/",
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/"
