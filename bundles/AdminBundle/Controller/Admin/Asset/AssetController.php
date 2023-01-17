@@ -1099,25 +1099,25 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $version = Model\Version::getById($id);
         $asset = $version?->loadData();
 
-        if ($asset) {
-            $currentAsset = Asset::getById($asset->getId());
-            if ($currentAsset->isAllowed('publish')) {
-                try {
-                    $asset->setUserModification($this->getAdminUser()->getId());
-                    $asset->save();
-
-                    $treeData = $this->getTreeNodeConfig($asset);
-
-                    return $this->adminJson(['success' => true, 'treeData' => $treeData]);
-                } catch (\Exception $e) {
-                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                }
-            }
-
-            throw $this->createAccessDeniedHttpException();
+        if (!$asset) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
 
-        throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
+        $currentAsset = Asset::getById($asset->getId());
+        if ($currentAsset->isAllowed('publish')) {
+            try {
+                $asset->setUserModification($this->getAdminUser()->getId());
+                $asset->save();
+
+                $treeData = $this->getTreeNodeConfig($asset);
+
+                return $this->adminJson(['success' => true, 'treeData' => $treeData]);
+            } catch (\Exception $e) {
+                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+            }
+        }
+
+        throw $this->createAccessDeniedHttpException();
     }
 
     /**
