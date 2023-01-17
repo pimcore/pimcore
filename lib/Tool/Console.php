@@ -24,7 +24,31 @@ use Symfony\Component\Process\Process;
 
 final class Console
 {
+    private static ?string $systemEnvironment = null;
+
     protected static array $executableCache = [];
+
+    /**
+     * @deprecated since v.6.9.
+     *
+     * @static
+     *
+     * @return string "windows" or "unix"
+     */
+    public static function getSystemEnvironment(): string
+    {
+        if (self::$systemEnvironment == null) {
+            if (stripos(php_uname('s'), 'windows') !== false) {
+                self::$systemEnvironment = 'windows';
+            } elseif (stripos(php_uname('s'), 'darwin') !== false) {
+                self::$systemEnvironment = 'darwin';
+            } else {
+                self::$systemEnvironment = 'unix';
+            }
+        }
+
+        return self::$systemEnvironment;
+    }
 
     /**
      * @return ($throwException is true ? string : string|false)
@@ -182,6 +206,123 @@ final class Console
         }
 
         return $process->getOutput();
+    }
+
+    /**
+     * @param string $script
+     * @param array $arguments
+     * @param string|null $outputFile
+     *
+     * @return int
+     *
+     * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
+     */
+    public static function runPhpScriptInBackground(string $script, array $arguments = [], string $outputFile = null): int
+    {
+        $cmd = self::buildPhpScriptCmd($script, $arguments);
+        $process = new Process($cmd);
+        $commandLine = $process->getCommandLine();
+
+        return self::execInBackground($commandLine, $outputFile);
+    }
+
+    /**
+     * @param string $cmd
+     * @param string|null $outputFile
+     *
+     * @return int
+     *
+     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
+     *
+     * @static
+     */
+    public static function execInBackground(string $cmd, string $outputFile = null): int
+    {
+        // windows systems
+        if (self::getSystemEnvironment() == 'windows') {
+            return self::execInBackgroundWindows($cmd, $outputFile);
+        } elseif (self::getSystemEnvironment() == 'darwin') {
+            return self::execInBackgroundUnix($cmd, $outputFile, false);
+        } else {
+            return self::execInBackgroundUnix($cmd, $outputFile);
+        }
+    }
+
+    /**
+     * @param string $cmd
+     * @param ?string $outputFile
+     * @param bool $useNohup
+     *
+     * @return int
+     *
+     * @deprecated since v.6.9. For long running background tasks use queues.
+     *
+     * @static
+     */
+    protected static function execInBackgroundUnix(string $cmd, ?string $outputFile, bool $useNohup = true): int
+    {
+        if (!$outputFile) {
+            $outputFile = '/dev/null';
+        }
+
+        $nice = (string) self::getExecutable('nice');
+        if ($nice) {
+            $nice .= ' -n 19 ';
+        }
+
+        if ($useNohup) {
+            $nohup = (string) self::getExecutable('nohup');
+            if ($nohup) {
+                $nohup .= ' ';
+            }
+        } else {
+            $nohup = '';
+        }
+
+        /**
+         * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
+         */
+        if (strpos(php_sapi_name(), 'apache') !== false) {
+            foreach (['APP_ENV'] as $envVarName) {
+                if ($envValue = $_SERVER[$envVarName] ?? $_SERVER['REDIRECT_' . $envVarName] ?? null) {
+                    putenv($envVarName . '='.$envValue);
+                }
+            }
+        }
+
+        $commandWrapped = $nohup . $nice . $cmd . ' > '. $outputFile .' 2>&1 & echo $!';
+        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
+        $pid = shell_exec($commandWrapped);
+
+        Logger::debug('Process started with PID ' . $pid);
+
+        return (int)$pid;
+    }
+
+    /**
+     * @param string $cmd
+     * @param string $outputFile
+     *
+     * @return int
+     *
+     * @deprecated since v.6.9. For long-running background tasks use queues.
+     *
+     * @static
+     */
+    protected static function execInBackgroundWindows(string $cmd, string $outputFile): int
+    {
+        if (!$outputFile) {
+            $outputFile = 'NUL';
+        }
+
+        $commandWrapped = 'cmd /c ' . $cmd . ' > '. $outputFile . ' 2>&1';
+        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
+
+        $WshShell = new \COM('WScript.Shell');
+        $WshShell->Run($commandWrapped, 0, false);
+        Logger::debug('Process started - returning the PID is not supported on Windows Systems');
+
+        return 0;
     }
 
     /**
