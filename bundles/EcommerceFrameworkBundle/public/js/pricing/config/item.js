@@ -1180,7 +1180,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_targeting_targetgrouplist')
+                url: Routing.generate('pimcore_bundle_personalization_targeting_targetgrouplist')
             },
             fields: ["id", "text"],
             listeners: {

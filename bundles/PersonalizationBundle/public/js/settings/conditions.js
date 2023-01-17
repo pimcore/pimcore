@@ -15,13 +15,13 @@
 /**
  * CONDITION TYPES
  */
-pimcore.registerNS("pimcore.settings.targeting.conditions");
+pimcore.registerNS("pimcore.bundle.personalization.settings.conditions");
 /**
  * @private
  */
-pimcore.settings.targeting.conditions = (function () {
+ppimcore.bundle.personalization.settings.conditions = (function () {
     var conditions = {
-        url: Class.create(pimcore.settings.targeting.condition.abstract, {
+        url: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return t('targeting_condition_url_pattern');
             },
@@ -34,7 +34,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: "textfield",
                         fieldLabel: t('targeting_condition_url_pattern'),
@@ -50,7 +50,7 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        browser: Class.create(pimcore.settings.targeting.condition.abstract, {
+        browser: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return t("browser");
             },
@@ -67,7 +67,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: "combo",
                         fieldLabel: t("browser"),
@@ -93,7 +93,7 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        country: Class.create(pimcore.settings.targeting.condition.abstract, {
+        country: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
 
             isAvailable : function () {
                 return pimcore.settings['maxmind_geoip_installed'];
@@ -115,7 +115,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'combo',
                         fieldLabel: t('country'),
@@ -155,7 +155,7 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        language: Class.create(pimcore.settings.targeting.condition.abstract, {
+        language: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return t("language");
             },
@@ -172,7 +172,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'combo',
                         fieldLabel: t('language'),
@@ -212,7 +212,7 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        geopoint: Class.create(pimcore.settings.targeting.condition.abstract, {
+        geopoint: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
 
             isAvailable : function () {
                 return pimcore.settings['maxmind_geoip_installed'];
@@ -260,7 +260,7 @@ pimcore.settings.targeting.conditions = (function () {
                         var searchHandler = function() {
                             var address = searchfield.getValue();
                             Ext.Ajax.request({
-                                url: pimcore.settings.targeting.conditions.getSearchUrl(address),
+                                url: pimcore.bundle.personalization.settings.conditions.getSearchUrl(address),
                                 method: "GET",
                                 success: function (response, opts) {
                                     var data = Ext.decode(response.responseText);
@@ -409,13 +409,13 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: items
                 });
             }
         }),
 
-        referringsite: Class.create(pimcore.settings.targeting.condition.abstract, {
+        referringsite: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return t("referring_site");
             },
@@ -432,7 +432,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'textfield',
                         fieldLabel: t('referrer') + ' (' + t("regex") + ')',
@@ -449,7 +449,7 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        searchengine: Class.create(pimcore.settings.targeting.condition.abstract, {
+        searchengine: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return t("searchengine");
             },
@@ -466,7 +466,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'combo',
                         fieldLabel: t('searchengine'),
@@ -486,7 +486,7 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        visitedpagebefore: Class.create(pimcore.settings.targeting.condition.abstract, {
+        visitedpagebefore: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return t("visited_page_before");
             },
@@ -537,13 +537,13 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: items
                 });
             }
         }),
 
-        visitedpagesbefore: Class.create(pimcore.settings.targeting.condition.abstract, {
+        visitedpagesbefore: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return t("visited_pages_before_number");
             },
@@ -556,7 +556,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'numberfield',
                         fieldLabel: t("number"),
@@ -572,7 +572,7 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        timeonsite: Class.create(pimcore.settings.targeting.condition.abstract, {
+        timeonsite: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return t("time_on_site");
             },
@@ -585,7 +585,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'numberfield',
                         fieldLabel: t("hours"),
@@ -613,7 +613,7 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        hardwareplatform: Class.create(pimcore.settings.targeting.condition.abstract, {
+        hardwareplatform: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return t("hardware_platform");
             },
@@ -630,7 +630,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'combo',
                         fieldLabel: t('hardware_platform'),
@@ -650,7 +650,7 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        operatingsystem: Class.create(pimcore.settings.targeting.condition.abstract, {
+        operatingsystem: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return t("operating_system");
             },
@@ -667,7 +667,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'combo',
                         fieldLabel: t('operating_system'),
@@ -688,7 +688,7 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        target_group: Class.create(pimcore.settings.targeting.condition.abstract, {
+        target_group: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return t("target_group");
             },
@@ -701,7 +701,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: "combo",
                         name: "targetGroup",

@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\PersonalizationBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache\Core\CoreCacheHandler;
@@ -41,7 +41,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     }
 
     /**
-     * @Route("/rule/list", name="pimcore_admin_targeting_rulelist", methods={"GET"})
+     * @Route("/rule/list", name="pimcore_bundle_personalization_targeting_rulelist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -68,7 +68,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     }
 
     /**
-     * @Route("/rule/add", name="pimcore_admin_targeting_ruleadd", methods={"POST"})
+     * @Route("/rule/add", name="pimcore_bundle_personalization_targeting_ruleadd", methods={"POST"})
      *
      * @param Request $request
      *
@@ -84,7 +84,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     }
 
     /**
-     * @Route("/rule/delete", name="pimcore_admin_targeting_ruledelete", methods={"DELETE"})
+     * @Route("/rule/delete", name="pimcore_bundle_personalization_targeting_ruledelete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -104,7 +104,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     }
 
     /**
-     * @Route("/rule/get", name="pimcore_admin_targeting_ruleget", methods={"GET"})
+     * @Route("/rule/get", name="pimcore_bundle_personalization_targeting_ruleget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -122,7 +122,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     }
 
     /**
-     * @Route("/rule/save", name="pimcore_admin_targeting_rulesave", methods={"PUT"})
+     * @Route("/rule/save", name="pimcore_bundle_personalization_targeting_rulesave", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -146,7 +146,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     }
 
     /**
-     * @Route("/rule/order", name="pimcore_admin_targeting_ruleorder", methods={"POST"})
+     * @Route("/rule/order", name="pimcore_bundle_personalization_targeting_ruleorder", methods={"POST"})
      *
      * @param Request $request
      *
@@ -192,7 +192,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     // TARGET GROUPS
 
     /**
-     * @Route("/target-group/list", name="pimcore_admin_targeting_targetgrouplist", methods={"GET"})
+     * @Route("/target-group/list", name="pimcore_bundle_personalization_targeting_targetgrouplist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -227,7 +227,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     }
 
     /**
-     * @Route("/target-group/add", name="pimcore_admin_targeting_targetgroupadd", methods={"POST"})
+     * @Route("/target-group/add", name="pimcore_bundle_personalization_targeting_targetgroupadd", methods={"POST"})
      *
      * @param Request $request
      * @param CoreCacheHandler $cache
@@ -247,7 +247,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     }
 
     /**
-     * @Route("/target-group/delete", name="pimcore_admin_targeting_targetgroupdelete", methods={"DELETE"})
+     * @Route("/target-group/delete", name="pimcore_bundle_personalization_targeting_targetgroupdelete", methods={"DELETE"})
      *
      * @param Request $request
      * @param CoreCacheHandler $cache
@@ -270,7 +270,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     }
 
     /**
-     * @Route("/target-group/get", name="pimcore_admin_targeting_targetgroupget", methods={"GET"})
+     * @Route("/target-group/get", name="pimcore_bundle_personalization_targeting_targetgroupget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -288,7 +288,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     }
 
     /**
-     * @Route("/target-group/save", name="pimcore_admin_targeting_targetgroupsave", methods={"PUT"})
+     * @Route("/target-group/save", name="pimcore_bundle_personalization_targeting_targetgroupsave", methods={"PUT"})
      *
      * @param Request $request
      * @param CoreCacheHandler $cache

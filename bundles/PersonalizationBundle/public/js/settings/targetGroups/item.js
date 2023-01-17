@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.targeting.targetGroups.item");
+pimcore.registerNS("pimcore.bundle.personalization.settings.targetGroups.item");
 /**
  * @private
  */
-pimcore.settings.targeting.targetGroups.item = Class.create({
+pimcore.bundle.personalization.settings.targetGroups.item.item = Class.create({
 
     initialize: function(parent, data) {
         this.parent = parent;
@@ -82,7 +82,7 @@ pimcore.settings.targeting.targetGroups.item = Class.create({
         };
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_targeting_targetgroupsave'),
+            url: Routing.generate('pimcore_bundle_personalization_targeting_targetgroupsave'),
             method: 'PUT',
             params: {
                 id: this.data.id,

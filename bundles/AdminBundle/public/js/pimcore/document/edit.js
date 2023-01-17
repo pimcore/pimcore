@@ -100,7 +100,9 @@ pimcore.document.edit = Class.create({
                 handler: cleanupFunction.bind(this)
             }];
 
-            this.addTargetingPanel(lbar, cleanupFunction);
+            if (pimcore.bundle.personalization) {
+                this.addTargetingPanel(lbar, cleanupFunction);
+            }
 
             // edit panel configuration
             var config = {
@@ -189,6 +191,7 @@ pimcore.document.edit = Class.create({
         this.highlightTagButton.toggle(this.tagHighlightingActive);
     },
 
+    // To do bundle (move this to personalization bundle
     addTargetingPanel: function(lbar, cleanupFunction) {
         if (!Ext.Array.contains(['page', 'snippet'], this.document.getType())) {
             return;
@@ -206,7 +209,7 @@ pimcore.document.edit = Class.create({
         this.targetGroupStore = Ext.create('Ext.data.JsonStore', {
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_targeting_targetgrouplist', {'add-default': true})
+                url: Routing.generate('pimcore_bundle_personalization_targeting_targetgrouplist', {'add-default': true})
             },
             fields: ["id", "text"],
             listeners: {

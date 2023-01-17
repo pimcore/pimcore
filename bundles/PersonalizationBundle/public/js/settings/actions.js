@@ -14,13 +14,13 @@
 /**
  * ACTION TYPES
  */
-pimcore.registerNS("pimcore.settings.targeting.actions");
+pimcore.registerNS("pimcore.bundle.personalization.settings.actions");
 /**
  * @private
  */
-pimcore.settings.targeting.actions = (function () {
+pimcore.bundle.personalization.settings.actions = (function () {
     var actions = {
-        redirect: Class.create(pimcore.settings.targeting.action.abstract, {
+        redirect: Class.create(pimcore.bundle.personalization.settings.action.abstract, {
             getName: function () {
                 return t("redirect");
             },
@@ -34,7 +34,7 @@ pimcore.settings.targeting.actions = (function () {
                     border: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.actions.getTopBar(this, id, panel),
+                    tbar: pimcore.bundle.personalization.settings.actions.getTopBar(this, id, panel),
                     items: [
                         {
                             xtype: "textfield",
@@ -84,7 +84,7 @@ pimcore.settings.targeting.actions = (function () {
             }
         }),
 
-        codesnippet: Class.create(pimcore.settings.targeting.action.abstract, {
+        codesnippet: Class.create(pimcore.bundle.personalization.settings.action.abstract, {
             getName: function () {
                 return t("code_snippet");
             },
@@ -98,7 +98,7 @@ pimcore.settings.targeting.actions = (function () {
                     border: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.actions.getTopBar(this, id, panel),
+                    tbar: pimcore.bundle.personalization.settings.actions.getTopBar(this, id, panel),
                     items: [
                         {
                             xtype: "textarea",
@@ -142,7 +142,7 @@ pimcore.settings.targeting.actions = (function () {
             }
         }),
 
-        assign_target_group: Class.create(pimcore.settings.targeting.action.abstract, {
+        assign_target_group: Class.create(pimcore.bundle.personalization.settings.action.abstract, {
             getName: function () {
                 return t('assign_target_group');
             },
@@ -156,7 +156,7 @@ pimcore.settings.targeting.actions = (function () {
                     border: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.actions.getTopBar(this, id, panel),
+                    tbar: pimcore.bundle.personalization.settings.actions.getTopBar(this, id, panel),
                     items: [
                         {
                             xtype: "combo",

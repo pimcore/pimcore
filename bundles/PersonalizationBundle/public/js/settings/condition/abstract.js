@@ -11,13 +11,17 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.targeting.action.abstract");
+pimcore.registerNS("pimcore.bundle.personalization.settings.condition.abstract");
 /**
  * @private
  */
-pimcore.settings.targeting.action.abstract = Class.create({
+pimcore.bundle.personalization.settings.condition.abstract = Class.create({
+    matchesScope: function (scope) {
+        return 'targeting_rule' === scope;
+    },
+
     getName: function () {
-        console.error('Name is not set for action', this);
+        console.error('Name is not set for condition', this);
     },
 
     getIconCls: function () {
@@ -25,6 +29,10 @@ pimcore.settings.targeting.action.abstract = Class.create({
     },
 
     getPanel: function () {
-        console.error('You have to implement the getPanel() method in action', this);
+        console.error('You have to implement the getPanel() method in condition', this);
+    },
+
+    isAvailable: function () {
+        return true;
     }
 });

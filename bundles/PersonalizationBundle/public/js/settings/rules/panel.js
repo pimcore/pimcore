@@ -11,26 +11,30 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.targeting.targetGroups.panel");
+pimcore.registerNS("pimcore.bundle.personalization.settings.rules.panel");
 /**
  * @private
  */
-pimcore.settings.targeting.targetGroups.panel= Class.create({
+pimcore.bundle.personalization.settings.rules.panel= Class.create({
 
     initialize: function() {
-        this.treeDataUrl = Routing.generate('pimcore_admin_targeting_targetgrouplist');
+        this.treeDataUrl = Routing.generate('pimcore_bundle_personalization_targeting_rulelist');
     },
+
 
     getLayout: function () {
 
         if (this.layout == null) {
             this.layout = new Ext.Panel({
-                title: t('target_groups'),
+                title: t('global_targeting_rules'),
                 layout: "border",
                 closable: true,
                 border: false,
-                iconCls: "pimcore_icon_target_groups",
-                items: [this.getTree(), this.getTabPanel()]
+                iconCls: "pimcore_icon_targeting",
+                items: [
+                    this.getTree(),
+                    this.getTabPanel()
+                ]
             });
         }
 
@@ -39,6 +43,38 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
 
     getTree: function () {
         if (!this.tree) {
+            this.saveButton = new Ext.Button({
+                // save button
+                hidden: true,
+                text: t("save_order"),
+                iconCls: "pimcore_icon_save",
+                handler: function () {
+                    // this
+                    var button = this;
+
+                    // get current order
+                    var prio = 0;
+                    var rules = {};
+
+                    this.ownerCt.ownerCt.getRootNode().eachChild(function (rule) {
+                        prio++;
+                        rules[rule.id] = prio;
+                    });
+
+                    // save order
+                    Ext.Ajax.request({
+                        url: Routing.generate('pimcore_bundle_personalization_targeting_ruleorder'),
+                        params: {
+                            rules: Ext.encode(rules)
+                        },
+                        method: "post",
+                        success: function () {
+                            button.hide();
+                        }
+                    });
+                }
+            });
+
             var store = Ext.create('Ext.data.TreeStore', {
                 autoLoad: false,
                 autoSync: true,
@@ -54,26 +90,33 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
             this.tree = new Ext.tree.TreePanel({
                 store: store,
                 region: "west",
-                autoScroll:true,
-                animate:false,
+                useArrows: true,
+                autoScroll: true,
+                animate: true,
                 containerScroll: true,
                 width: 200,
                 split: true,
+                rootVisible: false,
                 root: {
                     id: '0'
                 },
-                listeners: this.getTreeNodeListeners(),
-                rootVisible: false,
+                viewConfig: {
+                    plugins: {
+                        ptype: 'treeviewdragdrop'
+                    }
+                },
                 tbar: {
                     cls: 'pimcore_toolbar_border_bottom',
                     items: [
                         {
                             text: t("add"),
                             iconCls: "pimcore_icon_add",
-                            handler: this.addTargetGroup.bind(this)
-                        }
+                            handler: this.addTarget.bind(this)
+                        },
+                        this.saveButton
                     ]
-                }
+                },
+                listeners: this.getTreeNodeListeners()
             });
 
         }
@@ -85,12 +128,15 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
         var treeNodeListeners = {
             'itemclick': this.onTreeNodeClick.bind(this),
             "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
+            "itemmove": function(tree, oldParent, newParent, index, eOpts ) {
+                this.saveButton.show();
+            }.bind(this),
             "render": function () {
                 this.getRootNode().expand();
             },
             'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
                 var classes = [];
-                var iconClasses = ['pimcore_icon_target_groups'];
+                var iconClasses = ['pimcore_icon_targeting'];
 
                 if (!newChildNode.data.active) {
                     classes.push('pimcore_unpublished');
@@ -102,41 +148,21 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
                 newChildNode.data.iconCls = iconClasses.join(' ');
             }
         };
+
         return treeNodeListeners;
     },
 
-
-
-    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
-        tree.select();
-
-        var menu = new Ext.menu.Menu();
-        menu.add(new Ext.menu.Item({
-            text: t('delete'),
-            iconCls: "pimcore_icon_delete",
-            handler: this.deleteTargetGroup.bind(this, tree, record)
-        }));
-
-        e.stopEvent();
-        menu.showAt(e.pageX, e.pageY);
-    },
-
-    addTargetGroup: function () {
+    addTarget: function () {
         Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
-                                                this.addTargetGroupComplete.bind(this), null, null, "");
+                                                this.addTargetComplete.bind(this), null, null, "");
     },
 
+    addTargetComplete: function (button, value, object) {
 
-    onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
-        this.openTargetGroup(record.data);
-    },
-
-
-    addTargetGroupComplete: function (button, value, object) {
-
-        if (button == "ok" && value.length > 2) {
+        var regresult = value.match(/[a-zA-Z0-9_\-]+/);
+        if (button == "ok" && value.length > 2 && regresult == value) {
             Ext.Ajax.request({
-                url: Routing.generate('pimcore_admin_targeting_targetgroupadd'),
+                url: Routing.generate('pimcore_bundle_personalization_targeting_ruleadd'),
                 method: 'POST',
                 params: {
                     name: value
@@ -144,14 +170,12 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
                 success: function (response) {
                     var data = Ext.decode(response.responseText);
 
-                    this.tree.getStore().reload();
+                    this.tree.getStore().load();
 
                     if(!data || !data.success) {
                         Ext.Msg.alert(' ', t('failed_to_create_new_item'));
                     } else {
-                        this.openTargetGroup(intval(data.id));
-
-                        pimcore.globalmanager.get("target_group_store").reload();
+                        this.openTarget(intval(data.id));
                     }
                 }.bind(this)
             });
@@ -163,44 +187,68 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
         }
     },
 
-    deleteTargetGroup: function (tree, record) {
-        pimcore.helpers.deleteConfirm(t('target_group'), record.data.text, function () {
+
+
+    onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
+        this.openTarget(record.data);
+    },
+
+
+    deleteTarget: function (tree, record) {
+        pimcore.helpers.deleteConfirm(t('global_targeting_rule'), record.data.text, function () {
             Ext.Ajax.request({
-                url: Routing.generate('pimcore_admin_targeting_targetgroupdelete'),
+                url: Routing.generate('pimcore_bundle_personalization_targeting_ruledelete'),
                 method: 'DELETE',
                 params: {
                     id: record.data.id
                 },
                 success: function () {
                     this.tree.getStore().load();
-
-                    pimcore.globalmanager.get("target_group_store").reload();
                 }.bind(this)
             });
         }.bind(this));
     },
 
-    openTargetGroup: function (node) {
+    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
+        tree.select();
+
+        var menu = new Ext.menu.Menu();
+        menu.add(new Ext.menu.Item({
+            text: t('delete'),
+            iconCls: "pimcore_icon_delete",
+            handler: this.deleteTarget.bind(this, tree, record)
+        }));
+
+        e.stopEvent();
+        menu.showAt(e.pageX, e.pageY);
+    },
+
+
+    openTarget: function (node) {
 
         if(!is_numeric(node)) {
             node = node.id;
         }
 
 
-        var existingPanel = Ext.getCmp("pimcore_target_groups_panel_" + node);
+        var existingPanel = Ext.getCmp("pimcore_targeting_panel_" + node);
         if(existingPanel) {
             this.panel.setActiveItem(existingPanel);
             return;
         }
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_targeting_targetgroupget'),
+            url: Routing.generate('pimcore_bundle_personalization_targeting_ruleget'),
             params: {
                 id: node
             },
             success: function (response) {
-                var res = Ext.decode(response.responseText);
-                var item = new pimcore.settings.targeting.targetGroups.item(this, res);
+                try {
+                    var res = Ext.decode(response.responseText);
+                    var item = new pimcore.bundle.personalization.settings.rules.item(this, res);
+                } catch (e) {
+                    console.log(e);
+                }
             }.bind(this)
         });
 

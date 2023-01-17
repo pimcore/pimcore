@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.targetingToolbar");
+pimcore.registerNS("pimcore.bundle.personalization.settings.targetingtoolbar");
 /**
  * @private
  */
-pimcore.settings.targetingToolbar = Class.create({
+pimcore.bundle.personalization.settings.targetingtoolbar = Class.create({
     initialize: function () {
         var that = this;
         var cookieName = "pimcore_targeting_debug";

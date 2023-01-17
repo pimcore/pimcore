@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.targeting.rules.item");
+pimcore.registerNS("pimcore.bundle.personalization.settings.rules.item");
 /**
  * @private
  */
-pimcore.settings.targeting.rules.item = Class.create({
+pimcore.bundle.personalization.settings.rules.item = Class.create({
     initialize: function(parent, data) {
         this.parent = parent;
         this.data = data;
@@ -54,7 +54,7 @@ pimcore.settings.targeting.rules.item = Class.create({
         if (this.data.conditions && this.data.conditions.length > 0) {
             for (var i = 0; i < this.data.conditions.length; i++) {
                 try {
-                    condition = pimcore.settings.targeting.conditions.create(this.data.conditions[i].type);
+                    condition = pimcore.bundle.personalization.settings.conditions.create(this.data.conditions[i].type);
                 } catch (e) {
                     console.error(e);
                     continue;
@@ -75,7 +75,7 @@ pimcore.settings.targeting.rules.item = Class.create({
         if (this.data.actions && this.data.actions.length > 0) {
             for (var i = 0; i < this.data.actions.length; i++) {
                 try {
-                    action = pimcore.settings.targeting.actions.create(this.data.actions[i].type);
+                    action = pimcore.bundle.personalization.settings.actions.create(this.data.actions[i].type);
                 } catch (e) {
                     console.error(e);
                     continue;
@@ -137,11 +137,11 @@ pimcore.settings.targeting.rules.item = Class.create({
         }.bind(this);
 
         var addMenu = [];
-        Ext.Array.forEach(pimcore.settings.targeting.conditions.getKeys(), function(key) {
+        Ext.Array.forEach(pimcore.bundle.personalization.settings.conditions.getKeys(), function(key) {
             var condition;
 
             try {
-                condition = pimcore.settings.targeting.conditions.create(key);
+                condition = pimcore.bundle.personalization.settings.conditions.create(key);
             } catch (e) {
                 console.error(e);
                 return;
@@ -181,11 +181,11 @@ pimcore.settings.targeting.rules.item = Class.create({
         }.bind(this);
 
         var addMenu = [];
-        Ext.Array.forEach(pimcore.settings.targeting.actions.getKeys(), function(key) {
+        Ext.Array.forEach(pimcore.bundle.personalization.settings.actions.getKeys(), function(key) {
             var action;
 
             try {
-                action = pimcore.settings.targeting.actions.create(key);
+                action = pimcore.bundle.personalization.settings.actions.create(key);
             } catch (e) {
                 console.error(e);
                 return;
@@ -305,7 +305,7 @@ pimcore.settings.targeting.rules.item = Class.create({
         };
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_targeting_rulesave'),
+            url: Routing.generate('pimcore_bundle_personalization_targeting_rulesave'),
             method: 'PUT',
             params: {
                 id: this.data.id,
