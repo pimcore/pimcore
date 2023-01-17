@@ -10,8 +10,6 @@ pimcore.bundle.customreports.startup = Class.create({
 
     pimcoreReady: function () {
         this.registerCustomReportsPanel();
-        pimcore.globalmanager.add("reports", this.customReportsPanel.getNewReportInstance());
-        pimcore.globalmanager.add("custom_reports_settings", new pimcore.bundle.customreports.custom.settings());
     },
 
     registerCustomReportsPanel: function () {
@@ -51,7 +49,7 @@ pimcore.bundle.customreports.startup = Class.create({
             pimcore.globalmanager.get("custom_reports_settings").activate();
         }
         catch (e) {
-            console.log(e);
+            pimcore.globalmanager.add("custom_reports_settings", new pimcore.bundle.customreports.custom.settings());
         }
     },
 
@@ -60,7 +58,7 @@ pimcore.bundle.customreports.startup = Class.create({
             pimcore.globalmanager.get("reports").activate();
         }
         catch (e) {
-            console.log(e);
+            pimcore.globalmanager.add("reports", this.customReportsPanel.getNewReportInstance());
         }
 
         // this is for generated/configured reports like the SQL Report
@@ -82,7 +80,7 @@ pimcore.bundle.customreports.startup = Class.create({
         }
         if (user.isAllowed("reports")) {
             pimcore.helpers.keyBindingMapping.reports = function() {
-                customreports.showCustomReports();
+                customreports.showReports();
             }
         }
     }

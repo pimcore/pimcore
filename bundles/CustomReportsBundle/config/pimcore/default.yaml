@@ -8,9 +8,12 @@ pimcore_admin:
         default_key_bindings:
             reports:
                 key: 'M'
+                action: reports
+                ctrl: true
                 alt: true
-                shift: true
-            customReports:
+            custom_reports:
                 key: 'C'
+                action: customReports
+                ctrl: true
                 alt: true
-                shift: true
+

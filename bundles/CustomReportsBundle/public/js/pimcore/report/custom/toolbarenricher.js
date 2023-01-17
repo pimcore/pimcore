@@ -69,7 +69,7 @@ document.addEventListener(pimcore.events.pimcoreReady, (e) => {
                                         text: t(report["niceName"]),
                                         iconCls: report["iconClass"],
                                         handler: function (report, reportClass) {
-                                            toolbar.showReports(reportClass, {
+                                            customreports.showReports(reportClass, {
                                                 name: report["name"],
                                                 text: t(report["niceName"]),
                                                 niceName: report["niceName"],
