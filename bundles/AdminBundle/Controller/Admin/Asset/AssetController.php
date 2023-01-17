@@ -1097,7 +1097,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
-        $asset = $version->loadData();
+        $asset = $version?->loadData();
 
         if ($asset) {
             $currentAsset = Asset::getById($asset->getId());
