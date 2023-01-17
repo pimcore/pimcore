@@ -375,8 +375,8 @@ final class ClassDefinition extends Model\AbstractModel
                 }
             }
 
-            if (isset($data->blockedVarsForExport)) {
-                unset($data->blockedVarsForExport);
+            if (!empty($data->getBlockedVarsForExport())) {
+                $data->setBlockedVarsForExport([]);
             }
         }
 
