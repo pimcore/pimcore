@@ -500,9 +500,6 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return Editable[]
      */
-    /**
-     * @return Editable[]
-     */
     public function getEditables(): array
     {
         if ($this->editables === null) {
