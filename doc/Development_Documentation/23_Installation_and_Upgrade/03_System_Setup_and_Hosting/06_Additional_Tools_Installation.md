@@ -82,7 +82,7 @@ apt-get install facedetect
 ```
 
 
-# Check your installation
+# Check your installation (requires pimcore/system-info-bundle package)
 
 You can check system requirements via Admin UI `Tools` / `System Info & Tools` / `System-Requirements Check` menu.
 
