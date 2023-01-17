@@ -2102,14 +2102,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $latestVersion = $object->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
-            try {
-                $latestObj = $latestVersion->loadData();
-                if ($latestObj instanceof DataObject\Concrete) {
-                    $draftVersion = $latestVersion;
-    
-                    return $latestObj;
-                }
-            } catch (\Exception) {}
+            $latestObj = $latestVersion->loadData();
+            if ($latestObj instanceof DataObject\Concrete) {
+                $draftVersion = $latestVersion;
+
+                return $latestObj;
+            }
         }
 
         return $object;
