@@ -13,7 +13,8 @@
   "prefer-stable": true,
   "minimum-stability": "dev",
   "require": {
-    "pimcore/pimcore": "^11.0"
+    "pimcore/pimcore": "^11.0",
+    "knplabs/knp-paginator-bundle": "^6.0.0"
   },
   "require-dev": {
     "phpstan/phpstan": "^1.9",
@@ -34,6 +35,9 @@
     }
   },
   "autoload-dev": {
+    "psr-4": {
+      "Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tests\\": "tests"
+    },
     "files": [
       "kernel/Kernel.php"
     ]

@@ -533,7 +533,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         }
 
         /** @var PaginatorInterface $paginator */
-        $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
+        $paginator = \Pimcore::getContainer()->get('knp_paginator');
         $paginator = $paginator->paginate(
             $tokens,
             $params['page'] ?? 1,

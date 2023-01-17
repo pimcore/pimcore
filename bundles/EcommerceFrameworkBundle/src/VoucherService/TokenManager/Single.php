@@ -71,7 +71,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
 
         if ($codes) {
             /** @var PaginatorInterface $paginator */
-            $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
+            $paginator = \Pimcore::getContainer()->get('knp_paginator');
             $paginator = $paginator->paginate(
                 (array)$codes,
                 $params['page'] ?? 1,
