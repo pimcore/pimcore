@@ -109,6 +109,31 @@ abstract class PageSnippet extends Model\Document
     protected $inheritedEditables = [];
 
     /**
+     * @var bool
+     */
+    private static $getInheritedValues = false;
+
+    /**
+     * @static
+     *
+     * @param bool $getInheritedValues
+     */
+    public static function setGetInheritedValues($getInheritedValues)
+    {
+        self::$getInheritedValues = $getInheritedValues;
+    }
+
+    /**
+     * @static
+     *
+     * @return bool
+     */
+    public static function getGetInheritedValues()
+    {
+        return self::$getInheritedValues;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function save()
@@ -503,7 +528,15 @@ abstract class PageSnippet extends Model\Document
     public function getEditables(): array
     {
         if ($this->editables === null) {
-            $this->setEditables($this->getDao()->getEditables());
+            $documentEditables = $this->getDao()->getEditables();
+
+            if (self::getGetInheritedValues() && $this->supportsContentMaster() && $this->getContentMasterDocument()){
+                $contentMasterEditables = $this->getContentMasterDocument()->getEditables();
+                $documentEditables = array_merge($contentMasterEditables, $documentEditables);
+                $this->inheritedEditables = $documentEditables;
+            }
+
+            $this->setEditables($documentEditables);
         }
 
         return $this->editables;
