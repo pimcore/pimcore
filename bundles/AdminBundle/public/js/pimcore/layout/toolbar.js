@@ -748,16 +748,7 @@ pimcore.layout.toolbar = Class.create({
                      }
                  }
              }
- 
-             if (user.isAllowed("routes") && perspectiveCfg.inToolbar("settings.routes")) {
-                 settingsItems.push({
-                     text: t("static_routes"),
-                     iconCls: "pimcore_nav_icon_routes",
-                     itemId: 'pimcore_menu_settings_static_routes',
-                     handler: this.editRoutes
-                 });
-             }
- 
+
              if (perspectiveCfg.inToolbar("settings.cache") && (user.isAllowed("clear_cache") || user.isAllowed("clear_temp_files") || user.isAllowed("clear_fullpage_cache"))) {
  
                  var cacheItems = [];
@@ -903,16 +894,13 @@ pimcore.layout.toolbar = Class.create({
              }
  
              // help menu
-             if (settingsItems.length > 0) {
-                menu.settings = {
-                    items: settingsItems,
-                    shadow: false,
-                    listeners: true,
-                    cls: "pimcore_navigation_flyout"
-                };
-             }
+            menu.settings = {
+                items: settingsItems,
+                shadow: false,
+                listeners: true,
+                cls: "pimcore_navigation_flyout"
+            };
          }
- 
  
          // search menu
  
@@ -1258,17 +1246,6 @@ pimcore.layout.toolbar = Class.create({
              pimcore.globalmanager.add("translationdomainmanager", new pimcore.settings.translation.domain(domain));
          }
      },
- 
-     editRoutes: function () {
- 
-         try {
-             pimcore.globalmanager.get("staticroutes").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("staticroutes", new pimcore.settings.staticroutes());
-         }
-     },
- 
  
      editRedirects: function () {
  

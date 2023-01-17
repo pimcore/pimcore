@@ -13,22 +13,23 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Staticroute\Listing;
+namespace Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute\Listing;
 
-use Pimcore\Model;
+use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
+
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Staticroute\Listing $model
+ * @property Staticroute\Listing $model
  */
-class Dao extends Model\Staticroute\Dao
+class Dao extends Staticroute\Dao
 {
     public function loadList(): array
     {
         $staticRoutes = [];
         foreach ($this->loadIdList() as $id) {
-            $staticRoutes[] = Model\Staticroute::getById($id);
+            $staticRoutes[] = Staticroute::getById($id);
         }
 
         if ($this->model->getFilter()) {

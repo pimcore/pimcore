@@ -17,12 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\EventListener;
 
+use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Event\Targeting\AssignDocumentTargetGroupEvent;
 use Pimcore\Event\Targeting\TargetingEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Model\Document;
-use Pimcore\Model\Staticroute;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -74,7 +74,11 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
 
     private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo): void
     {
-        if (!$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
+        if (!$document instanceof Document\Page) {
+            return;
+        }
+
+        if(class_exists(Staticroute::class) && null !== Staticroute::getCurrentRoute()) {
             return;
         }
 

@@ -14,11 +14,12 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Routing\Staticroute;
+namespace Pimcore\Bundle\StaticRoutesBundle\Routing\Staticroute;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
+use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Config;
 use Pimcore\Model\Site;
-use Pimcore\Model\Staticroute;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
@@ -47,6 +48,9 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
      */
     protected ?array $staticRoutes = null;
 
+    /**
+     * @var string[]|null
+     */
     protected ?array $supportedNames = null;
 
     /**
@@ -93,14 +97,6 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function supports(string $name): bool
-    {
-        return is_string($name) && in_array($name, $this->getSupportedNames());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteCollection(): RouteCollection
     {
         return new RouteCollection();
@@ -119,6 +115,9 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
      */
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
+        if (!in_array($name, $this->getSupportedNames())) {
+            throw new RouteNotFoundException('Not supported name');
+        }
         // ABSOLUTE_URL = http://example.com
         // NETWORK_PATH = //example.com
         $needsHostname = self::ABSOLUTE_URL === $referenceType || self::NETWORK_PATH === $referenceType;
@@ -197,8 +196,6 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
 
     /**
      * {@inheritdoc}
-     *
-     * @return array
      */
     public function matchRequest(Request $request): array
     {
@@ -207,20 +204,12 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
 
     /**
      * {@inheritdoc}
-     *
-     * @return array
      */
     public function match(string $pathinfo): array
     {
         return $this->doMatch($pathinfo);
     }
 
-    /**
-     * @param string $pathinfo
-     * @param Request|null $request
-     *
-     * @return array
-     */
     protected function doMatch(string $pathinfo, Request $request = null): array
     {
         $pathinfo = urldecode($pathinfo);
@@ -321,6 +310,9 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         return $this->staticRoutes;
     }
 
+    /**
+     * @return string[]
+     */
     protected function getSupportedNames(): array
     {
         if (null === $this->supportedNames) {

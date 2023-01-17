@@ -13,8 +13,10 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Staticroute;
+namespace Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 
+use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
+use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\Uid\Uuid as Uid;
@@ -22,16 +24,16 @@ use Symfony\Component\Uid\Uuid as Uid;
 /**
  * @internal
  *
- * @property \Pimcore\Model\Staticroute $model
+ * @property Staticroute $model
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
     public function configure(): void
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+        $definitions = \Pimcore::getContainer()->getParameter('pimcore_static_routes.definitions');
 
         parent::configure([
-            'containerConfig' => $config['staticroutes']['definitions'],
+            'containerConfig' => $definitions,
             'settingsStoreScope' => 'pimcore_staticroutes',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/staticroutes',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_STATICROUTES',
@@ -49,11 +51,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * @deprecated duplicate work, use the listing instead
      *
-     * @return Model\Staticroute[]
+     * @return Staticroute[]
      */
     public function getAll(): array
     {
-        $list = new Model\Staticroute\Listing();
+        $list = new Staticroute\Listing();
         $list = $list->load();
 
         return $list;
@@ -105,7 +107,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $totalList = new Listing();
         $totalList = $totalList->load();
 
-        $data = array_filter($totalList, function (Model\Staticroute $row) use ($name, $siteId) {
+        $data = array_filter($totalList, function (Staticroute $row) use ($name, $siteId) {
             if ($row->getName() == $name) {
                 if (empty($row->getSiteId()) || in_array($siteId, $row->getSiteId())) {
                     return true;
@@ -115,7 +117,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             return false;
         });
 
-        usort($data, function (Model\Staticroute $a, Model\Staticroute $b) {
+        usort($data, function (Staticroute $a, Staticroute $b) {
             if ($a->getSiteId() == $b->getSiteId()) {
                 return 0;
             }
@@ -139,11 +141,9 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
-            'pimcore' => [
-                'staticroutes' => [
-                    'definitions' => [
-                        $id => $data,
-                    ],
+            'pimcore_static_routes' => [
+                'definitions' => [
+                    $id => $data,
                 ],
             ],
         ];

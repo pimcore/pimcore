@@ -109,6 +109,9 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - Removed `dontCheckEnabled` config support from Areablock editable. 
   - Functionality that was moved into its own bundle and must be enabled manually in `config/bundles.php`
     - Glossary has been moved into PimcoreGlossaryBundle
+      - Config `pimcore:glossary:` has been removed, please use `pimcore_glossary:` in the PimcoreGlossaryBundle instead.
+    - Staticroutes has been moved into PimcoreStaticRoutesBundle
+      - Config `pimcore:staticroutes:` has been removed, please use `pimcore_static_routes:` in the PimcoreStaticRoutesBundle instead.
     - SEO Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
     - [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
     - UUID has been moved into PimcoreUuidBundle

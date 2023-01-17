@@ -186,7 +186,8 @@
       "Pimcore\\Bundle\\UuidBundle\\": "bundles/UuidBundle/src/",
       "Pimcore\\Bundle\\GlossaryBundle\\": "bundles/GlossaryBundle/src/",
       "Pimcore\\Bundle\\SeoBundle\\": "bundles/SeoBundle/src/",
-      "Pimcore\\Bundle\\SystemInfoBundle\\": "bundles/SystemInfoBundle/src/"
+      "Pimcore\\Bundle\\SystemInfoBundle\\": "bundles/SystemInfoBundle/src/",
+      "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"

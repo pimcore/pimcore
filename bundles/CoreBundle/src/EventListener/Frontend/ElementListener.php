@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
@@ -24,7 +25,6 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Document;
-use Pimcore\Model\Staticroute;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
@@ -130,7 +130,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     protected function applyTargetGroups(Request $request, Document $document): void
     {
-        if (!$document instanceof Document\Targeting\TargetingDocumentInterface || null !== Staticroute::getCurrentRoute()) {
+        if (!$document instanceof Document\Targeting\TargetingDocumentInterface) {
+            return;
+        }
+
+        if(class_exists(Staticroute::class) && null !== Staticroute::getCurrentRoute()) {
             return;
         }
 
