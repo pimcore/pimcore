@@ -30,7 +30,7 @@ class Dao extends Model\User\AbstractUser\Dao
      *
      * @throws \Exception
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         parent::getById($id);
 
@@ -44,7 +44,7 @@ class Dao extends Model\User\AbstractUser\Dao
      *
      * @throws \Exception
      */
-    public function getByName(string $name)
+    public function getByName(string $name): void
     {
         parent::getByName($name);
 
@@ -53,7 +53,7 @@ class Dao extends Model\User\AbstractUser\Dao
         }
     }
 
-    public function loadWorkspaces()
+    public function loadWorkspaces(): void
     {
         $types = ['asset', 'document', 'object'];
 
@@ -72,7 +72,7 @@ class Dao extends Model\User\AbstractUser\Dao
         }
     }
 
-    public function emptyWorkspaces()
+    public function emptyWorkspaces(): void
     {
         $this->db->delete('users_workspaces_asset', ['userId' => $this->model->getId()]);
         $this->db->delete('users_workspaces_document', ['userId' => $this->model->getId()]);

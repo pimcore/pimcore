@@ -65,7 +65,7 @@ class GridConfigFavourite extends AbstractModel
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         $this->getDao()->save();
     }
@@ -73,7 +73,7 @@ class GridConfigFavourite extends AbstractModel
     /**
      * Delete this favourite
      */
-    public function delete()
+    public function delete(): void
     {
         $this->getDao()->delete();
     }
@@ -83,7 +83,7 @@ class GridConfigFavourite extends AbstractModel
         return $this->ownerId;
     }
 
-    public function setOwnerId(int $ownerId)
+    public function setOwnerId(int $ownerId): void
     {
         $this->ownerId = $ownerId;
     }
@@ -93,7 +93,7 @@ class GridConfigFavourite extends AbstractModel
         return $this->classId;
     }
 
-    public function setClassId(string $classId)
+    public function setClassId(string $classId): void
     {
         $this->classId = $classId;
     }
@@ -103,7 +103,7 @@ class GridConfigFavourite extends AbstractModel
         return $this->gridConfigId;
     }
 
-    public function setGridConfigId(int $gridConfigId)
+    public function setGridConfigId(int $gridConfigId): void
     {
         $this->gridConfigId = $gridConfigId;
     }
@@ -113,7 +113,7 @@ class GridConfigFavourite extends AbstractModel
         return $this->searchType;
     }
 
-    public function setSearchType(string $searchType)
+    public function setSearchType(string $searchType): void
     {
         $this->searchType = $searchType;
     }
@@ -123,7 +123,7 @@ class GridConfigFavourite extends AbstractModel
         return $this->objectId;
     }
 
-    public function setObjectId(int $objectId)
+    public function setObjectId(int $objectId): void
     {
         $this->objectId = $objectId;
     }
@@ -143,7 +143,7 @@ class GridConfigFavourite extends AbstractModel
      *
      * @param string $type
      */
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }

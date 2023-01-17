@@ -37,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @param int|null $id
      */
-    public function getById(int $id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -50,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save document to database
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
             $this->create();
@@ -94,12 +94,12 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::$dbTable, ['id' => $this->model->getId()]);
     }
 
-    public function create()
+    public function create(): void
     {
         $this->db->insert(self::$dbTable, []);
 

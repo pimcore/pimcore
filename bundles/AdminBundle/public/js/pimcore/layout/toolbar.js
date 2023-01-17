@@ -25,7 +25,7 @@ pimcore.layout.toolbar = Class.create({
          var perspectiveCfg = pimcore.globalmanager.get("perspective");
 
          var menu = {};
- 
+
          if (perspectiveCfg.inToolbar("file")) {
              var fileItems = [];
  
@@ -290,7 +290,7 @@ pimcore.layout.toolbar = Class.create({
          if (perspectiveCfg.inToolbar("extras")) {
  
              var extrasItems = [];
- 
+
              if (user.isAllowed("redirects") && perspectiveCfg.inToolbar("extras.redirects")) {
                  extrasItems.push({
                      text: t("redirects"),
@@ -409,43 +409,9 @@ pimcore.layout.toolbar = Class.create({
                          handler: this.showMaintenance
                      });
                  }
- 
-                 if (perspectiveCfg.inToolbar("extras.systemtools")) {
-                     var systemItems = [];
- 
-                     if (perspectiveCfg.inToolbar("extras.systemtools.phpinfo")) {
-                         systemItems.push(
-                             {
-                                 text: t("php_info"),
-                                 iconCls: "pimcore_nav_icon_php",
-                                 itemId: 'pimcore_menu_extras_system_info_php_info',
-                                 handler: this.showPhpInfo
-                             }
-                         );
-                     }
- 
-                     if (perspectiveCfg.inToolbar("extras.systemtools.opcache")) {
-                         systemItems.push(
-                             {
-                                 text: t("php_opcache_status"),
-                                 iconCls: "pimcore_nav_icon_reports",
-                                 itemId: 'pimcore_menu_extras_system_info_php_opcache_status',
-                                 handler: this.showOpcacheStatus
-                             }
-                         );
-                     }
- 
-                     if (perspectiveCfg.inToolbar("extras.systemtools.requirements")) {
-                         systemItems.push(
-                             {
-                                 text: t("system_requirements_check"),
-                                 iconCls: "pimcore_nav_icon_systemrequirements",
-                                 itemId: 'pimcore_menu_extras_system_info_system_requirements_check',
-                                 handler: this.showSystemRequirementsCheck
-                             }
-                         );
-                     }
 
+                 var systemItems = [];
+                 if (perspectiveCfg.inToolbar("extras.systemtools")) {
                      if (perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")) {
                          systemItems.push(
                              {
@@ -456,19 +422,19 @@ pimcore.layout.toolbar = Class.create({
                              }
                          );
                      }
- 
-                     extrasItems.push({
-                         text: t("system_infos_and_tools"),
-                         iconCls: "pimcore_nav_icon_info",
-                         hideOnClick: false,
-                         itemId: 'pimcore_menu_extras_system_info',
-                         menu: {
-                             cls: "pimcore_navigation_flyout",
-                             shadow: false,
-                             items: systemItems
-                         }
-                     });
                  }
+
+                 extrasItems.push({
+                     text: t("system_infos_and_tools"),
+                     iconCls: "pimcore_nav_icon_info",
+                     hideOnClick: false,
+                     itemId: 'pimcore_menu_extras_system_info',
+                     menu: {
+                         cls: "pimcore_navigation_flyout",
+                         shadow: false,
+                         items: systemItems
+                     }
+                 });
              }
 
              // adding menu even though extraItems can be empty
@@ -1565,18 +1531,6 @@ pimcore.layout.toolbar = Class.create({
          }
      },
  
-     showPhpInfo: function () {
-         pimcore.helpers.openGenericIframeWindow("phpinfo", Routing.generate('pimcore_admin_misc_phpinfo'), "pimcore_icon_php", "PHP Info");
-     },
- 
-     showOpcacheStatus: function () {
-         pimcore.helpers.openGenericIframeWindow("opcachestatus", Routing.generate('pimcore_admin_external_opcache_index'), "pimcore_icon_reports", "PHP OPcache Status");
-     },
- 
-     showSystemRequirementsCheck: function () {
-         pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_admin_install_check'), "pimcore_icon_systemrequirements", "System-Requirements Check");
-     },
-
      showElementHistory: function() {
          try {
              pimcore.globalmanager.get("element_history").activate();

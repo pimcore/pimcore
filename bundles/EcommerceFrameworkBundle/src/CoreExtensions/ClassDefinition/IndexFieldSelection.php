@@ -72,7 +72,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     {
     }
 
-    public function setConsiderTenants($considerTenants)
+    public function setConsiderTenants(bool $considerTenants): void
     {
         $this->considerTenants = $considerTenants;
     }
@@ -82,7 +82,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return $this->considerTenants;
     }
 
-    public function setFilterGroups(array $filterGroups)
+    public function setFilterGroups(array $filterGroups): void
     {
         $this->filterGroups = $filterGroups;
     }
@@ -92,7 +92,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return $this->filterGroups;
     }
 
-    public function setMultiPreSelect(string $multiPreSelect)
+    public function setMultiPreSelect(string $multiPreSelect): void
     {
         $this->multiPreSelect = $multiPreSelect;
     }
@@ -102,7 +102,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return $this->multiPreSelect;
     }
 
-    public function setPredefinedPreSelectOptions(array $predefinedPreSelectOptions)
+    public function setPredefinedPreSelectOptions(array $predefinedPreSelectOptions): void
     {
         $this->predefinedPreSelectOptions = $predefinedPreSelectOptions;
     }
@@ -239,7 +239,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() &&
             ($data === null || $data->getField() === null)) {
@@ -291,7 +291,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return $this->width;
     }
 
-    public function setWidth(mixed $width)
+    public function setWidth(mixed $width): void
     {
         $this->width = (int)$width;
     }

@@ -43,7 +43,7 @@ class CsrfProtectionHandler implements LoggerAwareInterface
         $this->twig = $twig;
     }
 
-    public function checkCsrfToken(Request $request)
+    public function checkCsrfToken(Request $request): void
     {
         $csrfToken = $this->getCsrfToken();
         $requestCsrfToken = $request->headers->get('x_pimcore_csrf_token');
@@ -72,7 +72,7 @@ class CsrfProtectionHandler implements LoggerAwareInterface
         return $this->csrfToken;
     }
 
-    public function regenerateCsrfToken(bool $force = true)
+    public function regenerateCsrfToken(bool $force = true): void
     {
         $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) use ($force) {
             if ($force || !$adminSession->get('csrfToken')) {
@@ -85,7 +85,7 @@ class CsrfProtectionHandler implements LoggerAwareInterface
         $this->twig->addGlobal('csrfToken', $this->csrfToken);
     }
 
-    public function generateCsrfToken()
+    public function generateCsrfToken(): void
     {
         $this->twig->addGlobal('csrfToken', $this->getCsrfToken());
     }

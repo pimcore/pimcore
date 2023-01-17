@@ -25,7 +25,7 @@ use Pimcore\Maintenance\TaskInterface;
  */
 class CleanupPendingOrdersTask implements TaskInterface
 {
-    public function execute()
+    public function execute(): void
     {
         $checkoutManager = Factory::getInstance()->getCheckoutManager(new Cart());
         $checkoutManager->cleanUpPendingOrders();

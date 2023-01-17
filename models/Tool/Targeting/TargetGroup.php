@@ -111,7 +111,7 @@ class TargetGroup extends Model\AbstractModel
         return $this->name;
     }
 
-    public function setThreshold(int $threshold)
+    public function setThreshold(int $threshold): void
     {
         $this->threshold = $threshold;
     }
@@ -121,7 +121,7 @@ class TargetGroup extends Model\AbstractModel
         return $this->threshold;
     }
 
-    public function setActive(bool $active)
+    public function setActive(bool $active): void
     {
         $this->active = (bool)$active;
     }

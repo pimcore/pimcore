@@ -258,9 +258,15 @@ class DocType extends Model\AbstractModel
     {
         return $this->staticGeneratorEnabled;
     }
-    public function setStaticGeneratorEnabled(bool $staticGeneratorEnabled): void
+
+    /**
+     * @return $this
+     */
+    public function setStaticGeneratorEnabled(bool $staticGeneratorEnabled): static
     {
         $this->staticGeneratorEnabled = $staticGeneratorEnabled;
+
+        return $this;
     }
 
     public function __clone()

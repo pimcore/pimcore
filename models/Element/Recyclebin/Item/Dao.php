@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM recyclebin WHERE id = ?', [$id]);
 
@@ -72,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('recyclebin', ['id' => $this->model->getId()]);
     }

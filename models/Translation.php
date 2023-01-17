@@ -188,7 +188,7 @@ final class Translation extends AbstractModel
         return Tool::getValidLanguages();
     }
 
-    public function addTranslation(string $language, string $text)
+    public function addTranslation(string $language, string $text): void
     {
         $this->translations[$language] = $text;
     }
@@ -206,7 +206,7 @@ final class Translation extends AbstractModel
     /**
      * @internal
      */
-    public static function clearDependentCache()
+    public static function clearDependentCache(): void
     {
         Cache::clearTags(['translator', 'translate']);
     }
@@ -327,7 +327,7 @@ final class Translation extends AbstractModel
         return $translation->getDao()->isAValidDomain($domain);
     }
 
-    public function save()
+    public function save(): void
     {
         $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
 
@@ -338,7 +338,7 @@ final class Translation extends AbstractModel
         self::clearDependentCache();
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_DELETE);
 

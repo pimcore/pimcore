@@ -47,7 +47,7 @@ abstract class AbstractElementGenerator implements GeneratorInterface
         $this->processors = $processors;
     }
 
-    public function addFilter(FilterInterface $filter)
+    public function addFilter(FilterInterface $filter): void
     {
         $this->filters[] = $filter;
     }
@@ -60,7 +60,7 @@ abstract class AbstractElementGenerator implements GeneratorInterface
         return $this->filters;
     }
 
-    public function addProcessor(ProcessorInterface $processor)
+    public function addProcessor(ProcessorInterface $processor): void
     {
         $this->processors[] = $processor;
     }

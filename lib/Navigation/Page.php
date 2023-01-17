@@ -882,14 +882,9 @@ abstract class Page extends Container
      *
      * Magic overload for enabling <code>$page->propname = $value</code>.
      *
-     * @param  string $name               property name
-     * @param  mixed  $value              value to set
-     *
-     * @return void
-     *
      * @throws \Exception  if property name is invalid
      */
-    public function __set(string $name, mixed $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->set($name, $value);
     }
@@ -1124,7 +1119,7 @@ abstract class Page extends Container
      *
      * TODO: In Pimcore 11, deprecate/remove the IF block and mark these methods as internal in the phpdoc block
      */
-    public static function setDefaultPageType(string $type = null)
+    public static function setDefaultPageType(string $type = null): void
     {
         // @phpstan-ignore-next-line
         if ($type !== null && !is_string($type)) {

@@ -27,7 +27,7 @@ interface VisitorInfoStorageInterface
 {
     public function getVisitorInfo(): VisitorInfo;
 
-    public function setVisitorInfo(VisitorInfo $visitorInfo);
+    public function setVisitorInfo(VisitorInfo $visitorInfo): void;
 
     public function hasVisitorInfo(): bool;
 }

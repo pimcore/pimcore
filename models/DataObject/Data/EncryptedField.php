@@ -50,7 +50,7 @@ class EncryptedField implements OwnerAwareFieldInterface
         return $this->delegate;
     }
 
-    public function setDelegate(Data $delegate)
+    public function setDelegate(Data $delegate): void
     {
         $this->delegate = $delegate;
     }
@@ -60,7 +60,7 @@ class EncryptedField implements OwnerAwareFieldInterface
         return $this->plain;
     }
 
-    public function setPlain(mixed $plain)
+    public function setPlain(mixed $plain): void
     {
         $this->plain = $plain;
         $this->markMeDirty();
@@ -71,7 +71,7 @@ class EncryptedField implements OwnerAwareFieldInterface
      *
      * @throws \Exception
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         if ($this->plain) {
             try {
@@ -102,7 +102,7 @@ class EncryptedField implements OwnerAwareFieldInterface
     /**
      * @throws \Exception
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->encrypted) {
             try {

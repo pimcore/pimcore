@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 final class PimcoreGlossaryExtension extends ConfigurableExtension
 {
-    public function loadInternal(array $config, ContainerBuilder $container)
+    public function loadInternal(array $config, ContainerBuilder $container): void
     {
         // on container build the shutdown handler shouldn't be called
         // for details please see https://github.com/pimcore/pimcore/issues/4709

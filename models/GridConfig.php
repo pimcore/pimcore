@@ -70,7 +70,7 @@ class GridConfig extends AbstractModel
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->getId()) {
             $this->setCreationDate(time());
@@ -84,7 +84,7 @@ class GridConfig extends AbstractModel
     /**
      * Delete this GridConfig
      */
-    public function delete()
+    public function delete(): void
     {
         $this->getDao()->delete();
     }
@@ -94,7 +94,7 @@ class GridConfig extends AbstractModel
         return $this->id;
     }
 
-    public function setId(int $id)
+    public function setId(int $id): void
     {
         $this->id = (int) $id;
     }
@@ -104,7 +104,7 @@ class GridConfig extends AbstractModel
         return $this->ownerId;
     }
 
-    public function setOwnerId(int $ownerId)
+    public function setOwnerId(int $ownerId): void
     {
         $this->ownerId = $ownerId;
     }
@@ -114,7 +114,7 @@ class GridConfig extends AbstractModel
         return $this->classId;
     }
 
-    public function setClassId(string $classId)
+    public function setClassId(string $classId): void
     {
         $this->classId = $classId;
     }
@@ -124,7 +124,7 @@ class GridConfig extends AbstractModel
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -134,7 +134,7 @@ class GridConfig extends AbstractModel
         return $this->searchType;
     }
 
-    public function setSearchType(string $searchType)
+    public function setSearchType(string $searchType): void
     {
         $this->searchType = $searchType;
     }
@@ -144,7 +144,7 @@ class GridConfig extends AbstractModel
         return $this->config;
     }
 
-    public function setConfig(string $config)
+    public function setConfig(string $config): void
     {
         $this->config = $config;
     }
@@ -154,7 +154,7 @@ class GridConfig extends AbstractModel
         return $this->description;
     }
 
-    public function setDescription(?string $description)
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
     }
@@ -164,7 +164,7 @@ class GridConfig extends AbstractModel
         return $this->creationDate;
     }
 
-    public function setCreationDate(int $creationDate)
+    public function setCreationDate(int $creationDate): void
     {
         $this->creationDate = $creationDate;
     }
@@ -174,7 +174,7 @@ class GridConfig extends AbstractModel
         return $this->modificationDate;
     }
 
-    public function setModificationDate(int $modificationDate)
+    public function setModificationDate(int $modificationDate): void
     {
         $this->modificationDate = $modificationDate;
     }
@@ -184,7 +184,7 @@ class GridConfig extends AbstractModel
         return $this->shareGlobally;
     }
 
-    public function setShareGlobally(bool $shareGlobally)
+    public function setShareGlobally(bool $shareGlobally): void
     {
         $this->shareGlobally = (bool) $shareGlobally;
     }
@@ -194,7 +194,7 @@ class GridConfig extends AbstractModel
         return $this->setAsFavourite;
     }
 
-    public function setSetAsFavourite(bool $setAsFavourite)
+    public function setSetAsFavourite(bool $setAsFavourite): void
     {
         $this->setAsFavourite = (bool) $setAsFavourite;
     }
@@ -224,7 +224,7 @@ class GridConfig extends AbstractModel
      *
      * @param string $type
      */
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }

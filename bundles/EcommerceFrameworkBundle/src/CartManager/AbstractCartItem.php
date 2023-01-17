@@ -121,7 +121,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->cartId;
     }
 
-    public function setCartId(int|string|null $cartId)
+    public function setCartId(int|string|null $cartId): void
     {
         $this->cartId = $cartId;
     }
@@ -135,7 +135,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->getProduct()->getId();
     }
 
-    public function setProductId(int $productId)
+    public function setProductId(int $productId): void
     {
         if ($this->productId !== $productId && !$this->isLoading && $this->getCart()) {
             $this->getCart()->modified();
@@ -144,7 +144,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         $this->product = null;
     }
 
-    public function setParentItemKey(string $parentItemKey)
+    public function setParentItemKey(string $parentItemKey): void
     {
         $this->parentItemKey = $parentItemKey;
     }
@@ -154,7 +154,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->parentItemKey;
     }
 
-    public function setItemKey(string $itemKey)
+    public function setItemKey(string $itemKey): void
     {
         $this->itemKey = $itemKey;
     }
@@ -294,7 +294,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      *
      * @internal
      */
-    public function setIsLoading(bool $isLoading)
+    public function setIsLoading(bool $isLoading): void
     {
         $this->isLoading = $isLoading;
     }

@@ -45,7 +45,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative("SELECT assets.*, tree_locks.locked FROM assets
             LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
@@ -89,7 +89,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPath(string $path)
+    public function getByPath(string $path): void
     {
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM assets WHERE `path` = :path AND `filename` = :key', $params);
@@ -101,7 +101,7 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    public function create()
+    public function create(): void
     {
         $this->db->insert('assets', [
             'filename' => $this->model->getFilename(),
@@ -112,7 +112,7 @@ class Dao extends Model\Element\Dao
         $this->model->setId((int) $this->db->lastInsertId());
     }
 
-    public function update()
+    public function update(): void
     {
         $asset = $this->model->getObjectVars();
 
@@ -181,12 +181,12 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('assets', ['id' => $this->model->getId()]);
     }
 
-    public function updateWorkspaces()
+    public function updateWorkspaces(): void
     {
         $this->db->update('users_workspaces_asset', [
             'cpath' => $this->model->getRealFullPath(),
@@ -285,7 +285,7 @@ class Dao extends Model\Element\Dao
     /**
      * deletes all properties for the object from database
      */
-    public function deleteAllProperties()
+    public function deleteAllProperties(): void
     {
         $this->db->delete('properties', ['cid' => $this->model->getId(), 'ctype' => 'asset']);
     }
@@ -513,7 +513,7 @@ class Dao extends Model\Element\Dao
         return $this->permissionByTypes($columns, $user, 'asset');
     }
 
-    public function updateCustomSettings()
+    public function updateCustomSettings(): void
     {
         $customSettingsData = Serialize::serialize($this->model->getCustomSettings());
         $this->db->update('assets', ['customSettings' => $customSettingsData], ['id' => $this->model->getId()]);

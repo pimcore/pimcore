@@ -47,7 +47,7 @@ class TimeOfTheDay implements ConditionInterface
         $this->hour = $hour;
     }
 
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): self
     {
         $hour = $config['hour'] ?? null;
         if (!empty($hour)) {

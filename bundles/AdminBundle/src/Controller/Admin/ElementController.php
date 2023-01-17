@@ -846,8 +846,10 @@ class ElementController extends AdminController
     {
         $userId = $request->request->getInt('userId');
         if ($userId) {
-            $user = Model\User::getById($userId);
-            $userList = [$user];
+            $userList = [];
+            if ($user = Model\User::getById($userId)) {
+                $userList[] = $user;
+            }
         } else {
             $userList = new Model\User\Listing();
             $userList->setCondition('`type` = ?', ['user']);
