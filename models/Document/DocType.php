@@ -168,6 +168,9 @@ class DocType extends Model\AbstractModel
         return $this->template;
     }
 
+    /**
+     * @return $this
+     */
     public function setController(string $controller): static
     {
         $this->controller = $controller;
@@ -189,6 +192,9 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setGroup(string $group): static
     {
         $this->group = $group;
@@ -196,6 +202,9 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setTemplate(string $template): static
     {
         $this->template = $template;
@@ -208,6 +217,9 @@ class DocType extends Model\AbstractModel
         return $this->type;
     }
 
+    /**
+     * @return $this
+     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -215,6 +227,9 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setPriority(int $priority): static
     {
         $this->priority = $priority;
@@ -227,6 +242,9 @@ class DocType extends Model\AbstractModel
         return $this->priority;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
@@ -239,6 +257,9 @@ class DocType extends Model\AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = $creationDate;
@@ -256,9 +277,14 @@ class DocType extends Model\AbstractModel
         return $this->staticGeneratorEnabled;
     }
 
-    public function setStaticGeneratorEnabled(bool $staticGeneratorEnabled): void
+    /**
+     * @return $this
+     */
+    public function setStaticGeneratorEnabled(bool $staticGeneratorEnabled): static
     {
         $this->staticGeneratorEnabled = $staticGeneratorEnabled;
+
+        return $this;
     }
 
     public function __clone()

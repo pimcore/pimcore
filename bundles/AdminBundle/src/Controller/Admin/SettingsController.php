@@ -402,14 +402,12 @@ class SettingsController extends AdminController
         $valueArray['general']['valid_language'] = explode(',', $valueArray['general']['valid_languages']);
 
         //for "wrong" legacy values
-        if (is_array($valueArray['general']['valid_language'])) {
-            foreach ($valueArray['general']['valid_language'] as $existingValue) {
-                if (!in_array($existingValue, $validLanguages)) {
-                    $languageOptions[] = [
-                        'language' => $existingValue,
-                        'display' => $existingValue,
-                    ];
-                }
+        foreach ($valueArray['general']['valid_language'] as $existingValue) {
+            if (!in_array($existingValue, $validLanguages)) {
+                $languageOptions[] = [
+                    'language' => $existingValue,
+                    'display' => $existingValue,
+                ];
             }
         }
 
