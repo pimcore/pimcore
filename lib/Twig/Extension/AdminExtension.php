@@ -30,13 +30,11 @@ use Twig\TwigFunction;
  */
 class AdminExtension extends AbstractExtension
 {
-    private EditmodeResolver $editmodeResolver;
-    private UserLoader $userLoader;
-
-    public function __construct(private UrlGeneratorInterface $generator, EditmodeResolver $editmodeResolver, UserLoader $userLoader)
-    {
-        $this->editmodeResolver = $editmodeResolver;
-        $this->userLoader = $userLoader;
+    public function __construct(
+        private UrlGeneratorInterface $generator, 
+        private EditmodeResolver $editmodeResolver, 
+        private UserLoader $userLoader
+    ) {
     }
 
     public function getFunctions(): array
