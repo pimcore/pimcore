@@ -214,7 +214,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         // loaders are defined as private services as we don't need them outside the main type loader
         foreach ($services as $serviceId => $cfg) {
             $loaders = [];
-
             if ($cfg['config']['prefixes']) {
                 $prefixLoader = new Definition($cfg['prefixLoader'], [$cfg['config']['prefixes']]);
                 $prefixLoader->setPublic(false);

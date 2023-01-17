@@ -983,12 +983,7 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-            ->booleanNode('type_definitions_loader_enabled')
-                ->defaultFalse()
-                ->info('Enabling the new type_definition loader, will be removed with Pimcore 11')
-            ->end()
-        ->end();
-
+            ->end();
 
         $this->addImplementationLoaderNode($documentsNode, 'type_definitions');
     }

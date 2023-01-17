@@ -21,6 +21,7 @@ use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
@@ -264,14 +265,17 @@ class Document extends Element\AbstractElement
                 return null;
             }
 
-            // check for if custom types are enabled. Will be removed in Pimcore 11
-            $config = Config::getSystemConfiguration('documents');
-
-            if($config['type_definitions_loader_enabled']) {
+            try {
                 // Getting Typeloader from container
                 $loader = \Pimcore::getContainer()->get(TypeLoader::class);
                 $newDocument = $loader->build($document->getType());
-            } else {
+            } catch(UnsupportedException $ex) {
+
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.6.0',
+                    sprintf('%s - Loading documents via fixed namespace is deprecated and will be removed in Pimcore 11. Use pimcore:type_definitions instead', $ex->getMessage())
+                );
                 /**
                  * @deprecated since Pimcore 10.6 and will be removed in Pimcore 11. Use type_definitions instead
                  */
@@ -285,7 +289,6 @@ class Document extends Element\AbstractElement
                         $className = $oldStyleClass;
                     }
                 }
-
                 /** @var Document $newDocument */
                 $newDocument = self::getModelFactory()->build($className);
             }
