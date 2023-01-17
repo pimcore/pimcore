@@ -634,11 +634,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         }
 
         $enrichedFieldDefinitions = [];
-        if (is_array($this->fieldDefinitionsCache)) {
-            foreach ($this->fieldDefinitionsCache as $key => $fieldDefinition) {
-                $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
-                $enrichedFieldDefinitions[$key] = $fieldDefinition;
-            }
+        foreach ($this->fieldDefinitionsCache as $key => $fieldDefinition) {
+            $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
+            $enrichedFieldDefinitions[$key] = $fieldDefinition;
         }
 
         return $enrichedFieldDefinitions;
