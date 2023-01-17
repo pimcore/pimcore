@@ -38,7 +38,7 @@ class StoreConfigEvent extends Event
         return $this->storeConfig;
     }
 
-    public function setStoreConfig(StoreConfig $storeConfig)
+    public function setStoreConfig(StoreConfig $storeConfig): void
     {
         $this->storeConfig = $storeConfig;
     }

@@ -133,7 +133,7 @@ final class Localizedfield extends Model\AbstractModel implements
         $this->markAllLanguagesAsDirty();
     }
 
-    public function addItem(mixed $item)
+    public function addItem(mixed $item): void
     {
         $this->items[] = $item;
         $this->markFieldDirty('_self');
@@ -165,10 +165,9 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @param bool $mark
      *
-     *@internal
-     *
+     * @internal
      */
-    public function setLoadedAllLazyData(bool $mark = true)
+    public function setLoadedAllLazyData(bool $mark = true): void
     {
         $this->_loadedAllLazyData = $mark;
     }

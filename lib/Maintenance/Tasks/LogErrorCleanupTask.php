@@ -34,7 +34,7 @@ class LogErrorCleanupTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         // keep the history for max. 7 days (=> exactly 144h), according to the privacy policy (EU/German Law)
         // it's allowed to store the IP for 7 days for security reasons (DoS, ...)

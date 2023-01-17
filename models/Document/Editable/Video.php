@@ -90,6 +90,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     protected ?array $allowedTypes = null;
 
+    /**
+     * @return $this
+     */
     public function setId(int|string|null $id): static
     {
         $this->id = $id;
@@ -217,9 +220,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
-    protected function getDataEditmode()
+    protected function getDataEditmode(): mixed
     {
         $data = $this->getData();
 

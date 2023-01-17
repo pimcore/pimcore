@@ -70,7 +70,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
      * @param Request $request
      * @param string $context
      */
-    public function setPimcoreContext(Request $request, string $context)
+    public function setPimcoreContext(Request $request, string $context): void
     {
         $request->attributes->set(self::ATTRIBUTE_PIMCORE_CONTEXT, $context);
     }

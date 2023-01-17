@@ -129,7 +129,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this->calculatorClass;
     }
 
-    public function setCalculatorClass(string $calculatorClass)
+    public function setCalculatorClass(string $calculatorClass): void
     {
         $this->calculatorClass = $calculatorClass;
     }
@@ -161,8 +161,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @return string|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -220,7 +219,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         // nothing to do
     }

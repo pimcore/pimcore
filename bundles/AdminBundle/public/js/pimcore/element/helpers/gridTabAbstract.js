@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.helpers.gridTabAbstract");
+/**
+ * @private
+ */
 pimcore.element.helpers.gridTabAbstract = Class.create({
 
     considerChildTags: 0, // 0 => false

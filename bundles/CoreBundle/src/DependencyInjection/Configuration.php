@@ -173,7 +173,6 @@ final class Configuration implements ConfigurationInterface
         $this->addStaticRoutesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
-        $this->addGlossaryNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
 
@@ -284,11 +283,6 @@ final class Configuration implements ConfigurationInterface
                         })
                     ->end()
                     ->defaultFalse()
-                ->end()
-                ->scalarNode('instance_identifier')
-                    ->defaultNull()
-                    ->info('UUID instance identifier. Has to be unique throughout multiple Pimcore instances. UUID generation will be automatically enabled if a Instance identifier is provided (do not change the instance identifier afterwards - this will cause invalid UUIDs)')
-                    ->end()
                 ->end()
             ->end();
     }
@@ -1014,20 +1008,6 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->booleanNode('allow_processing_unpublished_fallback_document')
-                            ->beforeNormalization()
-                                ->ifString()
-                                ->then(function ($v) {
-                                    return (bool)$v;
-                                })
-                            ->end()
-                            ->defaultFalse()
-                            ->setDeprecated(
-                                'pimcore/pimcore',
-                                '10.1',
-                                'The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.'
-                            )
-                        ->end()
                         ->arrayNode('direct_route_document_types')
                             ->scalarPrototype()->end()
                         ->end()
@@ -1639,7 +1619,7 @@ final class Configuration implements ConfigurationInterface
                                             ->scalarNode('guard')
                                                 ->cannotBeEmpty()
                                                 ->info('An expression to block the transition')
-                                                ->example('is_fully_authenticated() and has_role(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
+                                                ->example('is_fully_authenticated() and is_granted(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
                                             ->end()
                                             ->arrayNode('from')
                                                 ->beforeNormalization()
@@ -1814,7 +1794,7 @@ final class Configuration implements ConfigurationInterface
                                             ->scalarNode('guard')
                                                 ->cannotBeEmpty()
                                                 ->info('An expression to block the action')
-                                                ->example('is_fully_authenticated() and has_role(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
+                                                ->example('is_fully_authenticated() and is_granted(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
                                             ->end()
                                             ->arrayNode('to')
                                                 ->beforeNormalization()
@@ -2092,18 +2072,6 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
-    }
-
-    private function addGlossaryNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('glossary')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('blocked_tags')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar');
     }
 
     private function addTemplatingEngineNode(ArrayNodeDefinition $rootNode): void

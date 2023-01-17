@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.objectbricks");
+/**
+ * @private
+ */
 pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.data.data, {
 
     type: "objectbricks",

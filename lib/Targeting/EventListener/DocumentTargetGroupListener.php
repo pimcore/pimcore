@@ -62,7 +62,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         ];
     }
 
-    public function onVisitorInfoResolve(TargetingEvent $event)
+    public function onVisitorInfoResolve(TargetingEvent $event): void
     {
         $request = $event->getRequest();
         $document = $this->documentResolver->getDocument($request);

@@ -107,10 +107,12 @@ trait FieldcollectionObjectbrickDefinitionTrait
      */
     public function setLayoutDefinitions(?Layout $layoutDefinitions): static
     {
-        $this->layoutDefinitions = $layoutDefinitions;
+        if ($layoutDefinitions) {
+            $this->layoutDefinitions = $layoutDefinitions;
 
-        $this->fieldDefinitions = [];
-        $this->extractDataDefinitions($this->layoutDefinitions);
+            $this->fieldDefinitions = [];
+            $this->extractDataDefinitions($this->layoutDefinitions);
+        }
 
         return $this;
     }
@@ -120,7 +122,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return Data[]
      */
-    public function getFieldDefinitions(array $context = [])
+    public function getFieldDefinitions(array $context = []): array
     {
         if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitions;

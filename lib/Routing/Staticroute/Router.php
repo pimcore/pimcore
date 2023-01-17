@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Routing\Staticroute;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Config;
 use Pimcore\Model\Site;
 use Pimcore\Model\Staticroute;
@@ -68,7 +67,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->context = $context;
     }
@@ -86,7 +85,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         return $this->localeParams;
     }
 
-    public function setLocaleParams(array $localeParams)
+    public function setLocaleParams(array $localeParams): void
     {
         $this->localeParams = $localeParams;
     }
@@ -94,7 +93,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function supports($name): bool
+    public function supports(string $name): bool
     {
         return is_string($name) && in_array($name, $this->getSupportedNames());
     }
@@ -110,9 +109,9 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function getRouteDebugMessage($name, array $parameters = []): string
+    public function getRouteDebugMessage(string $name, array $parameters = []): string
     {
-        return (string)$name;
+        return $name;
     }
 
     /**
@@ -211,7 +210,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
      *
      * @return array
      */
-    public function match($pathinfo): array
+    public function match(string $pathinfo): array
     {
         return $this->doMatch($pathinfo);
     }
@@ -245,7 +244,6 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
                 // to determine if a call to an action was made through a staticroute or not
                 // more on that infos see Pimcore_Controller_Action_Frontend::getRenderScript()
                 $routeParams['pimcore_request_source'] = 'staticroute';
-                $routeParams[ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS] = $this->config['routing']['allow_processing_unpublished_fallback_document'];
                 $routeParams['_route'] = $route->getName();
 
                 $routeParams = $this->processRouteParams($routeParams);

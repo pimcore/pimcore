@@ -226,6 +226,12 @@ class Processor
 
                 if ($success) {
                     $source = fopen($converter->getDestinationFile(), 'rb');
+                    if (false === $source) {
+                        $conversionStatus = 'error';
+                        Logger::info('could not open stream resource at path "' . $converter->getDestinationFile() . '" for Video conversion.');
+
+                        continue;
+                    }
                     Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
                     fclose($source);
                     unlink($converter->getDestinationFile());

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.gdpr.dataproviders.pimcoreUsers");
+/**
+ * @private
+ */
 pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
 
     searchParams: [],

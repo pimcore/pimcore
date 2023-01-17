@@ -165,7 +165,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this;
     }
 
-    public function setInteger(bool $integer)
+    public function setInteger(bool $integer): void
     {
         $this->integer = $integer;
     }
@@ -175,7 +175,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->integer;
     }
 
-    public function setMaxValue(?float $maxValue)
+    public function setMaxValue(?float $maxValue): void
     {
         $this->maxValue = $maxValue;
     }
@@ -185,7 +185,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->maxValue;
     }
 
-    public function setMinValue(?float $minValue)
+    public function setMinValue(?float $minValue): void
     {
         $this->minValue = $minValue;
     }
@@ -195,7 +195,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->minValue;
     }
 
-    public function setUnsigned(bool $unsigned)
+    public function setUnsigned(bool $unsigned): void
     {
         $this->unsigned = $unsigned;
     }
@@ -210,7 +210,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->decimalSize;
     }
 
-    public function setDecimalSize(?int $decimalSize)
+    public function setDecimalSize(?int $decimalSize): void
     {
         if (!is_numeric($decimalSize)) {
             $decimalSize = null;
@@ -219,7 +219,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->decimalSize = $decimalSize;
     }
 
-    public function setDecimalPrecision(?int $decimalPrecision)
+    public function setDecimalPrecision(?int $decimalPrecision): void
     {
         if (!is_numeric($decimalPrecision)) {
             $decimalPrecision = null;
@@ -238,7 +238,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->unique;
     }
 
-    public function setUnique(bool $unique)
+    public function setUnique(bool $unique): void
     {
         $this->unique = (bool) $unique;
     }
@@ -327,8 +327,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return float|int|string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
@@ -384,8 +383,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return float|int|string|null
      *
-     *@see Data::getDataForEditmode
-     *
+     * @see Data::getDataForEditmode
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
@@ -399,8 +397,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return float|int|string|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
@@ -414,8 +411,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return string
      *
-     *@see Data::getVersionPreview
-     *
+     * @see Data::getVersionPreview
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -425,7 +421,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -496,7 +492,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             }
         }
 
-        if (is_numeric($value) && in_array($operator, self::$validFilterOperators)) {
+        if ((is_numeric($value) || $value === 'NULL') && in_array($operator, self::$validFilterOperators)) {
             return $key . ' ' . $operator . ' ' . $value . ' ';
         }
 

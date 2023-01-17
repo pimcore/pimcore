@@ -163,13 +163,8 @@ class HeadLink extends CacheBusterAware
      * - offsetSetAlternate($index, $href, $type, $title, $extras)
      * - prependAlternate($href, $type, $title, $extras)
      * - setAlternate($href, $type, $title, $extras)
-     *
-     * @param string $method
-     * @param array $args
-     *
-     * @return mixed
      */
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args): mixed
     {
         if (preg_match('/^(?P<action>set|(ap|pre)pend|offsetSet)(?P<type>Stylesheet|Alternate)$/', $method, $matches)) {
             $argc = count($args);
@@ -270,7 +265,7 @@ class HeadLink extends CacheBusterAware
      *
      * @param \stdClass $value
      */
-    public function prepend($value)
+    public function prepend($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('prepend() expects a data token; please use one of the custom prepend*() methods');
@@ -284,7 +279,7 @@ class HeadLink extends CacheBusterAware
      *
      * @param \stdClass $value
      */
-    public function set($value)
+    public function set($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('set() expects a data token; please use one of the custom set*() methods');
@@ -362,7 +357,7 @@ class HeadLink extends CacheBusterAware
     /**
      * prepares entries with cache buster prefix
      */
-    protected function prepareEntries()
+    protected function prepareEntries(): void
     {
         foreach ($this as &$item) {
             if ($this->isCacheBuster()) {

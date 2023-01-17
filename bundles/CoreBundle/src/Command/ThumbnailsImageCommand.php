@@ -31,10 +31,10 @@ class ThumbnailsImageCommand extends AbstractCommand
 {
     use Parallelization;
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
-        self::configureParallelization($this);
+        self::configureCommand($this);
 
         $this
             ->setName('pimcore:thumbnails:image')
@@ -42,7 +42,7 @@ class ThumbnailsImageCommand extends AbstractCommand
             ->setDescription('Generate image thumbnails, useful to pre-generate thumbnails in the background')
             ->addOption(
                 'parent',
-                'p',
+                null,
                 InputOption::VALUE_OPTIONAL,
                 'only create thumbnails of images in this folder (comma separated IDs e.g. 543,1077)'
             )

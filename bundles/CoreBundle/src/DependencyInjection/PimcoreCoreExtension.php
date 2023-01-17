@@ -54,7 +54,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     /**
      * {@inheritdoc}
      */
-    public function loadInternal(array $config, ContainerBuilder $container)
+    public function loadInternal(array $config, ContainerBuilder $container): void
     {
         // on container build the shutdown handler shouldn't be called
         // for details please see https://github.com/pimcore/pimcore/issues/4709
@@ -144,7 +144,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
         $this->configureSitemaps($container, $config['sitemaps']);
-        $this->configureGlossary($container, $config['glossary']);
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
@@ -396,7 +395,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
      *
      * {@inheritdoc}
      */
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         /*$securityConfigs = $container->getExtensionConfig('security');
 
@@ -418,10 +417,5 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
 
         $serviceLocator->setArgument(0, $arguments);
-    }
-
-    private function configureGlossary(ContainerBuilder $container, array $config): void
-    {
-        $container->setParameter('pimcore.glossary.blocked_tags', $config['blocked_tags']);
     }
 }

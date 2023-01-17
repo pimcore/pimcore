@@ -177,7 +177,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->getId() < 1) {
             throw new \Exception('Deleting the system user is not allowed!');
@@ -241,7 +241,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @throws \Exception
      */
-    protected function update()
+    protected function update(): void
     {
         $this->getDao()->update();
     }

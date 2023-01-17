@@ -172,8 +172,7 @@ class Authentication
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getPasswordHash(string $username, string $plainTextPassword): string
     {
@@ -197,8 +196,7 @@ class Authentication
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function generateToken(string $username): string
     {

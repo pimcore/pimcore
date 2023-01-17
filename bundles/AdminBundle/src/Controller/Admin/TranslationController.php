@@ -397,7 +397,10 @@ class TranslationController extends AdminController
             } elseif ($request->get('xaction') == 'create') {
                 $t = Translation::getByKey($data['key'], $domain);
                 if ($t) {
-                    throw new \Exception($translator->trans('identifier_already_exists', [], $domain));
+                    return $this->adminJson([
+                        'message' => 'identifier_already_exists',
+                        'success' => false,
+                    ]);
                 }
 
                 $t = new Translation();
@@ -514,7 +517,7 @@ class TranslationController extends AdminController
         return $prefixedTranslations;
     }
 
-    protected function extendTranslationQuery(array $joins, Translation\Listing $list, string $tableName, array $filters)
+    protected function extendTranslationQuery(array $joins, Translation\Listing $list, string $tableName, array $filters): void
     {
         if ($joins) {
             $list->onCreateQueryBuilder(
@@ -557,7 +560,7 @@ class TranslationController extends AdminController
         }
     }
 
-    protected function getGridFilterCondition(Request $request, string $tableName, bool $languageMode = false, $admin = false): array|string|null
+    protected function getGridFilterCondition(Request $request, string $tableName, bool $languageMode = false, bool $admin = false): array|string|null
     {
         $joins = [];
         $conditions = [];

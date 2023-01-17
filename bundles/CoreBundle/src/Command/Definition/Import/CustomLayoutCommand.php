@@ -27,7 +27,7 @@ use Symfony\Component\Console\Input\InputOption;
  */
 class CustomLayoutCommand extends AbstractStructureImportCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 
@@ -73,8 +73,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
      *
      * @return null|AbstractModel
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     protected function loadDefinition(string $name): ?AbstractModel
     {

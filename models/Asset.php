@@ -397,8 +397,7 @@ class Asset extends Element\AbstractElement
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getTypeFromMimeMapping(string $mimeType, string $filename): string
     {
@@ -411,7 +410,7 @@ class Asset extends Element\AbstractElement
         $mappings = [
             'unknown' => ["/\.stp$/"],
             'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/", '/photoshop/'],
-            'text' => ['/text/', '/xml$/', '/\.json$/'],
+            'text' => ['/text\//', '/xml$/', '/\.json$/'],
             'audio' => ['/audio/'],
             'video' => ['/video/'],
             'document' => ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/'],
@@ -584,7 +583,7 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception|DuplicateFullPathException
      */
-    public function correctPath()
+    public function correctPath(): void
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
@@ -648,10 +647,9 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception
      *
-     *@internal
-     *
+     * @internal
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         $storage = Storage::get('asset');
         $this->updateModificationInfos();
@@ -770,7 +768,7 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      */
-    protected function postPersistData()
+    protected function postPersistData(): void
     {
         // hook for the save process, can be overwritten in implementations, such as Image
     }
@@ -943,7 +941,7 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    public function delete(bool $isNested = false)
+    public function delete(bool $isNested = false): void
     {
         if ($this->getId() == 1) {
             throw new Exception('root-node cannot be deleted');
@@ -1021,7 +1019,7 @@ class Asset extends Element\AbstractElement
         $this->dispatchEvent(new AssetEvent($this), AssetEvents::POST_DELETE);
     }
 
-    public function clearDependentCache(array $additionalTags = [])
+    public function clearDependentCache(array $additionalTags = []): void
     {
         try {
             $tags = [$this->getCacheTag(), 'asset_properties', 'output'];
@@ -1229,7 +1227,7 @@ class Asset extends Element\AbstractElement
         return null;
     }
 
-    public function removeCustomSetting(string $key)
+    public function removeCustomSetting(string $key): void
     {
         if (is_array($this->customSettings) && array_key_exists($key, $this->customSettings)) {
             unset($this->customSettings[$key]);
@@ -1443,7 +1441,7 @@ class Asset extends Element\AbstractElement
         return $result;
     }
 
-    private function transformMetadata(array $metaData)
+    private function transformMetadata(array $metaData): mixed
     {
         $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
         $transformedData = $metaData['data'];
@@ -1520,7 +1518,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->isInDumpState()) {
             // set current parent and path, this is necessary because the serialized data can have a different path than the original element (element was moved)
@@ -1584,7 +1582,7 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
-    public function clearThumbnails(bool $force = false)
+    public function clearThumbnails(bool $force = false): void
     {
         if ($this->getDataChanged() || $force) {
             foreach (['thumbnail', 'asset_cache'] as $storageName) {
@@ -1671,7 +1669,7 @@ class Asset extends Element\AbstractElement
         } while ($asset !== null);
     }
 
-    public function clearThumbnail(string $name)
+    public function clearThumbnail(string $name): void
     {
         try {
             Storage::get('thumbnail')->deleteDirectory($this->getRealPath().'/'.$this->getId().'/image-thumb__'.$this->getId().'__'.$name);

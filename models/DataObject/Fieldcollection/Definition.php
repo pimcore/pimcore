@@ -55,7 +55,7 @@ class Definition extends Model\AbstractModel
      *
      * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
-    protected function extractDataDefinitions(DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $def)
+    protected function extractDataDefinitions(DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $def): void
     {
         if ($def instanceof DataObject\ClassDefinition\Layout) {
             if ($def->hasChildren()) {
@@ -83,8 +83,7 @@ class Definition extends Model\AbstractModel
      *
      * @return self|null
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     public static function getByKey(string $key): ?Definition
     {
@@ -120,7 +119,7 @@ class Definition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function save(bool $saveDefinitionFile = true)
+    public function save(bool $saveDefinitionFile = true): void
     {
         if (!$this->getKey()) {
             throw new \Exception('A field-collection needs a key to be saved!');
@@ -172,10 +171,9 @@ class Definition extends Model\AbstractModel
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
      *
-     *@internal
-     *
+     * @internal
      */
-    protected function generateClassFiles(bool $generateDefinitionFile = true)
+    protected function generateClassFiles(bool $generateDefinitionFile = true): void
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
             throw new DataObject\Exception\DefinitionWriteException();
@@ -212,7 +210,7 @@ class Definition extends Model\AbstractModel
         }
     }
 
-    public function delete()
+    public function delete(): void
     {
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
@@ -237,12 +235,10 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @return bool
      */
     public function isWritable(): bool
     {
-        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return (bool) ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
     }
 
     /**
@@ -250,8 +246,7 @@ class Definition extends Model\AbstractModel
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getDefinitionFile(string $key = null): string
     {

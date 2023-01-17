@@ -27,14 +27,14 @@ interface InstallerInterface
      *
      * @throws InstallationException
      */
-    public function install();
+    public function install(): void;
 
     /**
      * Uninstalls the bundle
      *
      * @throws InstallationException
      */
-    public function uninstall();
+    public function uninstall(): void;
 
     /**
      * Determine if bundle is installed

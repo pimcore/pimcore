@@ -51,7 +51,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         $this->setElement($element);
     }
 
-    public function setElementTypeAndId(?string $elementType, ?int $elementId)
+    public function setElementTypeAndId(?string $elementType, ?int $elementId): void
     {
         $this->elementType = $elementType;
         $this->elementId = $elementId;
@@ -95,7 +95,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         }
     }
 
-    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index)
+    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index): void
     {
         $element = $this->getElement();
         $type = Model\Element\Service::getElementType($element);

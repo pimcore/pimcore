@@ -25,7 +25,7 @@ class SiteResolver extends AbstractRequestResolver
 
     const ATTRIBUTE_SITE_PATH = '_site_path';
 
-    public function setSite(Request $request, Site $site)
+    public function setSite(Request $request, Site $site): void
     {
         $request->attributes->set(static::ATTRIBUTE_SITE, $site);
     }
@@ -44,7 +44,7 @@ class SiteResolver extends AbstractRequestResolver
         return $request->attributes->get(static::ATTRIBUTE_SITE);
     }
 
-    public function setSitePath(Request $request, string $path)
+    public function setSitePath(Request $request, string $path): void
     {
         $request->attributes->set(static::ATTRIBUTE_SITE_PATH, $path);
     }

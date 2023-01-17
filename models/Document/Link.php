@@ -308,8 +308,7 @@ class Link extends Model\Document
      *
      * @return $this
      *
-     *@deprecated use getElement() instead, will be removed in Pimcore 11
-     *
+     * @deprecated use getElement() instead, will be removed in Pimcore 11
      */
     public function setObject(Model\Element\ElementInterface $object): static
     {
@@ -383,14 +382,14 @@ class Link extends Model\Document
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         parent::update($params);
 
         $this->saveScheduledTasks();
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

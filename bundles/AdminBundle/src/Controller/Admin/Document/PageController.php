@@ -258,8 +258,8 @@ class PageController extends DocumentControllerBase
      */
     public function checkPrettyUrlAction(Request $request): JsonResponse
     {
-        $docId = $request->get('id');
-        $path = (string) trim($request->get('path'));
+        $docId = $request->request->getInt('id');
+        $path = trim($request->request->get('path', ''));
 
         $success = true;
 
@@ -314,8 +314,8 @@ class PageController extends DocumentControllerBase
      */
     public function clearEditableDataAction(Request $request): JsonResponse
     {
-        $targetGroupId = $request->get('targetGroup');
-        $docId = $request->get('id');
+        $targetGroupId = $request->request->get('targetGroup');
+        $docId = $request->request->getInt('id');
 
         $doc = Document\PageSnippet::getById($docId);
 
@@ -446,11 +446,11 @@ class PageController extends DocumentControllerBase
         ]);
     }
 
-    protected function setValuesToDocument(Request $request, Document $page)
+    protected function setValuesToDocument(Request $request, Document $document): void
     {
-        $this->addSettingsToDocument($request, $page);
-        $this->addDataToDocument($request, $page);
-        $this->addPropertiesToDocument($request, $page);
-        $this->applySchedulerDataToElement($request, $page);
+        $this->addSettingsToDocument($request, $document);
+        $this->addDataToDocument($request, $document);
+        $this->addPropertiesToDocument($request, $document);
+        $this->applySchedulerDataToElement($request, $document);
     }
 }
