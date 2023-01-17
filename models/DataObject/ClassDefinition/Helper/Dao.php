@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject;
  */
 trait Dao
 {
-    protected function addIndexToField(DataObject\ClassDefinition\Data $field, string $table, string $columnTypeGetter = 'getColumnType', $considerUniqueIndex = false, $isLocalized = false, $isFieldcollection = false): void
+    protected function addIndexToField(DataObject\ClassDefinition\Data $field, string $table, string $columnTypeGetter = 'getColumnType', bool $considerUniqueIndex = false, bool $isLocalized = false, bool $isFieldcollection = false): void
     {
         $columnType = $field->$columnTypeGetter();
 

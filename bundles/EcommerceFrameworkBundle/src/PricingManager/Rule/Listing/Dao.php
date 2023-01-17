@@ -43,7 +43,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         return $rules;
     }
 
-    public function setRuleClass($cartClass)
+    public function setRuleClass(string $cartClass): void
     {
         $this->ruleClass = $cartClass;
     }

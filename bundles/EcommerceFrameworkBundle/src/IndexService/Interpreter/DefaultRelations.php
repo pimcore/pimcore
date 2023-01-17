@@ -22,7 +22,7 @@ use Pimcore\Model\Element\Service;
 
 class DefaultRelations implements RelationInterpreterInterface
 {
-    public function interpret($value, $config = null): array
+    public function interpret(mixed $value, ?array $config = null): array
     {
         $result = [];
 

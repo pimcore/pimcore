@@ -28,7 +28,7 @@ use Symfony\Component\Finder\Finder;
  */
 class InternalModelDaoMappingGeneratorCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setHidden(true)

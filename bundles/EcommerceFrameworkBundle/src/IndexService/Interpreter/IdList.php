@@ -24,7 +24,7 @@ class IdList implements InterpreterInterface
 {
     use OptionsResolverTrait;
 
-    public function interpret($value, $config = null): ?string
+    public function interpret(mixed $value, ?array $config = null): ?string
     {
         $config = $this->resolveOptions($config ?? []);
 
@@ -51,7 +51,7 @@ class IdList implements InterpreterInterface
         return $ids ? $delimiter . $ids . $delimiter : null;
     }
 
-    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver): void
     {
         $resolver
             ->setDefault('multiSelectEncoded', false)

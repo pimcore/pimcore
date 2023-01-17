@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface CustomVersionMarshalInterface
 {
-    public function marshalVersion(Concrete $object, mixed $data);
+    public function marshalVersion(Concrete $object, mixed $data): mixed;
 
-    public function unmarshalVersion(Concrete $object, mixed $data);
+    public function unmarshalVersion(Concrete $object, mixed $data): mixed;
 }

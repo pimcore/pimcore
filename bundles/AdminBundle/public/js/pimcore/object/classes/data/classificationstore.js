@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.classificationstore");
+/**
+ * @private
+ */
 pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.classes.data.data, {
 
     type: "classificationstore",

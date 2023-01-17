@@ -84,8 +84,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @return Asset|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Asset
     {
@@ -103,8 +102,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @return int|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
@@ -152,8 +150,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @return Asset\Image|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Asset\Image
     {
@@ -171,7 +168,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @throws Element\ValidationException
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && !$data instanceof Asset\Image) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -308,7 +305,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @param Model\DataObject\ClassDefinition\Data\Image $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->uploadPath = $masterDefinition->uploadPath;
     }

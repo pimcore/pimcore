@@ -145,7 +145,7 @@ class Cse implements PaginateListingInterface
         }
     }
 
-    public function readGoogleResponse(Search $googleResponse)
+    public function readGoogleResponse(Search $googleResponse): void
     {
         $items = [];
 

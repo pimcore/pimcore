@@ -26,7 +26,7 @@ interface DataDefinitionInterface
      *
      * @throws \Exception
      */
-    public function checkValidity(mixed $data, array $params = []);
+    public function checkValidity(mixed $data, array $params = []): void;
 
     public function getDataForListfolderGrid(mixed $data, array $params = []): mixed;
 

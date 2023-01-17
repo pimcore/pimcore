@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classificationstore.keyDefinitionWindow");
+/**
+ * @private
+ */
 pimcore.object.classificationstore.keyDefinitionWindow = Class.create({
 
     initialize: function (data, keyid, parentPanel) {

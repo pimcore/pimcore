@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.urlSlug");
+/**
+ * @private
+ */
 pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
     type: "urlSlug",

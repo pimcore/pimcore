@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.settings.email.log');
+/**
+ * @private
+ */
 pimcore.settings.email.log = Class.create({
 
     filterField: null,

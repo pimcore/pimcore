@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.data");
+/**
+ * @private
+ */
 pimcore.object.classes.data.data = Class.create({
 
     invalidFieldNames: false,

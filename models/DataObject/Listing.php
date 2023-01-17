@@ -125,8 +125,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return $this
      *
-     *@internal
-     *
+     * @internal
      */
     public function addFilterByField(string $field, string $operator, float|array|int|string $data): static
     {

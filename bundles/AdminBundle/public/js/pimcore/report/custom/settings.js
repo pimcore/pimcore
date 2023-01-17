@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.report.custom.settings");
+/**
+ * @private
+ */
 pimcore.report.custom.settings = Class.create({
 
     initialize: function (parent) {

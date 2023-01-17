@@ -33,7 +33,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
 {
     use DryRun;
 
-    protected function configure()
+    protected function configure(): void
     {
         $type = $this->getType();
 

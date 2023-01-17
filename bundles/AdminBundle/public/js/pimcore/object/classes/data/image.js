@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.image");
+/**
+ * @private
+ */
 pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.data, {
 
     type: "image",

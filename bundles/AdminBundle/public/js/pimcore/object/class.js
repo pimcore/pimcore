@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.klass");
+/**
+ * @private
+ */
 pimcore.object.klass = Class.create({
 
     forbiddenNames: [

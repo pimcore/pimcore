@@ -48,8 +48,7 @@ class DataObject extends Data
      *
      * @return string
      *
-     *@deprecated use denormalize() instead, will be removed in Pimcore 11
-     *
+     * @deprecated use denormalize() instead, will be removed in Pimcore 11
      */
     public function unmarshal(mixed $value, array $params = []): mixed
     {

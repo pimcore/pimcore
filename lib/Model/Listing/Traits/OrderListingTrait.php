@@ -28,8 +28,10 @@ trait OrderListingTrait
         return $this->order;
     }
 
-    public function setOrder(?callable $order): void
+    public function setOrder(?callable $order): static
     {
         $this->order = $order;
+
+        return $this;
     }
 }

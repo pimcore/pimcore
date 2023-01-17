@@ -51,7 +51,7 @@ class AgentFactory implements OrderAgentFactoryInterface
         $this->processOptions($resolver->resolve($options));
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         if (isset($options['agent_class'])) {
             if (!class_exists($options['agent_class'])) {
@@ -65,7 +65,7 @@ class AgentFactory implements OrderAgentFactoryInterface
         }
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefined('agent_class');
         $resolver->setAllowedTypes('agent_class', 'string');

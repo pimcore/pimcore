@@ -280,8 +280,7 @@ class Container extends \ArrayObject
      *
      * @return void
      *
-     *@throws Exception
-     *
+     * @throws Exception
      */
     public function captureStart(int|string $type = self::APPEND, mixed $key = null): void
     {

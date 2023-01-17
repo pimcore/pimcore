@@ -138,7 +138,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return true;
     }
 
-    public function cleanup()
+    public function cleanup(): void
     {
         $keysToDelete = $this->db->fetchFirstColumn('SELECT `key` FROM ' . $this->getDatabaseTableName() . ' as tbl1 WHERE
                (SELECT count(*) FROM ' . $this->getDatabaseTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))

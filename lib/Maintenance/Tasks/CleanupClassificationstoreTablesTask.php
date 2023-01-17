@@ -36,7 +36,7 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $db = Db::get();
         $tableTypes = ['object_classificationstore_data', 'object_classificationstore_groups'];

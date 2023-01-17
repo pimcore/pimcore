@@ -39,7 +39,7 @@ class FullPageCacheCookieCleanupListener implements EventSubscriberInterface
         ];
     }
 
-    public function onPrepareFullPageCacheResponse(PrepareResponseEvent $event)
+    public function onPrepareFullPageCacheResponse(PrepareResponseEvent $event): void
     {
         $response = $event->getResponse();
         $cookies = $response->headers->getCookies();

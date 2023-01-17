@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.video");
+/**
+ * @private
+ */
 pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
     type: "video",

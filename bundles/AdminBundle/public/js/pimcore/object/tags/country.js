@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.country");
+/**
+ * @private
+ */
 pimcore.object.tags.country = Class.create(pimcore.object.tags.select, {
 
     type: "country",

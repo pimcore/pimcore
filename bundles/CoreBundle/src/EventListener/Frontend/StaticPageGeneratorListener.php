@@ -64,7 +64,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -118,7 +118,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         }
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -148,7 +148,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         }
     }
 
-    public function onPostAddUpdateDeleteDocument(DocumentEvent $e)
+    public function onPostAddUpdateDeleteDocument(DocumentEvent $e): void
     {
         $document = $e->getDocument();
 

@@ -431,7 +431,7 @@ class CustomReportController extends ReportsControllerBase
         if ($drillDownFilters) {
             $drillDownFilters = json_decode($drillDownFilters, true);
         }
-        $includeHeaders = $request->get('headers', false);
+        $includeHeaders = $request->query->getBoolean('headers');
 
         $config = CustomReport\Config::getByName($request->get('name'));
         if (!$config) {

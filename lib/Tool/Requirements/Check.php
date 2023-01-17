@@ -47,7 +47,7 @@ final class Check implements \ArrayAccess
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -57,7 +57,7 @@ final class Check implements \ArrayAccess
         return $this->link;
     }
 
-    public function setLink(string $link)
+    public function setLink(string $link): void
     {
         $this->link = $link;
     }
@@ -67,7 +67,7 @@ final class Check implements \ArrayAccess
         return $this->state;
     }
 
-    public function setState(int $state)
+    public function setState(int $state): void
     {
         $this->state = $state;
     }
@@ -81,7 +81,7 @@ final class Check implements \ArrayAccess
         return $this->message;
     }
 
-    public function setMessage(string $message)
+    public function setMessage(string $message): void
     {
         $this->message = $message;
     }

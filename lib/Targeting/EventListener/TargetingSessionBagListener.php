@@ -52,7 +52,7 @@ class TargetingSessionBagListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (!$this->isEnabled()) {
             return;
@@ -72,7 +72,7 @@ class TargetingSessionBagListener implements EventSubscriberInterface
         $this->configure($session);
     }
 
-    public function configure(SessionInterface $session)
+    public function configure(SessionInterface $session): void
     {
         $sessionBag = new AttributeBag('_' . self::TARGETING_BAG_SESSION);
         $sessionBag->setName(self::TARGETING_BAG_SESSION);
@@ -84,7 +84,7 @@ class TargetingSessionBagListener implements EventSubscriberInterface
         $session->registerBag($visitorBag);
     }
 
-    public function configureIgnoredSessionKeys(IgnoredSessionKeysEvent $event)
+    public function configureIgnoredSessionKeys(IgnoredSessionKeysEvent $event): void
     {
         if (!$this->isEnabled()) {
             return;
@@ -102,7 +102,7 @@ class TargetingSessionBagListener implements EventSubscriberInterface
      *
      * @param PrepareResponseEvent $event
      */
-    public function prepareFullPageCacheResponse(PrepareResponseEvent $event)
+    public function prepareFullPageCacheResponse(PrepareResponseEvent $event): void
     {
         if (!$this->isEnabled()) {
             return;
@@ -133,7 +133,7 @@ class TargetingSessionBagListener implements EventSubscriberInterface
         }
     }
 
-    protected function isEnabled()
+    protected function isEnabled(): bool
     {
         return $this->config['targeting']['session']['enabled'];
     }

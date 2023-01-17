@@ -312,7 +312,7 @@ class TargetingController extends AdminController implements KernelControllerEve
         return $this->adminJson(['success' => true]);
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

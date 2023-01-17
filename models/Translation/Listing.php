@@ -100,7 +100,7 @@ class Listing extends Model\Listing\AbstractListing
         return self::$cacheLimit;
     }
 
-    public static function setCacheLimit(int $cacheLimit)
+    public static function setCacheLimit(int $cacheLimit): void
     {
         self::$cacheLimit = $cacheLimit;
     }

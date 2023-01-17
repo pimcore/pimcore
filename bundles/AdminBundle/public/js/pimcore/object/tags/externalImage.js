@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.externalImage");
+/**
+ * @private
+ */
 pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
 
     type: "externalImage",
