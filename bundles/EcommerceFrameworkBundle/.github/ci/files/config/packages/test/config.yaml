@@ -3,8 +3,6 @@ imports:
 
 # this cache is used during tests when setting up pimcore
 framework:
-    session:
-        storage_factory_id: session.storage.factory.mock_file
     cache:
         pools:
             pimcore.cache.pool:
@@ -27,7 +25,6 @@ doctrine:
                 mapping_types:
                     enum: string
                     bit: boolean
-
 
 parameters:
     pimcore_test.db.dsn: '%env(PIMCORE_TEST_DB_DSN)%'

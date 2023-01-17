@@ -3,6 +3,7 @@
 docker-compose down -v --remove-orphans
 docker-compose up -d
 
+docker-compose exec php chmod 755 .github/ci/scripts/setup-pimcore-environment.sh
 docker-compose exec php .github/ci/scripts/setup-pimcore-environment.sh
 docker-compose exec php composer update
 

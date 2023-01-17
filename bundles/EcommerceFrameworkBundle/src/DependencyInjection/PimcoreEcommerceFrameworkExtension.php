@@ -73,7 +73,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
     {
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__ . '/../../config')
+            new FileLocator(__DIR__ . '/../Resources/config')
         );
 
         $container->setParameter('pimcore_ecommerce.pimcore.config', $config['pimcore']);

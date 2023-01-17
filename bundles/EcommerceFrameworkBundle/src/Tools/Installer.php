@@ -138,7 +138,7 @@ class Installer extends AbstractInstaller
         BundleInterface $bundle,
         Connection $connection
     ) {
-        $this->installSourcesPath = __DIR__ . '/../../install';
+        $this->installSourcesPath = __DIR__ . '/../Resources/install';
         $this->bundle = $bundle;
         $this->db = $connection;
         parent::__construct();

@@ -13,13 +13,13 @@
   "prefer-stable": true,
   "minimum-stability": "dev",
   "require": {
-    "pimcore/pimcore": "^10.6 || ^11.0"
+    "pimcore/pimcore": "^11.0"
   },
   "require-dev": {
     "phpstan/phpstan": "^1.9",
-    "codeception/codeception": "^4.1.12 || ^5.0.3",
+    "codeception/codeception": "^5.0.3",
     "codeception/module-asserts": "^2",
-    "codeception/module-symfony": "^1.6.0 || ^3.1",
+    "codeception/module-symfony": "^3.1",
     "codeception/phpunit-wrapper": "^9",
     "elasticsearch/elasticsearch": "^8.0",
     "pimcore/elasticsearch-client": "^1.0.0"
