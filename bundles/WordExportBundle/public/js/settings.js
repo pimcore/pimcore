@@ -246,7 +246,7 @@ pimcore.bundle.wordexport.settings = Class.create({
                 data: Ext.encode(tmData),
                 type: "word",
                 job_url: Routing.generate('pimcore_bundle_wordexport_translation_wordexport'),
-                elements_per_job: 0
+                elements_per_job: 1
             },
             success: function(response) {
                 var res = Ext.decode(response.responseText);
