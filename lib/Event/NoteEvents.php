@@ -18,7 +18,7 @@ namespace Pimcore\Event;
 final class NoteEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\Noteevent")
+     * @Event("Pimcore\Event\Model\ModelEvent")
      *
      * @var string
      *
