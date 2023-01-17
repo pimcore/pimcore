@@ -108,27 +108,14 @@ abstract class PageSnippet extends Model\Document
      */
     protected $inheritedEditables = [];
 
-    /**
-     * @var bool
-     */
-    private static $getInheritedValues = false;
+    private static bool $getInheritedValues = false;
 
-    /**
-     * @static
-     *
-     * @param bool $getInheritedValues
-     */
-    public static function setGetInheritedValues($getInheritedValues)
+    public static function setGetInheritedValues(bool $getInheritedValues): void
     {
         self::$getInheritedValues = $getInheritedValues;
     }
 
-    /**
-     * @static
-     *
-     * @return bool
-     */
-    public static function getGetInheritedValues()
+    public static function getGetInheritedValues(): bool
     {
         return self::$getInheritedValues;
     }
