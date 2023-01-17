@@ -1615,15 +1615,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $version = Model\Version::getById($id);
         $object = $version->loadData();
 
-        if (method_exists($object, 'getLocalizedFields')) {
-            /** @var DataObject\Localizedfield $localizedFields */
-            $localizedFields = $object->getLocalizedFields();
-            $localizedFields->setLoadedAllLazyData();
-        }
-
-        DataObject::setDoNotRestoreKeyAndPath(false);
-
         if ($object) {
+            if (method_exists($object, 'getLocalizedFields')) {
+                /** @var DataObject\Localizedfield $localizedFields */
+                $localizedFields = $object->getLocalizedFields();
+                $localizedFields->setLoadedAllLazyData();
+            }
+
+            DataObject::setDoNotRestoreKeyAndPath(false);
+
             if ($object->isAllowed('versions')) {
                 return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/previewVersion.html.twig',
                     [
