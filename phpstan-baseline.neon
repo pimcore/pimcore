@@ -151,11 +151,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
 
 		-
-			message: "#^Parameter \\#1 \\$seriesId of static method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\Token\\\\Listing\\:\\:cleanUpAllTokens\\(\\) expects string, int\\|null given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/VoucherService/DefaultService.php
-
-		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 1
 			path: lib/Db/Connection.php

@@ -21,6 +21,8 @@ final class ElementEvents
      * @Event("Pimcore\Event\Model\ElementEvent")
      *
      * @var string
+     *
+     * @deprecated Remove with Pimcore 11
      */
     const POST_ADD = 'pimcore.element.note.postAdd';
 }

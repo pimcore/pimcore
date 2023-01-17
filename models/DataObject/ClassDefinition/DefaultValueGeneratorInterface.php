@@ -19,5 +19,8 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface DefaultValueGeneratorInterface
 {
+    /**
+     * @return mixed
+     */
     public function getValue(Concrete $object, Data $fieldDefinition, array $context);
 }

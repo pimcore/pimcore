@@ -35,7 +35,7 @@ class StateTableMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
      *
      * @return Marking
      */
@@ -63,9 +63,11 @@ class StateTableMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
+     * @param Marking $marking
+     * @param array $context
      *
-     * @throws \Exception
+     * @return void
      */
     public function setMarking($subject, Marking $marking, array $context = [])
     {

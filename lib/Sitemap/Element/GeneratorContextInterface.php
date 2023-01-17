@@ -43,5 +43,8 @@ interface GeneratorContextInterface extends \IteratorAggregate, \Countable
      */
     public function get($key, $default = null);
 
+    /**
+     * @param int|string $key
+     */
     public function has($key): bool;
 }

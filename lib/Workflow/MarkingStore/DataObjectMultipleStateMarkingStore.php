@@ -45,9 +45,7 @@ class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws LogicException
+     * @param object $subject
      */
     public function getMarking($subject): Marking
     {
@@ -64,10 +62,11 @@ class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
+     * @param Marking $marking
+     * @param array $context
      *
-     * @throws LogicException
-     * @throws \Exception
+     * @return void
      */
     public function setMarking($subject, Marking $marking, array $context = [])
     {
