@@ -152,7 +152,7 @@ class Asset extends Element\AbstractElement
      */
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
+        $blockedVars = ['scheduledTasks', 'versions', 'parent', 'stream'];
 
         if (!$this->isInDumpState()) {
             // for caching asset

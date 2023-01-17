@@ -93,30 +93,16 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var bool[]
-     */
-    protected array $hasChildren = [];
-
-    /**
-     * @internal
-     *
      * @var array
      */
     protected array $siblings = [];
-
-    /**
-     * @internal
-     *
-     * @var bool[]
-     */
-    protected array $hasSiblings = [];
 
     /**
      * {@inheritdoc}
      */
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['versions', 'scheduledTasks', 'parent', 'fullPathCache'];
 
         if (!$this->isInDumpState()) {
             // this is if we want to cache the object
@@ -566,12 +552,10 @@ class Document extends Element\AbstractElement
     {
         if ($children === null) {
             // unset all cached children
-            $this->hasChildren = [];
             $this->children = [];
         } else {
             $cacheKey = $this->getListingCacheKey([$includingUnpublished]);
             $this->children[$cacheKey] = $children;
-            unset($this->hasChildren[$cacheKey]);
         }
 
         return $this;
@@ -605,20 +589,10 @@ class Document extends Element\AbstractElement
 
     /**
      * Returns true if the document has at least one child
-     *
-     * @param bool $includingUnpublished
-     *
-     * @return bool
      */
     public function hasChildren(bool $includingUnpublished = false): bool
     {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasChildren[$cacheKey])) {
-            return $this->hasChildren[$cacheKey];
-        }
-
-        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($includingUnpublished);
+        return $this->getDao()->hasChildren($includingUnpublished);
     }
 
     /**
@@ -643,7 +617,6 @@ class Document extends Element\AbstractElement
                 $list = new Listing();
                 $list->setDocuments([]);
                 $this->siblings[$cacheKey] = $list;
-                $this->hasSiblings[$cacheKey] = false;
             }
         }
 
@@ -655,13 +628,7 @@ class Document extends Element\AbstractElement
      */
     public function hasSiblings(bool $includingUnpublished = null): bool
     {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasSiblings[$cacheKey])) {
-            return $this->hasSiblings[$cacheKey];
-        }
-
-        return $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($includingUnpublished);
+        return $this->getDao()->hasSiblings($includingUnpublished);
     }
 
     /**
@@ -908,7 +875,6 @@ class Document extends Element\AbstractElement
         parent::setParentId($id);
 
         $this->siblings = [];
-        $this->hasSiblings = [];
 
         return $this;
     }
@@ -1036,7 +1002,6 @@ class Document extends Element\AbstractElement
     {
         parent::__clone();
         $this->parent = null;
-        $this->hasSiblings = [];
         $this->siblings = [];
         $this->fullPathCache = null;
     }
