@@ -16,11 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ExportService\Exporter;
 
+use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
+use Pimcore\Bundle\XliffBundle\Escaper\Xliff12Escaper;
 use Pimcore\Bundle\XliffBundle\Event\Model\TranslationXliffEvent;
 use Pimcore\Bundle\XliffBundle\Event\XliffEvents;
 use Pimcore\File;
-use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
-use Pimcore\Bundle\XliffBundle\Escaper\Xliff12Escaper;
 
 class Xliff12Exporter implements ExporterInterface
 {

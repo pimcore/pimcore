@@ -16,11 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ExportDataExtractorService\DataExtractor;
 
-use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Property;
 use Pimcore\Bundle\XliffBundle\AttributeSet\Attribute;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Property;
 
 abstract class AbstractElementDataExtractor implements DataExtractorInterface
 {

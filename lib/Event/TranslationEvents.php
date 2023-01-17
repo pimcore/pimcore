@@ -45,5 +45,4 @@ final class TranslationEvents
      * @var string
      */
     const POST_DELETE = 'pimcore.translation.postDelete';
-
 }

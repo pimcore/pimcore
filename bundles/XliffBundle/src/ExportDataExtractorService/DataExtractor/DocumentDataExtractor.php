@@ -16,12 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ExportDataExtractorService\DataExtractor;
 
-use Pimcore\Document\Editable\EditableUsageResolver;
-use Pimcore\Model\Document;
-use Pimcore\Model\Property;
 use Pimcore\Bundle\XliffBundle\AttributeSet\Attribute;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
+use Pimcore\Document\Editable\EditableUsageResolver;
+use Pimcore\Model\Document;
+use Pimcore\Model\Property;
 
 class DocumentDataExtractor extends AbstractElementDataExtractor
 {

@@ -43,5 +43,4 @@ final class PimcoreXliffExtension extends ConfigurableExtension
             $definition->setArgument('$exportAttributes', $config['data_object']['translation_extractor']['attributes']);
         }
     }
-
 }

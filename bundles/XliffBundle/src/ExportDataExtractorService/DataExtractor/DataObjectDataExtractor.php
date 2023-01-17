@@ -16,13 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ExportDataExtractorService\DataExtractor;
 
+use Pimcore\Bundle\XliffBundle\AttributeSet\Attribute;
+use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
+use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Tool;
-use Pimcore\Bundle\XliffBundle\AttributeSet\Attribute;
-use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
-use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
 
 class DataObjectDataExtractor extends AbstractElementDataExtractor
 {

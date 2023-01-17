@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ImporterService\Importer;
 
+use Pimcore\Bundle\XliffBundle\AttributeSet\Attribute;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Bundle\XliffBundle\AttributeSet\Attribute;
 
 class DocumentImporter extends AbstractElementImporter
 {

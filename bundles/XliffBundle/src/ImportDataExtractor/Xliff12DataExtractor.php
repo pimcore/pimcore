@@ -16,11 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ImportDataExtractor;
 
-use Pimcore\Tool;
 use Pimcore\Bundle\XliffBundle\AttributeSet\AttributeSet;
 use Pimcore\Bundle\XliffBundle\Escaper\Xliff12Escaper;
 use Pimcore\Bundle\XliffBundle\ExportService\Exporter\Xliff12Exporter;
 use Pimcore\Bundle\XliffBundle\ImportDataExtractor\TranslationItemResolver\TranslationItemResolverInterface;
+use Pimcore\Tool;
 
 class Xliff12DataExtractor implements ImportDataExtractorInterface
 {

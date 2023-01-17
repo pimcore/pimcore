@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ImportDataExtractor\TranslationItemResolver;
 
-use Pimcore\Model\Element;
 use Pimcore\Bundle\XliffBundle\TranslationItemCollection\TranslationItem;
+use Pimcore\Model\Element;
 
 class TranslationItemResolver implements TranslationItemResolverInterface
 {

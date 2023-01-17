@@ -24,8 +24,9 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const USER_PERMISSION_CATEGORY = 'Pimcore Xliff Bundle';
+
     protected const USER_PERMISSIONS = [
-        'xliff_import_export'
+        'xliff_import_export',
     ];
 
     public function install(): void
@@ -62,5 +63,4 @@ class Installer extends SettingsStoreAwareInstaller
             ]);
         }
     }
-
 }

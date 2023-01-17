@@ -16,10 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\ImporterService\Importer;
 
-use Pimcore\Model\DataObject;
-use Pimcore\Model\Element;
 use Pimcore\Bundle\XliffBundle\AttributeSet\Attribute;
 use Pimcore\Bundle\XliffBundle\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\Element;
 
 class DataObjectImporter extends AbstractElementImporter
 {
