@@ -38,7 +38,7 @@ class CollectionConfigEvent extends Event
         return $this->collectionConfig;
     }
 
-    public function setCollectionConfig(CollectionConfig $collectionConfig)
+    public function setCollectionConfig(CollectionConfig $collectionConfig): void
     {
         $this->collectionConfig = $collectionConfig;
     }

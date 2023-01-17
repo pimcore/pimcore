@@ -37,7 +37,7 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir): array
+    public function warmUp(string $cacheDir): array
     {
         $classes = [];
 

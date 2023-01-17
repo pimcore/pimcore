@@ -41,7 +41,7 @@ class Dao
         $this->logger = $logger;
     }
 
-    public function load($condition, $orderBy = null, $limit = null, $offset = null): array
+    public function load(string $condition, ?string $orderBy = null, ?int $limit = null, int $offset = 0): array
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -85,7 +85,7 @@ class Dao
         return $result;
     }
 
-    public function loadGroupByValues($fieldname, $condition, $countValues = false): array
+    public function loadGroupByValues(string $fieldname, string $condition, bool $countValues = false): array
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -123,7 +123,7 @@ class Dao
         }
     }
 
-    public function loadGroupByRelationValues($fieldname, $condition, $countValues = false): array
+    public function loadGroupByRelationValues(string $fieldname, string $condition, bool $countValues = false): array
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -171,7 +171,7 @@ class Dao
         }
     }
 
-    public function getCount($condition, $orderBy = null, $limit = null, $offset = null): int
+    public function getCount(string $condition, ?string $orderBy = null, ?int $limit = null, int $offset = 0): int
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -208,7 +208,7 @@ class Dao
         return is_int($result) ? $result : 0;
     }
 
-    public function quote($value)
+    public function quote(mixed $value): mixed
     {
         return $this->db->quote($value);
     }

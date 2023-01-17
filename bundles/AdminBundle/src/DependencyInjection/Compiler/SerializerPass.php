@@ -36,7 +36,7 @@ final class SerializerPass implements CompilerPassInterface
 {
     use PriorityTaggedServiceTrait;
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('Pimcore\\Admin\\Serializer')) {
             return;

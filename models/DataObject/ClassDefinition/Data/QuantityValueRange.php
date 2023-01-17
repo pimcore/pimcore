@@ -136,9 +136,9 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return $this->autoConvert;
     }
 
-    public function setAutoConvert($autoConvert): void
+    public function setAutoConvert(bool $autoConvert): void
     {
-        $this->autoConvert = (bool) $autoConvert;
+        $this->autoConvert = $autoConvert;
     }
 
     /**
@@ -411,12 +411,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         }
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
         $obj->configureOptions();

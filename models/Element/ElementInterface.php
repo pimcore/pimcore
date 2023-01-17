@@ -153,9 +153,9 @@ interface ElementInterface extends ModelInterface
      */
     public function save(array $parameters = []): static;
 
-    public function delete();
+    public function delete(): void;
 
-    public function clearDependentCache(array $additionalTags = []);
+    public function clearDependentCache(array $additionalTags = []): void;
 
     public function setId(?int $id): static;
 

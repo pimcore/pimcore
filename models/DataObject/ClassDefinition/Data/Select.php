@@ -327,7 +327,7 @@ class Select extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -346,7 +346,7 @@ class Select extends Data implements
     /**
      * @param DataObject\ClassDefinition\Data\Select $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->options = $masterDefinition->options;
         $this->columnLength = $masterDefinition->columnLength;
@@ -360,7 +360,7 @@ class Select extends Data implements
         return $this->defaultValue;
     }
 
-    public function setDefaultValue(?string $defaultValue)
+    public function setDefaultValue(?string $defaultValue): void
     {
         $this->defaultValue = $defaultValue;
     }
@@ -370,7 +370,7 @@ class Select extends Data implements
         return $this->optionsProviderClass;
     }
 
-    public function setOptionsProviderClass(?string $optionsProviderClass)
+    public function setOptionsProviderClass(?string $optionsProviderClass): void
     {
         $this->optionsProviderClass = $optionsProviderClass;
     }
@@ -380,7 +380,7 @@ class Select extends Data implements
         return $this->optionsProviderData;
     }
 
-    public function setOptionsProviderData(?string $optionsProviderData)
+    public function setOptionsProviderData(?string $optionsProviderData): void
     {
         $this->optionsProviderData = $optionsProviderData;
     }
@@ -547,13 +547,7 @@ class Select extends Data implements
         return 'string|null';
     }
 
-    /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         return $oldValue == $newValue;
     }

@@ -33,7 +33,7 @@ class GeneratePagePreviews extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:documents:generate-page-previews')

@@ -46,7 +46,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
             return;
@@ -137,7 +137,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function delete()
+    public function delete(): void
     {
         $object = $this->model->getObject();
         $objectId = $object->getId();
@@ -152,7 +152,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function load()
+    public function load(): void
     {
         $classificationStore = $this->model;
         $object = $this->model->getObject();
@@ -227,7 +227,7 @@ class Dao extends Model\Dao\AbstractDao
         $classificationStore->resetDirtyMap();
     }
 
-    public function createUpdateTable()
+    public function createUpdateTable(): void
     {
         $groupsTable = $this->getGroupsTableName();
         $dataTable = $this->getDataTableName();

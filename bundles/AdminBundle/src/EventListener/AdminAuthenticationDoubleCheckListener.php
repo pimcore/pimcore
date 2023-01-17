@@ -72,7 +72,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelController(ControllerEvent $event)
+    public function onKernelController(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -144,7 +144,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
      * @throws AccessDeniedHttpException
      *      if there's no current user in the session
      */
-    protected function checkSessionUser()
+    protected function checkSessionUser(): void
     {
         $user = Authentication::authenticateSession();
         if (null === $user) {
@@ -156,7 +156,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
      * @throws AccessDeniedHttpException
      *      if there's no current user in the token storage
      */
-    protected function checkTokenStorageUser()
+    protected function checkTokenStorageUser(): void
     {
         $user = $this->tokenResolver->getUser();
 

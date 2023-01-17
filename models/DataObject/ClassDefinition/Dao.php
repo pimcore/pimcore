@@ -82,7 +82,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(bool $isUpdate = true)
+    public function save(bool $isUpdate = true): void
     {
         if (!$this->model->getId() || !$isUpdate) {
             $this->create();
@@ -94,7 +94,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         $class = $this->model->getObjectVars();
         $data = [];
@@ -238,7 +238,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('classes', ['id' => $this->model->getId()]);
 
@@ -295,7 +295,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @param string $newName
      */
-    public function updateClassNameInObjects(string $newName)
+    public function updateClassNameInObjects(string $newName): void
     {
         $this->db->update('objects', ['className' => $newName], ['classId' => $this->model->getId()]);
 

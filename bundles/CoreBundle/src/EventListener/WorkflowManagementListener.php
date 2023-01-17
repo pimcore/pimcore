@@ -99,7 +99,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
      *
      * @param ElementEventInterface $e
      */
-    public function onElementPostDelete(ElementEventInterface $e)
+    public function onElementPostDelete(ElementEventInterface $e): void
     {
         /**
          * @var Asset|Document|ConcreteObject $element
@@ -121,7 +121,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
      *
      * @throws \Exception
      */
-    public function onAdminElementGetPreSendData(GenericEvent $e)
+    public function onAdminElementGetPreSendData(GenericEvent $e): void
     {
         $element = self::extractElementFromEvent($e);
         $data = $e->getArgument('data');
@@ -238,12 +238,12 @@ class WorkflowManagementListener implements EventSubscriberInterface
         return $element;
     }
 
-    public function enable()
+    public function enable(): void
     {
         $this->enabled = true;
     }
 
-    public function disable()
+    public function disable(): void
     {
         $this->enabled = false;
     }

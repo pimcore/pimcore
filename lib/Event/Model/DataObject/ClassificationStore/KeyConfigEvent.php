@@ -38,7 +38,7 @@ class KeyConfigEvent extends Event
         return $this->keyConfig;
     }
 
-    public function setKeyConfig(KeyConfig $keyConfig)
+    public function setKeyConfig(KeyConfig $keyConfig): void
     {
         $this->keyConfig = $keyConfig;
     }

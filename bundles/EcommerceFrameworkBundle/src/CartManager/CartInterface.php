@@ -42,7 +42,7 @@ interface CartInterface
 
     public function getId(): int|string|null;
 
-    public function setId(int|string $id);
+    public function setId(int|string $id): void;
 
     /**
      * @return CartItemInterface[]
@@ -52,7 +52,7 @@ interface CartInterface
     /**
      * @param CartItemInterface[]|null $items
      */
-    public function setItems(?array $items);
+    public function setItems(?array $items): void;
 
     public function isEmpty(): bool;
 
@@ -184,7 +184,7 @@ interface CartInterface
      * @param string $key
      * @param string $data
      */
-    public function setCheckoutData(string $key, string $data);
+    public function setCheckoutData(string $key, string $data): void;
 
     /**
      * Get custom checkout data for cart with given key.
@@ -303,5 +303,8 @@ interface CartInterface
      */
     public function getPricingManagerTokenInformationDetails(): array;
 
-    public function isVoucherErrorCode($errorCode): bool;
+    /**
+     * Checks if an error code is a defined Voucher Error Code.
+     */
+    public function isVoucherErrorCode(int $errorCode): bool;
 }

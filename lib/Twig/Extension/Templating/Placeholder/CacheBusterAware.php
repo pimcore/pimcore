@@ -26,14 +26,14 @@ abstract class CacheBusterAware extends AbstractExtension
     /**
      * prepares entries with cache buster prefix
      */
-    abstract protected function prepareEntries();
+    abstract protected function prepareEntries(): void;
 
     public function isCacheBuster(): bool
     {
         return $this->cacheBuster;
     }
 
-    public function setCacheBuster(bool $cacheBuster)
+    public function setCacheBuster(bool $cacheBuster): void
     {
         $this->cacheBuster = $cacheBuster;
     }

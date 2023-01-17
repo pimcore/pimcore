@@ -40,7 +40,7 @@ class UrlGenerator implements UrlGeneratorInterface
         $this->configureOptions($this->optionsResolver);
     }
 
-    protected function configureOptions(OptionsResolver $options)
+    protected function configureOptions(OptionsResolver $options): void
     {
         $options->setDefaults([
             'scheme' => $this->requestContext->getScheme(),

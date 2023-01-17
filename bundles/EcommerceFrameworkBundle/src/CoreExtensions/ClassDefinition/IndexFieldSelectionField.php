@@ -33,7 +33,7 @@ class IndexFieldSelectionField extends Textarea
 
     public bool $considerTenants = false;
 
-    public function setSpecificPriceField($specificPriceField)
+    public function setSpecificPriceField(bool $specificPriceField): void
     {
         $this->specificPriceField = $specificPriceField;
     }
@@ -43,7 +43,7 @@ class IndexFieldSelectionField extends Textarea
         return $this->specificPriceField;
     }
 
-    public function setShowAllFields($showAllFields)
+    public function setShowAllFields(bool $showAllFields): void
     {
         $this->showAllFields = $showAllFields;
     }
@@ -53,7 +53,7 @@ class IndexFieldSelectionField extends Textarea
         return $this->showAllFields;
     }
 
-    public function setConsiderTenants($considerTenants)
+    public function setConsiderTenants(bool $considerTenants): void
     {
         $this->considerTenants = $considerTenants;
     }

@@ -78,7 +78,7 @@ class LazyLoadedItem extends AbstractItem
         return self::implementsInterface($this->className, PimcoreBundleInterface::class);
     }
 
-    public function registerDependencies(BundleCollection $collection)
+    public function registerDependencies(BundleCollection $collection): void
     {
         if (self::implementsInterface($this->className, DependentBundleInterface::class)) {
             /** @var DependentBundleInterface $className */

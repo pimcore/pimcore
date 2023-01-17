@@ -43,12 +43,12 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         $this->handleOptions($resolver->resolve($options));
     }
 
-    protected function handleOptions(array $options)
+    protected function handleOptions(array $options): void
     {
         $this->tableName = $options['tableName'];
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'tableName' => 'targeting_storage',
@@ -124,7 +124,7 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         return 1 === $result;
     }
 
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value): void
     {
         if (!$visitorInfo->hasVisitorId()) {
             return;
@@ -201,7 +201,7 @@ EOF;
     /**
      * {@inheritdoc }
      */
-    public function clear(VisitorInfo $visitorInfo, string $scope = null)
+    public function clear(VisitorInfo $visitorInfo, string $scope = null): void
     {
         if (!$visitorInfo->hasVisitorId()) {
             return;
@@ -225,7 +225,7 @@ EOF;
         }
     }
 
-    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): void
     {
         // only allow migration if a visitor ID is available as otherwise the fallback
         // would clear the original storage although data was not stored
@@ -272,7 +272,7 @@ EOF;
     /**
      * {@inheritdoc }
      */
-    public function maintenance()
+    public function maintenance(): void
     {
         // clean up expired keys scopes with an expiration
         foreach (self::VALID_SCOPES as $scope) {
@@ -313,7 +313,7 @@ EOF;
         return null;
     }
 
-    private function convertToDateTime($result = null): ?\DateTimeImmutable
+    private function convertToDateTime(mixed $result = null): ?\DateTimeImmutable
     {
         if (!$result) {
             return null;

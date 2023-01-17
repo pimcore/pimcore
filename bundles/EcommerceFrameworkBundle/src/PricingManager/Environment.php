@@ -143,7 +143,7 @@ class Environment implements EnvironmentInterface
         return $this->categories;
     }
 
-    public function setExecutionMode(string $executionMode)
+    public function setExecutionMode(string $executionMode): void
     {
         $this->executionMode = $executionMode;
     }

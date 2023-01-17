@@ -18,7 +18,7 @@ namespace Pimcore\Model\Listing;
 
 interface CallableFilterListingInterface
 {
-    public function setFilter(?callable $filter);
+    public function setFilter(?callable $filter): void;
 
     public function getFilter(): ?callable;
 }
