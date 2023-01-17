@@ -2837,7 +2837,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             && 'object' === $context['containerType']
             && $object = Concrete::getById($context['objectId'])
         ) {
-            $fieldDefinition = $object->getClass()?->getFieldDefinition($context['fieldname']);
+            $fieldDefinition = $object->getClass()->getFieldDefinition($context['fieldname']);
             if (!$fieldDefinition instanceof ManyToManyRelation) {
                 return;
             }
