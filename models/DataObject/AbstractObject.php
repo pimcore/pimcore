@@ -1197,6 +1197,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         // compatibility mode (they do not have any set_oXyz() methods anymore)
         if (preg_match('/^(get|set)o_/i', $method)) {
             $newMethod = preg_replace('/^(get|set)o_/i', '$1', $method);
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.6',
+                sprintf('using "%s" is deprecated, please use "%s" instead. using "%s" wont work in Pimcore 11.', $method, $newMethod, $method)
+            );
             if (method_exists($this, $newMethod)) {
                 $r = call_user_func_array([$this, $newMethod], $args);
 

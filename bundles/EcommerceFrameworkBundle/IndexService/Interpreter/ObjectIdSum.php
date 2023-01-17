@@ -19,6 +19,12 @@ use Pimcore\Model\Element\ElementInterface;
 
 class ObjectIdSum implements InterpreterInterface
 {
+    /**
+     * @param mixed $value
+     * @param array|null $config
+     *
+     * @return int|null
+     */
     public function interpret($value, $config = null)
     {
         $sum = 0;

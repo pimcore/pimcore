@@ -35,7 +35,7 @@ class TargetGroup extends AbstractVariableCondition implements ConditionInterfac
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
     public static function fromConfig(array $config)
     {

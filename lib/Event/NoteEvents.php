@@ -13,24 +13,15 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
+namespace Pimcore\Event;
 
-use Pimcore\Model\DataObject\AbstractObject;
-
-class ObjectId implements InterpreterInterface
+final class NoteEvents
 {
     /**
-     * @param mixed $value
-     * @param array|null $config
+     * @Event("Pimcore\Event\Model\ModelEvent")
      *
-     * @return int|null
+     * @var string
+     *
      */
-    public function interpret($value, $config = null)
-    {
-        if (!empty($value) && $value instanceof AbstractObject) {
-            return $value->getId();
-        }
-
-        return null;
-    }
+    const POST_ADD = 'pimcore.note.postAdd';
 }

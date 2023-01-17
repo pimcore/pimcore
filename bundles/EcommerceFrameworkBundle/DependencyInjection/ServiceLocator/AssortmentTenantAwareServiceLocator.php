@@ -19,6 +19,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLoc
 
 abstract class AssortmentTenantAwareServiceLocator extends TenantAwareServiceLocator
 {
+    /**
+     * @return string|null
+     */
     protected function getEnvironmentTenant()
     {
         return $this->environment->getCurrentAssortmentTenant();

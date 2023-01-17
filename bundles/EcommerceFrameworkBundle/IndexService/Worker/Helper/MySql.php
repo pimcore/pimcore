@@ -62,6 +62,11 @@ class MySql
         return Cache\RuntimeCache::load($cacheKey);
     }
 
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
     public function doInsertData($data)
     {
         $validColumns = $this->getValidTableColumns($this->tenantConfig->getTablename());
@@ -176,12 +181,22 @@ class MySql
         }
     }
 
+    /**
+     * @param string $sql
+     *
+     * @return void
+     */
     protected function dbexec($sql)
     {
         $this->logSql($sql);
         $this->db->executeQuery($sql);
     }
 
+    /**
+     * @param string $sql
+     *
+     * @return void
+     */
     protected function logSql($sql)
     {
         Logger::info($sql);

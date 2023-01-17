@@ -151,11 +151,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/Type/Decimal.php
 
 		-
-			message: "#^Parameter \\#1 \\$seriesId of static method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\Token\\\\Listing\\:\\:cleanUpAllTokens\\(\\) expects string, int\\|null given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/VoucherService/DefaultService.php
-
-		-
 			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
 			count: 1
 			path: lib/Db/Connection.php
@@ -189,11 +184,6 @@ parameters:
 			message: "#^Dead catch \\- Throwable is never thrown in the try block\\.$#"
 			count: 1
 			path: lib/Tool/Serialize.php
-
-		-
-			message: "#^Parameter \\#1 \\$separator of function explode expects non\\-empty\\-string, string given\\.$#"
-			count: 1
-			path: lib/Tool/Text/Csv.php
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"

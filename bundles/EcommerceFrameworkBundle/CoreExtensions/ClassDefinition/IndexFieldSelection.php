@@ -72,11 +72,19 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     {
     }
 
+    /**
+     * @param bool $considerTenants
+     *
+     * @return void
+     */
     public function setConsiderTenants($considerTenants)
     {
         $this->considerTenants = $considerTenants;
     }
 
+    /**
+     * @return bool
+     */
     public function getConsiderTenants()
     {
         return $this->considerTenants;

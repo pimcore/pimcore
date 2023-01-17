@@ -135,6 +135,8 @@ class Csv
      * @param string $quotechar
      *
      * @return bool|string
+     *
+     * @phpstan-param non-empty-string $linefeed
      */
     protected function guessDelim($data, $linefeed, $quotechar)
     {
