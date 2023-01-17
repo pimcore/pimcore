@@ -380,6 +380,7 @@ class Asset extends Element\AbstractElement
                 $mp = $maxPixels / 1_000_000;
                 // unlink file before throwing exception
                 unlink($localPath);
+
                 throw new ValidationException("<p>Image dimensions of <em>{$data['filename']}</em> are too large.</p>
 <p>Max size: <code>{$mp}</code> <abbr title='Million pixels'>Megapixels</abbr></p>
 <p>Suggestion: resize to <code>{$suggestion_0}&times;{$suggestion_1}</code> pixels or smaller.</p>");
