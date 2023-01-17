@@ -59,7 +59,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         return $taxClass;
     }
 
-    private function setUpProduct(int $grossPrice, array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
+    private function setUpProduct(float|int|string|Decimal $grossPrice, array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
     {
         $taxClass = $this->buildTaxClass($taxes, $combinationType);
 
