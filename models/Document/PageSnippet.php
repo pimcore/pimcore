@@ -500,15 +500,13 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return Editable[]
      */
+    /**
+     * @return Editable[]
+     */
     public function getEditables(): array
     {
         if ($this->editables === null) {
-            $documentEditables = $this->getDao()->getEditables();
-            if ($this->supportsContentMaster() && $this->getContentMasterDocument()) {
-                $contentMasterEditables = $this->getContentMasterDocument()->getDao()->getEditables();
-                $documentEditables = array_merge($contentMasterEditables, $documentEditables);
-            }
-            $this->setEditables($documentEditables);
+            $this->setEditables($this->getDao()->getEditables());
         }
 
         return $this->editables;
