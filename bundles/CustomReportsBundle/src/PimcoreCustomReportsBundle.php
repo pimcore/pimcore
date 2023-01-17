@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\CustomReportsBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
-use Pimcore\Bundle\CustomReportsBundle\Installer;
 
 class PimcoreCustomReportsBundle extends AbstractPimcoreBundle
 {
