@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -31,7 +32,6 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
-use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

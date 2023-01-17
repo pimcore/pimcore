@@ -78,7 +78,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
             return;
         }
 
-        if(class_exists(Staticroute::class) && null !== Staticroute::getCurrentRoute()) {
+        if (class_exists(Staticroute::class) && null !== Staticroute::getCurrentRoute()) {
             return;
         }
 

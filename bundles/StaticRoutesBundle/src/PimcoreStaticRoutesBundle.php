@@ -46,7 +46,6 @@ class PimcoreStaticRoutesBundle extends AbstractPimcoreBundle
         return $this->container->get(Installer::class);
     }
 
-
     public function getPath(): string
     {
         return \dirname(__DIR__);

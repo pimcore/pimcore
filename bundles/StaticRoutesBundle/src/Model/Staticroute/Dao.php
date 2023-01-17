@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
-use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\Uid\Uuid as Uid;

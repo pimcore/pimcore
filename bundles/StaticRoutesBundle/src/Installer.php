@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -24,9 +25,11 @@ use Pimcore\Model\Tool\SettingsStore;
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const SETTINGS_STORE_SCOPE = 'pimcore_staticroutes';
+
     protected const USER_PERMISSION_CATEGORY = 'Pimcore Static Routes Bundle';
+
     protected const USER_PERMISSIONS = [
-        'routes'
+        'routes',
     ];
 
     public function install(): void
@@ -68,8 +71,8 @@ class Installer extends SettingsStoreAwareInstaller
     private function removeRoutesFromSettingsStore(): void
     {
         $staticRoutes = SettingsStore::getIdsByScope(self::SETTINGS_STORE_SCOPE);
-        if(!empty($staticRoutes)) {
-            foreach($staticRoutes as $staticRoute) {
+        if (!empty($staticRoutes)) {
+            foreach ($staticRoutes as $staticRoute) {
                 SettingsStore::delete($staticRoute, self::SETTINGS_STORE_SCOPE);
             }
         }

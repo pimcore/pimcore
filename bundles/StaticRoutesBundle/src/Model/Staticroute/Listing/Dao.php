@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute\Listing;
 
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 
-
 /**
  * @internal
  *

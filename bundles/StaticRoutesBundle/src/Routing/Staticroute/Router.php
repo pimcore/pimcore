@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\StaticRoutesBundle\Routing\Staticroute;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Config;
 use Pimcore\Model\Site;
