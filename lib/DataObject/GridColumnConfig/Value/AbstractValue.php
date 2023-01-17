@@ -23,6 +23,8 @@ abstract class AbstractValue implements ValueInterface
 
     protected string $label;
 
+    protected ?string $renderer = null;
+
     protected mixed $context = null;
 
     /**
@@ -39,5 +41,10 @@ abstract class AbstractValue implements ValueInterface
     public function getLabel(): string
     {
         return $this->label;
+    }
+
+    public function getRenderer(): ?string
+    {
+        return $this->renderer;
     }
 }
