@@ -107,7 +107,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     protected bool $allLazyKeysMarkedAsLoaded = false;
 
-    protected ?Localizedfield $localizedfields = null;
+    protected $localizedfields = null;
     /**
      * returns the class ID of the current object class
      *
