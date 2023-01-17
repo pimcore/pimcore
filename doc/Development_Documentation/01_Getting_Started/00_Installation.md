@@ -71,7 +71,7 @@ have a look at the logs as a starting point when debugging installation issues.
 
 Maintenance tasks are handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance
 messages to the bus and runs them afterwards immediately from the queue. However it's recommended to setup independent
-workers that process the queues, by running `bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize` (using e.g.
+workers that process the queues, by running `bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize pimcore_asset_update` (using e.g.
 `Supervisor`).
 
 ```bash
