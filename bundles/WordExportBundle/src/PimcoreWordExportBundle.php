@@ -34,7 +34,7 @@ class PimcoreWordExportBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/pimcorewordexport/js/startup.js',
-            '/bundles/pimcorewordexport/js/word.js',
+            '/bundles/pimcorewordexport/js/settings.js',
         ];
     }
 

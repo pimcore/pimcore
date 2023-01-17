@@ -44,10 +44,10 @@ pimcore.bundle.wordexport.startup = Class.create({
 
     wordExport: function () {
         try {
-            pimcore.globalmanager.get("word").activate();
+            pimcore.globalmanager.get("bundle_word_export").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("word", new pimcore.bundle.wordexport.word());
+            pimcore.globalmanager.add("bundle_word_export", new pimcore.bundle.wordexport.settings());
         }
     }
 })
