@@ -55,18 +55,6 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 }
             });
 
-            const treeToolbarItems = [
-                "->"
-            ];
-
-            if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
-                treeToolbarItems.push({
-                    text: t("search"),
-                        iconCls: "pimcore_icon_search",
-                    handler: this.openSearchPanel.bind(this)
-                });
-            }
-
             this.tree = Ext.create('Ext.tree.Panel', {
                 id: "pimcore_panel_users_tree",
                 store: store,
@@ -98,7 +86,11 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 },
                 tbar: {
                     cls: 'pimcore_toolbar_border_bottom',
-                    items: treeToolbarItems
+                    items: ["->", {
+                        text: t("search"),
+                        iconCls: "pimcore_icon_search",
+                        handler: this.openSearchPanel.bind(this)
+                    }]
                 },
                 listeners: this.getTreeNodeListeners()
             });
