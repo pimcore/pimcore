@@ -256,7 +256,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             handler: this.empty.bind(this, false)
         });
 
-        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+        if(pimcore.helpers.hasSearchImplementation()) {
             items.push({
                 xtype: "button",
                 iconCls: "pimcore_icon_search",

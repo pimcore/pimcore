@@ -819,6 +819,9 @@ pimcore.helpers.itemselector = function (multiselect, callback, restrictions, co
     );
 };
 
+pimcore.helpers.hasSearchImplementation = function () {
+    return pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation();
+}
 
 pimcore.helpers.activateMaintenance = function () {
 
@@ -1519,7 +1522,7 @@ pimcore.helpers.sendTestEmail = function (from, to, subject, emailType, document
         documentTextField
     ];
 
-    if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+    if(pimcore.helpers.hasSearchImplementation()) {
         const searchDocumentButton = new Ext.Button({
             name: 'searchDocument',
             fieldLabel: t('document'),
@@ -1846,7 +1849,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         fieldPath
     ];
 
-    if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+    if(pimcore.helpers.hasSearchImplementation()) {
         fcItems.push({
             xtype: "button",
             iconCls: "pimcore_icon_search",
@@ -2131,7 +2134,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
     let searchButton = undefined;
     let posterImageSearchButton = undefined;
-    if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()){
+    if(pimcore.helpers.hasSearchImplementation()){
         searchButton = new Ext.Button({
             iconCls: "pimcore_icon_search",
             handler: function () {
@@ -2224,7 +2227,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         poster
     ];
 
-    if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+    if(pimcore.helpers.hasSearchImplementation()) {
         pathContainerItems.push(searchButton);
         posterContainerItems.push(posterImageSearchButton, posterImageOpenButton);
     }

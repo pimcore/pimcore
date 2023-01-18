@@ -265,7 +265,7 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
             }
         }
 
-        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+        if(pimcore.helpers.hasSearchImplementation()) {
             menu.add(new Ext.menu.Item({
                 text: t('search'),
                 iconCls: 'pimcore_icon_search',

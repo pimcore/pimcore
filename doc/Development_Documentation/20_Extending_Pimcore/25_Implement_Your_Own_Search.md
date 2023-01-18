@@ -26,6 +26,9 @@ Thanks to the registry we can check if a custom search implementation has been r
 
 ```js
 pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation();
+
+//or a more readable way
+pimcore.helpers.hasSearchImplementation()
 ```
 
 ## Create a custom search implementation

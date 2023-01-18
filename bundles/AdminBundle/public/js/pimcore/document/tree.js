@@ -785,7 +785,7 @@ pimcore.document.tree = Class.create({
             if (childSupportedDocument &&
                 record.data.permissions.create &&
                 perspectiveCfg.inTreeContextMenu("document.searchAndMove") &&
-                pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+                pimcore.helpers.hasSearchImplementation()) {
                 advancedMenuItems.push({
                     text: t('search_and_move'),
                     iconCls: "pimcore_icon_search pimcore_icon_overlay_go",

@@ -394,7 +394,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                         }.bind(this)
                     }));
 
-                    if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+                    if(pimcore.helpers.hasSearchImplementation()) {
                         menu.add(new Ext.menu.Item({
                             text: t('search'),
                             iconCls: "pimcore_icon_search",
@@ -436,7 +436,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                 }
             ];
 
-            if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+            if(pimcore.helpers.hasSearchImplementation()) {
                 items.push({
                     xtype: "button",
                     iconCls: "pimcore_icon_search",

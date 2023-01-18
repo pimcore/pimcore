@@ -193,7 +193,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             this.parentField
         ];
 
-        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+        if(pimcore.helpers.hasSearchImplementation()) {
             this.parentChooseButton = new Ext.Button({
                 labelStyle: 'padding-left: 10px;',
                 iconCls: 'pimcore_icon_search',
@@ -666,7 +666,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 });
             }
 
-            if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+            if(pimcore.helpers.hasSearchImplementation()) {
                 toolbarItems.push({
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
@@ -762,7 +762,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }.bind(this, data)
         }));
 
-        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+        if(pimcore.helpers.hasSearchImplementation()) {
             menu.add(new Ext.menu.Item({
                 text: t('search'),
                 iconCls: "pimcore_icon_search",

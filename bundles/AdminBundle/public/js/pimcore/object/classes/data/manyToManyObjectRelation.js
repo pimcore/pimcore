@@ -156,7 +156,7 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
         const displayModeStore = [
             ['grid', t('display_mode_grid')]
         ];
-        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+        if(pimcore.helpers.hasSearchImplementation()) {
             displayModeStore.push(['combo', t('display_mode_combo')]);
         }
         this.specificPanel.add(

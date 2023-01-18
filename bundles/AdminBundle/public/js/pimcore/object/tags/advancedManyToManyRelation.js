@@ -606,7 +606,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 });
             }
 
-            if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+            if(pimcore.helpers.hasSearchImplementation()) {
                 toolbarItems = toolbarItems.concat([
                     {
                         xtype: "button",
@@ -728,7 +728,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             }.bind(this, data)
         }));
 
-        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+        if(pimcore.helpers.hasSearchImplementation()) {
             menu.add(new Ext.menu.Item({
                 text: t('search'),
                 iconCls: "pimcore_icon_search",

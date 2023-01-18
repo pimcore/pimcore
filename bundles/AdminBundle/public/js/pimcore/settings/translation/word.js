@@ -83,7 +83,7 @@ pimcore.settings.translation.word = Class.create({
             }
         ];
 
-        if(pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
+        if(pimcore.helpers.hasSearchImplementation()) {
             componentToolbarItems.push({
                 xtype: "button",
                 iconCls: "pimcore_icon_search",
