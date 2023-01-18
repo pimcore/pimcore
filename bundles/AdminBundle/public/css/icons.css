@@ -147,10 +147,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/puzzle.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_word_export {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/word.svg) center center no-repeat !important;
-}
-
 .pimcore_nav_icon_close_all {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/tabs.svg) center center no-repeat !important;
 }
@@ -766,15 +762,9 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/wysiwyg.svg) center center no-repeat !important;
 }
 
-
-.pimcore_icon_routes {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/globe.svg) center center no-repeat !important;
-}
-
 .pimcore_icon_redirects {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/redirect.svg) center center no-repeat !important;
 }
-
 
 .pimcore_icon_dependencies {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/parallel_tasks.svg) center center no-repeat !important;
