@@ -1,6 +1,6 @@
-pimcore.registerNS("pimcore.bundle.file_explorer.startup");
+pimcore.registerNS("pimcore.bundle.fileexplorer.startup");
 
-pimcore.bundle.file_explorer.startup = Class.create({
+pimcore.bundle.fileexplorer.startup = Class.create({
 
     initialize: function () {
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
@@ -63,11 +63,11 @@ pimcore.bundle.file_explorer.startup = Class.create({
 
     showFileExplorer: function () {
         try {
-            pimcore.globalmanager.get("file_explorer").activate();
+            pimcore.globalmanager.get("bundle_file_explorer").activate();
         } catch (e) {
-            pimcore.globalmanager.add("file_explorer", new pimcore.bundle.file_explorer.settings.explorer());
+            pimcore.globalmanager.add("bundle_file_explorer", new pimcore.bundle.fileexplorer.explorer());
         }
     },
 })
 
-const fileexplorer = new pimcore.bundle.file_explorer.startup();
+const fileexplorer = new pimcore.bundle.fileexplorer.startup();

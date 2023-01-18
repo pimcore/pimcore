@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.bundle.file_explorer.settings.explorer");
+pimcore.registerNS("pimcore.bundle.fileexplorer.explorer");
 /**
  * @private
  */
-pimcore.bundle.file_explorer.settings.explorer = Class.create({
+pimcore.bundle.fileexplorer.explorer = Class.create({
 
     initialize: function () {
 
@@ -37,7 +37,7 @@ pimcore.bundle.file_explorer.settings.explorer = Class.create({
 
 
         this.panel.on("destroy", function () {
-            pimcore.globalmanager.remove("fileexplorer");
+            pimcore.globalmanager.remove("bundle_file_explorer");
         }.bind(this));
     },
 
@@ -256,7 +256,7 @@ pimcore.bundle.file_explorer.settings.explorer = Class.create({
         if (typeof this.openfiles[path] != "undefined") {
             this.openfiles[path].activate();
         } else {
-            this.openfiles[path] = new pimcore.bundle.file_explorer.settings.file(path, this);
+            this.openfiles[path] = new pimcore.bundle.fileexplorer.file(path, this);
         }
     },
 
