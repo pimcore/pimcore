@@ -109,27 +109,6 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
 
-                        ->arrayNode('data_object')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->arrayNode('translation_extractor')
-                                    ->children()
-                                        ->arrayNode('attributes')
-                                            ->info('Can be used to restrict the extracted localized fields (e.g. used by XLIFF exporter in the Pimcore backend)')
-                                            ->prototype('array')
-                                                ->prototype('scalar')->end()
-                                            ->end()
-                                            ->example(
-                                                [
-                                                    'Product' => ['name', 'description'],
-                                                    'Brand' => ['name'],
-                                                ]
-                                            )
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
                     ->end()
                 ->end()
                 ->arrayNode('maps')
@@ -170,7 +149,6 @@ final class Configuration implements ConfigurationInterface
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
-        $this->addStaticRoutesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
@@ -283,11 +261,6 @@ final class Configuration implements ConfigurationInterface
                         })
                     ->end()
                     ->defaultFalse()
-                ->end()
-                ->scalarNode('instance_identifier')
-                    ->defaultNull()
-                    ->info('UUID instance identifier. Has to be unique throughout multiple Pimcore instances. UUID generation will be automatically enabled if a Instance identifier is provided (do not change the instance identifier afterwards - this will cause invalid UUIDs)')
-                    ->end()
                 ->end()
             ->end();
     }
@@ -1936,44 +1909,6 @@ final class Configuration implements ConfigurationInterface
                                         })
                                         ->end()
                                 ->end()
-                                ->integerNode('creationDate')->end()
-                                ->integerNode('modificationDate')->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
-    }
-
-    /**
-     * Add static routes specific extension config
-     */
-    private function addStaticroutesNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-        ->children()
-            ->arrayNode('staticroutes')
-                ->ignoreExtraKeys()
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('definitions')
-                    ->normalizeKeys(false)
-                        ->prototype('array')
-                            ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('pattern')->end()
-                                ->scalarNode('reverse')->end()
-                                ->scalarNode('controller')->end()
-                                ->scalarNode('variables')->end()
-                                ->scalarNode('defaults')->end()
-                                ->arrayNode('siteId')
-                                    ->integerPrototype()->end()
-                                ->end()
-                                ->arrayNode('methods')
-                                    ->scalarPrototype()->end()
-                                ->end()
-                                ->integerNode('priority')->end()
                                 ->integerNode('creationDate')->end()
                                 ->integerNode('modificationDate')->end()
                             ->end()

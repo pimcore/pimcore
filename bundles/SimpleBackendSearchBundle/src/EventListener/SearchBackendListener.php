@@ -57,7 +57,7 @@ class SearchBackendListener implements EventSubscriberInterface
         ];
     }
 
-    public function onPostAddUpdateElement(ElementEventInterface $e)
+    public function onPostAddUpdateElement(ElementEventInterface $e): void
     {
         //do not update index when auto save or only saving version
         if (
@@ -74,7 +74,7 @@ class SearchBackendListener implements EventSubscriberInterface
         );
     }
 
-    public function onPreDeleteElement(ElementEventInterface $e)
+    public function onPreDeleteElement(ElementEventInterface $e): void
     {
         $searchEntry = Data::getForElement($e->getElement());
         if ($searchEntry instanceof Data && $searchEntry->getId() instanceof Data\Id) {

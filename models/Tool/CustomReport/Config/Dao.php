@@ -24,7 +24,7 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    public function configure()
+    public function configure(): void
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
@@ -41,7 +41,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByName(string $id = null)
+    public function getByName(string $id = null): void
     {
         if ($id != null) {
             $this->model->setName($id);
@@ -67,7 +67,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -92,7 +92,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleteData($this->model->getName());
     }

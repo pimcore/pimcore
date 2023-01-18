@@ -60,7 +60,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
 
@@ -79,7 +79,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         }
     }
 
-    protected function handleErrorPage(ExceptionEvent $event)
+    protected function handleErrorPage(ExceptionEvent $event): void
     {
         if (\Pimcore::inDebugMode()) {
             return;

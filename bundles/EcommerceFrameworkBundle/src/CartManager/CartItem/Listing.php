@@ -58,7 +58,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
         return $this->setData($cartItems);
     }
 
-    public function setCartItemClassName(string $className)
+    public function setCartItemClassName(string $className): void
     {
         $this->getDao()->setClassName($className);
     }

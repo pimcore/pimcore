@@ -62,7 +62,7 @@ class OutputTimestampResolver extends AbstractRequestResolver
      *
      * @param int $timestamp
      */
-    public function setOutputTimestamp(int $timestamp)
+    public function setOutputTimestamp(int $timestamp): void
     {
         $this->getMainRequest()->attributes->set(self::ATTRIBUTE_PIMCORE_OUTPUT_TIMESTAMP, $timestamp);
     }

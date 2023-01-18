@@ -30,7 +30,7 @@ use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
  */
 class SearchBackendReindexCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:search-backend-reindex')

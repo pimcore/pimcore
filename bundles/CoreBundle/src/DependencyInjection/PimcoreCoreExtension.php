@@ -30,7 +30,6 @@ use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
-use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -54,7 +53,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     /**
      * {@inheritdoc}
      */
-    public function loadInternal(array $config, ContainerBuilder $container)
+    public function loadInternal(array $config, ContainerBuilder $container): void
     {
         // on container build the shutdown handler shouldn't be called
         // for details please see https://github.com/pimcore/pimcore/issues/4709
@@ -236,11 +235,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             $definition = $container->getDefinition(TranslationDebugListener::class);
             $definition->setArgument('$parameterName', $parameter);
         }
-
-        if (!empty($config['data_object']['translation_extractor']['attributes'])) {
-            $definition = $container->getDefinition(DataObjectDataExtractor::class);
-            $definition->setArgument('$exportAttributes', $config['data_object']['translation_extractor']['attributes']);
-        }
     }
 
     private function configureTargeting(ContainerBuilder $container, LoaderInterface $loader, array $config): void
@@ -395,7 +389,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
      *
      * {@inheritdoc}
      */
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         /*$securityConfigs = $container->getExtensionConfig('security');
 

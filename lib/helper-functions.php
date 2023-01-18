@@ -532,7 +532,7 @@ function var_export_pretty(mixed $var, string $indent = ''): string
     }
 }
 
-function to_php_data_file_format(mixed $contents, $comments = null): string
+function to_php_data_file_format(mixed $contents, ?string $comments = null): string
 {
     $contents = var_export_pretty($contents);
 

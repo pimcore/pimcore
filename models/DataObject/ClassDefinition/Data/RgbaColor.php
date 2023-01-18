@@ -200,7 +200,7 @@ class RgbaColor extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         parent::checkValidity($data, $omitMandatoryCheck);
 
@@ -227,7 +227,7 @@ class RgbaColor extends Data implements
     /**
      * @param Model\DataObject\ClassDefinition\Data\RgbaColor $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->width = $masterDefinition->width;
     }

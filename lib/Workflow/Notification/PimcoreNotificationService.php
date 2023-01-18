@@ -39,7 +39,7 @@ class PimcoreNotificationService extends AbstractNotificationService
         $this->translator = $translator;
     }
 
-    public function sendPimcoreNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action)
+    public function sendPimcoreNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action): void
     {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles, true);

@@ -39,7 +39,7 @@ class FileSynonymProvider extends AbstractSynonymProvider implements SynonymProv
         return $synonymLines;
     }
 
-    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver): void
     {
         $resolver->setRequired(static::SYNONYM_FILE_OPTION);
     }

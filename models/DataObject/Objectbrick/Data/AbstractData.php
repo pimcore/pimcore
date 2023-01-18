@@ -95,7 +95,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $this->getObject();
     }
 
-    public function delete(Concrete $object)
+    public function delete(Concrete $object): void
     {
         $this->doDelete = true;
         $this->getDao()->delete($object);
@@ -106,7 +106,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      * @internal
      * Flushes the already collected items of the container object
      */
-    protected function flushContainer()
+    protected function flushContainer(): void
     {
         $object = $this->getObject();
         if ($object) {
@@ -229,7 +229,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $parentVars = parent::__sleep();
         $blockedVars = ['loadedLazyKeys', 'object'];
@@ -249,7 +249,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $finalVars;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->object) {
             $this->objectId = $this->object->getId();

@@ -49,14 +49,14 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
         $this->processOptions($resolver->resolve($options));
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         $this->attributeName = $options['attribute_name'];
         $this->priceClass = $options['price_class'];
         $this->priceType = $options['price_type'];
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired([
             'attribute_name',

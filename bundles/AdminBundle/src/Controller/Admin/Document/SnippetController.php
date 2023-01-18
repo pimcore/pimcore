@@ -144,11 +144,11 @@ class SnippetController extends DocumentControllerBase
         }
     }
 
-    protected function setValuesToDocument(Request $request, Document $snippet)
+    protected function setValuesToDocument(Request $request, Document $document): void
     {
-        $this->addSettingsToDocument($request, $snippet);
-        $this->addDataToDocument($request, $snippet);
-        $this->applySchedulerDataToElement($request, $snippet);
-        $this->addPropertiesToDocument($request, $snippet);
+        $this->addSettingsToDocument($request, $document);
+        $this->addDataToDocument($request, $document);
+        $this->applySchedulerDataToElement($request, $document);
+        $this->addPropertiesToDocument($request, $document);
     }
 }

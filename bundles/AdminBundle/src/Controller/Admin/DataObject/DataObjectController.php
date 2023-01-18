@@ -1217,7 +1217,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
     }
 
-    protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder)
+    protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder): void
     {
         $fn = function () use ($parentObject, $currentSortOrder) {
             $list = new DataObject\Listing();
@@ -1551,7 +1551,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         throw $this->createAccessDeniedHttpException();
     }
 
-    protected function assignPropertiesFromEditmode(Request $request, DataObject\AbstractObject $object)
+    protected function assignPropertiesFromEditmode(Request $request, DataObject\AbstractObject $object): void
     {
         if ($request->get('properties')) {
             $properties = [];
@@ -2007,7 +2007,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
     }
 
-    protected function processRemoteOwnerRelations(DataObject\Concrete $object, array $toDelete, array $toAdd, string $ownerFieldName)
+    protected function processRemoteOwnerRelations(DataObject\Concrete $object, array $toDelete, array $toAdd, string $ownerFieldName): void
     {
         $getter = 'get' . ucfirst($ownerFieldName);
         $setter = 'set' . ucfirst($ownerFieldName);
@@ -2089,7 +2089,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return $diff;
     }
 
-    protected function getLatestVersion(DataObject\Concrete $object, &$draftVersion = null): DataObject\Concrete
+    protected function getLatestVersion(DataObject\Concrete $object, ?DataObject\Concrete &$draftVersion = null): DataObject\Concrete
     {
         $latestVersion = $object->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
@@ -2104,7 +2104,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return $object;
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

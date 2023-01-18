@@ -40,12 +40,12 @@ class Shipping implements ShippingInterface
         $this->processOptions($resolver->resolve($options));
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         $this->charge = Decimal::create($options['charge']);
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'charge' => 0,
@@ -93,7 +93,7 @@ class Shipping implements ShippingInterface
         return $this->taxClass;
     }
 
-    public function setTaxClass(OnlineShopTaxClass $taxClass)
+    public function setTaxClass(OnlineShopTaxClass $taxClass): void
     {
         $this->taxClass = $taxClass;
     }

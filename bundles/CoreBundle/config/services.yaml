@@ -129,38 +129,6 @@ services:
     Pimcore\DataObject\Consent\Service:
         public: true
 
-    Pimcore\Translation\ExportDataExtractorService\ExportDataExtractorServiceInterface:
-        class:  Pimcore\Translation\ExportDataExtractorService\ExportDataExtractorService
-
-    Pimcore\Translation\ExportService\ExportServiceInterface:
-        class:  Pimcore\Translation\ExportService\ExportService
-
-    Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor:
-        tags: [{name: pimcore.translation.data-extractor, type: object}]
-
-    Pimcore\Translation\ExportDataExtractorService\DataExtractor\DocumentDataExtractor:
-        tags: [{name: pimcore.translation.data-extractor, type: document}]
-
-    Pimcore\Translation\ExportService\Exporter\ExporterInterface:
-        class: Pimcore\Translation\ExportService\Exporter\Xliff12Exporter
-
-    Pimcore\Translation\ImporterService\ImporterServiceInterface:
-        class: Pimcore\Translation\ImporterService\ImporterService
-
-    Pimcore\Translation\ImporterService\Importer\DataObjectImporter:
-        tags: [{name: pimcore.translation.importer, type: object}]
-
-    Pimcore\Translation\ImporterService\Importer\DocumentImporter:
-        tags: [{name: pimcore.translation.importer, type: document}]
-
-    Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface:
-        class: Pimcore\Translation\ImportDataExtractor\Xliff12DataExtractor
-
-    Pimcore\Translation\ImportDataExtractor\TranslationItemResolver\TranslationItemResolverInterface:
-        class: Pimcore\Translation\ImportDataExtractor\TranslationItemResolver\TranslationItemResolver
-
-    Pimcore\Translation\Escaper\Xliff12Escaper: ~
-
     Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager:
         public: true
 

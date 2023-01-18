@@ -257,7 +257,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     /**
      * {@inheritdoc}
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

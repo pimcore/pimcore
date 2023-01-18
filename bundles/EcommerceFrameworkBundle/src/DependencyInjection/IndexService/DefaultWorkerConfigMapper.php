@@ -34,6 +34,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql;
  */
 class DefaultWorkerConfigMapper
 {
+    /** @var array<string, string> */
     private array $mapping = [
         OptimizedMysqlConfig::class => OptimizedMysql::class,
         DefaultMysqlConfig::class => DefaultMysql::class,
@@ -42,7 +43,7 @@ class DefaultWorkerConfigMapper
         DefaultFindologicConfig::class => DefaultFindologic::class,
     ];
 
-    public function getWorkerForConfig(string $config)
+    public function getWorkerForConfig(string $config): ?string
     {
         // we can only try to guess a worker if config is a class name we can resolve
         if (!class_exists($config)) {
@@ -55,9 +56,11 @@ class DefaultWorkerConfigMapper
                 return $workerClass;
             }
         }
+
+        return null;
     }
 
-    public function getConfigForWorker(string $worker)
+    public function getConfigForWorker(string $worker): ?string
     {
         // we can only try to guess a config if worker is a class name we can resolve
         if (!class_exists($worker)) {
@@ -70,5 +73,7 @@ class DefaultWorkerConfigMapper
                 return $configClass;
             }
         }
+
+        return null;
     }
 }

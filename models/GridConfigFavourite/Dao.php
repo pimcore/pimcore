@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByOwnerAndClassAndObjectId(int $ownerId, string $classId, int $objectId = null, string $searchType = null)
+    public function getByOwnerAndClassAndObjectId(int $ownerId, string $classId, int $objectId = null, string $searchType = null): void
     {
         $query = 'SELECT * FROM gridconfig_favourites WHERE ownerId = ? AND classId = ? AND searchType = ?';
         $params = [$ownerId, $classId, $searchType];
@@ -79,7 +79,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $params = ['ownerId' => $this->model->getOwnerId(), 'classId' => $this->model->getClassId()];
         if ($this->model->getSearchType()) {

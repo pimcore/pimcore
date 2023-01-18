@@ -48,7 +48,7 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
         $this->expression = $expression;
     }
 
-    public function supports(WorkflowInterface $workflow, $subject): bool
+    public function supports(WorkflowInterface $workflow, object $subject): bool
     {
         if (!$this->supportsClass($subject)) {
             return false;
@@ -65,11 +65,9 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
             return $subject instanceof $this->className;
         }
 
-        if (is_array($this->className)) {
-            foreach ($this->className as $className) {
-                if ($subject instanceof $className) {
-                    return true;
-                }
+        foreach ($this->className as $className) {
+            if ($subject instanceof $className) {
+                return true;
             }
         }
 

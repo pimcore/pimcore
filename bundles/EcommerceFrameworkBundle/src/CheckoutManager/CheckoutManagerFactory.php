@@ -80,7 +80,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
         $this->processCheckoutStepDefinitions($checkoutStepDefinitions);
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -96,7 +96,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
         }
     }
 
-    protected function processCheckoutStepDefinitions(array $checkoutStepDefinitions)
+    protected function processCheckoutStepDefinitions(array $checkoutStepDefinitions): void
     {
         $stepResolver = new OptionsResolver();
         $this->configureStepOptions($stepResolver);
@@ -106,12 +106,12 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
         }
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $this->configureClassOptions($resolver);
     }
 
-    protected function configureStepOptions(OptionsResolver $resolver)
+    protected function configureStepOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefined('class');
         $resolver->setAllowedTypes('class', 'string');
@@ -121,7 +121,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
         $resolver->setAllowedTypes('options', ['array', 'null']);
     }
 
-    protected function configureClassOptions(OptionsResolver $resolver)
+    protected function configureClassOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefined('class');
         $resolver->setAllowedTypes('class', 'string');

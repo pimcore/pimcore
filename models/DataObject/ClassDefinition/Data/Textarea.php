@@ -80,7 +80,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->maxLength;
     }
 
-    public function setMaxLength(?int $maxLength)
+    public function setMaxLength(?int $maxLength): void
     {
         $this->maxLength = $maxLength;
     }
@@ -90,7 +90,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->showCharCount;
     }
 
-    public function setShowCharCount(bool $showCharCount)
+    public function setShowCharCount(bool $showCharCount): void
     {
         $this->showCharCount = (bool) $showCharCount;
     }
@@ -216,7 +216,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMaxLength() !== null) {
             if (mb_strlen($data) > $this->getMaxLength()) {

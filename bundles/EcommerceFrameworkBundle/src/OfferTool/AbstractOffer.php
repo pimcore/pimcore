@@ -27,30 +27,51 @@ abstract class AbstractOffer extends Concrete
 {
     abstract public function getOffernumber(): ?string;
 
-    abstract public function setOffernumber(?string $offernumber);
+    /**
+     * @return $this
+     */
+    abstract public function setOffernumber(?string $offernumber): static;
 
     abstract public function getTotalPrice(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setTotalPriceBeforeDiscount(?string $totalPriceBeforeDiscount): static;
 
     abstract public function getTotalPriceBeforeDiscount(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setTotalPrice(?string $totalPrice): static;
 
     abstract public function getDiscount(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setDiscount(?string $discount): static;
 
     abstract public function getDiscountType(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setDiscountType(?string $discountType): static;
 
     abstract public function getDateCreated(): ?\Carbon\Carbon;
 
+    /**
+     * @return $this
+     */
     abstract public function setDateCreated(?\Carbon\Carbon $dateCreated): static;
 
     abstract public function getDateValidUntil(): ?\Carbon\Carbon;
 
+    /**
+     * @return $this
+     */
     abstract public function setDateValidUntil(?\Carbon\Carbon $dateValidUntil): static;
 
     /**
@@ -60,8 +81,10 @@ abstract class AbstractOffer extends Concrete
 
     /**
      * @param AbstractOfferItem[] $items
+     *
+     * @return $this
      */
-    abstract public function setItems(?array $items);
+    abstract public function setItems(?array $items): static;
 
     /**
      * @return AbstractOfferItem[]
@@ -70,8 +93,10 @@ abstract class AbstractOffer extends Concrete
 
     /**
      * @param AbstractOfferItem[] $customItems
+     *
+     * @return $this
      */
-    abstract public function setCustomItems(?array $customItems);
+    abstract public function setCustomItems(?array $customItems): static;
 
     /**
      * @throws UnsupportedException
@@ -87,14 +112,19 @@ abstract class AbstractOffer extends Concrete
      * @throws UnsupportedException
      *
      * @param mixed $customer
+     *
+     * @return $this
      */
-    public function setCustomer(mixed $customer)
+    public function setCustomer(mixed $customer): static
     {
         throw new UnsupportedException('setCustomer is not implemented for ' . get_class($this));
     }
 
     abstract public function getCartId(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setCartId(?string $cartId): static;
 
     public function addCustomItemFromProduct(AbstractOfferToolProduct $product, int $amount = 1): ?AbstractOfferItem

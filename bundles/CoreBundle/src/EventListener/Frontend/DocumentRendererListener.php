@@ -42,13 +42,13 @@ class DocumentRendererListener implements EventSubscriberInterface
         ];
     }
 
-    public function onPreRender()
+    public function onPreRender(): void
     {
         // when rendering a new document, the index is pushed to create a new, empty context
         $this->containerService->pushIndex();
     }
 
-    public function onPostRender()
+    public function onPostRender(): void
     {
         $this->containerService->popIndex();
     }

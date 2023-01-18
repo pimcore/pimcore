@@ -1,0 +1,6 @@
+_pimcore_bundle_xliff_backend:
+    resource: "../../src/Controller/"
+    type:     annotation
+    prefix:   /admin/bundle/xliff
+    options:
+        expose: true

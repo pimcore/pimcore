@@ -49,7 +49,7 @@ interface PriceInterface
      * @param string $priceMode - default to PRICE_MODE_GROSS
      * @param bool $recalc - default to false
      */
-    public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false);
+    public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false): void;
 
     /**
      * Returns gross amount of price

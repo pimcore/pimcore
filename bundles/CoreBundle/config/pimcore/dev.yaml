@@ -21,6 +21,11 @@ monolog:
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
             channels: ['!event', '!doctrine', '!cache']
+        error:
+            type: stream
+            path: "%kernel.logs_dir%/php.log"
+            level: error
+            channels: [ '!event', '!doctrine', '!cache' ]
         console:
             type: console
             process_psr_3_messages: false
