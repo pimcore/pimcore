@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Event;
 
 use Pimcore\Analytics\Code\CodeBlock;
-use Pimcore\Analytics\Config\Config;
+use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\Config;
 use Pimcore\Analytics\SiteId\SiteId;
 use Symfony\Contracts\EventDispatcher\Event;
 
