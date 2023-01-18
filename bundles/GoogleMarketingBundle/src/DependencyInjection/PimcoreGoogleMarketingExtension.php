@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\GoogleMarketingBundle\DependencyInjection;
 
-use Pimcore\Analytics\Config\SiteConfigProvider;
+use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Tracker as AnalyticsGoogleTracker;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

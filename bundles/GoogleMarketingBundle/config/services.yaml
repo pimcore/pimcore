@@ -24,11 +24,11 @@ services:
     # GOOGLE
     #
 
-    Pimcore\Analytics\Config\ConfigProvider: ~
-    Pimcore\Analytics\Config\Config:
-        factory: [ '@Pimcore\Analytics\Config\ConfigProvider', 'getConfig' ]
+    Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\ConfigProvider: ~
+    Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\Config:
+        factory: [ '@Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\ConfigProvider', 'getConfig' ]
 
-    Pimcore\Analytics\Config\SiteConfigProvider: ~
+    Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\SiteConfigProvider: ~
 
     Pimcore\Analytics\TrackerInterface: '@Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Tracker'
 
