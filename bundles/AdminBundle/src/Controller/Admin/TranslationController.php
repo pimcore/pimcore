@@ -31,7 +31,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -757,7 +756,7 @@ class TranslationController extends AdminController
         $elementsPerJob = (int)$request->get('elements_per_job', 10);
 
         // make sure elements per job is not 0
-        if(!$elementsPerJob) {
+        if (!$elementsPerJob) {
             $elementsPerJob = 1;
         }
 

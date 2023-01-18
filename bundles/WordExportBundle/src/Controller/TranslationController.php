@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Bundle\WordExportBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
@@ -16,7 +29,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @Route("/translation")
@@ -25,6 +37,7 @@ use Symfony\Component\Routing\RouterInterface;
 class TranslationController extends AdminController
 {
     private const PERMISSION = 'word_export';
+
     /**
      * @Route("/word-export", name="pimcore_bundle_wordexport_translation_wordexport", methods={"POST"})
      *
@@ -58,8 +71,8 @@ class TranslationController extends AdminController
 
                 if ($element instanceof ElementInterface) {
                     $output .= '<h1 class="element-headline">' . ucfirst(
-                            $element->getType()
-                        ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
+                        $element->getType()
+                    ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
                 }
 
                 if ($element instanceof PageSnippet) {

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,6 +13,7 @@ declare(strict_types=1);
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
+
 namespace Pimcore\Bundle\WordExportBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
