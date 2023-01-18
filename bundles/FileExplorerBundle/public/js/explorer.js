@@ -48,7 +48,7 @@ pimcore.bundle.fileexplorer.explorer = Class.create({
             var store = Ext.create('Ext.data.TreeStore', {
                 proxy: {
                     type: 'ajax',
-                    url: Routing.generate('pimcore_bundle_file_explorer_tree')
+                    url: Routing.generate('pimcore_bundle_file_explorer_settings_tree')
                 },
                 folderSort: true,
                 sorters: [{
@@ -144,7 +144,7 @@ pimcore.bundle.fileexplorer.explorer = Class.create({
         Ext.MessageBox.prompt(t('pimcore_file_explorer_bundle_new_file'), t('pimcore_file_explorer_bundle_enter_name'),
             function (node, button, value) {
                 Ext.Ajax.request({
-                    url: Routing.generate('pimcore_bundle_file_explorer_add'),
+                    url: Routing.generate('pimcore_bundle_file_explorer_settings_add'),
                     method: "POST",
                     success: function (node, response) {
                         node.data.loaded = false;
@@ -169,7 +169,7 @@ pimcore.bundle.fileexplorer.explorer = Class.create({
         Ext.MessageBox.prompt(t('pimcore_file_explorer_bundle_new_folder'), t('pimcore_file_explorer_bundle_enter_name'),
             function (node, button, value) {
                 Ext.Ajax.request({
-                    url: Routing.generate('pimcore_bundle_file_explorer_addfolder'),
+                    url: Routing.generate('pimcore_bundle_file_explorer_settings_addfolder'),
                     method: "POST",
                     success: function (node, response) {
                         node.data.loaded = false;
@@ -196,7 +196,7 @@ pimcore.bundle.fileexplorer.explorer = Class.create({
             function (node, button, value) {
                 if (button == "ok") {
                     Ext.Ajax.request({
-                        url: Routing.generate('pimcore_bundle_file_explorer_rename'),
+                        url: Routing.generate('pimcore_bundle_file_explorer_settings_rename'),
                         method: 'PUT',
                         success: function (node, response) {
                             if (this.openfiles[node.id]) {
@@ -226,7 +226,7 @@ pimcore.bundle.fileexplorer.explorer = Class.create({
     deleteFile: function (node) {
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_bundle_file_explorer_delete'),
+            url: Routing.generate('pimcore_bundle_file_explorer_settings_delete'),
             method: 'DELETE',
             success: function (node, response) {
                 this.treePanel.getStore().load({

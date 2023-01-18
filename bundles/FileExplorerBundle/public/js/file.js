@@ -25,7 +25,7 @@ pimcore.bundle.fileexplorer.file = Class.create({
 
     loadFileContents: function (path) {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_bundle_file_explorer_content'),
+            url: Routing.generate('pimcore_bundle_file_explorer_settings_content'),
             success: this.loadFileContentsComplete.bind(this),
             params: {
                 path: path
@@ -119,7 +119,7 @@ pimcore.bundle.fileexplorer.file = Class.create({
         var content = this.textEditor.getValue();
         Ext.Ajax.request({
             method: "put",
-            url: Routing.generate('pimcore_bundle_file_explorer_contentsave'),
+            url: Routing.generate('pimcore_bundle_file_explorer_settings_contentsave'),
             params: {
                 path: this.responsePath,
                 content: content

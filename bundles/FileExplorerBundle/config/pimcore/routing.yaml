@@ -1,5 +1,5 @@
 _pimcore_bundle_file_explorer:
-    resource: "../../src/Controller/Admin/"
+    resource: "../../src/Controller/"
     type:     annotation
     prefix:   /admin/bundle/file-explorer
     options:

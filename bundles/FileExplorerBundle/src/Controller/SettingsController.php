@@ -1,21 +1,22 @@
 <?php
 
-namespace Pimcore\Bundle\FileExplorerBundle\Controller\Admin;
+namespace Pimcore\Bundle\FileExplorerBundle\Controller;
 
+use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/")
+ * @Route("/settings")
  *
  * @internal
  */
-class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
+class SettingsController extends AdminController
 {
     /**
-     * @Route("/tree", name="pimcore_bundle_file_explorer_tree", methods={"GET"})
+     * @Route("/tree", name="pimcore_bundle_file_explorer_settings_tree", methods={"GET"})
      *
      * @param Request $request
      *
@@ -64,7 +65,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/content", name="pimcore_bundle_file_explorer_content", methods={"GET"})
+     * @Route("/content", name="pimcore_bundle_file_explorer_settings_content", methods={"GET"})
      *
      * @param Request $request
      *
@@ -96,7 +97,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/content-save", name="pimcore_bundle_file_explorer_contentsave", methods={"PUT"})
+     * @Route("/content-save", name="pimcore_bundle_file_explorer_settings_contentsave", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -123,7 +124,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/add", name="pimcore_bundle_file_explorer_add", methods={"POST"})
+     * @Route("/add", name="pimcore_bundle_file_explorer_settings_add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -159,7 +160,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/add-folder", name="pimcore_bundle_file_explorer_addfolder", methods={"POST"})
+     * @Route("/add-folder", name="pimcore_bundle_file_explorer_settings_addfolder", methods={"POST"})
      *
      * @param Request $request
      *
@@ -195,7 +196,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/delete", name="pimcore_bundle_file_explorer_delete", methods={"DELETE"})
+     * @Route("/delete", name="pimcore_bundle_file_explorer_settings_delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -220,7 +221,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @Route("/rename", name="pimcore_bundle_file_explorer_rename", methods={"PUT"})
+     * @Route("/rename", name="pimcore_bundle_file_explorer_settings_rename", methods={"PUT"})
      *
      * @param Request $request
      *

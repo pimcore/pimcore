@@ -5,8 +5,8 @@ services:
         autoconfigure: true
         public: false
 
-    Pimcore\Bundle\FileExplorerBundle\Controller\Admin\:
-        resource: '../src/Controller/Admin'
+    Pimcore\Bundle\FileExplorerBundle\Controller\:
+        resource: '../src/Controller/'
         public: true
         tags: [ 'controller.service_arguments' ]
 
