@@ -71,7 +71,7 @@ the configuration entries relevant to the component:
 
 - [Cart Manager](./11_Cart_Manager.md)
 - [Price Systems](./09_Working_with_Prices/README.md)
-- Availability Systems
+- [Availability Systems](./10_Working_with_Availabilities.md)
 - [Checkout Manager and Checkout Steps](./13_Checkout_Manager/README.md)
 - [Payment Providers](./15_Payment/README.md)
 - [Index Service and which attributes should be in the Product Index](./05_Index_Service/README.md)
