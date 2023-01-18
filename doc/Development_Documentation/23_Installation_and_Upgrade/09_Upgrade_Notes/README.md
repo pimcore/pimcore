@@ -114,6 +114,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
       - Config `pimcore:staticroutes:` has been removed, please use `pimcore_static_routes:` in the PimcoreStaticRoutesBundle instead.
     - Xliff Translation Import/Export and related Events have been moved into PimcoreXliffBundle. Please check and adapt the Events' namespaces.
     - SEO Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
+    - WordExport has been moved into PimcoreWordExportBundle
     - [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
     - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
     - UUID has been moved into PimcoreUuidBundle
