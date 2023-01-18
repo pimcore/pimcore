@@ -36,6 +36,30 @@ pimcore.element.selector.searchFacade = new Class.create({
                 //TODO: handle error
             }
         }
+    },
+
+    showQuickSearch: function () {
+        if(this.hasImplementation()){
+            //call implementation
+            try {
+                this.getImplementation().showQuickSearch();
+            }
+            catch (e) {
+                //TODO: handle error
+            }
+        }
+    },
+
+    hideQuickSearch: function () {
+        if(this.hasImplementation()){
+            //call implementation
+            try {
+                this.getImplementation().hideQuickSearch();
+            }
+            catch (e) {
+                //TODO: handle error
+            }
+        }
     }
 });
 

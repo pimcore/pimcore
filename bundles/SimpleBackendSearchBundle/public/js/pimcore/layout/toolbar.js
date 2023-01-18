@@ -20,7 +20,7 @@ pimcore.bundle.search.layout.toolbar = Class.create({
     initialize: function (menu) {
         this.perspectiveCfg = pimcore.globalmanager.get('perspective');
         this.user = pimcore.globalmanager.get('user');
-        this.quickSearch = pimcore.globalmanager.get('quickSearchImplementationRegistry');
+        this.searchRegistry = pimcore.globalmanager.get('searchImplementationRegistry');
         this.menu = menu;
 
         this.createSearchEntry();
@@ -33,14 +33,13 @@ pimcore.bundle.search.layout.toolbar = Class.create({
             if ((this.user.isAllowed("documents") ||
                 this.user.isAllowed("assets") ||
                 this.user.isAllowed("objects")) &&
-                this.perspectiveCfg.inToolbar("search.quickSearch") &&
-                this.quickSearch.hasImplementation()) {
+                this.perspectiveCfg.inToolbar("search.quickSearch")) {
                 searchItems.push({
                     text: t("quicksearch"),
                     iconCls: "pimcore_nav_icon_quicksearch",
                     itemId: 'pimcore_menu_search_quick_search',
                     handler: function () {
-                        this.quickSearch.show();
+                        this.searchRegistry.showQuickSearch();
                     }.bind(this)
                 });
                 searchItems.push('-');

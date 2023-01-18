@@ -31,7 +31,7 @@ pimcore.bundle.search = Class.create({
 
     registerKeyBinding: function () {
         pimcore.helpers.keyBindingMapping.quickSearch = function () {
-            pimcore.globalmanager.get('quickSearchImplementationRegistry').show();
+            pimcore.globalmanager.get('searchImplementationRegistry').showQuickSearch();
         }
     },
 
@@ -42,17 +42,8 @@ pimcore.bundle.search = Class.create({
         this.searchRegistry.registerImplementation(new pimcore.bundle.search.element.service());
     },
 
-    registerQuickSearchService: function () {
-        this.quickSearchRegistry = pimcore.globalmanager.get('quickSearchImplementationRegistry');
-
-        //register quickSearch
-        this.quickSearchRegistry.registerImplementation(new pimcore.bundle.search.layout.quickSearch());
-    },
-
     preMenuBuild: function (event) {
-        this.registerQuickSearchService();
-
-        new pimcore.bundle.search.layout.toolbar(event.detail.menu);
+        new pimcore.bundle.search.layout.toolbar(event.detail.menu); //TODO: check if that works
     }
 });
 

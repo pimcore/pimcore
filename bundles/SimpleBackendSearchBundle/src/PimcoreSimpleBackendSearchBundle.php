@@ -34,8 +34,7 @@ class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle
             '/bundles/pimcoresimplebackendsearch/js/pimcore/element/selector/object.js',
             '/bundles/pimcoresimplebackendsearch/js/pimcore/element/selector/selector.js',
 
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/layout/toolbar.js',
-            '/bundles/pimcoresimplebackendsearch/js/pimcore/layout/quickSearch.js'
+            '/bundles/pimcoresimplebackendsearch/js/pimcore/layout/toolbar.js'
         ];
     }
 

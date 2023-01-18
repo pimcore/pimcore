@@ -73,7 +73,7 @@ pimcore.settings.user.user.keyBindings = Class.create({
         for (var action in mapping) {
             if (mapping.hasOwnProperty(action)){
                 if(action === 'quickSearch' &&
-                    !pimcore.globalmanager.get('quickSearchImplementationRegistry').hasImplementation()) {
+                    !pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation()) {
                     continue;
                 }
 
