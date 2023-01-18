@@ -135,6 +135,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - The "advanced" GDPR search has also been moved. We provide a basic search to cover the fundamental functionality if the search bundle isn't available.
   - The asset, object, document and quick search have been moved to the search bundle
   - All backend-search related files have been moved to the search bundle (please check custom implementations if you rely on any backend-search component!)
+  - Added additional messenger transport for backend search (`pimcore_search_backend_message`)
 - [DataObjects] Text data types now set their corresponding database columns to `null` instead of `''` (empty string) when empty.
 - [Ecommerce][Product Interfaces] Changed return type-hints of `CheckoutableInterface` methods `getOSPrice`, `getOSPriceInfo`, `getOSAvailabilityInfo`, `getPriceSystemName`, `getAvailabilitySystemName`, `getPriceSystemImplementation`, `getAvailabilitySystemImplementation` to be non-nullable.
 - [Elements] Removed the deprecated `Pimcore\Model\Element\Service::getType()`, use `Pimcore\Model\Element\Service::getElementType()` instead.
