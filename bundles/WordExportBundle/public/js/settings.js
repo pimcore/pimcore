@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.translation.word");
+pimcore.registerNS("pimcore.bundle.wordexport.settings");
 /**
  * @private
  */
-pimcore.settings.translation.word = Class.create({
+pimcore.bundle.wordexport.settings = Class.create({
 
     initialize: function () {
         this.getTabPanel();
@@ -45,7 +45,7 @@ pimcore.settings.translation.word = Class.create({
             tabPanel.setActiveItem("pimcore_word");
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("word");
+                pimcore.globalmanager.remove("bundle_word_export");
             }.bind(this));
 
             pimcore.layout.refresh();
@@ -137,8 +137,6 @@ pimcore.settings.translation.word = Class.create({
             ]
         });
 
-        //this.component.on("rowcontextmenu", this.onRowContextmenu);
-
         this.component.on("afterrender", function () {
 
             var dropTargetEl = this.component.getEl();
@@ -146,7 +144,6 @@ pimcore.settings.translation.word = Class.create({
                 ddGroup    : 'element',
                 getTargetFromEvent: function(e) {
                     return this.component.getEl().dom;
-                    //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
 
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
@@ -247,7 +244,9 @@ pimcore.settings.translation.word = Class.create({
             params: {
                 source: this.exportSourceLanguageSelector.getValue(),
                 data: Ext.encode(tmData),
-                type: "word"
+                type: "word",
+                job_url: Routing.generate('pimcore_bundle_wordexport_translation_wordexport'),
+                elements_per_job: 1
             },
             success: function(response) {
                 var res = Ext.decode(response.responseText);
@@ -279,7 +278,7 @@ pimcore.settings.translation.word = Class.create({
                         this.exportProgressbar = null;
                         this.exportProgressWin = null;
 
-                        pimcore.helpers.download(Routing.generate('pimcore_admin_translation_wordexportdownload', {id: id}));
+                        pimcore.helpers.download(Routing.generate('pimcore_bundle_wordexport_translation_wordexportdownload', {id: id}));
                     }.bind(this, res.id),
                     update: function (currentStep, steps, percent) {
                         if(this.exportProgressbar) {

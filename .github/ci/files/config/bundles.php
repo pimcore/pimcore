@@ -17,4 +17,7 @@ return [
     "Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle" => [
+        "all" => TRUE
+    ],
 ];

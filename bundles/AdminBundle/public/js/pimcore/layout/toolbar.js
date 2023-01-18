@@ -309,12 +309,6 @@ pimcore.layout.toolbar = Class.create({
                      itemId: 'pimcore_menu_extras_translations_shared_translations',
                      handler: this.editTranslations.bind(this, 'messages'),
                      priority: 10
-                 }, {
-                     text: "Microsoft® Word " + t("export"),
-                     iconCls: "pimcore_nav_icon_word_export",
-                     itemId: 'pimcore_menu_extras_translations_word_export',
-                     handler: this.wordExport,
-                     priority: 30
                  }];
              }
 
@@ -1247,7 +1241,7 @@ pimcore.layout.toolbar = Class.create({
              pimcore.globalmanager.add("translationdomainmanager", new pimcore.settings.translation.domain(domain));
          }
      },
- 
+
      editRedirects: function () {
  
          try {
@@ -1491,15 +1485,6 @@ pimcore.layout.toolbar = Class.create({
          }
      },
 
-     wordExport: function () {
-         try {
-             pimcore.globalmanager.get("word").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("word", new pimcore.settings.translation.word());
-         }
-     },
- 
      showElementHistory: function() {
          try {
              pimcore.globalmanager.get("element_history").activate();
