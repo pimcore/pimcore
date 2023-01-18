@@ -20,13 +20,15 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\ObjectAwareFieldInterface;
 
 /**
  * @method Dao getDao()
  * @method void save(Concrete $object, $params = [])
  * @method array getRelationData($field, $forOwner, $remoteClassId)
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface, ObjectAwareFieldInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
     use Model\Element\ElementDumpStateTrait;
@@ -197,6 +199,10 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
+
+        if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
+            $this->localizedfields->setObject($object, false);
+        }
 
         return $this;
     }
