@@ -37,7 +37,12 @@ final class Version20210324152822 extends AbstractMigration
         foreach ($translationsTables as $table) {
             $translationsTable = current($table);
 
-            if (!$schema->getTable($translationsTable)->hasColumn('type')) {
+            $translationsTableSchema = $schema->getTable($translationsTable);
+
+            if ($translationsTableSchema->hasColumn('key')
+                && $translationsTableSchema->hasColumn('language')
+                && $translationsTableSchema->hasColumn('text')
+                && !$translationsTableSchema->hasColumn('type')) {
                 $this->addSql('ALTER TABLE `'.$translationsTable.'` ADD COLUMN `type` varchar(10) DEFAULT NULL AFTER `key`');
             }
         }
@@ -54,7 +59,12 @@ final class Version20210324152822 extends AbstractMigration
         foreach ($translationsTables as $table) {
             $translationsTable = current($table);
 
-            if ($schema->getTable($translationsTable)->hasColumn('type')) {
+            $translationsTableSchema = $schema->getTable($translationsTable);
+
+            if ($translationsTableSchema->hasColumn('key')
+                && $translationsTableSchema->hasColumn('language')
+                && $translationsTableSchema->hasColumn('text')
+                && $translationsTableSchema->hasColumn('type')) {
                 $this->addSql('ALTER TABLE `'.$translationsTable.'` DROP COLUMN `type`');
             }
         }

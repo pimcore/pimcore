@@ -252,7 +252,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
                 pimcore.helpers.showNotification(t("error"), res, "error",
                     res.response.responseText);
             }
-        }.bind(this), [] ,this.getType());
+        }.bind(this), [], "image");
     },
 
     onNodeOver: function(target, dd, e, data) {

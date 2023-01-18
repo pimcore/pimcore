@@ -275,7 +275,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 pimcore.helpers.showNotification(t("error"), res, "error",
                     res.response.responseText);
             }
-        }.bind(this), this.context, this.type);
+        }.bind(this), this.context, "image");
     },
 
     addDataFromSelector: function (item) {
