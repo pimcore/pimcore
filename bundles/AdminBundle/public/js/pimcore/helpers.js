@@ -2916,8 +2916,7 @@ pimcore.helpers.keyBindingMapping = {
     "users": pimcore.helpers.users,
     "roles": pimcore.helpers.roles,
     "clearAllCaches": pimcore.helpers.clearAllCaches,
-    "clearDataCache": pimcore.helpers.clearDataCache,
-    "quickSearch": pimcore.helpers.showQuickSearch
+    "clearDataCache": pimcore.helpers.clearDataCache
 };
 
 pimcore.helpers.showPermissionError = function(permission) {
