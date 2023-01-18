@@ -276,6 +276,17 @@ final class Translation extends AbstractModel
     }
 
     /**
+     *
+     * @return array
+     */
+    public static function getRegisteredDomains(): array
+    {
+        $translationsConfig = \Pimcore\Config::getSystemConfiguration('translations');
+
+        return $translationsConfig['domains'];
+    }
+
+    /**
      * @param string $id
      * @param string $domain
      * @param bool $create - creates an empty translation entry if the key doesn't exists

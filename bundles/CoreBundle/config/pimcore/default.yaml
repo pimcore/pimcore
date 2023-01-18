@@ -241,7 +241,10 @@ pimcore:
         plugin:
             routes:
                 - { path: ^/plugin(/.*)?$ }
-
+    translations:
+        domains:
+            - messages
+            - admin
     sitemaps:
         generators:
             pimcore_documents:
