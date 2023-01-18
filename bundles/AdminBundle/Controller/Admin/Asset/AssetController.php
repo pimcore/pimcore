@@ -1095,8 +1095,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function publishVersionAction(Request $request)
     {
-        $version = Model\Version::getById((int) $request->get('id'));
-        $asset = $version->loadData();
+        $id = (int)$request->get('id');
+        $version = Model\Version::getById($id);
+        $asset = $version?->loadData();
+
+        if (!$asset) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
+        }
 
         $currentAsset = Asset::getById($asset->getId());
         if ($currentAsset->isAllowed('publish')) {
@@ -1126,10 +1131,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
-        if (!$version) {
-            throw $this->createNotFoundException('Version not found');
+        $asset = $version?->loadData();
+        if (!$asset) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
-        $asset = $version->loadData();
 
         if (!$asset->isAllowed('versions')) {
             throw $this->createAccessDeniedHttpException('Permission denied, version id [' . $id . ']');
