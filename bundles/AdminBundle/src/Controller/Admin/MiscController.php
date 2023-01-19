@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
 use Pimcore\Controller\Config\ControllerDataProvider;
-use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
@@ -247,7 +246,6 @@ class MiscController extends AdminController
             'filename' => \Pimcore\Model\Element\Service::getValidKey($request->get('value'), $request->get('type')),
         ]);
     }
-
 
     /**
      * @Route("/maintenance", name="pimcore_admin_misc_maintenance", methods={"POST"})

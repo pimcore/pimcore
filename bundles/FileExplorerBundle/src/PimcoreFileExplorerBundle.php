@@ -1,16 +1,26 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Bundle\FileExplorerBundle;
 
+use function dirname;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
-use Pimcore\Bundle\FileExplorerBundle\DependencyInjection\PimcoreFileExplorerExtension;
-use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
-use function dirname;
 
 class PimcoreFileExplorerBundle extends AbstractPimcoreBundle
 {
-
     use PackageVersionTrait;
 
     public function getComposerPackageName(): string
@@ -21,7 +31,7 @@ class PimcoreFileExplorerBundle extends AbstractPimcoreBundle
     public function getCssPaths(): array
     {
         return [
-            '/bundles/pimcorefileexplorer/css/file-explorer.css'
+            '/bundles/pimcorefileexplorer/css/file-explorer.css',
         ];
     }
 
@@ -46,5 +56,4 @@ class PimcoreFileExplorerBundle extends AbstractPimcoreBundle
     {
         return $this->container->get(Installer::class);
     }
-
 }
