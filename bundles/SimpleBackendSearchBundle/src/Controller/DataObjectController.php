@@ -55,14 +55,17 @@ class DataObjectController extends AdminController
         $objects = json_decode($res->getContent(), true)['data'];
 
         if ($request->get('data')) {
-            foreach (explode(',', $request->get('data')) as $preSelectedElementId) {
-                $objects[] = ['id' => $preSelectedElementId];
+            foreach (json_decode($request->get('data'), true) as $preSelectedElement) {
+                if (isset($preSelectedElement['id'], $preSelectedElement['type'])) {
+                    $objects[] = ['id' => $preSelectedElement['id'], 'type' => $preSelectedElement['type']];
+                }
             }
         }
 
         foreach ($objects as $objectData) {
             $option = [
                 'id' => $objectData['id'],
+                'type' => $objectData['type']
             ];
 
             $visibleFieldValues = [];
