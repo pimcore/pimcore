@@ -114,6 +114,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
     - UUID has been moved into PimcoreUuidBundle
       - Config `pimcore:general:instance_identifier` has been removed, please use `pimcore_uuid:instance_identifier` in the PimcoreUuidBundle instead. Please run `bin/console config:dump pimcore_uuid` to see more about the instance identifier config after installing the bundle.
+    - `Personalization and targeting` has been moved to `pimcore/personalization` package.
+       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting:` in the PimcoreStaticRoutesBundle instead.
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
