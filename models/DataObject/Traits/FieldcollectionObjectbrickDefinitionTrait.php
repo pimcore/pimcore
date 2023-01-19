@@ -24,6 +24,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
  */
 trait FieldcollectionObjectbrickDefinitionTrait
 {
+    use FieldDefinitionEnrichmentModelTrait;
+
     public ?string $key = null;
 
     public ?string $parentClass = null;
@@ -39,22 +41,12 @@ trait FieldcollectionObjectbrickDefinitionTrait
 
     public ?Layout $layoutDefinitions = null;
 
-    /**
-     * @var Data[]
-     */
-    protected array $fieldDefinitions = [];
-
     public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * @param string|null $key
-     *
-     * @return $this
-     */
-    public function setKey($key): static
+    public function setKey(?string $key): static
     {
         $this->key = $key;
 
@@ -66,12 +58,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->parentClass;
     }
 
-    /**
-     * @param string|null $parentClass
-     *
-     * @return $this
-     */
-    public function setParentClass($parentClass): static
+    public function setParentClass(?string $parentClass): static
     {
         $this->parentClass = $parentClass;
 
@@ -83,11 +70,6 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
     public function setTitle(?string $title): static
     {
         $this->title = $title;
@@ -100,98 +82,16 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->layoutDefinitions;
     }
 
-    /**
-     * @param Layout|null $layoutDefinitions
-     *
-     * @return $this
-     */
     public function setLayoutDefinitions(?Layout $layoutDefinitions): static
     {
         if ($layoutDefinitions) {
             $this->layoutDefinitions = $layoutDefinitions;
 
-            $this->fieldDefinitions = [];
+            $this->setFieldDefinitions([]);
             $this->extractDataDefinitions($this->layoutDefinitions);
         }
 
         return $this;
-    }
-
-    /**
-     * @param array $context additional contextual data
-     *
-     * @return Data[]
-     */
-    public function getFieldDefinitions(array $context = []): array
-    {
-        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-            return $this->fieldDefinitions;
-        }
-
-        $enrichedFieldDefinitions = [];
-        if (is_array($this->fieldDefinitions)) {
-            foreach ($this->fieldDefinitions as $key => $fieldDefinition) {
-                $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
-                $enrichedFieldDefinitions[$key] = $fieldDefinition;
-            }
-        }
-
-        return $enrichedFieldDefinitions;
-    }
-
-    /**
-     * @param Data[] $fieldDefinitions
-     *
-     * @return $this
-     */
-    public function setFieldDefinitions(array $fieldDefinitions): static
-    {
-        $this->fieldDefinitions = $fieldDefinitions;
-
-        return $this;
-    }
-
-    /**
-     * @param string $key
-     * @param Data $data
-     *
-     * @return $this
-     */
-    public function addFieldDefinition(string $key, Data $data): static
-    {
-        $this->fieldDefinitions[$key] = $data;
-
-        return $this;
-    }
-
-    /**
-     * @param string $key
-     * @param array $context additional contextual data
-     *
-     * @return Data|null
-     */
-    public function getFieldDefinition(string $key, array $context = []): ?Data
-    {
-        if (is_array($this->fieldDefinitions)) {
-            $fieldDefinition = null;
-            if (array_key_exists($key, $this->fieldDefinitions)) {
-                $fieldDefinition = $this->fieldDefinitions[$key];
-            } elseif (array_key_exists('localizedfields', $this->fieldDefinitions)) {
-                /** @var Data\Localizedfields $lfDef */
-                $lfDef = $this->fieldDefinitions['localizedfields'];
-                $fieldDefinition = $lfDef->getFieldDefinition($key);
-            }
-
-            if ($fieldDefinition) {
-                if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-                    return $fieldDefinition;
-                }
-
-                return $this->doEnrichFieldDefinition($fieldDefinition, $context);
-            }
-        }
-
-        return null;
     }
 
     public function getGroup(): ?string
@@ -199,11 +99,6 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->group;
     }
 
-    /**
-     * @param string $group
-     *
-     * @return $this
-     */
     public function setGroup(?string $group): static
     {
         $this->group = $group;
@@ -222,14 +117,4 @@ trait FieldcollectionObjectbrickDefinitionTrait
 
         return $this;
     }
-
-    /**
-     * @internal
-     *
-     * @param Data $fieldDefinition
-     * @param array $context
-     *
-     * @return mixed
-     */
-    abstract protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data;
 }
