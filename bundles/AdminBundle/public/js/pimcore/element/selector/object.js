@@ -412,7 +412,16 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             plugins: ['pimcore.gridfilters'],
             viewConfig: {
                 forceFit: false,
-                xtype: 'patchedgridview'
+                xtype: 'patchedgridview',
+                listeners: {
+                    refresh: function (dataview) {
+                        Ext.each(dataview.panel.columns, function (column) {
+                            if (column.autoSizeColumn === true) {
+                                column.autoSize();
+                            }
+                        })
+                    }
+                }
             },
             cls: 'pimcore_object_grid_panel',
             selModel: this.getGridSelModel(),

@@ -299,35 +299,30 @@ pimcore.layout.toolbar = Class.create({
                      handler: this.editRedirects
                  });
              }
- 
+
+             let translationItems = [];
+
              if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
-                 extrasItems.push({
+                 translationItems = [{
                      text: t("translations"),
                      iconCls: "pimcore_nav_icon_translations",
-                     itemId: 'pimcore_menu_extras_translations',
-                     hideOnClick: false,
-                     menu: {
-                         cls: "pimcore_navigation_flyout",
-                         shadow: false,
-                         items: [{
-                             text: t("translations"),
-                             iconCls: "pimcore_nav_icon_translations",
-                             itemId: 'pimcore_menu_extras_translations_shared_translations',
-                             handler: this.editTranslations.bind(this, 'messages')
-                         }, {
-                             text: "XLIFF " + t("export") + "/" + t("import"),
-                             iconCls: "pimcore_nav_icon_translations",
-                             itemId: 'pimcore_menu_extras_translations_xliff',
-                             handler: this.xliffImportExport
-                         }, {
-                             text: "Microsoft® Word " + t("export"),
-                             iconCls: "pimcore_nav_icon_word_export",
-                             itemId: 'pimcore_menu_extras_translations_word_export',
-                             handler: this.wordExport
-                         }]
-                     }
-                 });
+                     itemId: 'pimcore_menu_extras_translations_shared_translations',
+                     handler: this.editTranslations.bind(this, 'messages'),
+                     priority: 10
+                 }];
              }
+
+             extrasItems.push({
+                 text: t("translations"),
+                 iconCls: "pimcore_nav_icon_translations",
+                 itemId: 'pimcore_menu_extras_translations',
+                 hideOnClick: false,
+                 menu: {
+                     cls: "pimcore_navigation_flyout",
+                     shadow: false,
+                     items: translationItems
+                 }
+             });
  
              if (user.isAllowed("recyclebin") && perspectiveCfg.inToolbar("extras.recyclebin")) {
                  extrasItems.push({
@@ -717,16 +712,7 @@ pimcore.layout.toolbar = Class.create({
                      }
                  }
              }
- 
-             if (user.isAllowed("routes") && perspectiveCfg.inToolbar("settings.routes")) {
-                 settingsItems.push({
-                     text: t("static_routes"),
-                     iconCls: "pimcore_nav_icon_routes",
-                     itemId: 'pimcore_menu_settings_static_routes',
-                     handler: this.editRoutes
-                 });
-             }
- 
+
              if (perspectiveCfg.inToolbar("settings.cache") && (user.isAllowed("clear_cache") || user.isAllowed("clear_temp_files") || user.isAllowed("clear_fullpage_cache"))) {
  
                  var cacheItems = [];
@@ -872,16 +858,13 @@ pimcore.layout.toolbar = Class.create({
              }
  
              // help menu
-             if (settingsItems.length > 0) {
-                menu.settings = {
-                    items: settingsItems,
-                    shadow: false,
-                    listeners: true,
-                    cls: "pimcore_navigation_flyout"
-                };
-             }
+            menu.settings = {
+                items: settingsItems,
+                shadow: false,
+                listeners: true,
+                cls: "pimcore_navigation_flyout"
+            };
          }
- 
  
          // search menu
  
@@ -1227,18 +1210,7 @@ pimcore.layout.toolbar = Class.create({
              pimcore.globalmanager.add("translationdomainmanager", new pimcore.settings.translation.domain(domain));
          }
      },
- 
-     editRoutes: function () {
- 
-         try {
-             pimcore.globalmanager.get("staticroutes").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("staticroutes", new pimcore.settings.staticroutes());
-         }
-     },
- 
- 
+
      editRedirects: function () {
  
          try {
@@ -1438,25 +1410,7 @@ pimcore.layout.toolbar = Class.create({
              pimcore.globalmanager.add("pimcore_applicationlog_admin", new pimcore.log.admin());
          }
      },
- 
-     xliffImportExport: function () {
-         try {
-             pimcore.globalmanager.get("xliff").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("xliff", new pimcore.settings.translation.xliff());
-         }
-     },
- 
-     wordExport: function () {
-         try {
-             pimcore.globalmanager.get("word").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("word", new pimcore.settings.translation.word());
-         }
-     },
- 
+
      showElementHistory: function() {
          try {
              pimcore.globalmanager.get("element_history").activate();
