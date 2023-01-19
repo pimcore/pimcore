@@ -1084,7 +1084,7 @@ pimcore.object.classes.klass = Class.create({
         };
 
         //fixes data to match store model
-        var indexesArray = [];
+        const indexesArray = [];
         if(data.index_columns){
             Object.values(data.index_columns).forEach(column => {
                 indexesArray.push({id: column, value: column});
