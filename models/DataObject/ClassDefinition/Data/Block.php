@@ -34,7 +34,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 {
     use Extension\ColumnType;
     use DataObject\Traits\ClassSavedTrait;
-    use DataObject\Traits\FieldDefinitionEnrichmentModelTrait;
+    use DataObject\Traits\FieldDefinitionEnrichmentDataTrait;
 
     /**
      * Static type of this element
