@@ -186,7 +186,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @param ?string $description
      *
-     * @return Model\DataObject\Classificationstore\GroupConfig
+     * @return $this
      */
     public function setDescription(?string $description): static
     {
