@@ -76,7 +76,7 @@ pimcore.notification.modal = Class.create({
                 iconCls: "pimcore_icon_delete",
                 style: "margin-left: 5px",
                 handler: this.empty.bind(this)
-            })
+            });
 
             var elementContainer = Ext.create('Ext.form.FieldContainer', {
                 fieldLabel: t("attachment"),
