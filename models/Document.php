@@ -269,7 +269,6 @@ class Document extends Element\AbstractElement
                 $loader = \Pimcore::getContainer()->get(TypeLoader::class);
                 $newDocument = $loader->build($document->getType());
             } catch(UnsupportedException $ex) {
-
                 trigger_deprecation(
                     'pimcore/pimcore',
                     '10.6.0',
