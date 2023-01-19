@@ -32,7 +32,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 {
     use Layout\Traits\LabelTrait;
     use DataObject\Traits\ClassSavedTrait;
-    use DataObject\Traits\FieldDefinitionEnrichmentModelTrait;
+    use DataObject\Traits\FieldDefinitionEnrichmentDataTrait;
 
     /**
      * Static type of this element
@@ -159,7 +159,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $dataItems = $data->getInternalData($loadLazy);
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading() && $loadLazy) {
+                if ($fd instanceof LazyLoadingSupportInterface
+                    && $fd instanceof DataObject\ClassDefinition\Data
+                    && $fd->getLazyLoading()
+                    && $loadLazy) {
                     $lazyKey = $data->buildLazyKey($fd->getName(), $language);
                     if (!$data->isLazyKeyLoaded($lazyKey) && $fd instanceof CustomResourcePersistingInterface) {
                         $params['language'] = $language;
@@ -933,7 +936,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         foreach ($validLanguages as $language) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if ($fd instanceof IdRewriterInterface) {
+                if ($fd instanceof IdRewriterInterface
+                && $fd instanceof DataObject\ClassDefinition\Data) {
                     $d = $fd->rewriteIds($data, $idMapping, ['language' => $language]);
                     $data->setLocalizedValue($fd->getName(), $d, $language);
                 }

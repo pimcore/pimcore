@@ -41,67 +41,15 @@ trait FieldDefinitionEnrichmentModelTrait
         return $this;
     }
 
-    protected function doGetFieldDefinitions(mixed $def = null, array $fields = []): array
-    {
-        if ($def === null) {
-            $def = $this->getChildren();
-        }
-
-        if (is_array($def)) {
-            foreach ($def as $child) {
-                $fields = array_merge($fields, $this->doGetFieldDefinitions($child, $fields));
-            }
-        }
-
-        if ($def instanceof ClassDefinition\Layout) {
-            if ($def->hasChildren()) {
-                foreach ($def->getChildren() as $child) {
-                    $fields = array_merge($fields, $this->doGetFieldDefinitions($child, $fields));
-                }
-            }
-        }
-
-        if ($def instanceof ClassDefinition\Data) {
-            $existing = $fields[$def->getName()] ?? false;
-            if ($existing && method_exists($existing, 'addReferencedField')) {
-                // this is especially for localized fields which get aggregated here into one field definition
-                // in the case that there are more than one localized fields in the class definition
-                // see also pimcore.object.edit.addToDataFields();
-                $existing->addReferencedField($def);
-            } else {
-                $fields[$def->getName()] = $def;
-            }
-        }
-
-        return $fields;
-    }
-
-    protected function  getFieldDefinitionsForData(array $context = []): void {
-        if (empty($this->fieldDefinitionsCache)) {
-            $definitions = $this->doGetFieldDefinitions();
-            foreach ($this->getReferencedFields() as $rf) {
-                if ($rf instanceof ClassDefinition\Data\Localizedfields) {
-                    $definitions = array_merge($definitions, $this->doGetFieldDefinitions($rf->getChildren()));
-                }
-            }
-
-            $this->fieldDefinitionsCache = $definitions;
-        }
+    public function suppressEnrichment(array $context): bool {
+        return !\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment']);
     }
 
     /**
-     * @return Data[]|null
+     * @return Data[]
      */
-    public function getFieldDefinitions(array $context = []): ?array
+    protected function getEnrichedFieldDefinitions(array $context = []): array
     {
-        if($this instanceof ClassDefinition\Data) {
-            $this->getFieldDefinitionsForData($context);
-        }
-
-        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-            return $this->fieldDefinitionsCache;
-        }
-
         $enrichedFieldDefinitions = [];
         if (is_array($this->fieldDefinitionsCache)) {
             foreach ($this->fieldDefinitionsCache as $key => $fieldDefinition) {
@@ -109,8 +57,19 @@ trait FieldDefinitionEnrichmentModelTrait
                 $enrichedFieldDefinitions[$key] = $fieldDefinition;
             }
         }
-
         return $enrichedFieldDefinitions;
+    }
+
+    /**
+     * @return Data[]|null
+     */
+    public function getFieldDefinitions(array $context = []): ?array
+    {
+        if ($this->suppressEnrichment($context)) {
+            return $this->fieldDefinitionsCache;
+        }
+
+        return $this->getEnrichedFieldDefinitions($context);
     }
 
     /**
@@ -142,7 +101,7 @@ trait FieldDefinitionEnrichmentModelTrait
             }
 
             if ($fieldDefinition) {
-                if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
+                if ($this->suppressEnrichment($context)) {
                     return $fieldDefinition;
                 }
 
