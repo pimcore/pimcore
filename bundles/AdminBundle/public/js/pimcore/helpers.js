@@ -952,7 +952,7 @@ pimcore.helpers.openMemorizedTabs = function () {
     }
 };
 
-pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context, type) {
+pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context, uploadAssetType) {
 
     var params = {};
     params['parent' + ucfirst(parentType)] = parent;
@@ -962,8 +962,8 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
         url += "&context=" + Ext.encode(context);
     }
 
-    if(type) {
-        url += "&type=" + type;
+    if(uploadAssetType) {
+        url += "&uploadAssetType=" + uploadAssetType;
     }
 
     pimcore.helpers.uploadDialog(url, 'Filedata', success, failure);

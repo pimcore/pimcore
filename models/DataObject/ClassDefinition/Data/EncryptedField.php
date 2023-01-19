@@ -112,7 +112,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    private function encrypt(mixed $data, Model\DataObject\Concrete $object, array $params): string
+    private function encrypt(mixed $data, Model\DataObject\Concrete $object = null, array $params): ?string
     {
         if (!is_null($data)) {
             $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
@@ -138,7 +138,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @throws \Exception
      */
-    private function decrypt(?string $data, Model\DataObject\Concrete $object, array $params): ?string
+    private function decrypt(?string $data, Model\DataObject\Concrete $object = null, array $params): ?string
     {
         if ($data) {
             try {

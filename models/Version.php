@@ -286,7 +286,7 @@ final class Version extends AbstractModel
             $msg = 'Version: cannot read version data with storage type: ' . $this->getStorageType();
             Logger::err($msg);
 
-            throw new \Exception($msg);
+            return null;
         }
 
         if ($this->getSerialized()) {
