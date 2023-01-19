@@ -118,6 +118,7 @@ class Assets extends Elements implements DataProviderInterface
             return ['data' => [], 'success' => true, 'total' => 0];
         }
 
+        //TODO: add orWhere only if field if set!
         $db = \Pimcore\Db::get();
         $queryBuilder = $db->createQueryBuilder();
         $query = $queryBuilder
@@ -125,23 +126,33 @@ class Assets extends Elements implements DataProviderInterface
             ->from('assets')
             ->leftJoin('assets', 'assets_metadata', 'metadata', 'assets.id = metadata.cid')
             ->where('assets.id = :id')
-            ->orWhere(
-                $queryBuilder->expr()->like('metadata.data', ':firstname')
-            )
-            ->orWhere(
-                $queryBuilder->expr()->like('metadata.data', ':lastname')
-            )
-            ->orWhere(
-                $queryBuilder->expr()->like('metadata.data', ':email')
-            )
-            ->setParameters([
-                'id' => $id,
-                'firstname' => $firstname,
-                'lastname' => $lastname,
-                'email' => $email
-            ])
+            ->setParameter('id', $id)
             ->setFirstResult($start)
             ->setMaxResults($limit);
+
+        if(!empty($firstname)){
+            $query
+                ->orWhere(
+                    $queryBuilder->expr()->like('metadata.data', ':firstname')
+                )
+                ->setParameter('firstname', ('%'.$firstname.'%'));
+        }
+
+        if(!empty($lastname)){
+            $query
+                ->orWhere(
+                    $queryBuilder->expr()->like('metadata.data', ':lastname')
+                )
+                ->setParameter('lastname', ('%'.$lastname.'%'));
+        }
+
+        if(!empty($email)){
+            $query
+                ->orWhere(
+                    $queryBuilder->expr()->like('metadata.data', ':email')
+                )
+                ->setParameter('email', ('%'.$email.'%'));
+        }
 
         $sortingSettings = QueryParams::extractSortingSettings(['sort' => $sort]);
         if ($sortingSettings['orderKey']) {
