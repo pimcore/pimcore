@@ -91,31 +91,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     this.dataChanged = true
                 }.bind(this)
             },
-            model: modelName,
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list'),
-                extraParams: {
-                    fieldConfig: JSON.stringify(this.fieldConfig),
-                    data: JSON.stringify(this.data.map(function(element) {
-                        return {id: element.id, type: element.type};
-                    })),
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'options',
-                    successProperty: 'success',
-                    messageProperty: 'message'
-                }
-            },
-            fields: ['id', 'label'],
-            autoLoad: true,
-            listeners: {
-                beforeload: function(store) {
-                    store.getProxy().setExtraParam('unsavedChanges', this.object ? this.object.getSaveData().data : {});
-                    store.getProxy().setExtraParam('context', JSON.stringify(this.getContext()));
-                }.bind(this)
-            }
+            model: modelName
         });
     },
 
