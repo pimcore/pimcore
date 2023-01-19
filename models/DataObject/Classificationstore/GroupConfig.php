@@ -57,7 +57,6 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * The group description.
      *
-     * @var string
      */
     protected ?string $description = null;
 
