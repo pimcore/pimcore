@@ -138,7 +138,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureModelFactory($container, $config);
         $this->configureRouting($container, $config['routing']);
         $this->configureTranslations($container, $config['translations']);
-        $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
@@ -243,53 +242,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
     }
 
-    private function configureTargeting(ContainerBuilder $container, LoaderInterface $loader, array $config): void
-    {
-        $container->setParameter('pimcore.targeting.enabled', $config['enabled']);
-        $container->setParameter('pimcore.targeting.conditions', $config['conditions']);
-        if (!$container->hasParameter('pimcore.geoip.db_file')) {
-            $container->setParameter('pimcore.geoip.db_file', '');
-        }
 
-        $loader->load('targeting.yaml');
-
-        // set TargetingStorageInterface type hint to the configured service ID
-        $container->setAlias(TargetingStorageInterface::class, $config['storage_id']);
-
-        if ($config['enabled']) {
-            // enable targeting by registering listeners
-            $loader->load('targeting/services.yaml');
-            $loader->load('targeting/listeners.yaml');
-        }
-
-        $dataProviders = [];
-        foreach ($config['data_providers'] as $dataProviderKey => $dataProviderServiceId) {
-            $dataProviders[$dataProviderKey] = new Reference($dataProviderServiceId);
-        }
-
-        $dataProviderLocator = new Definition(ServiceLocator::class, [$dataProviders]);
-        $dataProviderLocator
-            ->setPublic(false)
-            ->addTag('container.service_locator');
-
-        $container
-            ->findDefinition(DataLoaderInterface::class)
-            ->setArgument('$dataProviders', $dataProviderLocator);
-
-        $actionHandlers = [];
-        foreach ($config['action_handlers'] as $actionHandlerKey => $actionHandlerServiceId) {
-            $actionHandlers[$actionHandlerKey] = new Reference($actionHandlerServiceId);
-        }
-
-        $actionHandlerLocator = new Definition(ServiceLocator::class, [$actionHandlers]);
-        $actionHandlerLocator
-            ->setPublic(false)
-            ->addTag('container.service_locator');
-
-        $container
-            ->getDefinition(DelegatingActionHandler::class)
-            ->setArgument('$actionHandlers', $actionHandlerLocator);
-    }
 
     /**
      * Configures a "typed locator" (a class exposing get/has for a specific type) wrapping

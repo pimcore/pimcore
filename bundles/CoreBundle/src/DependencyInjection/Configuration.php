@@ -164,7 +164,6 @@ final class Configuration implements ConfigurationInterface
         $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
         $this->addCustomReportsNode($rootNode);
-        $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
@@ -1293,7 +1292,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
     }
-
+/*
     private function addTargetingNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
@@ -1330,7 +1329,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
     }
-
+*/
     private function addSitemapsNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode

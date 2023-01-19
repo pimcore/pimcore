@@ -1,0 +1,19 @@
+global_targeting_rule: Global Targeting Rule
+global_targeting_rules: Global Targeting Rules
+personalization: Personalization
+targeting: Targeting
+targeting_toolbar: Targeting Toolbar
+target_groups: Target Groups
+targeting_visitor: Visitor
+targeting_condition_visited_page_before_piwik_data_warning: >-
+    This condition fetches data synchronously from Piwik which can be quite slow.
+    Use with care!
+targeting_condition_visited_page_before_piwik_not_configured_warning: >-
+    This condition cannot be matched as Piwik is not configured and will always
+    resolve to false.
+targeting_condition_url_pattern: URL (RegExp)
+targeting_toolbar_browser_note: >-
+    <b>NOTE:</b> Enabling the targeting toolbar affects only the browser you are
+    currently using. If you want to use the toolbar on another browser you need to
+    enable it again. See <a target='_blank' href='{targetingLink}'>the
+    documentation</a> for details.
