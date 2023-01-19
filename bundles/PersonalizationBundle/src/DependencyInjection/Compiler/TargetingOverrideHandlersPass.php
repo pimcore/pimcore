@@ -15,9 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
+namespace Pimcore\Bundle\PersonalizationBundle\DependencyInjection\Compiler;
 
-use Pimcore\Targeting\Debug\OverrideHandler;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\OverrideHandler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
