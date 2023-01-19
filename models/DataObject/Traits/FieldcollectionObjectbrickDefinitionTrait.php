@@ -87,7 +87,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
         if ($layoutDefinitions) {
             $this->layoutDefinitions = $layoutDefinitions;
 
-            $this->setFieldDefinitions([]);
+            $this->setFieldDefinitions(null);
             $this->extractDataDefinitions($this->layoutDefinitions);
         }
 

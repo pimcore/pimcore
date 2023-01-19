@@ -562,7 +562,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function setChildren(array $children): static
     {
         $this->children = $children;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
 
         return $this;
     }
@@ -585,7 +585,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function addChild(mixed $child): void
     {
         $this->children[] = $child;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
     }
 
     public function setLayout(?array $layout): static
@@ -617,7 +617,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function setReferencedFields(array $referencedFields): void
     {
         $this->referencedFields = $referencedFields;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
     }
 
     /**
@@ -631,7 +631,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function addReferencedField(Data $field): void
     {
         $this->referencedFields[] = $field;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
     }
 
     public function getBlockedVarsForExport(): array

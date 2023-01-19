@@ -43,9 +43,9 @@ interface FieldDefinitionEnrichmentModelInterface
     /**
      * Get all available fieldDefinitions
      *
-     * @return Data[]
+     * @return Data[]|null
      */
-    function getFieldDefinitions(array $context = []): array;
+    function getFieldDefinitions(array $context = []): ?array;
 
     /**
      * Set fieldDefinition collection
@@ -54,5 +54,5 @@ interface FieldDefinitionEnrichmentModelInterface
      *
      * @return $this
      */
-    function setFieldDefinitions(array $fieldDefinitions): static;
+    function setFieldDefinitions(?array $fieldDefinitions): static;
 }

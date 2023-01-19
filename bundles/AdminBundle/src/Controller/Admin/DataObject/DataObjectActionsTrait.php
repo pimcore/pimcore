@@ -293,11 +293,6 @@ trait DataObjectActionsTrait
             return $fieldDefinition;
         }
 
-        $localized = $class->getFieldDefinition('localizedfields');
-        if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-            $fieldDefinition = $localized->getFieldDefinition($key);
-        }
-
         return $fieldDefinition;
     }
 

@@ -384,7 +384,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function setChildren(array $children): static
     {
         $this->children = $children;
-        $this->setFieldDefinitions([]);
+        $this->setFieldDefinitions(null);
 
         return $this;
     }
@@ -403,7 +403,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function addChild(mixed $child): void
     {
         $this->children[] = $child;
-        $this->setFieldDefinitions([]);
+        $this->setFieldDefinitions(null);
     }
 
     /**
@@ -412,7 +412,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function setReferencedFields(array $referencedFields): void
     {
         $this->referencedFields = $referencedFields;
-        $this->setFieldDefinitions([]);
+        $this->setFieldDefinitions(null);
     }
 
     /**
@@ -426,7 +426,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function addReferencedField(Data $field): void
     {
         $this->referencedFields[] = $field;
-        $this->setFieldDefinitions([]);
+        $this->setFieldDefinitions(null);
     }
 
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
@@ -899,7 +899,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getBlockedVarsForExport(): array
     {
         return [
-            'fieldDefinitions',
+            'fieldDefinitionsCache',
             'referencedFields',
             'blockedVarsForExport',
             'permissionView',

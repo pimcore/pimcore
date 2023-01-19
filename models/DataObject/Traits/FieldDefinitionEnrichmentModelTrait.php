@@ -27,16 +27,16 @@ trait FieldDefinitionEnrichmentModelTrait
     /**
      * @var Data[]
      */
-    protected array $fieldDefinitions = [];
+    protected ?array $fieldDefinitionsCache = null;
 
     /**
      * @param Data[] $fieldDefinitions
      *
      * @return $this
      */
-    public function setFieldDefinitions(array $fieldDefinitions): static
+    public function setFieldDefinitions(?array $fieldDefinitions): static
     {
-        $this->fieldDefinitions = $fieldDefinitions;
+        $this->fieldDefinitionsCache = $fieldDefinitions;
 
         return $this;
     }
@@ -76,8 +76,8 @@ trait FieldDefinitionEnrichmentModelTrait
         return $fields;
     }
 
-    protected function getFieldDefinitionsForData(array $context = []): array {
-        if (empty($this->fieldDefinitions)) {
+    protected function  getFieldDefinitionsForData(array $context = []): void {
+        if (empty($this->fieldDefinitionsCache)) {
             $definitions = $this->doGetFieldDefinitions();
             foreach ($this->getReferencedFields() as $rf) {
                 if ($rf instanceof ClassDefinition\Data\Localizedfields) {
@@ -85,51 +85,32 @@ trait FieldDefinitionEnrichmentModelTrait
                 }
             }
 
-            $this->fieldDefinitions = $definitions;
+            $this->fieldDefinitionsCache = $definitions;
         }
-
-        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-            return $this->fieldDefinitions;
-        }
-
-        $enrichedFieldDefinitions = [];
-        if (is_array($this->fieldDefinitions)) {
-            foreach ($this->fieldDefinitions as $key => $fieldDefinition) {
-                $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
-                $enrichedFieldDefinitions[$key] = $fieldDefinition;
-            }
-        }
-
-        return $enrichedFieldDefinitions;
-    }
-
-    protected function getFieldDefinitionsForModel(array $context = []): array {
-        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-            return $this->fieldDefinitions;
-        }
-
-        $enrichedFieldDefinitions = [];
-        if (is_array($this->fieldDefinitions)) {
-            foreach ($this->fieldDefinitions as $key => $fieldDefinition) {
-                $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
-                $enrichedFieldDefinitions[$key] = $fieldDefinition;
-            }
-        }
-
-        return $enrichedFieldDefinitions;
     }
 
     /**
-     * @return Data[]
+     * @return Data[]|null
      */
-    public function getFieldDefinitions(array $context = []): array
+    public function getFieldDefinitions(array $context = []): ?array
     {
         if($this instanceof ClassDefinition\Data) {
-            return $this->getFieldDefinitionsForData($context);
+            $this->getFieldDefinitionsForData($context);
         }
 
-        return $this->getFieldDefinitionsForModel($context);
+        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
+            return $this->fieldDefinitionsCache;
+        }
 
+        $enrichedFieldDefinitions = [];
+        if (is_array($this->fieldDefinitionsCache)) {
+            foreach ($this->fieldDefinitionsCache as $key => $fieldDefinition) {
+                $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
+                $enrichedFieldDefinitions[$key] = $fieldDefinition;
+            }
+        }
+
+        return $enrichedFieldDefinitions;
     }
 
     /**
@@ -137,21 +118,27 @@ trait FieldDefinitionEnrichmentModelTrait
      */
     public function addFieldDefinition(string $key, Data $data): static
     {
-        $this->fieldDefinitions[$key] = $data;
+        $this->fieldDefinitionsCache[$key] = $data;
 
         return $this;
     }
 
     public function getFieldDefinition(string $key, array $context = []): ?Data
     {
-        if (is_array($this->fieldDefinitions)) {
+        if(!isset($this->fieldDefinitionsCache)) {
+            $this->getFieldDefinitions($context);
+        }
+
+        if (isset($this->fieldDefinitionsCache)) {
             $fieldDefinition = null;
-            if (array_key_exists($key, $this->fieldDefinitions)) {
-                $fieldDefinition = $this->fieldDefinitions[$key];
-            } elseif (array_key_exists('localizedfields', $this->fieldDefinitions)) {
-                /** @var Data\Localizedfields $lfDef */
-                $lfDef = $this->fieldDefinitions['localizedfields'];
-                $fieldDefinition = $lfDef->getFieldDefinition($key);
+
+            if (array_key_exists($key, $this->fieldDefinitionsCache)) {
+                $fieldDefinition = $this->fieldDefinitionsCache[$key];
+            } elseif (array_key_exists('localizedfields', $this->fieldDefinitionsCache)) {
+                $localizedFields = $this->fieldDefinitionsCache['localizedfields'];
+                if ($localizedFields instanceof ClassDefinition\Data\Localizedfields) {
+                    $fieldDefinition = $localizedFields->getFieldDefinition($key);
+                }
             }
 
             if ($fieldDefinition) {
