@@ -36,7 +36,7 @@ class PimcoreCustomReportsExtension extends ConfigurableExtension
         $serviceLocator->setArgument(0, $arguments);
     }
 
-    public function loadInternal(array $config, ContainerBuilder $container)
+    public function loadInternal(array $config, ContainerBuilder $container): void
     {
         \Pimcore::disableShutdown();
 
