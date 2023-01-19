@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.fileexplorer.file");
+pimcore.registerNS("pimcore.bundle.fileexplorer.file");
 /**
  * @private
  */
-pimcore.settings.fileexplorer.file = Class.create({
+pimcore.bundle.fileexplorer.file = Class.create({
 
     initialize: function (path, explorer) {
         this.path = path;
@@ -25,7 +25,7 @@ pimcore.settings.fileexplorer.file = Class.create({
 
     loadFileContents: function (path) {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_misc_fileexplorercontent'),
+            url: Routing.generate('pimcore_bundle_file_explorer_settings_content'),
             success: this.loadFileContentsComplete.bind(this),
             params: {
                 path: path
@@ -119,7 +119,7 @@ pimcore.settings.fileexplorer.file = Class.create({
         var content = this.textEditor.getValue();
         Ext.Ajax.request({
             method: "put",
-            url: Routing.generate('pimcore_admin_misc_fileexplorercontentsave'),
+            url: Routing.generate('pimcore_bundle_file_explorer_settings_contentsave'),
             params: {
                 path: this.responsePath,
                 content: content
@@ -128,14 +128,14 @@ pimcore.settings.fileexplorer.file = Class.create({
                 try{
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-                        pimcore.helpers.showNotification(t("success"), t("file_explorer_saved_file_success"),
+                        pimcore.helpers.showNotification(t("success"), t("pimcore_file_explorer_bundle_saved_file_success"),
                                                                     "success");
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("file_explorer_saved_file_error"), "error");
+                        pimcore.helpers.showNotification(t("error"), t("pimcore_file_explorer_bundle_saved_file_error"), "error");
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("file_explorer_saved_file_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("pimcore_file_explorer_bundle_saved_file_error"), "error");
                 }
             }.bind(this)
         });
