@@ -140,6 +140,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Search] The search functionality has been extracted to its own bundle (`PimcoreSimpleBackendSearchBundle`)
   - The `pimcore:search-backend-reindex` command has been moved to the search bundle
   - Search icons all over Pimcore won't be available without the search bundle
+  - The inline search feature for some relations won't be available without the search bundle
   - The "advanced" GDPR search has also been moved. We provide a basic search to cover the fundamental functionality if the search bundle isn't available.
   - The asset, object, document and quick search have been moved to the search bundle
   - All backend-search related files have been moved to the search bundle (please check custom implementations if you rely on any backend-search component!)

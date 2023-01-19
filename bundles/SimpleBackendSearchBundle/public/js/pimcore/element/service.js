@@ -206,5 +206,9 @@ pimcore.bundle.search.element.service = Class.create({
         if (Ext.get('pimcore_quickSearch_overlay')) {
             Ext.get('pimcore_quickSearch_overlay').remove();
         }
+    },
+
+    getObjectRelationInlineSearchRoute: function () {
+        return Routing.generate('pimcore_bundle_search_dataobject_relation_objects_list');
     }
 });

@@ -823,6 +823,14 @@ pimcore.helpers.hasSearchImplementation = function () {
     return pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation();
 }
 
+pimcore.helpers.getObjectRelationInlineSearchRoute = function () {
+    if(pimcore.helpers.hasSearchImplementation()) {
+        return pimcore.globalmanager.get('searchImplementationRegistry').getObjectRelationInlineSearchRoute();
+    }
+
+    //TODO: what to do here?
+}
+
 pimcore.helpers.activateMaintenance = function () {
 
     Ext.Ajax.request({

@@ -58,7 +58,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         if (this.fieldConfig.displayMode == 'combo') {
             storeConfig.proxy = {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list'),
+                url: pimcore.helpers.getObjectRelationInlineSearchRoute(),
                 extraParams: {
                     fieldConfig: JSON.stringify(this.fieldConfig),
                     data: JSON.stringify(
