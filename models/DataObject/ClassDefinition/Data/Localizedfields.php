@@ -899,7 +899,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getBlockedVarsForExport(): array
     {
         return [
-            'fieldDefinitionsCache',
+            'fieldDefinitions',
             'referencedFields',
             'blockedVarsForExport',
             'permissionView',
