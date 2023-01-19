@@ -880,7 +880,11 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('types')
                     ->info('list of supported document types')
-                    ->scalarPrototype()->end()
+                    ->scalarPrototype()
+                    ->setDeprecated(
+                        'pimcore/pimcore',
+                        '10.6',
+                        'The "%node%" option is deprecated since Pimcore 10.6, it will be removed in Pimcore 11. The types will then be represented by the keys of the type_definitions:map')->end()
                 ->end()
                 ->arrayNode('valid_tables')
                     ->info('list of supported documents_* tables')
@@ -955,6 +959,8 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                 ->end()
             ->end();
+
+        $this->addImplementationLoaderNode($documentsNode, 'type_definitions');
     }
 
     /**

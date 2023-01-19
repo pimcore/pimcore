@@ -188,6 +188,19 @@ pimcore:
                     - \Object_Class_Layout_
 
     documents:
+        type_definitions:
+            map:
+                folder: \Pimcore\Model\Document\Folder
+                page: \Pimcore\Model\Document\Page
+                snippet: \Pimcore\Model\Document\Snippet
+                link: \Pimcore\Model\Document\Link
+                hardlink: \Pimcore\Model\Document\Hardlink
+                email: \Pimcore\Model\Document\Email
+                newsletter: \Pimcore\Model\Document\Newsletter
+                printpage: \Pimcore\Model\Document\Printpage
+                printcontainer: \Pimcore\Model\Document\Printcontainer
+            prefixes:
+                - \Pimcore\Model\Document\
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\

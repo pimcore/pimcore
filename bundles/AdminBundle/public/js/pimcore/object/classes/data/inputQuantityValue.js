@@ -74,6 +74,7 @@ pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.cla
                 editable: true,
                 typeAhead: true,
                 selectOnFocus: true,
+                forceSelection: true,
                 fieldLabel: t('default_unit'),
                 store: this.store,
                 value: this.datax.defaultUnit,

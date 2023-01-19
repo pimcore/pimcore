@@ -531,13 +531,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         // check if there is a requested type and if matches the asset type of the uploaded file
-        $type = $request->get('type');
-        if ($type) {
+        $uploadAssetType = $request->get('uploadAssetType');
+        if ($uploadAssetType) {
             $mimetype = MimeTypes::getDefault()->guessMimeType($sourcePath);
             $assetType = Asset::getTypeFromMimeMapping($mimetype, $filename);
 
-            if ($type !== $assetType) {
-                throw new \Exception("Mime type does not match with asset type: $type");
+            if ($uploadAssetType !== $assetType) {
+                throw new \Exception("Mime type $mimetype does not match with asset type: $uploadAssetType");
             }
         }
 
@@ -1074,8 +1074,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function publishVersionAction(Request $request): JsonResponse
     {
-        $version = Model\Version::getById((int) $request->get('id'));
-        $asset = $version->loadData();
+        $id = (int)$request->get('id');
+        $version = Model\Version::getById($id);
+        $asset = $version?->loadData();
+
+        if (!$asset) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
+        }
 
         $currentAsset = Asset::getById($asset->getId());
         if ($currentAsset->isAllowed('publish')) {
@@ -1105,12 +1110,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
-        if (!$version) {
-            throw $this->createNotFoundException('Version not found');
+        $asset = $version?->loadData();
+        if (!$asset) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
-
-        /** @var Asset $asset */
-        $asset = $version->loadData();
 
         if (!$asset->isAllowed('versions')) {
             throw $this->createAccessDeniedHttpException('Permission denied, version id [' . $id . ']');
