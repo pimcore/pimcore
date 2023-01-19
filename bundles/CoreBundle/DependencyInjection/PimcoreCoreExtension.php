@@ -24,6 +24,8 @@ use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
+use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
+use Pimcore\Model\Document\TypeDefinition\Loader\PrefixLoader as DocumentTypePrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
@@ -202,13 +204,16 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
                 'config' => $config['assets']['metadata']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class,
             ],
+            TypeLoader::class => [
+                'config' => $config['documents']['type_definitions'],
+                'prefixLoader' => DocumentTypePrefixLoader::class,
+            ],
         ];
 
         // read config and add map/prefix loaders if configured - makes sure only needed objects are built
         // loaders are defined as private services as we don't need them outside the main type loader
         foreach ($services as $serviceId => $cfg) {
             $loaders = [];
-
             if ($cfg['config']['prefixes']) {
                 $prefixLoader = new Definition($cfg['prefixLoader'], [$cfg['config']['prefixes']]);
                 $prefixLoader->setPublic(false);
@@ -218,14 +223,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
                 $loaders[] = new Reference($prefixLoaderId);
             }
-
             if ($cfg['config']['map']) {
                 $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
                 $classMapLoader->setPublic(false);
-
                 $classMapLoaderId = $serviceId . '.class_map_loader';
                 $container->setDefinition($classMapLoaderId, $classMapLoader);
-
                 $loaders[] = new Reference($classMapLoaderId);
             }
 
