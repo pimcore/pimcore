@@ -127,7 +127,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 iconCls: "pimcore_icon_search",
                 overflowText: t("search"),
                 handler: this.openSearchEditor.bind(this)
-            })
+            });
         }
 
         const conf = {
