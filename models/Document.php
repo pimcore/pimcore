@@ -20,9 +20,11 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
@@ -262,18 +264,33 @@ class Document extends Element\AbstractElement
                 return null;
             }
 
-            $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
+            try {
+                // Getting Typeloader from container
+                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
+                $newDocument = $loader->build($document->getType());
+            } catch(UnsupportedException $ex) {
 
-            // this is the fallback for custom document types using prefixes
-            // so we need to check if the class exists first
-            if (!Tool::classExists($className)) {
-                $oldStyleClass = 'Document_' . ucfirst($document->getType());
-                if (Tool::classExists($oldStyleClass)) {
-                    $className = $oldStyleClass;
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.6.0',
+                    sprintf('%s - Loading documents via fixed namespace is deprecated and will be removed in Pimcore 11. Use pimcore:type_definitions instead', $ex->getMessage())
+                );
+                /**
+                 * @deprecated since Pimcore 10.6 and will be removed in Pimcore 11. Use type_definitions instead
+                 */
+                $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
+
+                // this is the fallback for custom document types using prefixes
+                // so we need to check if the class exists first
+                if (!Tool::classExists($className)) {
+                    $oldStyleClass = 'Document_' . ucfirst($document->getType());
+                    if (Tool::classExists($oldStyleClass)) {
+                        $className = $oldStyleClass;
+                    }
                 }
+                /** @var Document $newDocument */
+                $newDocument = self::getModelFactory()->build($className);
             }
-            /** @var Document $newDocument */
-            $newDocument = self::getModelFactory()->build($className);
 
             if (get_class($document) !== get_class($newDocument)) {
                 $document = $newDocument;
