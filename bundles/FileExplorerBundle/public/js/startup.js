@@ -16,25 +16,11 @@ pimcore.bundle.fileexplorer.startup = Class.create({
             return item.itemId === 'pimcore_menu_extras_system_info';
         });
 
-        if (filteredMenu.length > 0) {
-            const systemInfoMenu = filteredMenu.shift();
-            systemInfoMenuItems.map(function(item) {
-                systemInfoMenu.menu.items.push(item);
-            });
-        } else {
-            menu.extras.items.push({
-                text: t("system_infos_and_tools"),
-                iconCls: "pimcore_nav_icon_info",
-                hideOnClick: false,
-                priority: 90,
-                itemId: 'pimcore_menu_extras_system_info',
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: systemInfoMenuItems
-                }
-            })
-        }
+        const systemInfoMenu = filteredMenu.shift();
+        systemInfoMenuItems.map(function(item) {
+            systemInfoMenu.menu.items.push(item);
+        });
+
     },
 
     getSystemInfoMenu: function () {
