@@ -142,8 +142,6 @@ class Document extends Element\AbstractElement
         $types = array_keys($documentsConfig['type_definitions']['map']);
         // exclude some types like folder
         return array_diff($types, self::EXCLUDED_TYPES);
-
-        return $documentsConfig['types'];
     }
 
     /**
