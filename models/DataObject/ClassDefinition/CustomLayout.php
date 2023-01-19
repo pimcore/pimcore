@@ -38,9 +38,9 @@ class CustomLayout extends Model\AbstractModel
 
     protected ?string $id = null;
 
-    protected string $name;
+    protected string $name = '';
 
-    protected string $description;
+    protected string $description = '';
 
     protected ?int $creationDate = null;
 

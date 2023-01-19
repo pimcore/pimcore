@@ -59,7 +59,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @var string
      */
-    protected string $description = '';
+    protected ?string $description = null;
 
     protected ?int $creationDate = null;
 
@@ -174,9 +174,9 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Returns the description.
      *
-     * @return string
+     * @return ?string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -184,11 +184,11 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Sets the description.
      *
-     * @param string $description
+     * @param ?string $description
      *
      * @return Model\DataObject\Classificationstore\GroupConfig
      */
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
