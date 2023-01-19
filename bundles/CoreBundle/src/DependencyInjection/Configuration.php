@@ -878,10 +878,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('types')
-                    ->info('list of supported document types')
-                    ->scalarPrototype()->end()
-                ->end()
                 ->arrayNode('valid_tables')
                     ->info('list of supported documents_* tables')
                     ->scalarPrototype()->end()
@@ -955,6 +951,8 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                 ->end()
             ->end();
+
+        $this->addImplementationLoaderNode($documentsNode, 'type_definitions');
     }
 
     /**
