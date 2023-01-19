@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Analytics;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Event;
 
 final class GoogleAnalyticsEvents
 {
@@ -23,7 +23,7 @@ final class GoogleAnalyticsEvents
      * Triggered before a tracking code block is rendered. Can be used to add additional code
      * snippets to the tracking block.
      *
-     * @Event("Pimcore\Analytics\Google\Event\TrackingDataEvent")
+     * @Event("Pimcore\Bundle\GoogleMarketingBundle\Model\Event\TrackingDataEvent")
      *
      * @var string
      */

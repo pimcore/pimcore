@@ -4,16 +4,6 @@ services:
         autoconfigure: true
         public: false
     #
-    # GOOGLE TAG MANAGER
-    #
-    Pimcore\Bundle\GoogleMarketingBundle\EventSubscriber\TrackingCodeSubscriber: ~
-    # fallback locator which is used from the deprecated Pimcore\Google\Analytics class
-    pimcore.analytics.google.fallback_service_locator:
-        class: Symfony\Component\DependencyInjection\ServiceLocator
-        public: true
-        tags:
-            - { name: container.service_locator }
-    #
     # Installer
     #
     Pimcore\Bundle\GoogleMarketingBundle\Installer:
@@ -24,14 +14,15 @@ services:
     # GOOGLE
     #
 
-    Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\ConfigProvider: ~
-    Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\Config:
-        factory: [ '@Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\ConfigProvider', 'getConfig' ]
+    Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteIdProvider: ~
+    Pimcore\Bundle\GoogleMarketingBundle\Config\ConfigProvider: ~
+    Pimcore\Bundle\GoogleMarketingBundle\Config\Config:
+        factory: [ '@Pimcore\Bundle\GoogleMarketingBundle\Config\ConfigProvider', 'getConfig' ]
 
-    Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\SiteConfigProvider: ~
+    Pimcore\Bundle\GoogleMarketingBundle\Config\SiteConfigProvider: ~
 
-    Pimcore\Analytics\TrackerInterface: '@Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Tracker'
+    Pimcore\Bundle\GoogleMarketingBundle\Tracker\TrackerInterface: '@Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker'
 
-    Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Tracker:
+    Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker:
         calls:
             - [ setLogger, [ '@logger' ] ]

@@ -120,7 +120,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('templating_twig.yaml');
         $loader->load('profiler.yaml');
         $loader->load('migrations.yaml');
-        $loader->load('analytics.yaml');
         $loader->load('sitemaps.yaml');
         $loader->load('aliases.yaml');
         $loader->load('image_optimizers.yaml');

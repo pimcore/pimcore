@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
-use Pimcore\Analytics\TrackerInterface;
+use Pimcore\Bundle\GoogleMarketingBundle\Tracker\TrackerInterface;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker as EcommerceTracker;
 use Symfony\Contracts\Service\Attribute\Required;

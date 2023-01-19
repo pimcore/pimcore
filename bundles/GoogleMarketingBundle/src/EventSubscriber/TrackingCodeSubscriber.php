@@ -17,15 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GoogleMarketingBundle\EventSubscriber;
 
-use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Tracker;
+use Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PreviewRequestTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\GoogleTagManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
-use Pimcore\Event\Analytics\Google\TagManager\CodeEvent;
-use Pimcore\Event\Analytics\GoogleTagManagerEvents;
+use Pimcore\Bundle\GoogleMarketingBundle\Model\Event\TagManager\CodeEvent;
+use Pimcore\Bundle\GoogleMarketingBundle\Event\GoogleTagManagerEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Twig\Environment;
 

@@ -15,9 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Analytics\Code;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Code;
 
-use Pimcore\Analytics\SiteId\SiteId;
+use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteId;
 
 /**
  * Collects additional code parts which should be added to specific blocks upon rendering. Code

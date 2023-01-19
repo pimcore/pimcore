@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Analytics\SiteId;
+namespace Pimcore\Bundle\GoogleMarketingBundle\SiteId;
 
 use Pimcore\Model\Site;
 use Symfony\Contracts\Translation\TranslatorInterface;

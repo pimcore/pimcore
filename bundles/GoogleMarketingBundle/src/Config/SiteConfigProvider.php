@@ -15,10 +15,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Config;
 
-use Pimcore\Analytics\SiteId\SiteId;
-use Pimcore\Analytics\SiteId\SiteIdProvider;
+use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteId;
+use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteIdProvider;
 use Pimcore\Model\Site;
 
 class SiteConfigProvider

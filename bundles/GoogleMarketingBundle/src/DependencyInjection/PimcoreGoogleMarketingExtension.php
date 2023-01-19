@@ -2,8 +2,8 @@
 
 namespace Pimcore\Bundle\GoogleMarketingBundle\DependencyInjection;
 
-use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\SiteConfigProvider;
-use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Tracker as AnalyticsGoogleTracker;
+use Pimcore\Bundle\GoogleMarketingBundle\Config\SiteConfigProvider;
+use Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker as AnalyticsGoogleTracker;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -20,6 +20,7 @@ class PimcoreGoogleMarketingExtension extends Extension
             new FileLocator(__DIR__ . '/../../config')
         );
         $loader->load('services.yaml');
+        $loader->load('analytics.yaml');
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
     }
 

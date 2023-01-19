@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Analytics;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Event;
 
 final class GoogleTagManagerEvents
 {
@@ -22,7 +22,7 @@ final class GoogleTagManagerEvents
      * Triggered before the tag manager head code block is rendered. Can be used to add additional code
      * snippets to the head code.
      *
-     * @Event("Pimcore\Event\Analytics\Google\TagManager\CodeEvent")
+     * @Event("Pimcore\Bundle\GoogleMarketingBundle\Model\Event\CodeEvent")
      *
      * @var string
      */
@@ -32,7 +32,7 @@ final class GoogleTagManagerEvents
      * Triggered before the tag manager body code is rendered. Can be used to add additional code
      * snippets to the body code.
      *
-     * @Event("Pimcore\Event\Analytics\Google\TagManager\CodeEvent")
+     * @Event("Pimcore\Bundle\GoogleMarketingBundle\Model\Event\TagManager\CodeEvent")
      *
      * @var string
      */

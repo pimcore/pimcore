@@ -15,17 +15,16 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Tracker;
 
-use Pimcore\Analytics\AbstractTracker;
-use Pimcore\Analytics\Code\CodeBlock;
-use Pimcore\Analytics\Code\CodeCollector;
-use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\Config;
-use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\ConfigProvider;
-use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Event\TrackingDataEvent;
-use Pimcore\Analytics\SiteId\SiteId;
-use Pimcore\Analytics\SiteId\SiteIdProvider;
-use Pimcore\Event\Analytics\GoogleAnalyticsEvents;
+use Pimcore\Bundle\GoogleMarketingBundle\Code\CodeBlock;
+use Pimcore\Bundle\GoogleMarketingBundle\Code\CodeCollector;
+use Pimcore\Bundle\GoogleMarketingBundle\Config\Config;
+use Pimcore\Bundle\GoogleMarketingBundle\Config\ConfigProvider;
+use Pimcore\Bundle\GoogleMarketingBundle\Model\Event\TrackingDataEvent;
+use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteId;
+use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteIdProvider;
+use Pimcore\Bundle\GoogleMarketingBundle\Event\GoogleAnalyticsEvents;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;

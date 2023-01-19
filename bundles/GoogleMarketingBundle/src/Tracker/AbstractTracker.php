@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 /**
@@ -15,11 +14,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Analytics;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Tracker;
 
-use Pimcore\Analytics\Code\CodeCollector;
-use Pimcore\Analytics\SiteId\SiteId;
-use Pimcore\Analytics\SiteId\SiteIdProvider;
+use Pimcore\Bundle\GoogleMarketingBundle\Code\CodeCollector;
+use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteId;
+use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteIdProvider;
 
 abstract class AbstractTracker implements TrackerInterface
 {

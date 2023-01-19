@@ -17,15 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend;
 
-use Pimcore\Analytics\Code\CodeBlock;
-use Pimcore\Analytics\SiteId\SiteIdProvider;
+use Pimcore\Bundle\GoogleMarketingBundle\Code\CodeBlock;
+use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteIdProvider;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PreviewRequestTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Config;
-use Pimcore\Event\Analytics\Google\TagManager\CodeEvent;
-use Pimcore\Event\Analytics\GoogleTagManagerEvents;
+use Pimcore\Bundle\GoogleMarketingBundle\Model\Event\TagManager\CodeEvent;
+use Pimcore\Bundle\GoogleMarketingBundle\Event\GoogleTagManagerEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;

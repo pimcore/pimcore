@@ -15,9 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Analytics;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Tracker;
 
-use Pimcore\Analytics\SiteId\SiteId;
+use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteId;
 
 interface TrackerInterface
 {

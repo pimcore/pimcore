@@ -15,19 +15,13 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Event;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Model\Event\TagManager;
 
-use Pimcore\Analytics\Code\CodeBlock;
-use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\Config;
-use Pimcore\Analytics\SiteId\SiteId;
+use Pimcore\Bundle\GoogleMarketingBundle\Code\CodeBlock;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class TrackingDataEvent extends Event
+class CodeEvent extends Event
 {
-    private Config $config;
-
-    private SiteId $siteId;
-
     private array $data;
 
     /**
@@ -38,27 +32,13 @@ class TrackingDataEvent extends Event
     private string $template;
 
     public function __construct(
-        Config $config,
-        SiteId $siteId,
         array $data,
         array $blocks,
         string $template
     ) {
-        $this->config = $config;
-        $this->siteId = $siteId;
         $this->data = $data;
         $this->blocks = $blocks;
         $this->template = $template;
-    }
-
-    public function getConfig(): Config
-    {
-        return $this->config;
-    }
-
-    public function getSiteId(): SiteId
-    {
-        return $this->siteId;
     }
 
     public function getData(): array
