@@ -173,7 +173,6 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Returns the description.
      *
-     * @return ?string
      */
     public function getDescription(): ?string
     {
@@ -183,7 +182,6 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Sets the description.
      *
-     * @param ?string $description
      *
      * @return $this
      */
