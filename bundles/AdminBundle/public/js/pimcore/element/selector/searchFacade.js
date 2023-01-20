@@ -27,50 +27,28 @@ pimcore.element.selector.searchFacade = new Class.create({
     },
 
     openItemSelector: function (multiselect, callback, restrictions, config) {
-        if(this.hasImplementation()){
-            //call implementation
-            try {
-                this.getImplementation().openItemSelector(multiselect, callback, restrictions, config);
-            }
-            catch (e) {
-                //TODO: handle error
-            }
+        if(this.hasImplementation()) {
+            this.getImplementation().openItemSelector(multiselect, callback, restrictions, config);
         }
     },
 
     showQuickSearch: function () {
         if(this.hasImplementation()){
-            //call implementation
-            try {
-                this.getImplementation().showQuickSearch();
-            }
-            catch (e) {
-                //TODO: handle error
-            }
+            this.getImplementation().showQuickSearch();
         }
     },
 
     hideQuickSearch: function () {
         if(this.hasImplementation()){
-            //call implementation
-            try {
-                this.getImplementation().hideQuickSearch();
-            }
-            catch (e) {
-                //TODO: handle error
-            }
+            this.getImplementation().hideQuickSearch();
         }
     },
 
     getObjectRelationInlineSearchRoute: function () {
-        if(this.hasImplementation()){
-            try{
-                return this.getImplementation().getObjectRelationInlineSearchRoute();
-            }
-            catch (e) {
-                //TODO: handle error
-            }
+        if(this.hasImplementation()) {
+            return this.getImplementation().getObjectRelationInlineSearchRoute();
         }
+        return null;
     }
 });
 

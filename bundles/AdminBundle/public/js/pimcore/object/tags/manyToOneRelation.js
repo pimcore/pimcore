@@ -55,7 +55,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             },
         };
 
-        if (this.fieldConfig.displayMode == 'combo') {
+        if (pimcore.helpers.hasSearchImplementation() && this.fieldConfig.displayMode === 'combo') {
             storeConfig.proxy = {
                 type: 'ajax',
                 url: pimcore.helpers.getObjectRelationInlineSearchRoute(),
@@ -139,7 +139,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             href.width = 300;
         }
 
-        if (this.fieldConfig.displayMode == 'combo') {
+        if (pimcore.helpers.hasSearchImplementation() && this.fieldConfig.displayMode === 'combo') {
             Object.assign(href, {
                 store: this.store,
                 autoLoadOnValue: true,

@@ -828,7 +828,7 @@ pimcore.helpers.getObjectRelationInlineSearchRoute = function () {
         return pimcore.globalmanager.get('searchImplementationRegistry').getObjectRelationInlineSearchRoute();
     }
 
-    //TODO: what to do here?
+    return null;
 }
 
 pimcore.helpers.activateMaintenance = function () {

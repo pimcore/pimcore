@@ -85,6 +85,9 @@ workers that process the queues, by running `bin/console messenger:consume pimco
 */5 * * * * /your/project/bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize pimcore_search_backend_message --time-limit=300
 ```
 
+> Depending on installed and activated extensions, it might be necessary to add additional transports to the messenger 
+> consume command. Please look at documentation of corresponding extensions for more details. 
+
 Keep in mind, that the cron job has to run as the same user as the web interface to avoid permission issues (eg. `www-data`).
 
 ## 6. Additional Information & Help

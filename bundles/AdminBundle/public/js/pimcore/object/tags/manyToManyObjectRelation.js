@@ -64,7 +64,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
         };
 
-        if (this.fieldConfig.displayMode == 'combo') {
+        if (pimcore.helpers.hasSearchImplementation() && this.fieldConfig.displayMode === 'combo') {
             storeConfig.proxy = {
                 type: 'ajax',
                 url: pimcore.helpers.getObjectRelationInlineSearchRoute(),
@@ -402,7 +402,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             this.fieldConfig.height = null;
         }
 
-        if (this.fieldConfig.displayMode == 'combo') {
+        if (pimcore.helpers.hasSearchImplementation() && this.fieldConfig.displayMode === 'combo') {
             this.component = Ext.create('Ext.form.field.Tag', {
                 store: this.store,
                 autoLoadOnValue: true,
