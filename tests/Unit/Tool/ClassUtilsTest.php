@@ -22,7 +22,7 @@ use Pimcore\Tool\ClassUtils;
 
 class ClassUtilsTest extends TestCase
 {
-    public function testFindClassName()
+    public function testFindClassName(): void
     {
         $file = new \SplFileInfo(__FILE__);
         $className = ClassUtils::findClassName($file);
@@ -30,7 +30,7 @@ class ClassUtilsTest extends TestCase
         $this->assertEquals($className, self::class);
     }
 
-    public function testFindNamespaceClassName()
+    public function testFindNamespaceClassName(): void
     {
         //find classname for DummyNamespace/ClassX
         $file = new \SplFileInfo(__DIR__ . '/../../Support/Resources/dummyfiles/ClassX.php');
