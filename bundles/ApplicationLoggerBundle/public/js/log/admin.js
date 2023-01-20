@@ -11,11 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.log.admin");
-/**
- * @private
- */
-pimcore.log.admin = Class.create({
+pimcore.registerNS("pimcore.bundle.applicationlogger.log.admin");
+pimcore.bundle.applicationlogger.log.admin = Class.create({
 
     initialize: function (config) {
 

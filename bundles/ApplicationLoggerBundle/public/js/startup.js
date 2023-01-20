@@ -1,6 +1,6 @@
-pimcore.registerNS("pimcore.applicationLogger");
+pimcore.registerNS("pimcore.bundle.applicationLogger.startup");
 
-pimcore.applicationLogger = Class.create({
+pimcore.applicationLogger.startup = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
     },
@@ -36,4 +36,4 @@ pimcore.applicationLogger = Class.create({
     },
 })
 
-const applicationLogger = new pimcore.applicationLogger();
+const applicationLogger = new pimcore.applicationLogger.startup();
