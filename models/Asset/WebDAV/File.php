@@ -104,7 +104,7 @@ class File extends DAV\File
      *
      * @return null
      */
-    public function put($data): null
+    public function put($data)
     {
         if ($this->asset->isAllowed('publish')) {
             // read from resource -> default for SabreDAV

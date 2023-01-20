@@ -491,7 +491,7 @@ pimcore.settings.email.log = Class.create({
                 forceFit: true,
                 enableTextSelection: true,
                 getRowClass: function (record) {
-                    return (record.get('error')) ? 'log-type-ERR' : '';
+                    return (record.get('error')) ? 'log-type-error' : '';
                 }
             },
             tbar: toolbar,

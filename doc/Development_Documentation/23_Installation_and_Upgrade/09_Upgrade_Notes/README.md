@@ -101,7 +101,6 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - Removed BruteforceProtection
 - Removed PreAuthenticatedAdminToken
 - [Logger] Bumped `monolog/monolog` to [^3.2](https://github.com/Seldaek/monolog/blob/main/UPGRADE.md#300) and `symfony/monolog-bundle` to [^3.8](https://github.com/symfony/monolog-bundle/blob/master/CHANGELOG.md#380-2022-05-10) (which adds support for monolog v3). Please adapt your custom implementation accordingly eg. log records are now `LogRecord` Objects instead of array.
-- `Pimcore\Tool\Console`: Deprecated methods `getSystemEnvironment()`, `execInBackground()` and `runPhpScriptInBackground()` have been removed, use `Symfony\Component\Process\Process` instead where possible. For long running background tasks (which should run even when parent process has exited), switch to a queue implementation.
 - [Ecommerce] The constructor of the indexing services (eg. `DefaultMysql`, `AbstractElasticSearch`) and related workers were changed to support the injection of monolog logger, please adapt your custom implementation.
 - [Bundles] 
   - Removed support for loading bundles through `extensions.php`.
@@ -110,8 +109,14 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - Removed `dontCheckEnabled` config support from Areablock editable. 
   - Functionality that was moved into its own bundle and must be enabled manually in `config/bundles.php`
     - Glossary has been moved into PimcoreGlossaryBundle
+      - Config `pimcore:glossary:` has been removed, please use `pimcore_glossary:` in the PimcoreGlossaryBundle instead.
+    - Staticroutes has been moved into PimcoreStaticRoutesBundle
+      - Config `pimcore:staticroutes:` has been removed, please use `pimcore_static_routes:` in the PimcoreStaticRoutesBundle instead.
+    - Xliff Translation Import/Export and related Events have been moved into PimcoreXliffBundle. Please check and adapt the Events' namespaces.
     - SEO Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
+    - WordExport has been moved into PimcoreWordExportBundle
     - [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
+    - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
     - UUID has been moved into PimcoreUuidBundle
       - Config `pimcore:general:instance_identifier` has been removed, please use `pimcore_uuid:instance_identifier` in the PimcoreUuidBundle instead. Please run `bin/console config:dump pimcore_uuid` to see more about the instance identifier config after installing the bundle.
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
@@ -151,12 +156,13 @@ Please make sure to set your preferred storage location ***before*** migration. 
   E.g. passing `o_id` in Pimcore 10 will return `o_id`, but `id` in Pimcore 11. 
 - [Ecommerce] Elasticsearch 7 support has been deprecated, elasticsearch 8 supported was added.
 - [CustomLayout] Passing `int` to `setDefault` is deprecated and will be removed in Pimcore 11. Use type `bool` instead. Same for `getDefault` method, it will return type `bool` only in Pimcore 11.
+- [DataObjects] Traits `ColumnType` and `QueryColumnType` are deprecated. These will be removed in Pimcore 11.
 - [ClassSavedInterface] Introduced additional interface implementing the `classSaved` method. The interface will be used by field definitions in `Pimcore\Model\DataObject\ClassDefinition\Data\*`. If your custom field definition implements the `classSaved` method, please use the `ClassSavedInterface` interface. Make sure that you either provide a default value (e.g. `$params = []`) for `$params` or don't use a second parameter in the method signature at all. Note that using the `classSaved` method without implementing the interface is deprecated and won't work in Pimcore 11.
 - [DataObject]: The usage of `getO_` or `setO_` methods is deprecated. The BC layer supporting these methods will be removed in Pimcore 11.
 - [Classification Store] Deleting the data from deleted groups and keys.
 - [Commands] Calling `configureParallelization` on `Parallelization` trait is deprecated and will be removed in Pimcore 11. Please call `Parallelization::configureCommand` instead.
-- [Events] Event `pimcore.element.note.postAdd` has been deprecated.
-
+- [Events] Event `pimcore.element.note.postAdd` has been deprecated. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
+- [Document] Deprecated loading documents via fixed namespace only. It will be removed in Pimcore 11. Use `pimcore:type_definitions instead`
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
 

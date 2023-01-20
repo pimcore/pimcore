@@ -259,6 +259,13 @@ pimcore.registerNS("pimcore.object.tree");
      },
 
      onTreeNodesDrop: function (node, data, overModel, dropPosition, eOpts) {
+         if (typeof this.treeNodeMoveParameter.oldParent.getOwnerTree !== "function") {
+             Ext.Array.each(data.records, function (record) {
+                 if (this.onTreeNodeBeforeMove(record, record.parentNode, overModel)) {
+                     this.onTreeNodeMove(record, record.parentNode, overModel, 0);
+                 }
+             }.bind(this));
+         }
 
          if (typeof this.treeNodeMoveParameter.oldParent.getOwnerTree !== "function") {
              return;
