@@ -40,7 +40,7 @@ use Pimcore\Tests\Support\Test\EcommerceTestCase;
 
 class CartTaxManagementTest extends EcommerceTestCase
 {
-    private function buildTaxClass(array $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): OnlineShopTaxClass
+    private function buildTaxClass(array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): OnlineShopTaxClass
     {
         $taxClass = new OnlineShopTaxClass();
         $taxClass->setId((int)md5(serialize($taxes)));
@@ -59,7 +59,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         return $taxClass;
     }
 
-    private function setUpProduct($grossPrice, array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
+    private function setUpProduct(float|int|string|Decimal $grossPrice, array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
     {
         $taxClass = $this->buildTaxClass($taxes, $combinationType);
 
@@ -135,7 +135,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         return $calculator;
     }
 
-    public function testCartWithoutTaxEntries()
+    public function testCartWithoutTaxEntries(): void
     {
         $product = $this->setUpProduct(100);
         $product2 = $this->setUpProduct(50);
@@ -161,7 +161,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         $this->assertEquals(250, $grandTotal->getNetAmount()->asNumeric(), 'grandtotal net');
     }
 
-    public function testCartWithTaxEntriesCombine()
+    public function testCartWithTaxEntriesCombine(): void
     {
         $product = $this->setUpProduct(100, [
             '1' => 10,
@@ -206,7 +206,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         $this->assertSame('24.0000', $taxEntries['2-15']->getAmount()->asString(), 'grandtotal taxentry 2 amount');
     }
 
-    public function testPriceSystemWithTaxEntriesOneAfterAnother()
+    public function testPriceSystemWithTaxEntriesOneAfterAnother(): void
     {
         $product = $this->setUpProduct(100, [
             '1' => 10,
@@ -249,7 +249,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         $this->assertSame('26.0870', $taxEntries['2-15']->getAmount()->asString(), 'grandtotal taxentry 2 amount');
     }
 
-    public function testCartWithoutTaxEntriesWithModificators()
+    public function testCartWithoutTaxEntriesWithModificators(): void
     {
         $product = $this->setUpProduct(100);
         $product2 = $this->setUpProduct(50);
@@ -274,7 +274,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         $this->assertEquals(260, $grandTotal->getNetAmount()->asNumeric(), 'grandtotal net');
     }
 
-    public function testCartWithTaxEntriesCombineWithModificators()
+    public function testCartWithTaxEntriesCombineWithModificators(): void
     {
         $product = $this->setUpProduct(100, ['1' => 10, '2' => 15], TaxEntry::CALCULATION_MODE_COMBINE);
         $product2 = $this->setUpProduct(50, ['1' => 10], TaxEntry::CALCULATION_MODE_COMBINE);
@@ -312,7 +312,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         $this->assertSame('1.6667', $taxEntries['shipping-20']->getAmount()->asString(), 'grandtotal taxentry 3 amount');
     }
 
-    public function testPriceSystemWithTaxEntriesOneAfterAnotherWithModificators()
+    public function testPriceSystemWithTaxEntriesOneAfterAnotherWithModificators(): void
     {
         $product = $this->setUpProduct(100, ['1' => 10, '2' => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
         $product2 = $this->setUpProduct(50, ['1' => 10], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);

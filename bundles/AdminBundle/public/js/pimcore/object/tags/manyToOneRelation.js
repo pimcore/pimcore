@@ -55,10 +55,10 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             },
         };
 
-        if (this.fieldConfig.displayMode == 'combo') {
+        if (pimcore.helpers.hasSearchImplementation() && this.fieldConfig.displayMode === 'combo') {
             storeConfig.proxy = {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list'),
+                url: pimcore.helpers.getObjectRelationInlineSearchRoute(),
                 extraParams: {
                     fieldConfig: JSON.stringify(this.fieldConfig),
                     data: JSON.stringify(
@@ -139,7 +139,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             href.width = 300;
         }
 
-        if (this.fieldConfig.displayMode == 'combo') {
+        if (pimcore.helpers.hasSearchImplementation() && this.fieldConfig.displayMode === 'combo') {
             Object.assign(href, {
                 store: this.store,
                 autoLoadOnValue: true,
@@ -222,12 +222,14 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             });
         }
 
-        items.push({
-            xtype: "button",
-            iconCls: "pimcore_icon_search",
-            style: "margin-left: 5px",
-            handler: this.openSearchEditor.bind(this)
-        });
+        if(pimcore.helpers.hasSearchImplementation()) {
+            items.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_search",
+                style: "margin-left: 5px",
+                handler: this.openSearchEditor.bind(this)
+            });
+        }
 
         // add upload button when assets are allowed
         if (this.fieldConfig.assetsAllowed) {
@@ -435,14 +437,17 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             }.bind(this)
         }));
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: "pimcore_icon_search",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.openSearchEditor();
-            }.bind(this)
-        }));
+
+        if(pimcore.helpers.hasSearchImplementation()) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+        }
 
         // add upload button when assets are allowed
         if (this.fieldConfig.assetsAllowed) {

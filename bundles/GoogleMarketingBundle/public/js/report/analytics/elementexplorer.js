@@ -20,7 +20,7 @@ pimcore.google_marketing.report.analytics.element_explorer = Class.create(pimcor
     matchType: function (type) {
         var types = ["document_page","global"];
         if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)
-                                                    && pimcore.settings.google_analytics_enabled) {
+            && pimcore.settings.google_analytics_enabled) {
             return true;
         }
         return false;
@@ -260,5 +260,7 @@ pimcore.google_marketing.report.analytics.element_explorer = Class.create(pimcor
 });
 
 // add to report broker
-pimcore.report.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
-pimcore.report.broker.addReport(pimcore.google_marketing.report.analytics.element_explorer, "analytics");
+if(pimcore.bundle && pimcore.bundle.customreports) {
+    pimcore.bundle.customreports.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
+    pimcore.bundle.customreports.broker.addReport(pimcore.google_marketing.report.analytics.element_explorer, "analytics");
+}
