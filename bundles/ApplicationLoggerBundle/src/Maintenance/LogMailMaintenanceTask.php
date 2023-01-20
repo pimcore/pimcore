@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Maintenance\Tasks;
 
 use Doctrine\DBAL\Connection;
+use Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogArchiveTask;
 use Pimcore\Config;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
@@ -94,3 +95,5 @@ class LogMailMaintenanceTask implements TaskInterface
         $db->executeQuery('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1 WHERE maintenanceChecked != 1 OR maintenanceChecked IS NULL');
     }
 }
+
+@class_alias(LogMailMaintenanceTask::class, 'Pimcore\Maintenance\Tasks\LogMailMaintenanceTask');

@@ -1,12 +1,12 @@
-services:
-    Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogArchiveTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: archiveLogEntries }
-
-    Pimcore\Maintenance\Tasks\LogMailMaintenanceTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: logmaintenance }
+#services:
+#    Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogArchiveTask:
+#        arguments:
+#            - '@doctrine.dbal.default_connection'
+#        tags:
+#            - { name: pimcore.maintenance.task, type: archiveLogEntries }
+#
+#    Pimcore\Maintenance\Tasks\LogMailMaintenanceTask:
+#        arguments:
+#            - '@doctrine.dbal.default_connection'
+#        tags:
+#            - { name: pimcore.maintenance.task, type: logmaintenance }

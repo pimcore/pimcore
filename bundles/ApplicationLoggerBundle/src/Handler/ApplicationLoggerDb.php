@@ -21,6 +21,7 @@ use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
 use Pimcore\Db;
+use Pimcore\Maintenance\Tasks\LogMailMaintenanceTask;
 
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
@@ -92,3 +93,5 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
         return $priorities;
     }
 }
+
+@class_alias(ApplicationLoggerDb::class, 'Pimcore\Maintenance\Handler\ApplicationLoggerDb');

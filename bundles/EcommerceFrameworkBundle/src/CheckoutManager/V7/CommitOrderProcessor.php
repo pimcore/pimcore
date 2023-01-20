@@ -28,8 +28,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInt
 use Pimcore\Event\Ecommerce\CommitOrderProcessorEvents;
 use Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent;
 use Pimcore\Event\Model\Ecommerce\SendConfirmationMailEvent;
-use Pimcore\Log\ApplicationLogger;
-use Pimcore\Log\FileObject;
+use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
+use Pimcore\Bundle\ApplicationLoggerBundle\FileObject;
 use Pimcore\Logger;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

@@ -38,7 +38,7 @@ services:
         arguments:
             $level: 'DEBUG'
             $skipClassesPartials:
-                - 'Pimcore\Log\ApplicationLogger'
+                - 'Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger'
 
     # the DB write handler
     Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb:

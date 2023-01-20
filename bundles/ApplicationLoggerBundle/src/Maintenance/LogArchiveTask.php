@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle\Maintenance;
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Pimcore\Bundle\ApplicationLoggerBundle\Processor\ApplicationLoggerProcessor;
 use Pimcore\Config;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
@@ -134,3 +135,5 @@ class LogArchiveTask implements TaskInterface
         } while ($archiveTableExists);
     }
 }
+
+@class_alias(LogArchiveTask::class, 'Pimcore\Maintenance\Tasks\LogArchiveTask');

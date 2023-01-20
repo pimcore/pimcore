@@ -36,7 +36,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class LogController extends AdminController implements KernelControllerEventInterface
 {
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$this->getAdminUser()->isAllowed('application_logging')) {
             throw new AccessDeniedHttpException("Permission denied, user needs 'application_logging' permission.");
@@ -271,3 +271,5 @@ class LogController extends AdminController implements KernelControllerEventInte
         return $response;
     }
 }
+
+@class_alias(LogController::class, 'Pimcore\Bundle\AdminBundle\Controller\Admin\ApplicationLoggerDb');

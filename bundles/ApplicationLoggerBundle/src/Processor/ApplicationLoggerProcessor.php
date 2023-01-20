@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\ApplicationLoggerBundle\Processor;
 
 use Monolog\LogRecord;
+use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
 use Pimcore\Bundle\ApplicationLoggerBundle\FileObject;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -144,3 +145,5 @@ class ApplicationLoggerProcessor
         return str_replace(PIMCORE_PROJECT_ROOT . '/', '', $filename);
     }
 }
+
+@class_alias(ApplicationLoggerProcessor::class, 'Pimcore\Log\Processor\ApplicationLoggerProcessor');

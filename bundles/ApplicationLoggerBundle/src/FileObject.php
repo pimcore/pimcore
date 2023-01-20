@@ -69,3 +69,5 @@ final class FileObject
         return $this->getFilename();
     }
 }
+
+@class_alias(FileObject::class, 'Pimcore\Log\FileObject');

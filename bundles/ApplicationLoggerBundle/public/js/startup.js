@@ -1,28 +1,22 @@
-pimcore.registerNS("pimcore.bundle.applicationLogger.startup");
+pimcore.registerNS("pimcore.bundle.applicationlogger.startup");
 
-pimcore.applicationLogger.startup = Class.create({
+pimcore.bundle.applicationlogger.startup = Class.create({
     initialize: function () {
-        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
+        document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
 
-    pimcoreReady: function (e) {
+    preMenuBuild: function (e) {
         const user = pimcore.globalmanager.get('user');
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
-        var applicationLoggerMenu = [];
+        let menu = e.detail.menu;
 
         if (user.isAllowed("application_logging")&& perspectiveCfg.inToolbar("extras.applicationlog")) {
-            applicationLoggerMenu.push({
+            menu.extras.items.push({
                 text: t("log_applicationlog"),
                 iconCls: "pimcore_nav_icon_log_admin",
                 itemId: 'pimcore_menu_extras_application_log',
                 handler: this.logAdmin
             });
-        }
-
-        if (applicationLoggerMenu.length > 0) {
-            const toolbar = pimcore.globalmanager.get('layout_toolbar');
-
-            toolbar.extrasMenu.add(applicationLoggerMenu);
         }
     },
 
@@ -31,9 +25,9 @@ pimcore.applicationLogger.startup = Class.create({
             pimcore.globalmanager.get("pimcore_applicationlog_admin").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("pimcore_applicationlog_admin", new pimcore.log.admin());
+            pimcore.globalmanager.add("pimcore_applicationlog_admin", new pimcore.bundle.applicationlogger.log.admin());
         }
     },
 })
 
-const applicationLogger = new pimcore.applicationLogger.startup();
+const applicationLogger = new pimcore.bundle.applicationlogger.startup();
