@@ -16,16 +16,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\EventListener;
 
+use Pimcore\Bundle\SimpleBackendSearchBundle\Message\SearchBackendMessage;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\AssetEvent;
-use Pimcore\Model\Element\Service;
 use Pimcore\Event\Model\ElementEventInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
+use Pimcore\Model\Element\Service;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
-use Pimcore\Bundle\SimpleBackendSearchBundle\Message\SearchBackendMessage;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * @internal

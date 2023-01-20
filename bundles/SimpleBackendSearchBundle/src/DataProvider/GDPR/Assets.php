@@ -16,11 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR;
 
+use Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\Service;
-use Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
-use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
 class Assets extends DataProvider\Assets
 {

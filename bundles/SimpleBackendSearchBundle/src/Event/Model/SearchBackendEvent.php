@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Event\Model;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class SearchBackendEvent extends Event
 {

@@ -19,6 +19,7 @@ namespace Pimcore\Tests\Model\Element;
 use Codeception\Stub;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\User;
@@ -26,7 +27,6 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
-use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 
 class ModelDocumentPermissionsTest extends ModelTestCase
 {

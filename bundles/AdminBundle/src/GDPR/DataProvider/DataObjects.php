@@ -17,15 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
-use Pimcore\Model\Asset;
-use Pimcore\Model\Element;
-use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\DataObject\Data\ObjectMetadata;
-use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\ElementMetadata;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
+use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @internal
@@ -167,7 +167,7 @@ class DataObjects extends Elements implements DataProviderInterface
         $query = $query->executeQuery();
 
         $elements = [];
-        if($query->rowCount() > 0){
+        if ($query->rowCount() > 0) {
             foreach ($query->fetchAllAssociative() as $hit) {
                 $element = Element\Service::getElementById($hit['type'], $hit['id']);
                 if ($element instanceof Concrete) {

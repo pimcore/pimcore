@@ -16,11 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
+use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 
 class DataObjectController extends AdminController
 {
@@ -65,7 +65,7 @@ class DataObjectController extends AdminController
         foreach ($objects as $objectData) {
             $option = [
                 'id' => $objectData['id'],
-                'type' => $objectData['type']
+                'type' => $objectData['type'],
             ];
 
             $visibleFieldValues = [];

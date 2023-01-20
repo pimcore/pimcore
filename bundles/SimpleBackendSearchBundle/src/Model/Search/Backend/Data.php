@@ -16,20 +16,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend;
 
-
-use Pimcore\Logger;
-use ForceUTF8\Encoding;
-use Pimcore\Model\Asset;
-use Pimcore\Model\Element;
-use Pimcore\Model\Document;
-use Pimcore\Model\DataObject;
-use Pimcore\Model\AbstractModel;
 use Doctrine\DBAL\Exception\DeadlockException;
-use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
-use Pimcore\Bundle\SimpleBackendSearchBundle\Event\SearchBackendEvents;
-use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use ForceUTF8\Encoding;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Event\Model\SearchBackendEvent;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Event\SearchBackendEvents;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data\Dao;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use Pimcore\Logger;
+use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 
 /**
  * @internal

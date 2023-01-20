@@ -18,10 +18,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
 use Doctrine\DBAL\Exception;
+use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Response;
-use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 
 /**
  * @internal
@@ -110,6 +110,7 @@ class Assets extends Elements implements DataProviderInterface
      * @param string|null $sort
      *
      * @return array
+     *
      * @throws Exception
      */
     public function searchData(int $id, string $firstname, string $lastname, string $email, int $start, int $limit, string $sort = null): array
@@ -130,7 +131,7 @@ class Assets extends Elements implements DataProviderInterface
             ->setFirstResult($start)
             ->setMaxResults($limit);
 
-        if(!empty($firstname)){
+        if (!empty($firstname)) {
             $query
                 ->orWhere(
                     $queryBuilder->expr()->like('metadata.data', ':firstname')
@@ -138,7 +139,7 @@ class Assets extends Elements implements DataProviderInterface
                 ->setParameter('firstname', ('%'.$firstname.'%'));
         }
 
-        if(!empty($lastname)){
+        if (!empty($lastname)) {
             $query
                 ->orWhere(
                     $queryBuilder->expr()->like('metadata.data', ':lastname')
@@ -146,7 +147,7 @@ class Assets extends Elements implements DataProviderInterface
                 ->setParameter('lastname', ('%'.$lastname.'%'));
         }
 
-        if(!empty($email)){
+        if (!empty($email)) {
             $query
                 ->orWhere(
                     $queryBuilder->expr()->like('metadata.data', ':email')
@@ -174,7 +175,7 @@ class Assets extends Elements implements DataProviderInterface
         $query = $query->executeQuery();
 
         $elements = [];
-        if($query->rowCount() > 0) {
+        if ($query->rowCount() > 0) {
             foreach ($query->fetchAllAssociative() as $hit) {
                 $element = Element\Service::getElementById('asset', $hit['id']);
 

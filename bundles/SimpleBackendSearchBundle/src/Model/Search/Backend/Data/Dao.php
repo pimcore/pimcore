@@ -16,11 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
-use Pimcore\Model;
-use Pimcore\Logger;
-use Pimcore\Db\Helper;
-use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend;
+use Pimcore\Db\Helper;
+use Pimcore\Logger;
+use Pimcore\Model;
+use Pimcore\Model\Dao\AbstractDao;
 
 /**
  * @internal

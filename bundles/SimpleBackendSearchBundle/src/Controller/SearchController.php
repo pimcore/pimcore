@@ -16,24 +16,24 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Controller;
 
+use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
+use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Config;
 use Pimcore\Db\Helper;
-use Pimcore\Model\Asset;
-use Pimcore\Model\Element;
-use Pimcore\Model\Document;
-use Pimcore\Model\DataObject;
-use Pimcore\Event\AdminEvents;
-use Symfony\Component\HttpFoundation\Request;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
-use Symfony\Component\Routing\Annotation\Route;
-use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Pimcore\Event\AdminEvents;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
-use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 
 /**
  * @Route("/search")

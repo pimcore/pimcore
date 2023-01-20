@@ -16,14 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\Command;
 
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
+use Pimcore\Console\AbstractCommand;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
-use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 
 /**
  * @internal

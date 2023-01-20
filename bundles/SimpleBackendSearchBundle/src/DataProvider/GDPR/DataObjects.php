@@ -16,12 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR;
 
-use Pimcore\Model\Element;
-use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element;
 
 class DataObjects extends DataProvider\DataObjects
 {
