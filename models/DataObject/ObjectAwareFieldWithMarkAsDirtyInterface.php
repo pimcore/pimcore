@@ -16,5 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject;
 
-interface ObjectAwareFieldWithMarkAsDirtyInterface extends ObjectAwareFieldInterface
-{}
+interface ObjectAwareFieldWithMarkAsDirtyInterface
+{
+    public function setObject(?Concrete $object, bool $markAsDirty): static;
+}

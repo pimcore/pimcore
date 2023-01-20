@@ -37,7 +37,6 @@ final class Localizedfield extends Model\AbstractModel implements
     LazyLoadedFieldsInterface,
     Model\Element\ElementDumpStateInterface,
     OwnerAwareFieldInterface,
-    ObjectAwareFieldInterface,
     ObjectAwareFieldWithMarkAsDirtyInterface
 {
     use Model\DataObject\Traits\OwnerAwareFieldTrait;
