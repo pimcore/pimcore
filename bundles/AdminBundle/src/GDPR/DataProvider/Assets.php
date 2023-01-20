@@ -17,11 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
-use Pimcore\Db;
+use Doctrine\DBAL\Exception;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Element\Service;
-use Pimcore\Model\Search\Backend\Data;
+use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Response;
+use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 
 /**
  * @internal
@@ -110,6 +110,7 @@ class Assets extends Elements implements DataProviderInterface
      * @param string|null $sort
      *
      * @return array
+     * @throws Exception
      */
     public function searchData(int $id, string $firstname, string $lastname, string $email, int $start, int $limit, string $sort = null): array
     {
@@ -117,49 +118,43 @@ class Assets extends Elements implements DataProviderInterface
             return ['data' => [], 'success' => true, 'total' => 0];
         }
 
-        $offset = $start;
-        $offset = $offset ?: 0;
-        $limit = $limit ?: 50;
-
-        $searcherList = new Data\Listing();
-        $conditionParts = [];
+        //TODO: add orWhere only if field if set!
         $db = \Pimcore\Db::get();
+        $queryBuilder = $db->createQueryBuilder();
+        $query = $queryBuilder
+            ->select('assets.id')
+            ->from('assets')
+            ->leftJoin('assets', 'assets_metadata', 'metadata', 'assets.id = metadata.cid')
+            ->where('assets.id = :id')
+            ->setParameter('id', $id)
+            ->setFirstResult($start)
+            ->setMaxResults($limit);
 
-        //id search
-        if ($id) {
-            $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST (+"' . $id . '" IN BOOLEAN MODE) )';
+        if(!empty($firstname)){
+            $query
+                ->orWhere(
+                    $queryBuilder->expr()->like('metadata.data', ':firstname')
+                )
+                ->setParameter('firstname', ('%'.$firstname.'%'));
         }
 
-        // search for firstname, lastname, email
-        if ($firstname || $lastname || $email) {
-            $firstname = $this->prepareQueryString($firstname);
-            $lastname = $this->prepareQueryString($lastname);
-            $email = $this->prepareQueryString($email);
-
-            $queryString = ($firstname ? '+"' . $firstname . '"' : '') . ' ' . ($lastname ? '+"' . $lastname . '"' : '') . ' ' . ($email ? '+"' . $email . '"' : '');
-            $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST ("' . $db->quote($queryString) . '" IN BOOLEAN MODE) )';
+        if(!empty($lastname)){
+            $query
+                ->orWhere(
+                    $queryBuilder->expr()->like('metadata.data', ':lastname')
+                )
+                ->setParameter('lastname', ('%'.$lastname.'%'));
         }
 
-        $db = Db::get();
-
-        $typesPart = '';
-        if ($this->config['types']) {
-            $typesList = [];
-            foreach ($this->config['types'] as $type) {
-                $typesList[] = $db->quote($type);
-            }
-            $typesPart = ' AND `type` IN (' . implode(',', $typesList) . ')';
+        if(!empty($email)){
+            $query
+                ->orWhere(
+                    $queryBuilder->expr()->like('metadata.data', ':email')
+                )
+                ->setParameter('email', ('%'.$email.'%'));
         }
 
-        $conditionParts[] = '( maintype = "asset" ' . $typesPart . ')';
-
-        $condition = implode(' AND ', $conditionParts);
-        $searcherList->setCondition($condition);
-
-        $searcherList->setOffset($offset);
-        $searcherList->setLimit($limit);
-
-        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(['sort' => $sort]);
+        $sortingSettings = QueryParams::extractSortingSettings(['sort' => $sort]);
         if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
@@ -170,28 +165,28 @@ class Assets extends Elements implements DataProviderInterface
             if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
                 $sort = $sortMapping[$sortingSettings['orderKey']];
             }
-            $searcherList->setOrderKey($sort);
-        }
-        if ($sortingSettings['order']) {
-            $searcherList->setOrder($sortingSettings['order']);
+
+            $order = $sortingSettings['order'] ?? null;
+
+            $query->orderBy($sort, $order);
         }
 
-        $hits = $searcherList->load();
+        $query = $query->executeQuery();
 
         $elements = [];
-        foreach ($hits as $hit) {
-            $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
+        if($query->rowCount() > 0) {
+            foreach ($query->fetchAllAssociative() as $hit) {
+                $element = Element\Service::getElementById('asset', $hit['id']);
 
-            if ($element instanceof Asset) {
-                $data = \Pimcore\Model\Asset\Service::gridAssetData($element);
-                $data['permissions'] = $element->getUserPermissions();
-                $elements[] = $data;
+                if ($element instanceof Asset) {
+                    $data = Asset\Service::gridAssetData($element);
+                    $data['permissions'] = $element->getUserPermissions();
+                    $elements[] = $data;
+                }
             }
         }
 
-        $totalMatches = $searcherList->getTotalCount();
-
-        return ['data' => $elements, 'success' => true, 'total' => $totalMatches];
+        return ['data' => $elements, 'success' => true, 'total' => $query->rowCount()];
     }
 
     /**

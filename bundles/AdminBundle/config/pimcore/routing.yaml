@@ -12,13 +12,6 @@ _pimcore_reports:
     options:
         expose: true
 
-_pimcore_search:
-    resource: "../../src/Controller/Searchadmin/"
-    type:     annotation
-    prefix:   /admin/search
-    options:
-        expose: true
-
 _pimcore_gdpr:
     resource: "../../src/Controller/GDPR/"
     type:     annotation

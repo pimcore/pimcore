@@ -884,73 +884,7 @@ pimcore.layout.toolbar = Class.create({
                 cls: "pimcore_navigation_flyout"
             };
          }
- 
-         // search menu
- 
-         if (perspectiveCfg.inToolbar("search")) {
-             var searchItems = [];
- 
-             if ((user.isAllowed("documents") || user.isAllowed("assets") || user.isAllowed("objects")) && perspectiveCfg.inToolbar("search.quickSearch")) {
-                 searchItems.push({
-                     text: t("quicksearch"),
-                     iconCls: "pimcore_nav_icon_quicksearch",
-                     itemId: 'pimcore_menu_search_quick_search',
-                     handler: function () {
-                         pimcore.helpers.showQuickSearch();
-                     }
-                 });
-                 searchItems.push('-');
-             }
- 
-             var searchAction = function (type) {
-                 pimcore.helpers.itemselector(false, function (selection) {
-                         pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
-                     }, {type: [type]},
-                     {
-                         asTab: true,
-                         context: {
-                             scope: "globalSearch"
-                         }
-                     });
-             };
- 
-             if (user.isAllowed("documents") && perspectiveCfg.inToolbar("search.documents")) {
-                 searchItems.push({
-                     text: t("documents"),
-                     iconCls: "pimcore_nav_icon_document",
-                     itemId: 'pimcore_menu_search_documents',
-                     handler: searchAction.bind(this, "document")
-                 });
-             }
- 
-             if (user.isAllowed("assets") && perspectiveCfg.inToolbar("search.assets")) {
-                 searchItems.push({
-                     text: t("assets"),
-                     iconCls: "pimcore_nav_icon_asset",
-                     itemId: 'pimcore_menu_search_assets',
-                     handler: searchAction.bind(this, "asset")
-                 });
-             }
- 
-             if (user.isAllowed("objects") && perspectiveCfg.inToolbar("search.objects")) {
-                 searchItems.push({
-                     text: t("data_objects"),
-                     iconCls: "pimcore_nav_icon_object",
-                     itemId: 'pimcore_menu_search_data_objects',
-                     handler: searchAction.bind(this, "object")
-                 });
-             }
- 
-             if (searchItems.length > 0) {
-                 menu.search = {
-                     items: searchItems,
-                     shadow: false,
-                     listeners: true,
-                     cls: "pimcore_navigation_flyout"
-                 };
-             }
-         }
- 
+
          // notifications
          if (user.isAllowed("notifications")) {
              var notificationItems = [{

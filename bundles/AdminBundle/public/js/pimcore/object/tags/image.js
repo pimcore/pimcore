@@ -91,46 +91,53 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             this.fieldConfig.height = 300;
         }
 
-        var conf = {
+        const tbarItems = [
+            {
+                xtype: "tbspacer",
+                width: 48,
+                height: 24,
+                cls: "pimcore_icon_droptarget_upload"
+
+            },
+            {
+                xtype: "tbtext",
+                text: "<b>" + this.fieldConfig.title + "</b>"
+            }, "->", {
+                xtype: "button",
+                iconCls: "pimcore_icon_upload",
+                overflowText: t("upload"),
+                cls: "pimcore_inline_upload",
+                handler: this.uploadDialog.bind(this)
+            }, {
+                xtype: "button",
+                iconCls: "pimcore_icon_open",
+                overflowText: t("open"),
+                handler: this.openImage.bind(this)
+            }, {
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                overflowText: t("delete"),
+                handler: this.empty.bind(this)
+            }
+        ];
+
+        if(pimcore.helpers.hasSearchImplementation()){
+            tbarItems.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_search",
+                overflowText: t("search"),
+                handler: this.openSearchEditor.bind(this)
+            });
+        }
+
+        const conf = {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             border: true,
             style: "padding-bottom: 10px",
             tbar: {
                 overflowHandler: 'menu',
-                items:
-                    [{
-                        xtype: "tbspacer",
-                        width: 48,
-                        height: 24,
-                        cls: "pimcore_icon_droptarget_upload"
-
-                    },
-                        {
-                            xtype: "tbtext",
-                            text: "<b>" + this.fieldConfig.title + "</b>"
-                        }, "->", {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_upload",
-                        overflowText: t("upload"),
-                        cls: "pimcore_inline_upload",
-                        handler: this.uploadDialog.bind(this)
-                    }, {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_open",
-                        overflowText: t("open"),
-                        handler: this.openImage.bind(this)
-                    }, {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_delete",
-                        overflowText: t("delete"),
-                        handler: this.empty.bind(this)
-                    }, {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_search",
-                        overflowText: t("search"),
-                        handler: this.openSearchEditor.bind(this)
-                    }]
+                items: tbarItems
             },
             componentCls: this.getWrapperClassNames(),
             bodyCls: "pimcore_droptarget_image pimcore_image_container"
@@ -390,7 +397,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        if(!this.fieldConfig.noteditable) {
+        if(!this.fieldConfig.noteditable && pimcore.helpers.hasSearchImplementation()) {
             menu.add(new Ext.menu.Item({
                 text: t('search'),
                 iconCls: "pimcore_icon_search",

@@ -161,11 +161,6 @@ pimcore_admin:
                 action: clearDataCache
                 ctrl: false
                 alt: true
-            quick_search:
-                key: 'F'
-                action: quickSearch
-                ctrl: true
-                shift: true
 
 # adds support for admin related routes that will be used to determine the request context in PimcoreContextGuesser
 pimcore:

@@ -113,6 +113,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - Staticroutes has been moved into PimcoreStaticRoutesBundle
       - Config `pimcore:staticroutes:` has been removed, please use `pimcore_static_routes:` in the PimcoreStaticRoutesBundle instead.
     - Xliff Translation Import/Export and related Events have been moved into PimcoreXliffBundle. Please check and adapt the Events' namespaces.
+    - Search has been moved into PimcoreSimpleBackendSearchBundle
     - SEO Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
     - WordExport has been moved into PimcoreWordExportBundle
     - [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
@@ -137,6 +138,14 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [DataObjects\Documents] **BC Break**: Calling `getChildren/getSiblings` on `AbstractObject` or `Document` now returns unloaded listing. If the list is not traveresed immediately, then it is required to call `load()` explicitily.
   Also, `setChildren` now accepts `Listing` as first parameter instead of array.
 - [Admin] Removed `adminer` as built-in database management tool.
+- [Search] The search functionality has been extracted to its own bundle (`PimcoreSimpleBackendSearchBundle`)
+  - The `pimcore:search-backend-reindex` command has been moved to the search bundle
+  - Search icons all over Pimcore won't be available without the search bundle
+  - The inline search feature for some relations won't be available without the search bundle
+  - The "advanced" GDPR search has also been moved. We provide a basic search to cover the fundamental functionality if the search bundle isn't available.
+  - The asset, object, document and quick search have been moved to the search bundle
+  - All backend-search related files have been moved to the search bundle (please check custom implementations if you rely on any backend-search component!)
+  - Added additional messenger transport for backend search (`pimcore_search_backend_message`)
 - [DataObjects] Text data types now set their corresponding database columns to `null` instead of `''` (empty string) when empty.
 - [Ecommerce][Product Interfaces] Changed return type-hints of `CheckoutableInterface` methods `getOSPrice`, `getOSPriceInfo`, `getOSAvailabilityInfo`, `getPriceSystemName`, `getAvailabilitySystemName`, `getPriceSystemImplementation`, `getAvailabilitySystemImplementation` to be non-nullable.
 - [Elements] Removed the deprecated `Pimcore\Model\Element\Service::getType()`, use `Pimcore\Model\Element\Service::getElementType()` instead.

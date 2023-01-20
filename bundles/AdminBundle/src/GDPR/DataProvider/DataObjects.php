@@ -18,13 +18,14 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
 use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\Element;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\Data\ElementMetadata;
-use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\Service;
-use Pimcore\Model\Search\Backend\Data;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
+use Pimcore\Model\DataObject\Data\ElementMetadata;
+use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 
 /**
  * @internal
@@ -136,55 +137,17 @@ class DataObjects extends Elements implements DataProviderInterface
             return ['data' => [], 'success' => true, 'total' => 0];
         }
 
-        $offset = $start;
-        $offset = $offset ?: 0;
-        $limit = $limit ?: 50;
-
-        $searcherList = new Data\Listing();
-        $conditionParts = [];
         $db = \Pimcore\Db::get();
+        $queryBuilder = $db->createQueryBuilder();
+        $query = $queryBuilder
+            ->select('id', 'type')
+            ->from('objects')
+            ->where('id = :id')
+            ->setParameter('id', $id)
+            ->setFirstResult($start)
+            ->setMaxResults($limit);
 
-        //id search
-        if ($id) {
-            $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST (+"' . $id . '" IN BOOLEAN MODE) )';
-        }
-
-        // search for firstname, lastname, email
-        if ($firstname || $lastname || $email) {
-            $firstname = $this->prepareQueryString($firstname);
-            $lastname = $this->prepareQueryString($lastname);
-            $email = $this->prepareQueryString($email);
-
-            $queryString = ($firstname ? '+"' . $firstname . '"' : '') . ' ' . ($lastname ? '+"' . $lastname . '"' : '') . ' ' . ($email ? '+"' . $email . '"' : '');
-            $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST ("' . $db->quote($queryString) . '" IN BOOLEAN MODE) )';
-        }
-
-        $conditionParts[] = '( maintype = "object" AND `type` IN ("object", "variant") )';
-
-        $classnames = [];
-        if ($this->config['classes']) {
-            foreach ($this->config['classes'] as $classname => $classConfig) {
-                if ($classConfig['include'] == true) {
-                    $classnames[] = $classname;
-                }
-            }
-        }
-
-        if (is_array($classnames) && !empty($classnames[0])) {
-            $conditionClassnameParts = [];
-            foreach ($classnames as $classname) {
-                $conditionClassnameParts[] = $db->quote($classname);
-            }
-            $conditionParts[] = '( subtype IN (' . implode(',', $conditionClassnameParts) . ') )';
-        }
-
-        $condition = implode(' AND ', $conditionParts);
-        $searcherList->setCondition($condition);
-
-        $searcherList->setOffset($offset);
-        $searcherList->setLimit($limit);
-
-        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(['sort' => $sort]);
+        $sortingSettings = QueryParams::extractSortingSettings(['sort' => $sort]);
         if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
@@ -195,27 +158,27 @@ class DataObjects extends Elements implements DataProviderInterface
             if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
                 $sort = $sortMapping[$sortingSettings['orderKey']];
             }
-            $searcherList->setOrderKey($sort);
-        }
-        if ($sortingSettings['order']) {
-            $searcherList->setOrder($sortingSettings['order']);
+
+            $order = $sortingSettings['order'] ?? null;
+
+            $query->orderBy($sort, $order);
         }
 
-        $hits = $searcherList->load();
+        $query = $query->executeQuery();
 
         $elements = [];
-        foreach ($hits as $hit) {
-            $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
-            if ($element instanceof Concrete) {
-                $data = \Pimcore\Model\DataObject\Service::gridObjectData($element);
-                $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'] ?? false;
-                $elements[] = $data;
+        if($query->rowCount() > 0){
+            foreach ($query->fetchAllAssociative() as $hit) {
+                $element = Element\Service::getElementById($hit['type'], $hit['id']);
+                if ($element instanceof Concrete) {
+                    $data = DataObject\Service::gridObjectData($element);
+                    $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'] ?? false;
+                    $elements[] = $data;
+                }
             }
         }
 
-        $totalMatches = $searcherList->getTotalCount();
-
-        return ['data' => $elements, 'success' => true, 'total' => $totalMatches];
+        return ['data' => $elements, 'success' => true, 'total' => $query->rowCount()];
     }
 
     /**

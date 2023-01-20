@@ -21,12 +21,12 @@ use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Property;
-use Pimcore\Model\Search;
 use Pimcore\Model\User;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
+use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search;
 
 class ModelAssetPermissionsTest extends ModelTestCase
 {
@@ -600,7 +600,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
 
     protected function doTestSearch(string $searchText, User $user, array $expectedResultPaths, int $limit = 100): void
     {
-        $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Searchadmin\\SearchController', $user);
+        $controller = $this->buildController('\\Pimcore\\Bundle\\SimpleBackendSearchBundle\\Controller\\SearchController', $user);
 
         $request = new Request([
             'type' => 'asset',

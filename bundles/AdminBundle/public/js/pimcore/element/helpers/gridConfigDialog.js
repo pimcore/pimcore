@@ -450,7 +450,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
         });
         items.push(this.itemsPerPage);
 
-        if (this.previewSettings.showPreviewSelector) {
+        if (this.previewSettings.showPreviewSelector && pimcore.helpers.hasSearchImplementation()) {
             items.push({
                 xtype: "button",
                 text: t("preview_item"),
