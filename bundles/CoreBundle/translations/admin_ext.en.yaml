@@ -438,14 +438,6 @@ predefined_metadata_definitions: Predefined Metadata Definitions
 default_layout: Use as default layout
 hide_edit_image_tab: Hide Edit Image Tab
 are_you_sure_recursive: There child nodes which will be deleted as well! Are you sure?
-log_relatedobject: Related object
-log_component: Component
-log_search_form: Search parameter
-log_search_type: Logging type
-log_search_relatedobject: Related object (id)
-log_timestamp: Timestamp
-log_fileobject: File object
-log_detailinformation: Detail information
 classificationstore_group_definition: Groups
 classificationstore_group_limitation: Max. group items
 classificationstore_mbx_entergroup_title: New Group
@@ -495,7 +487,6 @@ preview_width: Preview Width
 preview_height: Preview Height
 url_width: URL Width
 externalImage: External Image
-log_pid: PID
 search_console_settings_description: >-
     To use the Google Search Console integration, please configure the Google API
     Service Account in System Settings
@@ -557,7 +548,6 @@ thumbnail_preserve_info_text: >-
     (greyscale, sepia, ...)
 path_formatter_service: Formatter Service / Class
 separated: separated
-log_refresh_label: Refresh every
 website_translation_settings: Shared Translation Settings
 language_permissions: Language Permissions (no view permission means all)
 rendering_class: Custom Renderer class
@@ -700,7 +690,6 @@ class_definitions: Class Definitions
 custom_layout_changed: Layout was changed in the meantime. Please reload the layout and try again
 rule_violation: Rule Violation
 emails: Emails
-log_applicationlog: Application Logger
 classification_store: Classification Store
 quantityValue_field: Quantity Value
 expanded: Expanded
