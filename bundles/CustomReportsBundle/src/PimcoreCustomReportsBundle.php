@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -41,7 +42,7 @@ class PimcoreCustomReportsBundle extends AbstractPimcoreBundle
             '/bundles/pimcorecustomreports/js/pimcore/report/custom/panel.js',
             '/bundles/pimcorecustomreports/js/pimcore/report/custom/report.js',
             '/bundles/pimcorecustomreports/js/pimcore/report/custom/toolbarenricher.js',
-            '/bundles/pimcorecustomreports/js/pimcore/document/newsletters/addressSourceAdapters/report.js'
+            '/bundles/pimcorecustomreports/js/pimcore/document/newsletters/addressSourceAdapters/report.js',
         ];
     }
 
@@ -49,7 +50,6 @@ class PimcoreCustomReportsBundle extends AbstractPimcoreBundle
     {
         return $this->container->get(Installer::class);
     }
-
 
     public function getPath(): string
     {

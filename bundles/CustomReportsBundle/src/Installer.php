@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -21,7 +22,7 @@ class Installer extends SettingsStoreAwareInstaller
 {
     protected const USER_PERMISSIONS = [
         'reports',
-        'reports_config'
+        'reports_config',
     ];
 
     public function install(): void

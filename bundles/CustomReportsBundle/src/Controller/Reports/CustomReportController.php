@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CustomReportsBundle\Controller\Reports;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
-use Pimcore\Bundle\CustomReportsBundle\Tool;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;

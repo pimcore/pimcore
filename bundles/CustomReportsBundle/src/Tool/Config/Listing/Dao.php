@@ -15,8 +15,8 @@
 
 namespace Pimcore\Bundle\CustomReportsBundle\Tool\Config\Listing;
 
-use Pimcore\Model;
 use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
+use Pimcore\Model;
 
 /**
  * @internal

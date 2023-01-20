@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Exception;
 use Pimcore;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Email;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive;
@@ -26,7 +27,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Listing;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Tool;
-use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Pimcore\Tool\Newsletter;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
