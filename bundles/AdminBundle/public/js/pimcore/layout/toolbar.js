@@ -424,16 +424,7 @@ pimcore.layout.toolbar = Class.create({
          if (perspectiveCfg.inToolbar("marketing")) {
              // marketing menu
              var marketingItems = [];
- 
-             if (user.isAllowed("reports") && perspectiveCfg.inToolbar("marketing.reports")) {
-                 marketingItems.push({
-                     text: t("reports"),
-                     iconCls: "pimcore_nav_icon_reports",
-                     itemId: 'pimcore_menu_marketing_reports',
-                     handler: this.showReports.bind(this, null)
-                 });
-             }
- 
+
              if (user.isAllowed("targeting") && perspectiveCfg.inToolbar("marketing.targeting")) {
                  marketingItems.push({
                      text: t("personalization") + " / " + t("targeting"),
@@ -463,28 +454,6 @@ pimcore.layout.toolbar = Class.create({
                          ]
                      }
                  });
-             }
-
-             if (user.isAllowed("reports_config")) {
-                 if (perspectiveCfg.inToolbar("settings.customReports")) {
-                     marketingItems.push({
-                         text: t("custom_reports"),
-                         iconCls: "pimcore_nav_icon_reports",
-                         itemId: 'pimcore_menu_marketing_custom_reports',
-                         handler: this.showCustomReports
-                     });
-                 }
-             }
- 
-             if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
-                 if (perspectiveCfg.inToolbar("settings.marketingReports")) {
-                     marketingItems.push({
-                         text: t("marketing_settings"),
-                         iconCls: "pimcore_nav_icon_marketing_settings",
-                         itemId: 'pimcore_menu_marketing_settings',
-                         handler: this.reportSettings
-                     });
-                 }
              }
 
              menu.marketing = {
@@ -875,73 +844,7 @@ pimcore.layout.toolbar = Class.create({
                 cls: "pimcore_navigation_flyout"
             };
          }
- 
-         // search menu
- 
-         if (perspectiveCfg.inToolbar("search")) {
-             var searchItems = [];
- 
-             if ((user.isAllowed("documents") || user.isAllowed("assets") || user.isAllowed("objects")) && perspectiveCfg.inToolbar("search.quickSearch")) {
-                 searchItems.push({
-                     text: t("quicksearch"),
-                     iconCls: "pimcore_nav_icon_quicksearch",
-                     itemId: 'pimcore_menu_search_quick_search',
-                     handler: function () {
-                         pimcore.helpers.showQuickSearch();
-                     }
-                 });
-                 searchItems.push('-');
-             }
- 
-             var searchAction = function (type) {
-                 pimcore.helpers.itemselector(false, function (selection) {
-                         pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
-                     }, {type: [type]},
-                     {
-                         asTab: true,
-                         context: {
-                             scope: "globalSearch"
-                         }
-                     });
-             };
- 
-             if (user.isAllowed("documents") && perspectiveCfg.inToolbar("search.documents")) {
-                 searchItems.push({
-                     text: t("documents"),
-                     iconCls: "pimcore_nav_icon_document",
-                     itemId: 'pimcore_menu_search_documents',
-                     handler: searchAction.bind(this, "document")
-                 });
-             }
- 
-             if (user.isAllowed("assets") && perspectiveCfg.inToolbar("search.assets")) {
-                 searchItems.push({
-                     text: t("assets"),
-                     iconCls: "pimcore_nav_icon_asset",
-                     itemId: 'pimcore_menu_search_assets',
-                     handler: searchAction.bind(this, "asset")
-                 });
-             }
- 
-             if (user.isAllowed("objects") && perspectiveCfg.inToolbar("search.objects")) {
-                 searchItems.push({
-                     text: t("data_objects"),
-                     iconCls: "pimcore_nav_icon_object",
-                     itemId: 'pimcore_menu_search_data_objects',
-                     handler: searchAction.bind(this, "object")
-                 });
-             }
- 
-             if (searchItems.length > 0) {
-                 menu.search = {
-                     items: searchItems,
-                     shadow: false,
-                     listeners: true,
-                     cls: "pimcore_navigation_flyout"
-                 };
-             }
-         }
- 
+
          // notifications
          if (user.isAllowed("notifications")) {
              var notificationItems = [{
@@ -1253,34 +1156,7 @@ pimcore.layout.toolbar = Class.create({
      sendTestEmail: function () {
          pimcore.helpers.sendTestEmail(pimcore.settings.mailDefaultAddress);
      },
- 
-     showReports: function (reportClass, reportConfig) {
-         try {
-             pimcore.globalmanager.get("reports").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("reports", new pimcore.report.panel());
-         }
- 
-         // this is for generated/configured reports like the SQL Report
-         try {
-             if(reportClass) {
-                 pimcore.globalmanager.get("reports").openReportViaToolbar(reportClass, reportConfig);
-             }
-         } catch (e) {
-             console.log(e);
-         }
-     },
- 
-     showCustomReports: function () {
-         try {
-             pimcore.globalmanager.get("custom_reports_settings").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("custom_reports_settings", new pimcore.report.custom.settings());
-         }
-     },
- 
+
      showTargetingRules: function () {
          var tabPanel = Ext.getCmp("pimcore_panel_tabs");
          try {

@@ -42,7 +42,7 @@ class ClassificationstoreTest extends ModelTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $class = ClassDefinition::getByName('inheritance');
 
@@ -58,7 +58,7 @@ class ClassificationstoreTest extends ModelTestCase
         }
     }
 
-    protected function configureStore(Classificationstore\StoreConfig $store)
+    protected function configureStore(Classificationstore\StoreConfig $store): void
     {
         $group = Classificationstore\GroupConfig::getByName('group1', $store->getId());
         if (!$group) {
@@ -129,7 +129,7 @@ class ClassificationstoreTest extends ModelTestCase
      * asserts inherited and non-inherited values on child & parent.
      *
      */
-    public function testInheritance()
+    public function testInheritance(): void
     {
         $inheritanceEnabled = DataObject::getGetInheritedValues();
         DataObject::setGetInheritedValues(true);

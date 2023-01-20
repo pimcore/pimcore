@@ -227,7 +227,7 @@ class DefinitionModifierTest extends ModelTestCase
         }
     }
 
-    public function testAppendingFields()
+    public function testAppendingFields(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -251,7 +251,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('appendFields', $callable);
     }
 
-    public function testPrependingFields()
+    public function testPrependingFields(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -279,7 +279,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('prependFields', $callable);
     }
 
-    public function testReplacingField()
+    public function testReplacingField(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -301,7 +301,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('replaceField', $callable);
     }
 
-    public function testRemovingField()
+    public function testRemovingField(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -314,7 +314,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('removeField', $callable);
     }
 
-    public function testInsertingFieldsFront()
+    public function testInsertingFieldsFront(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -341,7 +341,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('insertFieldsFront', $callable, true);
     }
 
-    public function testInsertingFieldsBack()
+    public function testInsertingFieldsBack(): void
     {
         $callable = function () {
             $args = func_get_args();
@@ -369,7 +369,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('insertFieldsBack', $callable, true);
     }
 
-    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithOneField()
+    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithOneField(): void
     {
         $classDef = new ClassDefinition();
 
@@ -389,7 +389,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->assertEmpty($layoutDef->getChildren()[0]->getChildren());
     }
 
-    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithMoreFields()
+    public function testDeleteDeletedDataComponentsInLayoutDefinitionWithMoreFields(): void
     {
         $classDef = new ClassDefinition();
 
@@ -433,7 +433,7 @@ class DefinitionModifierTest extends ModelTestCase
         return $method;
     }
 
-    public function testGetByIdIgnoreCaseWithoutValidId()
+    public function testGetByIdIgnoreCaseWithoutValidId(): void
     {
         $id = '-9999';
         $checkVal = ClassDefinition::getByIdIgnoreCase($id);
@@ -441,7 +441,7 @@ class DefinitionModifierTest extends ModelTestCase
         $this->assertNull($checkVal);
     }
 
-    public function testGetByIdIgnoreCaseWithValidId()
+    public function testGetByIdIgnoreCaseWithValidId(): void
     {
         $id = 'Inheritance';
         $checkVal = ClassDefinition::getByIdIgnoreCase($id);

@@ -37,7 +37,7 @@ class GlossaryTest extends TestCase
         $this->processor = $pimcoreModule->grabService(Processor::class);
     }
 
-    public function testGlossary()
+    public function testGlossary(): void
     {
         $entry = new Glossary();
         $entry->setText('Glossary');
@@ -52,7 +52,7 @@ class GlossaryTest extends TestCase
         $this->assertSame($result, $expect);
     }
 
-    public function testGlossaryWithHtmlEntities()
+    public function testGlossaryWithHtmlEntities(): void
     {
         $entry = new Glossary();
         $entry->setText('Entity');
@@ -73,7 +73,7 @@ class GlossaryTest extends TestCase
         $this->assertSame($result, html_entity_decode($expect));
     }
 
-    public function testGlossaryWithHtmlEntities2()
+    public function testGlossaryWithHtmlEntities2(): void
     {
         $entry = new Glossary();
         $entry->setText('Eintrag');
@@ -88,7 +88,7 @@ class GlossaryTest extends TestCase
         $this->assertSame($result, html_entity_decode($expect));
     }
 
-    public function testGlossaryWithHtml()
+    public function testGlossaryWithHtml(): void
     {
         $entry = new Glossary();
         $entry->setText('HTML');
@@ -132,7 +132,7 @@ class GlossaryTest extends TestCase
         $this->assertSame($result, $expect);
     }
 
-    public function testGlossaryWithAnotherHtml()
+    public function testGlossaryWithAnotherHtml(): void
     {
         $entry = new Glossary();
         $entry->setText('hans');
@@ -152,7 +152,7 @@ class GlossaryTest extends TestCase
         $this->assertSame($result, $expect);
     }
 
-    public function testGlossaryWithLowerThenAndGreaterThenHtml()
+    public function testGlossaryWithLowerThenAndGreaterThenHtml(): void
     {
         $entry = new Glossary();
         $entry->setText('huber');

@@ -153,6 +153,12 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
             }
         }));
 
+        const displayModeStore = [
+            ['grid', t('display_mode_grid')]
+        ];
+        if(pimcore.helpers.hasSearchImplementation()) {
+            displayModeStore.push(['combo', t('display_mode_combo')]);
+        }
         this.specificPanel.add(
             {
                 xtype: "combo",
@@ -162,10 +168,7 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                 labelWidth: 140,
                 forceSelection: true,
                 defaultValue: 'grid',
-                store: [
-                    ['grid', t('display_mode_grid')],
-                    ['combo', t('display_mode_combo')],
-                ]
+                store: displayModeStore
             }
         );
 
