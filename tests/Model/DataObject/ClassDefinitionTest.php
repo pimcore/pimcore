@@ -44,7 +44,7 @@ class ClassDefinitionTest extends ModelTestCase
     /**
      * Verifies that the class definition gets renamed properly
      */
-    public function testRename()
+    public function testRename(): void
     {
         $class = ClassDefinition::getByName('unittest');
         $class->rename('unittest_renamed');
@@ -56,7 +56,7 @@ class ClassDefinitionTest extends ModelTestCase
     /**
      * Verifies that the setter code gets created properly
      */
-    public function testInputSetterCode()
+    public function testInputSetterCode(): void
     {
         $expectedSetterCode =
             '/**
@@ -78,7 +78,7 @@ public function setInput(?string $input): static
     /**
      * Verifies that the setter code gets created properly
      */
-    public function testFieldCollectionSetterCode()
+    public function testFieldCollectionSetterCode(): void
     {
         $expectedSetterCode =
             '/**
@@ -101,7 +101,7 @@ public function setFieldcollection(?\Pimcore\Model\DataObject\Fieldcollection $f
     /**
      * Verifies that the setter code gets created properly
      */
-    public function testBricksSetterCode()
+    public function testBricksSetterCode(): void
     {
         $expectedSetterCode =
             '/**
@@ -124,7 +124,7 @@ public function setMybricks(?\Pimcore\Model\DataObject\Objectbrick $mybricks): s
     /**
      * Verifies that the setter code gets created properly
      */
-    public function testQuantityValueSetterCode()
+    public function testQuantityValueSetterCode(): void
     {
         $expectedSetterCode =
             '/**
@@ -146,7 +146,7 @@ public function setQuantityValue(?\Pimcore\Model\DataObject\Data\QuantityValue $
     /**
      * Verifies that the setter code gets created properly
      */
-    public function testLocalizedFieldSetterCode()
+    public function testLocalizedFieldSetterCode(): void
     {
         $expectedSetterCode =
             '/**

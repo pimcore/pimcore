@@ -657,7 +657,9 @@ pimcore.registerNS("pimcore.object.tree");
              var advancedMenuItems = [];
              var user = pimcore.globalmanager.get("user");
 
-             if (record.data.permissions.create && perspectiveCfg.inTreeContextMenu("object.searchAndMove")) {
+             if (record.data.permissions.create &&
+                 perspectiveCfg.inTreeContextMenu("object.searchAndMove") &&
+                 pimcore.helpers.hasSearchImplementation()) {
                  advancedMenuItems.push({
                      text: t('search_and_move'),
                      iconCls: "pimcore_icon_search pimcore_icon_overlay_go",

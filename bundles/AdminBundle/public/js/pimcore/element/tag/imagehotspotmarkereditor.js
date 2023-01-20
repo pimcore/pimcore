@@ -530,11 +530,15 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     iconCls: "pimcore_icon_delete"
                     ,
                     handler: this.empty.bind(this, textField)
-                }, {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this, textField, type, hotspotMetaDataWin, nameField)
                 }];
+
+                if(pimcore.helpers.hasSearchImplementation()){
+                    items.push({
+                        xtype: "button",
+                        iconCls: "pimcore_icon_search",
+                        handler: this.openSearchEditor.bind(this, textField, type, hotspotMetaDataWin, nameField)
+                    });
+                }
 
                 valueField = new Ext.form.FieldContainer({
                     items: items,
