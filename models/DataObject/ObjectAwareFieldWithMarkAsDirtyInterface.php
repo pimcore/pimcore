@@ -18,5 +18,8 @@ namespace Pimcore\Model\DataObject;
 
 interface ObjectAwareFieldWithMarkAsDirtyInterface
 {
+    /**
+     * @return $this
+     */
     public function setObject(?Concrete $object, bool $markAsDirty): static;
 }
