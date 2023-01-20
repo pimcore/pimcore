@@ -26,7 +26,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    protected ElementDescriptor|Asset\Image|null $image;
+    protected ElementDescriptor|Asset\Image|null $image = null;
 
     /**
      * @var array[]|null
