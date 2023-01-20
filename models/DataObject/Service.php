@@ -774,7 +774,6 @@ class Service extends Model\Element\Service
                     $value = $object->$getter();
                     if ($value instanceof Localizedfield) {
                         $value->loadLazyData();
-                        $object->__objectAwareFields['localizedfields'] = true;
                     } elseif ($value instanceof Objectbrick) {
                         $value->loadLazyData();
                     } elseif ($value instanceof Fieldcollection) {
