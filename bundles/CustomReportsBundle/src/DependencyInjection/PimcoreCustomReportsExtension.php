@@ -38,8 +38,6 @@ class PimcoreCustomReportsExtension extends ConfigurableExtension
 
     public function loadInternal(array $config, ContainerBuilder $container): void
     {
-        \Pimcore::disableShutdown();
-
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../../config')
