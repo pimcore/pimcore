@@ -43,6 +43,7 @@ final class Configuration implements ConfigurationInterface
         $rootNode->append($this->buildAssetsNode());
         $rootNode->append($this->buildDocumentsNode());
         $rootNode->append($this->addNotificationsNode());
+        $rootNode->append($this->addUserNode());
 
         $rootNode->children()
             ->arrayNode('admin_languages')
@@ -126,7 +127,7 @@ final class Configuration implements ConfigurationInterface
                         ->defaultNull()
                     ->end()
                     ->scalarNode('login_screen_custom_image')
-                        ->defaultNull()
+                        ->defaultValue('')
                     ->end()
                 ->end()
             ->end()
@@ -424,5 +425,29 @@ final class Configuration implements ConfigurationInterface
         ;
 
         return $notificationsNode;
+    }
+
+    protected function addUserNode(): ArrayNodeDefinition|NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('user');
+        $userNode = $treeBuilder->getRootNode();
+
+        $userNode
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('default_key_bindings')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('key')->isRequired()->end()
+                            ->scalarNode('action')->isRequired()->end()
+                            ->scalarNode('alt')->defaultFalse()->end()
+                            ->scalarNode('ctrl')->defaultFalse()->end()
+                            ->scalarNode('shift')->defaultFalse()->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $userNode;
     }
 }

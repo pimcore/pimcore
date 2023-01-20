@@ -999,52 +999,52 @@ span.warning {
 }
 
 /* highlight error logs */
-.x-grid-item .log-type-CRIT,
-.x-grid-item .log-type-ALERT,
-.x-grid-item .log-type-ERR {
+.x-grid-item .log-type-critical,
+.x-grid-item .log-type-alert,
+.x-grid-item .log-type-error {
     background-color: #ffe2e2;
     color: #900;
 }
 
-.x-grid-item.x-grid-item-over .log-type-CRIT,
-.x-grid-item.x-grid-item-over .log-type-ALERT,
-.x-grid-item.x-grid-item-over .log-type-ERR {
+.x-grid-item.x-grid-item-over .log-type-critical,
+.x-grid-item.x-grid-item-over .log-type-alert,
+.x-grid-item.x-grid-item-over .log-type-error {
     background-color: #f2d5d5;
 }
 
-.x-grid-item.x-grid-item-selected .log-type-CRIT,
-.x-grid-item.x-grid-item-selected .log-type-ALERT,
-.x-grid-item.x-grid-item-selected .log-type-ERR {
+.x-grid-item.x-grid-item-selected .log-type-critical,
+.x-grid-item.x-grid-item-selected .log-type-alert,
+.x-grid-item.x-grid-item-selected .log-type-error {
     background-color: #dfc2c2;
 }
 
-.x-grid-item.x-grid-item-selected.x-grid-item-over .log-type-CRIT,
-.x-grid-item.x-grid-item-selected.x-grid-item-over .log-type-ALERT,
-.x-grid-item.x-grid-item-selected.x-grid-item-over .log-type-ERR {
+.x-grid-item.x-grid-item-selected.x-grid-item-over .log-type-critical,
+.x-grid-item.x-grid-item-selected.x-grid-item-over .log-type-alert,
+.x-grid-item.x-grid-item-selected.x-grid-item-over .log-type-error {
     background-color: #d2b5b5;
 }
 
-.x-grid-item-alt .log-type-CRIT,
-.x-grid-item-alt .log-type-ALERT,
-.x-grid-item-alt .log-type-ERR {
+.x-grid-item-alt .log-type-critical,
+.x-grid-item-alt .log-type-alert,
+.x-grid-item-alt .log-type-error {
     background-color: #f6d9d9;
 }
 
-.x-grid-item-alt.x-grid-item-over .log-type-CRIT,
-.x-grid-item-alt.x-grid-item-over .log-type-ALERT,
-.x-grid-item-alt.x-grid-item-over .log-type-ERR {
+.x-grid-item-alt.x-grid-item-over .log-type-critical,
+.x-grid-item-alt.x-grid-item-over .log-type-alert,
+.x-grid-item-alt.x-grid-item-over .log-type-error {
     background-color: #e9cccc;
 }
 
-.x-grid-item-alt.x-grid-item-selected .log-type-CRIT,
-.x-grid-item-alt.x-grid-item-selected .log-type-ALERT,
-.x-grid-item-alt.x-grid-item-selected .log-type-ERR {
+.x-grid-item-alt.x-grid-item-selected .log-type-critical,
+.x-grid-item-alt.x-grid-item-selected .log-type-alert,
+.x-grid-item-alt.x-grid-item-selected .log-type-error {
     background-color: #d6b9b9;
 }
 
-.x-grid-item-alt.x-grid-item-selected.x-grid-item-over .log-type-CRIT,
-.x-grid-item-alt.x-grid-item-selected.x-grid-item-over .log-type-ALERT,
-.x-grid-item-alt.x-grid-item-selected.x-grid-item-over .log-type-ERR {
+.x-grid-item-alt.x-grid-item-selected.x-grid-item-over .log-type-critical,
+.x-grid-item-alt.x-grid-item-selected.x-grid-item-over .log-type-alert,
+.x-grid-item-alt.x-grid-item-selected.x-grid-item-over .log-type-error {
     background-color: #c5a9a9;
 }
 

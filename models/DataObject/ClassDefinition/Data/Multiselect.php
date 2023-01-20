@@ -278,6 +278,19 @@ class Multiselect extends Data implements
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getDiffDataFromEditmode($data, $object = null, $params = []): ?array
+    {
+        $data = $data[0]['data'];
+        if (is_string($data) && $data !== '') {
+            return explode(',', $data);
+        }
+
+        return null;
+    }
+
+    /**
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
@@ -301,14 +314,14 @@ class Multiselect extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (!is_array($data) && !empty($data)) {
-            throw new Model\Element\ValidationException('Invalid multiselect data');
+            throw new Model\Element\ValidationException("Invalid multiselect data on field [ {$this->getName()} ]");
         }
     }
 
@@ -442,7 +455,7 @@ class Multiselect extends Data implements
     /**
      * @param DataObject\ClassDefinition\Data\Multiselect $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->maxItems = $masterDefinition->maxItems;
         $this->options = $masterDefinition->options;
@@ -453,7 +466,7 @@ class Multiselect extends Data implements
         return $this->optionsProviderClass;
     }
 
-    public function setOptionsProviderClass(?string $optionsProviderClass)
+    public function setOptionsProviderClass(?string $optionsProviderClass): void
     {
         $this->optionsProviderClass = $optionsProviderClass;
     }
@@ -463,7 +476,7 @@ class Multiselect extends Data implements
         return $this->optionsProviderData;
     }
 
-    public function setOptionsProviderData(?string $optionsProviderData)
+    public function setOptionsProviderData(?string $optionsProviderData): void
     {
         $this->optionsProviderData = $optionsProviderData;
     }
@@ -552,7 +565,7 @@ class Multiselect extends Data implements
      * @param mixed $containerDefinition
      * @param array $params
      */
-    public function preSave(mixed $containerDefinition, array $params = [])
+    public function preSave(mixed $containerDefinition, array $params = []): void
     {
         /** @var DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface|null $optionsProvider */
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
@@ -579,7 +592,7 @@ class Multiselect extends Data implements
         }
     }
 
-    public function postSave(mixed $containerDefinition, array $params = [])
+    public function postSave(mixed $containerDefinition, array $params = []): void
     {
         // nothing to do
     }

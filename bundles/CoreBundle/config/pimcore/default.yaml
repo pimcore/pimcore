@@ -36,13 +36,14 @@ framework:
             pimcore_core: "doctrine://default?queue_name=pimcore_core"
             pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
+            pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
         routing:
             'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
             'Pimcore\Messenger\SearchBackendMessage': pimcore_core
             'Pimcore\Messenger\SanityCheckMessage': pimcore_core
-            'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_core
+            'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_asset_update
             'Pimcore\Messenger\AssetPreviewImageMessage': pimcore_core
             'Pimcore\Messenger\GeneratePagePreviewMessage': pimcore_core
             'Pimcore\Messenger\GenerateWeb2PrintPdfMessage': pimcore_core
@@ -187,6 +188,19 @@ pimcore:
                     - \Object_Class_Layout_
 
     documents:
+        type_definitions:
+            map:
+                folder: \Pimcore\Model\Document\Folder
+                page: \Pimcore\Model\Document\Page
+                snippet: \Pimcore\Model\Document\Snippet
+                link: \Pimcore\Model\Document\Link
+                hardlink: \Pimcore\Model\Document\Hardlink
+                email: \Pimcore\Model\Document\Email
+                newsletter: \Pimcore\Model\Document\Newsletter
+                printpage: \Pimcore\Model\Document\Printpage
+                printcontainer: \Pimcore\Model\Document\Printcontainer
+            prefixes:
+                - \Pimcore\Model\Document\
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
@@ -254,12 +268,6 @@ pimcore:
             302: Found
             303: See Other
             307: Temporary Redirect
-
-    glossary:
-        blocked_tags: [
-              'a', 'script', 'style', 'code', 'pre', 'textarea', 'acronym',
-              'abbr', 'option', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
-          ]
 
     templating_engine:
         twig:

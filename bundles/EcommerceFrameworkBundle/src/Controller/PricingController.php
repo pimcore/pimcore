@@ -36,7 +36,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PricingController extends AdminController implements KernelControllerEventInterface
 {
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         // permission check
         $access = $this->getAdminUser()->isAllowed('bundle_ecommerce_pricing_rules');
@@ -258,8 +258,8 @@ class PricingController extends AdminController implements KernelControllerEvent
             'message' => '',
         ];
 
-        $ruleId = $request->get('id');
-        $ruleNewName = $request->get('name');
+        $ruleId = $request->request->getInt('id');
+        $ruleNewName = $request->request->get('name');
 
         try {
             if ($ruleId && $ruleNewName && preg_match('/^[a-zA-Z0-9_\-]+$/', $ruleNewName)) {

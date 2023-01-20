@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.manyToOneRelation");
+/**
+ * @private
+ */
 pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.classes.data.data, {
 
     type: "manyToOneRelation",
@@ -342,6 +345,19 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                         store: classesStore,
                         width: 400
                     })
+                ]
+            },
+            {
+                xtype: "combo",
+                fieldLabel: t("display_mode"),
+                name: "displayMode",
+                value: this.datax.displayMode ?? 'grid',
+                labelWidth: 140,
+                forceSelection: true,
+                width: 400,
+                store: [
+                    ['grid', t('display_mode_display')],
+                    ['combo', t('display_mode_inline_search')],
                 ]
             }
 

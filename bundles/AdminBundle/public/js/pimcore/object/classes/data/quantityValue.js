@@ -1,5 +1,8 @@
 
 pimcore.registerNS("pimcore.object.classes.data.quantityValue");
+/**
+ * @private
+ */
 pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.data.data, {
 
     type: "quantityValue",
@@ -77,6 +80,7 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                 editable: true,
                 typeAhead: true,
                 selectOnFocus: true,
+                forceSelection: true,
                 fieldLabel: t('default_unit'),
                 store: this.store,
                 value: this.datax.defaultUnit,

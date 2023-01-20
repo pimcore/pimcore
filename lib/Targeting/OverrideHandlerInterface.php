@@ -30,17 +30,11 @@ interface OverrideHandlerInterface
 
     /**
      * Add fields to the targeting toolbar override form
-     *
-     * @param FormBuilderInterface $form
-     * @param Request $request
      */
-    public function buildOverrideForm(FormBuilderInterface $form, Request $request);
+    public function buildOverrideForm(FormBuilderInterface $form, Request $request): void;
 
     /**
      * Override targeting data from the override data as gathered from the form
-     *
-     * @param array $overrides
-     * @param Request $request
      */
-    public function overrideFromRequest(array $overrides, Request $request);
+    public function overrideFromRequest(array $overrides, Request $request): void;
 }

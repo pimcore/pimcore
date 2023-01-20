@@ -28,7 +28,7 @@ class Optimizer implements ImageOptimizerInterface
      */
     private array $optimizers = [];
 
-    public function optimizeImage(string $path)
+    public function optimizeImage(string $path): void
     {
         $extension = File::getFileExtension($path);
         $storage = Storage::get('thumbnail');
@@ -80,7 +80,7 @@ class Optimizer implements ImageOptimizerInterface
         }
     }
 
-    public function registerOptimizer(OptimizerInterface $optimizer)
+    public function registerOptimizer(OptimizerInterface $optimizer): void
     {
         if (in_array($optimizer, $this->optimizers)) {
             throw new \InvalidArgumentException(sprintf('Optimizer of class %s has already been registered',

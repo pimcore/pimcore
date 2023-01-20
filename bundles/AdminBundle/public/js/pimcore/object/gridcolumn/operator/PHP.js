@@ -16,7 +16,9 @@
 
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.php");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.php = Class.create(pimcore.object.gridcolumn.operator.text, {
     operatorGroup: "transformer",
     type: "operator",

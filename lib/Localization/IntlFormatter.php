@@ -86,7 +86,7 @@ class IntlFormatter
         $this->currencyFormatters = [];
     }
 
-    public function getCurrencyFormat($locale): string
+    public function getCurrencyFormat(string $locale): string
     {
         return $this->currencyFormats[$locale];
     }

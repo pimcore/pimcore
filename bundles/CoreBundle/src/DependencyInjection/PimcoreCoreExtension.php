@@ -25,12 +25,13 @@ use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
+use Pimcore\Model\Document\TypeDefinition\Loader\PrefixLoader as DocumentTypePrefixLoader;
+use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
-use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -54,7 +55,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     /**
      * {@inheritdoc}
      */
-    public function loadInternal(array $config, ContainerBuilder $container)
+    public function loadInternal(array $config, ContainerBuilder $container): void
     {
         // on container build the shutdown handler shouldn't be called
         // for details please see https://github.com/pimcore/pimcore/issues/4709
@@ -144,7 +145,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
         $this->configureSitemaps($container, $config['sitemaps']);
-        $this->configureGlossary($container, $config['glossary']);
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
@@ -185,6 +185,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             'pimcore.implementation_loader.asset.metadata.data' => [
                 'config' => $config['assets']['metadata']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class,
+            ],
+            TypeLoader::class => [
+                'config' => $config['documents']['type_definitions'],
+                'prefixLoader' => DocumentTypePrefixLoader::class,
             ],
         ];
 
@@ -236,11 +240,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         } else {
             $definition = $container->getDefinition(TranslationDebugListener::class);
             $definition->setArgument('$parameterName', $parameter);
-        }
-
-        if (!empty($config['data_object']['translation_extractor']['attributes'])) {
-            $definition = $container->getDefinition(DataObjectDataExtractor::class);
-            $definition->setArgument('$exportAttributes', $config['data_object']['translation_extractor']['attributes']);
         }
     }
 
@@ -396,7 +395,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
      *
      * {@inheritdoc}
      */
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         /*$securityConfigs = $container->getExtensionConfig('security');
 
@@ -418,10 +417,5 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
 
         $serviceLocator->setArgument(0, $arguments);
-    }
-
-    private function configureGlossary(ContainerBuilder $container, array $config): void
-    {
-        $container->setParameter('pimcore.glossary.blocked_tags', $config['blocked_tags']);
     }
 }

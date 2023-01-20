@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.tags.input");
+/**
+ * @private
+ */
 pimcore.asset.metadata.tags.input = Class.create(pimcore.asset.metadata.tags.abstract, {
 
     type: "input",

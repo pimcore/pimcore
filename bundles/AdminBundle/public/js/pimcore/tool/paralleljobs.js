@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.tool.paralleljobs");
+/**
+ * @private
+ */
 pimcore.tool.paralleljobs = Class.create({
 
     initialize: function (config) {

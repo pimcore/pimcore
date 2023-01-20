@@ -195,7 +195,7 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * Deletes the key value key configuration
      */
-    public function delete()
+    public function delete(): void
     {
         DefinitionCache::clear($this);
 
@@ -211,7 +211,7 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * Saves the key config
      */
-    public function save()
+    public function save(): void
     {
         DefinitionCache::clear($this);
 
@@ -247,7 +247,7 @@ final class KeyConfig extends Model\AbstractModel
         return $this->creationDate;
     }
 
-    public function setCreationDate(int $creationDate)
+    public function setCreationDate(int $creationDate): void
     {
         $this->creationDate = $creationDate;
     }
@@ -257,7 +257,7 @@ final class KeyConfig extends Model\AbstractModel
         return $this->modificationDate;
     }
 
-    public function setModificationDate(int $modificationDate)
+    public function setModificationDate(int $modificationDate): void
     {
         $this->modificationDate = $modificationDate;
     }
@@ -267,7 +267,7 @@ final class KeyConfig extends Model\AbstractModel
         return $this->type;
     }
 
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
@@ -277,7 +277,7 @@ final class KeyConfig extends Model\AbstractModel
         return $this->definition;
     }
 
-    public function setDefinition(string $definition)
+    public function setDefinition(string $definition): void
     {
         $this->definition = $definition;
     }
@@ -287,7 +287,7 @@ final class KeyConfig extends Model\AbstractModel
         return $this->enabled;
     }
 
-    public function setEnabled(bool $enabled)
+    public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
     }
@@ -297,7 +297,7 @@ final class KeyConfig extends Model\AbstractModel
         return $this->title;
     }
 
-    public function setTitle(string $title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
@@ -307,7 +307,7 @@ final class KeyConfig extends Model\AbstractModel
         return $this->storeId;
     }
 
-    public function setStoreId(int $storeId)
+    public function setStoreId(int $storeId): void
     {
         $this->storeId = $storeId;
     }

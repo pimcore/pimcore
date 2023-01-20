@@ -34,7 +34,7 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
     /**
      * @internal
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
         /** @var Tool\Targeting\TargetGroup\Listing|Tool\Targeting\TargetGroup\Listing\Dao $list */
         $list = new Tool\Targeting\TargetGroup\Listing();
@@ -54,12 +54,7 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
         $this->setOptions($options);
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
         $options = $obj->getOptions();

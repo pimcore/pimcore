@@ -36,7 +36,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param WebsiteSetting[]|null $settings
      */
-    public function setSettings(?array $settings)
+    public function setSettings(?array $settings): void
     {
         $this->settings = $settings;
     }

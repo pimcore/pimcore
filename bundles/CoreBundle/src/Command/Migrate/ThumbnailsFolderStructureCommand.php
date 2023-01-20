@@ -29,7 +29,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ThumbnailsFolderStructureCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:migrate:thumbnails-folder-structure')
@@ -56,7 +56,7 @@ class ThumbnailsFolderStructureCommand extends AbstractCommand
         return 0;
     }
 
-    protected function doMigrateStorage(OutputInterface $output, FilesystemOperator $storage)
+    protected function doMigrateStorage(OutputInterface $output, FilesystemOperator $storage): void
     {
         $thumbnailFiles = $storage->listContents('/', true)->filter(function (StorageAttributes $attributes) {
             if ($attributes->isDir()) {

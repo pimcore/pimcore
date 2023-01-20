@@ -24,6 +24,9 @@
 });
 
 pimcore.registerNS("pimcore.document.tree");
+/**
+ * @private
+ */
 pimcore.document.tree = Class.create({
 
     treeDataUrl: null,
@@ -1034,7 +1037,7 @@ pimcore.document.tree = Class.create({
         };
 
         document_types.sort([
-            {property: 'priority', direction: 'DESC'},
+            {property: 'priority', direction: 'ASC'},
             {property: 'translatedGroup', direction: 'ASC'},
             {property: 'translatedName', direction: 'ASC'}
         ]);

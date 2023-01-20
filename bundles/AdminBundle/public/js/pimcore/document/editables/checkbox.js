@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.checkbox");
+/**
+ * @private
+ */
 pimcore.document.editables.checkbox = Class.create(pimcore.document.editable, {
 
 

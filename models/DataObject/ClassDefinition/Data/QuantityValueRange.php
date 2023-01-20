@@ -136,16 +136,15 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return $this->autoConvert;
     }
 
-    public function setAutoConvert($autoConvert): void
+    public function setAutoConvert(bool $autoConvert): void
     {
-        $this->autoConvert = (bool) $autoConvert;
+        $this->autoConvert = $autoConvert;
     }
 
     /**
      * @param DataObject\Concrete|null $object
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -167,8 +166,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     /**
      * @param DataObject\Concrete|null $object
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
     {
@@ -194,8 +192,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     /**
      * @param DataObject\Concrete|null $object
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -414,12 +411,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         }
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
         $obj->configureOptions();

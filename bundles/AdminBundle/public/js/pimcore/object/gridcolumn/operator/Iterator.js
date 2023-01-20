@@ -16,7 +16,9 @@
 
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.iterator");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.iterator = Class.create(pimcore.object.gridcolumn.operator.text, {
     operatorGroup: "transformer",
     type: "operator",

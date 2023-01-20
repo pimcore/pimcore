@@ -130,8 +130,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
      *
      * @return Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface
      *
-     *@deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
-     *
+     * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      */
     public static function getAdapter(?\stdClass $configuration, Config $fullConfig = null): Adapter\CustomReportAdapterInterface
     {
@@ -152,7 +151,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $factory->create($configuration, $fullConfig);
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -162,7 +161,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->name;
     }
 
-    public function setSql(string $sql)
+    public function setSql(string $sql): void
     {
         $this->sql = $sql;
     }
@@ -172,7 +171,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->sql;
     }
 
-    public function setColumnConfiguration(array $columnConfiguration)
+    public function setColumnConfiguration(array $columnConfiguration): void
     {
         $this->columnConfiguration = $columnConfiguration;
     }
@@ -182,7 +181,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->columnConfiguration;
     }
 
-    public function setGroup(string $group)
+    public function setGroup(string $group): void
     {
         $this->group = $group;
     }
@@ -192,7 +191,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->group;
     }
 
-    public function setGroupIconClass(string $groupIconClass)
+    public function setGroupIconClass(string $groupIconClass): void
     {
         $this->groupIconClass = $groupIconClass;
     }
@@ -202,7 +201,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->groupIconClass;
     }
 
-    public function setIconClass(string $iconClass)
+    public function setIconClass(string $iconClass): void
     {
         $this->iconClass = $iconClass;
     }
@@ -212,7 +211,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->iconClass;
     }
 
-    public function setNiceName(string $niceName)
+    public function setNiceName(string $niceName): void
     {
         $this->niceName = $niceName;
     }
@@ -222,7 +221,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->niceName;
     }
 
-    public function setMenuShortcut(bool $menuShortcut)
+    public function setMenuShortcut(bool $menuShortcut): void
     {
         $this->menuShortcut = (bool) $menuShortcut;
     }
@@ -232,7 +231,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->menuShortcut;
     }
 
-    public function setDataSourceConfig(array $dataSourceConfig)
+    public function setDataSourceConfig(array $dataSourceConfig): void
     {
         $this->dataSourceConfig = $dataSourceConfig;
     }
@@ -253,7 +252,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return null;
     }
 
-    public function setChartType(string $chartType)
+    public function setChartType(string $chartType): void
     {
         $this->chartType = $chartType;
     }
@@ -263,7 +262,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->chartType;
     }
 
-    public function setPieColumn(?string $pieColumn)
+    public function setPieColumn(?string $pieColumn): void
     {
         $this->pieColumn = $pieColumn;
     }
@@ -273,7 +272,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->pieColumn;
     }
 
-    public function setXAxis(?string $xAxis)
+    public function setXAxis(?string $xAxis): void
     {
         $this->xAxis = $xAxis;
     }
@@ -283,7 +282,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->xAxis;
     }
 
-    public function setYAxis(array|string|null $yAxis)
+    public function setYAxis(array|string|null $yAxis): void
     {
         $this->yAxis = $yAxis;
     }
@@ -293,7 +292,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->yAxis;
     }
 
-    public function setPieLabelColumn(?string $pieLabelColumn)
+    public function setPieLabelColumn(?string $pieLabelColumn): void
     {
         $this->pieLabelColumn = $pieLabelColumn;
     }
@@ -308,7 +307,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->modificationDate;
     }
 
-    public function setModificationDate(int $modificationDate)
+    public function setModificationDate(int $modificationDate): void
     {
         $this->modificationDate = $modificationDate;
     }
@@ -318,7 +317,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->creationDate;
     }
 
-    public function setCreationDate(int $creationDate)
+    public function setCreationDate(int $creationDate): void
     {
         $this->creationDate = $creationDate;
     }
@@ -328,7 +327,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->reportClass;
     }
 
-    public function setReportClass(string $reportClass)
+    public function setReportClass(string $reportClass): void
     {
         $this->reportClass = $reportClass;
     }

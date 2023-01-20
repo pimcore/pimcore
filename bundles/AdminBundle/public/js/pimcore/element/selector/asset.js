@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.selector.asset");
+/**
+ * @private
+ */
 pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract, {
 
     initStore: function () {
@@ -282,7 +285,16 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 stripeRows: true,
                 viewConfig: {
                     forceFit: true,
-                    markDirty: false
+                    markDirty: false,
+                    listeners: {
+                        refresh: function (dataview) {
+                            Ext.each(dataview.panel.columns, function (column) {
+                                if (column.autoSizeColumn === true) {
+                                    column.autoSize();
+                                }
+                            })
+                        }
+                    }
                 },
                 plugins: ['gridfilters'],
                 selModel: this.getGridSelModel(),

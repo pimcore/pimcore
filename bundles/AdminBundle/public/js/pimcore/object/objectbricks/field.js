@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.objectbricks.field");
+/**
+ * @private
+ */
 pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
     allowedInType: 'objectbrick',

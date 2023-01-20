@@ -28,7 +28,7 @@ interface BatchProcessingWorkerInterface extends WorkerInterface
      *
      * @param IndexableInterface $object
      */
-    public function fillupPreparationQueue(IndexableInterface $object);
+    public function fillupPreparationQueue(IndexableInterface $object): void;
 
     /**
      * prepare data for index creation and store is in store table

@@ -30,7 +30,7 @@ class TargetingStorageTask implements TaskInterface
         $this->targetingStorage = $targetingStorage;
     }
 
-    public function execute()
+    public function execute(): void
     {
         if (!$this->targetingStorage instanceof MaintenanceStorageInterface) {
             return;

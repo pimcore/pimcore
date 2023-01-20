@@ -95,7 +95,7 @@ class AbstractProduct extends DataObject\Concrete
     public function getVariants(): array
     {
         $variantType = self::OBJECT_TYPE_VARIANT; //variant
-        $variants = $this->getChildren(array($variantType));
+        $variants = $this->getChildren(array($variantType))->load();
         return $variants;
     }
 }

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.date");
+/**
+ * @private
+ */
 pimcore.document.editables.date = Class.create(pimcore.document.editable, {
 
     initialize: function($super, id, name, config, data, inherited) {

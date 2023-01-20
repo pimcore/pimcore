@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.selector.document");
+/**
+ * @private
+ */
 pimcore.element.selector.document = Class.create(pimcore.element.selector.abstract, {
 
     initStore: function () {
@@ -211,7 +214,16 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 store: this.store,
                 columns: columns,
                 viewConfig: {
-                    forceFit: true
+                    forceFit: true,
+                    listeners: {
+                        refresh: function (dataview) {
+                            Ext.each(dataview.panel.columns, function (column) {
+                                if (column.autoSizeColumn === true) {
+                                    column.autoSize();
+                                }
+                            })
+                        }
+                    }
                 },
                 loadMask: true,
                 columnLines: true,

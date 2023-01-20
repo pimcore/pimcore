@@ -109,27 +109,6 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
 
-                        ->arrayNode('data_object')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->arrayNode('translation_extractor')
-                                    ->children()
-                                        ->arrayNode('attributes')
-                                            ->info('Can be used to restrict the extracted localized fields (e.g. used by XLIFF exporter in the Pimcore backend)')
-                                            ->prototype('array')
-                                                ->prototype('scalar')->end()
-                                            ->end()
-                                            ->example(
-                                                [
-                                                    'Product' => ['name', 'description'],
-                                                    'Brand' => ['name'],
-                                                ]
-                                            )
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
                     ->end()
                 ->end()
                 ->arrayNode('maps')
@@ -170,10 +149,8 @@ final class Configuration implements ConfigurationInterface
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
-        $this->addStaticRoutesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
-        $this->addGlossaryNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
 
@@ -284,11 +261,6 @@ final class Configuration implements ConfigurationInterface
                         })
                     ->end()
                     ->defaultFalse()
-                ->end()
-                ->scalarNode('instance_identifier')
-                    ->defaultNull()
-                    ->info('UUID instance identifier. Has to be unique throughout multiple Pimcore instances. UUID generation will be automatically enabled if a Instance identifier is provided (do not change the instance identifier afterwards - this will cause invalid UUIDs)')
-                    ->end()
                 ->end()
             ->end();
     }
@@ -908,7 +880,11 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('types')
                     ->info('list of supported document types')
-                    ->scalarPrototype()->end()
+                    ->scalarPrototype()
+                    ->setDeprecated(
+                        'pimcore/pimcore',
+                        '10.6',
+                        'The "%node%" option is deprecated since Pimcore 10.6, it will be removed in Pimcore 11. The types will then be represented by the keys of the type_definitions:map')->end()
                 ->end()
                 ->arrayNode('valid_tables')
                     ->info('list of supported documents_* tables')
@@ -983,6 +959,8 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                 ->end()
             ->end();
+
+        $this->addImplementationLoaderNode($documentsNode, 'type_definitions');
     }
 
     /**
@@ -1014,20 +992,6 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->booleanNode('allow_processing_unpublished_fallback_document')
-                            ->beforeNormalization()
-                                ->ifString()
-                                ->then(function ($v) {
-                                    return (bool)$v;
-                                })
-                            ->end()
-                            ->defaultFalse()
-                            ->setDeprecated(
-                                'pimcore/pimcore',
-                                '10.1',
-                                'The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.'
-                            )
-                        ->end()
                         ->arrayNode('direct_route_document_types')
                             ->scalarPrototype()->end()
                         ->end()
@@ -1639,7 +1603,7 @@ final class Configuration implements ConfigurationInterface
                                             ->scalarNode('guard')
                                                 ->cannotBeEmpty()
                                                 ->info('An expression to block the transition')
-                                                ->example('is_fully_authenticated() and has_role(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
+                                                ->example('is_fully_authenticated() and is_granted(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
                                             ->end()
                                             ->arrayNode('from')
                                                 ->beforeNormalization()
@@ -1814,7 +1778,7 @@ final class Configuration implements ConfigurationInterface
                                             ->scalarNode('guard')
                                                 ->cannotBeEmpty()
                                                 ->info('An expression to block the action')
-                                                ->example('is_fully_authenticated() and has_role(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
+                                                ->example('is_fully_authenticated() and is_granted(\'ROLE_JOURNALIST\') and subject.getTitle() == \'My first article\'')
                                             ->end()
                                             ->arrayNode('to')
                                                 ->beforeNormalization()
@@ -1962,44 +1926,6 @@ final class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Add static routes specific extension config
-     */
-    private function addStaticroutesNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-        ->children()
-            ->arrayNode('staticroutes')
-                ->ignoreExtraKeys()
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('definitions')
-                    ->normalizeKeys(false)
-                        ->prototype('array')
-                            ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('pattern')->end()
-                                ->scalarNode('reverse')->end()
-                                ->scalarNode('controller')->end()
-                                ->scalarNode('variables')->end()
-                                ->scalarNode('defaults')->end()
-                                ->arrayNode('siteId')
-                                    ->integerPrototype()->end()
-                                ->end()
-                                ->arrayNode('methods')
-                                    ->scalarPrototype()->end()
-                                ->end()
-                                ->integerNode('priority')->end()
-                                ->integerNode('creationDate')->end()
-                                ->integerNode('modificationDate')->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
-    }
-
-    /**
      * Add perspectives specific extension config
      */
     private function addPerspectivesNode(ArrayNodeDefinition $rootNode): void
@@ -2092,18 +2018,6 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
-    }
-
-    private function addGlossaryNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('glossary')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('blocked_tags')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar');
     }
 
     private function addTemplatingEngineNode(ArrayNodeDefinition $rootNode): void

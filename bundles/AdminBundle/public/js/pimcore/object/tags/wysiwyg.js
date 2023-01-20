@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.wysiwyg");
+/**
+ * @private
+ */
 pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     type: "wysiwyg",

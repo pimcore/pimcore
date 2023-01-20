@@ -35,6 +35,7 @@ abstract class AbstractRelations extends Data implements
     Data\IdRewriterInterface
 {
     use DataObject\Traits\ContextPersistenceTrait;
+    use Data\Extension\Relation;
 
     const RELATION_ID_SEPARATOR = '$$';
 
@@ -64,9 +65,7 @@ abstract class AbstractRelations extends Data implements
     public ?string $pathFormatterClass = null;
 
     /**
-     * @return array[
-     *  'classes' => string,
-     * ]
+     * @return array<array{classes: string}>
      */
     public function getClasses(): array
     {
@@ -203,8 +202,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return mixed
      *
-     *@internal
-     *
+     * @internal
      */
     abstract protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed;
 
@@ -219,7 +217,7 @@ abstract class AbstractRelations extends Data implements
      */
     abstract protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed;
 
-    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
     }
 
@@ -239,8 +237,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     protected function rewriteIdsService(mixed $data, array $idMapping): array
     {
@@ -263,7 +260,7 @@ abstract class AbstractRelations extends Data implements
         return $this->pathFormatterClass;
     }
 
-    public function setPathFormatterClass(?string $pathFormatterClass)
+    public function setPathFormatterClass(?string $pathFormatterClass): void
     {
         $this->pathFormatterClass = $pathFormatterClass;
     }
@@ -334,8 +331,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     protected function buildUniqueKeyForAppending(Element\ElementInterface $item): string
     {
@@ -387,7 +383,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @throws \Exception
      */
-    protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
+    protected function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item): void
     {
         if ($item->getObject()) {
             /** @var DataObject\Fieldcollection|null $container */
@@ -408,7 +404,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @throws \Exception
      */
-    protected function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
+    protected function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item): void
     {
         if ($item->getObject()) {
             $fieldName = $item->getFieldName();
@@ -431,10 +427,9 @@ abstract class AbstractRelations extends Data implements
      *
      * @throws Element\ValidationException
      *
-     *@internal
-     *
+     * @internal
      */
-    public function performMultipleAssignmentCheck(?array $data)
+    public function performMultipleAssignmentCheck(?array $data): void
     {
         if (is_array($data)) {
             if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {

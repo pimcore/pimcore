@@ -132,5 +132,5 @@ interface RuleInterface
     /**
      * delete item
      */
-    public function delete();
+    public function delete(): void;
 }

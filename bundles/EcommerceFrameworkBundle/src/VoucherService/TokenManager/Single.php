@@ -56,7 +56,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return true;
     }
 
-    public function cleanupReservations(int $duration = 0, ?string $seriesId = null): bool
+    public function cleanupReservations(int $duration = 0, ?int $seriesId = null): bool
     {
         return Reservation::cleanUpReservations($duration, $seriesId);
     }
@@ -156,7 +156,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return Token\Listing::getCodes($this->seriesId, $filter);
     }
 
-    protected function prepareUsageStatisticData(&$data, $usagePeriod)
+    protected function prepareUsageStatisticData(array &$data, ?int $usagePeriod): void
     {
         $now = new \DateTime();
         $periodData = [];
@@ -263,22 +263,22 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return $this->configuration;
     }
 
-    public function setConfiguration(VoucherTokenTypeSingle $configuration)
+    public function setConfiguration(VoucherTokenTypeSingle $configuration): void
     {
         $this->configuration = $configuration;
     }
 
-    public function getSeriesId(): int|string|null
+    public function getSeriesId(): int|null
     {
         return $this->seriesId;
     }
 
-    public function setSeriesId(int|string|null $seriesId)
+    public function setSeriesId(int|null $seriesId): void
     {
         $this->seriesId = $seriesId;
     }
 
-    public function setTemplate(string $template)
+    public function setTemplate(string $template): void
     {
         $this->template = $template;
     }

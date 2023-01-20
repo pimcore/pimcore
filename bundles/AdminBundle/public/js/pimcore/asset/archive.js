@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.archive");
+/**
+ * @private
+ */
 pimcore.asset.archive = Class.create(pimcore.asset.asset, {
 
     initialize: function(id, options) {
@@ -25,11 +28,15 @@ pimcore.asset.archive = Class.create(pimcore.asset.asset, {
             detail: {
                 object: this,
                 type: "archive"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenAssetArchive);
-
+        const isAllowed = document.dispatchEvent(preOpenAssetArchive);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         var user = pimcore.globalmanager.get("user");
 

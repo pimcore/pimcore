@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.log.admin");
+/**
+ * @private
+ */
 pimcore.log.admin = Class.create({
 
     initialize: function (config) {

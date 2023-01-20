@@ -32,7 +32,7 @@ class CartFactory implements CartFactoryInterface
         $this->options = $resolver->resolve($options);
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['cart_class_name']);
 

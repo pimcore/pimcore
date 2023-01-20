@@ -55,7 +55,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
         $this->translator = $translator;
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         // set language
         $user = $this->tokenResolver->getUser();
@@ -163,7 +163,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
      *
      * @Route("/generate", name="pimcore_ecommerce_backend_voucher_generate", methods={"GET"})
      */
-    public function generateAction(Request $request)
+    public function generateAction(Request $request): Response
     {
         $onlineShopVoucherSeries = OnlineShopVoucherSeries::getById((int) $request->get('id'));
 
@@ -187,6 +187,8 @@ class VoucherController extends FrontendController implements KernelControllerEv
                 $params
             );
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**
@@ -194,7 +196,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
      *
      * @Route("/cleanup", name="pimcore_ecommerce_backend_voucher_cleanup", methods={"POST"})
      */
-    public function cleanupAction(Request $request)
+    public function cleanupAction(Request $request): Response
     {
         $onlineShopVoucherSeries = OnlineShopVoucherSeries::getById((int) $request->get('id'));
 
@@ -220,6 +222,8 @@ class VoucherController extends FrontendController implements KernelControllerEv
                 $params
             );
         }
+
+        throw $this->createNotFoundException();
     }
 
     /**

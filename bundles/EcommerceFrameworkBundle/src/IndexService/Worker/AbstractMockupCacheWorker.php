@@ -51,7 +51,7 @@ abstract class AbstractMockupCacheWorker extends ProductCentricBatchProcessingWo
      *
      * @param int $objectId
      */
-    protected function deleteFromMockupCache(int $objectId)
+    protected function deleteFromMockupCache(int $objectId): void
     {
         $key = $this->getMockupCachePrefix() . '_' . $this->name . '_' . $objectId;
         Cache::remove($key);
