@@ -106,7 +106,7 @@ class Folder extends DAV\Collection
      *
      * @return null
      */
-    public function createFile($name, $data = null): null
+    public function createFile($name, $data = null)
     {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-dav-tmp-file-' . uniqid();
         if (is_resource($data)) {

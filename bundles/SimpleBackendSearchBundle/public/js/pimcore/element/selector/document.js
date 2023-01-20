@@ -213,7 +213,16 @@ pimcore.bundle.search.element.selector.document = Class.create(pimcore.bundle.se
                 store: this.store,
                 columns: columns,
                 viewConfig: {
-                    forceFit: true
+                    forceFit: true,
+                    listeners: {
+                        refresh: function (dataview) {
+                            Ext.each(dataview.panel.columns, function (column) {
+                                if (column.autoSizeColumn === true) {
+                                    column.autoSize();
+                                }
+                            })
+                        }
+                    }
                 },
                 loadMask: true,
                 columnLines: true,

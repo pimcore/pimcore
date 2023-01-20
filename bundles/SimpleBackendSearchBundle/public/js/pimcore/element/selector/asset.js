@@ -284,7 +284,16 @@ pimcore.bundle.search.element.selector.asset = Class.create(pimcore.bundle.searc
                 stripeRows: true,
                 viewConfig: {
                     forceFit: true,
-                    markDirty: false
+                    markDirty: false,
+                    listeners: {
+                        refresh: function (dataview) {
+                            Ext.each(dataview.panel.columns, function (column) {
+                                if (column.autoSizeColumn === true) {
+                                    column.autoSize();
+                                }
+                            })
+                        }
+                    }
                 },
                 plugins: ['gridfilters'],
                 selModel: this.getGridSelModel(),

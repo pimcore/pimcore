@@ -153,6 +153,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     name: 'regexflags',
                     triggerAction: "all",
                     selectOnFocus: true,
+                    forceSelection: true,
                     store: new Ext.data.ArrayStore({
                         fields: [
                             'value',

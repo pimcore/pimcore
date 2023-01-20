@@ -17,6 +17,9 @@ return [
     "Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\FileExplorerBundle\\PimcoreFileExplorerBundle" => [
+        "all" => TRUE
+    ],
     "Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle" => [
         "all" => TRUE
     ],

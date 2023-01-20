@@ -321,7 +321,7 @@ class Multiselect extends Data implements
         }
 
         if (!is_array($data) && !empty($data)) {
-            throw new Model\Element\ValidationException('Invalid multiselect data');
+            throw new Model\Element\ValidationException("Invalid multiselect data on field [ {$this->getName()} ]");
         }
     }
 

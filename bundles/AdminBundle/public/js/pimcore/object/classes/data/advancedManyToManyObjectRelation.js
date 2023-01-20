@@ -126,26 +126,6 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
 
         this.specificPanel.add(this.classCombo);
 
-        const displayModeStore = [
-            ['grid', t('display_mode_grid')]
-        ];
-        if(pimcore.helpers.hasSearchImplementation()) {
-            displayModeStore.push(['combo', t('display_mode_combo')]);
-        }
-
-        this.specificPanel.add(
-            {
-                xtype: "combo",
-                fieldLabel: t("display_mode"),
-                name: "displayMode",
-                value: this.datax.displayMode ?? 'grid',
-                labelWidth: 140,
-                forceSelection: true,
-                width: 400,
-                store: displayModeStore
-            }
-        );
-
         this.fieldStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',

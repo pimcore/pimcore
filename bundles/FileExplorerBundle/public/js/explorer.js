@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.fileexplorer.explorer");
+pimcore.registerNS("pimcore.bundle.fileexplorer.explorer");
 /**
  * @private
  */
-pimcore.settings.fileexplorer.explorer = Class.create({
+pimcore.bundle.fileexplorer.explorer = Class.create({
 
     initialize: function () {
 
@@ -23,7 +23,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
         this.panel = new Ext.Panel({
             id: "pimcore_fileexplorer",
-            title: t("server_fileexplorer"),
+            title: t("pimcore_file_explorer_bundle_server_file_explorer"),
             iconCls: "pimcore_icon_folder pimcore_icon_overlay_search",
             border: false,
             layout: "border",
@@ -37,7 +37,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
 
         this.panel.on("destroy", function () {
-            pimcore.globalmanager.remove("fileexplorer");
+            pimcore.globalmanager.remove("bundle_file_explorer");
         }.bind(this));
     },
 
@@ -48,7 +48,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
             var store = Ext.create('Ext.data.TreeStore', {
                 proxy: {
                     type: 'ajax',
-                    url: Routing.generate('pimcore_admin_misc_fileexplorertree')
+                    url: Routing.generate('pimcore_bundle_file_explorer_settings_tree')
                 },
                 folderSort: true,
                 sorters: [{
@@ -71,7 +71,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                     type: "folder",
                     expanded: true,
                     id: '/fileexplorer/',
-                    text: t("document_root"),
+                    text: t("pimcore_file_explorer_bundle_document_root"),
                     writeable: true
                 },
                 listeners: {
@@ -96,21 +96,21 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
         if (record.data.type == "folder") {
             menu.add(new Ext.menu.Item({
-                text: t('new_file'),
+                text: t('pimcore_file_explorer_bundle_new_file'),
                 iconCls: "pimcore_icon_file pimcore_icon_overlay_add",
                 handler: this.addNewFile.bind(this, record),
                 disabled: !record.data.writeable
             }));
 
             menu.add(new Ext.menu.Item({
-                text: t('new_folder'),
+                text: t('pimcore_file_explorer_bundle_new_folder'),
                 iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                 handler: this.addNewFolder.bind(this, record),
                 disabled: !record.data.writeable
             }));
 
             menu.add(new Ext.menu.Item({
-                text: t('reload'),
+                text: t('pimcore_file_explorer_bundle_reload'),
                 iconCls: "pimcore_icon_reload",
                 handler: function (node) {
                     this.treePanel.getStore().load({
@@ -120,7 +120,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
             }));
         } else if (record.data.type == "file") {
             menu.add(new Ext.menu.Item({
-                text: t('delete'),
+                text: t('pimcore_file_explorer_bundle_delete'),
                 iconCls: "pimcore_icon_delete",
                 handler: this.deleteFile.bind(this, record),
                 disabled: !record.data.writeable
@@ -129,7 +129,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
         if (record.parentNode) {
             menu.add(new Ext.menu.Item({
-                text: t('rename'),
+                text: t('pimcore_file_explorer_bundle_rename'),
                 iconCls: "pimcore_icon_key",
                 handler: this.rename.bind(this, record),
                 disabled: !record.data.writeable
@@ -141,10 +141,10 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
     addNewFile: function (node) {
 
-        Ext.MessageBox.prompt(t('new_file'), t('enter_the_name_of_the_new_item'),
+        Ext.MessageBox.prompt(t('pimcore_file_explorer_bundle_new_file'), t('pimcore_file_explorer_bundle_enter_name'),
             function (node, button, value) {
                 Ext.Ajax.request({
-                    url: Routing.generate('pimcore_admin_misc_fileexploreradd'),
+                    url: Routing.generate('pimcore_bundle_file_explorer_settings_add'),
                     method: "POST",
                     success: function (node, response) {
                         node.data.loaded = false;
@@ -166,10 +166,10 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
     addNewFolder: function (node) {
 
-        Ext.MessageBox.prompt(t('new_folder'), t('enter_the_name_of_the_new_item'),
+        Ext.MessageBox.prompt(t('pimcore_file_explorer_bundle_new_folder'), t('pimcore_file_explorer_bundle_enter_name'),
             function (node, button, value) {
                 Ext.Ajax.request({
-                    url: Routing.generate('pimcore_admin_misc_fileexploreraddfolder'),
+                    url: Routing.generate('pimcore_bundle_file_explorer_settings_addfolder'),
                     method: "POST",
                     success: function (node, response) {
                         node.data.loaded = false;
@@ -192,11 +192,11 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
     rename: function (node) {
 
-        Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
+        Ext.MessageBox.prompt(t('pimcore_file_explorer_bundle_rename'), t('pimcore_file_explorer_bundle_enter_new_name'),
             function (node, button, value) {
                 if (button == "ok") {
                     Ext.Ajax.request({
-                        url: Routing.generate('pimcore_admin_misc_fileexplorerrename'),
+                        url: Routing.generate('pimcore_bundle_file_explorer_settings_rename'),
                         method: 'PUT',
                         success: function (node, response) {
                             if (this.openfiles[node.id]) {
@@ -226,7 +226,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
     deleteFile: function (node) {
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_misc_fileexplorerdelete'),
+            url: Routing.generate('pimcore_bundle_file_explorer_settings_delete'),
             method: 'DELETE',
             success: function (node, response) {
                 this.treePanel.getStore().load({
@@ -256,7 +256,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
         if (typeof this.openfiles[path] != "undefined") {
             this.openfiles[path].activate();
         } else {
-            this.openfiles[path] = new pimcore.settings.fileexplorer.file(path, this);
+            this.openfiles[path] = new pimcore.bundle.fileexplorer.file(path, this);
         }
     },
 
