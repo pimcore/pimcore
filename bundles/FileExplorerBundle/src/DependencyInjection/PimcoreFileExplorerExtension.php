@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -14,16 +13,16 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\GlossaryBundle\DependencyInjection;
+namespace Pimcore\Bundle\FileExplorerBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-final class PimcoreGlossaryExtension extends ConfigurableExtension
+class PimcoreFileExplorerExtension extends Extension
 {
-    public function loadInternal(array $config, ContainerBuilder $container): void
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(
             $container,
@@ -31,7 +30,5 @@ final class PimcoreGlossaryExtension extends ConfigurableExtension
         );
 
         $loader->load('services.yaml');
-
-        $container->setParameter('pimcore_glossary.blocked_tags', $config['blocked_tags']);
     }
 }
