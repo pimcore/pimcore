@@ -48,9 +48,11 @@ class PimcoreGoogleMarketingBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/pimcoregooglemarketing/js/startup.js',
+            '/bundles/pimcoregooglemarketing/js/layout/portlets/analytics.js',
             '/bundles/pimcoregooglemarketing/js/report/analytics/elementexplorer.js',
             '/bundles/pimcoregooglemarketing/js/report/analytics/elementoverview.js',
             '/bundles/pimcoregooglemarketing/js/report/analytics/settings.js',
+            '/bundles/pimcoregooglemarketing/js/report/custom/definitions/analytics.js',
             '/bundles/pimcoregooglemarketing/js/report/tagmanager/settings.js',
             '/bundles/pimcoregooglemarketing/js/report/webmastertools/settings.js',
         ];

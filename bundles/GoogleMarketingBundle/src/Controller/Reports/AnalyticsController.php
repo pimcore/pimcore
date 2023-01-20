@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,10 +15,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Controller\Reports;
 
 use Google\Service\Analytics;
-use Pimcore\Bundle\GoogleMarketingBundle\Analytics\Google\Config\SiteConfigProvider;
+use Pimcore\Bundle\AdminBundle\Controller\Reports\ReportsControllerBase;
+use Pimcore\Bundle\GoogleMarketingBundle\Config\SiteConfigProvider;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Google;
 use Pimcore\Model\Document;
@@ -29,7 +31,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/analytics")
+ * @Route("/reports/analytics")
  *
  * @internal
  */
@@ -38,7 +40,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     protected Analytics $service;
 
     /**
-     * @Route("/deeplink", name="pimcore_admin_reports_analytics_deeplink", methods={"GET"})
+     * @Route("/deeplink", name="pimcore_bundle_googlemarketing_reports_analytics_deeplink", methods={"GET"})
      *
      *
      */
@@ -54,7 +56,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     }
 
     /**
-     * @Route("/get-profiles", name="pimcore_admin_reports_analytics_getprofiles", methods={"GET"})
+     * @Route("/get-profiles", name="pimcore_bundle_googlemarketing_reports_analytics_getprofiles", methods={"GET"})
      *
      * @param Request $request
      *
@@ -142,7 +144,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     }
 
     /**
-     * @Route("/chartmetricdata", name="pimcore_admin_reports_analytics_chartmetricdata", methods={"GET"})
+     * @Route("/chartmetricdata", name="pimcore_bundle_googlemarketing_reports_analytics_chartmetricdata", methods={"GET"})
      *
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
@@ -225,7 +227,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     }
 
     /**
-     * @Route("/summary", name="pimcore_admin_reports_analytics_summary", methods={"GET"})
+     * @Route("/summary", name="pimcore_bundle_googlemarketing_reports_analytics_summary", methods={"GET"})
      *
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
@@ -303,7 +305,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     }
 
     /**
-     * @Route("/source", name="pimcore_admin_reports_analytics_source", methods={"GET"})
+     * @Route("/source", name="pimcore_bundle_googlemarketing_reports_analytics_source", methods={"GET"})
      *
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
@@ -357,7 +359,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     }
 
     /**
-     * @Route("/data-explorer", name="pimcore_admin_reports_analytics_dataexplorer", methods={"GET", "POST"})
+     * @Route("/data-explorer", name="pimcore_bundle_googlemarketing_reports_analytics_dataexplorer", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
@@ -428,7 +430,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     }
 
     /**
-     * @Route("/get-dimensions", name="pimcore_admin_reports_analytics_getdimensions", methods={"GET"})
+     * @Route("/get-dimensions", name="pimcore_bundle_googlemarketing_reports_analytics_getdimensions", methods={"GET"})
      *
      * @param Request $request
      *
@@ -440,7 +442,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     }
 
     /**
-     * @Route("/get-metrics", name="pimcore_admin_reports_analytics_getmetrics", methods={"GET"})
+     * @Route("/get-metrics", name="pimcore_bundle_googlemarketing_reports_analytics_getmetrics", methods={"GET"})
      *
      * @param Request $request
      *
@@ -452,7 +454,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
     }
 
     /**
-     * @Route("/get-segments", name="pimcore_admin_reports_analytics_getsegments", methods={"GET"})
+     * @Route("/get-segments", name="pimcore_bundle_googlemarketing_reports_analytics_getsegments", methods={"GET"})
      *
      * @param Request $request
      *

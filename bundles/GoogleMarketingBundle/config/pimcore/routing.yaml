@@ -1,0 +1,6 @@
+_pimcore_bundle_googlemarketing_backend:
+    resource: "../../src/Controller/"
+    type:     annotation
+    prefix:   /admin/bundle/googlemarketing
+    options:
+        expose: true

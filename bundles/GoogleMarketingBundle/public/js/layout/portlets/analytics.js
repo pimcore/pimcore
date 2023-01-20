@@ -42,7 +42,7 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_reports_analytics_chartmetricdata', {metric: ['visits', 'pageviews'], site: site}),
+                url: Routing.generate('pimcore_bundle_googlemarketing_reports_analytics_chartmetricdata', {metric: ['visits', 'pageviews'], site: site}),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'

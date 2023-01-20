@@ -72,7 +72,7 @@ pimcore.google_marketing.report.analytics.element_explorer = Class.create(pimcor
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_reports_analytics_dataexplorer'),
+                url: Routing.generate('pimcore_bundle_googlemarketing_reports_analytics_dataexplorer'),
                 extraParams: {
                     type: type,
                     id: id,
@@ -168,7 +168,7 @@ pimcore.google_marketing.report.analytics.element_explorer = Class.create(pimcor
                                 autoLoad: true,
                                 proxy: {
                                     type: 'ajax',
-                                    url: Routing.generate('pimcore_admin_reports_analytics_getdimensions'),
+                                    url: Routing.generate('pimcore_bundle_googlemarketing_reports_analytics_getdimensions'),
                                     reader: {
                                         type: 'json',
                                         rootProperty: "data",
@@ -193,7 +193,7 @@ pimcore.google_marketing.report.analytics.element_explorer = Class.create(pimcor
                                 autoLoad: true,
                                 proxy: {
                                     type: 'ajax',
-                                    url: Routing.generate('pimcore_admin_reports_analytics_getmetrics'),
+                                    url: Routing.generate('pimcore_bundle_googlemarketing_reports_analytics_getmetrics'),
                                     reader: {
                                         type: 'json',
                                         rootProperty: "data",

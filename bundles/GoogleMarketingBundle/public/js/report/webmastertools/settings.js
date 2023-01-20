@@ -12,6 +12,7 @@
  */
 
 pimcore.registerNS("pimcore.google_marketing.report.webmaster_tools.settings");
+
 /**
  * @private
  */

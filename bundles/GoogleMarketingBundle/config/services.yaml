@@ -10,9 +10,17 @@ services:
         public: true
         arguments:
             $bundle: "@=service('kernel').getBundle('PimcoreGoogleMarketingBundle')"
+
     #
-    # GOOGLE
+    # CONTROLLERS
     #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\GoogleMarketingBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: [ 'controller.service_arguments' ]
+
 
     Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteIdProvider: ~
     Pimcore\Bundle\GoogleMarketingBundle\Config\ConfigProvider: ~

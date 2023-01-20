@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Code;
 
-use Pimcore\Analytics\Code\CodeBlock;
+use Pimcore\Bundle\GoogleMarketingBundle\Code\CodeBlock;
 use Pimcore\Event\Targeting\TargetingCodeEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Targeting\Model\VisitorInfo;
