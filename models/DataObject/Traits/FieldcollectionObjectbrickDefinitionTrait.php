@@ -46,6 +46,9 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->key;
     }
 
+    /**
+     * @return $this
+     */
     public function setKey(?string $key): static
     {
         $this->key = $key;
@@ -58,6 +61,9 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->parentClass;
     }
 
+    /**
+     * @return $this
+     */
     public function setParentClass(?string $parentClass): static
     {
         $this->parentClass = $parentClass;
@@ -70,6 +76,9 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->title;
     }
 
+    /**
+     * @return $this
+     */
     public function setTitle(?string $title): static
     {
         $this->title = $title;
@@ -82,6 +91,9 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->layoutDefinitions;
     }
 
+    /**
+     * @return $this
+     */
     public function setLayoutDefinitions(?Layout $layoutDefinitions): static
     {
         if ($layoutDefinitions) {
@@ -99,6 +111,9 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->group;
     }
 
+    /**
+     * @return $this
+     */
     public function setGroup(?string $group): static
     {
         $this->group = $group;
@@ -111,6 +126,9 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->implementsInterfaces;
     }
 
+    /**
+     * @return $this
+     */
     public function setImplementsInterfaces(?string $implementsInterfaces): static
     {
         $this->implementsInterfaces = $implementsInterfaces;
