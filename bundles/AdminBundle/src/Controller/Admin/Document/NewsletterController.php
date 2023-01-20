@@ -26,7 +26,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Listing;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Tool;
-use Pimcore\Model\Tool\CustomReport\Config;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Pimcore\Tool\Newsletter;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;

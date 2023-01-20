@@ -240,7 +240,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
             // this stuff is used to decide whether the "add" button should be grayed out or not
             'image-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable(),
             'video-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Video\Thumbnail\Config())->isWriteable(),
-            'custom-reports-writeable'            => (new \Pimcore\Model\Tool\CustomReport\Config())->isWriteable(),
             'document-types-writeable'            => (new DocType())->isWriteable(),
             'web2print-writeable'                 => \Pimcore\Web2Print\Config::isWriteable(),
             'predefined-properties-writeable'     => (new \Pimcore\Model\Property\Predefined())->isWriteable(),

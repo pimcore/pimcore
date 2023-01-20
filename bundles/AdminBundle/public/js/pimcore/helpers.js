@@ -2844,20 +2844,6 @@ pimcore.helpers.applicationLogger = function() {
     }
 };
 
-pimcore.helpers.reports = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("reports")) {
-        pimcore.layout.toolbar.prototype.showReports(null);
-    }
-};
-
-pimcore.helpers.customReports = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("reports")) {
-        pimcore.layout.toolbar.prototype.showCustomReports();
-    }
-};
-
 pimcore.helpers.tagConfiguration = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("tags_configuration")) {
@@ -2917,9 +2903,7 @@ pimcore.helpers.keyBindingMapping = {
     "recycleBin": pimcore.helpers.recycleBin,
     "notesEvents": pimcore.helpers.notesEvents,
     "applicationLogger": pimcore.helpers.applicationLogger,
-    "reports": pimcore.helpers.reports,
     "tagManager": pimcore.helpers.tagManager,
-    "customReports": pimcore.helpers.customReports,
     "tagConfiguration": pimcore.helpers.tagConfiguration,
     "users": pimcore.helpers.users,
     "roles": pimcore.helpers.roles,
@@ -3246,7 +3230,7 @@ pimcore.helpers.buildMenu = function(items) {
             items.splice(i, 1);
             continue;
         }
-        
+
         pimcore.helpers.buildMenu(items[i].menu.items);
         items[i].menu = Ext.create('pimcore.menu.menu', items[i].menu);
     }

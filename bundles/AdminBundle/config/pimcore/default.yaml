@@ -121,19 +121,9 @@ pimcore_admin:
                 action: applicationLogger
                 ctrl: true
                 alt: true
-            reports:
-                key: 'M'
-                action: reports
-                ctrl: true
-                alt: true
             tag_manager:
                 key: 'H'
                 action: tagManager
-                ctrl: true
-                alt: true
-            custom_reports:
-                key: 'C'
-                action: customReports
                 ctrl: true
                 alt: true
             tag_configuration:

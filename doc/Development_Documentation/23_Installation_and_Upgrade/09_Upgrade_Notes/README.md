@@ -113,6 +113,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - Staticroutes has been moved into PimcoreStaticRoutesBundle
       - Config `pimcore:staticroutes:` has been removed, please use `pimcore_static_routes:` in the PimcoreStaticRoutesBundle instead.
     - Xliff Translation Import/Export and related Events have been moved into PimcoreXliffBundle. Please check and adapt the Events' namespaces.
+    - CustomReports have been moved into PimcoreCustomReportsBundle
+      - Config `pimcore:custom_reports` has been removed, please use `pimcore_custom_reports:` in the PimcoreCustomReportsBundle insteand.
     - Search has been moved into PimcoreSimpleBackendSearchBundle
     - SEO Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
     - WordExport has been moved into PimcoreWordExportBundle
