@@ -280,6 +280,8 @@ pimcore.layout.toolbar = Class.create({
              }
 
              menu.file = {
+                 label: 'file',
+                 iconCls: 'file',
                  items: fileItems,
                  shadow: false,
                  listeners: true,
@@ -435,6 +437,8 @@ pimcore.layout.toolbar = Class.create({
              // adding menu even though extraItems can be empty
              // items can be added via event later
              menu.extras = {
+                 label: 'tools',
+                 iconCls: 'build',
                  items: extrasItems,
                  shadow: false,
                  listeners: true,
@@ -509,6 +513,8 @@ pimcore.layout.toolbar = Class.create({
              }
 
              menu.marketing = {
+                 label: 'marketing',
+                 iconCls: 'marketing',
                  items: marketingItems,
                  shadow: false,
                  listeners: true,
@@ -890,6 +896,8 @@ pimcore.layout.toolbar = Class.create({
  
              // help menu
             menu.settings = {
+                label: 'settings',
+                iconCls: 'settings',
                 items: settingsItems,
                 shadow: false,
                 listeners: true,
@@ -955,6 +963,8 @@ pimcore.layout.toolbar = Class.create({
  
              if (searchItems.length > 0) {
                  menu.search = {
+                     label: 'search',
+                     iconCls: 'search',
                      items: searchItems,
                      shadow: false,
                      listeners: true,
@@ -1036,6 +1046,7 @@ pimcore.layout.toolbar = Class.create({
                  shadow: false,
                  listeners: false,
                  cls: "pimcore_navigation_flyout",
+                 exclude: true,
              };
          }
 
@@ -1047,6 +1058,9 @@ pimcore.layout.toolbar = Class.create({
          });
 
          document.dispatchEvent(preMenuBuild);
+
+         // building the html markup for the main navigation
+         pimcore.helpers.buildMainNavigationMarkup(menu);
 
          if(Object.keys(menu).length !== 0) {
              Object.keys(menu).forEach(key => {
@@ -1076,27 +1090,16 @@ pimcore.layout.toolbar = Class.create({
                      }
 
                      // Adding single main menu item
-                     this[key + 'Menu'] = Ext.create('pimcore.menu.menu', menuItem);
+                     let menuKey = key + 'Menu';
+                     this[menuKey] = Ext.create('pimcore.menu.menu', menuItem);
+                     if(!menu[key]['exclude']) {
+                         // make sure the elements are clickable
+                         Ext.get("pimcore_menu_" + key).on("mousedown", this.showSubMenu.bind(this[menuKey]));
+                     }
                  }
              });
          }
- 
- 
-         if (this.fileMenu) {
-             Ext.get("pimcore_menu_file").on("mousedown", this.showSubMenu.bind(this.fileMenu));
-         }
-         if (this.extrasMenu) {
-             Ext.get("pimcore_menu_extras").on("mousedown", this.showSubMenu.bind(this.extrasMenu));
-         }
-         if (this.marketingMenu) {
-             Ext.get("pimcore_menu_marketing").on("mousedown", this.showSubMenu.bind(this.marketingMenu));
-         }
-         if (this.settingsMenu) {
-             Ext.get("pimcore_menu_settings").on("mousedown", this.showSubMenu.bind(this.settingsMenu));
-         }
-         if (this.searchMenu) {
-             Ext.get("pimcore_menu_search").on("mousedown", this.showSubMenu.bind(this.searchMenu));
-         }
+
          if (pimcore.settings.notifications_enabled && this.notificationMenu) {
              Ext.get('pimcore_notification').show();
              Ext.get("pimcore_notification").on("mousedown", this.showSubMenu.bind(this.notificationMenu));

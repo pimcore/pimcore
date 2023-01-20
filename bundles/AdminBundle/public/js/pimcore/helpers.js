@@ -3232,6 +3232,10 @@ pimcore.helpers.buildMenu = function(items) {
             continue;
         }
 
+        if(null === items[i].menu) {
+            continue;
+        }
+
         // if the submenu has no items, remove the submenu itself
         if(items[i].menu.items.length === 0){
             items.splice(i, 1);
@@ -3242,3 +3246,76 @@ pimcore.helpers.buildMenu = function(items) {
         items[i].menu = Ext.create('pimcore.menu.menu', items[i].menu);
     }
 };
+
+pimcore.helpers.buildMainNavigationMarkup = function(menu) {
+    // priority for main menu starts at 10
+    // leaving enough space for bundles etc.
+
+    let priority = 10;
+    Object.keys(menu).forEach(key => {
+        if(menu[key].priority === undefined) {
+            menu[key].priority = priority;
+            priority += 10;
+        }
+    });
+
+
+    // sorting must be done manually here.
+    let sortedMenu = {};
+    Object.keys(menu).sort(function(a, b){
+        // a and b are the keys like file, extras e.t.c
+        // we use the keys to get the menu object themselfes with the priorities
+        return pimcore.helpers.priorityCompare(menu[a], menu[b]);
+    }).forEach(function(key) {
+        // after sorting the keys we then build a new sorted menu
+        sortedMenu[key] = menu[key];
+    });
+
+    let dh = Ext.DomHelper;
+    let ul = Ext.get("pimcore_navigation_ul");
+    const menuPrefix = 'pimcore_menu_';
+
+    Object.keys(sortedMenu).forEach(key => {
+        // the notifications are excluded from this
+        if(!sortedMenu[key]['exclude']) {
+            let li = {
+                id: menuPrefix + key,
+                tag: 'li',
+                cls: 'pimcore_menu_item pimcore_menu_needs_children',
+                html: '<div id="menuitem-' + key + '-iconEl" data-ref="iconEl" class="x-menu-item-main-icon x-menu-item-icon pimcore_main_nav_icon_' + sortedMenu[key]['iconCls'] + '"></div>',
+                'data-menu-tooltip': t(sortedMenu[key]['label'])
+            }
+            if(sortedMenu[key]['style']) {
+                li.style = sortedMenu[key]['style'];
+            }
+            dh.append(ul, li)
+        }
+    })
+
+    // add the maintenance at last
+    dh.append(ul,
+        {
+            id: menuPrefix + 'maintenance',
+            tag: 'li',
+            cls: 'pimcore_menu_item',
+            style: 'display:none;',
+            'data-menu-tooltip': t('deactivate_maintenance')
+        }
+    )
+}
+
+pimcore.helpers.priorityCompare = function(a, b) {
+    let priorityA = a.priority ?? Number.MAX_VALUE;
+    let priorityB = b.priority ?? Number.MAX_VALUE;
+
+    if(priorityA > priorityB) {
+        return 1;
+    }
+
+    if(priorityA < priorityB) {
+        return -1;
+    }
+
+    return 0;
+}
+
