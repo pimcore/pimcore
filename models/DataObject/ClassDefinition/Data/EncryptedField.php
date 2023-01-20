@@ -325,7 +325,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             }
         }
 
-        return $data;
+        return $data ?? [];
     }
 
     /**

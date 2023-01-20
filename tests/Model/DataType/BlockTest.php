@@ -47,7 +47,7 @@ class BlockTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_Block();
     }
@@ -104,7 +104,7 @@ class BlockTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testReferencesInsideBlock()
+    public function testReferencesInsideBlock(): void
     {
         $cacheEnabled = Cache::isEnabled();
         if (!$cacheEnabled) {
@@ -155,7 +155,7 @@ class BlockTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testReferencesInsideLocalizedBlock()
+    public function testReferencesInsideLocalizedBlock(): void
     {
         $cacheEnabled = Cache::isEnabled();
         if (!$cacheEnabled) {
@@ -205,7 +205,7 @@ class BlockTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testBlockDataFromReferences()
+    public function testBlockDataFromReferences(): void
     {
         $cacheEnabled = Cache::isEnabled();
         if (!$cacheEnabled) {

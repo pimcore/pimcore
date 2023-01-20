@@ -23,7 +23,7 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class CompositeIndexTest extends ModelTestCase
 {
-    public function testAddIndex()
+    public function testAddIndex(): void
     {
         $classId = Unittest::classId();
         $db = Db::get();

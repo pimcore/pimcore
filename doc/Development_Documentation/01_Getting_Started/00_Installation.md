@@ -82,8 +82,11 @@ workers that process the queues, by running `bin/console messenger:consume pimco
 # it's recommended to run the following command using a process control system like Supervisor
 # please follow the Symfony Messenger guide for a best practice production setup: 
 # https://symfony.com/doc/current/messenger.html#deploying-to-production
-*/5 * * * * /your/project/bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize --time-limit=300
+*/5 * * * * /your/project/bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize pimcore_search_backend_message --time-limit=300
 ```
+
+> Depending on installed and activated extensions, it might be necessary to add additional transports to the messenger 
+> consume command. Please look at documentation of corresponding extensions for more details. 
 
 Keep in mind, that the cron job has to run as the same user as the web interface to avoid permission issues (eg. `www-data`).
 

@@ -185,11 +185,14 @@
       "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/",
       "Pimcore\\Bundle\\UuidBundle\\": "bundles/UuidBundle/src/",
       "Pimcore\\Bundle\\GlossaryBundle\\": "bundles/GlossaryBundle/src/",
+      "Pimcore\\Bundle\\SimpleBackendSearchBundle\\": "bundles/SimpleBackendSearchBundle/src/",
       "Pimcore\\Bundle\\XliffBundle\\": "bundles/XliffBundle/src/",
       "Pimcore\\Bundle\\SeoBundle\\": "bundles/SeoBundle/src/",
       "Pimcore\\Bundle\\SystemInfoBundle\\": "bundles/SystemInfoBundle/src/",
+      "Pimcore\\Bundle\\CustomReportsBundle\\": "bundles/CustomReportsBundle/src/",
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
-      "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/"
+      "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
+      "Pimcore\\Bundle\\FileExplorerBundle\\": "bundles/FileExplorerBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"

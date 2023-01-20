@@ -73,7 +73,7 @@ class Asset extends Data
     public function transformGetterData(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
-            return \Pimcore\Model\Asset\Service::getElementById('asset', $data);
+            return \Pimcore\Model\Asset\Service::getElementById('asset', (int) $data);
         }
 
         return $data;

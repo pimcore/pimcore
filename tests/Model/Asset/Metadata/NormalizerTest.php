@@ -52,7 +52,7 @@ class NormalizerTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function doCompare(int $assetId, string $metaDataName, $originalData)
+    protected function doCompare(int $assetId, string $metaDataName, mixed $originalData): void
     {
         $asset = Asset::getById($assetId, ['force' => true]);
         $metaDataArray = $asset->getMetadata($metaDataName, null, false, true);
@@ -69,7 +69,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalData, $denormalizedData);
     }
 
-    protected function compareRawMetaData(array $metaData, string $expectedName, string|int|float|null $expectedData, ?string $expectedLanguage, string $expectedType)
+    protected function compareRawMetaData(array $metaData, string $expectedName, string|int|float|null $expectedData, ?string $expectedLanguage, string $expectedType): void
     {
         $this->assertIsArray($metaData);
         $this->assertArrayHasKey('name', $metaData);
@@ -82,7 +82,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($metaData['language'], $expectedLanguage);
     }
 
-    public function testLocalizedMetaData()
+    public function testLocalizedMetaData(): void
     {
         $languages = [
             'en', 'de', null,
@@ -158,7 +158,7 @@ class NormalizerTest extends ModelTestCase
         }
     }
 
-    public function testAssetMetadata()
+    public function testAssetMetadata(): void
     {
         $metadataAsset = TestHelper::createImageAsset('metadata-');
         $metaDataName = 'asset-metadata';
@@ -169,7 +169,7 @@ class NormalizerTest extends ModelTestCase
         $this->doCompare($this->testAsset->getId(), $metaDataName, $metadataAsset);
     }
 
-    public function testDocumentMetadata()
+    public function testDocumentMetadata(): void
     {
         $metadataDocument = TestHelper::createEmptyDocumentPage('metadata-');
         $metaDataName = 'document-metadata';
@@ -180,7 +180,7 @@ class NormalizerTest extends ModelTestCase
         $this->doCompare($this->testAsset->getId(), $metaDataName, $metadataDocument);
     }
 
-    public function testDataObjectMetadata()
+    public function testDataObjectMetadata(): void
     {
         $metadataObject = TestHelper::createEmptyObject('metadata-');
         $metaDataName = 'object-metadata';
@@ -191,7 +191,7 @@ class NormalizerTest extends ModelTestCase
         $this->doCompare($this->testAsset->getId(), $metaDataName, $metadataObject);
     }
 
-    public function testInputMetadata()
+    public function testInputMetadata(): void
     {
         $originalData = 'foo bar';
         $metaDataName = 'input-metadata';
@@ -201,7 +201,7 @@ class NormalizerTest extends ModelTestCase
         $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
     }
 
-    public function testTextAreaMetadata()
+    public function testTextAreaMetadata(): void
     {
         $originalData = "foo bar\nsecond line";
         $metaDataName = 'textarea-metadata';
@@ -211,7 +211,7 @@ class NormalizerTest extends ModelTestCase
         $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
     }
 
-    public function testDateMetadata()
+    public function testDateMetadata(): void
     {
         $originalData = time();
         $metaDataName = 'date-metadata';
@@ -221,7 +221,7 @@ class NormalizerTest extends ModelTestCase
         $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
     }
 
-    public function testCheckboxMetadata()
+    public function testCheckboxMetadata(): void
     {
         $originalData = true;
         $metaDataName = 'checkbox-metadata';
@@ -238,7 +238,7 @@ class NormalizerTest extends ModelTestCase
         $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
     }
 
-    public function testSelectMetadata()
+    public function testSelectMetadata(): void
     {
         $originalData = 'somevalue';
         $metaDataName = 'select-metadata';
