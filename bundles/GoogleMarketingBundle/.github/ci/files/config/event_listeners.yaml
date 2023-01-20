@@ -1,0 +1,19 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend\GoogleAnalyticsCodeListener:
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
+
+    Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend\GoogleTagManagerListener:
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -108 }
+
+    Pimcore\Bundle\GoogleMarketingBundle\EventListener\IndexSettingsListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }

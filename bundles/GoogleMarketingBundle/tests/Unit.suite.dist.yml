@@ -1,0 +1,7 @@
+actor: UnitTester
+modules:
+    enabled:
+        - \Pimcore\Tests\Support\Helper\Pimcore:
+            connect_db: true
+            cache_router: false
+        - \Pimcore\Bundle\GoogleMarketingBundle\Tests\Support\Helper\Unit

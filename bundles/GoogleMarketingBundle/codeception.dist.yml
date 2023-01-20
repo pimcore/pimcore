@@ -1,0 +1,15 @@
+namespace: Pimcore\Bundle\GoogleMarketingBundle\Tests
+support_namespace: Support
+bootstrap: _bootstrap.php
+actor_suffix: Tester
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/Support/Data
+    support: tests/Support
+    envs: tests/_envs
+params:
+    - env
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
