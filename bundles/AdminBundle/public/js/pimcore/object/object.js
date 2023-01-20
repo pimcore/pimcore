@@ -922,7 +922,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             usermodification_name: this.data.general.userModificationFullname,
             userowner: this.data.general.userOwner,
             userowner_name: this.data.general.userOwnerFullname,
-            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, "object")
+            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, this.data.general.type)
         };
     },
 
