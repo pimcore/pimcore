@@ -1484,5 +1484,3 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter('sometext<br>' . $seed);
     }
 }
-
-@class_alias(TestDataHelper::class, 'Pimcore\Tests\Support\Helper\DataType\TestDataHelper');
