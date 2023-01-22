@@ -40,13 +40,14 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
         array $searchAttributes,
         array $filterTypes,
         array $options,
+        AttributeFactory $attributeFactory,
         EnvironmentInterface $environment,
         Connection $db
     ) {
         $this->environment = $environment;
         $this->db = $db;
 
-        parent::__construct($tenantName, $attributes, $searchAttributes, $filterTypes, $options);
+        parent::__construct($tenantName, $attributes, $searchAttributes, $filterTypes, $attributeFactory, $options);
     }
 
     /**
