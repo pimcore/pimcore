@@ -18,7 +18,7 @@ The installer does following tasks:
 If either classes, field collections, object bricks or tables already exist, the installation cannot be started. 
 
 After this installation routine, additional configurations have to be made - most important Product and ProductCategory.
-Please see [Configuration](./04_Configuration) for further information on available options.
+Please see [Configuration](./04_Configuration/README.md) for further information on available options.
 
 
 ## Configure Product and Product Category Class
@@ -62,7 +62,7 @@ Possibly the index update scripts need to be adapted.
 
 The E-Commerce Framework is split up into multiple components which can be configured individually. For further reading please see:
 
-- [Configuration](./04_Configuration) describes configuration features valid for the whole framework configuration
+- [Configuration](./04_Configuration/README.md) describes configuration features valid for the whole framework configuration
 - [PimcoreEcommerceFrameworkBundle Configuration Reference](./04_Configuration/01_PimcoreEcommerceFrameworkBundle_Configuration_Reference.md)
   contains a reference of the whole configuration tree
   

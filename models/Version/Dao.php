@@ -108,6 +108,12 @@ class Dao extends Model\Dao\AbstractDao
         return $returnValue;
     }
 
+    /**
+     * @param list<array{elementType: string, days?: int, steps?: int}> $elementTypes
+     * @param int[] $ignoreIds
+     *
+     * @return int[]
+     */
     public function maintenanceGetOutdatedVersions(array $elementTypes, array $ignoreIds = []): array
     {
         $ignoreIdsList = implode(',', $ignoreIds);
@@ -158,6 +164,6 @@ class Dao extends Model\Dao\AbstractDao
         }
         Logger::info('return ' .  count($versionIds) . " ids\n");
 
-        return $versionIds;
+        return array_map('intval', $versionIds);
     }
 }

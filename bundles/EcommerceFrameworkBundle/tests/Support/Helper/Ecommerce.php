@@ -33,7 +33,7 @@ use Pimcore\Tests\Support\Util\Autoloader;
 
 class Ecommerce extends Module
 {
-    public function __construct(ModuleContainer $moduleContainer, $config = null)
+    public function __construct(ModuleContainer $moduleContainer, ?array $config = null)
     {
         $this->config = array_merge($this->config, [
             'run_installer' => true,
@@ -42,7 +42,7 @@ class Ecommerce extends Module
         parent::__construct($moduleContainer, $config);
     }
 
-    public function _beforeSuite(array $settings = [])
+    public function _beforeSuite(array $settings = []): void
     {
         if ($this->config['run_installer']) {
             /** @var Pimcore $pimcoreModule */

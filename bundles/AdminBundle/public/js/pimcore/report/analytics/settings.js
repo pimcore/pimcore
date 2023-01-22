@@ -47,7 +47,7 @@ pimcore.report.analytics.settings = Class.create({
                     width: 400,
                     hideLabel: true,
                     value: "&nbsp;<br />" + t("analytics_settings_description") + "<br /><br />"
-                                           + t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
+                        + t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
                     cls: "pimcore_extra_label"
                 },
                 {

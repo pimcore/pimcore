@@ -109,9 +109,7 @@ final class Tool
     }
 
     /**
-     * @param string $language
-     *
-     * @return array
+     * @return string[]
      *
      * @internal
      */
@@ -650,7 +648,7 @@ final class Tool
     /**
      * @internal
      *
-     * @return array
+     * @return string[]
      */
     public static function getCachedSymfonyEnvironments(): array
     {

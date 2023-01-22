@@ -71,7 +71,7 @@ class GiftActionTest extends AbstractRuleTest
         ],
     ];
 
-    public function testOneGift()
+    public function testOneGift(): void
     {
         $pricingManager = $this->buildPricingManager([]);
         $gift1 = $this->setUpProduct(777, 100, $pricingManager);
@@ -106,7 +106,7 @@ class GiftActionTest extends AbstractRuleTest
         $this->doAssertionsWithShippingCosts($ruleDefinitions, $this->productDefinitions2, $tests, false);
     }
 
-    public function testMultipleGifts()
+    public function testMultipleGifts(): void
     {
         $pricingManager = $this->buildPricingManager([]);
         $gift1 = $this->setUpProduct(777, 100, $pricingManager);

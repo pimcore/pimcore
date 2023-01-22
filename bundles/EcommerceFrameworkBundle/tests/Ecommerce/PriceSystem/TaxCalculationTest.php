@@ -44,7 +44,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->calculationService = new TaxCalculationService();
     }
 
-    public function testNetAndGrossDefaultToTheSameValue()
+    public function testNetAndGrossDefaultToTheSameValue(): void
     {
         $price = new Price(Decimal::create(100), new Currency('EUR'));
 
@@ -53,7 +53,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->assertEquals(100, $price->getNetAmount()->asNumeric());
     }
 
-    public function testNetAndGrossAmountAreDifferentValues()
+    public function testNetAndGrossAmountAreDifferentValues(): void
     {
         $price = new Price(Decimal::create(100), new Currency('EUR'));
 
@@ -66,7 +66,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->assertEquals(90, $price->getNetAmount()->asNumeric());
     }
 
-    public function testNetAndGrossAreTheSameWithoutTaxEntries()
+    public function testNetAndGrossAreTheSameWithoutTaxEntries(): void
     {
         $price = new Price(Decimal::create(100), new Currency('EUR'));
 
@@ -82,7 +82,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->assertTrue($price->getNetAmount()->equals($price->getGrossAmount()), 'No tax entries > net and gross should be equal');
     }
 
-    public function testTaxesAreUpdatesWithRecalcParam()
+    public function testTaxesAreUpdatesWithRecalcParam(): void
     {
         $price = new Price(Decimal::create(100), new Currency('EUR'));
 
@@ -97,7 +97,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->assertEquals(110, $price->getNetAmount()->asNumeric());
     }
 
-    public function testSetAmount()
+    public function testSetAmount(): void
     {
         $price = new Price(Decimal::create(100), new Currency('EUR'));
         $price->setAmount(Decimal::create(110), PriceInterface::PRICE_MODE_GROSS, false);
@@ -121,7 +121,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->assertEquals(80, $price->getNetAmount()->asNumeric());
     }
 
-    public function testSingleTaxEntryFromNet()
+    public function testSingleTaxEntryFromNet(): void
     {
         $price = new Price(Decimal::create(90), new Currency('EUR'));
 
@@ -146,7 +146,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->assertTrue($price->getGrossAmount()->equals($price->getNetAmount()->add($taxEntries[0]->getAmount())));
     }
 
-    public function testSingleTaxEntryFromGross()
+    public function testSingleTaxEntryFromGross(): void
     {
         $price = new Price(Decimal::create(0), new Currency('EUR'));
         $price->setTaxEntries([
@@ -176,7 +176,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->assertEquals(15, $taxEntries[0]->getAmount()->asNumeric(), 'Tax 15%, tax entry amount');
     }
 
-    public function testMultipleTaxEntriesOneAfterAnother()
+    public function testMultipleTaxEntriesOneAfterAnother(): void
     {
         $price = new Price(Decimal::create(90), new Currency('EUR'));
         $price->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
@@ -203,7 +203,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->assertTaxesAddUp($price);
     }
 
-    public function testMultipleTaxEntriesCombined()
+    public function testMultipleTaxEntriesCombined(): void
     {
         $price = new Price(Decimal::create(90), new Currency('EUR'));
         $price->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_COMBINE);
@@ -227,7 +227,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->assertTaxesAddUp($price);
     }
 
-    public function testMultipleTaxEntriesCombinedFromGross()
+    public function testMultipleTaxEntriesCombinedFromGross(): void
     {
         $price = new Price(Decimal::create(100), new Currency('EUR'));
         $price->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_COMBINE);
@@ -261,7 +261,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->assertTrue($price->getGrossAmount()->equals($calculatedGrossAmount));
     }
 
-    public function testPriceSystem()
+    public function testPriceSystem(): void
     {
         $environment = $this->buildEnvironment();
 
