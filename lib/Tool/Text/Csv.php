@@ -24,10 +24,6 @@ namespace Pimcore\Tool\Text;
 class Csv
 {
     /**
-     * @param string $data
-     *
-     * @return \stdClass
-     *
      * @throws \Exception
      */
     public function detect(string $data): \stdClass
@@ -60,10 +56,6 @@ class Csv
     }
 
     /**
-     * @param string $data
-     *
-     * @return string
-     *
      * @phpstan-return non-empty-string
      */
     protected function guessLinefeed(string $data): string
@@ -79,10 +71,10 @@ class Csv
             return "$cr$lf";
         }
         if ($count_cr == 0 && $count_lf > 0) {
-            return (string)$lf;
+            return $lf;
         }
         if ($count_lf == 0 && $count_cr > 0) {
-            return (string)$cr;
+            return $cr;
         }
 
         // sane default: cr+lf
@@ -98,7 +90,7 @@ class Csv
         $patterns[] = '/(?:^|\n)(["\']).*?(\2)(?:$|\n)/';
 
         foreach ($patterns as $pattern) {
-            if ($nummatches = preg_match_all($pattern, $data, $matches)) {
+            if (preg_match_all($pattern, $data, $matches)) {
                 if ($matches) {
                     break;
                 }
@@ -125,6 +117,9 @@ class Csv
         return [$quote, $delim];
     }
 
+    /**
+     * @phpstan-param non-empty-string $linefeed
+     */
     protected function guessDelim(string $data, string $linefeed, string $quotechar): bool|string
     {
         $charcount = count_chars($data, 1);

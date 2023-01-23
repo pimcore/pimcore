@@ -65,14 +65,13 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public ?array $availableSites = null;
 
     /**
+     * @see Data::getDataForEditmode
+     *
      * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return array
-     *
-     * @see Data::getDataForEditmode
-     *
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -107,8 +106,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @param array $params
      *
      * @return Model\DataObject\Data\UrlSlug[]
-     *
-     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -145,7 +142,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data && !is_array($data)) {
             throw new Model\Element\ValidationException('Invalid slug data');
@@ -242,9 +239,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                                     return;
                                 }
 
-                                // if now exception is thrown then the slug is owned by a diffrent object/field
-                                throw new \Exception('Unique constraint violated. Slug alreay used by object '
-                                    . $existingSlug->getFieldname() . ', fieldname: ' . $existingSlug->getFieldname());
+                            // if now exception is thrown then the slug is owned by a diffrent object/field
+                            throw new \Exception('Unique constraint violated. Slug "' . $slug['slug'] . '" is already used by object '
+                                . $existingSlug->getObjectId() . ', fieldname: ' . $existingSlug->getFieldname());
                             }
                         }
 
@@ -373,7 +370,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $result;
     }
 
-    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         if (!isset($params['isUpdate']) || !$params['isUpdate']) {
             $db = Db::get();
@@ -389,7 +386,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * @param Model\DataObject\ClassDefinition\Data\UrlSlug $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->action = $masterDefinition->action;
     }

@@ -303,8 +303,7 @@ class Service extends Model\Element\Service
      *
      * @return Document
      *
-     *@internal
-     *
+     * @internal
      */
     public static function loadAllDocumentFields(Document $doc): Document
     {
@@ -435,8 +434,7 @@ class Service extends Model\Element\Service
      *
      * @return Document|null
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getByUrl(string $url): ?Document
     {
@@ -504,8 +502,7 @@ class Service extends Model\Element\Service
      *
      * @return Document|null
      *
-     *@internal
-     *
+     * @internal
      */
     public function getNearestDocumentByPath(string|Request $path, bool $ignoreHardlinks = false, array $types = []): ?Document
     {

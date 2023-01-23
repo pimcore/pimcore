@@ -45,7 +45,7 @@ class CacheResponseEvent extends Event
         return $this->cache;
     }
 
-    public function setCache(bool $cache)
+    public function setCache(bool $cache): void
     {
         $this->cache = $cache;
     }

@@ -33,11 +33,11 @@ class StateTableMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
      *
      * @return Marking
      */
-    public function getMarking($subject): Marking
+    public function getMarking(object $subject): Marking
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 
@@ -61,11 +61,13 @@ class StateTableMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $subject
+     * @param Marking $marking
+     * @param array $context
      *
-     * @throws \Exception
+     * @return void
      */
-    public function setMarking($subject, Marking $marking, array $context = [])
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         $subject = $this->checkIfSubjectIsValid($subject);
         $type = Service::getElementType($subject);

@@ -15,7 +15,9 @@
  */
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.translatevalue");
-
+/**
+ * @private
+ */
 pimcore.object.gridcolumn.operator.translatevalue = Class.create(pimcore.object.gridcolumn.Abstract, {
     operatorGroup: "transformer",
     type: "operator",

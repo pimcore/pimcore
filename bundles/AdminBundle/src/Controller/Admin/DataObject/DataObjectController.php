@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
-use Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
@@ -362,7 +361,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function getAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $objectId = (int)$request->get('id');
+        $objectId = $request->query->getInt('id');
         $objectFromDatabase = DataObject\Concrete::getById($objectId);
         if ($objectFromDatabase === null) {
             return $this->adminJson(['success' => false, 'message' => 'element_not_found'], JsonResponse::HTTP_NOT_FOUND);
@@ -379,7 +378,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 return $this->getEditLockResponse($objectId, 'object');
             }
 
-            Element\Editlock::lock($request->get('id'), 'object');
+            Element\Editlock::lock($objectId, 'object');
         }
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
@@ -553,83 +552,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * @Route("/relation-objects-list", name="relation_objects_list", methods={"GET"})
-     */
-    public function optionsAction(Request $request): JsonResponse
-    {
-        $fieldConfig = json_decode($request->get('fieldConfig'), true);
-
-        $options = [];
-        $classes = [];
-        if (count($fieldConfig['classes']) > 0) {
-            foreach ($fieldConfig['classes'] as $classData) {
-                $classes[] = $classData['classes'];
-            }
-        }
-
-        $visibleFields = is_array($fieldConfig['visibleFields']) ? $fieldConfig['visibleFields'] : explode(',', $fieldConfig['visibleFields']);
-
-        if (!$visibleFields) {
-            $visibleFields = ['id', 'fullpath', 'classname'];
-        }
-
-        $searchRequest = $request;
-        $searchRequest->request->set('type', 'object');
-        $searchRequest->request->set('subtype', 'object,variant');
-        $searchRequest->request->set('class', implode(',', $classes));
-        $searchRequest->request->set('fields', $visibleFields);
-        $searchRequest->attributes->set('unsavedChanges', $request->get('unsavedChanges', ''));
-        $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
-        $objects = json_decode($res->getContent(), true)['data'];
-
-        if ($request->get('data')) {
-            foreach (explode(',', $request->get('data')) as $preSelectedElementId) {
-                $objects[] = ['id' => $preSelectedElementId];
-            }
-        }
-
-        foreach ($objects as $objectData) {
-            $option = [
-                'id' => $objectData['id'],
-            ];
-
-            $visibleFieldValues = [];
-            foreach ($visibleFields as $visibleField) {
-                if (isset($objectData[$visibleField])) {
-                    $visibleFieldValues[] = $objectData[$visibleField];
-                } else {
-                    $inheritValues = DataObject\Concrete::getGetInheritedValues();
-                    $fallbackValues = DataObject\Localizedfield::getGetFallbackValues();
-
-                    DataObject\Concrete::setGetInheritedValues(true);
-                    DataObject\Localizedfield::setGetFallbackValues(true);
-
-                    $object = DataObject\Concrete::getById($objectData['id']);
-                    if (!$object instanceof DataObject\Concrete) {
-                        continue;
-                    }
-
-                    $getter = 'get'.ucfirst($visibleField);
-                    $visibleFieldValue = $object->$getter();
-                    if (count($classes) > 1 && $visibleField == 'key') {
-                        $visibleFieldValue .= ' ('.$object->getClassName().')';
-                    }
-                    $visibleFieldValues[] = $visibleFieldValue;
-
-                    DataObject\Concrete::setGetInheritedValues($inheritValues);
-                    DataObject\Localizedfield::setGetFallbackValues($fallbackValues);
-                }
-            }
-
-            $option['label'] = implode(', ', $visibleFieldValues);
-
-            $options[] = $option;
-        }
-
-        return new JsonResponse($options);
-    }
-
-    /**
      * @Route("/get-select-options", name="getSelectOptions", methods={"GET"})
      *
      * @param Request $request
@@ -640,7 +562,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function getSelectOptions(Request $request): JsonResponse
     {
-        $objectId = $request->get('objectId');
+        $objectId = $request->query->getInt('objectId');
         $object = DataObject\Concrete::getById($objectId);
         if (!$object instanceof DataObject\Concrete) {
             return new JsonResponse(['success'=> false, 'message' => 'Object not found.']);
@@ -969,14 +891,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object->setClassId($request->get('classId'));
 
         if ($request->get('variantViaTree')) {
-            $parentId = $request->get('parentId');
+            $parentId = $request->request->getInt('parentId');
             $parent = DataObject\Concrete::getById($parentId);
             $object->setClassId($parent->getClass()->getId());
         }
 
-        $object->setClassName($request->get('className'));
-        $object->setParentId($request->get('parentId'));
-        $object->setKey($request->get('key'));
+        $object->setClassName($request->request->get('className'));
+        $object->setParentId($request->request->getInt('parentId'));
+        $object->setKey($request->request->get('key'));
         $object->setCreationDate(time());
         $object->setUserOwner($this->getAdminUser()->getId());
         $object->setUserModification($this->getAdminUser()->getId());
@@ -1294,7 +1216,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
     }
 
-    protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder)
+    protected function reindexBasedOnSortOrder(DataObject\AbstractObject $parentObject, string $currentSortOrder): void
     {
         $fn = function () use ($parentObject, $currentSortOrder) {
             $list = new DataObject\Listing();
@@ -1628,7 +1550,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         throw $this->createAccessDeniedHttpException();
     }
 
-    protected function assignPropertiesFromEditmode(Request $request, DataObject\AbstractObject $object)
+    protected function assignPropertiesFromEditmode(Request $request, DataObject\AbstractObject $object): void
     {
         if ($request->get('properties')) {
             $properties = [];
@@ -1672,11 +1594,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function publishVersionAction(Request $request): JsonResponse
     {
-        $version = Model\Version::getById((int) $request->get('id'));
-        if (!$version) {
-            throw $this->createNotFoundException();
+        $id = (int)$request->get('id');
+        $version = Model\Version::getById($id);
+        $object = $version?->loadData();
+        if (!$object) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
-        $object = $version->loadData();
 
         $currentObject = DataObject::getById($object->getId());
         if ($currentObject->isAllowed('publish')) {
@@ -1718,17 +1641,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
-        $object = $version->loadData();
-
-        if (method_exists($object, 'getLocalizedFields')) {
-            /** @var DataObject\Localizedfield $localizedFields */
-            $localizedFields = $object->getLocalizedFields();
-            $localizedFields->setLoadedAllLazyData();
-        }
-
-        DataObject::setDoNotRestoreKeyAndPath(false);
+        $object = $version?->loadData();
 
         if ($object) {
+            if (method_exists($object, 'getLocalizedFields')) {
+                /** @var DataObject\Localizedfield $localizedFields */
+                $localizedFields = $object->getLocalizedFields();
+                $localizedFields->setLoadedAllLazyData();
+            }
+
+            DataObject::setDoNotRestoreKeyAndPath(false);
+
             if ($object->isAllowed('versions')) {
                 return $this->render('@PimcoreAdmin/admin/data_object/data_object/preview_version.html.twig',
                     [
@@ -1763,7 +1686,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $id2 = (int)$to;
 
         $version1 = Model\Version::getById($id1);
-        $object1 = $version1->loadData();
+        $object1 = $version1?->loadData();
+
+        if (!$object1) {
+            throw $this->createNotFoundException('Version with id [' . $id1 . "] doesn't exist");
+        }
 
         if (method_exists($object1, 'getLocalizedFields')) {
             /** @var DataObject\Localizedfield $localizedFields1 */
@@ -1772,7 +1699,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         $version2 = Model\Version::getById($id2);
-        $object2 = $version2->loadData();
+        $object2 = $version2?->loadData();
+
+        if (!$object2) {
+            throw $this->createNotFoundException('Version with id [' . $id2 . "] doesn't exist");
+        }
 
         if (method_exists($object2, 'getLocalizedFields')) {
             /** @var DataObject\Localizedfield $localizedFields2 */
@@ -1782,22 +1713,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         DataObject::setDoNotRestoreKeyAndPath(false);
 
-        if ($object1 && $object2) {
-            if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
-                return $this->render('@PimcoreAdmin/admin/data_object/data_object/diff_versions.html.twig',
-                    [
-                        'object1' => $object1,
-                        'versionNote1' => $version1->getNote(),
-                        'object2' => $object2,
-                        'versionNote2' => $version2->getNote(),
-                        'validLanguages' => Tool::getValidLanguages(),
-                    ]);
-            }
-
-            throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
+        if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
+            return $this->render('@PimcoreAdmin/admin/data_object/data_object/diff_versions.html.twig',
+                [
+                    'object1' => $object1,
+                    'versionNote1' => $version1->getNote(),
+                    'object2' => $object2,
+                    'versionNote2' => $version2->getNote(),
+                    'validLanguages' => Tool::getValidLanguages(),
+                ]);
         }
 
-        throw $this->createNotFoundException('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
+        throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
     }
 
     /**
@@ -2058,7 +1985,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function previewAction(Request $request): RedirectResponse|Response
     {
-        $id = $request->get('id');
+        $id = $request->query->getInt('id');
         $object = DataObject\Service::getElementFromSession('object', $id);
 
         if ($object instanceof DataObject\Concrete) {
@@ -2084,7 +2011,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
     }
 
-    protected function processRemoteOwnerRelations(DataObject\Concrete $object, array $toDelete, array $toAdd, string $ownerFieldName)
+    protected function processRemoteOwnerRelations(DataObject\Concrete $object, array $toDelete, array $toAdd, string $ownerFieldName): void
     {
         $getter = 'get' . ucfirst($ownerFieldName);
         $setter = 'set' . ucfirst($ownerFieldName);
@@ -2166,7 +2093,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return $diff;
     }
 
-    protected function getLatestVersion(DataObject\Concrete $object, &$draftVersion = null): DataObject\Concrete
+    protected function getLatestVersion(DataObject\Concrete $object, ?DataObject\Concrete &$draftVersion = null): DataObject\Concrete
     {
         $latestVersion = $object->getLatestVersion($this->getAdminUser()->getId());
         if ($latestVersion) {
@@ -2181,7 +2108,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return $object;
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

@@ -124,8 +124,7 @@ class Geopoint extends AbstractGeo implements
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -161,8 +160,7 @@ class Geopoint extends AbstractGeo implements
      *
      * @return DataObject\Data\GeoCoordinates|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\GeoCoordinates
     {
@@ -272,7 +270,7 @@ class Geopoint extends AbstractGeo implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
 

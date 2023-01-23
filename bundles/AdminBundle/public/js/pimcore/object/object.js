@@ -12,23 +12,30 @@
  */
 
 pimcore.registerNS("pimcore.object.object");
+/**
+ * @private
+ */
 pimcore.object.object = Class.create(pimcore.object.abstract, {
     willClose: false,
     initialize: function (id, options) {
         this.id = intval(id);
         this.options = options;
+        this.addLoadingPanel();
 
         const preOpenObject = new CustomEvent(pimcore.events.preOpenObject, {
             detail: {
                 object: this,
                 type: "object"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenObject);
+        const isAllowed = document.dispatchEvent(preOpenObject);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
-
-        this.addLoadingPanel();
 
         var user = pimcore.globalmanager.get("user");
 
@@ -45,7 +52,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.notes = new pimcore.element.notes(this, "object");
         }
 
-        this.reports = new pimcore.report.panel("object_concrete", this);
+        if(pimcore.globalmanager.get('customReportsPanelImplementationFactory').hasImplementation()) {
+            this.reports = pimcore.globalmanager.get('customReportsPanelImplementationFactory').getNewReportInstance("object_concrete");
+        }
         this.variants = new pimcore.object.variantsTab(this);
         this.appLogger = new pimcore.log.admin({
             localMode: true,
@@ -303,9 +312,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
 
         try {
-            var reportLayout = this.reports.getLayout();
-            if (reportLayout) {
-                items.push(reportLayout);
+            if(this.reports) {
+                var reportLayout = this.reports.getLayout();
+                if (reportLayout) {
+                    items.push(reportLayout);
+                }
             }
         } catch (e) {
             console.log(e);

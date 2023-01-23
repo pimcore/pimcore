@@ -37,7 +37,7 @@ class Dao extends Document\PageSnippet\Dao
     /**
      * Get the valid columns from the database
      */
-    public function init()
+    public function init(): void
     {
         // page
         $this->validColumnsPage = $this->getValidTableColumns('documents_printpage');
@@ -50,7 +50,7 @@ class Dao extends Document\PageSnippet\Dao
      *
      * @throws \Exception
      */
-    public function getById(int $id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -68,7 +68,7 @@ class Dao extends Document\PageSnippet\Dao
         }
     }
 
-    public function create()
+    public function create(): void
     {
         parent::create();
 
@@ -80,7 +80,7 @@ class Dao extends Document\PageSnippet\Dao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         $this->model->setModificationDate(time());
         $document = $this->model->getObjectVars();
@@ -121,7 +121,7 @@ class Dao extends Document\PageSnippet\Dao
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleteAllProperties();
 

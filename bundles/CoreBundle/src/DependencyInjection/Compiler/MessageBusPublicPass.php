@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 final class MessageBusPublicPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $container->getDefinition('messenger.bus.pimcore-core')->setPublic(true);
     }

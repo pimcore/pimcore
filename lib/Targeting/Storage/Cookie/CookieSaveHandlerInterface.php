@@ -24,23 +24,11 @@ interface CookieSaveHandlerInterface
 {
     /**
      * Loads data from cookie
-     *
-     * @param Request $request
-     * @param string $scope
-     * @param string $name
-     *
-     * @return array
      */
     public function load(Request $request, string $scope, string $name): array;
 
     /**
      * Saves data to cookie
-     *
-     * @param Response $response
-     * @param string $scope
-     * @param string $name
-     * @param \DateTimeInterface|int|string $expire
-     * @param array|null $data
      */
-    public function save(Response $response, string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data);
+    public function save(Response $response, string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data): void;
 }

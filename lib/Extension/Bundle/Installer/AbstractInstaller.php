@@ -32,14 +32,14 @@ class AbstractInstaller implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function install()
+    public function install(): void
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function uninstall()
+    public function uninstall(): void
     {
     }
 

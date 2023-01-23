@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.link");
+/**
+ * @private
+ */
 pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
     type: "link",

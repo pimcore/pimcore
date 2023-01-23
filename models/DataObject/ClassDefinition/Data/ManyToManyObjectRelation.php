@@ -25,9 +25,8 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface, LayoutDefinitionEnrichmentInterface
+class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface, LayoutDefinitionEnrichmentInterface
 {
-    use DataObject\ClassDefinition\Data\Extension\Relation;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait;
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
@@ -306,7 +305,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -482,7 +481,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @param DataObject\ClassDefinition\Data\ManyToManyObjectRelation $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->maxItems = $masterDefinition->maxItems;
         $this->relationType = $masterDefinition->relationType;
@@ -577,7 +576,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     protected function getPhpdocType(): string
     {
-        return implode(' | ', $this->getPhpDocClassString(true));
+        return $this->getPhpDocClassString(true);
     }
 
     public function normalize(mixed $value, array $params = []): ?array
@@ -635,8 +634,15 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /**
      * @internal
+     *
+     * @param mixed $originalData
+     * @param mixed $data
+     * @param Concrete $object
+     * @param array $params
+     *
+     * @return array
      */
-    protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = []): array
+    protected function processDiffDataForEditMode(mixed $originalData, mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data) {
             $data = $data[0];
@@ -748,7 +754,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this->allowToCreateNewObject;
     }
 
-    public function setAllowToCreateNewObject(bool $allowToCreateNewObject)
+    public function setAllowToCreateNewObject(bool $allowToCreateNewObject): void
     {
         $this->allowToCreateNewObject = (bool)$allowToCreateNewObject;
     }
@@ -771,7 +777,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return (bool) $this->optimizedAdminLoading;
     }
 
-    public function setOptimizedAdminLoading(bool $optimizedAdminLoading)
+    public function setOptimizedAdminLoading(bool $optimizedAdminLoading): void
     {
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }

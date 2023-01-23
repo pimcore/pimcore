@@ -32,7 +32,7 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setHidden(true)

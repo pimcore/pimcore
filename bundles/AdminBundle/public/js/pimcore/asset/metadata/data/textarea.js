@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.data.textarea");
+/**
+ * @private
+ */
 pimcore.asset.metadata.data.textarea = Class.create(pimcore.asset.metadata.data.data, {
 
     type: "textarea"

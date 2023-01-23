@@ -104,7 +104,7 @@ final class Version extends AbstractModel
      *
      * @static
      */
-    public static function disable()
+    public static function disable(): void
     {
         self::$disabled = true;
     }
@@ -115,7 +115,7 @@ final class Version extends AbstractModel
      *
      * @static
      */
-    public static function enable()
+    public static function enable(): void
     {
         self::$disabled = false;
     }
@@ -128,7 +128,7 @@ final class Version extends AbstractModel
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         $this->dispatchEvent(new VersionEvent($this), VersionEvents::PRE_SAVE);
 
@@ -260,7 +260,7 @@ final class Version extends AbstractModel
     /**
      * Delete this Version
      */
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new VersionEvent($this), VersionEvents::PRE_DELETE);
 
@@ -276,8 +276,7 @@ final class Version extends AbstractModel
      *
      * @return mixed
      *
-     *@internal
-     *
+     * @internal
      */
     public function loadData(bool $renewReferences = true): mixed
     {
@@ -287,7 +286,7 @@ final class Version extends AbstractModel
             $msg = 'Version: cannot read version data with storage type: ' . $this->getStorageType();
             Logger::err($msg);
 
-            throw new \Exception($msg);
+            return null;
         }
 
         if ($this->getSerialized()) {

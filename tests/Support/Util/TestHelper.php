@@ -850,7 +850,7 @@ class TestHelper
         return $randomString;
     }
 
-    public static function clearThumbnailConfiguration($name): void
+    public static function clearThumbnailConfiguration(string $name): void
     {
         $pipe = Asset\Image\Thumbnail\Config::getByName($name);
         if ($pipe) {

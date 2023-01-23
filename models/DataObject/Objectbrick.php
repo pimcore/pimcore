@@ -265,10 +265,8 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $finalVars;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
-        $brickGetter = null;
-
         // for backwards compatibility
         if ($this->object) {
             $this->objectId = $this->object->getId();
@@ -287,7 +285,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             foreach ($this->items as $key => $item) {
                 if ($item instanceof \__PHP_Incomplete_Class) {
                     unset($this->items[$key]);
-                    Logger::error('brick ' . $brickGetter . ' does not exist anymore');
+                    Logger::error('brick item ' . $key . ' does not exist anymore');
                 }
             }
         }
@@ -310,10 +308,9 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
-    public function loadLazyField(string $brick, string $brickField, string $field)
+    public function loadLazyField(string $brick, string $brickField, string $field): void
     {
         $item = $this->get($brick);
         if ($item && !$item->isLazyKeyLoaded($field)) {
@@ -341,7 +338,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @internal
      */
-    public function loadLazyData()
+    public function loadLazyData(): void
     {
         $allowedBrickTypes = $this->getAllowedBrickTypes();
         if (is_array($allowedBrickTypes)) {

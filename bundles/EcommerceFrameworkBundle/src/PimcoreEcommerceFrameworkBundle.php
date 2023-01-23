@@ -36,7 +36,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new RegisterConfiguredServicesPass());
     }
@@ -68,7 +68,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
         ];
     }
 
-    public function boot()
+    public function boot(): void
     {
         $container = $this->container;
         // set default decimal scale from config

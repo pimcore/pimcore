@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.layout.layout");
+/**
+ * @private
+ */
 pimcore.object.classes.layout.layout = Class.create({
 
     initData: function (d) {

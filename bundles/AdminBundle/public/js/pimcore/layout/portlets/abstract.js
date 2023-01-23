@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.layout.portlets.abstract");
+/**
+ * @private
+ */
 pimcore.layout.portlets.abstract = Class.create({
     /**
      * Determines if the portlet is available for the current context. This

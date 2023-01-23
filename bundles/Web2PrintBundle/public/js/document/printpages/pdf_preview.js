@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.printpages.pdfpreview");
+/**
+ * @private
+ */
 pimcore.document.printpages.pdfpreview = Class.create({
 
     initialize: function(page) {

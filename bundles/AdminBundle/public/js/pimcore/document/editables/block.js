@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.block");
+/**
+ * @private
+ */
 pimcore.document.editables.block = Class.create(pimcore.document.editable, {
 
     initialize: function($super, id, name, config, data, inherited) {

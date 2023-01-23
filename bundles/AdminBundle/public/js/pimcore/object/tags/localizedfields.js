@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.localizedfields");
+/**
+ * @private
+ */
 pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract, {
 
     type: "localizedfields",

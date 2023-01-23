@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.gridexport.abstract");
+/**
+ * @private
+ */
 pimcore.element.gridexport.abstract = Class.create({
     name: t('export'),
     text: t('export'),

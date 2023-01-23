@@ -47,7 +47,7 @@ abstract class PrintAbstract extends PageSnippet
      */
     protected ?string $controller = 'web2print';
 
-    public function setLastGeneratedDate(\DateTime $lastGenerated)
+    public function setLastGeneratedDate(\DateTime $lastGenerated): void
     {
         $this->lastGenerated = $lastGenerated->getTimestamp();
     }
@@ -69,7 +69,7 @@ abstract class PrintAbstract extends PageSnippet
         return TmpStore::get($this->getLockKey());
     }
 
-    public function setLastGenerated(int $lastGenerated)
+    public function setLastGenerated(int $lastGenerated): void
     {
         $this->lastGenerated = $lastGenerated;
     }
@@ -79,7 +79,7 @@ abstract class PrintAbstract extends PageSnippet
         return $this->lastGenerated;
     }
 
-    public function setLastGenerateMessage(string $lastGenerateMessage)
+    public function setLastGenerateMessage(string $lastGenerateMessage): void
     {
         $this->lastGenerateMessage = $lastGenerateMessage;
     }

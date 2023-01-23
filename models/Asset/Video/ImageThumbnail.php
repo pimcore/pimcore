@@ -83,8 +83,7 @@ final class ImageThumbnail
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public function generate(bool $deferredAllowed = true): void
     {
@@ -137,7 +136,7 @@ final class ImageThumbnail
                         $tempFile = File::getLocalTempFilePath('png');
                         $converter = \Pimcore\Video::getInstance();
                         $converter->load($this->asset->getLocalFile());
-                        $converter->saveImage($tempFile, $timeOffset);
+                        $converter->saveImage($tempFile, (int) $timeOffset);
                         $generated = true;
                         $storage->write($cacheFilePath, file_get_contents($tempFile));
                         unlink($tempFile);

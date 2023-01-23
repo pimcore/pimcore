@@ -53,7 +53,7 @@ interface EnvironmentInterface extends ComponentInterface
      * @param string $key
      * @param mixed $value
      */
-    public function setCustomItem(string $key, mixed $value);
+    public function setCustomItem(string $key, mixed $value): void;
 
     /**
      * Removes custom item from the environment
@@ -61,7 +61,7 @@ interface EnvironmentInterface extends ComponentInterface
      *
      * @param string $key
      */
-    public function removeCustomItem(string $key);
+    public function removeCustomItem(string $key): void;
 
     /**
      * Returns custom saved item from environment
@@ -84,14 +84,14 @@ interface EnvironmentInterface extends ComponentInterface
      * Resets environment
      * save()-call is needed to save changes
      */
-    public function clearEnvironment();
+    public function clearEnvironment(): void;
 
     /**
      * Sets current assortment tenant which is used for indexing and product lists
      *
      * @param string|null $tenant
      */
-    public function setCurrentAssortmentTenant(?string $tenant);
+    public function setCurrentAssortmentTenant(?string $tenant): void;
 
     /**
      * Returns current assortment tenant which is used for indexing and product lists
@@ -105,7 +105,7 @@ interface EnvironmentInterface extends ComponentInterface
      *
      * @param string|null $subTenant
      */
-    public function setCurrentAssortmentSubTenant(?string $subTenant);
+    public function setCurrentAssortmentSubTenant(?string $subTenant): void;
 
     /**
      * Returns current sub assortment tenant which is used for indexing and product lists
@@ -120,7 +120,7 @@ interface EnvironmentInterface extends ComponentInterface
      * @param string $tenant
      * @param bool $persistent - if set to false, tenant is not stored to session and only valid for current process
      */
-    public function setCurrentCheckoutTenant(string $tenant, bool $persistent = true);
+    public function setCurrentCheckoutTenant(string $tenant, bool $persistent = true): void;
 
     /**
      * Returns current assortment tenant which is used for cart and checkout manager
@@ -134,7 +134,7 @@ interface EnvironmentInterface extends ComponentInterface
      *
      * @param Currency $currency
      */
-    public function setDefaultCurrency(Currency $currency);
+    public function setDefaultCurrency(Currency $currency): void;
 
     /**
      * Returns instance of default currency
@@ -145,7 +145,7 @@ interface EnvironmentInterface extends ComponentInterface
 
     public function getUseGuestCart(): bool;
 
-    public function setUseGuestCart(bool $useGuestCart);
+    public function setUseGuestCart(bool $useGuestCart): void;
 
     /**
      * Returns current system locale

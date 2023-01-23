@@ -32,10 +32,10 @@ class ThumbnailsVideoCommand extends AbstractCommand
 {
     use Parallelization;
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
-        self::configureParallelization($this);
+        self::configureCommand($this);
 
         $this
             ->setName('pimcore:thumbnails:video')
@@ -43,7 +43,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
             ->setDescription('Generate video thumbnails, useful to pre-generate thumbnails in the background')
             ->addOption(
                 'parent',
-                'p',
+                null,
                 InputOption::VALUE_OPTIONAL,
                 'only create thumbnails of images in this folder (ID)'
             )
@@ -132,7 +132,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         }
     }
 
-    protected function waitTillFinished(int $videoId, string|Asset\Video\Thumbnail\Config $thumbnail)
+    protected function waitTillFinished(int $videoId, string|Asset\Video\Thumbnail\Config $thumbnail): void
     {
         $finished = false;
 

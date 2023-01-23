@@ -37,13 +37,12 @@ interface CartPriceCalculatorInterface
      * (Re-)initialize standard price modificators, e.g. after removing an item from a cart
      * within the same request, such as an AJAX-call.
      */
-    public function initModificators();
+    public function initModificators(): void;
 
     /**
      * Calculates cart sums and saves results
-     *
      */
-    public function calculate($ignorePricingRules = false): void;
+    public function calculate(bool $ignorePricingRules = false): void;
 
     /**
      * Reset calculations

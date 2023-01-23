@@ -156,7 +156,14 @@ class PublicServicesController extends Controller
                                 // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                                 // is set to auto-optimized format so the resulting thumbnail can be jpeg
                                 $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $pathReference['src']);
-                                $storage->writeStream($requestedFile, $thumbnailStream);
+
+                                //Only copy the file if not exists yet
+                                if (!$storage->fileExists($requestedFile)) {
+                                    $storage->writeStream($requestedFile, $thumbnailStream);
+                                }
+
+                                //Stream can be closed by writeStream and needs to be reloaded.
+                                $thumbnailStream = $storage->readStream($requestedFile);
                             }
                         } elseif ($thumbnailType =='video' && isset($storagePath)) {
                             $mime = $storage->mimeType($storagePath);

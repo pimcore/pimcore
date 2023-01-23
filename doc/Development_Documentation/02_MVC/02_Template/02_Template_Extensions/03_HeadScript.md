@@ -47,7 +47,7 @@ Internally, it stores each item as a stdClass token, which it later serializes u
 This allows you to perform checks on the items in the stack, and optionally modify these items by simply modifying 
 the object returned.
 
-> **Note**: Use [InlineScript](05_InlineScript.md) for HTML Body Scripts
+> **Note**: Use [InlineScript](06_InlineScript.md) for HTML Body Scripts
 HeadScript's sibling helper, InlineScript, should be used when you wish to include scripts inline in the HTML body. 
 Placing scripts at the end of your document is a good practice for speeding up delivery of your page, particularly when using 3rd party analytics scripts. 
 Note: Arbitrary Attributes are Disabled by Default

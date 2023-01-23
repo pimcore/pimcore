@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.firstname");
+/**
+ * @private
+ */
 pimcore.object.classes.data.firstname = Class.create(pimcore.object.classes.data.data, {
 
     type: "input",
