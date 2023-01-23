@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
+use Pimcore\Bundle\SeoBundle\Config;
 use function date;
-use Pimcore\Config;
 use Pimcore\Controller\Controller;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -207,7 +207,11 @@ class PublicServicesController extends Controller
         $domain = \Pimcore\Tool::getHostname();
         $site = Site::getByDomain($domain);
 
-        $config = Config::getRobotsConfig();
+        $config = [];
+
+        if(class_exists(Config::class)) {
+            $config = Config::getRobotsConfig();
+        }
 
         $siteId = 'default';
         if ($site instanceof Site) {

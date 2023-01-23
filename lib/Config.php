@@ -371,49 +371,6 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function getRobotsConfig(): array
-    {
-        $config = [];
-        if (RuntimeCache::isRegistered('pimcore_config_robots')) {
-            $config = RuntimeCache::get('pimcore_config_robots');
-        } else {
-            try {
-                $settingsStoreScope = 'robots.txt';
-                $configData = [];
-                $robotsSettingsIds = SettingsStore::getIdsByScope($settingsStoreScope);
-                foreach ($robotsSettingsIds as $id) {
-                    $robots = SettingsStore::get($id, $settingsStoreScope);
-                    $siteId = preg_replace('/^robots\.txt\-/', '', $robots->getId());
-                    $config[$siteId] = $robots->getData();
-                }
-            } catch (Exception $e) {
-            }
-
-            self::setRobotsConfig($config);
-        }
-
-        return $config;
-    }
-
-    /**
-     * @static
-     *
-     * @param array $config
-     *
-     * @internal
-     */
-    public static function setRobotsConfig(array $config): void
-    {
-        RuntimeCache::set('pimcore_config_robots', $config);
-    }
-
-    /**
-     * @static
-     *
-     * @return array
-     *
-     * @internal
-     */
     public static function getWeb2PrintConfig(): array
     {
         if (RuntimeCache::isRegistered('pimcore_config_web2print')) {
