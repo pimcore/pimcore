@@ -23,14 +23,17 @@ use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\TranslatorPass;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface;
 use Pimcore\Bundle\AdminBundle\Security\Factory\PreAuthenticatedAdminSessionFactory;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 
 /**
  * @internal
  */
-class PimcoreAdminBundle extends Bundle
+class PimcoreAdminBundle extends Bundle implements DependentBundleInterface
 {
     /**
      * {@inheritdoc}
@@ -56,5 +59,10 @@ class PimcoreAdminBundle extends Bundle
     public function getPath(): string
     {
         return \dirname(__DIR__);
+    }
+
+    public static function registerDependentBundles(BundleCollection $collection): void
+    {
+        $collection->addBundle(new WebpackEncoreBundle());
     }
 }

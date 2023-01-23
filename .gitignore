@@ -30,3 +30,6 @@ nbproject
 /tests/Support/Resources/objects/
 /cache/
 /.htaccess
+
+#npm
+/node_modules/
