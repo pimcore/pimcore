@@ -159,7 +159,8 @@
     "elasticsearch/elasticsearch": "^8.0",
     "composer/composer": "*",
     "chrome-php/chrome": "^1.4.0",
-    "webmozarts/console-parallelization": "^2.1"
+    "webmozarts/console-parallelization": "^2.1",
+    "symfony/dotenv": "^6.1"
   },
   "suggest": {
     "ext-sockets": "*",
