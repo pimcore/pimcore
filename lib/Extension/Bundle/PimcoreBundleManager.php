@@ -44,8 +44,14 @@ class PimcoreBundleManager
 
     protected RouterInterface $router;
 
+    /**
+     * @var string[]|null
+     */
     protected ?array $availableBundles = null;
 
+    /**
+     * @var array<string, array{enabled: bool, priority: int, environments: string[]}>|null
+     */
     protected ?array $manuallyRegisteredBundles = null;
 
     public function __construct(
@@ -98,7 +104,7 @@ class PimcoreBundleManager
     /**
      * List of available bundles from a defined set of paths
      *
-     * @return array
+     * @return string[]
      */
     public function getAvailableBundles(): array
     {
@@ -132,6 +138,8 @@ class PimcoreBundleManager
 
     /**
      * Returns names of manually registered bundles
+     *
+     * @return string[]
      */
     private function getManuallyRegisteredBundleNames(bool $onlyEnabled = false): array
     {
@@ -153,6 +161,8 @@ class PimcoreBundleManager
 
     /**
      * Builds state infos & return manually configured bundles
+     *
+     * @return array<string, array{enabled: bool, priority: int, environments: string[]}>
      */
     private function getManuallyRegisteredBundles(): array
     {
