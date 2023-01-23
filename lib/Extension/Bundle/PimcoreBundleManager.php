@@ -411,7 +411,7 @@ class PimcoreBundleManager
     /**
      * Resolves all admin javascripts to load
      *
-     * @return array
+     * @return string[]
      */
     public function getJsPaths(): array
     {
@@ -423,7 +423,7 @@ class PimcoreBundleManager
     /**
      * Resolves all admin stylesheets to load
      *
-     * @return array
+     * @return string[]
      */
     public function getCssPaths(): array
     {
@@ -435,7 +435,7 @@ class PimcoreBundleManager
     /**
      * Resolves all editmode javascripts to load
      *
-     * @return array
+     * @return string[]
      */
     public function getEditmodeJsPaths(): array
     {
@@ -447,7 +447,7 @@ class PimcoreBundleManager
     /**
      * Resolves all editmode stylesheets to load
      *
-     * @return array
+     * @return string[]
      */
     public function getEditmodeCssPaths(): array
     {
@@ -462,7 +462,7 @@ class PimcoreBundleManager
      * @param string $type
      * @param string|null $mode
      *
-     * @return array
+     * @return string[]
      */
     protected function resolvePaths(string $type, string $mode = null): array
     {
