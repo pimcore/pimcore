@@ -25,5 +25,5 @@ interface CartUpdateInterface
      *
      * @param CartInterface $cart
      */
-    public function trackCartUpdate(CartInterface $cart);
+    public function trackCartUpdate(CartInterface $cart): void;
 }

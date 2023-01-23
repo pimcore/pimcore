@@ -31,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByElement(int $cid, string $ctype)
+    public function getByElement(int $cid, string $ctype): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM edit_lock WHERE cid = ? AND ctype = ?', [$cid, $ctype]);
 
@@ -79,12 +79,12 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('edit_lock', ['id' => $this->model->getId()]);
     }
 
-    public function clearSession(string $sessionId)
+    public function clearSession(string $sessionId): void
     {
         $this->db->delete('edit_lock', ['sessionId' => $sessionId]);
     }

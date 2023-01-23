@@ -27,7 +27,7 @@ final class Merge extends AbstractOperator
 
     private bool $unique;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -81,7 +81,7 @@ final class Merge extends AbstractOperator
         return $this->flatten;
     }
 
-    public function setFlatten(bool $flatten)
+    public function setFlatten(bool $flatten): void
     {
         $this->flatten = $flatten;
     }
@@ -91,7 +91,7 @@ final class Merge extends AbstractOperator
         return $this->unique;
     }
 
-    public function setUnique(bool $unique)
+    public function setUnique(bool $unique): void
     {
         $this->unique = $unique;
     }

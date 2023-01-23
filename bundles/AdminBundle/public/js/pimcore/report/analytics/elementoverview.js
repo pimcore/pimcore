@@ -20,7 +20,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
     matchType: function (type) {
         var types = ["document_page","global"];
         if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)
-                                                        && pimcore.settings.google_analytics_enabled) {
+            && pimcore.settings.google_analytics_enabled) {
             return true;
         }
         return false;
@@ -78,14 +78,14 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
             hideHeaders: true,
             columns: [
                 {dataIndex: 'chart', sortable: false, renderer: function (d) {
-                    return '<img src="' + d + '" />';
-                }},
+                        return '<img src="' + d + '" />';
+                    }},
                 {dataIndex: 'value', sortable: false, renderer: function (d) {
-                    return '<span class="pimcore_analytics_gridvalue">' + d + '</span>';
-                }},
+                        return '<span class="pimcore_analytics_gridvalue">' + d + '</span>';
+                    }},
                 {flex: 1, dataIndex: 'label', sortable: false, renderer: function (d) {
-                    return '<span class="pimcore_analytics_gridlabel">' + t(d) + '</span>';
-                }}
+                        return '<span class="pimcore_analytics_gridlabel">' + t(d) + '</span>';
+                    }}
             ],
             stripeRows: true
         });
@@ -153,49 +153,49 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                         }
                     ]
                 }]
-             },{
+            },{
                 autoScroll: true,
                 items: [{
                     layout:'hbox',
                     border: false,
                     items: [summary,
                         {
-                        xtype: 'polar',
-                        width: '100%',
-                        height: 300,
-                        store: this.sourceStore,
-                        flex: 1,
-                        scrollable: false,
-                        series: [{
-                            type: 'pie',
-                            angleField: 'pageviews',
-                            label: {
-                                field: 'source',
-                                display: 'source',
-                                calloutLine: {
-                                    length: 60,
-                                    width: 3
+                            xtype: 'polar',
+                            width: '100%',
+                            height: 300,
+                            store: this.sourceStore,
+                            flex: 1,
+                            scrollable: false,
+                            series: [{
+                                type: 'pie',
+                                angleField: 'pageviews',
+                                label: {
+                                    field: 'source',
+                                    display: 'source',
+                                    calloutLine: {
+                                        length: 60,
+                                        width: 3
+                                    }
+                                },
+                                highlight: true,
+                                tooltip: {
+                                    trackMouse: true,
+                                    renderer: function(tooltip, storeItem, item) {
+                                        var views = storeItem.get('pageviews');
+                                        var total = self.sourceStore.sum('pageviews');
+                                        var percent = Math.round(views / total * 1000) / 10;
+                                        tooltip.setHtml(storeItem.get('source') + ' ' + views + ' (' + percent + '%)');
+                                    }
                                 }
-                            },
-                            highlight: true,
-                            tooltip: {
-                                trackMouse: true,
-                                renderer: function(tooltip, storeItem, item) {
-                                    var views = storeItem.get('pageviews');
-                                    var total = self.sourceStore.sum('pageviews');
-                                    var percent = Math.round(views / total * 1000) / 10;
-                                    tooltip.setHtml(storeItem.get('source') + ' ' + views + ' (' + percent + '%)');
-                                }
+                            }],
+                            legend: {
+                                docked: 'bottom',
+                                border: 0
                             }
-                        }],
-                        legend: {
-                            docked: 'bottom',
-                            border: 0
                         }
-                    }
                     ]
-                 }]
-             }]
+                }]
+            }]
         });
 
         return panel;
@@ -364,5 +364,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
 });
 
 // add to report broker
-pimcore.report.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
-pimcore.report.broker.addReport(pimcore.report.analytics.elementoverview, "analytics");
+if(pimcore.bundle && pimcore.bundle.customreports) {
+    pimcore.bundle.customreports.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
+    pimcore.bundle.customreports.broker.addReport(pimcore.report.analytics.elementoverview, "analytics");
+}

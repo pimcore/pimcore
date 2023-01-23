@@ -46,7 +46,7 @@ class QuantityValue implements InterpreterInterface
         return null;
     }
 
-    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver): void
     {
         $resolver
             ->setDefault('onlyValue', false)

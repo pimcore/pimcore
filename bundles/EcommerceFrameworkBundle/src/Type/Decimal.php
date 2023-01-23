@@ -138,13 +138,8 @@ class Decimal
 
     /**
      * Creates a value from an raw integer input. No value conversions will be done.
-     *
-     * @param int $amount
-     * @param int|null $scale
-     *
-     * @return self
      */
-    public static function fromRawValue(int $amount, int $scale = null): self
+    public static function fromRawValue(int $amount, int $scale = null): static
     {
         $scale = $scale ?? static::$defaultScale;
         self::validateScale($scale);
@@ -155,14 +150,8 @@ class Decimal
     /**
      * Creates a value from a string input. If possible, the integer will be created with
      * string operations (e.g. adding zeroes), otherwise it will fall back to fromNumeric().
-     *
-     * @param string $amount
-     * @param int|null $scale
-     * @param int|null $roundingMode
-     *
-     * @return Decimal
      */
-    public static function fromString(string $amount, int $scale = null, int $roundingMode = null): self
+    public static function fromString(string $amount, int $scale = null, int $roundingMode = null): static
     {
         $scale = $scale ?? static::$defaultScale;
         self::validateScale($scale);
@@ -212,14 +201,8 @@ class Decimal
      * Creates a value from a numeric input. The given amount will be converted to int
      * with the given scale. Please note that this implicitely rounds the amount to the
      * next integer, so precision depends on the given scale.
-     *
-     * @param float|int|string $amount
-     * @param int|null $scale
-     * @param int|null $roundingMode
-     *
-     * @return Decimal
      */
-    public static function fromNumeric(float|int|string $amount, int $scale = null, int $roundingMode = null): self
+    public static function fromNumeric(float|int|string $amount, int $scale = null, int $roundingMode = null): static
     {
         if (!is_numeric($amount)) {
             throw new \InvalidArgumentException('Value is not numeric');
@@ -378,13 +361,8 @@ class Decimal
 
     /**
      * Builds a value with the given scale
-     *
-     * @param int $scale
-     * @param int|null $roundingMode
-     *
-     * @return Decimal
      */
-    public function withScale(int $scale, int $roundingMode = null): self
+    public function withScale(int $scale, int $roundingMode = null): static
     {
         self::validateScale($scale);
 
@@ -527,10 +505,8 @@ class Decimal
 
     /**
      * Returns the absolute amount
-     *
-     * @return Decimal
      */
-    public function abs(): self
+    public function abs(): static
     {
         if ($this->amount < 0) {
             return new static((int)abs($this->amount), $this->scale);
@@ -541,12 +517,8 @@ class Decimal
 
     /**
      * Adds another price amount
-     *
-     * @param float|int|string|Decimal $other
-     *
-     * @return Decimal
      */
-    public function add(float|int|string|Decimal $other): self
+    public function add(float|int|string|Decimal $other): static
     {
         if (!$other instanceof Decimal) {
             $other = static::fromNumeric($other, $this->scale);
@@ -562,12 +534,8 @@ class Decimal
 
     /**
      * Subtracts another price amount
-     *
-     * @param float|int|string|Decimal $other
-     *
-     * @return Decimal
      */
-    public function sub(float|int|string|Decimal $other): self
+    public function sub(float|int|string|Decimal $other): static
     {
         if (!$other instanceof Decimal) {
             $other = static::fromNumeric($other, $this->scale);
@@ -585,13 +553,8 @@ class Decimal
      * Multiplies by the given factor. This does NOT have to be a price amount, but can be
      * a simple scalar factor (e.g. 2) as multiplying prices is rarely needed. However, if
      * a Decimal is passed, its float representation will be used for calculations.
-     *
-     * @param float|int|Decimal $other
-     * @param int|null $roundingMode
-     *
-     * @return Decimal
      */
-    public function mul(float|int|Decimal $other, int $roundingMode = null): self
+    public function mul(float|int|string|Decimal $other, int $roundingMode = null): static
     {
         $operand = $this->getScalarOperand($other);
 
@@ -608,14 +571,9 @@ class Decimal
      * a simple scalar factor (e.g. 2) as dividing prices is rarely needed. However, if
      * a Decimal is passed, its float representation will be used for calculations.
      *
-     * @param float|int|Decimal $other
-     * @param int|null $roundingMode
-     *
-     * @return Decimal
-     *
      * @throws \DivisionByZeroError
      */
-    public function div(float|int|Decimal $other, int $roundingMode = null): self
+    public function div(float|int|string|Decimal $other, int $roundingMode = null): static
     {
         $operand = $this->getScalarOperand($other);
         $epsilon = pow(10, -1 * $this->scale);
@@ -666,14 +624,9 @@ class Decimal
     /**
      * Calculate a discounted amount
      *
-     * @param float|int|Decimal $discount
-     * @param int|null $roundingMode
-     *
-     * @return Decimal
-     *
      * @example Decimal::create(100)->discount(15) = 85
      */
-    public function discount(float|int|Decimal $discount, int $roundingMode = null): self
+    public function discount(float|int|string|Decimal $discount, int $roundingMode = null): static
     {
         $discount = $this->getScalarOperand($discount);
 

@@ -162,10 +162,12 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
         queryString.site = this.site;
 
         Ext.get(this.iframeId).dom.setAttribute("src",
-                                Routing.getBaseUrl() + "/admin/reports/analytics/siteoverview?" + Ext.Object.toQueryString(queryString));
+            Routing.getBaseUrl() + "/admin/reports/analytics/siteoverview?" + Ext.Object.toQueryString(queryString));
     }
 });
 
 // add to report broker
-pimcore.report.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
-pimcore.report.broker.addReport(pimcore.report.analytics.overview, "analytics");
+if(pimcore.bundle && pimcore.bundle.customreports) {
+    pimcore.bundle.customreports.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
+    pimcore.bundle.customreports.broker.addReport(pimcore.report.analytics.overview, "analytics");
+}

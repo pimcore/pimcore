@@ -50,7 +50,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         self::configureCommand($this);

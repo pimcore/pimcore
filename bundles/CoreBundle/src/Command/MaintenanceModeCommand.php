@@ -31,7 +31,7 @@ class MaintenanceModeCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:maintenance-mode')
@@ -44,7 +44,7 @@ class MaintenanceModeCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $input->setOption('ignore-maintenance-mode', true);
         parent::initialize($input, $output);

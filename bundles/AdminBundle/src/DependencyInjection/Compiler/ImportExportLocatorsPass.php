@@ -30,7 +30,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
  */
 final class ImportExportLocatorsPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->processGridColumns($container);
     }

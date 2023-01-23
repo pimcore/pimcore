@@ -28,10 +28,15 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
             detail: {
                 document: this,
                 type: "snippet"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenDocumentSnippet);
+        const isAllowed = document.dispatchEvent(preOpenDocumentSnippet);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         this.getData();
     },
@@ -59,7 +64,9 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         }
 
         this.dependencies = new pimcore.element.dependencies(this, "document");
-        this.reports = new pimcore.report.panel("document_snippet", this);
+        if(pimcore.globalmanager.get('customReportsPanelImplementationFactory').hasImplementation()) {
+            this.reports = pimcore.globalmanager.get('customReportsPanelImplementationFactory').getNewReportInstance("document_snippet");
+        }
         this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
         this.workflows = new pimcore.element.workflows(this, "document");
     },
@@ -88,9 +95,11 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
 
         items.push(this.dependencies.getLayout());
 
-        var reportLayout = this.reports.getLayout();
-        if(reportLayout) {
-            items.push(reportLayout);
+        if(this.reports) {
+            var reportLayout = this.reports.getLayout();
+            if (reportLayout) {
+                items.push(reportLayout);
+            }
         }
 
         if (user.isAllowed("notes_events")) {

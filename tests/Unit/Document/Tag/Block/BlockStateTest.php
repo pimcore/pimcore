@@ -26,7 +26,7 @@ use Pimcore\Tests\Support\Test\TestCase;
  */
 class BlockStateTest extends TestCase
 {
-    public function testBlocks()
+    public function testBlocks(): void
     {
         $state = new BlockState();
 
@@ -57,14 +57,14 @@ class BlockStateTest extends TestCase
         $this->assertFalse($state->hasBlocks());
     }
 
-    public function testPopBlocksThrowsExceptionIfEmpty()
+    public function testPopBlocksThrowsExceptionIfEmpty(): void
     {
         $this->expectException(\UnderflowException::class);
         $state = new BlockState();
         $state->popBlock();
     }
 
-    public function testClearBlocks()
+    public function testClearBlocks(): void
     {
         $state = new BlockState();
 
@@ -80,7 +80,7 @@ class BlockStateTest extends TestCase
         $this->assertCount(0, $state->getBlocks());
     }
 
-    public function testIndexes()
+    public function testIndexes(): void
     {
         $state = new BlockState();
 
@@ -106,14 +106,14 @@ class BlockStateTest extends TestCase
         $this->assertFalse($state->hasIndexes());
     }
 
-    public function testPopIndexesThrowsExceptionIfEmpty()
+    public function testPopIndexesThrowsExceptionIfEmpty(): void
     {
         $this->expectException(\UnderflowException::class);
         $state = new BlockState();
         $state->popIndex();
     }
 
-    public function testClearIndexes()
+    public function testClearIndexes(): void
     {
         $state = new BlockState();
 

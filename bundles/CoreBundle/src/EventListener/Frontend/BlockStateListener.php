@@ -51,7 +51,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -73,7 +73,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
         $this->blockStateStack->push();
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         $request = $event->getRequest();
 

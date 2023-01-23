@@ -41,7 +41,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getByCode(string $code)
+    public function getByCode(string $code): void
     {
         $result = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?', [$code]);
         if (empty($result)) {
@@ -63,12 +63,12 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         return $reservation !== null;
     }
 
-    public function getTokenUsages($code)
+    public function getTokenUsages(string $code): ?int
     {
         try {
-            return $this->db->fetchOne('SELECT usages FROM ' . self::TABLE_NAME . ' WHERE token = ?', $code);
+            return (int) $this->db->fetchOne('SELECT usages FROM ' . self::TABLE_NAME . ' WHERE token = ?', [$code]);
         } catch (\Exception $e) {
-            return false;
+            return null;
         }
     }
 
@@ -94,7 +94,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         }
     }
 
-    public function check($cart)
+    public function check(CartInterface $cart): void
     {
     }
 }

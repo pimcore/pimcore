@@ -24,11 +24,8 @@ interface DirtyIndicatorInterface
 
     /**
      * marks the given field as dirty
-     *
-     * @param string $field
-     * @param bool $dirty
      */
-    public function markFieldDirty(string $field, bool $dirty = true);
+    public function markFieldDirty(string $field, bool $dirty = true): void;
 
-    public function resetDirtyMap();
+    public function resetDirtyMap(): void;
 }

@@ -39,7 +39,7 @@ class ImportConfigListener implements EventSubscriberInterface
         ];
     }
 
-    public function onClassDelete(ClassDefinitionEvent $event)
+    public function onClassDelete(ClassDefinitionEvent $event): void
     {
         $class = $event->getClassDefinition();
         $classId = $class->getId();
@@ -54,7 +54,7 @@ class ImportConfigListener implements EventSubscriberInterface
         $this->cleanupImportConfigs('classId = ' . $db->quote($classId));
     }
 
-    public function onUserDelete(UserRoleEvent $event)
+    public function onUserDelete(UserRoleEvent $event): void
     {
         $user = $event->getUserRole();
         $userId = $user->getId();
@@ -69,7 +69,7 @@ class ImportConfigListener implements EventSubscriberInterface
         $this->cleanupImportConfigs('ownerId = ' . $userId);
     }
 
-    protected function cleanupImportConfigs($condition)
+    protected function cleanupImportConfigs(string $condition): void
     {
         $db = Db::get();
         $db->executeQuery('DELETE FROM importconfigs where ' . $condition);

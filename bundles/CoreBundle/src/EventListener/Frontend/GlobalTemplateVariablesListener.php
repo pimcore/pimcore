@@ -58,7 +58,7 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         // set the variables as soon as possible, so that we're not getting troubles in
         // onKernelController() if the twig environment was already initialized before
@@ -70,7 +70,7 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
         }
     }
 
-    public function onKernelController(ControllerEvent $event)
+    public function onKernelController(ControllerEvent $event): void
     {
         $request = $event->getRequest();
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
@@ -90,7 +90,7 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
         }
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if (count($this->globalsStack)) {
             $globals = array_pop($this->globalsStack);

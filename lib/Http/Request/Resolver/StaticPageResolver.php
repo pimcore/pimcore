@@ -31,7 +31,7 @@ class StaticPageResolver extends AbstractRequestResolver
         return $request->attributes->has(self::ATTRIBUTE_PIMCORE_STATIC_PAGE);
     }
 
-    public function setStaticPageContext(Request $request)
+    public function setStaticPageContext(Request $request): void
     {
         $request->attributes->set(self::ATTRIBUTE_PIMCORE_STATIC_PAGE, true);
     }

@@ -388,13 +388,6 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             "->"
         ];
         toolbarItems = toolbarItems.concat(this.getFilterEditToolbarItems());
-        toolbarItems = toolbarItems.concat([
-            {
-                xtype: "button",
-                iconCls: "pimcore_icon_search",
-                handler: this.openSearchEditor.bind(this)
-            }
-        ]);
 
         if (this.fieldConfig.allowToClearRelation) {
             toolbarItems.push({
@@ -406,6 +399,16 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                     }.bind(this));
                 }.bind(this)
             });
+        }
+
+        if(pimcore.helpers.hasSearchImplementation()) {
+            toolbarItems = toolbarItems.concat([
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    handler: this.openSearchEditor.bind(this)
+                }
+            ]);
         }
 
         if (this.fieldConfig.assetsAllowed) {
@@ -553,14 +556,16 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             }.bind(this, data)
         }));
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: "pimcore_icon_search",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.openSearchEditor();
-            }.bind(this.reference)
-        }));
+        if(pimcore.helpers.hasSearchImplementation()) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this.reference)
+            }));
+        }
 
         e.stopEvent();
         menu.showAt(e.getXY());

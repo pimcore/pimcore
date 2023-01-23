@@ -109,7 +109,7 @@ abstract class AbstractWorker implements WorkerInterface
      * @param IndexableInterface $object
      * @param array $subObjectIds
      */
-    protected function doCleanupOldZombieData(IndexableInterface $object, array $subObjectIds)
+    protected function doCleanupOldZombieData(IndexableInterface $object, array $subObjectIds): void
     {
         $cleanupIds = $this->tenantConfig->getSubIdsToCleanup($object, $subObjectIds);
         foreach ($cleanupIds as $idToCleanup) {
@@ -123,7 +123,7 @@ abstract class AbstractWorker implements WorkerInterface
      * @param int $subObjectId
      * @param IndexableInterface|null $object - might be empty (when object doesn't exist any more in pimcore
      */
-    abstract protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null);
+    abstract protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null): void;
 
     /**
      * Checks if given data is array and returns converted data suitable for search backend. For mysql it is a string with special delimiter.

@@ -69,7 +69,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
      *
      * {@inheritdoc}
      */
-    protected function loadInternal(array $config, ContainerBuilder $container)
+    protected function loadInternal(array $config, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(
             $container,

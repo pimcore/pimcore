@@ -118,7 +118,7 @@ class CacheExtension extends AbstractExtension
      * @param string $key the cache key
      * @param bool $isLoadedFromCache true if the content origins from the cache and hasn't been created "live".
      */
-    protected function outputContent(string $content, string $key, bool $isLoadedFromCache)
+    protected function outputContent(string $content, string $key, bool $isLoadedFromCache): void
     {
         echo $content;
     }
@@ -130,7 +130,7 @@ class CacheExtension extends AbstractExtension
      * @param string $key
      * @param array $tags
      */
-    protected function saveContentToCache(string $content, string $key, array $tags)
+    protected function saveContentToCache(string $content, string $key, array $tags): void
     {
         CacheManager::save($content, $key, $tags, $this->lifetime, 996, true);
     }

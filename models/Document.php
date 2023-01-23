@@ -21,9 +21,11 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
@@ -187,11 +189,18 @@ class Document extends Element\AbstractElement
 
     public static function getById(int|string $id, array $params = []): ?static
     {
-        if (!is_numeric($id) || $id < 1) {
+        if (is_string($id)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0',
+                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
+            );
+            $id = is_numeric($id) ? (int) $id : 0;
+        }
+        if ($id < 1) {
             return null;
         }
 
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
         $params = Element\Service::prepareGetByIdParams($params);
 
@@ -216,18 +225,32 @@ class Document extends Element\AbstractElement
                 return null;
             }
 
-            $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
+            try {
+                // Getting Typeloader from container
+                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
+                $newDocument = $loader->build($document->getType());
+            } catch(UnsupportedException $ex) {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.6.0',
+                    sprintf('%s - Loading documents via fixed namespace is deprecated and will be removed in Pimcore 11. Use pimcore:type_definitions instead', $ex->getMessage())
+                );
+                /**
+                 * @deprecated since Pimcore 10.6 and will be removed in Pimcore 11. Use type_definitions instead
+                 */
+                $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
 
-            // this is the fallback for custom document types using prefixes
-            // so we need to check if the class exists first
-            if (!Tool::classExists($className)) {
-                $oldStyleClass = 'Document_' . ucfirst($document->getType());
-                if (Tool::classExists($oldStyleClass)) {
-                    $className = $oldStyleClass;
+                // this is the fallback for custom document types using prefixes
+                // so we need to check if the class exists first
+                if (!Tool::classExists($className)) {
+                    $oldStyleClass = 'Document_' . ucfirst($document->getType());
+                    if (Tool::classExists($oldStyleClass)) {
+                        $className = $oldStyleClass;
+                    }
                 }
+                /** @var Document $newDocument */
+                $newDocument = self::getModelFactory()->build($className);
             }
-            /** @var Document $newDocument */
-            $newDocument = self::getModelFactory()->build($className);
 
             if (get_class($document) !== get_class($newDocument)) {
                 $document = $newDocument;
@@ -469,7 +492,7 @@ class Document extends Element\AbstractElement
      *
      * @internal
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         $disallowedKeysInFirstLevel = ['install', 'admin', 'plugin'];
         if ($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
@@ -522,13 +545,13 @@ class Document extends Element\AbstractElement
      *
      * @internal
      */
-    public function saveIndex(int $index)
+    public function saveIndex(int $index): void
     {
         $this->getDao()->saveIndex($index);
         $this->clearDependentCache();
     }
 
-    public function clearDependentCache(array $additionalTags = [])
+    public function clearDependentCache(array $additionalTags = []): void
     {
         try {
             $tags = [$this->getCacheTag(), 'document_properties', 'output'];
@@ -636,7 +659,7 @@ class Document extends Element\AbstractElement
      *
      * @throws \Exception
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // remove children
         if ($this->hasChildren()) {
@@ -663,7 +686,7 @@ class Document extends Element\AbstractElement
         $service->removeTranslation($this);
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
 
@@ -969,7 +992,7 @@ class Document extends Element\AbstractElement
      *
      * @param bool $hideUnpublished
      */
-    public static function setHideUnpublished(bool $hideUnpublished)
+    public static function setHideUnpublished(bool $hideUnpublished): void
     {
         self::$hideUnpublished = $hideUnpublished;
     }

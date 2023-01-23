@@ -23,7 +23,6 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\ReportConfigWriter;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\SettingsStore;
-use function preg_replace;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Yaml\Yaml;
 
@@ -127,7 +126,7 @@ final class Config implements ArrayAccess
      *
      * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
      */
-    public static function setSystemConfiguration(?array $configuration, string $offset = null)
+    public static function setSystemConfiguration(?array $configuration, string $offset = null): void
     {
         if (null !== $offset) {
             self::getSystemConfiguration();
@@ -295,7 +294,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function setWebsiteConfig(?array $config, string $language = null)
+    public static function setWebsiteConfig(?array $config, string $language = null): void
     {
         RuntimeCache::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
     }
@@ -359,52 +358,9 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function setReportConfig(array $config)
+    public static function setReportConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_report', $config);
-    }
-
-    /**
-     * @static
-     *
-     * @return array
-     *
-     * @internal
-     */
-    public static function getRobotsConfig(): array
-    {
-        $config = [];
-        if (RuntimeCache::isRegistered('pimcore_config_robots')) {
-            $config = RuntimeCache::get('pimcore_config_robots');
-        } else {
-            try {
-                $settingsStoreScope = 'robots.txt';
-                $configData = [];
-                $robotsSettingsIds = SettingsStore::getIdsByScope($settingsStoreScope);
-                foreach ($robotsSettingsIds as $id) {
-                    $robots = SettingsStore::get($id, $settingsStoreScope);
-                    $siteId = preg_replace('/^robots\.txt\-/', '', $robots->getId());
-                    $config[$siteId] = $robots->getData();
-                }
-            } catch (Exception $e) {
-            }
-
-            self::setRobotsConfig($config);
-        }
-
-        return $config;
-    }
-
-    /**
-     * @static
-     *
-     * @param array $config
-     *
-     * @internal
-     */
-    public static function setRobotsConfig(array $config)
-    {
-        RuntimeCache::set('pimcore_config_robots', $config);
     }
 
     /**
@@ -433,7 +389,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function setWeb2PrintConfig(array $config)
+    public static function setWeb2PrintConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_web2print', $config);
     }
@@ -445,7 +401,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function setModelClassMappingConfig(array $config)
+    public static function setModelClassMappingConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_model_classmapping', $config);
     }

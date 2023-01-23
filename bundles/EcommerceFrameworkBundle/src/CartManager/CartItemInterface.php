@@ -86,7 +86,7 @@ interface CartItemInterface
      *
      * @param int|string $cartId
      */
-    public static function removeAllFromCart(int|string $cartId);
+    public static function removeAllFromCart(int|string $cartId): void;
 
     public function save(): void;
 

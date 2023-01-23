@@ -65,7 +65,7 @@ abstract class FrontendController extends Controller
         throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
     }
 
-    public function __set(string $name, mixed $value)
+    public function __set(string $name, mixed $value): void
     {
         $requestAttributes = ['document', 'editmode'];
         if (in_array($name, $requestAttributes)) {
@@ -87,7 +87,7 @@ abstract class FrontendController extends Controller
      * @param bool $replace
      * @param Request|null $request
      */
-    protected function addResponseHeader(string $key, array|string $values, bool $replace = false, Request $request = null)
+    protected function addResponseHeader(string $key, array|string $values, bool $replace = false, Request $request = null): void
     {
         if (null === $request) {
             $request = $this->container->get('request_stack')->getCurrentRequest();

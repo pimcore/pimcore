@@ -30,6 +30,8 @@ to integrate custom adapters - see section below.
 - Default Object List: Extracts email addresses based on Pimcore objects.  
 - CSV List: Uses a CSV as source for email addresses. 
 - Column from a report: Uses a custom report as source for email adresses. 
+  - Please make sure to enable the PimcoreCustomReportsBundle before you use this feature. 
+ 
 
 ### Test Sending
 Once a Address Source Adapter is selected, a test sending to a specified email address can be made with the button 

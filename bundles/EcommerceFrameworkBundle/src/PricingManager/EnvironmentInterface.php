@@ -64,7 +64,7 @@ interface EnvironmentInterface
      *
      * @param string $executionMode
      */
-    public function setExecutionMode(string $executionMode);
+    public function setExecutionMode(string $executionMode): void;
 
     /**
      * returns in with execution mode the system is - either product or cart

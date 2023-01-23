@@ -106,9 +106,9 @@ class HardlinkController extends DocumentControllerBase
 
     /**
      * @param Request $request
-     * @param Document\Hardlink $link
+     * @param Document\Hardlink $document
      */
-    protected function setValuesToDocument(Request $request, Document $link)
+    protected function setValuesToDocument(Request $request, Document $document): void
     {
         // data
         if ($request->get('data')) {
@@ -118,11 +118,11 @@ class HardlinkController extends DocumentControllerBase
             if ($sourceDocument = Document::getByPath($data['sourcePath'])) {
                 $sourceId = $sourceDocument->getId();
             }
-            $link->setSourceId($sourceId);
-            $link->setValues($data);
+            $document->setSourceId($sourceId);
+            $document->setValues($data);
         }
 
-        $this->addPropertiesToDocument($request, $link);
-        $this->applySchedulerDataToElement($request, $link);
+        $this->addPropertiesToDocument($request, $document);
+        $this->applySchedulerDataToElement($request, $document);
     }
 }

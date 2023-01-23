@@ -29,7 +29,7 @@ class MigrateElementsCommand extends AbstractCommand
 {
     private bool $runCommand = true;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:documents:migrate-elements')
@@ -64,7 +64,7 @@ class MigrateElementsCommand extends AbstractCommand
         $this->output->writeln(sprintf('saved version %d, document id: %d, document key: %s', $vId, $documentId, $dKey));
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output)
+    protected function interact(InputInterface $input, OutputInterface $output): void
     {
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
