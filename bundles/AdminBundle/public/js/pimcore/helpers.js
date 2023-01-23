@@ -3253,36 +3253,30 @@ pimcore.helpers.buildMainNavigationMarkup = function(menu) {
     });
 
 
+    const dh = Ext.DomHelper;
+    const ul = Ext.get("pimcore_navigation_ul");
+    const menuPrefix = 'pimcore_menu_';
+    
     // sorting must be done manually here.
-    let sortedMenu = {};
-    Object.keys(menu).sort(function(a, b){
+    Object.keys(menu).sort((a, b) => {
         // a and b are the keys like file, extras e.t.c
         // we use the keys to get the menu object themselfes with the priorities
         return pimcore.helpers.priorityCompare(menu[a], menu[b]);
-    }).forEach(function(key) {
-        // after sorting the keys we then build a new sorted menu
-        sortedMenu[key] = menu[key];
-    });
-
-    let dh = Ext.DomHelper;
-    let ul = Ext.get("pimcore_navigation_ul");
-    const menuPrefix = 'pimcore_menu_';
-
-    Object.keys(sortedMenu).forEach(key => {
+    }).filter(key => {
         // the notifications are excluded from this
-        if(!sortedMenu[key]['exclude']) {
-            let li = {
-                id: menuPrefix + key,
-                tag: 'li',
-                cls: 'pimcore_menu_item pimcore_menu_needs_children',
-                html: '<div id="menuitem-' + key + '-iconEl" data-ref="iconEl" class="x-menu-item-main-icon x-menu-item-icon pimcore_main_nav_icon_' + sortedMenu[key]['iconCls'] + '"></div>',
-                'data-menu-tooltip': t(sortedMenu[key]['label'])
-            }
-            if(sortedMenu[key]['style']) {
-                li.style = sortedMenu[key]['style'];
-            }
-            dh.append(ul, li)
+        return !menu[key]['exclude'];
+    }).forEach(key => {
+        const li = {
+            id: menuPrefix + key,
+            tag: 'li',
+            cls: 'pimcore_menu_item pimcore_menu_needs_children',
+            html: '<div id="menuitem-' + key + '-iconEl" data-ref="iconEl" class="x-menu-item-main-icon x-menu-item-icon pimcore_main_nav_icon_' + menu[key]['iconCls'] + '"></div>',
+            'data-menu-tooltip': t(menu[key]['label'])
         }
+        if(menu[key]['style']) {
+            li.style = menu[key]['style'];
+        }
+        dh.append(ul, li)
     })
 
     // add the maintenance at last
