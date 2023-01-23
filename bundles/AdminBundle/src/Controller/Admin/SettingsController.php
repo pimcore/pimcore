@@ -1540,7 +1540,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @return array{id: ?int, name: string, language: string, type: string, data: ?string, siteId: ?int, creationDate: ?int, modificationDate: ?int}
+     * @return array{id: ?int, name: string, language: string, type: string, data: mixed, siteId: ?int, creationDate: ?int, modificationDate: ?int}
      */
     private function getWebsiteSettingForEditMode(WebsiteSetting $item): array
     {
