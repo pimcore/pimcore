@@ -66,7 +66,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         return $this->minValue;
     }
 
-    public function setMinValue(?string $minValue)
+    public function setMinValue(?string $minValue): void
     {
         if (is_string($minValue) && strlen($minValue)) {
             $this->minValue = $this->toTime($minValue);
@@ -80,7 +80,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         return $this->maxValue;
     }
 
-    public function setMaxValue(?string $maxValue)
+    public function setMaxValue(?string $maxValue): void
     {
         if (is_string($maxValue) && strlen($maxValue)) {
             $this->maxValue = $this->toTime($maxValue);
@@ -92,7 +92,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         parent::checkValidity($data, $omitMandatoryCheck);
 
@@ -206,7 +206,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         return $this->increment;
     }
 
-    public function setIncrement(int $increment)
+    public function setIncrement(int $increment): void
     {
         $this->increment = (int) $increment;
     }

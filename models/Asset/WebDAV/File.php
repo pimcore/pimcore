@@ -66,7 +66,7 @@ class File extends DAV\File
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->asset->isAllowed('delete')) {
             Asset\Service::loadAllFields($this->asset);

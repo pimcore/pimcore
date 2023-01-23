@@ -11,8 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.custom.definition.analytics");
-pimcore.report.custom.definition.analytics = Class.create({
+pimcore.registerNS("pimcore.bundle.customreports.custom.definition.analytics");
+/**
+ * @private
+ */
+pimcore.bundle.customreports.custom.definition.analytics = Class.create({
 
     element: null,
     sourceDefinitionData: null,

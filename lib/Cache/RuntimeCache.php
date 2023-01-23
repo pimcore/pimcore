@@ -155,7 +155,7 @@ class RuntimeCache extends \ArrayObject
      * @param mixed $data
      * @param string $id
      */
-    public static function save(mixed $data, string $id)
+    public static function save(mixed $data, string $id): void
     {
         self::set($id, $data);
     }
@@ -172,7 +172,7 @@ class RuntimeCache extends \ArrayObject
         return self::get($id);
     }
 
-    public static function clear(array $keepItems = [])
+    public static function clear(array $keepItems = []): void
     {
         self::$instance = null;
         $newInstance = new self();

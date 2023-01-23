@@ -48,7 +48,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         }
     }
 
-    public function setCartClass($cartClass)
+    public function setCartClass(string $cartClass): void
     {
         $this->cartClass = $cartClass;
     }

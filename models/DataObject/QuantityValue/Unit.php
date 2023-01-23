@@ -117,7 +117,7 @@ class Unit extends Model\AbstractModel
         return $unit;
     }
 
-    public function save()
+    public function save(): void
     {
         $isUpdate = false;
         if ($this->getId()) {
@@ -138,7 +138,7 @@ class Unit extends Model\AbstractModel
         }
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_DELETE);
         $this->getDao()->delete();
@@ -167,7 +167,7 @@ class Unit extends Model\AbstractModel
         return $this->abbreviation;
     }
 
-    public function setBaseunit(Unit|int $baseunit): static
+    public function setBaseunit(Unit|string|null $baseunit): static
     {
         if ($baseunit instanceof self) {
             $baseunit = $baseunit->getId();

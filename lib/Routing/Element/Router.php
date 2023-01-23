@@ -48,15 +48,13 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->context = $context;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return RequestContext
      */
     public function getContext(): RequestContext
     {
@@ -65,36 +63,25 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function supports($name): bool
-    {
-        return $name === 'pimcore_element';
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return string
-     */
-    public function getRouteDebugMessage($name, array $parameters = []): string
+    public function getRouteDebugMessage(string $name, array $parameters = []): string
     {
         $element = $parameters['element'] ?? null;
         if ($element instanceof ElementInterface) {
-            return sprintf('Element (Type: %s, ID: %d)', $element->getType(), $element->getId());
+            return sprintf('pimcore_element (Type: %s, ID: %d)', $element->getType(), $element->getId());
         }
 
-        return 'No element';
+        return 'pimcore_element (No element)';
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return string
      */
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
+        if ($name !== 'pimcore_element') {
+            throw new RouteNotFoundException('Not supported name');
+        }
         $element = $parameters['element'] ?? null;
         unset($parameters['element']);
         if ($element instanceof Document || $element instanceof Asset) {
@@ -159,8 +146,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * Tries to get the current route name from current or master request
-     *
-     * @return string|null
      */
     protected function getCurrentRoute(): ?string
     {
@@ -179,8 +164,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * {@inheritdoc}
-     *
-     * @return array
      */
     public function matchRequest(Request $request): array
     {
@@ -189,18 +172,14 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * {@inheritdoc}
-     *
-     * @return array
      */
-    public function match($pathinfo): array
+    public function match(string $pathinfo): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return RouteCollection
      */
     public function getRouteCollection(): RouteCollection
     {

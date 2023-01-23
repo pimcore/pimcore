@@ -11,6 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @private
+ */
+
 Ext.setVersion("ext", "7.0.0.159");
 Ext.setVersion("core", "7.0.0.159");
 

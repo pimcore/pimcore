@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.listfolder");
+/**
+ * @private
+ */
 pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
     systemColumns: ["id~system", "type~system", "fullpath~system", "filename~system", "creationDate~system", "modificationDate~system", "preview~system", "size~system"],

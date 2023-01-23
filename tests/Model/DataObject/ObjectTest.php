@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\DataObject;
 
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -33,7 +34,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Verifies that an object with the same parent ID cannot be created.
      */
-    public function testParentIdentical()
+    public function testParentIdentical(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
@@ -47,7 +48,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Verifies that object PHP API version note is saved
      */
-    public function testSavingVersionNotes()
+    public function testSavingVersionNotes(): void
     {
         $versionNote = ['versionNote' => 'a new version of this object'];
         $this->testObject = TestHelper::createEmptyObject();
@@ -58,7 +59,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Parent ID of a new object cannot be 0
      */
-    public function testParentIs0()
+    public function testParentIs0(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
@@ -74,7 +75,7 @@ class ObjectTest extends ModelTestCase
      *
      * @group notfound
      */
-    public function testParentNotFound()
+    public function testParentNotFound(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
@@ -89,7 +90,7 @@ class ObjectTest extends ModelTestCase
      * Verifies that children result should be cached based on parameters provided.
      *
      */
-    public function testCacheUnpublishedChildren()
+    public function testCacheUnpublishedChildren(): void
     {
         // create parent
         $parent = TestHelper::createEmptyObject();
@@ -100,14 +101,14 @@ class ObjectTest extends ModelTestCase
         $firstChild->save();
 
         //without unpublished flag
-        $child = $parent->getChildren();
+        $child = $parent->getChildren()->load();
         $this->assertEquals(0, count($child), 'Expected no child');
 
         $hasChild = $parent->hasChildren();
         $this->assertFalse($hasChild, 'hasChild property should be false');
 
         //with unpublished flag
-        $child = $parent->getChildren([], true);
+        $child = $parent->getChildren([], true)->load();
         $this->assertEquals(1, count($child), 'Expected 1 child');
 
         $hasChild = $parent->hasChildren([], true);
@@ -118,7 +119,7 @@ class ObjectTest extends ModelTestCase
      * Verifies that siblings result should be cached based on parameters provided.
      *
      */
-    public function testCacheUnpublishedSiblings()
+    public function testCacheUnpublishedSiblings(): void
     {
         // create parent
         $parent = TestHelper::createEmptyObject();
@@ -134,14 +135,14 @@ class ObjectTest extends ModelTestCase
         $secondChild->save();
 
         //without unpublished flag
-        $sibling = $firstChild->getSiblings();
+        $sibling = $firstChild->getSiblings()->load();
         $this->assertEquals(0, count($sibling), 'Expected no sibling');
 
         $hasSibling = $firstChild->hasSiblings();
         $this->assertFalse($hasSibling, 'hasSiblings property should be false');
 
         //with unpublished flag
-        $sibling = $firstChild->getSiblings([], true);
+        $sibling = $firstChild->getSiblings([], true)->load();
         $this->assertEquals(1, count($sibling), 'Expected 1 sibling');
 
         $hasSibling = $firstChild->hasSiblings([], true);
@@ -152,7 +153,7 @@ class ObjectTest extends ModelTestCase
      * Verifies that an object can be saved with custom user modification id.
      *
      */
-    public function testCustomUserModification()
+    public function testCustomUserModification(): void
     {
         $userId = 101;
         $object = TestHelper::createEmptyObject();
@@ -172,7 +173,7 @@ class ObjectTest extends ModelTestCase
      * Verifies that an object can be saved with custom modification date.
      *
      */
-    public function testCustomModificationDate()
+    public function testCustomModificationDate(): void
     {
         $customDateTime = new \Carbon\Carbon();
         $customDateTime = $customDateTime->subHour();
@@ -194,7 +195,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Verifies that when an object gets saved default values of fields get saved to the version
      */
-    public function testDefaultValueSavedToVersion()
+    public function testDefaultValueSavedToVersion(): void
     {
         $object = TestHelper::createEmptyObject();
         $object->save();
@@ -208,7 +209,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Verifies that when an object gets cloned, the fields get copied properly
      */
-    public function testCloning()
+    public function testCloning(): void
     {
         $object = TestHelper::createEmptyObject('', false);
         $clone = Service::cloneMe($object);
@@ -224,7 +225,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Verifies that loading only Concrete object from Concrete::getById().
      */
-    public function testConcreteLoading()
+    public function testConcreteLoading(): void
     {
         $concreteObject = TestHelper::createEmptyObject();
         $loadedConcrete = DataObject\Concrete::getById($concreteObject->getId(), ['force' => true]);
@@ -235,5 +236,106 @@ class ObjectTest extends ModelTestCase
         $loadedNonConcrete = DataObject\Concrete::getById($nonConcreteObject->getId(), ['force' => true]);
 
         $this->assertNull($loadedNonConcrete, 'Loaded Concrete should be null.');
+    }
+
+    /**
+     * Values should be stored as they are passed. E.g. passing '' (empty string) to a setter function should be stored as such in the database.
+     * Passing null to a setter function should be stored as null in the database.
+     */
+    public function testEmptyValuesAsNullApi(): void
+    {
+        $db = Db::get();
+
+        $object = TestHelper::createEmptyObject();
+        $object->setInput('InputValue');
+        $object->setTextarea('TextareaValue');
+        $object->setWysiwyg('WysiwygValue');
+        $object->setPassword('PasswordValue');
+        $iqv = new \Pimcore\Model\DataObject\Data\InputQuantityValue('1', 'km');
+        $object->setInputQuantityValue($iqv);
+        $object->save();
+
+        //check if empty strings are stored as empty strings in the database
+        $object->setInput('');
+        $object->setTextarea('');
+        $object->setWysiwyg('');
+        $object->setPassword('');
+        $iqv = new \Pimcore\Model\DataObject\Data\InputQuantityValue('', '');
+        $object->setInputQuantityValue($iqv);
+        $object->save();
+
+        $result = $db->fetchAllAssociative('select * from object_store_' . $object->getClassId() . ' where oo_id=' .  $object->getId());
+        $this->assertTrue($result[0]['input'] === '');
+        $this->assertTrue($result[0]['textarea'] === '');
+        $this->assertTrue($result[0]['wysiwyg'] === '');
+        $this->assertNull($result[0]['password']);
+        $this->assertTrue($result[0]['inputQuantityValue__value'] === '');
+
+        //check if null values are stored as null in the database
+        $object->setInput(null);
+        $object->setTextarea(null);
+        $object->setWysiwyg(null);
+        $object->setPassword(null);
+        $object->setInputQuantityValue(null);
+        $object->save();
+
+        $result = $db->fetchAllAssociative('select * from object_store_' . $object->getClassId() . ' where oo_id=' .  $object->getId());
+        $this->assertNull($result[0]['input']);
+        $this->assertNull($result[0]['textarea']);
+        $this->assertNull($result[0]['wysiwyg']);
+        $this->assertNull($result[0]['password']);
+        $this->assertNull($result[0]['inputQuantityValue__value']);
+    }
+
+    /**
+     * In contrast to the api calls, empty strings and null values should be stored as null if the save was triggered from the backend ui.
+     */
+    public function testEmptyValuesAsNullBackend(): void
+    {
+        $object = TestHelper::createEmptyObject();
+
+        //check empty strings
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Input();
+        $value = $dataType->getDataFromEditmode('', $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Textarea();
+        $value = $dataType->getDataFromEditmode('', $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg();
+        $value = $dataType->getDataFromEditmode('', $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Password();
+        $value = $dataType->getDataFromEditmode('', $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue();
+        $iqv = ['value' => '', 'unit' => ''];
+        $value = $dataType->getDataFromEditmode($iqv, $object);
+        $this->assertNull($value);
+
+        //check null values
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Input();
+        $value = $dataType->getDataFromEditmode(null, $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Textarea();
+        $value = $dataType->getDataFromEditmode(null, $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg();
+        $value = $dataType->getDataFromEditmode(null, $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\Password();
+        $value = $dataType->getDataFromEditmode(null, $object);
+        $this->assertNull($value);
+
+        $dataType = new \Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue();
+        $iqv = ['value' => null, 'unit' => null];
+        $value = $dataType->getDataFromEditmode($iqv, $object);
+        $this->assertNull($value);
     }
 }

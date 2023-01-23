@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.multiselect");
+/**
+ * @private
+ */
 pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
 
     type: "multiselect",

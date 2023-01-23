@@ -40,7 +40,7 @@ class LowQualityImagePreviewTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         if (date('H') <= 4 && $this->lock->acquire()) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected

@@ -33,7 +33,7 @@ class InstallCommand extends AbstractBundleCommand
         parent::__construct($bundleManager);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName($this->buildName('install'))

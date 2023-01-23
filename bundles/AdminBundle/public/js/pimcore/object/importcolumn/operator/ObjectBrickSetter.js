@@ -15,7 +15,9 @@
  */
 
 pimcore.registerNS("pimcore.object.importcolumn.operator.objectbricksetter");
-
+/**
+ * @private
+ */
 pimcore.object.importcolumn.operator.objectbricksetter = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "ObjectBrickSetter",

@@ -25,5 +25,5 @@ interface CheckoutCompleteInterface
      *
      * @param AbstractOrder $order
      */
-    public function trackCheckoutComplete(AbstractOrder $order);
+    public function trackCheckoutComplete(AbstractOrder $order): void;
 }

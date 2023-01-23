@@ -56,8 +56,10 @@ A complete example of a document page would look like the following:
 
 ```twig
 {% extends 'layout.html.twig' %}
-
+...
+{% block content %}
 <h1>
     {{ pimcore_input('headline', {'width': 540}) }}
 </h1>
+{% endblock %}
 ```

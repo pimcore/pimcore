@@ -1,0 +1,16 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Bundle\FileExplorerBundle\Controller\:
+        resource: '../src/Controller/'
+        public: true
+        tags: [ 'controller.service_arguments' ]
+
+    Pimcore\Bundle\FileExplorerBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreFileExplorerBundle')"

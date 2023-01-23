@@ -91,7 +91,7 @@ class UserRole extends AbstractUser
     /**
      * {@inheritdoc}
      */
-    protected function update()
+    protected function update(): void
     {
         $this->getDao()->update();
 

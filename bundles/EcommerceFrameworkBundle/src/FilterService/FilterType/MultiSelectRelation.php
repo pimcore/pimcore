@@ -48,7 +48,7 @@ class MultiSelectRelation extends AbstractFilterType
         }
 
         foreach ($values as $v) {
-            if (empty($availableRelations) || $availableRelations[$v['value']] === true) {
+            if (empty($availableRelations) || ($availableRelations[$v['value']] ?? false)) {
                 $objects[$v['value']] = DataObject::getById($v['value']);
             }
         }
@@ -66,11 +66,17 @@ class MultiSelectRelation extends AbstractFilterType
         ];
     }
 
-    protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = [])
+    /**
+     * @param DataObject\AbstractObject[] $availableRelations
+     * @param array<int, true> $availableRelationsArray
+     *
+     * @return array<int, true>
+     */
+    protected function loadAllAvailableRelations(array $availableRelations, array $availableRelationsArray = []): array
     {
         foreach ($availableRelations as $rel) {
             if ($rel instanceof Folder) {
-                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChildren(), $availableRelationsArray);
+                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChildren()->load(), $availableRelationsArray);
             } else {
                 $availableRelationsArray[$rel->getId()] = true;
             }

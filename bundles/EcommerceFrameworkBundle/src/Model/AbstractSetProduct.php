@@ -54,7 +54,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      *
      * @return bool
      */
-    public function getOSIsBookable($quantityScale = 1, array $products = null): bool
+    public function getOSIsBookable(int $quantityScale = 1, array $products = null): bool
     {
         if ($this->isActive()) {
             if (empty($products)) {
@@ -84,18 +84,13 @@ abstract class AbstractSetProduct extends AbstractProduct
      * @param int|null $quantityScale
      * @param array|null $products
      *
-     * @return PriceInterface|null
+     * @return PriceInterface
      *
-     *@throws UnsupportedException
-     *
+     * @throws UnsupportedException
      */
-    public function getOSPrice(int $quantityScale = null, array $products = null): ?PriceInterface
+    public function getOSPrice(int $quantityScale = null, array $products = null): PriceInterface
     {
-        if ($this->getOSPriceInfo($quantityScale, $products)) {
-            return $this->getOSPriceInfo($quantityScale, $products)->getPrice();
-        }
-
-        return null;
+        return $this->getOSPriceInfo($quantityScale, $products)->getPrice();
     }
 
     /**
@@ -104,12 +99,11 @@ abstract class AbstractSetProduct extends AbstractProduct
      * @param int|null $quantityScale
      * @param array|null $products
      *
-     * @return PriceInfoInterface|null
+     * @return PriceInfoInterface
      *
-     *@throws UnsupportedException
-     *
+     * @throws UnsupportedException
      */
-    public function getOSPriceInfo(int $quantityScale = null, ?array $products = null): ?PriceInfoInterface
+    public function getOSPriceInfo(int $quantityScale = null, ?array $products = null): PriceInfoInterface
     {
         if (!is_array($products)) {
             $products = $this->getMandatoryProductEntries();
@@ -122,9 +116,11 @@ abstract class AbstractSetProduct extends AbstractProduct
      * @param int|null $quantity
      * @param AbstractSetProductEntry[]|null $products
      *
-     * @return AvailabilityInterface|null
+     * @return AvailabilityInterface
+     *
+     * @throws UnsupportedException
      */
-    public function getOSAvailabilityInfo(int $quantity = null, ?array $products = null): ?AvailabilityInterface
+    public function getOSAvailabilityInfo(int $quantity = null, ?array $products = null): AvailabilityInterface
     {
         if ($quantity === null) {
             $quantity = 1;
@@ -144,8 +140,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      *
      * @return void
      *
-     *@throws UnsupportedException
-     *
+     * @throws UnsupportedException
      */
     protected function checkMandatoryProducts(array $products): void
     {

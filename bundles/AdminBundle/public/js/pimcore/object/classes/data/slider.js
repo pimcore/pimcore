@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.slider");
+/**
+ * @private
+ */
 pimcore.object.classes.data.slider = Class.create(pimcore.object.classes.data.data, {
 
     type: "slider",

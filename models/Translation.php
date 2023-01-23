@@ -188,7 +188,7 @@ final class Translation extends AbstractModel
         return Tool::getValidLanguages();
     }
 
-    public function addTranslation(string $language, string $text)
+    public function addTranslation(string $language, string $text): void
     {
         $this->translations[$language] = $text;
     }
@@ -206,7 +206,7 @@ final class Translation extends AbstractModel
     /**
      * @internal
      */
-    public static function clearDependentCache()
+    public static function clearDependentCache(): void
     {
         Cache::clearTags(['translator', 'translate']);
     }
@@ -288,12 +288,6 @@ final class Translation extends AbstractModel
      */
     public static function getByKeyLocalized(string $id, string $domain = self::DOMAIN_DEFAULT, bool $create = false, bool $returnIdIfEmpty = false, string $language = null): ?string
     {
-        $args = func_get_args();
-        $domain = $args[1] ?? self::DOMAIN_DEFAULT;
-        $create = $args[2] ?? false;
-        $returnIdIfEmpty = $args[3] ?? false;
-        $language = $args[4] ?? null;
-
         if ($domain == self::DOMAIN_ADMIN) {
             if ($user = Tool\Admin::getCurrentUser()) {
                 $language = $user->getLanguage();
@@ -333,7 +327,7 @@ final class Translation extends AbstractModel
         return $translation->getDao()->isAValidDomain($domain);
     }
 
-    public function save()
+    public function save(): void
     {
         $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
 
@@ -344,7 +338,7 @@ final class Translation extends AbstractModel
         self::clearDependentCache();
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_DELETE);
 
@@ -368,8 +362,7 @@ final class Translation extends AbstractModel
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function importTranslationsFromFile(string $file, string $domain = self::DOMAIN_DEFAULT, bool $replaceExistingTranslations = true, array $languages = null, array $dialect = null): array
     {

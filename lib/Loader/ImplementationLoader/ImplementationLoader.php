@@ -54,7 +54,7 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
         }
     }
 
-    public function addLoader(LoaderInterface $loader)
+    public function addLoader(LoaderInterface $loader): void
     {
         $this->loaders[] = $loader;
     }

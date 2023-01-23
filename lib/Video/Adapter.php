@@ -68,18 +68,9 @@ abstract class Adapter
 
     abstract public function save(): bool;
 
-    /**
-     * @abstract
-     *
-     * @param string $file
-     * @param int|null $timeOffset
-     */
-    abstract public function saveImage(string $file, int $timeOffset = null);
+    abstract public function saveImage(string $file, int $timeOffset = null): void;
 
-    /**
-     * @abstract
-     */
-    abstract public function destroy();
+    abstract public function destroy(): void;
 
     public function getMedias(): ?array
     {

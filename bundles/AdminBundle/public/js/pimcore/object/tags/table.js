@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.table");
+/**
+ * @private
+ */
 pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
     type: "table",

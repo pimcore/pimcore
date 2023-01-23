@@ -57,7 +57,7 @@ class CacheWarmingCommand extends AbstractCommand
         'variant',
     ];
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:cache:warming')
@@ -142,7 +142,7 @@ class CacheWarmingCommand extends AbstractCommand
         return 0;
     }
 
-    protected function writeWarmingMessage(string $type, array $types, $extra = '')
+    protected function writeWarmingMessage(string $type, array $types, string $extra = ''): void
     {
         $output = sprintf('Warming <comment>%s</comment> cache', $type);
         if (null !== $types && count($types) > 0) {

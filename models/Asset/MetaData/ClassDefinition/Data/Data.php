@@ -104,7 +104,7 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
         return empty($data);
     }
 
-    public function checkValidity(mixed $data, array $params = [])
+    public function checkValidity(mixed $data, array $params = []): void
     {
     }
 

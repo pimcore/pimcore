@@ -11,8 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
 pimcore.registerNS("pimcore.object.classificationstore.storeTree");
+/**
+ * @private
+ */
 pimcore.object.classificationstore.storeTree = Class.create({
 
     activeStoreId: 0,

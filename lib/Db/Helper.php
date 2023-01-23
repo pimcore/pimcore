@@ -18,6 +18,7 @@ namespace Pimcore\Db;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Types\Type;
 use Pimcore\Model\Element\ValidationException;
 
 class Helper
@@ -36,7 +37,7 @@ class Helper
         }
     }
 
-    public static function insertOrUpdate(Connection $connection, $table, array $data): int|string
+    public static function insertOrUpdate(Connection $connection, string $table, array $data): int|string
     {
         // extract and quote col names from the array keys
         $i = 0;
@@ -69,7 +70,7 @@ class Helper
         return $connection->executeStatement($sql, $bind);
     }
 
-    public static function fetchPairs(Connection $db, $sql, array $params = [], $types = []): array
+    public static function fetchPairs(Connection $db, string $sql, array $params = [], array $types = []): array
     {
         $stmt = $db->executeQuery($sql, $params, $types);
         $data = [];
@@ -82,7 +83,7 @@ class Helper
         return $data;
     }
 
-    public static function selectAndDeleteWhere(Connection $db, $table, $idColumn = 'id', $where = ''): void
+    public static function selectAndDeleteWhere(Connection $db, string $table, string $idColumn = 'id', string $where = ''): void
     {
         $sql = 'SELECT ' . $db->quoteIdentifier($idColumn) . '  FROM ' . $table;
 
@@ -101,7 +102,7 @@ class Helper
         }
     }
 
-    public static function queryIgnoreError(Connection $db, $sql, $exclusions = []): ?\Doctrine\DBAL\Result
+    public static function queryIgnoreError(Connection $db, string $sql, array $exclusions = []): ?\Doctrine\DBAL\Result
     {
         try {
             return $db->executeQuery($sql);
@@ -117,7 +118,7 @@ class Helper
         return null;
     }
 
-    public static function quoteInto(Connection $db, $text, $value, $type = null, $count = null): array|string
+    public static function quoteInto(Connection $db, string $text, mixed $value, int|string|Type|null $type = null, ?int $count = null): array|string
     {
         if ($count === null) {
             return str_replace('?', $db->quote($value, $type), $text);

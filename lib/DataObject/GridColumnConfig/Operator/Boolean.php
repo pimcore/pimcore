@@ -27,7 +27,7 @@ final class Boolean extends AbstractOperator
 
     private string $operator;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -94,7 +94,7 @@ final class Boolean extends AbstractOperator
         return $this->skipNull;
     }
 
-    public function setSkipNull(bool $skipNull)
+    public function setSkipNull(bool $skipNull): void
     {
         $this->skipNull = $skipNull;
     }
@@ -104,7 +104,7 @@ final class Boolean extends AbstractOperator
         return $this->operator;
     }
 
-    public function setOperator(string $operator)
+    public function setOperator(string $operator): void
     {
         $this->operator = $operator;
     }

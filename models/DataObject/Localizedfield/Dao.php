@@ -80,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(array $params = [])
+    public function save(array $params = []): void
     {
         $context = $this->model->getContext();
 
@@ -572,7 +572,7 @@ class Dao extends Model\Dao\AbstractDao
         return false;
     }
 
-    public function load(DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = [])
+    public function load(DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): void
     {
         $validLanguages = Tool::getValidLanguages();
         foreach ($validLanguages as &$language) {
@@ -673,7 +673,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function createLocalizedViews()
+    public function createLocalizedViews(): void
     {
         // init
         $languages = Tool::getValidLanguages();
@@ -783,7 +783,7 @@ QUERY;
      *
      * @throws \Exception
      */
-    public function createUpdateTable(array $params = [])
+    public function createUpdateTable(array $params = []): void
     {
         $table = $this->getTableName();
 

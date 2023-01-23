@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.fieldlookup.helper");
+/**
+ * @private
+ */
 pimcore.object.fieldlookup.helper = Class.create(pimcore.object.helpers.classTree, {
 
     showFieldName: false,

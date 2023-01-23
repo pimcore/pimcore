@@ -30,7 +30,7 @@ class LocalizedFieldTest extends ModelTestCase
         Localizedfield::setStrictMode((bool)Localizedfield::STRICT_DISABLED);
     }
 
-    public function testStrictMode()
+    public function testStrictMode(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -41,7 +41,7 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals('TestKo', $object->getLinput('ko'));
     }
 
-    public function testExceptionInStrictMode()
+    public function testExceptionInStrictMode(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -52,7 +52,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->setLinput('Test');
     }
 
-    public function testExceptionWithLocaleInStrictMode()
+    public function testExceptionWithLocaleInStrictMode(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -64,7 +64,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->setLinput('Test', 'ko');
     }
 
-    public function testLocalizedFieldInsideFieldCollection()
+    public function testLocalizedFieldInsideFieldCollection(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -95,7 +95,7 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals('textDE', $loadedItem->getLinput('de'), 'New localized value inside fieldcollection not saved or loaded properly');
     }
 
-    public function testLocalizedFieldFallback()
+    public function testLocalizedFieldFallback(): void
     {
         $configuration = Config::getSystemConfiguration();
         $configuration['general']['fallback_languages']['de'] = 'en';

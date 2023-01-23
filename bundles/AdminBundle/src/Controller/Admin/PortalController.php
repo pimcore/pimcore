@@ -43,7 +43,7 @@ class PortalController extends AdminController implements KernelControllerEventI
         return $this->dashboardHelper->getDashboard($request->get('key'));
     }
 
-    protected function saveConfiguration(Request $request, array $config)
+    protected function saveConfiguration(Request $request, array $config): void
     {
         $this->dashboardHelper->saveDashboard($request->get('key'), $config);
     }
@@ -79,7 +79,7 @@ class PortalController extends AdminController implements KernelControllerEventI
     public function createDashboardAction(Request $request): JsonResponse
     {
         $dashboards = $this->dashboardHelper->getAllDashboards();
-        $key = trim($request->get('key'));
+        $key = trim($request->request->get('key', ''));
 
         if (isset($dashboards[$key])) {
             return $this->adminJson(['success' => false, 'message' => 'name_already_in_use']);
@@ -410,7 +410,7 @@ class PortalController extends AdminController implements KernelControllerEventI
         return $this->adminJson(['data' => $data]);
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

@@ -43,7 +43,7 @@ class VersionsCleanupTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $this->doVersionCleanup();
         $this->doAutoSaveVersionCleanup();
@@ -87,7 +87,7 @@ class VersionsCleanupTask implements TaskInterface
             }
             $value = $tConf['steps'] ?? 10;
 
-            if (isset($tConf['days']) && !is_null($tConf['days'])) {
+            if (isset($tConf['days'])) {
                 $versioningType = 'days';
                 $value = (int)$tConf['days'];
             }

@@ -36,7 +36,7 @@ class ExtJSCommand extends AbstractCommand
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:extjs')
@@ -135,7 +135,7 @@ class ExtJSCommand extends AbstractCommand
         return 0;
     }
 
-    public function populate($loadOrder, &$list, $item)
+    public function populate(array $loadOrder, array &$list, array $item): void
     {
         $depth = count(debug_backtrace());
         if ($depth > 100) {
