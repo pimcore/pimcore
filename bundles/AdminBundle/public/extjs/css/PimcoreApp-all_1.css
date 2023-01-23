@@ -14354,18 +14354,6 @@ a.x-color-picker-item:hover {
     margin-right: 41px;
 }
 
-.x-menu-item-main-icon {
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    top: 13px;
-    left: 18px;
-    line-height: 24px;
-    font-size: 16px;
-    color: #919191;
-    background-position: center center;
-}
-
 .x-menu-item-icon-default {
     width: 24px;
     height: 24px;

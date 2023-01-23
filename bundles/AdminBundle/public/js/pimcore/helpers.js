@@ -3272,12 +3272,12 @@ pimcore.helpers.buildMainNavigationMarkup = function(menu) {
             cls: 'pimcore_menu_item pimcore_menu_needs_children',
             html: '<div id="menuitem-' + key + '-iconEl" data-ref="iconEl" class="x-menu-item-main-icon x-menu-item-icon pimcore_main_nav_icon_' + menu[key]['iconCls'] + '"></div>',
             'data-menu-tooltip': t(menu[key]['label'])
-        }
+        };
         if(menu[key]['style']) {
             li.style = menu[key]['style'];
         }
-        dh.append(ul, li)
-    })
+        dh.append(ul, li);
+    });
 
     // add the maintenance at last
     dh.append(ul,
@@ -3288,7 +3288,7 @@ pimcore.helpers.buildMainNavigationMarkup = function(menu) {
             style: 'display:none;',
             'data-menu-tooltip': t('deactivate_maintenance')
         }
-    )
+    );
 }
 
 pimcore.helpers.priorityCompare = function(a, b) {
