@@ -36,40 +36,25 @@ class Folder extends Model\Asset
     /**
      * @internal
      *
-     * @var Asset[]|null
+     * @var Asset\Listing|null
      */
-    protected ?array $children = null;
-
-    /**
-     * @internal
-     *
-     * @var bool|null
-     */
-    protected ?bool $hasChildren = null;
+    protected ?Listing $children = null;
 
     /**
      * set the children of the document
      *
-     * @param Asset[]|null $children
+     * @param Listing|null $children
      *
      * @return $this
      */
-    public function setChildren(?array $children): static
+    public function setChildren(?Listing $children): static
     {
         $this->children = $children;
-        if (is_array($children) && count($children) > 0) {
-            $this->hasChildren = true;
-        } else {
-            $this->hasChildren = false;
-        }
 
         return $this;
     }
 
-    /**
-     * @return Asset[]
-     */
-    public function getChildren(): array
+    public function getChildren(): Listing
     {
         if ($this->children === null) {
             if ($this->getId()) {
@@ -78,9 +63,11 @@ class Folder extends Model\Asset
                 $list->setOrderKey('filename');
                 $list->setOrder('asc');
 
-                $this->children = $list->getAssets();
+                $this->children = $list;
             } else {
-                $this->children = [];
+                $list = new Listing();
+                $list->setAssets([]);
+                $this->children = $list;
             }
         }
 
@@ -89,15 +76,7 @@ class Folder extends Model\Asset
 
     public function hasChildren(): bool
     {
-        if (is_bool($this->hasChildren)) {
-            if (($this->hasChildren && empty($this->children)) || (!$this->hasChildren && !empty($this->children))) {
-                return $this->getDao()->hasChildren();
-            }
-
-            return $this->hasChildren;
-        }
-
-        return $this->getDao()->hasChildren();
+      return $this->getDao()->hasChildren();
     }
 
     /**

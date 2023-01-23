@@ -173,9 +173,9 @@ class DocumentTest extends ModelTestCase
         $secondChildDoc->setPublished(false);
         $secondChildDoc->save();
 
-        $this->assertEquals(0, count($firstChildDoc->getSiblings()), 'Expected no sibling');
+        $this->assertEquals(0, $firstChildDoc->getSiblings()->count(), 'Expected no sibling');
 
-        $this->assertEquals(1, count($firstChildDoc->getSiblings(true)), 'Expected 1 sibling');
+        $this->assertEquals(1, $firstChildDoc->getSiblings(true)->count(), 'Expected 1 sibling');
     }
 
     /**

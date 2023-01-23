@@ -136,16 +136,9 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array|null
+     * @var Listing|null
      */
-    protected ?array $siblings = null;
-
-    /**
-     * @internal
-     *
-     * @var bool|null
-     */
-    protected ?bool $hasSiblings = null;
+    protected ?Listing $siblings = null;
 
     /**
      * @internal
@@ -159,7 +152,7 @@ class Asset extends Element\AbstractElement
      */
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
+        $blockedVars = ['scheduledTasks', 'versions', 'parent', 'stream'];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -891,7 +884,7 @@ class Asset extends Element\AbstractElement
         return $path;
     }
 
-    public function getSiblings(): array
+    public function getSiblings(): Listing
     {
         if ($this->siblings === null) {
             if ($this->getParentId()) {
@@ -902,26 +895,20 @@ class Asset extends Element\AbstractElement
                 }
                 $list->setOrderKey('filename');
                 $list->setOrder('asc');
-                $this->siblings = $list->getAssets();
+                $this->siblings = $list;
             } else {
-                $this->siblings = [];
+                $list = new Asset\Listing();
+                $list->setAssets([]);
+                $this->siblings = $list;
             }
         }
 
         return $this->siblings;
     }
 
-    public function hasSiblings(): ?bool
+    public function hasSiblings(): bool
     {
-        if (is_bool($this->hasSiblings)) {
-            if (($this->hasSiblings && empty($this->siblings)) || (!$this->hasSiblings && !empty($this->siblings))) {
-                return $this->getDao()->hasSiblings();
-            } else {
-                return $this->hasSiblings;
-            }
-        }
-
-        return $this->getDao()->hasSiblings();
+       return $this->getDao()->hasSiblings();
     }
 
     public function hasChildren(): bool
@@ -929,12 +916,9 @@ class Asset extends Element\AbstractElement
         return false;
     }
 
-    /**
-     * @return Asset[]
-     */
-    public function getChildren(): array
+    public function getChildren(): Listing
     {
-        return [];
+        return (new Listing())->setAssets([]);
     }
 
     /**
@@ -1585,7 +1569,6 @@ class Asset extends Element\AbstractElement
         parent::__clone();
         $this->parent = null;
         $this->versions = null;
-        $this->hasSiblings = null;
         $this->siblings = null;
         $this->scheduledTasks = null;
         $this->closeStream();

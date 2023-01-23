@@ -137,7 +137,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Ecommerce] Config option `es_client_params` in `index_service` was removed 
 - [ClassSavedInterface] Removed `method_exists` bc layer. Please add the corresponding `ClassSavedInterface` interface to your custom field definitions. For more details check the 10.6.0 patch notes.
 - [UrlSlug] Allow processing unpublished fallback document is now default behaviour, removed the related configuration options and usages (`allow_processing_unpublished_fallback_document`, `ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS`). For details, please see [#10005](https://github.com/pimcore/pimcore/issues/10005#issuecomment-907007745)
-- [DataObjects\Documents] **BC Break**: Calling `getChildren/getSiblings` on `AbstractObject` or `Document` now returns unloaded listing. If the list is not traveresed immediately, then it is required to call `load()` explicitily.
+- [DataObjects\Documents] **BC Break**: Calling `getChildren/getSiblings` on `AbstractObject`, `Document` and `Asset` now returns unloaded listing. If the list is not traveresed immediately, then it is required to call `load()` explicitily.
   Also, `setChildren` now accepts `Listing` as first parameter instead of array.
 - [Admin] Removed `adminer` as built-in database management tool.
 - [Search] The search functionality has been extracted to its own bundle (`PimcoreSimpleBackendSearchBundle`)
