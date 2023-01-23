@@ -5,4 +5,6 @@ scheb_two_factor:
         issuer: Pimcore 2 Factor Authentication             # Issuer name used in QR code
 
     security_tokens:
+        - Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken
         - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+        - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
