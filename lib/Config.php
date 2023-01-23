@@ -23,7 +23,6 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\ReportConfigWriter;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\SettingsStore;
-use function preg_replace;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Yaml\Yaml;
 
@@ -359,45 +358,6 @@ final class Config implements ArrayAccess
     public static function setReportConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_report', $config);
-    }
-
-    /**
-     * @return array<string, mixed>
-     *
-     * @internal
-     */
-    public static function getRobotsConfig(): array
-    {
-        $config = [];
-        if (RuntimeCache::isRegistered('pimcore_config_robots')) {
-            $config = RuntimeCache::get('pimcore_config_robots');
-        } else {
-            try {
-                $settingsStoreScope = 'robots.txt';
-                $configData = [];
-                $robotsSettingsIds = SettingsStore::getIdsByScope($settingsStoreScope);
-                foreach ($robotsSettingsIds as $id) {
-                    $robots = SettingsStore::get($id, $settingsStoreScope);
-                    $siteId = preg_replace('/^robots\.txt\-/', '', $robots->getId());
-                    $config[$siteId] = $robots->getData();
-                }
-            } catch (Exception $e) {
-            }
-
-            self::setRobotsConfig($config);
-        }
-
-        return $config;
-    }
-
-    /**
-     * @param array<string, mixed> $config
-     *
-     * @internal
-     */
-    public static function setRobotsConfig(array $config): void
-    {
-        RuntimeCache::set('pimcore_config_robots', $config);
     }
 
     /**

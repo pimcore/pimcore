@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
+/**
+ * @deprecated please implement getColumnType() on your data-type class
+ */
 trait ColumnType
 {
     /**

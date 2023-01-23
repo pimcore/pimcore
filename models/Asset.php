@@ -221,11 +221,18 @@ class Asset extends Element\AbstractElement
 
     public static function getById(int|string $id, array $params = []): ?static
     {
-        if (!is_numeric($id) || $id < 1) {
+        if (is_string($id)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0',
+                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
+            );
+            $id = is_numeric($id) ? (int) $id : 0;
+        }
+        if ($id < 1) {
             return null;
         }
 
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         $params = Service::prepareGetByIdParams($params);
@@ -361,6 +368,8 @@ class Asset extends Element\AbstractElement
                 $suggestion_1 = (int) round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
 
                 $mp = $maxPixels / 1_000_000;
+                // unlink file before throwing exception
+                unlink($localPath);
 
                 throw new ValidationException("<p>Image dimensions of <em>{$data['filename']}</em> are too large.</p>
 <p>Max size: <code>{$mp}</code> <abbr title='Million pixels'>Megapixels</abbr></p>

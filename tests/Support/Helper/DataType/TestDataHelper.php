@@ -911,9 +911,9 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     // @todo
-    public function assertWysiwyg(Concrete $object, string $field, int $seed = 1)
+    public function assertWysiwyg(Concrete $object, string $field, int $seed = 1): void
     {
-        return $this->assertTextarea($object, $field, $seed);
+        $this->assertTextarea($object, $field, $seed);
     }
 
     public function assertTextarea(Concrete $object, string $field, int $seed = 1): void

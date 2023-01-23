@@ -110,7 +110,7 @@ final class FrontendEvents
      * Allows to rewrite the frontend path of a static route
      * Overwrite the argument "frontendPath" to do so
      *
-     * Subject: 	Pimcore\Model\Staticroute
+     * Subject: 	Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute
      * Arguments:
      *  - frontendPath | string | Web-path, relative
      *  - params | array

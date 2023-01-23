@@ -328,15 +328,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * Static helper to get an object by the passed ID
-     *
      */
     public static function getById(int|string $id, array $params = []): ?static
     {
-        if (!is_numeric($id) || $id < 1) {
+        if (is_string($id)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0',
+                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
+            );
+            $id = is_numeric($id) ? (int) $id : 0;
+        }
+        if ($id < 1) {
             return null;
         }
 
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         $params = Model\Element\Service::prepareGetByIdParams($params);
@@ -379,6 +385,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     throw new Model\Exception\NotFoundException('No entry for object id ' . $id);
                 }
             } catch (Model\Exception\NotFoundException $e) {
+                Logger::error($e->getMessage());
+
                 return null;
             }
         } else {

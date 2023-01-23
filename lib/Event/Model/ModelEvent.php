@@ -26,9 +26,9 @@ class ModelEvent extends Event implements ModelEventInterface
 
     protected ModelInterface $modelInterface;
 
-    public function __construct(ModelInterface $element, array $arguments = [])
+    public function __construct(ModelInterface $model, array $arguments = [])
     {
-        $this->modelInterface = $element;
+        $this->modelInterface = $model;
         $this->arguments = $arguments;
     }
 
@@ -37,8 +37,8 @@ class ModelEvent extends Event implements ModelEventInterface
         return $this->modelInterface;
     }
 
-    public function setModel(ModelInterface $element): void
+    public function setModel(ModelInterface $model): void
     {
-        $this->modelInterface = $element;
+        $this->modelInterface = $model;
     }
 }

@@ -70,7 +70,7 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @param string $name
      */
-    protected static function setupLogger(string $name)
+    protected static function setupLogger(string $name): void
     {
         static::$logHandlers = [
             'buffer' => new BufferHandler(new StreamHandler('php://stdout')),
@@ -83,7 +83,7 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * Flush buffer handler if TEST_LOG env var is set
      */
-    protected static function handleLogOutput()
+    protected static function handleLogOutput(): void
     {
         /** @var BufferHandler $bufferHandler */
         $bufferHandler = static::$logHandlers['buffer'];
@@ -197,7 +197,7 @@ abstract class AbstractCoreHandlerTest extends Unit
      * @param bool $write
      * @param bool $assertExisting
      */
-    protected function buildSampleEntries(bool $write = true, bool $assertExisting = true)
+    protected function buildSampleEntries(bool $write = true, bool $assertExisting = true): void
     {
         foreach ($this->sampleEntries as $key => $tags) {
             $this->handler->save($key, 'test', $tags);
@@ -214,7 +214,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         }
     }
 
-    public function testCacheIsEnabledByDefault()
+    public function testCacheIsEnabledByDefault(): void
     {
         $this->assertTrue($this->handler->isEnabled());
     }
@@ -226,7 +226,7 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @param string $key
      */
-    public function testExceptionOnInvalidItemKeySave(string $key)
+    public function testExceptionOnInvalidItemKeySave(string $key): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->handler->save($key, 'foo');
@@ -239,18 +239,18 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @param string $key
      */
-    public function testExceptionOnInvalidItemKeyRemove(string $key)
+    public function testExceptionOnInvalidItemKeyRemove(string $key): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->handler->remove($key);
     }
 
-    public function testLoadReturnsFalseOnMiss()
+    public function testLoadReturnsFalseOnMiss(): void
     {
         $this->assertFalse($this->handler->load('not_existing'));
     }
 
-    public function testLoadReturnsUnserializedItem()
+    public function testLoadReturnsUnserializedItem(): void
     {
         $timestamp = time();
 
@@ -268,7 +268,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertEquals($timestamp, $date->getTimestamp());
     }
 
-    public function testGetItemIsCacheMiss()
+    public function testGetItemIsCacheMiss(): void
     {
         /** @var CacheItem $item */
         $item = $this->handler->getItem('not_existing');
@@ -277,7 +277,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertFalse($item->isHit());
     }
 
-    public function testDeferredWrite()
+    public function testDeferredWrite(): void
     {
         $this->handler->save('itemA', 'test');
 
@@ -288,7 +288,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->cacheHasItem('itemA'));
     }
 
-    public function testWriteQueueIsWrittenOnShutdown()
+    public function testWriteQueueIsWrittenOnShutdown(): void
     {
         $this->handler->save('itemA', 'test');
 
@@ -299,7 +299,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->cacheHasItem('itemA'));
     }
 
-    public function testWriteQueueIsEmptyAfterSave()
+    public function testWriteQueueIsEmptyAfterSave(): void
     {
         $this->buildSampleEntries(false, false);
 
@@ -316,7 +316,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         );
     }
 
-    public function testImmediateWrite()
+    public function testImmediateWrite(): void
     {
         $this->handler->setForceImmediateWrite(true);
         $this->handler->save('itemA', 'test');
@@ -324,14 +324,14 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->cacheHasItem('itemA'));
     }
 
-    public function testImmediateWriteOnForce()
+    public function testImmediateWriteOnForce(): void
     {
         $this->handler->save('itemA', 'test', [], null, 0, true);
 
         $this->assertTrue($this->cacheHasItem('itemA'));
     }
 
-    public function testWriteQueueDoesNotWriteMoreThanMaxItems()
+    public function testWriteQueueDoesNotWriteMoreThanMaxItems(): void
     {
         $maxItems = $this->getHandlerPropertyValue('maxWriteToCacheItems');
 
@@ -372,7 +372,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         }
     }
 
-    public function testWriteQueueRespectsPriority()
+    public function testWriteQueueRespectsPriority(): void
     {
         $maxItems = $this->getHandlerPropertyValue('maxWriteToCacheItems');
 
@@ -407,7 +407,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->handler->getItem('additional_item')->isHit());
     }
 
-    public function testNoWriteOnDisabledCache()
+    public function testNoWriteOnDisabledCache(): void
     {
         $this->handler->setForceImmediateWrite(true);
 
@@ -440,7 +440,7 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * @group cache-cli
      */
-    public function testNoWriteInCliMode()
+    public function testNoWriteInCliMode(): void
     {
         $this->assertFalse($this->cacheHasItem('itemA'));
         $this->assertFalse($this->handler->save('itemA', 'test'));
@@ -453,7 +453,7 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * @group cache-cli
      */
-    public function testNoWriteInCliModeWithForceImmediateWrite()
+    public function testNoWriteInCliModeWithForceImmediateWrite(): void
     {
         $this->handler->setForceImmediateWrite(true);
 
@@ -465,7 +465,7 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * @group cache-cli
      */
-    public function testWriteWithForceInCliMode()
+    public function testWriteWithForceInCliMode(): void
     {
         // force writes immediately - no need to write save queue
         $this->assertFalse($this->cacheHasItem('itemA'));
@@ -476,7 +476,7 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * @group cache-cli
      */
-    public function testWriteWithHandleCliOption()
+    public function testWriteWithHandleCliOption(): void
     {
         $this->handler->setHandleCli(true);
 
@@ -491,7 +491,7 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * @group cache-cli
      */
-    public function testWriteInCliModeWithHandleCiOptionAndForceImmediateWrite()
+    public function testWriteInCliModeWithHandleCiOptionAndForceImmediateWrite(): void
     {
         $this->handler->setHandleCli(true);
         $this->handler->setForceImmediateWrite(true);
@@ -501,7 +501,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->cacheHasItem('itemA'));
     }
 
-    public function testRemove()
+    public function testRemove(): void
     {
         $this->handler->save('itemA', 'test');
 
@@ -516,7 +516,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertFalse($this->cacheHasItem('itemA'));
     }
 
-    public function testClearAll()
+    public function testClearAll(): void
     {
         foreach (array_keys($this->sampleEntries) as $key) {
             $this->assertFalse($this->cacheHasItem($key));
@@ -561,7 +561,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         ];
     }
 
-    protected function runClearedTagEntryAssertions(array $expectedRemoveEntries)
+    protected function runClearedTagEntryAssertions(array $expectedRemoveEntries): void
     {
         $allEntries = ['A', 'B', 'C'];
 
@@ -577,7 +577,7 @@ abstract class AbstractCoreHandlerTest extends Unit
      * @param string $tag
      * @param array $expectedRemoveEntries
      */
-    public function testClearTag(string $tag, array $expectedRemoveEntries)
+    public function testClearTag(string $tag, array $expectedRemoveEntries): void
     {
         $this->buildSampleEntries();
 
@@ -593,7 +593,7 @@ abstract class AbstractCoreHandlerTest extends Unit
      * @param array $tags
      * @param array $expectedRemoveEntries
      */
-    public function testClearTags(array $tags, array $expectedRemoveEntries)
+    public function testClearTags(array $tags, array $expectedRemoveEntries): void
     {
         $this->buildSampleEntries();
 
@@ -601,7 +601,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->runClearedTagEntryAssertions($expectedRemoveEntries);
     }
 
-    public function testClearedTagIsAddedToClearedTagsList()
+    public function testClearedTagIsAddedToClearedTagsList(): void
     {
         $this->assertEmpty($this->getHandlerPropertyValue('clearedTags'));
 
@@ -611,7 +611,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertEquals(['tag_a' => true, 'tag_b' => true], $this->getHandlerPropertyValue('clearedTags'));
     }
 
-    public function testClearedTagIsShiftedToShutdownList()
+    public function testClearedTagIsShiftedToShutdownList(): void
     {
         $this->assertEmpty($this->getHandlerPropertyValue('tagsClearedOnShutdown'));
 
@@ -624,7 +624,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertEquals(['tag_a' => true, 'tag_b' => true, 'output' => true], $this->getHandlerPropertyValue('clearedTags'));
     }
 
-    protected function handleShutdownTagListProcessing($shutdown = false)
+    protected function handleShutdownTagListProcessing(bool $shutdown = false): void
     {
         $this->assertEmpty($this->getHandlerPropertyValue('clearedTags'));
         $this->assertEmpty($this->getHandlerPropertyValue('tagsClearedOnShutdown'));
@@ -642,17 +642,17 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertEquals(['foo' => true], $this->getHandlerPropertyValue('clearedTags'));
     }
 
-    public function testShutdownTagListIsProcessedOnMethodCall()
+    public function testShutdownTagListIsProcessedOnMethodCall(): void
     {
         $this->handleShutdownTagListProcessing(false);
     }
 
-    public function testShutdownTagListIsProcessedOnShutdown()
+    public function testShutdownTagListIsProcessedOnShutdown(): void
     {
         $this->handleShutdownTagListProcessing(true);
     }
 
-    public function testForceCacheIsWrittenWhenWriteLockIsDisabled()
+    public function testForceCacheIsWrittenWhenWriteLockIsDisabled(): void
     {
         $this->handler->save('itemA', 'test', [], null, null, true);
 
@@ -666,7 +666,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->cacheHasItem('itemB'));
     }
 
-    public function testWriteLockIsSetOnRemove()
+    public function testWriteLockIsSetOnRemove(): void
     {
         $this->assertFalse($this->writeLock->hasLock());
 
@@ -675,7 +675,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->writeLock->hasLock());
     }
 
-    public function testWriteLockIsSetOnClearTag()
+    public function testWriteLockIsSetOnClearTag(): void
     {
         $this->assertFalse($this->writeLock->hasLock());
 
@@ -684,7 +684,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->writeLock->hasLock());
     }
 
-    public function testWriteLockIsSetOnClearTags()
+    public function testWriteLockIsSetOnClearTags(): void
     {
         $this->assertFalse($this->writeLock->hasLock());
 
@@ -693,7 +693,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->writeLock->hasLock());
     }
 
-    public function testWriteLockIsSetOnClearAll()
+    public function testWriteLockIsSetOnClearAll(): void
     {
         $this->assertFalse($this->writeLock->hasLock());
 
@@ -702,7 +702,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->writeLock->hasLock());
     }
 
-    public function testWriteLockIsSetWhenTagIsAddedForShutdownClear()
+    public function testWriteLockIsSetWhenTagIsAddedForShutdownClear(): void
     {
         $this->assertFalse($this->writeLock->hasLock());
 
@@ -711,7 +711,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         $this->assertTrue($this->writeLock->hasLock());
     }
 
-    public function testWriteLockIsRemovedOnShutdown()
+    public function testWriteLockIsRemovedOnShutdown(): void
     {
         $this->assertFalse($this->writeLock->hasLock());
 
