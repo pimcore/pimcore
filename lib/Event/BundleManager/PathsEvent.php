@@ -26,6 +26,9 @@ class PathsEvent extends Event
      */
     protected array $paths = [];
 
+    /**
+     * @param string[] $paths
+     */
     public function __construct(array $paths = [])
     {
         $this->setPaths($paths);
