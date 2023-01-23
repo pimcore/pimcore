@@ -3260,7 +3260,7 @@ pimcore.helpers.buildMainNavigationMarkup = function(menu) {
     // sorting must be done manually here.
     Object.keys(menu).sort((a, b) => {
         // a and b are the keys like file, extras e.t.c
-        // we use the keys to get the menu object themselfes with the priorities
+        // we use the keys to get the menu object themselves with the priorities
         return pimcore.helpers.priorityCompare(menu[a], menu[b]);
     }).filter(key => {
         // the notifications are excluded from this
