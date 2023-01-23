@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
-use Pimcore\Bundle\SeoBundle\Config;
 use function date;
+use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Controller\Controller;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -209,7 +209,7 @@ class PublicServicesController extends Controller
 
         $config = [];
 
-        if(class_exists(Config::class)) {
+        if (class_exists(Config::class)) {
             $config = Config::getRobotsConfig();
         }
 

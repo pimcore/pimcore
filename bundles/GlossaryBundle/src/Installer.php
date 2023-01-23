@@ -24,6 +24,7 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const USER_PERMISSIONS_CATEGORY = 'Pimcore Glossary Bundle';
+
     protected const USER_PERMISSIONS = [
         'glossary',
     ];
