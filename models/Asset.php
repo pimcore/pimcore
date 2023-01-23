@@ -908,7 +908,7 @@ class Asset extends Element\AbstractElement
 
     public function hasSiblings(): bool
     {
-       return $this->getDao()->hasSiblings();
+        return $this->getDao()->hasSiblings();
     }
 
     public function hasChildren(): bool

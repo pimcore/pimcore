@@ -76,7 +76,7 @@ class Folder extends Model\Asset
 
     public function hasChildren(): bool
     {
-      return $this->getDao()->hasChildren();
+        return $this->getDao()->hasChildren();
     }
 
     /**
