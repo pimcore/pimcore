@@ -62,7 +62,7 @@ Possibly the index update scripts need to be adapted.
 
 The E-Commerce Framework is split up into multiple components which can be configured individually. For further reading please see:
 
-- [Configuration](./04_Configuration) describes configuration features valid for the whole framework configuration
+- [Configuration](./04_Configuration/README.md) describes configuration features valid for the whole framework configuration
 - [PimcoreEcommerceFrameworkBundle Configuration Reference](./04_Configuration/01_PimcoreEcommerceFrameworkBundle_Configuration_Reference.md)
   contains a reference of the whole configuration tree
   
