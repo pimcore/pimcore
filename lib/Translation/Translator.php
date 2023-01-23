@@ -307,7 +307,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             $translated = $this->translator->trans($normalizedId, $parameters, $domain, $locale);
         }
 
-        $lookForFallback = empty($translated);
+        // activate fallback language only if getFallbackValues is set to true
+        $lookForFallback = empty($translated) && \Pimcore\Model\DataObject\Localizedfield::getGetFallbackValues();
         if ($normalizedId != $translated && $translated) {
             return $translated;
         } elseif ($normalizedId == $translated) {
