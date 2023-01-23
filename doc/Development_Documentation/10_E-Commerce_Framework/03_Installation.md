@@ -18,7 +18,7 @@ The installer does following tasks:
 If either classes, field collections, object bricks or tables already exist, the installation cannot be started. 
 
 After this installation routine, additional configurations have to be made - most important Product and ProductCategory.
-Please see [Configuration](./04_Configuration) for further information on available options.
+Please see [Configuration](./04_Configuration/README.md) for further information on available options.
 
 
 ## Configure Product and Product Category Class
