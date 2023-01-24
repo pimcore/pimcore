@@ -17,10 +17,10 @@ pimcore.bundle.search = Class.create({
         this.searchRegistry = pimcore.globalmanager.get('searchImplementationRegistry');
         this.searchRegistry.registerImplementation(new your.custom.search.implementation());
     }
-)}
+)};
 ````
 
-### Check for a Implementation
+### Check for an Implementation
 
 Thanks to the registry we can check if a custom search implementation has been registered.
 
