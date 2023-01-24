@@ -41,7 +41,8 @@ trait FieldDefinitionEnrichmentModelTrait
         return $this;
     }
 
-    public function suppressEnrichment(array $context): bool {
+    public function suppressEnrichment(array $context): bool
+    {
         return !\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment']);
     }
 
@@ -57,6 +58,7 @@ trait FieldDefinitionEnrichmentModelTrait
                 $enrichedFieldDefinitions[$key] = $fieldDefinition;
             }
         }
+
         return $enrichedFieldDefinitions;
     }
 
@@ -84,7 +86,7 @@ trait FieldDefinitionEnrichmentModelTrait
 
     public function getFieldDefinition(string $key, array $context = []): ?Data
     {
-        if(!isset($this->fieldDefinitionsCache)) {
+        if (!isset($this->fieldDefinitionsCache)) {
             $this->getFieldDefinitions($context);
         }
 

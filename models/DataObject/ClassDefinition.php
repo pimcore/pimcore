@@ -28,9 +28,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentModelInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()

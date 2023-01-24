@@ -26,26 +26,26 @@ interface FieldDefinitionEnrichmentModelInterface
     /**
      * Set values for $context array (if any) and call enrichFieldDefinition on $fieldDefinition.
      */
-    function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data;
+    public function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data;
 
     /**
      * Add Data $data to the fieldDefinition collection
      *
      * @return $this
      */
-    function addFieldDefinition(string $key, Data $data): static;
+    public function addFieldDefinition(string $key, Data $data): static;
 
     /**
      * Get Data $data from collection if available
      */
-    function getFieldDefinition(string $key, array $context = []): ?Data;
+    public function getFieldDefinition(string $key, array $context = []): ?Data;
 
     /**
      * Get all available fieldDefinitions
      *
      * @return Data[]|null
      */
-    function getFieldDefinitions(array $context = []): ?array;
+    public function getFieldDefinitions(array $context = []): ?array;
 
     /**
      * Set fieldDefinition collection
@@ -54,5 +54,5 @@ interface FieldDefinitionEnrichmentModelInterface
      *
      * @return $this
      */
-    function setFieldDefinitions(?array $fieldDefinitions): static;
+    public function setFieldDefinitions(?array $fieldDefinitions): static;
 }

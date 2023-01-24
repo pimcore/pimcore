@@ -64,7 +64,8 @@ trait FieldDefinitionEnrichmentDataTrait
     /**
      * @return Data[]|null
      */
-    public function  getFieldDefinitions(array $context = []): ?array {
+    public function getFieldDefinitions(array $context = []): ?array
+    {
         if (empty($this->fieldDefinitionsCache)) {
             $definitions = $this->doGetFieldDefinitions();
             foreach ($this->getReferencedFields() as $rf) {
