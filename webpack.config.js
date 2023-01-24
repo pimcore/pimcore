@@ -6,51 +6,83 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 
 let webpackConfigs = [];
 
-Encore
-    // directory where compiled assets will be stored
-    .setOutputPath('bundles/AdminBundle/public/build')
-    .setOutputPath('bundles/AdminBundle/public/build/admin')
-    // public path used by the web server to access the output path
-    .setPublicPath('/bundles/pimcoreadmin/build/admin')
+const standardConfigs = [
+    {
+        bundleFolderName: "AdminBundle",
+        name: "admin",
+        bundleName: "pimcoreadmin",
+        configName: "pimcoreAdmin"
+    }, {
+        bundleFolderName: "AdminBundle",
+        name: "imageEditor",
+        bundleName: "pimcoreadmin",
+        configName: "pimcoreAdminImageEditor"
+    }, {
+        bundleFolderName: "TinymceBundle",
+        name: "tinymce",
+        bundleName: "pimcoretinymce",
+        configName: "pimcoreTinymce"
+    }
+]
+
+standardConfigs.map((par) => {
+
+    Encore.reset();
+
+    Encore
+
+        // directory where compiled assets will be stored
+        .setOutputPath(`bundles/${par.bundleFolderName}/public/build`)
+        .setOutputPath(`bundles/${par.bundleFolderName}/public/build/${par.name}`)
+        // public path used by the web server to access the output path
+        .setPublicPath(`/bundles/${par.bundleName}/build/${par.name}`)
+
+        .setManifestKeyPrefix(`${par.bundleFolderName}/build`)
 
 
-    .setManifestKeyPrefix('AdminBundle/build/admin')
+        .addEntry(par.name, `./assets/${par.name}.js`)
 
+        // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
+        .splitEntryChunks()
 
-    .addEntry('admin', './assets/admin.js')
+        // will require an extra script tag for runtime.js
+        // but, you probably want this, unless you're building a single-page app
+        .enableSingleRuntimeChunk()
 
-    // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
-    .splitEntryChunks()
+        .cleanupOutputBeforeBuild()
+        .enableBuildNotifications()
+        .enableSourceMaps(!Encore.isProduction())
+    ;
 
-    // will require an extra script tag for runtime.js
-    // but, you probably want this, unless you're building a single-page app
-    .enableSingleRuntimeChunk()
+    let encoreConfig = Encore.getWebpackConfig();
+    encoreConfig.name = par.configName;
 
-    .cleanupOutputBeforeBuild()
-    .enableBuildNotifications()
-    .enableSourceMaps(!Encore.isProduction())
-    // enables hashed filenames (e.g. app.abc123.css)
-    //.enableVersioning(Encore.isProduction())
-;
+    webpackConfigs.push(encoreConfig);
 
-let adminConfig = Encore.getWebpackConfig();
-adminConfig.name = 'pimcoreAdmin';
+});
 
-webpackConfigs.push(adminConfig);
+const par = {
+    bundleFolderName: "EcommerceFrameworkBundle",
+    name1: "backOffice",
+    name2: "voucher",
+    bundleName: "pimcoreecommerceframework",
+    configName: "pimcoreEcommerceFrameworkVoucher"
+};
 
 Encore.reset();
 
 Encore
 
     // directory where compiled assets will be stored
-    .setOutputPath('bundles/AdminBundle/public/build/image-editor')
+    .setOutputPath(`bundles/${par.bundleFolderName}/public/build`)
     // public path used by the web server to access the output path
-    .setPublicPath('/bundles/pimcoreadmin/build/image-editor')
+    .setPublicPath(`/bundles/${par.bundleName}/build`)
 
-    .setManifestKeyPrefix('AdminBundle/build/image-editor')
+    .setManifestKeyPrefix(`${par.bundleFolderName}/build`)
 
 
-    .addEntry('image-editor', './assets/image-editor.js')
+    .addEntry(par.name1, `./assets/${par.name1}.js`)
+    .addEntry(par.name2, `./assets/${par.name2}.js`)
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
@@ -62,14 +94,11 @@ Encore
     .cleanupOutputBeforeBuild()
     .enableBuildNotifications()
     .enableSourceMaps(!Encore.isProduction())
-    // enables hashed filenames (e.g. app.abc123.css)
-    //.enableVersioning(Encore.isProduction())
 ;
 
-let imageEditorConfig = Encore.getWebpackConfig();
-imageEditorConfig.name = 'pimcoreAdminImageEditor';
+let encoreConfig = Encore.getWebpackConfig();
+encoreConfig.name = par.configName;
 
-webpackConfigs.push(imageEditorConfig);
-
+webpackConfigs.push(encoreConfig);
 
 module.exports = webpackConfigs;

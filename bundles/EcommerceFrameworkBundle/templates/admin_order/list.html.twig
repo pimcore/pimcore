@@ -1,8 +1,5 @@
 {% extends '@PimcoreEcommerceFramework/back-office.html.twig' %}
 
-{% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
-{% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.js')) %}
-
 {% set urlParams = app.request.query.all %}
 {% block content %}
     <div class="page-header mt-5">

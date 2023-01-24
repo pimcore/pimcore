@@ -78,7 +78,7 @@ final class PimcoreAdminExtension extends Extension implements PrependExtensionI
     {
         $builds = [
             'pimcoreAdmin' => realpath(__DIR__ . '/../../public/build/admin'),
-            'pimcoreAdminImageEditor' => realpath(__DIR__ . '/../../public/build/image-editor'),
+            'pimcoreAdminImageEditor' => realpath(__DIR__ . '/../../public/build/imageEditor'),
         ];
 
         $container->prependExtensionConfig('webpack_encore', [

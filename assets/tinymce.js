@@ -1,0 +1,1 @@
+import * as tinymce from "tinymce";
