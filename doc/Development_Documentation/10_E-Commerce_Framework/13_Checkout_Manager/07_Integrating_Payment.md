@@ -176,4 +176,4 @@ Above mentioned use cases will now result in following behavior:
 It is possible to implement custom strategies as they are just services implementing `HandlePendingPaymentsStrategyInterface`. 
 
 
-For more details see [Payment Docs ](../15_Payment) section. 
+For more details see [Payment Docs ](../15_Payment/README.md) section. 
