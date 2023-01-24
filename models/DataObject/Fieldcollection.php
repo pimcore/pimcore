@@ -24,9 +24,9 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 /**
  * @template TItem of Model\DataObject\Fieldcollection\Data\AbstractData
  *
- * @method array delete(Concrete $object, $saveMode = false)
+ * @method array{saveLocalizedRelations?: true, saveFieldcollectionRelations?: true} delete(Concrete $object, bool $saveMode = false)
  * @method Fieldcollection\Dao getDao()
- * @method array load(Concrete $object)
+ * @method TItem[] load(Concrete $object)
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface, ObjectAwareFieldInterface
 {
@@ -62,11 +62,19 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         $this->markFieldDirty('_self', true);
     }
 
+    /**
+     * @return TItem[]
+     */
     public function getItems(): array
     {
         return $this->items;
     }
 
+    /**
+     * @param TItem[] $items
+     *
+     * @return $this
+     */
     public function setItems(array $items): static
     {
         $this->items = $items;
@@ -104,7 +112,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
     /**
      * @param Concrete $object
-     * @param array $params
+     * @param array<string, mixed> $params
      *
      * @throws \Exception
      */
@@ -142,7 +150,10 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         return count($this->getItems()) < 1;
     }
 
-    public function add(mixed $item): void
+    /**
+     * @param TItem $item
+     */
+    public function add(Fieldcollection\Data\AbstractData $item): void
     {
         $this->items[] = $item;
 
@@ -158,11 +169,17 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         }
     }
 
+    /**
+     * @return TItem|null
+     */
     public function get(int $index): ?Fieldcollection\Data\AbstractData
     {
         return $this->items[$index] ?? null;
     }
 
+    /**
+     * @return TItem|null
+     */
     private function getByOriginalIndex(?int $index): ?Fieldcollection\Data\AbstractData
     {
         if ($index === null) {
@@ -196,7 +213,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @return TItem|false
      */
-    public function current(): mixed
+    public function current(): Fieldcollection\Data\AbstractData|false
     {
         return current($this->items);
     }

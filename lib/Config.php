@@ -28,10 +28,16 @@ use Symfony\Component\Yaml\Yaml;
 
 final class Config implements ArrayAccess
 {
+    /**
+     * @var array<string, string>
+     */
     protected static array $configFileCache = [];
 
     protected static ?string $environment = null;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     protected static ?array $systemConfig = null;
 
     /**
@@ -60,6 +66,8 @@ final class Config implements ArrayAccess
 
     /**
      * {@inheritdoc}
+     *
+     * @return array<string, mixed>|null
      */
     public function offsetGet($offset): ?array
     {
@@ -121,8 +129,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @param array|null $configuration
-     * @param string|null $offset
+     * @param array<string, mixed>|null $configuration
      *
      * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
      */
@@ -137,9 +144,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @param string|null $offset
-     *
-     * @return null|array
+     * @return null|array<string, mixed>
      *
      * @internal
      */
@@ -177,11 +182,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @static
-     *
-     * @param string|null $language
-     *
-     * @return array
+     * @return array<string, mixed>
      */
     public static function getWebsiteConfig(string $language = null): array
     {
@@ -289,7 +290,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @param array|null $config
+     * @param array<string, mixed>|null $config
      * @param string|null $language
      *
      * @internal
@@ -319,13 +320,11 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      *
      * @throws Exception
      *
      * @internal
-     *
-     * @static
      */
     public static function getReportConfig(): array
     {
@@ -352,9 +351,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @static
-     *
-     * @param array $config
+     * @param array<string, mixed> $config
      *
      * @internal
      */
@@ -364,9 +361,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @static
-     *
-     * @return array
+     * @return array<string, mixed>
      *
      * @internal
      */
@@ -383,9 +378,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @static
-     *
-     * @param array $config
+     * @param array<string, mixed> $config
      *
      * @internal
      */
@@ -395,9 +388,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @static
-     *
-     * @param array $config
+     * @param array<string, mixed> $config
      *
      * @internal
      */
@@ -407,10 +398,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @param array $runtimeConfig
-     * @param string $key
-     *
-     * @return bool
+     * @param array<string, mixed> $runtimeConfig
      *
      * @internal
      */
@@ -454,9 +442,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @param string $file
-     *
-     * @return array
+     * @return array<string, mixed>
      *
      * @throws Exception
      *

@@ -23,9 +23,7 @@ use Pimcore\Model\Tool\SettingsStore;
 final class Config
 {
     /**
-     * @static
-     *
-     * @return array
+     * @return array<string, string>
      *
      * @internal
      */
@@ -53,9 +51,7 @@ final class Config
     }
 
     /**
-     * @static
-     *
-     * @param array $config
+     * @param array<string, string> $config
      *
      * @internal
      */

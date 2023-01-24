@@ -19,18 +19,30 @@ namespace Pimcore\Analytics\Google\Config;
 
 class Config
 {
+    /**
+     * @var array<string, mixed>
+     */
     private array $config;
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function __construct(array $config)
     {
         $this->config = $config;
     }
 
+    /**
+     * @param array<string, mixed> $reportConfig
+     */
     public static function fromReportConfig(array $reportConfig): self
     {
         return new self($reportConfig['analytics'] ?? []);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getConfig(): array
     {
         return $this->config;
@@ -52,6 +64,9 @@ class Config
         return true;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getConfigForSite(string $configKey): ?array
     {
         if (!isset($this->config['sites']) || !isset($this->config['sites'][$configKey])) {
@@ -61,6 +76,9 @@ class Config
         return $this->config['sites'][$configKey];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getConfiguredSites(): array
     {
         $sites = $this->config['sites'];
