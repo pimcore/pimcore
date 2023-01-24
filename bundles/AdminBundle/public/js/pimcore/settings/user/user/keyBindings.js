@@ -72,6 +72,10 @@ pimcore.settings.user.user.keyBindings = Class.create({
 
         for (var action in mapping) {
             if (mapping.hasOwnProperty(action)) {
+                if(action === 'quickSearch' &&
+                    !pimcore.helpers.hasSearchImplementation()) {
+                    continue;
+                }
 
                 var hiddenField = new Ext.form.field.Text({
 

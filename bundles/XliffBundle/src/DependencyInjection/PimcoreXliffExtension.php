@@ -27,10 +27,6 @@ final class PimcoreXliffExtension extends ConfigurableExtension
 {
     protected function loadInternal(array $config, ContainerBuilder $container): void
     {
-        // on container build the shutdown handler shouldn't be called
-        // for details please see https://github.com/pimcore/pimcore/issues/4709
-        \Pimcore::disableShutdown();
-
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../../config')

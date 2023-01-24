@@ -27,7 +27,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 
 class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 {
-    protected function loadMetadataRelations($fieldname, $metaKey = 'metadata'): array
+    protected function loadMetadataRelations(string $fieldname, string $metaKey = 'metadata'): array
     {
         $relations = $this->loadRelations();
 
@@ -42,14 +42,14 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         return $metaDataList;
     }
 
-    protected function checkSerialization(LazyLoading $object, string $messagePrefix, bool $contentShouldBeIncluded = false)
+    protected function checkSerialization(LazyLoading $object, string $messagePrefix, bool $contentShouldBeIncluded = false): void
     {
         parent::checkSerialization($object, $messagePrefix, false);
         $serializedString = serialize($object);
         $this->checkSerializedStringForNeedle($serializedString, 'some-metadata', $contentShouldBeIncluded, $messagePrefix);
     }
 
-    public function testClassAttributes()
+    public function testClassAttributes(): void
     {
         //prepare data object
 
@@ -95,7 +95,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testDirtyFlag()
+    public function testDirtyFlag(): void
     {
         $object = $this->createDataObject();
 
@@ -113,7 +113,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $this->assertTrue($object->isFieldDirty('advancedObjects'), 'Advanced relation must be dirty after changing a metadata field');
     }
 
-    public function testLocalizedClassAttributes()
+    public function testLocalizedClassAttributes(): void
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -157,7 +157,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testBlockClassAttributes()
+    public function testBlockClassAttributes(): void
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -208,7 +208,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testLazyBlockClassAttributes()
+    public function testLazyBlockClassAttributes(): void
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -257,7 +257,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testFieldCollectionAttributes()
+    public function testFieldCollectionAttributes(): void
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -314,7 +314,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testFieldCollectionLocalizedAttributes()
+    public function testFieldCollectionLocalizedAttributes(): void
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -371,7 +371,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testBrickAttributes()
+    public function testBrickAttributes(): void
     {
         //prepare data object
         $object = $this->createDataObject();
@@ -419,7 +419,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testLocalizedBrickAttributes()
+    public function testLocalizedBrickAttributes(): void
     {
         //prepare data object
         $object = $this->createDataObject();
