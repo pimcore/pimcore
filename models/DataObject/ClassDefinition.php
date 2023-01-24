@@ -28,16 +28,18 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentModelInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
  */
-final class ClassDefinition extends Model\AbstractModel
+final class ClassDefinition extends Model\AbstractModel implements FieldDefinitionEnrichmentModelInterface
 {
     use DataObject\ClassDefinition\Helper\VarExport;
     use DataObject\Traits\LocateFileTrait;
+    use DataObject\Traits\FieldDefinitionEnrichmentModelTrait;
     use RecursionBlockingEventDispatchHelperTrait;
 
     /**
@@ -169,13 +171,6 @@ final class ClassDefinition extends Model\AbstractModel
      * @var bool
      */
     public bool $showVariants = false;
-
-    /**
-     * @internal
-     *
-     * @var DataObject\ClassDefinition\Data[]
-     */
-    public array $fieldDefinitions = [];
 
     /**
      * @internal
@@ -508,7 +503,7 @@ final class ClassDefinition extends Model\AbstractModel
             /** @var self $clone */
             $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
-            $clone->fieldDefinitions = [];
+            $clone->setFieldDefinitions([]);
 
             self::cleanupForExport($clone->layoutDefinitions);
 
@@ -745,29 +740,9 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array $context
-     *
-     * @return DataObject\ClassDefinition\Data[]
-     */
-    public function getFieldDefinitions(array $context = []): array
-    {
-        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-            return $this->fieldDefinitions;
-        }
-
-        $enrichedFieldDefinitions = [];
-        foreach ($this->fieldDefinitions as $key => $fieldDefinition) {
-            $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
-            $enrichedFieldDefinitions[$key] = $fieldDefinition;
-        }
-
-        return $enrichedFieldDefinitions;
-    }
-
-    /**
      * @internal
      */
-    protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
+    public function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['class'] = $this;
@@ -782,39 +757,6 @@ final class ClassDefinition extends Model\AbstractModel
         return $this->layoutDefinitions;
     }
 
-    /**
-     * @param DataObject\ClassDefinition\Data[] $fieldDefinitions
-     *
-     * @return $this
-     */
-    public function setFieldDefinitions(array $fieldDefinitions): static
-    {
-        $this->fieldDefinitions = $fieldDefinitions;
-
-        return $this;
-    }
-
-    public function addFieldDefinition(string $key, ClassDefinition\Data $data): static
-    {
-        $this->fieldDefinitions[$key] = $data;
-
-        return $this;
-    }
-
-    public function getFieldDefinition(string $key, array $context = []): ?ClassDefinition\Data
-    {
-        if (array_key_exists($key, $this->fieldDefinitions)) {
-            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-                return $this->fieldDefinitions[$key];
-            }
-            $fieldDefinition = $this->doEnrichFieldDefinition($this->fieldDefinitions[$key], $context);
-
-            return $fieldDefinition;
-        }
-
-        return null;
-    }
-
     public function setLayoutDefinitions(?ClassDefinition\Layout $layoutDefinitions): static
     {
         $oldFieldDefinitions = null;
@@ -825,7 +767,7 @@ final class ClassDefinition extends Model\AbstractModel
 
         $this->layoutDefinitions = $layoutDefinitions;
 
-        $this->fieldDefinitions = [];
+        $this->setFieldDefinitions([]);
         $this->extractDataDefinitions($this->layoutDefinitions);
 
         if ($oldFieldDefinitions !== null) {

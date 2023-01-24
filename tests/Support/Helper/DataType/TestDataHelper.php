@@ -96,12 +96,6 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $cd = $object->getClass();
         $fd = $cd->getFieldDefinition($field);
-        if (!$fd) {
-            $localizedFields = $cd->getFieldDefinition('localizedfields');
-            if ($localizedFields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                $fd = $localizedFields->getFieldDefinition($field);
-            }
-        }
 
         return $fd;
     }

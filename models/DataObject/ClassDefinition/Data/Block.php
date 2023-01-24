@@ -30,10 +30,11 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
 {
     use Extension\ColumnType;
     use DataObject\Traits\ClassSavedTrait;
+    use DataObject\Traits\FieldDefinitionEnrichmentDataTrait;
 
     /**
      * Static type of this element
@@ -114,13 +115,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @var array
      */
     protected array $referencedFields = [];
-
-    /**
-     * @internal
-     *
-     * @var array|null
-     */
-    public ?array $fieldDefinitionsCache = null;
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -568,7 +562,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function setChildren(array $children): static
     {
         $this->children = $children;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
 
         return $this;
     }
@@ -591,7 +585,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function addChild(mixed $child): void
     {
         $this->children[] = $child;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
     }
 
     public function setLayout(?array $layout): static
@@ -607,99 +601,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param mixed $def
-     * @param array $fields
-     *
-     * @return array
+     * @internal
      */
-    public function doGetFieldDefinitions(mixed $def = null, array $fields = []): array
-    {
-        if ($def === null) {
-            $def = $this->getChildren();
-        }
-
-        if (is_array($def)) {
-            foreach ($def as $child) {
-                $fields = array_merge($fields, $this->doGetFieldDefinitions($child, $fields));
-            }
-        }
-
-        if ($def instanceof DataObject\ClassDefinition\Layout) {
-            if ($def->hasChildren()) {
-                foreach ($def->getChildren() as $child) {
-                    $fields = array_merge($fields, $this->doGetFieldDefinitions($child, $fields));
-                }
-            }
-        }
-
-        if ($def instanceof DataObject\ClassDefinition\Data) {
-            $existing = $fields[$def->getName()] ?? false;
-            if ($existing && method_exists($existing, 'addReferencedField')) {
-                // this is especially for localized fields which get aggregated here into one field definition
-                // in the case that there are more than one localized fields in the class definition
-                // see also pimcore.object.edit.addToDataFields();
-                $existing->addReferencedField($def);
-            } else {
-                $fields[$def->getName()] = $def;
-            }
-        }
-
-        return $fields;
-    }
-
-    /**
-     * @param array $context additional contextual data
-     *
-     * @return DataObject\ClassDefinition\Data[]|null
-     */
-    public function getFieldDefinitions(array $context = []): ?array
-    {
-        if (empty($this->fieldDefinitionsCache)) {
-            $definitions = $this->doGetFieldDefinitions();
-            foreach ($this->getReferencedFields() as $rf) {
-                if ($rf instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    $definitions = array_merge($definitions, $this->doGetFieldDefinitions($rf->getChildren()));
-                }
-            }
-
-            $this->fieldDefinitionsCache = $definitions;
-        }
-
-        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-            return $this->fieldDefinitionsCache;
-        }
-
-        $enrichedFieldDefinitions = [];
-        foreach ($this->fieldDefinitionsCache as $key => $fieldDefinition) {
-            $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
-            $enrichedFieldDefinitions[$key] = $fieldDefinition;
-        }
-
-        return $enrichedFieldDefinitions;
-    }
-
-    /**
-     * @param string $name
-     * @param array $context additional contextual data
-     *
-     * @return DataObject\ClassDefinition\Data|null
-     */
-    public function getFieldDefinition(string $name, array $context = []): ?Data
-    {
-        $fds = $this->getFieldDefinitions();
-        if (isset($fds[$name])) {
-            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-                return $fds[$name];
-            }
-            $fieldDefinition = $this->doEnrichFieldDefinition($fds[$name], $context);
-
-            return $fieldDefinition;
-        }
-
-        return null;
-    }
-
-    protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
+    public function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['containerType'] = 'block';
@@ -713,7 +617,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function setReferencedFields(array $referencedFields): void
     {
         $this->referencedFields = $referencedFields;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
     }
 
     /**
@@ -727,7 +631,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function addReferencedField(Data $field): void
     {
         $this->referencedFields[] = $field;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
     }
 
     public function getBlockedVarsForExport(): array
