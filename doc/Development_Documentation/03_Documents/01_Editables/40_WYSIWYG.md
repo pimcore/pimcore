@@ -97,7 +97,7 @@ CKEDITOR.editorConfig = function (config) {
 
 You can add a Global Configuration for all WYSIWYG Editors for all documents by setting `pimcore.document.editables.wysiwyg.defaultEditorConfig`.
 
-For this purpose, you can create a [Pimcore Bundle](../../20_Extending_Pimcore/13_Bundle_Developers_Guide) and add the
+For this purpose, you can create a [Pimcore Bundle](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/README.md) and add the
 configuration in a file in the `Resources/public` directory  of your bundle (e.g. `Resources/public/js/editmode.js`).
 
 ```
