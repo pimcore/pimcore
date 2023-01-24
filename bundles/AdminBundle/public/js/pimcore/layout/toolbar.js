@@ -284,7 +284,6 @@ pimcore.layout.toolbar = Class.create({
                  iconCls: 'file',
                  items: fileItems,
                  shadow: false,
-                 addShowAndHideListeners: true,
                  cls: "pimcore_navigation_flyout"
              };
          }
@@ -429,7 +428,6 @@ pimcore.layout.toolbar = Class.create({
                  iconCls: 'build',
                  items: extrasItems,
                  shadow: false,
-                 addShowAndHideListeners: true,
                  cls: "pimcore_navigation_flyout"
              };
          }
@@ -474,7 +472,6 @@ pimcore.layout.toolbar = Class.create({
                  iconCls: 'marketing',
                  items: marketingItems,
                  shadow: false,
-                 addShowAndHideListeners: true,
                  cls: "pimcore_navigation_flyout"
              };
          }
@@ -857,7 +854,6 @@ pimcore.layout.toolbar = Class.create({
                 iconCls: 'settings',
                 items: settingsItems,
                 shadow: false,
-                addShowAndHideListeners: true,
                 cls: "pimcore_navigation_flyout"
             };
          }
@@ -933,7 +929,6 @@ pimcore.layout.toolbar = Class.create({
              menu.notification = {
                  items: notificationItems,
                  shadow: false,
-                 addShowAndHideListeners: false,
                  cls: "pimcore_navigation_flyout",
                  exclude: true,
              };
@@ -968,23 +963,25 @@ pimcore.layout.toolbar = Class.create({
                      cls: "pimcore_navigation_flyout",
                  }
 
-                 if(menu[key].items) {
-                     menuItem.items = menu[key].items;
-                 }
-
                  if(menu[key].listeners) {
                      menuItem.listeners = menu[key].listeners
                  }
 
-                 if(menu[key].addShowAndHideListeners === true) {
-                     menuItem.listeners = { ...menuItem.listeners, ...{
-                             "show": function (e) {
-                                 Ext.get('pimcore_menu_' + key).addCls('active');
-                             },
-                             "hide": function (e) {
-                                 Ext.get('pimcore_menu_' + key).removeCls('active');
+                 if(menu[key].items) {
+                     menuItem.items = menu[key].items;
+
+                     if(!menu[key]['exclude'] && !menu[key]['noSubmenus']) {
+                         menuItem.listeners =
+                             {
+                                 ...menuItem.listeners, ...{
+                                     "show": function (e) {
+                                         Ext.get('pimcore_menu_' + key).addCls('active');
+                                     },
+                                     "hide": function (e) {
+                                         Ext.get('pimcore_menu_' + key).removeCls('active');
+                                     }
+                                 }
                              }
-                         }
                      }
                  }
 
@@ -992,16 +989,16 @@ pimcore.layout.toolbar = Class.create({
                  let menuKey = key + 'Menu';
                  this[menuKey] = Ext.create('pimcore.menu.menu', menuItem);
 
-                 // only add the default show sub menu if there are items
-                 if(menu[key]['items'] && !menu[key]['exclude'] && !menu[key]['handler']) {
-                     // make sure the elements are clickable
-                     Ext.get("pimcore_menu_" + key).on("mousedown", this.showSubMenu.bind(this[menuKey]));
-                 }
                  // if the main menu has its own handler use it
                  if(menu[key]['handler']) {
                      Ext.get("pimcore_menu_" + key).on("mousedown", menu[key]['handler']);
                  }
 
+                 // only add the default show sub menu if there are items
+                 if(menu[key]['items'] && !menu[key]['exclude'] && !menu[key]['handler']) {
+                     // make sure the elements are clickable
+                     Ext.get("pimcore_menu_" + key).on("mousedown", this.showSubMenu.bind(this[menuKey]));
+                 }
              });
          }
 
