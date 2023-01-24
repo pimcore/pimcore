@@ -265,15 +265,16 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
             }
         }
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: 'pimcore_icon_search',
-            handler: function (item) {
-                item.parentMenu.destroy();
-
-                this.openSearchEditor();
-            }.bind(this)
-        }));
+        if(pimcore.helpers.hasSearchImplementation()) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: 'pimcore_icon_search',
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+        }
 
 
         menu.showAt(e.getXY());

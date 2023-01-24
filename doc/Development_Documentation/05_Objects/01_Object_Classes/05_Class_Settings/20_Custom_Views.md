@@ -2,6 +2,8 @@
 A custom view is an additional custom tree representing a subset of elements of the corresponding original tree.
 Custom views can be configured for Documents, Assets and Objects. 
 
+To create or edit perspectives and custom views within the Pimcore backend UI use the [perspective editor](https://github.com/pimcore/perspective-editor) bundle.
+
 > **Security Note**    
 > Perspectives and Custom Views are not intended to be used to restrict access to data
 
@@ -10,56 +12,72 @@ Note that the ID is mandatory and must be unique!
 
 ![Custom Views](../../../img/classes-custom-views1.png)
 
-For a sample configuration file have a look at the [sample configuration file](https://github.com/pimcore/skeleton/blob/11.x/config/pimcore/customviews.example.php) 
-that ships with Pimcore and its comments. 
+For a sample configuration file have a look at the [sample configuration](21_Custom_View_Example.md).
+
+## The Configuration File
+
+Format and location of the custom view configuration depends on your environment.
+Per default the symfony-config is used.
+If you want to change the default behaviour, have a look at the [environment](../../../21_Deployment/03_Configuration_Environments.md#page_Configuration-Storage-Locations-Fallbacks) configuration options.
 
 ## Advanced Features / Configurations
 
 #### Additional object tree including condition filter
 The main idea for this configuration is to
-* add an additional object tree called `Articles` having its root at `/blog`
+* add an additional object tree called `Events` having its root at `/Events`
 * not showing the parent folder as its root
-* showing it at the right side in expanded state (there can be only one expanded tree on each side)
-* do NOT show all blog articles which have the text "magnis" in their English title.
-* only the classes `Category` (class id: 5) and `Subarticle` (class id: SUBARTICLE) should be enabled to be added. `Category` is only allowed to be added on the first level of the object tree. `Subarticle` is available in the context menu on the first three levels of the object tree.   
+* only show events that have the "Salzburg" tag.
 
 > **Note**
 > Be aware: for tree pagination to work properly, there needs to be a parent node available. 
 > If you have more than a certain amount of child nodes at your root level, you might need to set "showroot" to true because of that.  
 
-```php
-<?php
-// config/pimcore/customviews.php
- 
-return [
-    "views" => [
-        [
-            "treetype" => "object",
-            "name" => "Articles",
-            "icon" => "/bundles/pimcoreadmin/img/flat-color-icons/reading.svg",
-            "id" => 1,
-            "rootfolder" => "/blog",
-            "showroot" => FALSE,
-            'classes' => [                                                      
-                "5" => 1,                                                                
-                "SUBARTICLE" => 3,                                      
-            ],
-            "position" => "right",
-            "sort" => "1",
-            "expanded" => TRUE,
-            "having" => "type = \"folder\" || o5.title NOT LIKE '%magnis%'",
-            "joins" => [
-                array(
-                    "type" => "left",
-                    "name" => array("o5" => "object_localized_5_en"),
-                    "condition" => "objects.id = o5.oo_id",
-                    "columns" => array("o5" => "title")
-                )
-            ],
-            "where" => ""
-        ]
-    ]
-];
+```yaml
+#var/config/custom-views/customviews.yaml
+
+pimcore:
+    custom_views:
+        definitions:
+            87705013-edb9-c9ec-0f5e-c3ee45ca4459:
+                name: Events
+                treetype: object
+                position: right
+                rootfolder: /Events
+                showroot: false
+                sort: 0
+                treeContextMenu:
+                    object:
+                        items:
+                            add: true
+                            addFolder: true
+                            importCsv: true
+                            cut: true
+                            copy: true
+                            paste: true
+                            delete: true
+                            rename: true
+                            reload: true
+                            publish: true
+                            unpublish: true
+                            searchAndMove: true
+                            lock: true
+                            unlock: true
+                            lockAndPropagate: true
+                            unlockAndPropagate: true
+                            changeChildrenSortBy: true
+                classes: ''
+                joins: [
+                    {
+                        type: left,
+                        name: { ev: object_query_EV },
+                        condition: 'objects.id = ev.oo_id',
+                        columns: { ev: tags }
+                    }
+                ]
+                id: 87705013-edb9-c9ec-0f5e-c3ee45ca4459
+                icon: /bundles/pimcoreadmin/img/flat-color-icons/vip.svg
+                where: ''
+                having: 'ev.tags LIKE "%%Salzburg%%"'
 ```
 
 ![Custom Views](../../../img/classes-custom-views2.png)
@@ -72,29 +90,54 @@ return [
 * place it on the top and expand it
 * hide assets which have the "HIDE" property set to true
 
-```php
-[
-    "treetype" => "asset",
-    "name" => "Panama Impressions",
-    "icon" => "/bundles/pimcoreadmin/img/flat-color-icons/camera_identification.svg",
-    "id" => 1,
-    "rootfolder" => "/examples/panama",
-    "showroot" => FALSE,
-    "classes" => "",
-    "position" => "left",
-    "sort" => "-4",                 // the main trees have priorities -1 (objects), -2  (assets) and -3 (documents)
-    "expanded" => true,
-    "having" => "type = \"folder\" OR hide is NULL or hide != 1",
-    "joins" => [
-        array(
-            "type" => "left",
-            "name" => array("meta" => "properties"),
-            "condition" => "(meta.cid = assets.id AND meta.ctype = 'asset' AND name = 'HIDE')",
-            "columns" => array("hide" => "data")
-        )
-    ],
-    "where" => ""
-]
+```yaml
+#var/config/custom-views/customviews.yaml
+
+pimcore:
+    custom_views:
+        definitions:
+            186632eb-5ad3-6ac6-61f8-7a75e64f2204:
+                name: 'Panama Impressions'
+                treetype: asset
+                position: left
+                rootfolder: /examples/panama
+                showroot: false
+                sort: -4
+                treeContextMenu:
+                    asset:
+                        items:
+                            add:
+                                hidden: false
+                                items:
+                                    upload: true
+                                    uploadCompatibility: true
+                                    uploadZip: true
+                                    importFromServer: true
+                                    uploadFromUrl: true
+                            addFolder: true
+                            rename: true
+                            copy: true
+                            cut: true
+                            paste: true
+                            pasteCut: true
+                            delete: true
+                            searchAndMove: true
+                            lock: true
+                            unlock: true
+                            lockAndPropagate: true
+                            unlockAndPropagate: true
+                            reload: true
+                joins: [
+                    {
+                        type: left,
+                        name: { meta: properties },
+                        condition: "(meta.cid = assets.id AND meta.ctype = 'asset' AND name = 'HIDE')",
+                        columns: { hide: data }
+                    }
+                ]
+                icon: /bundles/pimcoreadmin/img/flat-color-icons/camera_identification.svg
+                where: ''
+                having: 'type = "folder" OR hide is NULL or hide != 1'
 ```
 
 ![Custom Views](../../../img/classes-custom-views3.png)
@@ -102,28 +145,58 @@ return [
 
 #### Document tree filtering using the where clause
 The intention is to
-* show the `/en/basic-examples subtree` (including the parent node on the right side)
+* show the `/en/Magazine` (including the parent node on the right side)
 * apply a simple filter which allows us to only show
    * folders 
    * links
    * pages which do not have the character 'g' in their key
 
-```php
-[
-   "treetype" => "document",
-   "name" => "Basic Page Examples",
-   "icon" => "/bundles/pimcoreadmin/img/flat-color-icons/reading.svg",
-   "id" => 3,
-   "rootfolder" => "/en/basic-examples",
-   "showroot" => TRUE,
-   "classes" => "",
-   "position" => "right",
-   "sort" => "-12",
-   "expanded" => TRUE,
-   "having" => "",
-   "joins" => "",
-   "where" => "(type = 'folder' OR (type = 'page' and `key` NOT LIKE '%g%' OR type = 'link'))"
-]
+```yaml
+#var/config/custom-views/customviews.yaml
+
+pimcore:
+    custom_views:
+        definitions:
+            c3da6659-c8b3-f3ed-2eda-70b2d3756730:
+                name: Magazine
+                treetype: document
+                position: right
+                rootfolder: /en/Magazine
+                showroot: true
+                sort: -12
+                treeContextMenu:
+                    document:
+                        items:
+                            add: true
+                            addSnippet: true
+                            addLink: true
+                            addEmail: true
+                            addNewsletter: true
+                            addHardlink: true
+                            addFolder: true
+                            addPrintPage: true
+                            paste: true
+                            pasteCut: true
+                            copy: true
+                            cut: true
+                            rename: true
+                            unpublish: true
+                            publish: true
+                            delete: true
+                            open: true
+                            convert: true
+                            searchAndMove: true
+                            useAsSite: true
+                            editSite: true
+                            removeSite: true
+                            lock: true
+                            unlock: true
+                            lockAndPropagate: true
+                            unlockAndPropagate: true
+                            reload: true
+                icon: /bundles/pimcoreadmin/img/flat-color-icons/reading.svg
+                where: "(type = 'folder' OR (type = 'page' and `key` NOT LIKE '%%g%%' OR type = 'link'))"
+
 ``` 
    
 ![Custom Views](../../../img/classes-custom-views4.png)   
@@ -133,30 +206,39 @@ The intention is to
 
 Allows you to hide certain context menu items via the customview's treeContextMenu configuration option.
 
-```php
-"treetype" => "asset",
-"name" => "New Panama Impressions",
-"showroot" => 1,
-"classes" => "",
-...
-...
-"treeContextMenu" => [
-    "asset" => [
-        "items" => [
-            "add" => [
-                "items" => [
-                    "importFromServer" => 0
-                ]
-            ],
-            "addFolder" => 0,
-            "rename" => 1,      // optional
-            "copy" => 0,
-            "cut" => 0,
-            "delete" => 1,      // optional
-            "lock" => 0
-        ]
-    ]
-]
+```yaml
+#var/config/custom-views/customviews.yaml
+
+pimcore:
+    custom_views:
+        definitions:
+            186632eb-5ad3-6ac6-61f8-7a75e64f2204:
+                ...
+                treeContextMenu:
+                    asset:
+                        items:
+                            add:
+                                hidden: false
+                                items:
+                                    upload: true
+                                    uploadCompatibility: true
+                                    uploadZip: true
+                                    importFromServer: false     #deny importFromServer
+                                    uploadFromUrl: true
+                            addFolder: false
+                            rename: true
+                            copy: false                         #deny copy
+                            cut: false                          #deny cut
+                            paste: true
+                            pasteCut: true
+                            delete: true
+                            searchAndMove: true
+                            lock: false                         #deny lock
+                            unlock: true
+                            lockAndPropagate: true
+                            unlockAndPropagate: true
+                            reload: true
+                ...
 ```
 
 ![Custom Views](../../../img/classes-custom-views5.png)
@@ -165,13 +247,12 @@ There are keys for most of the menu items, including sub menu items. The notion 
 
 Let's assume that we want to hide the "copy" option. The short way is this one:
 
-```php
-"copy"  => 0 (the default is that all menu entries are visible)    
+```yaml
+copy: false #the default is that all menu entries are visible    
 ```
 
-```php
-"copy" => [
-    "hidden" => true
-]
+```yaml
+copy: 
+    hidden: true
 ```
 

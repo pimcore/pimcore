@@ -13,6 +13,9 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @return array<string, mixed>
+ */
 function xmlToArray(string $file): array
 {
     $xml = simplexml_load_file($file, null, LIBXML_NOCDATA);
@@ -113,6 +116,11 @@ function replace_pcre_backreferences(string $string, array $values): string
     return $string;
 }
 
+/**
+ * @param mixed[] $array
+ *
+ * @return mixed[]
+ */
 function array_htmlspecialchars(array $array): array
 {
     foreach ($array as $key => $value) {
@@ -144,6 +152,9 @@ function array_searchi(string $needle, array $haystack): bool|int|string
     return array_search(strtolower($needle), array_map('strtolower', $haystack));
 }
 
+/**
+ * @return array<string, mixed>
+ */
 function object2array(object $node): array
 {
     // dirty hack, should be replaced
@@ -283,7 +294,6 @@ function filesize2bytes(string $str): int
 }
 
 /**
- * @param string $base
  * @param string[] $data
  *
  * @return string[]
@@ -315,7 +325,7 @@ function rscandir(string $base = '', array &$data = []): array
  * @param int $limit
  * @param bool $useArrayFilter
  *
- * @return array
+ * @return string[]
  *
  * @phpstan-param non-empty-string $delimiter
  */
@@ -413,6 +423,11 @@ function p_r(): void
     }
 }
 
+/**
+ * @param string[] $array
+ *
+ * @return string[]
+ */
 function wrapArrayElements(array $array, string $prefix = "'", string $suffix = "'"): array
 {
     foreach ($array as $key => $value) {

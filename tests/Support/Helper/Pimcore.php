@@ -39,7 +39,7 @@ class Pimcore extends Module\Symfony
 {
     protected array $groups = [];
 
-    public function __construct(ModuleContainer $moduleContainer, $config = null)
+    public function __construct(ModuleContainer $moduleContainer, ?array $config = null)
     {
         // simple unit tests do not need a test DB and run
         // way faster if no DB has to be initialized first, so

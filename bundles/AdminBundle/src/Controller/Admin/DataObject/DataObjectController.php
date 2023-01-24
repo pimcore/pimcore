@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
-use Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
@@ -550,158 +549,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         throw $this->createAccessDeniedHttpException();
-    }
-
-    /**
-     * @Route("/relation-objects-list", name="relation_objects_list", methods={"GET"})
-     */
-    public function optionsAction(Request $request): JsonResponse
-    {
-        $fieldConfigData = json_decode($request->get('fieldConfig'), true);
-        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
-        if (!$loader->supports($fieldConfigData['fieldtype'])) {
-            return new JsonResponse([]);
-        }
-
-        /** @var AbstractRelations $fieldConfig */
-        $fieldConfig = $loader->build($fieldConfigData['fieldtype']);
-        $fieldConfig->setValues($fieldConfigData);
-
-        $visibleFields = null;
-        if (method_exists($fieldConfig, 'getVisibleFields')) {
-            $visibleFields = is_array($fieldConfig->getVisibleFields()) ? $fieldConfig->getVisibleFields() : explode(',', $fieldConfig->getVisibleFields());
-        }
-
-        if (!$visibleFields) {
-            $visibleFields = ['id', 'fullpath', 'classname'];
-        }
-
-        $searchRequest = $request;
-
-        $allowedTypes = [];
-        $subTypes = [];
-        $classes = [];
-        $allowClasses = true;
-
-        if ($fieldConfig->getAssetsAllowed()) {
-            $allowedTypes[] = 'asset';
-            $allowClasses = false;
-
-            foreach ($fieldConfig->getAssetTypes() as $subType) {
-                $subTypes[] = $subType['assetTypes'];
-            }
-        }
-
-        if (method_exists($fieldConfig, 'getDocumentsAllowed') && $fieldConfig->getDocumentsAllowed()) {
-            $allowedTypes[] = 'document';
-            $allowClasses = false;
-
-            foreach ($fieldConfig->getDocumentTypes() as $subType) {
-                $subTypes[] = $subType['documentTypes'];
-            }
-        }
-
-        if (method_exists($fieldConfig, 'getObjectsAllowed') && $fieldConfig->getObjectsAllowed()) {
-            $allowedTypes[] = 'object';
-
-            if ($allowClasses) {
-                $subTypes = array_merge($subTypes, ['object', 'variant']);
-
-                foreach ($fieldConfig->getClasses() as $classData) {
-                    $classes[] = $classData['classes'];
-                }
-            }
-        }
-
-        $searchRequest->request->set('type', implode(',', $allowedTypes));
-        $searchRequest->request->set('subtype', implode(',', $subTypes));
-        $searchRequest->request->set('class', implode(',', $classes));
-        $searchRequest->request->set('fields', $visibleFields);
-        $searchRequest->attributes->set('unsavedChanges', $request->get('unsavedChanges', ''));
-        $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
-        $objects = json_decode($res->getContent(), true)['data'];
-
-        if ($request->get('data')) {
-            foreach (json_decode($request->get('data'), true) as $preSelectedElement) {
-                if (isset($preSelectedElement['id'], $preSelectedElement['type'])) {
-                    $objects[] = ['id' => $preSelectedElement['id'], 'type' => $preSelectedElement['type']];
-                }
-            }
-        }
-
-        $options = [];
-        foreach ($objects as $objectData) {
-            $option = [
-                'id' => $objectData['id'],
-                'type' => $objectData['type'],
-            ];
-
-            $visibleFieldValues = [];
-            foreach ($visibleFields as $visibleField) {
-                if ($visibleField === 'fullpath' && $fieldConfig instanceof DataObject\ClassDefinition\PathFormatterAwareInterface) {
-                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
-                    if (!$object instanceof Element\ElementInterface) {
-                        continue;
-                    }
-
-                    $formatter = $fieldConfig->getPathFormatterClass();
-
-                    if (null !== $formatter) {
-                        $pathFormatter = DataObject\ClassDefinition\Helper\PathFormatterResolver::resolvePathFormatter(
-                            $fieldConfig->getPathFormatterClass()
-                        );
-
-                        if ($pathFormatter instanceof DataObject\ClassDefinition\PathFormatterInterface) {
-                            $formattedPath = $pathFormatter->formatPath(
-                                [],
-                                $object,
-                                [$objectData],
-                                [
-                                    'fd' => $fieldConfig,
-                                    'context' => [],
-                                ]
-                            )[0] ?? null;
-                            if ($formattedPath) {
-                                $objectData['fullpath'] = $formattedPath;
-                            }
-                        }
-                    }
-                }
-
-                if (isset($objectData[$visibleField])) {
-                    $visibleFieldValues[] = $objectData[$visibleField];
-                } else {
-                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
-                    if (!$object instanceof Element\ElementInterface) {
-                        continue;
-                    }
-
-                    $inheritValues = DataObject\Concrete::getGetInheritedValues();
-                    $fallbackValues = DataObject\Localizedfield::getGetFallbackValues();
-
-                    DataObject\Concrete::setGetInheritedValues(true);
-                    DataObject\Localizedfield::setGetFallbackValues(true);
-
-                    $getter = 'get'.ucfirst($visibleField);
-                    if (method_exists($object, $getter)) {
-                        $visibleFieldValue = $object->$getter();
-                        if ($visibleField === 'key' && $object instanceof DataObject\Concrete && count($classes) > 1) {
-                            $visibleFieldValue .= ' ('.$object->getClassName().')';
-                        }
-                        $visibleFieldValues[] = $visibleFieldValue;
-                    }
-
-                    DataObject\Concrete::setGetInheritedValues($inheritValues);
-                    DataObject\Localizedfield::setGetFallbackValues($fallbackValues);
-                }
-            }
-
-            $option['label'] = implode(', ', $visibleFieldValues);
-
-            $options[] = $option;
-        }
-
-        return new JsonResponse($options);
     }
 
     /**
@@ -1747,11 +1594,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function publishVersionAction(Request $request): JsonResponse
     {
-        $version = Model\Version::getById((int) $request->get('id'));
-        if (!$version) {
-            throw $this->createNotFoundException();
+        $id = (int)$request->get('id');
+        $version = Model\Version::getById($id);
+        $object = $version?->loadData();
+        if (!$object) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
-        $object = $version->loadData();
 
         $currentObject = DataObject::getById($object->getId());
         if ($currentObject->isAllowed('publish')) {
@@ -1793,17 +1641,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
-        $object = $version->loadData();
-
-        if (method_exists($object, 'getLocalizedFields')) {
-            /** @var DataObject\Localizedfield $localizedFields */
-            $localizedFields = $object->getLocalizedFields();
-            $localizedFields->setLoadedAllLazyData();
-        }
-
-        DataObject::setDoNotRestoreKeyAndPath(false);
+        $object = $version?->loadData();
 
         if ($object) {
+            if (method_exists($object, 'getLocalizedFields')) {
+                /** @var DataObject\Localizedfield $localizedFields */
+                $localizedFields = $object->getLocalizedFields();
+                $localizedFields->setLoadedAllLazyData();
+            }
+
+            DataObject::setDoNotRestoreKeyAndPath(false);
+
             if ($object->isAllowed('versions')) {
                 return $this->render('@PimcoreAdmin/admin/data_object/data_object/preview_version.html.twig',
                     [
@@ -1838,7 +1686,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $id2 = (int)$to;
 
         $version1 = Model\Version::getById($id1);
-        $object1 = $version1->loadData();
+        $object1 = $version1?->loadData();
+
+        if (!$object1) {
+            throw $this->createNotFoundException('Version with id [' . $id1 . "] doesn't exist");
+        }
 
         if (method_exists($object1, 'getLocalizedFields')) {
             /** @var DataObject\Localizedfield $localizedFields1 */
@@ -1847,7 +1699,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         $version2 = Model\Version::getById($id2);
-        $object2 = $version2->loadData();
+        $object2 = $version2?->loadData();
+
+        if (!$object2) {
+            throw $this->createNotFoundException('Version with id [' . $id2 . "] doesn't exist");
+        }
 
         if (method_exists($object2, 'getLocalizedFields')) {
             /** @var DataObject\Localizedfield $localizedFields2 */
@@ -1857,22 +1713,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         DataObject::setDoNotRestoreKeyAndPath(false);
 
-        if ($object1 && $object2) {
-            if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
-                return $this->render('@PimcoreAdmin/admin/data_object/data_object/diff_versions.html.twig',
-                    [
-                        'object1' => $object1,
-                        'versionNote1' => $version1->getNote(),
-                        'object2' => $object2,
-                        'versionNote2' => $version2->getNote(),
-                        'validLanguages' => Tool::getValidLanguages(),
-                    ]);
-            }
-
-            throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
+        if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
+            return $this->render('@PimcoreAdmin/admin/data_object/data_object/diff_versions.html.twig',
+                [
+                    'object1' => $object1,
+                    'versionNote1' => $version1->getNote(),
+                    'object2' => $object2,
+                    'versionNote2' => $version2->getNote(),
+                    'validLanguages' => Tool::getValidLanguages(),
+                ]);
         }
 
-        throw $this->createNotFoundException('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
+        throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
     }
 
     /**

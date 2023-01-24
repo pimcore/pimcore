@@ -29,7 +29,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of static routes for the specicifies parameters, returns an array of Staticroute elements
      *
-     * @return array
+     * @return Glossary[]
      */
     public function load(): array
     {
@@ -45,6 +45,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $glossary;
     }
 
+    /**
+     * @return list<array<string,mixed>>
+     */
     public function getDataArray(): array
     {
         $glossarysData = $this->db->fetchAllAssociative('SELECT * FROM glossary' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());

@@ -74,7 +74,7 @@ class DataObject extends Data
     public function transformGetterData(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
-            return \Pimcore\Model\DataObject\Service::getElementById('object', $data);
+            return \Pimcore\Model\DataObject\Service::getElementById('object', (int) $data);
         }
 
         return $data;

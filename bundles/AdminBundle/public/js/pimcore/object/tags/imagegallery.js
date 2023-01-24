@@ -217,13 +217,17 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                 this.add(null);
             }.bind(this)
         });
-        toolBarItems.push({
-            xtype: "button",
-            iconCls: "pimcore_icon_search",
-            handler: function () {
-                this.openSearchEditor();
-            }.bind(this)
-        });
+
+        if(pimcore.helpers.hasSearchImplementation()) {
+            toolBarItems.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_search",
+                handler: function () {
+                    this.openSearchEditor();
+                }.bind(this)
+            });
+        }
+
         toolBarItems.push({
             xtype: "button",
             iconCls: "pimcore_icon_delete",

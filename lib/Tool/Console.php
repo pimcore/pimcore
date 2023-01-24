@@ -139,26 +139,6 @@ final class Console
         return false;
     }
 
-    protected static function checkComposite(string $process): bool
-    {
-        return self::checkConvert($process);
-    }
-
-    protected static function checkConvert(string $executablePath): bool
-    {
-        try {
-            $process = new Process([$executablePath, '--help']);
-            $process->run();
-            if (strpos($process->getOutput() . $process->getErrorOutput(), 'imagemagick.org') !== false) {
-                return true;
-            }
-        } catch (\Exception $e) {
-            // noting to do
-        }
-
-        return false;
-    }
-
     /**
      * @throws \Exception
      */

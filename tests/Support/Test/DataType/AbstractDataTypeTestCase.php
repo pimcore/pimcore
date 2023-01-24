@@ -41,7 +41,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
     protected Unittest $comparisonObject;
 
-    public function _inject(TestDataHelper $testData)
+    public function _inject(TestDataHelper $testData): void
     {
         $this->testDataHelper = $testData;
     }
@@ -50,7 +50,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
      * Calls fill* methods on the object as needed in test
      *
      */
-    protected function fillObject(Concrete $object, array|string $fields = [], ?array &$returnData = [])
+    protected function fillObject(Concrete $object, array|string $fields = [], ?array &$returnData = []): void
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {
@@ -99,7 +99,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         return true;
     }
 
-    public function testBooleanSelect()
+    public function testBooleanSelect(): void
     {
         $this->createTestObject('booleanSelect');
 
@@ -109,9 +109,9 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
     abstract protected function createTestObject(array $fields = [], ?array &$params = []): Unittest;
 
-    abstract public function refreshObject();
+    abstract public function refreshObject(): void;
 
-    public function testBricks()
+    public function testBricks(): void
     {
         $this->createTestObject([
             [
@@ -124,7 +124,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertBricks($this->testObject, 'mybricks', $this->seed);
     }
 
-    public function testCalculatedValue()
+    public function testCalculatedValue(): void
     {
         $this->createTestObject([
             [
@@ -152,7 +152,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertEquals($value, $row['calculatedValue'], 'value should have been written to query table');
     }
 
-    public function testCalculatedValueExpression()
+    public function testCalculatedValueExpression(): void
     {
         $this->createTestObject([
             [
@@ -178,7 +178,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertEquals('Jane some calc', $row['calculatedValueExpression'], 'value should have been written to query table');
     }
 
-    public function testCalculatedValueExpressionConstant()
+    public function testCalculatedValueExpressionConstant(): void
     {
         $this->createTestObject([
             [
@@ -191,7 +191,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertNotEquals(PIMCORE_PROJECT_ROOT, $value, 'calculated returns constant value');
     }
 
-    public function testCheckbox()
+    public function testCheckbox(): void
     {
         $this->createTestObject('checkbox');
 
@@ -199,7 +199,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertCheckbox($this->testObject, 'checkbox', $this->seed);
     }
 
-    public function testConsent()
+    public function testConsent(): void
     {
         $this->createTestObject();
 
@@ -230,7 +230,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertFalse($consent->getConsent(), 'Consent given but still false');
     }
 
-    public function testCountry()
+    public function testCountry(): void
     {
         $this->createTestObject('country');
 
@@ -238,7 +238,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertCountry($this->testObject, 'country', $this->seed);
     }
 
-    public function testCountryMultiSelect()
+    public function testCountryMultiSelect(): void
     {
         $this->createTestObject([
             [
@@ -251,7 +251,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'countries', $this->seed);
     }
 
-    public function testDate()
+    public function testDate(): void
     {
         $this->createTestObject('date');
 
@@ -259,7 +259,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertDate($this->testObject, 'date', $this->seed);
     }
 
-    public function testDateTime()
+    public function testDateTime(): void
     {
         $this->createTestObject([
             [
@@ -272,7 +272,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertDate($this->testObject, 'datetime', $this->seed);
     }
 
-    public function testEmail()
+    public function testEmail(): void
     {
         $this->createTestObject('email');
 
@@ -280,7 +280,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertEmail($this->testObject, 'email', $this->seed);
     }
 
-    public function testEncrypted()
+    public function testEncrypted(): void
     {
         $this->createTestObject('encryptedField');
 
@@ -296,7 +296,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertFalse(strpos($result, 'content'));
     }
 
-    public function testExternalImage()
+    public function testExternalImage(): void
     {
         $this->createTestObject('externalImage');
 
@@ -304,7 +304,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertExternalImage($this->testObject, 'externalImage', $this->seed);
     }
 
-    public function testFieldCollection()
+    public function testFieldCollection(): void
     {
         $this->createTestObject([
             [
@@ -317,7 +317,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertFieldCollection($this->testObject, 'myfieldcollection', $this->seed);
     }
 
-    public function testFirstname()
+    public function testFirstname(): void
     {
         $this->createTestObject('firstname');
 
@@ -325,7 +325,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertFirstname($this->testObject, 'firstname', $this->seed);
     }
 
-    public function testGender()
+    public function testGender(): void
     {
         $this->createTestObject('gender');
 
@@ -333,7 +333,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertGender($this->testObject, 'gender', $this->seed);
     }
 
-    public function testGeobounds()
+    public function testGeobounds(): void
     {
         $this->createTestObject([
             [
@@ -347,7 +347,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->checkValidityGeobounds($this->testObject, 'point', $this->seed);
     }
 
-    public function testGeopoint()
+    public function testGeopoint(): void
     {
         $this->createTestObject([
             [
@@ -361,7 +361,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->checkValidityGeoCoordinates($this->testObject, 'point', $this->seed);
     }
 
-    public function testGeopolygon()
+    public function testGeopolygon(): void
     {
         $this->createTestObject([
             [
@@ -375,7 +375,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->checkValidityGeopolygon($this->testObject, 'polygon', $this->seed);
     }
 
-    public function testGeopolyline()
+    public function testGeopolyline(): void
     {
         $this->createTestObject([
             [
@@ -389,7 +389,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->checkValidityGeopolyline($this->testObject, 'polyline', $this->seed);
     }
 
-    public function testHotspotImage()
+    public function testHotspotImage(): void
     {
         $this->createTestObject([
             [
@@ -404,7 +404,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertHotspotImage($this->testObject, 'hotspotimage', $this->seed);
     }
 
-    public function testHref()
+    public function testHref(): void
     {
         TestHelper::createEmptyObjects();
         $this->createTestObject('href');
@@ -413,7 +413,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertHref($this->testObject, 'href', $this->seed);
     }
 
-    public function testImage()
+    public function testImage(): void
     {
         $this->createTestObject('image');
 
@@ -423,7 +423,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertImage($this->testObject, 'image', $this->seed);
     }
 
-    public function testImageGallery()
+    public function testImageGallery(): void
     {
         $this->createTestObject([
             [
@@ -436,7 +436,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertImageGallery($this->testObject, 'imageGallery', $this->seed);
     }
 
-    public function testIndexFieldSelectionField()
+    public function testIndexFieldSelectionField(): void
     {
         $this->createTestObject('indexFieldSelectionField');
 
@@ -444,7 +444,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertIndexFieldSelectionField($this->testObject, 'indexFieldSelectionField', $this->seed);
     }
 
-    public function testIndexFieldSelection()
+    public function testIndexFieldSelection(): void
     {
         $this->createTestObject('indexFieldSelection');
 
@@ -452,7 +452,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertIndexFieldSelection($this->testObject, 'indexFieldSelection', $this->seed);
     }
 
-    public function testIndexFieldSelectionCombo()
+    public function testIndexFieldSelectionCombo(): void
     {
         $this->createTestObject('indexFieldSelectionCombo');
 
@@ -460,7 +460,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertIndexFieldSelectionCombo($this->testObject, 'indexFieldSelectionCombo', $this->seed);
     }
 
-    public function testInput()
+    public function testInput(): void
     {
         $this->createTestObject('input');
 
@@ -468,7 +468,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertInput($this->testObject, 'input', $this->seed);
     }
 
-    public function testInputQuantityValue()
+    public function testInputQuantityValue(): void
     {
         $this->createTestObject('inputQuantityValue');
 
@@ -478,7 +478,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertInputQuantityValue($this->testObject, 'inputQuantityValue', $this->seed);
     }
 
-    public function testLanguage()
+    public function testLanguage(): void
     {
         $this->createTestObject([
             [
@@ -491,7 +491,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertLanguage($this->testObject, 'languagex', $this->seed);
     }
 
-    public function testLanguageMultiSelect()
+    public function testLanguageMultiSelect(): void
     {
         $this->createTestObject([
             [
@@ -504,7 +504,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'languages', $this->seed);
     }
 
-    public function testLastname()
+    public function testLastname(): void
     {
         $this->createTestObject('lastname');
 
@@ -512,7 +512,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertLastname($this->testObject, 'lastname', $this->seed);
     }
 
-    public function testLazyLocalizedMultihref()
+    public function testLazyLocalizedMultihref(): void
     {
         TestHelper::createEmptyObjects();
 
@@ -542,7 +542,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'de');
     }
 
-    public function testLink()
+    public function testLink(): void
     {
         $this->createTestObject('link');
 
@@ -550,7 +550,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertLink($this->testObject, 'link', $this->seed);
     }
 
-    public function testLocalizedInput()
+    public function testLocalizedInput(): void
     {
         $this->createTestObject([
             [
@@ -570,7 +570,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertInput($this->testObject, 'linput', $this->seed, 'de');
     }
 
-    public function testLocalizedObjects()
+    public function testLocalizedObjects(): void
     {
         TestHelper::createEmptyObjects();
 
@@ -592,7 +592,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertObjects($this->testObject, 'lobjects', $this->seed, 'de');
     }
 
-    public function testLocalizedInputNumberAsString()
+    public function testLocalizedInputNumberAsString(): void
     {
         $this->createTestObject();
         $this->testObject->setLinput('0001', 'en');
@@ -605,7 +605,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertIsNotEqual($this->testObject, 'linput', $expectedDE, '0.100000');
     }
 
-    public function testLocalizedUrlSlug()
+    public function testLocalizedUrlSlug(): void
     {
         $this->createTestObject([
             [
@@ -627,7 +627,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'de');
     }
 
-    public function testMultiHref()
+    public function testMultiHref(): void
     {
         TestHelper::createEmptyObjects();
         $this->createTestObject('multihref');
@@ -636,7 +636,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertMultihref($this->testObject, 'multihref', $this->seed);
     }
 
-    public function testMultiSelect()
+    public function testMultiSelect(): void
     {
         $this->createTestObject([
             [
@@ -649,7 +649,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertMultiSelect($this->testObject, 'multiselect', $this->seed);
     }
 
-    public function testNewsletterActive()
+    public function testNewsletterActive(): void
     {
         $this->createTestObject('newsletterActive');
 
@@ -657,7 +657,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertNewsletterActive($this->testObject, 'newsletterActive', $this->seed);
     }
 
-    public function testNewsletterConfirmed()
+    public function testNewsletterConfirmed(): void
     {
         $this->createTestObject('newsletterConfirmed');
 
@@ -665,7 +665,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertNewsletterConfirmed($this->testObject, 'newsletterConfirmed', $this->seed);
     }
 
-    public function testNumeric()
+    public function testNumeric(): void
     {
         $this->createTestObject('number');
 
@@ -673,7 +673,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertNumber($this->testObject, 'number', $this->seed);
     }
 
-    public function testObjects()
+    public function testObjects(): void
     {
         // // this will create a couple of objects which can be used for references
         TestHelper::createEmptyObjects();
@@ -684,7 +684,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertObjects($this->testObject, 'objects', $this->seed);
     }
 
-    public function testReverseRelation()
+    public function testReverseRelation(): void
     {
         // // this will create a couple of objects which can be used for references
         $testObjects = TestHelper::createEmptyObjects();
@@ -699,7 +699,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertObjectsEqual($testObjects[0]->getNonowner()[0], $this->testObject);
     }
 
-    public function testObjectsWithMetadata()
+    public function testObjectsWithMetadata(): void
     {
         TestHelper::createEmptyObjects();
 
@@ -714,7 +714,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertObjectsWithmetadata($this->testObject, 'objectswithmetadata', $this->seed);
     }
 
-    public function testPassword()
+    public function testPassword(): void
     {
         $this->createTestObject('password');
 
@@ -722,7 +722,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertPassword($this->testObject, 'password', $this->seed);
     }
 
-    public function testQuantityValue()
+    public function testQuantityValue(): void
     {
         $this->createTestObject('quantityValue', $returnData);
 
@@ -733,7 +733,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->checkValidityQuantityValue($this->testObject, 'quantityValue', $this->seed);
     }
 
-    public function testRgbaColor()
+    public function testRgbaColor(): void
     {
         $this->createTestObject('rgbaColor');
 
@@ -742,7 +742,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->checkValidityRgbaColor($this->testObject, 'rgbaColor', $this->seed);
     }
 
-    public function testSelect()
+    public function testSelect(): void
     {
         $this->createTestObject('select');
 
@@ -750,7 +750,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertSelect($this->testObject, 'select', $this->seed);
     }
 
-    public function testSlider()
+    public function testSlider(): void
     {
         $this->createTestObject('slider');
 
@@ -758,7 +758,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertSlider($this->testObject, 'slider', $this->seed);
     }
 
-    public function testStructuredTable()
+    public function testStructuredTable(): void
     {
         $this->createTestObject([
             [
@@ -771,7 +771,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertStructuredTable($this->testObject, 'structuredtable', $this->seed);
     }
 
-    public function testTable()
+    public function testTable(): void
     {
         $this->createTestObject('table');
 
@@ -779,7 +779,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertTable($this->testObject, 'table', $this->seed);
     }
 
-    public function testTextarea()
+    public function testTextarea(): void
     {
         $this->createTestObject('textarea');
 
@@ -787,7 +787,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertTextarea($this->testObject, 'textarea', $this->seed);
     }
 
-    public function testTime()
+    public function testTime(): void
     {
         $this->createTestObject('time');
 
@@ -795,7 +795,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertTime($this->testObject, 'time', $this->seed);
     }
 
-    public function testUrlSlug()
+    public function testUrlSlug(): void
     {
         $this->createTestObject('urlSlug');
 
@@ -829,7 +829,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertNotNull($ex, 'duplicate slug, expected an exception');
     }
 
-    public function testUser()
+    public function testUser(): void
     {
         $this->createTestObject('user');
 
@@ -837,7 +837,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertUser($this->testObject, 'user', $this->seed);
     }
 
-    public function testVideo()
+    public function testVideo(): void
     {
         $returnData = [];
 
@@ -849,7 +849,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertVideo($this->testObject, 'video', $this->seed, $returnData);
     }
 
-    public function testWysiwyg()
+    public function testWysiwyg(): void
     {
         $this->createTestObject('wysiwyg');
 
