@@ -13,6 +13,11 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
+			path: bundles/EcommerceFrameworkBundle/src/CoreExtensions/ClassDefinition/IndexFieldSelectionCombo.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/CartManager/CartPriceModificator/Discount.php
 
 		-
