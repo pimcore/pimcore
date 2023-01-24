@@ -114,11 +114,6 @@ class Document extends Element\AbstractElement
         return $blockedVars;
     }
 
-    /**
-     * get possible types
-     *
-     * @return array
-     */
     public static function getTypes(): array
     {
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');

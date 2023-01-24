@@ -55,7 +55,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * possible types of a document
      *
-     * @var array
+     * @var string[]
      */
     public static array $types = [self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT];
 
@@ -215,7 +215,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @deprecated
      *
-     * @var array|null
+     * @var array<string, Model\Property>|null
      */
     protected ?array $properties = null;
 
@@ -305,11 +305,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return self::$getInheritedValues;
     }
 
-    /**
-     * get possible types
-     *
-     * @return array
-     */
     public static function getTypes(): array
     {
         return self::$types;
