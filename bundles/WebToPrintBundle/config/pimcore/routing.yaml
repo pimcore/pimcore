@@ -9,6 +9,6 @@ _pimcore_web2print_backend:
 _pimcore_web2print_document:
     resource: "../../src/Controller/Document/"
     type:     annotation
-    prefix:   /admin/bundle/web2print/document
+    prefix:   /admin/web2print/document
     options:
         expose: true

@@ -20,6 +20,8 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 
 class Installer extends SettingsStoreAwareInstaller
 {
+
+    protected const USER_PERMISSION_CATEGORY = 'Pimcore Static Routes Bundle';
     protected const USER_PERMISSIONS = [
         'web2print_settings',
     ];
@@ -43,6 +45,7 @@ class Installer extends SettingsStoreAwareInstaller
         foreach (self::USER_PERMISSIONS as $permission) {
             $db->insert('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('category') => self::USER_PERMISSION_CATEGORY,
             ]);
         }
     }

@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\WebToPrintBundle\Controller\Document;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/printpage", name="pimcore_bundle_web2print_document_printpage_")
+ * @Route("/printpage", name="pimcore_web2print_document_printpage_")
  *
  * @internal
  */

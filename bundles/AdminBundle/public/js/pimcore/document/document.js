@@ -21,7 +21,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         var options = this.options || {};
         Ext.Ajax.request({
             url: Routing.getBaseUrl() + "/admin/" + this.getType() + "/get-data-by-id",
-            params: {id: this.id},
+            params: {id: this.id} ,
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
             failure: function () {
