@@ -29,7 +29,6 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterImageOptimize
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTaskPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -71,7 +70,6 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new AreabrickPass());
         $container->addCompilerPass(new NavigationRendererPass());
         $container->addCompilerPass(new ServiceControllersPass());
-        $container->addCompilerPass(new TargetingOverrideHandlersPass());
         $container->addCompilerPass(new MonologPublicLoggerPass());
         $container->addCompilerPass(new MonologPsrLogMessageProcessorPass());
         $container->addCompilerPass(new DebugStopwatchPass());
