@@ -41,7 +41,7 @@ class LinkTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_Link();
     }
@@ -66,7 +66,7 @@ class LinkTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testSave()
+    public function testSave(): void
     {
         $linkObject = $this->createLinkObject();
         $link = new Link();
@@ -86,7 +86,7 @@ class LinkTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testCheckValidity()
+    public function testCheckValidity(): void
     {
         try {
             $linkObject = $this->createLinkObject();

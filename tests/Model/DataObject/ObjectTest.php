@@ -34,7 +34,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Verifies that an object with the same parent ID cannot be created.
      */
-    public function testParentIdentical()
+    public function testParentIdentical(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
@@ -48,7 +48,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Verifies that object PHP API version note is saved
      */
-    public function testSavingVersionNotes()
+    public function testSavingVersionNotes(): void
     {
         $versionNote = ['versionNote' => 'a new version of this object'];
         $this->testObject = TestHelper::createEmptyObject();
@@ -59,7 +59,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Parent ID of a new object cannot be 0
      */
-    public function testParentIs0()
+    public function testParentIs0(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
@@ -75,7 +75,7 @@ class ObjectTest extends ModelTestCase
      *
      * @group notfound
      */
-    public function testParentNotFound()
+    public function testParentNotFound(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
@@ -90,7 +90,7 @@ class ObjectTest extends ModelTestCase
      * Verifies that children result should be cached based on parameters provided.
      *
      */
-    public function testCacheUnpublishedChildren()
+    public function testCacheUnpublishedChildren(): void
     {
         // create parent
         $parent = TestHelper::createEmptyObject();
@@ -119,7 +119,7 @@ class ObjectTest extends ModelTestCase
      * Verifies that siblings result should be cached based on parameters provided.
      *
      */
-    public function testCacheUnpublishedSiblings()
+    public function testCacheUnpublishedSiblings(): void
     {
         // create parent
         $parent = TestHelper::createEmptyObject();
@@ -153,7 +153,7 @@ class ObjectTest extends ModelTestCase
      * Verifies that an object can be saved with custom user modification id.
      *
      */
-    public function testCustomUserModification()
+    public function testCustomUserModification(): void
     {
         $userId = 101;
         $object = TestHelper::createEmptyObject();
@@ -173,7 +173,7 @@ class ObjectTest extends ModelTestCase
      * Verifies that an object can be saved with custom modification date.
      *
      */
-    public function testCustomModificationDate()
+    public function testCustomModificationDate(): void
     {
         $customDateTime = new \Carbon\Carbon();
         $customDateTime = $customDateTime->subHour();
@@ -195,7 +195,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Verifies that when an object gets saved default values of fields get saved to the version
      */
-    public function testDefaultValueSavedToVersion()
+    public function testDefaultValueSavedToVersion(): void
     {
         $object = TestHelper::createEmptyObject();
         $object->save();
@@ -209,7 +209,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Verifies that when an object gets cloned, the fields get copied properly
      */
-    public function testCloning()
+    public function testCloning(): void
     {
         $object = TestHelper::createEmptyObject('', false);
         $clone = Service::cloneMe($object);
@@ -225,7 +225,7 @@ class ObjectTest extends ModelTestCase
     /**
      * Verifies that loading only Concrete object from Concrete::getById().
      */
-    public function testConcreteLoading()
+    public function testConcreteLoading(): void
     {
         $concreteObject = TestHelper::createEmptyObject();
         $loadedConcrete = DataObject\Concrete::getById($concreteObject->getId(), ['force' => true]);

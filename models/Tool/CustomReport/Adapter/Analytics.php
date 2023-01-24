@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
+use Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\AbstractAdapter;
+
 /**
  * @internal
  */

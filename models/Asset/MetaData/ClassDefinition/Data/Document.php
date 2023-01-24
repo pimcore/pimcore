@@ -73,7 +73,7 @@ class Document extends Data
     public function transformGetterData(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
-            return \Pimcore\Model\Document\Service::getElementById('document', $data);
+            return \Pimcore\Model\Document\Service::getElementById('document', (int) $data);
         }
 
         return $data;

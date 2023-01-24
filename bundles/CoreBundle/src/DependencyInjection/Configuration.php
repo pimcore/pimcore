@@ -142,7 +142,6 @@ final class Configuration implements ConfigurationInterface
         $this->addSecurityNode($rootNode);
         $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
-        $this->addCustomReportsNode($rootNode);
         $this->addSitemapsNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
@@ -879,7 +878,11 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('types')
                     ->info('list of supported document types')
-                    ->scalarPrototype()->end()
+                    ->scalarPrototype()
+                    ->setDeprecated(
+                        'pimcore/pimcore',
+                        '10.6',
+                        'The "%node%" option is deprecated since Pimcore 10.6, it will be removed in Pimcore 11. The types will then be represented by the keys of the type_definitions:map')->end()
                 ->end()
                 ->arrayNode('valid_tables')
                     ->info('list of supported documents_* tables')
@@ -954,6 +957,8 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                 ->end()
             ->end();
+
+        $this->addImplementationLoaderNode($documentsNode, 'type_definitions');
     }
 
     /**
@@ -1217,97 +1222,6 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    /**
-     * Adds configuration tree for custom report adapters
-     */
-    private function addCustomReportsNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('custom_report')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('definitions')
-                                ->normalizeKeys(false)
-                                ->prototype('array')
-                                    ->children()
-                                        ->scalarNode('id')->end()
-                                        ->scalarNode('name')->end()
-                                        ->scalarNode('niceName')->end()
-                                        ->scalarNode('sql')->end()
-                                        ->scalarNode('group')->end()
-                                        ->scalarNode('groupIconClass')->end()
-                                        ->scalarNode('iconClass')->end()
-                                        ->booleanNode('menuShortcut')->end()
-                                        ->scalarNode('reportClass')->end()
-                                        ->scalarNode('chartType')->end()
-                                        ->scalarNode('pieColumn')->end()
-                                        ->scalarNode('pieLabelColumn')->end()
-                                        ->variableNode('xAxis')->end()
-                                        ->variableNode('yAxis')->end()
-                                        ->integerNode('modificationDate')->end()
-                                        ->integerNode('creationDate')->end()
-                                        ->booleanNode('shareGlobally')->end()
-                                        ->variableNode('sharedUserNames')->end()
-                                        ->variableNode('sharedRoleNames')->end()
-                                        ->arrayNode('dataSourceConfig')
-                                            ->prototype('variable')
-                                            ->end()
-                                        ->end()
-                                        ->arrayNode('columnConfiguration')
-                                            ->prototype('variable')
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                        ->end()
-                        ->arrayNode('adapters')
-                            ->useAttributeAsKey('name')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-/*
-    private function addTargetingNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('targeting')
-                    ->canBeDisabled()
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('storage_id')
-                            ->info('Service ID of the targeting storage which should be used. This ID will be aliased to ' . TargetingStorageInterface::class)
-                            ->defaultValue(CookieStorage::class)
-                            ->cannotBeEmpty()
-                        ->end()
-                        ->arrayNode('session')
-                            ->info('Enables HTTP session support by configuring session bags and the full page cache')
-                            ->canBeEnabled()
-                        ->end()
-                        ->arrayNode('data_providers')
-                            ->useAttributeAsKey('key')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                        ->arrayNode('conditions')
-                            ->useAttributeAsKey('key')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                        ->arrayNode('action_handlers')
-                            ->useAttributeAsKey('name')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-*/
     private function addSitemapsNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode

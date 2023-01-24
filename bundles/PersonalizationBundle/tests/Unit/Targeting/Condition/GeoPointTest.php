@@ -64,7 +64,7 @@ class GeoPointTest extends \Codeception\Test\Unit
     /**
      * @dataProvider matchProvider
      */
-    public function testMatch (GeoPoint $condition, VisitorInfo $visitorInfo, bool $expected)
+    public function testMatch(GeoPoint $condition, VisitorInfo $visitorInfo, bool $expected): void
     {
         $this->assertEquals ($expected, $condition->match ($visitorInfo));
     }
@@ -72,7 +72,7 @@ class GeoPointTest extends \Codeception\Test\Unit
     /**
      * @dataProvider noMatchProvider
      */
-    public function testCannotMatchIfOptionsEmpty (GeoPoint $condition)
+    public function testCannotMatchIfOptionsEmpty(GeoPoint $condition): void
     {
         $this->assertFalse ($condition->canMatch ());
     }
