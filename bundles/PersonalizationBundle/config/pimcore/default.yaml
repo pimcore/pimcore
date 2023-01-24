@@ -17,7 +17,7 @@ pimcore_personalization:
             searchengine: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\SearchEngine
             target_group: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\TargetGroup
             timeonsite: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\TimeOnSite
-            url: Pimcore\Targeting\Condition\Url
+            url: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\Url
             visitedpagesbefore: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\VisitedPagesBefore
         action_handlers:
             assign_target_group: Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\AssignTargetGroup

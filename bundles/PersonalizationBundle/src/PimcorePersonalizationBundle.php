@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\PersonalizationBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Pimcore\Bundle\PersonalizationBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
 
 class PimcorePersonalizationBundle extends AbstractPimcoreBundle
 {
@@ -25,7 +27,8 @@ class PimcorePersonalizationBundle extends AbstractPimcoreBundle
     public function getCssPaths (): array
     {
         return [
-            '/bundles/pimcorepersonalization/css/icons.css'
+            '/bundles/pimcorepersonalization/css/icons.css',
+            '/bundles/pimcorepersonalization/css/targeting.css'
         ];
     }
 
@@ -42,6 +45,7 @@ class PimcorePersonalizationBundle extends AbstractPimcoreBundle
             '/bundles/pimcorepersonalization/js/settings/targetGroups/panel.js',
             '/bundles/pimcorepersonalization/js/settings/targetGroups/item.js',
             '/bundles/pimcorepersonalization/js/settings/targetingtoolbar.js',
+            '/bundles/pimcorepersonalization/js/targeting.js',
         ];
     }
 
@@ -53,6 +57,13 @@ class PimcorePersonalizationBundle extends AbstractPimcoreBundle
         return $this->container->get (Installer::class);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function build (ContainerBuilder $container): void
+    {
+        $container->addCompilerPass (new TargetingOverrideHandlersPass());
+    }
 
     public function getPath (): string
     {

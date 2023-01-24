@@ -15,14 +15,24 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Targeting;
+namespace Pimcore\Bundle\PersonalizationBundle\Event\Targeting;
 
-use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 
-class TargetingResolveVisitorInfoEvent extends TargetingEvent
+class TargetingRuleEvent extends TargetingEvent
 {
-    public function setVisitorInfo(VisitorInfo $visitorInfo): void
+    private Rule $rule;
+
+    public function __construct(VisitorInfo $visitorInfo, Rule $rule)
     {
-        $this->visitorInfo = $visitorInfo;
+        parent::__construct($visitorInfo);
+
+        $this->rule = $rule;
+    }
+
+    public function getRule(): Rule
+    {
+        return $this->rule;
     }
 }

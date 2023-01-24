@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Targeting;
+namespace Pimcore\Bundle\PersonalizationBundle\Event\Targeting;
 
 use Pimcore\Analytics\Code\CodeBlock;
 use Symfony\Contracts\EventDispatcher\Event;

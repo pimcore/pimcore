@@ -15,11 +15,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Targeting;
+namespace Pimcore\Bundle\PersonalizationBundle\Event\Targeting;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
-use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 
 class AssignDocumentTargetGroupEvent extends TargetingEvent
 {

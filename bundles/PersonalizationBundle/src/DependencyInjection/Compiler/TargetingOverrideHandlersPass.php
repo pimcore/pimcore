@@ -31,7 +31,7 @@ final class TargetingOverrideHandlersPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container): void
     {
-        $handlers = $this->findAndSortTaggedServices('pimcore.targeting.override_handler', $container);
+        $handlers = $this->findAndSortTaggedServices('pimcore_personalization.targeting.override_handler', $container);
 
         $overrideHandler = $container->getDefinition(OverrideHandler::class);
         $overrideHandler->setArgument('$overrideHandlers', $handlers);

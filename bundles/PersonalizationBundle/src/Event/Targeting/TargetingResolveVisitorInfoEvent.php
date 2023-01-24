@@ -15,29 +15,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Targeting;
+namespace Pimcore\Bundle\PersonalizationBundle\Event\Targeting;
 
-use Symfony\Contracts\EventDispatcher\Event;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 
-class OverrideEvent extends Event
+class TargetingResolveVisitorInfoEvent extends TargetingEvent
 {
-    private string $type;
-
-    private array $data = [];
-
-    public function __construct(string $type, array $data)
+    public function setVisitorInfo(VisitorInfo $visitorInfo): void
     {
-        $this->type = $type;
-        $this->data = $data;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    public function getData(): array
-    {
-        return $this->data;
+        $this->visitorInfo = $visitorInfo;
     }
 }

@@ -15,9 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Targeting;
+namespace Pimcore\Bundle\PersonalizationBundle\Event\Targeting;
 
-use Pimcore\Targeting\Condition\ConditionInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\ConditionInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class BuildConditionEvent extends Event

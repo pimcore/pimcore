@@ -15,9 +15,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\DependencyInjection;
 
-use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
-use Pimcore\Targeting\DataLoaderInterface;
-use Pimcore\Targeting\Storage\TargetingStorageInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\DataLoaderInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\TargetingStorageInterface;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
