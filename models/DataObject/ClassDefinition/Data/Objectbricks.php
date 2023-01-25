@@ -780,7 +780,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if ($fd instanceof IdRewriterInterface) {
+                    if ($fd instanceof IdRewriterInterface
+                    && $fd instanceof DataObject\ClassDefinition\Data) {
                         $d = $fd->rewriteIds($item, $idMapping, $params);
                         $setter = 'set' . ucfirst($fd->getName());
                         $item->$setter($d);
@@ -881,7 +882,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 $fds = $brickDef->getFieldDefinitions();
                 foreach ($fds as $fd) {
                     $value = $item->{'get' . $fd->getName()}();
-                    if ($fd instanceof NormalizerInterface) {
+                    if ($fd instanceof NormalizerInterface
+                        && $fd instanceof DataObject\ClassDefinition\Data) {
                         $result[$type][$fd->getName()] = $fd->normalize($value, $params);
                     } else {
                         throw new \Exception($fd->getName() . ' does not implement NormalizerInterface');

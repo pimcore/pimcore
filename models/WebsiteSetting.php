@@ -45,7 +45,7 @@ final class WebsiteSetting extends AbstractModel
     /**
      * this is a small per request cache to know which website setting is which is, this info is used in self::getByName()
      *
-     * @var array
+     * @var array<string, int>
      */
     protected static array $nameIdMappingCache = [];
 
@@ -133,6 +133,9 @@ final class WebsiteSetting extends AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -140,6 +143,9 @@ final class WebsiteSetting extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -152,6 +158,9 @@ final class WebsiteSetting extends AbstractModel
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
@@ -164,6 +173,9 @@ final class WebsiteSetting extends AbstractModel
         return $this->creationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setData(mixed $data): static
     {
         if ($data instanceof ElementInterface) {
@@ -186,6 +198,9 @@ final class WebsiteSetting extends AbstractModel
         return $this->data;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
@@ -198,6 +213,9 @@ final class WebsiteSetting extends AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setSiteId(int $siteId): static
     {
         $this->siteId = (int) $siteId;

@@ -55,7 +55,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * possible types of a document
      *
-     * @var array
+     * @var string[]
      */
     public static array $types = [self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT];
 
@@ -163,13 +163,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     protected ?int $userModification = null;
 
     /**
-     * @internal
-     *
-     * @var bool[]
-     */
-    protected array $hasChildren = [];
-
-    /**
      * Contains a list of sibling documents
      *
      * @internal
@@ -177,15 +170,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @var array
      */
     protected array $siblings = [];
-
-    /**
-     * Indicator if object has siblings or not
-     *
-     * @internal
-     *
-     * @var bool[]
-     */
-    protected array $hasSiblings = [];
 
     /**
      * @internal
@@ -231,7 +215,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @deprecated
      *
-     * @var array|null
+     * @var array<string, Model\Property>|null
      */
     protected ?array $properties = null;
 
@@ -240,7 +224,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['hasChildren', 'versions', 'class', 'scheduledTasks', 'parent', 'parent', 'omitMandatoryCheck'];
+        $blockedVars = ['versions', 'class', 'scheduledTasks', 'parent', 'parent', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -321,11 +305,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return self::$getInheritedValues;
     }
 
-    /**
-     * get possible types
-     *
-     * @return array
-     */
     public static function getTypes(): array
     {
         return self::$types;
@@ -333,15 +312,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * Static helper to get an object by the passed ID
-     *
      */
     public static function getById(int|string $id, array $params = []): ?static
     {
-        if (!is_numeric($id) || $id < 1) {
+        if (is_string($id)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0',
+                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
+            );
+            $id = is_numeric($id) ? (int) $id : 0;
+        }
+        if ($id < 1) {
             return null;
         }
 
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         $params = Model\Element\Service::prepareGetByIdParams($params);
@@ -384,6 +369,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     throw new Model\Exception\NotFoundException('No entry for object id ' . $id);
                 }
             } catch (Model\Exception\NotFoundException $e) {
+                Logger::error($e->getMessage());
+
                 return null;
             }
         } else {
@@ -487,7 +474,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $list = new Listing();
                 $list->setObjects([]);
                 $this->children[$cacheKey] = $list;
-                $this->hasChildren[$cacheKey] = false;
             }
         }
 
@@ -502,13 +488,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
         bool $includingUnpublished = null
     ): bool {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasChildren[$cacheKey])) {
-            return $this->hasChildren[$cacheKey];
-        }
-
-        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($objectTypes, $includingUnpublished);
+        return $this->getDao()->hasChildren($objectTypes, $includingUnpublished);
     }
 
     /**
@@ -536,7 +516,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $list = new Listing();
                 $list->setObjects([]);
                 $this->siblings[$cacheKey] = $list;
-                $this->hasSiblings[$cacheKey] = false;
             }
         }
 
@@ -545,19 +524,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * Returns true if the object has at least one sibling
-     *
      */
     public function hasSiblings(
         array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
         bool $includingUnpublished = null
     ): bool {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasSiblings[$cacheKey])) {
-            return $this->hasSiblings[$cacheKey];
-        }
-
-        return $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
+        return $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
     }
 
     /**
@@ -964,7 +936,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         parent::setParentId($parentId);
 
         $this->siblings = [];
-        $this->hasSiblings = [];
 
         return $this;
     }
@@ -994,7 +965,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         if ($this->childrenSortBy !== $childrenSortBy) {
             $this->children = [];
-            $this->hasChildren = [];
         }
         $this->childrenSortBy = $childrenSortBy;
     }
@@ -1010,12 +980,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         if ($children === null) {
             // unset all cached children
             $this->children = [];
-            $this->hasChildren = [];
         } else {
             //default cache key
             $cacheKey = $this->getListingCacheKey([$objectTypes, $includingUnpublished]);
             $this->children[$cacheKey] = $children;
-            $this->hasChildren[$cacheKey] = (bool) $children->count();
         }
 
         return $this;
@@ -1171,7 +1139,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $this->parent = null;
         // note that children is currently needed for the recycle bin
-        $this->hasSiblings = [];
         $this->siblings = [];
     }
 

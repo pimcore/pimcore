@@ -205,14 +205,16 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             }
         }
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: "pimcore_icon_search",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.openSearchEditor();
-            }.bind(this)
-        }));
+        if(pimcore.helpers.hasSearchImplementation()) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+        }
 
         if(this.config["disableInlineUpload"] !== true) {
             menu.add(new Ext.menu.Item({
@@ -255,7 +257,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
                 pimcore.helpers.showNotification(t("error"), res, "error",
                     res.response.responseText);
             }
-        }.bind(this), [] ,this.getType());
+        }.bind(this), [], "image");
     },
 
     onNodeOver: function(target, dd, e, data) {

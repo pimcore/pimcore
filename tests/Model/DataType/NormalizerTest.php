@@ -56,7 +56,7 @@ class NormalizerTest extends ModelTestCase
         parent::tearDown();
     }
 
-    public function testBooleanSelect()
+    public function testBooleanSelect(): void
     {
         $originalValue = true;
         $fd = new DataObject\ClassDefinition\Data\BooleanSelect();
@@ -66,7 +66,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testCheckbox()
+    public function testCheckbox(): void
     {
         $originalValue = true;
         $fd = new DataObject\ClassDefinition\Data\Checkbox();
@@ -76,7 +76,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testConsent()
+    public function testConsent(): void
     {
         $originalValue = new DataObject\Data\Consent(true);
         $fd = new DataObject\ClassDefinition\Data\Consent();
@@ -87,7 +87,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testCountry()
+    public function testCountry(): void
     {
         $originalValue = 'de';
         $fd = new DataObject\ClassDefinition\Data\Country();
@@ -97,7 +97,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testCountrymultiselect()
+    public function testCountrymultiselect(): void
     {
         $originalValue = ['de', 'en'];
         $fd = new DataObject\ClassDefinition\Data\Countrymultiselect();
@@ -107,7 +107,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testDate()
+    public function testDate(): void
     {
         $ts = time();
         $originalValue = new Carbon();
@@ -120,7 +120,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testDatetime()
+    public function testDatetime(): void
     {
         $ts = time();
         $originalValue = new Carbon();
@@ -133,7 +133,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testEmail()
+    public function testEmail(): void
     {
         $originalValue = uniqid();
         $fd = new DataObject\ClassDefinition\Data\Email();
@@ -143,12 +143,12 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testEncryptedField()
+    public function testEncryptedField(): void
     {
         $this->markTestSkipped('implement this as soon as marshal() is gone');
     }
 
-    public function testExternalImage()
+    public function testExternalImage(): void
     {
         $originalValue = new DataObject\Data\ExternalImage('http://someurl.com');
         $fd = new DataObject\ClassDefinition\Data\Email();
@@ -158,7 +158,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testFirstname()
+    public function testFirstname(): void
     {
         $originalValue = 'john' . uniqid();
         $fd = new DataObject\ClassDefinition\Data\Firstname();
@@ -168,7 +168,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testGender()
+    public function testGender(): void
     {
         $originalValue = 'male';
         $fd = new DataObject\ClassDefinition\Data\Gender();
@@ -178,7 +178,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testGeobounds()
+    public function testGeobounds(): void
     {
         $ownerInfo = $this->getDummyOwnerInfo();
         $originalValue = new DataObject\Data\Geobounds(new DataObject\Data\GeoCoordinates(123, -120), new DataObject\Data\GeoCoordinates(456, +130));
@@ -195,7 +195,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testGeopoint()
+    public function testGeopoint(): void
     {
         $ownerInfo = $this->getDummyOwnerInfo();
         $originalValue = new DataObject\Data\GeoCoordinates(123, 56);
@@ -212,7 +212,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testGeopolygon()
+    public function testGeopolygon(): void
     {
         $ownerInfo = $this->getDummyOwnerInfo();
         $c1 = new DataObject\Data\GeoCoordinates(123, -120);
@@ -239,7 +239,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testGeopolyline()
+    public function testGeopolyline(): void
     {
         $ownerInfo = $this->getDummyOwnerInfo();
         $c1 = new DataObject\Data\GeoCoordinates(123, -120);
@@ -275,7 +275,7 @@ class NormalizerTest extends ModelTestCase
         ];
     }
 
-    public function testHotspotimage()
+    public function testHotspotimage(): void
     {
         $asset = TestHelper::createImageAsset();
 
@@ -305,7 +305,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testImage()
+    public function testImage(): void
     {
         $originalValue = TestHelper::createImageAsset();
 
@@ -319,7 +319,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testImageGallery()
+    public function testImageGallery(): void
     {
         $originalValue = [];
         for ($i = 0; $i < 3; $i++) {
@@ -354,7 +354,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testInput()
+    public function testInput(): void
     {
         $originalValue = uniqid();
         $fd = new DataObject\ClassDefinition\Data\Input();
@@ -365,7 +365,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testInputQuantityValue()
+    public function testInputQuantityValue(): void
     {
         $unit = DataObject\QuantityValue\Unit::getByAbbreviation('cm');
         if (!$unit) {
@@ -385,7 +385,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue->getUnitId(), $denormalizedValue->getUnitId());
     }
 
-    public function testLink()
+    public function testLink(): void
     {
         $targetObject = TestHelper::createEmptyObject();
 
@@ -402,7 +402,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testLocalizedfields()
+    public function testLocalizedfields(): void
     {
         $object = TestHelper::createEmptyObject();
         $targetObject = TestHelper::createEmptyObject();
@@ -425,7 +425,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($targetObject->getId(), $objects[0]->getId());
     }
 
-    public function testManyToManyObjectRelation()
+    public function testManyToManyObjectRelation(): void
     {
         $targetObject1 = TestHelper::createEmptyObject();
         $targetObject2 = TestHelper::createEmptyObject();
@@ -446,7 +446,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($targetObject2->getId(), $denormalizedValue[1]->getId());
     }
 
-    public function testManyToManyRelation()
+    public function testManyToManyRelation(): void
     {
         $targetObject1 = TestHelper::createEmptyObject();
         $targetObject2 = TestHelper::createEmptyObject();
@@ -470,7 +470,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($targetAsset1->getId(), $denormalizedValue[2]->getId());
     }
 
-    public function testManyToOneRelation()
+    public function testManyToOneRelation(): void
     {
         $originalValue = TestHelper::createEmptyObject();
 
@@ -484,7 +484,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue->getId(), $denormalizedValue->getId());
     }
 
-    public function testMultiselect()
+    public function testMultiselect(): void
     {
         $originalValue = ['A', 'B', 'C'];
         $fd = new DataObject\ClassDefinition\Data\Multiselect();
@@ -498,7 +498,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testNewsletterActive()
+    public function testNewsletterActive(): void
     {
         $originalValue = true;
         $fd = new DataObject\ClassDefinition\Data\NewsletterActive();
@@ -508,7 +508,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testNewsletterConfirmed()
+    public function testNewsletterConfirmed(): void
     {
         $originalValue = true;
         $fd = new DataObject\ClassDefinition\Data\NewsletterConfirmed();
@@ -518,7 +518,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testNumeric()
+    public function testNumeric(): void
     {
         $originalValue = 123.1;
         $fd = new DataObject\ClassDefinition\Data\Numeric();
@@ -528,7 +528,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testPassword()
+    public function testPassword(): void
     {
         $originalValue = 'mysecret';
         $fd = new DataObject\ClassDefinition\Data\Password();
@@ -538,7 +538,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testQuantityValue()
+    public function testQuantityValue(): void
     {
         $unit = DataObject\QuantityValue\Unit::getByAbbreviation('cm');
         if (!$unit) {
@@ -558,7 +558,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue->getUnitId(), $denormalizedValue->getUnitId());
     }
 
-    public function testRgbaColor()
+    public function testRgbaColor(): void
     {
         $originalValue = new DataObject\Data\RgbaColor(1, 2, 3, 12);
         $fd = new DataObject\ClassDefinition\Data\RgbaColor();
@@ -573,7 +573,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testSelect()
+    public function testSelect(): void
     {
         $originalValue = 'Z';
         $fd = new DataObject\ClassDefinition\Data\Select();
@@ -586,7 +586,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testSlider()
+    public function testSlider(): void
     {
         $originalValue = 77;
         $fd = new DataObject\ClassDefinition\Data\Slider();
@@ -599,7 +599,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testStructuredTable()
+    public function testStructuredTable(): void
     {
         $data = ['row1' => ['col1' => '1', 'col2' => '2'],
             'row2' => ['col1' => '3', 'col2' => '4'], ];
@@ -617,7 +617,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testTable()
+    public function testTable(): void
     {
         $originalValue = [
             ['A', 'B', 'C'],
@@ -636,7 +636,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testTextarea()
+    public function testTextarea(): void
     {
         $originalValue = uniqid() . "\n" . uniqid();
         $fd = new DataObject\ClassDefinition\Data\Input();
@@ -647,7 +647,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testTime()
+    public function testTime(): void
     {
         $originalValue = '01:23';
         $fd = new DataObject\ClassDefinition\Data\Time();
@@ -658,7 +658,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testUrlSlug()
+    public function testUrlSlug(): void
     {
         $originalValue = [
             new DataObject\Data\UrlSlug('/abc', 1),
@@ -673,7 +673,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testUser()
+    public function testUser(): void
     {
         $user = User::getByName('admin');
         $originalValue = $user->getId();
@@ -687,7 +687,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testVideo()
+    public function testVideo(): void
     {
         $video = TestHelper::createImageAsset();
         $this->assertNotNull($video);
@@ -709,7 +709,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    public function testWysiwyg()
+    public function testWysiwyg(): void
     {
         $originalValue = uniqid() . '<br>' . uniqid();
         $fd = new DataObject\ClassDefinition\Data\Wysiwyg();

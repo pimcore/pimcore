@@ -41,7 +41,7 @@ class LocalizedFieldTest extends ModelTestCase
         parent::tearDown();
     }
 
-    public function testFallback()
+    public function testFallback(): void
     {
         $configuration = $this->originalConfig;
         $configuration['general']['fallback_languages']['de'] = 'en';
@@ -89,7 +89,7 @@ class LocalizedFieldTest extends ModelTestCase
      *
      * two is created after one, en fields inherited. two gets moved out and moved in again. Then one gets updated.
      */
-    public function testInheritance()
+    public function testInheritance(): void
     {
         // According to the bootstrap file en and de are valid website languages
 
@@ -227,7 +227,7 @@ class LocalizedFieldTest extends ModelTestCase
         $class->save();
     }
 
-    public function testInvalidLocaleList()
+    public function testInvalidLocaleList(): void
     {
         $this->expectException(\Exception::class);
         $this->markTestSkipped('TODO: the following test should fail, but no exception is thrown');
@@ -240,7 +240,7 @@ class LocalizedFieldTest extends ModelTestCase
         $listItems = $list->load();
     }
 
-    public function testQueryTable()
+    public function testQueryTable(): void
     {
         // create root -> one -> two -> three
 

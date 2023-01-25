@@ -60,19 +60,24 @@ pimcore.notification.modal = Class.create({
 
             var elementItems = [
                 this.component,
-                {
+            ];
+
+            if(pimcore.helpers.hasSearchImplementation()) {
+                elementItems.push({
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
                     style: "margin-left: 5px",
                     handler: this.openSearchEditor.bind(this)
-                },
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    style: "margin-left: 5px",
-                    handler: this.empty.bind(this)
-                }
-            ];
+                });
+            }
+
+            elementItems.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                style: "margin-left: 5px",
+                handler: this.empty.bind(this)
+            });
+
             var elementContainer = Ext.create('Ext.form.FieldContainer', {
                 fieldLabel: t("attachment"),
                 labelWidth: 100,
@@ -179,14 +184,16 @@ pimcore.notification.modal = Class.create({
             }.bind(this)
         }));
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: "pimcore_icon_search",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.openSearchEditor();
-            }.bind(this)
-        }));
+        if(pimcore.helpers.hasSearchImplementation()) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+        }
 
         menu.add(new Ext.menu.Item({
             text: t('upload'),

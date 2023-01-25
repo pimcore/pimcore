@@ -342,6 +342,9 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
+    /**
+     * @return string[]
+     */
     protected function getEnvironmentsForDevBundles(): array
     {
         return ['dev', 'test'];

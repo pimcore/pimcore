@@ -139,16 +139,9 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/sms.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_fileexplorer {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/search.svg) center center no-repeat !important;
-}
 
 .pimcore_nav_icon_bundles {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/puzzle.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_word_export {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/word.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_close_all {
@@ -239,16 +232,8 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/stop-circle.svg) center center no-repeat !important
 }
 
-.pimcore_nav_icon_php {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/php.svg) center center no-repeat !important;
-}
-
 .pimcore_nav_icon_reports {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/pie_chart.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_systemrequirements {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/factory.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_server_info {
@@ -285,10 +270,6 @@
 
 .pimcore_nav_icon_targeting_toolbar {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/ok.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_reports {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/pie_chart.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_marketing_settings {
@@ -778,15 +759,9 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/wysiwyg.svg) center center no-repeat !important;
 }
 
-
-.pimcore_icon_routes {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/globe.svg) center center no-repeat !important;
-}
-
 .pimcore_icon_redirects {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/redirect.svg) center center no-repeat !important;
 }
-
 
 .pimcore_icon_dependencies {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/parallel_tasks.svg) center center no-repeat !important;
@@ -1012,10 +987,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/info.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_php {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/php.svg) center center no-repeat !important;
-}
-
 .pimcore_icon_mysql {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/mysql.svg) center center no-repeat !important;
 }
@@ -1062,10 +1033,6 @@
 
 .pimcore_icon_mobile_landscape {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/cell_phone_landscape.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_systemrequirements {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/factory.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_notes {

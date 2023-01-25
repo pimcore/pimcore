@@ -432,20 +432,22 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                         }.bind(this)
                     }));
 
-                    menu.add(new Ext.menu.Item({
-                        text: t('search'),
-                        iconCls: "pimcore_icon_search",
-                        hidden: !isChangeAllowed,
-                        handler: function (item) {
-                            item.parentMenu.destroy();
-                            pimcore.helpers.itemselector(false, function (data) {
-                                pathField.setValue(data.fullpath);
-                                linkTypeField.setValue('internal');
-                                internalTypeField.setValue(data.type);
-                            }.bind(this), {type: ['document', 'asset', 'object']})
+                    if(pimcore.helpers.hasSearchImplementation()) {
+                        menu.add(new Ext.menu.Item({
+                            text: t('search'),
+                            iconCls: "pimcore_icon_search",
+                            hidden: !isChangeAllowed,
+                            handler: function (item) {
+                                item.parentMenu.destroy();
+                                pimcore.helpers.itemselector(false, function (data) {
+                                    pathField.setValue(data.fullpath);
+                                    linkTypeField.setValue('internal');
+                                    internalTypeField.setValue(data.type);
+                                }.bind(this), {type: ['document', 'asset', 'object']})
 
-                        }.bind(this)
-                    }));
+                            }.bind(this)
+                        }));
+                    }
 
                     menu.showAt(e.getXY());
 
@@ -480,8 +482,11 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                         internalTypeField.setValue("");
                         linkTypeField.setValue("");
                     }.bind(this)
-                },
-                {
+                }
+            ];
+
+            if(pimcore.helpers.hasSearchImplementation()) {
+                items.push({
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
                     style: "margin-left: 5px",
@@ -497,8 +502,8 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                             internalTypeField.setValue(data.type);
                         }.bind(this), {type: ['document', 'asset', 'object']})
                     }.bind(this)
-                }
-            ];
+                });
+            }
 
             this.panel = new Ext.form.FormPanel({
                 title: t('settings'),

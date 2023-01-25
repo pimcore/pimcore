@@ -25,6 +25,9 @@ class CacheQueueItem
 
     protected mixed $data = null;
 
+    /**
+     * @var string[]
+     */
     protected array $tags = [];
 
     /**
@@ -37,12 +40,7 @@ class CacheQueueItem
     protected bool $force = false;
 
     /**
-     * @param string $key
-     * @param mixed $data
-     * @param array $tags
-     * @param \DateInterval|int|null $lifetime
-     * @param int|null $priority
-     * @param bool $force
+     * @param string[] $tags
      */
     public function __construct(string $key, mixed $data, array $tags = [], \DateInterval|int $lifetime = null, ?int $priority = 0, bool $force = false)
     {
@@ -69,6 +67,9 @@ class CacheQueueItem
         $this->data = $data;
     }
 
+    /**
+     * @return string[]
+     */
     public function getTags(): array
     {
         return $this->tags;

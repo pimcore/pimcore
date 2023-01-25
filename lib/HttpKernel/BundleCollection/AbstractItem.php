@@ -21,10 +21,16 @@ abstract class AbstractItem implements ItemInterface
 {
     private int $priority;
 
+    /**
+     * @var string[]
+     */
     private array $environments = [];
 
     private string $source;
 
+    /**
+     * @param string[] $environments
+     */
     public function __construct(int $priority = 0, array $environments = [], string $source = self::SOURCE_PROGRAMATICALLY)
     {
         $this->priority = $priority;
