@@ -1,3 +1,7 @@
+framework:
+    messenger:
+        routing:
+            'Pimcore\Bundle\WebToPrintBundle\Messenger\GenerateWeb2PrintPdfMessage': pimcore_core
 pimcore:
     documents:
         type_definitions:

@@ -145,7 +145,7 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
     getData: function () {
         var options = this.options || {};
         Ext.Ajax.request({
-            url: Routing.getBaseUrl() + "/admin/web2print/document/" + this.getType() + "/get-data-by-id",
+            url: Routing.generate(this.getDataRoute()),
             params: {id: this.id},
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
@@ -158,10 +158,18 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
 
     removeFromSession: function () {
         Ext.Ajax.request({
-            url: Routing.getBaseUrl() + '/admin/web2print/document/' + this.getType() + '/remove-from-session',
+            url: Routing.getBaseUrl() + '/admin/bundle/web2print/document/' + this.getType() + '/remove-from-session',
             method: 'DELETE',
             params: {id: this.data.id}
         });
+    },
+
+    getDataRoute: function() {
+        return "pimcore_bundle_web2print_document_" + this.type + '_getdatabyid';
+    },
+
+    getSaveRoute: function() {
+        return "pimcore_bundle_web2print_document_" + this.type + '_save';
     },
 });
 

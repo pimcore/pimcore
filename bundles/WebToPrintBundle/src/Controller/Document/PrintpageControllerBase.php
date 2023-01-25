@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\WebToPrintBundle\Controller\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\Document\DocumentControllerBase;
+use Pimcore\Bundle\WebToPrintBundle\Config;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
-use Pimcore\Config;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Service;
 use Pimcore\Model\Element\ValidationException;
@@ -108,7 +108,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
 
         if ($request->get('task') !== self::TASK_SAVE) {
             //check, if to cleanup existing elements of document
-            $config = Config::getWeb2PrintConfig();
+            $config = Config::get();
             if ($config['generalDocumentSaveMode'] == 'cleanup') {
                 $page->setEditables([]);
             }
@@ -226,7 +226,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
      *
      * @throws \Exception
      */
-    public function startPdfGenerationAction(Request $request, Config $config): JsonResponse
+    public function startPdfGenerationAction(Request $request, \Pimcore\Config $config): JsonResponse
     {
         $allParams = json_decode($request->getContent(), true);
 

@@ -17,10 +17,12 @@ pimcore.registerNS("pimcore.document.document");
  */
 pimcore.document.document = Class.create(pimcore.element.abstract, {
     willClose: false,
+    saveRoute:  "pimcore_admin_document_" + this.type + '_save',
+
     getData: function () {
         var options = this.options || {};
         Ext.Ajax.request({
-            url: Routing.getBaseUrl() + "/admin/" + this.getType() + "/get-data-by-id",
+            url: Routing.generate(this.getDataRoute()),
             params: {id: this.id} ,
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
@@ -115,7 +117,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             }
 
             Ext.Ajax.request({
-                url: Routing.getBaseUrl() + "/admin/" + this.getType() + '/save?task=' + task,
+                url: Routing.generate(this.getSaveRoute()),
                 method: "PUT",
                 params: saveData,
                 success: function (response) {
@@ -684,5 +686,13 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 this.data.key = rdata.key;
             }.bind(this)
         });
-    }
+    },
+
+    getDataRoute: function() {
+        return "pimcore_admin_document_" + this.type + '_getdatabyid';
+    },
+
+    getSaveRoute: function() {
+        return "pimcore_admin_document_" + this.type + '_save';
+    },
 });

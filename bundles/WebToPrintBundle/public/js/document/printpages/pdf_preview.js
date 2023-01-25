@@ -62,7 +62,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     iconCls: "pimcore_icon_cancel",
                     handler: function() {
                         Ext.Ajax.request({
-                            url: Routing.generate('pimcore_web2print_document_printpage_cancelgeneration'),
+                            url: Routing.generate('pimcore_bundle_web2print_document_printpage_cancelgeneration'),
                             method: 'DELETE',
                             params: {id: this.page.id},
                             success: function(response) {
@@ -92,7 +92,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                 style: "float: right; margin-top: 10px",
                 handler: function () {
                     var date = new Date();
-                    var url = Routing.generate('pimcore_web2print_document_printpage_pdfdownload', {id: this.page.id, download: 1, time: date.getTime()});
+                    var url = Routing.generate('pimcore_bundle_document_printpage_pdfdownload', {id: this.page.id, download: 1, time: date.getTime()});
                     pimcore.helpers.download(url);
                 }.bind(this)
             });
@@ -178,7 +178,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
         this.processingOptionsStore = new Ext.data.JsonStore({
             proxy: {
-                url: Routing.generate('pimcore_web2print_document_printcontainer_getprocessingoptions'),
+                url: Routing.generate('pimcore_bundle_web2print_document_printcontainer_getprocessingoptions'),
                 type: 'ajax',
                 reader: {
                     type: 'json',
@@ -344,7 +344,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
         params.id = this.page.id;
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_web2print_document_printpage_startpdfgeneration'),
+            url: Routing.generate('pimcore_bundle_web2print_document_printpage_startpdfgeneration'),
             method: 'POST',
             jsonData: params,
             success: function(response) {
@@ -375,7 +375,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
     loadCurrentPreview: function () {
         var date = new Date();
-        var url = Routing.generate('pimcore_web2print_document_printpage_pdfdownload', {id: this.page.id, time: date.getTime()});
+        var url = Routing.generate('pimcore_bundle_web2print_document_printpage_pdfdownload', {id: this.page.id, time: date.getTime()});
 
         try {
             Ext.get(this.iframeName).dom.src = url;
@@ -395,7 +395,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
     checkForActiveGenerateProcess: function() {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_web2print_document_printpage_activegenerateprocess'),
+            url: Routing.generate('pimcore_bundle_web2print_document_printpage_activegenerateprocess'),
             method: 'POST',
             params: {id: this.page.id},
             success: function(response) {
@@ -433,7 +433,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
     checkPdfDirtyState: function() {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_web2print_document_printpage_checkpdfdirty'),
+            url: Routing.generate('pimcore_bundle_web2print_document_printpage_checkpdfdirty'),
             params: {id: this.page.id},
             success: function(response) {
                 result = Ext.decode(response.responseText);

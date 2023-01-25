@@ -17,6 +17,8 @@ pimcore.registerNS("pimcore.document.printpage");
  */
 pimcore.document.printpage = Class.create(pimcore.document.printabstract, {
     type: "printpage",
+    dataUri: '/admin/bundle/web2print/document/printpage/get-data-by-id',
+    saveUri: '/admin/bundle/web2print/document/printpage/save',
 
     init: function () {
 

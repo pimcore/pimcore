@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\WebToPrintBundle;
 
 use Pimcore\Bundle\WebToPrintBundle\Exception\CancelException;
 use Pimcore\Bundle\WebToPrintBundle\Exception\NotPreparedException;
+use Pimcore\Bundle\WebToPrintBundle\Messenger\GenerateWeb2PrintPdfMessage;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome;
 use Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor;
@@ -25,9 +26,7 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Helper\Mail;
 use Pimcore\Logger;
-use Pimcore\Messenger\GenerateWeb2PrintPdfMessage;
 use Pimcore\Model;
-use Pimcore\Model\Document;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Twig\Sandbox\SecurityError;

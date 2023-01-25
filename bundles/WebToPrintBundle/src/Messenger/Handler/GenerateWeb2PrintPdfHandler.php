@@ -14,12 +14,12 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Messenger\Handler;
+namespace Pimcore\Bundle\WebToPrintBundle\Messenger\Handler;
 
-use Pimcore\Bundle\Web2PrintBundle\Exception\NotPreparedException;
-use Pimcore\Bundle\Web2PrintBundle\Processor;
-use Pimcore\Config;
-use Pimcore\Messenger\GenerateWeb2PrintPdfMessage;
+use Pimcore\Bundle\WebToPrintBundle\Config;
+use Pimcore\Bundle\WebToPrintBundle\Exception\NotPreparedException;
+use Pimcore\Bundle\WebToPrintBundle\Messenger\GenerateWeb2PrintPdfMessage;
+use Pimcore\Bundle\WebToPrintBundle\Processor;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -39,8 +39,8 @@ class GenerateWeb2PrintPdfHandler
         $memoryLimit = ini_get('memory_limit');
 
         if ($memoryLimit !== '-1') {
-            $config = Config::getSystemConfiguration();
-            $memoryLimitConfig = $config['documents']['web_to_print']['pdf_creation_php_memory_limit'] ?? 0;
+            $config = Config::getWeb2PrintConfig();
+            $memoryLimitConfig = $config['pdf_creation_php_memory_limit'] ?? 0;
             if (!empty($memoryLimitConfig) && filesize2bytes($memoryLimit . 'B') < filesize2bytes($memoryLimitConfig . 'B')) {
                 $this->logger->info('Info: PHP:memory_limit set to ' . $memoryLimitConfig . ' from config documents.web_to_print.pdf_creation_php_memory_limit');
 
