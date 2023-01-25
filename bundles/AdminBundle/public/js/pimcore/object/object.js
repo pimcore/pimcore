@@ -56,7 +56,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.reports = pimcore.globalmanager.get('customReportsPanelImplementationFactory').getNewReportInstance("object_concrete");
         }
         this.variants = new pimcore.object.variantsTab(this);
-        this.appLogger = new pimcore.log.admin({
+        this.appLogger = new pimcore.bundle.applicationlogger.log.admin({
             localMode: true,
             searchParams: {
                 relatedobject: this.id

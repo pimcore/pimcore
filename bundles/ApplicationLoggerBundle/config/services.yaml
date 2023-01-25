@@ -60,3 +60,15 @@ services:
     pimcore.app_logger.default:
         public: true
         alias: Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger
+
+    Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogArchiveTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: archiveLogEntries }
+
+    Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogMailMaintenanceTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: logmaintenance }

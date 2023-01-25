@@ -2895,7 +2895,6 @@ pimcore.helpers.keyBindingMapping = {
     "sharedTranslations": pimcore.helpers.sharedTranslations,
     "recycleBin": pimcore.helpers.recycleBin,
     "notesEvents": pimcore.helpers.notesEvents,
-    "applicationLogger": pimcore.helpers.applicationLogger,
     "tagManager": pimcore.helpers.tagManager,
     "tagConfiguration": pimcore.helpers.tagConfiguration,
     "users": pimcore.helpers.users,

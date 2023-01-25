@@ -14,12 +14,12 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Maintenance\Tasks;
+namespace Pimcore\Bundle\ApplicationLoggerBundle\Maintenance;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogArchiveTask;
 use Pimcore\Config;
-use Pimcore\Log\Handler\ApplicationLoggerDb;
+use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
 use Symfony\Component\Mime\Address;
 
