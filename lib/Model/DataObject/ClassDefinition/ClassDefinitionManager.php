@@ -60,23 +60,26 @@ class ClassDefinitionManager
      */
     public function createOrUpdateClassDefinitions(): array
     {
-        $objectClassesFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY;
-        $files = glob($objectClassesFolder.'/*.php');
+        $objectClassesFolders = [PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY];
 
-        $changes = [];
+        foreach ($objectClassesFolders as $objectClassesFolder) {
+            $files = glob($objectClassesFolder.'/*.php');
 
-        foreach ($files as $file) {
-            $class = include $file;
+            $changes = [];
 
-            if ($class instanceof ClassDefinition) {
-                $existingClass = ClassDefinition::getByName($class->getName());
+            foreach ($files as $file) {
+                $class = include $file;
 
-                if ($existingClass instanceof ClassDefinition) {
-                    $changes[] = [$class->getName(), $class->getId(), self::SAVED];
-                    $existingClass->save(false);
-                } else {
-                    $changes[] = [$class->getName(), $class->getId(), self::CREATED];
-                    $class->save(false);
+                if ($class instanceof ClassDefinition) {
+                    $existingClass = ClassDefinition::getByName($class->getName());
+
+                    if ($existingClass instanceof ClassDefinition) {
+                        $changes[] = [$class->getName(), $class->getId(), self::SAVED];
+                        $existingClass->save(false);
+                    } else {
+                        $changes[] = [$class->getName(), $class->getId(), self::CREATED];
+                        $class->save(false);
+                    }
                 }
             }
         }
