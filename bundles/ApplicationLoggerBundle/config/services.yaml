@@ -53,6 +53,10 @@ services:
         calls:
             - [ addWriter, [ '@Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb' ] ]
 
+    Pimcore\Log\ApplicationLogger:
+        public: true
+        alias: Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger
+
     pimcore.app_logger:
         public: true
         alias: pimcore.app_logger.default
