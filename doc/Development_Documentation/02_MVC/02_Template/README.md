@@ -24,10 +24,10 @@ use Symfony\Bridge\Twig\Attribute\Template;
 class MyController extends FrontendController
 {
     /**
-     * The annotation will automatically resolve the view to MyController/myAnnotatedAction.html.twig
+     * The attribute will resolve the defined view
      */
-    #[Template('content/default.html.twig')]
-    public function myAnnotatedAction()
+    #[Template('content/default.html.twig', vars: ['param1' => 'value1'])]
+    public function attributeAction()
     {   
     }
     

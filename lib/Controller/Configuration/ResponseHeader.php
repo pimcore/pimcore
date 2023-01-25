@@ -18,13 +18,12 @@ declare(strict_types=1);
 namespace Pimcore\Controller\Configuration;
 
 /**
- * Allows to set HTTP headers on the response via annotation. The annotation will
+ * Allows to set HTTP headers on the response via attributes. The attribute will
  * be processed by ResponseHeaderListener which will set the HTTP headers on the
  * response.
  *
  * See ResponseHeaderBag for documentation on the fields.
  *
- * @Annotation
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
 final class ResponseHeader
@@ -35,8 +34,8 @@ final class ResponseHeader
         public bool $replace = false,
     ) {
         if (is_array($key)) {
-            // value is the default key if annotation was called without assignment
-            // e.g. @ResponseHeader("X-Foo") instead of @ResponseHeader(key="X-Foo")
+            // value is the default key if attribute was called without assignment
+            // e.g. #[ResponseHeader("X-Foo")] instead of #[ResponseHeader(key="X-Foo")]
             if (isset($key['value'])) {
                 $key['key'] = $key['value'];
                 unset($key['value']);

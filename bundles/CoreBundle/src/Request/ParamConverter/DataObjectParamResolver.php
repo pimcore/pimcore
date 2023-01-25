@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\CoreBundle\Request\ParamConverter;
 
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Request\Attribute\DataObjectParam;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
@@ -36,7 +37,9 @@ class DataObjectParamResolver implements ValueResolverInterface
      */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        $class = $argument->getType();
+        $options = $argument->getAttributes(DataObjectParam::class, ArgumentMetadata::IS_INSTANCEOF);
+
+        $class = $options[0]->class ?? $argument->getType();
         if (null === $class || !is_subclass_of($class, AbstractObject::class)) {
             return [];
         }
@@ -53,8 +56,6 @@ class DataObjectParamResolver implements ValueResolverInterface
             return [];
         }
 
-        $options = $argument->getAttributes();
-
         /** @var Concrete|null $object */
         $object = $class::getById($value);
         if (!$object) {
@@ -62,7 +63,7 @@ class DataObjectParamResolver implements ValueResolverInterface
         } elseif (
             !$object->isPublished()
             && !Tool::isElementRequestByAdmin($request, $object)
-            && !array_key_exists('unpublished', $options)
+            && (!isset($options[0]) || !$options[0]->unpublished)
         ) {
             throw new NotFoundHttpException(sprintf('Data object for parameter "%s" is not published.', $param));
         }
