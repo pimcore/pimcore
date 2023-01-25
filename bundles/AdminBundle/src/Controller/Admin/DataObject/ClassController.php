@@ -835,6 +835,8 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function importFieldcollectionAction(Request $request): Response
     {
+        $this->checkPermission('fieldcollections');
+
         $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
 
         $data = file_get_contents($_FILES['Filedata']['tmp_name']);
@@ -861,6 +863,8 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function exportFieldcollectionAction(Request $request): Response
     {
+        $this->checkPermission('fieldcollections');
+
         $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
 
         if (!$fieldCollection instanceof DataObject\Fieldcollection\Definition) {
@@ -887,6 +891,8 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function fieldcollectionDeleteAction(Request $request): JsonResponse
     {
+        $this->checkPermission('fieldcollections');
+
         $fc = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
         $fc->delete();
 
@@ -1800,7 +1806,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $result = [];
 
         foreach ($list as $item) {
-            if ($item['type'] === 'fieldcollection' && $this->getAdminUser()->isAllowed('classes')) {
+            if ($item['type'] === 'fieldcollection' && $this->getAdminUser()->isAllowed('fieldcollections')) {
                 if ($fieldCollection = DataObject\Fieldcollection\Definition::getByKey($item['name'])) {
                     $fieldCollectionJson = json_decode(DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
                     $fieldCollectionJson->key = $item['name'];
@@ -1848,7 +1854,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $unrestrictedActions = [
             'getTreeAction', 'fieldcollectionListAction', 'fieldcollectionTreeAction', 'fieldcollectionGetAction',
             'getClassDefinitionForColumnConfigAction', 'objectbrickListAction', 'objectbrickTreeAction', 'objectbrickGetAction',
-            'objectbrickDeleteAction', 'objectbrickUpdateAction', 'importObjectbrickAction', 'exportObjectbrickAction', 'bulkCommitAction', 'doBulkExportAction', 'bulkExportAction' // permissions for listed write operations handled separately in action methods
+            'objectbrickDeleteAction', 'objectbrickUpdateAction', 'importObjectbrickAction', 'exportObjectbrickAction', 'bulkCommitAction', 'doBulkExportAction', 'bulkExportAction', 'importFieldcollectionAction', 'exportFieldcollectionAction' // permissions for listed write operations handled separately in action methods
         ];
 
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);

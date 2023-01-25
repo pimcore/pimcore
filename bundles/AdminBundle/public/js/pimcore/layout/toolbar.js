@@ -797,7 +797,7 @@
                      });
                  }
 
-                 if (perspectiveCfg.inToolbar("settings.objects.fieldcollections") && user.isAllowed("classes")) {
+                 if (perspectiveCfg.inToolbar("settings.objects.fieldcollections") && user.isAllowed("fieldcollections")) {
                      objectMenu.menu.items.push({
                          text: t("field_collections"),
                          iconCls: "pimcore_nav_icon_fieldcollection",
@@ -815,7 +815,7 @@
                      });
                  }
 
-                 if (perspectiveCfg.inToolbar("settings.objects.quantityValue") && user.isAllowed("classes")) {
+                 if (perspectiveCfg.inToolbar("settings.objects.quantityValue") && user.isAllowed("quantityValue")) {
                      objectMenu.menu.items.push({
                          text: t("quantityValue_field"),
                          iconCls: "pimcore_nav_icon_quantityValue",
@@ -832,7 +832,7 @@
                      });
                  }
 
-                 if (perspectiveCfg.inToolbar("settings.objects.classificationstore") && user.isAllowed("classes")) {
+                 if (perspectiveCfg.inToolbar("settings.objects.classificationstore") && user.isAllowed("classificationstore")) {
                      objectMenu.menu.items.push({
                          text: t("classification_store"),
                          iconCls: "pimcore_nav_icon_classificationstore",
