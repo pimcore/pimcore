@@ -152,7 +152,7 @@ class PdfReactor extends Processor
 
         while (!$progress->finished) {
             $progress = $pdfreactor->getProgress($processId, $connectionSettings);
-            $this->updateStatus($document->getId(), 50 + ($progress->progress / 2), 'pdf_conversion');
+            $this->updateStatus($document->getId(), 50 + (int)($progress->progress / 2), 'pdf_conversion');
 
             Logger::info('PDF converting progress: ' . $progress->progress . '%');
             sleep(2);

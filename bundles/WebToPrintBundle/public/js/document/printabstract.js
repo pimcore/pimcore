@@ -156,20 +156,20 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
         });
     },
 
-    removeFromSession: function () {
-        Ext.Ajax.request({
-            url: Routing.getBaseUrl() + '/admin/bundle/web2print/document/' + this.getType() + '/remove-from-session',
-            method: 'DELETE',
-            params: {id: this.data.id}
-        });
-    },
-
     getDataRoute: function() {
         return "pimcore_bundle_web2print_document_" + this.type + '_getdatabyid';
     },
 
     getSaveRoute: function() {
         return "pimcore_bundle_web2print_document_" + this.type + '_save';
+    },
+
+    getSaveToSessionRoute: function() {
+        return "pimcore_bundle_web2print_document_" + this.type + '_savetosession';
+    },
+
+    getRemoveFromSessionRoute: function() {
+        return "pimcore_bundle_web2print_document_" + this.type + '_removefromsession';
     },
 });
 
