@@ -28,7 +28,7 @@ class Listing
 
         $objectBricksFolders = [PIMCORE_CLASS_DEFINITION_DIRECTORY . '/objectbricks', PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY . '/objectbricks'];
 
-        foreach($objectBricksFolders as $objectBricksFolder) {
+        foreach ($objectBricksFolders as $objectBricksFolder) {
             $files = glob($objectBricksFolder . '/*.php');
 
             foreach ($files as $file) {

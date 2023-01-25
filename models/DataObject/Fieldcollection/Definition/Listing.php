@@ -28,7 +28,7 @@ class Listing
 
         $fieldCollectionFolders = [PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections', PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY . '/fieldcollections'];
 
-        foreach($fieldCollectionFolders as $fieldCollectionFolder) {
+        foreach ($fieldCollectionFolders as $fieldCollectionFolder) {
             $files = glob($fieldCollectionFolder . '/*.php');
 
             foreach ($files as $file) {
