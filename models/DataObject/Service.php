@@ -903,7 +903,8 @@ class Service extends Model\Element\Service
             $fields = $object->getClass()->getFieldDefinitions();
 
             foreach ($fields as $field) {
-                if ($field instanceof IdRewriterInterface) {
+                if ($field instanceof IdRewriterInterface
+                    && $field instanceof DataObject\ClassDefinition\Data) {
                     $setter = 'set' . ucfirst($field->getName());
                     if (method_exists($object, $setter)) { // check for non-owner-objects
                         $object->$setter($field->rewriteIds($object, $rewriteConfig));

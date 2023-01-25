@@ -25,7 +25,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\GroupConfig\Dao getDao()
- * @method int hasChildren()
+ * @method bool hasChildren()
  */
 final class GroupConfig extends Model\AbstractModel
 {

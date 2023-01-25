@@ -33,6 +33,9 @@ interface ItemInterface
 
     public function getPriority(): int;
 
+    /**
+     * @return string[]
+     */
     public function getEnvironments(): array;
 
     /**
