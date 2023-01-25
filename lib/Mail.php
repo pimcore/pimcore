@@ -56,14 +56,14 @@ class Mail extends Email
     /**
      * Contains the dynamic Params for the Twig engine
      *
-     * @var array
+     * @var mixed[]
      */
     private array $params = [];
 
     /**
      * Options passed to html2text
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private array $html2textOptions = [
         'ignore_errors' => true,
@@ -232,7 +232,7 @@ class Mail extends Email
     /**
      * Returns options for html2text
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getHtml2TextOptions(): array
     {
@@ -328,7 +328,7 @@ class Mail extends Email
     /**
      * Returns the parameters which were set with "setParams" or "setParam"
      *
-     * @return array
+     * @return mixed[]
      */
     public function getParams(): array
     {
@@ -573,6 +573,11 @@ class Mail extends Email
         return $this;
     }
 
+    /**
+     * @param array<Address|string> $addresses
+     *
+     * @return array<Address|string>
+     */
     private function filterLogAddresses(array $addresses): array
     {
         foreach ($addresses as $addrKey => $address) {
@@ -592,6 +597,11 @@ class Mail extends Email
         return $addresses;
     }
 
+    /**
+     * @param array<Address|string> $recipients
+     *
+     * @return array<Address|string>
+     */
     private function getDebugMailRecipients(array $recipients): array
     {
         $headers = $this->getHeaders();
@@ -865,7 +875,9 @@ class Mail extends Email
     }
 
     /**
-     * format Address from old params(string $address, string $name)
+     * @param Address|string|string[] ...$addresses
+     *
+     * @return array<Address|string>
      */
     private function formatAddress(Address|string|array ...$addresses): array
     {

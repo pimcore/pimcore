@@ -919,13 +919,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             parentid: this.data.general.parentId,
             classid: this.data.general.classId,
             "class": this.data.general.className,
+            type: this.data.general.type,
             modificationdate: this.data.general.modificationDate,
             creationdate: this.data.general.creationDate,
             usermodification: this.data.general.userModification,
             usermodification_name: this.data.general.userModificationFullname,
             userowner: this.data.general.userOwner,
             userowner_name: this.data.general.userOwnerFullname,
-            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, "object")
+            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, this.data.general.type)
         };
     },
 
@@ -949,6 +950,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }, {
                 name: "class",
                 value: metainfo.class
+            }, {
+                name: "type",
+                value: metainfo.type
             }, {
                 name: "modificationdate",
                 type: "date",
