@@ -1,0 +1,26 @@
+{% macro label(value, classes, attributes) %}
+    <span class="_ptgtb__label {{ classes is not empty ? classes|join(' ') }}" {%- for attr, val in attributes %} {{ attr }}="{{ val }}"{% endfor -%}>{{ value }}</span>
+{% endmacro %}
+
+{% macro trigger_label(value, target, classes, attributes) %}
+    {% import _self as toolbar %}
+
+    {% set attributes = {
+        'data-ptgtb-toggle': 'collapse',
+        'data-ptgtb-target': target,
+        'data-ptgtb-collapse-default': 'collapse'
+    }|merge(attributes|default({})) %}
+
+    {{ toolbar.label(value, classes, attributes) }}
+{% endmacro %}
+
+{% macro metric(label, value) %}
+    <span class="_ptgtb__metric">
+        <span class="_ptgtb__metric__label">{{ label }}</span>
+        <span class="_ptgtb__metric__value">{{ value }}</span>
+    </span>
+{% endmacro %}
+
+{%- macro identifier(token, name, suffix) -%}
+    _ptgb-{{ name }}-{{ token }}{% if suffix is defined and suffix is not empty %}-{{ suffix }}{% endif %}
+{%- endmacro -%}

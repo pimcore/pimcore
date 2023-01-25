@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
-use Pimcore\Targeting\Storage\CookieStorage;
-use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;

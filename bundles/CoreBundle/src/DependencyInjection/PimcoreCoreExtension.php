@@ -29,9 +29,6 @@ use Pimcore\Model\Document\TypeDefinition\Loader\PrefixLoader as DocumentTypePre
 use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
-use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
-use Pimcore\Targeting\DataLoaderInterface;
-use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
