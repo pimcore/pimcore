@@ -489,8 +489,8 @@ pimcore.object.classes.klass = Class.create({
     },
 
     getRestrictionsFromParent: function (node) {
-        if(node.data.editor.type == "localizedfields") {
-            return "localizedfields";
+        if(in_array(node.data.editor.type, ['localizedfields', 'block'])) {
+            return node.data.editor.type;
         } else {
             if(node.parentNode && node.parentNode.getDepth() > 0) {
                 var parentType = this.getRestrictionsFromParent(node.parentNode);
