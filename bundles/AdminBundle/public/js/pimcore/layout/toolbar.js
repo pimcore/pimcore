@@ -280,8 +280,8 @@ pimcore.layout.toolbar = Class.create({
              }
 
              menu.file = {
-                 label: 'file',
-                 iconCls: 'file',
+                 label: t('file'),
+                 iconCls: 'pimcore_main_nav_icon_file',
                  items: fileItems,
                  shadow: false,
                  cls: "pimcore_navigation_flyout"
@@ -424,8 +424,8 @@ pimcore.layout.toolbar = Class.create({
              // adding menu even though extraItems can be empty
              // items can be added via event later
              menu.extras = {
-                 label: 'tools',
-                 iconCls: 'build',
+                 label: t('tools'),
+                 iconCls: 'pimcore_main_nav_icon_build',
                  items: extrasItems,
                  shadow: false,
                  cls: "pimcore_navigation_flyout"
@@ -468,8 +468,8 @@ pimcore.layout.toolbar = Class.create({
              }
 
              menu.marketing = {
-                 label: 'marketing',
-                 iconCls: 'marketing',
+                 label: t('marketing'),
+                 iconCls: 'pimcore_main_nav_icon_marketing',
                  items: marketingItems,
                  shadow: false,
                  cls: "pimcore_navigation_flyout"
@@ -850,8 +850,8 @@ pimcore.layout.toolbar = Class.create({
  
              // help menu
             menu.settings = {
-                label: 'settings',
-                iconCls: 'settings',
+                label: t('settings'),
+                iconCls: 'pimcore_main_nav_icon_settings',
                 items: settingsItems,
                 shadow: false,
                 cls: "pimcore_navigation_flyout"
