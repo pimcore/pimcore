@@ -18,9 +18,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Event\Targeting\RenderToolbarEvent;
-use Pimcore\Event\Targeting\TargetingEvent;
-use Pimcore\Event\TargetingEvents;
+use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\RenderToolbarEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Response\CodeInjector;
@@ -172,7 +172,7 @@ class ToolbarListener implements EventSubscriberInterface
 
     private function injectToolbar(Response $response, array $data): void
     {
-        $event = new RenderToolbarEvent('@PimcoreCore/Targeting/toolbar/toolbar.html.twig', $data);
+        $event = new RenderToolbarEvent('@PimcorePersonalization/Targeting/toolbar/toolbar.html.twig', $data);
 
         $this->eventDispatcher->dispatch($event, TargetingEvents::RENDER_TOOLBAR);
 

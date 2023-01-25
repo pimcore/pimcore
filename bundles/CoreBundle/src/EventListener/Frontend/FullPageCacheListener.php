@@ -26,7 +26,7 @@ use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
-use Pimcore\Targeting\VisitorInfoStorageInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;

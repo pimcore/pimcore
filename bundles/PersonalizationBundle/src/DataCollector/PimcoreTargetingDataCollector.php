@@ -15,11 +15,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\DataCollector;
+namespace Pimcore\Bundle\PersonalizationBundle\DataCollector;
 
 use Pimcore\Http\Request\Resolver\DocumentResolver;
-use Pimcore\Targeting\Debug\TargetingDataCollector;
-use Pimcore\Targeting\VisitorInfoStorageInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\TargetingDataCollector;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;

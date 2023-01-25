@@ -19,7 +19,7 @@ pimcore.registerNS("pimcore.bundle.personalization.settings.conditions");
 /**
  * @private
  */
-ppimcore.bundle.personalization.settings.conditions = (function () {
+pimcore.bundle.personalization.settings.conditions = (function () {
     var conditions = {
         url: Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {

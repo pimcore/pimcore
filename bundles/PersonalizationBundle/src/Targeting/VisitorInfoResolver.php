@@ -19,10 +19,10 @@ namespace Pimcore\Bundle\PersonalizationBundle\Targeting;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Debug\Traits\StopwatchTrait;
-use Pimcore\Event\Targeting\TargetingEvent;
-use Pimcore\Event\Targeting\TargetingResolveVisitorInfoEvent;
-use Pimcore\Event\Targeting\TargetingRuleEvent;
-use Pimcore\Event\TargetingEvents;
+use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingResolveVisitorInfoEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingRuleEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler;

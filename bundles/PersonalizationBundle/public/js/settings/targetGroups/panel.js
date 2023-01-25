@@ -200,7 +200,7 @@ pimcore.bundle.personalization.settings.targetGroups.panel = Class.create({
             },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
-                var item = new pimcore.settings.targeting.targetGroups.item(this, res);
+                var item = new pimcore.bundle.personalization.settings.targetGroups.item(this, res);
             }.bind(this)
         });
 

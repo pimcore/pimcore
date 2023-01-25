@@ -18,8 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\Code;
 
 use Pimcore\Analytics\Code\CodeBlock;
-use Pimcore\Event\Targeting\TargetingCodeEvent;
-use Pimcore\Event\TargetingEvents;
+use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingCodeEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -61,7 +61,7 @@ class TargetingCodeGenerator
         ];
 
         $event = new TargetingCodeEvent(
-            '@PimcoreCore/Targeting/targetingCode.html.twig',
+            '@PimcorePersonalization/Targeting/targetingCode.html.twig',
             $this->buildCodeBlocks(),
             $data
         );

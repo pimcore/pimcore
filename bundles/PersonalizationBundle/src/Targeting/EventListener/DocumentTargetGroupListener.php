@@ -18,9 +18,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
-use Pimcore\Event\Targeting\AssignDocumentTargetGroupEvent;
-use Pimcore\Event\Targeting\TargetingEvent;
-use Pimcore\Event\TargetingEvents;
+use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\AssignDocumentTargetGroupEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Model\Document;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerInterface;

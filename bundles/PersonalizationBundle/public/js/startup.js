@@ -24,6 +24,8 @@ pimcore.bundle.personalization.startup = Class.create({
         pimcore.globalmanager.add("target_group_store", targetGroupStore);
 
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
+
+        document.addEventListener(pimcore.events.assignTargetGroupToPage, this.assignTargetGroupToPage.bind(this));
     },
 
 
@@ -69,7 +71,7 @@ pimcore.bundle.personalization.startup = Class.create({
         try {
             tabPanel.setActiveTab(pimcore.globalmanager.get("targeting").getLayout());
         } catch (e) {
-            var targeting = new pimcore.settings.targeting.rules.panel();
+            var targeting = new pimcore.bundle.personalization.settings.rules.panel();
             pimcore.globalmanager.add("targeting", targeting);
 
             tabPanel.add(targeting.getLayout());
@@ -88,7 +90,7 @@ pimcore.bundle.personalization.startup = Class.create({
         try {
             tabPanel.setActiveTab(pimcore.globalmanager.get("targetGroupsPanel").getLayout());
         } catch (e) {
-            var targetGroups = new pimcore.settings.targeting.targetGroups.panel();
+            var targetGroups = new pimcore.bundle.personalization.settings.targetGroups.panel();
             pimcore.globalmanager.add("targetGroupsPanel", targetGroups);
 
             tabPanel.add(targetGroups.getLayout());
@@ -103,6 +105,38 @@ pimcore.bundle.personalization.startup = Class.create({
     },
 
     showTargetingToolbarSettings: function () {
-        new pimcore.settings.targetingToolbar();
+        new pimcore.bundle.personalization.settings.targetingtoolbar();
     },
+
+    assignTargetGroupToPage: function (e) {
+        const document = e.detail.document;
+
+        const assignTargetGroupBlock = {
+            xtype: 'fieldset',
+            title: t('assign_target_groups'),
+            collapsible: true,
+            autoHeight: true,
+            defaults: {
+                labelWidth: 300
+            },
+            defaultType: 'textfield',
+            items: [
+                Ext.create('Ext.ux.form.MultiSelect', {
+                    fieldLabel: t('visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups'),
+                    store: pimcore.globalmanager.get("target_group_store"),
+                    displayField: "text",
+                    valueField: "id",
+                    name: 'targetGroupIds',
+                    width: 700,
+                    //listWidth: 200,
+                    value: document.data["targetGroupIds"].split(',').map(Number).filter(item => item),
+                    minHeight: 100
+                })
+            ]
+        };
+
+        e.detail.layout.add(assignTargetGroupBlock);
+    }
 })
+
+const personalization = new pimcore.bundle.personalization.startup();

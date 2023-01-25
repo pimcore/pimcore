@@ -23,7 +23,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleService;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;

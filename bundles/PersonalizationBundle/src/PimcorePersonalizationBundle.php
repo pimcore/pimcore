@@ -46,6 +46,7 @@ class PimcorePersonalizationBundle extends AbstractPimcoreBundle
             '/bundles/pimcorepersonalization/js/settings/targetGroups/item.js',
             '/bundles/pimcorepersonalization/js/settings/targetingtoolbar.js',
             '/bundles/pimcorepersonalization/js/targeting.js',
+            '/bundles/pimcorepersonalization/js/document/areatoolbar.js',
         ];
     }
 

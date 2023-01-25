@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
-use Pimcore\Event\Targeting\TargetingEvent;
-use Pimcore\Event\TargetingEvents;
+use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Service\VisitedPagesCounter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

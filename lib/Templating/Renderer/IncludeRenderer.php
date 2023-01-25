@@ -21,7 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;

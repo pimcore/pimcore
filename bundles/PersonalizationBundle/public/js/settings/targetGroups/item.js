@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.bundle.personalization.settings.targetGroups.item");
 /**
  * @private
  */
-pimcore.bundle.personalization.settings.targetGroups.item.item = Class.create({
+pimcore.bundle.personalization.settings.targetGroups.item = Class.create({
 
     initialize: function(parent, data) {
         this.parent = parent;

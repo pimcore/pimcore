@@ -86,5 +86,8 @@ class PimcorePersonalizationExtension extends ConfigurableExtension
         $container
             ->getDefinition (DelegatingActionHandler::class)
             ->setArgument ('$actionHandlers', $actionHandlerLocator);
+
+        $container->setParameter ('pimcore_personalization.targeting.session.enabled', $config['session']['enabled'] ?? false);
+
     }
 }

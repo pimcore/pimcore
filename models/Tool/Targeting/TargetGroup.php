@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Tool\Targeting;
 
 use Pimcore\Event\Model\TargetGroupEvent;
-use Pimcore\Event\TargetGroupEvents;
+use Pimcore\Bundle\PersonalizationBundle\Event\TargetGroupEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 

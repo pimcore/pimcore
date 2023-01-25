@@ -14,26 +14,26 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event;
+namespace Pimcore\Bundle\PersonalizationBundle\Event;
 
 final class TargetGroupEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\TargetGroupEvent")
+     * @Event("Pimcore\Bundle\PersonalizationBundle\Event\Model\TargetGroupEvent")
      *
      * @var string
      */
     const POST_ADD = 'pimcore.targetgroup.postAdd';
 
     /**
-     * @Event("Pimcore\Event\Model\TargetGroupEvent")
+     * @Event("Pimcore\Bundle\PersonalizationBundle\Event\Model\TargetGroupEvent")
      *
      * @var string
      */
     const POST_UPDATE = 'pimcore.targetgroup.postUpdate';
 
     /**
-     * @Event("Pimcore\Event\Model\TargetGroupEvent")
+     * @Event("Pimcore\Bundle\PersonalizationBundle\Event\Model\TargetGroupEvent")
      *
      * @var string
      */

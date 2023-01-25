@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
-use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\CookieStorage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

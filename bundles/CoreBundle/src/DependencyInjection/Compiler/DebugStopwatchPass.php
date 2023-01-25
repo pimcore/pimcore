@@ -17,10 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
-use Pimcore\Targeting\DataLoader;
-use Pimcore\Targeting\Debug\TargetingDataCollector;
-use Pimcore\Targeting\EventListener\TargetingListener;
-use Pimcore\Targeting\VisitorInfoResolver;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\DataLoader;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\TargetingDataCollector;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\TargetingListener;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoResolver;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;

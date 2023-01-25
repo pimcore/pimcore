@@ -9,7 +9,10 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\TargetingStorageInter
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\CookieStorage;
 
 class Configuration implements ConfigurationInterface {
-    public function getConfigTreeBuilder (): TreeBuilder {
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfigTreeBuilder(): TreeBuilder {
         $treeBuilder = new TreeBuilder('pimcore_personalization');
 
         /** @var ArrayNodeDefinition $rootNode */

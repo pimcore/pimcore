@@ -19,3 +19,11 @@ services:
         tags: [ 'controller.service_arguments' ]
 
     Pimcore\Bundle\PersonalizationBundle\Targeting\Maintenance\TargetingStorageTask: ~
+
+    Pimcore\Bundle\PersonalizationBundle\DataCollector\PimcoreTargetingDataCollector:
+        tags:
+            -   name: data_collector
+                template: '@PimcorePersonalization/Profiler/targeting_data_collector.html.twig'
+                id: 'pimcore_targeting'
+                priority: 312
+
