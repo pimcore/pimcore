@@ -49,13 +49,13 @@ class DefaultController extends FrontendController
     }
 
     /**
-     * Example using the @Template annotation and auto-resolving the template using the controller/action name. 
-     * The frontend controller also provides methods to add response headers via annotation without having
+     * Example using the #[Template] attribute to resolve the view. 
+     * The frontend controller also provides methods to add response headers or via attributes without having
      * access to the final response object (as it is automatically created when rendering the view).
      *
-     * @Template
-     * @ResponseHeader("X-Foo", values={"123456", "98765"})
      */
+     #[Template('/default/header.html.twig')]
+     #[ResponseHeader(key: "X-Foo", values: ["123456", "98765"])]
     public function headerAction(Request $request)
     {
         // schedule a response header via code
