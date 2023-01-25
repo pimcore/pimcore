@@ -99,12 +99,19 @@ class MiscController extends AdminController
 
         $translations = [];
 
+        // add en as a fallback
+        $fallbackLanguages = ['en'];
+        if (null !== \Locale::getRegion($language)) {
+            // if language is region specific, prepend the primary language as a fallback
+            array_unshift($fallbackLanguages, \Locale::getPrimaryLanguage($language));
+        }
+
         foreach (['admin', 'admin_ext'] as $domain) {
             $translations = array_merge($translations, $translator->getCatalogue($language)->all($domain));
-            if ($language != 'en') {
-                // add en as a fallback
-                $translator->lazyInitialize($domain, 'en');
-                foreach ($translator->getCatalogue('en')->all($domain) as $key => $value) {
+
+            foreach ($fallbackLanguages as $fallbackLanguage) {
+                $translator->lazyInitialize($domain, $fallbackLanguage);
+                foreach ($translator->getCatalogue($fallbackLanguage)->all($domain) as $key => $value) {
                     if (empty($translations[$key])) {
                         $translations[$key] = $value;
                     }
