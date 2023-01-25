@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrappe
     /**
      * {@inheritdoc}
      */
-    public function getHref()
+    public function getHref(): string
     {
         if ($this->getLinktype() === 'internal' && $this->getInternalType() === 'document') {
             $element = $this->getElement();

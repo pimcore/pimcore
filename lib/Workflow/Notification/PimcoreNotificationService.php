@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,15 +23,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PimcoreNotificationService extends AbstractNotificationService
 {
-    /**
-     * @var NotificationService
-     */
-    protected $notificationService;
+    protected NotificationService $notificationService;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
     /**
      * PimcoreNotificationService constructor.
@@ -44,7 +39,7 @@ class PimcoreNotificationService extends AbstractNotificationService
         $this->translator = $translator;
     }
 
-    public function sendPimcoreNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action)
+    public function sendPimcoreNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action): void
     {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles, true);

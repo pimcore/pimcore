@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,14 +24,8 @@ use Pimcore\Maintenance\TaskInterface;
  */
 class LogErrorCleanupTask implements TaskInterface
 {
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @param Connection $db
-     */
     public function __construct(Connection $db)
     {
         $this->db = $db;
@@ -39,7 +34,7 @@ class LogErrorCleanupTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         // keep the history for max. 7 days (=> exactly 144h), according to the privacy policy (EU/German Law)
         // it's allowed to store the IP for 7 days for security reasons (DoS, ...)

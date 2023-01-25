@@ -33,36 +33,33 @@ class Device implements DataProviderInterface
 {
     const PROVIDER_KEY = 'device';
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * The cache handler caching detected results
      *
-     * @var CoreCacheHandler
+     * @var CoreCacheHandler|null
      */
-    private $cache;
+    private ?CoreCacheHandler $cache = null;
 
     /**
      * The cache pool which is passed to the DeviceDetector
      *
      * @var TagAwareAdapterInterface
      */
-    private $cachePool;
+    private TagAwareAdapterInterface $cachePool;
 
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
-    public function setCache(CoreCacheHandler $cache)
+    public function setCache(CoreCacheHandler $cache): void
     {
         $this->cache = $cache;
     }
 
-    public function setCachePool(TagAwareAdapterInterface $cachePool)
+    public function setCachePool(TagAwareAdapterInterface $cachePool): void
     {
         $this->cachePool = $cachePool;
     }
@@ -70,13 +67,13 @@ class Device implements DataProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function load(VisitorInfo $visitorInfo)
+    public function load(VisitorInfo $visitorInfo): void
     {
         if ($visitorInfo->has(self::PROVIDER_KEY)) {
             return;
         }
 
-        $userAgent = $visitorInfo->getRequest()->headers->get('User-Agent');
+        $userAgent = $visitorInfo->getRequest()->headers->get('User-Agent', '');
 
         $result = $this->loadData($userAgent);
         $result = $this->handleOverrides($visitorInfo->getRequest(), $result);
@@ -87,7 +84,7 @@ class Device implements DataProviderInterface
         );
     }
 
-    private function handleOverrides(Request $request, array $result = null)
+    private function handleOverrides(Request $request, array $result = null): ?array
     {
         $overrides = OverrideAttributeResolver::getOverrideValue($request, 'device');
         if (empty($overrides)) {
@@ -118,7 +115,7 @@ class Device implements DataProviderInterface
         return $result;
     }
 
-    private function loadData(string $userAgent)
+    private function loadData(string $userAgent): ?array
     {
         if (null === $this->cache) {
             return $this->doLoadData($userAgent);
@@ -140,7 +137,7 @@ class Device implements DataProviderInterface
         return $result;
     }
 
-    private function doLoadData(string $userAgent)
+    private function doLoadData(string $userAgent): ?array
     {
         try {
             $dd = new DeviceDetector($userAgent);

@@ -24,17 +24,12 @@ use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
  */
 abstract class TargetingDocument extends PageSnippet implements TargetingDocumentInterface
 {
-    /**
-     * @internal
-     *
-     * @var int
-     */
-    private $useTargetGroup;
+    private ?int $useTargetGroup = null;
 
     /**
      * {@inheritdoc}
      */
-    public function setUseTargetGroup(int $useTargetGroup = null)
+    public function setUseTargetGroup(int $useTargetGroup = null): void
     {
         $this->useTargetGroup = $useTargetGroup;
     }
@@ -42,7 +37,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * {@inheritdoc}
      */
-    public function getUseTargetGroup()
+    public function getUseTargetGroup(): ?int
     {
         return $this->useTargetGroup;
     }
@@ -101,14 +96,16 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * {@inheritdoc}
      */
-    public function setEditable(Editable $editable)
+    public function setEditable(Editable $editable): static
     {
         if ($this->getUseTargetGroup()) {
             $name = $this->getTargetGroupEditableName($editable->getName());
             $editable->setName($name);
         }
 
-        return parent::setEditable($editable);
+        parent::setEditable($editable);
+
+        return $this;
     }
 
     /**
@@ -118,7 +115,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
      *
      * @return Editable|null
      */
-    public function getEditable($name)
+    public function getEditable(string $name): ?Editable
     {
         // check if a target group is requested for this page, if yes deliver a different version of the editable (prefixed)
         if ($this->getUseTargetGroup()) {
@@ -153,7 +150,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * {@inheritdoc}
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

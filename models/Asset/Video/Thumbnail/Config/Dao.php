@@ -25,7 +25,7 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    public function configure()
+    public function configure(): void
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
@@ -33,7 +33,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             'containerConfig' => $config['assets']['video']['thumbnails']['definitions'],
             'settingsStoreScope' => 'pimcore_video_thumbnails',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_VIDEO_THUMBNAILS'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/video-thumbnails',
-            'legacyConfigFile' => 'video-thumbnails.php',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS',
         ]);
     }
@@ -43,7 +42,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function getByName($id = null)
+    public function getByName(string $id = null): void
     {
         if ($id != null) {
             $this->model->setName($id);
@@ -69,7 +68,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -95,13 +94,13 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleteData($this->model->getName());
         $this->autoClearTempFiles();
     }
 
-    protected function autoClearTempFiles()
+    protected function autoClearTempFiles(): void
     {
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['video']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
@@ -114,7 +113,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [

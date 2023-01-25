@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,20 +30,10 @@ use Psr\Log\LoggerInterface;
  */
 class VersionsCleanupTask implements TaskInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @param LoggerInterface $logger
-     * @param Config $config
-     */
     public function __construct(LoggerInterface $logger, Config $config)
     {
         $this->logger = $logger;
@@ -52,13 +43,13 @@ class VersionsCleanupTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $this->doVersionCleanup();
         $this->doAutoSaveVersionCleanup();
     }
 
-    private function doAutoSaveVersionCleanup()
+    private function doAutoSaveVersionCleanup(): void
     {
         $date = \Carbon\Carbon::now();
         $date->subHours(72);
@@ -76,7 +67,7 @@ class VersionsCleanupTask implements TaskInterface
         }
     }
 
-    private function doVersionCleanup()
+    private function doVersionCleanup(): void
     {
         $conf['document'] = $this->config['documents']['versions'] ?? null;
         $conf['asset'] = $this->config['assets']['versions'] ?? null;
@@ -96,7 +87,7 @@ class VersionsCleanupTask implements TaskInterface
             }
             $value = $tConf['steps'] ?? 10;
 
-            if (isset($tConf['days']) && !is_null($tConf['days'])) {
+            if (isset($tConf['days'])) {
                 $versioningType = 'days';
                 $value = (int)$tConf['days'];
             }

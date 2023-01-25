@@ -42,30 +42,15 @@ class CookieStorage implements TargetingStorageInterface
 
     const STORAGE_KEY_UPDATED_AT = '_u';
 
-    /**
-     * @var CookieSaveHandlerInterface
-     */
-    private $saveHandler;
+    private CookieSaveHandlerInterface $saveHandler;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var array
-     */
-    private $data = [];
+    private array $data = [];
 
-    /**
-     * @var bool
-     */
-    private $changed = false;
+    private bool $changed = false;
 
-    /**
-     * @var array
-     */
-    private $scopeCookieMapping = [
+    private array $scopeCookieMapping = [
         self::SCOPE_SESSION => self::COOKIE_NAME_SESSION,
         self::SCOPE_VISITOR => self::COOKIE_NAME_VISITOR,
     ];
@@ -106,7 +91,7 @@ class CookieStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed
     {
         $this->loadData($visitorInfo, $scope);
 
@@ -117,10 +102,7 @@ class CookieStorage implements TargetingStorageInterface
         return $default;
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value): void
     {
         $this->loadData($visitorInfo, $scope);
 
@@ -133,7 +115,7 @@ class CookieStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc }
      */
-    public function clear(VisitorInfo $visitorInfo, string $scope = null)
+    public function clear(VisitorInfo $visitorInfo, string $scope = null): void
     {
         if (null === $scope) {
             $this->data = [];
@@ -146,10 +128,7 @@ class CookieStorage implements TargetingStorageInterface
         $this->addSaveListener($visitorInfo);
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): void
     {
         $values = $storage->all($visitorInfo, $scope);
 
@@ -169,10 +148,7 @@ class CookieStorage implements TargetingStorageInterface
         $this->addSaveListener($visitorInfo);
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         $this->loadData($visitorInfo, $scope);
 
@@ -183,10 +159,7 @@ class CookieStorage implements TargetingStorageInterface
         return \DateTimeImmutable::createFromFormat('U', (string)$this->data[$scope][self::STORAGE_KEY_CREATED_AT]);
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         $this->loadData($visitorInfo, $scope);
 
@@ -214,7 +187,7 @@ class CookieStorage implements TargetingStorageInterface
         return $this->data[$scope];
     }
 
-    private function addSaveListener(VisitorInfo $visitorInfo)
+    private function addSaveListener(VisitorInfo $visitorInfo): void
     {
         if ($this->changed) {
             return;
@@ -248,7 +221,7 @@ class CookieStorage implements TargetingStorageInterface
         string $scope,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    ) {
+    ): void {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (!isset($this->data[$scope][self::STORAGE_KEY_CREATED_AT])) {
@@ -259,12 +232,7 @@ class CookieStorage implements TargetingStorageInterface
         }
     }
 
-    /**
-     * @param string $scope
-     *
-     * @return \DateTime|int
-     */
-    protected function expiryFor(string $scope)
+    protected function expiryFor(string $scope): \DateTime|int
     {
         $expiry = 0;
         if (self::SCOPE_VISITOR === $scope) {

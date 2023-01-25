@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,5 +29,5 @@ interface PasswordHasherFactoryAwareInterface
      *
      * @return string
      */
-    public function getHasherFactoryName();
+    public function getHasherFactoryName(): string;
 }

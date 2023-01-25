@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,19 +23,15 @@ trait OrderListingTrait
      */
     protected $order;
 
-    /**
-     * @return callable|null
-     */
-    public function getOrder()
+    public function getOrder(): ?callable
     {
         return $this->order;
     }
 
-    /**
-     * @param callable|null $order
-     */
-    public function setOrder($order)
+    public function setOrder(?callable $order): static
     {
         $this->order = $order;
+
+        return $this;
     }
 }

@@ -32,20 +32,11 @@ class GeoIp implements DataProviderInterface
 {
     const PROVIDER_KEY = 'geoip';
 
-    /**
-     * @var ProviderInterface
-     */
-    private $geoIpProvider;
+    private ProviderInterface $geoIpProvider;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var CoreCacheHandler
-     */
-    private $cache;
+    private ?CoreCacheHandler $cache = null;
 
     public function __construct(
         ProviderInterface $geoIpProvider,
@@ -55,7 +46,7 @@ class GeoIp implements DataProviderInterface
         $this->logger = $logger;
     }
 
-    public function setCache(CoreCacheHandler $cache)
+    public function setCache(CoreCacheHandler $cache): void
     {
         $this->cache = $cache;
     }
@@ -63,7 +54,7 @@ class GeoIp implements DataProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function load(VisitorInfo $visitorInfo)
+    public function load(VisitorInfo $visitorInfo): void
     {
         if ($visitorInfo->has(self::PROVIDER_KEY)) {
             return;
@@ -77,12 +68,7 @@ class GeoIp implements DataProviderInterface
         );
     }
 
-    /**
-     * @param VisitorInfo $visitorInfo
-     *
-     * @return array|null
-     */
-    public function loadData(VisitorInfo $visitorInfo)
+    public function loadData(VisitorInfo $visitorInfo): ?array
     {
         $result = null;
         $request = $visitorInfo->getRequest();
@@ -98,7 +84,7 @@ class GeoIp implements DataProviderInterface
         return $result;
     }
 
-    private function handleOverrides(Request $request, array $result = null)
+    private function handleOverrides(Request $request, array $result = null): ?array
     {
         $overrides = OverrideAttributeResolver::getOverrideValue($request, 'location');
         if (empty($overrides)) {
@@ -123,7 +109,7 @@ class GeoIp implements DataProviderInterface
         return $result === $ip;
     }
 
-    private function resolveIp(string $ip)
+    private function resolveIp(string $ip): ?array
     {
         if (null === $this->cache) {
             return $this->doResolveIp($ip);
@@ -145,7 +131,7 @@ class GeoIp implements DataProviderInterface
         return $result;
     }
 
-    private function doResolveIp(string $ip)
+    private function doResolveIp(string $ip): ?array
     {
         try {
             $city = $this->geoIpProvider->city($ip);

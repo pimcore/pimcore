@@ -25,10 +25,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 final class Session
 {
-    /**
-     * @var AdminSessionHandlerInterface
-     */
-    private static $handler;
+    private static ?AdminSessionHandlerInterface $handler = null;
 
     /**
      * @desc This is for forward compatibility, the custom Session implementation is not being used anymore in Pimcore 11.
@@ -88,7 +85,7 @@ final class Session
     /**
      * @deprecated
      */
-    public static function setHandler(AdminSessionHandlerInterface $handler)
+    public static function setHandler(AdminSessionHandlerInterface $handler): void
     {
         trigger_deprecation('pimcore/pimcore', '10.6', sprintf('Usage of method %s is deprecated since version 10.6 and will be removed in Pimcore 11. No alternative given.', __METHOD__));
 
@@ -96,14 +93,9 @@ final class Session
     }
 
     /**
-     * @param callable $func
-     * @param string $namespace
-     *
-     * @return mixed
-     *
      * @deprecated
      */
-    public static function useSession($func, string $namespace = 'pimcore_admin')
+    public static function useSession(callable $func, string $namespace = 'pimcore_admin'): mixed
     {
         trigger_deprecation('pimcore/pimcore', '10.6', sprintf('Usage of method %s is deprecated since version 10.6 and will be removed in Pimcore 11. Use \Pimcore\Tool\Session::useBag instead.', __METHOD__));
 
@@ -111,11 +103,9 @@ final class Session
     }
 
     /**
-     * @return string
-     *
      * @deprecated
      */
-    public static function getSessionId()
+    public static function getSessionId(): string
     {
         trigger_deprecation('pimcore/pimcore', '10.6', sprintf('Usage of method %s is deprecated since version 10.6 and will be removed in Pimcore 11. Use the Request SessionId instead.', __METHOD__));
 
@@ -123,11 +113,9 @@ final class Session
     }
 
     /**
-     * @return string
-     *
      * @deprecated
      */
-    public static function getSessionName()
+    public static function getSessionName(): string
     {
         trigger_deprecation('pimcore/pimcore', '10.6', sprintf('Usage of method %s is deprecated since version 10.6 and will be removed in Pimcore 11. Use the Request SessionName instead.', __METHOD__));
 
@@ -135,8 +123,6 @@ final class Session
     }
 
     /**
-     * @return bool
-     *
      * @deprecated
      */
     public static function invalidate(): bool
@@ -147,8 +133,6 @@ final class Session
     }
 
     /**
-     * @return bool
-     *
      * @deprecated
      */
     public static function regenerateId(): bool
@@ -159,11 +143,6 @@ final class Session
     }
 
     /**
-     * @param Request $request
-     * @param bool    $checkRequestParams
-     *
-     * @return bool
-     *
      * @deprecated
      */
     public static function requestHasSessionId(Request $request, bool $checkRequestParams = false): bool
@@ -174,14 +153,9 @@ final class Session
     }
 
     /**
-     * @param Request $request
-     * @param bool    $checkRequestParams
-     *
-     * @return string
-     *
      * @deprecated
      */
-    public static function getSessionIdFromRequest(Request $request, bool $checkRequestParams = false)
+    public static function getSessionIdFromRequest(Request $request, bool $checkRequestParams = false): string
     {
         trigger_deprecation('pimcore/pimcore', '10.6', sprintf('Usage of method %s is deprecated since version 10.6 and will be removed in Pimcore 11. Use the Request SessionId instead.', __METHOD__));
 
@@ -197,7 +171,7 @@ final class Session
      *
      * @deprecated
      */
-    public static function get(string $namespace = 'pimcore_admin')
+    public static function get(string $namespace = 'pimcore_admin'): ?AttributeBagInterface
     {
         trigger_deprecation('pimcore/pimcore', '10.6', sprintf('Usage of method %s is deprecated since version 10.6 and will be removed in Pimcore 11. Use \Pimcore\Tool\Session::getSessionBag instead.', __METHOD__));
 
@@ -210,10 +184,6 @@ final class Session
     }
 
     /**
-     * @param string $namespace
-     *
-     * @return AttributeBagInterface
-     *
      * @deprecated
      */
     public static function getReadOnly(string $namespace = 'pimcore_admin'): AttributeBagInterface
@@ -228,10 +198,10 @@ final class Session
      *
      * @deprecated
      */
-    public static function writeClose()
+    public static function writeClose(): void
     {
         trigger_deprecation('pimcore/pimcore', '10.6', sprintf('Usage of method %s is deprecated since version 10.6 and will be removed in Pimcore 11. No alternative given.', __METHOD__));
 
-        return self::getSessionHandler()->writeClose();
+        self::getSessionHandler()->writeClose();
     }
 }

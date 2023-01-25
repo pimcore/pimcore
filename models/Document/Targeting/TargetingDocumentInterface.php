@@ -51,14 +51,14 @@ interface TargetingDocumentInterface extends ElementInterface
      *
      * @param int|null $useTargetGroup
      */
-    public function setUseTargetGroup(int $useTargetGroup = null);
+    public function setUseTargetGroup(int $useTargetGroup = null): void;
 
     /**
      * Returns the target group to use
      *
      * @return int|null
      */
-    public function getUseTargetGroup();
+    public function getUseTargetGroup(): ?int;
 
     /**
      * Checks if the document has targeting specific elements

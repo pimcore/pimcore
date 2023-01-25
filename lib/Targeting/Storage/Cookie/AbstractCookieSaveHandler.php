@@ -24,14 +24,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractCookieSaveHandler implements CookieSaveHandlerInterface
 {
-    /**
-     * @var array
-     */
-    protected $options = [];
+    protected array $options = [];
 
-    /**
-     * @param array $options
-     */
     public function __construct(array $options = [])
     {
         $resolver = new OptionsResolver();
@@ -40,7 +34,7 @@ abstract class AbstractCookieSaveHandler implements CookieSaveHandlerInterface
         $this->options = $resolver->resolve($options);
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'domain' => null,
@@ -67,7 +61,7 @@ abstract class AbstractCookieSaveHandler implements CookieSaveHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function save(Response $response, string $scope, string $name, $expire, $data)
+    public function save(Response $response, string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data): void
     {
         $value = $this->prepareData($scope, $name, $expire, $data);
 
@@ -87,17 +81,17 @@ abstract class AbstractCookieSaveHandler implements CookieSaveHandlerInterface
      *
      * @return array
      */
-    abstract protected function parseData(string $scope, string $name, $data): array;
+    abstract protected function parseData(string $scope, string $name, ?string $data): array;
 
     /**
      * Prepare data for saving
      *
      * @param string $scope
      * @param string $name
-     * @param int|string|\DateTimeInterface $expire
+     * @param \DateTimeInterface|int|string $expire
      * @param array|null $data
      *
-     * @return string|null
+     * @return bool|string|null
      */
-    abstract protected function prepareData(string $scope, string $name, $expire, $data);
+    abstract protected function prepareData(string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data): bool|string|null;
 }

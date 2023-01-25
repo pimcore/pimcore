@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,37 +26,21 @@ class RequestHelper
 {
     const ATTRIBUTE_FRONTEND_REQUEST = '_pimcore_frontend_request';
 
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
+    protected RequestStack $requestStack;
 
-    /**
-     * @var requestContext
-     */
-    protected $requestContext;
+    protected RequestContext $requestContext;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param RequestContext $requestContext
-     */
     public function __construct(RequestStack $requestStack, RequestContext $requestContext)
     {
         $this->requestStack = $requestStack;
         $this->requestContext = $requestContext;
     }
 
-    /**
-     * @return bool
-     */
     public function hasCurrentRequest(): bool
     {
         return null !== $this->requestStack->getCurrentRequest();
     }
 
-    /**
-     * @return Request
-     */
     public function getCurrentRequest(): Request
     {
         if (!$this->requestStack->getCurrentRequest()) {
@@ -70,7 +55,7 @@ class RequestHelper
      *
      * @return Request
      */
-    public function getRequest(Request $request = null)
+    public function getRequest(Request $request = null): Request
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
@@ -79,57 +64,19 @@ class RequestHelper
         return $request;
     }
 
-    /**
-     * @deprecated will be removed in Pimcore 11, use getMainRequest() instead
-     *
-     * @return bool
-     */
-    public function hasMasterRequest(): bool
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.2',
-            sprintf('%s is deprecated, please use RequestHelper::hasMainRequest() instead.', __METHOD__)
-        );
-
-        return $this->hasMainRequest();
-    }
-
-    /**
-     * @return bool
-     */
     public function hasMainRequest(): bool
     {
         return null !== $this->requestStack->getMainRequest();
     }
 
-    /**
-     * @deprecated will be removed in Pimcore 11 - use getMainRequest() instead
-     *
-     * @return Request
-     */
-    public function getMasterRequest(): Request
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.2',
-            sprintf('%s is deprecated, please use RequestHelper::getMainRequest() instead.', __METHOD__)
-        );
-
-        return $this->getMainRequest();
-    }
-
-    /**
-     * @return Request
-     */
     public function getMainRequest(): Request
     {
-        $masterRequest = $this->requestStack->getMainRequest();
-        if (null === $masterRequest) {
+        $mainRequest = $this->requestStack->getMainRequest();
+        if (null === $mainRequest) {
             throw new \LogicException('There is no main request available.');
         }
 
-        return $masterRequest;
+        return $mainRequest;
     }
 
     /**
@@ -155,10 +102,6 @@ class RequestHelper
 
     /**
      * TODO use pimcore context here?
-     *
-     * @param Request $request
-     *
-     * @return bool
      */
     private function detectFrontendRequest(Request $request): bool
     {
@@ -214,7 +157,7 @@ class RequestHelper
      *
      * @return string
      */
-    public function getAnonymizedClientIp(Request $request = null)
+    public function getAnonymizedClientIp(Request $request = null): string
     {
         $request = $this->getRequest($request);
 
@@ -223,12 +166,8 @@ class RequestHelper
 
     /**
      * Anonymize IP: replace the last octet with 255
-     *
-     * @param string $ip
-     *
-     * @return string
      */
-    private function anonymizeIp(string $ip)
+    private function anonymizeIp(string $ip): string
     {
         $aip = substr($ip, 0, strrpos($ip, '.') + 1);
         $aip .= '255';
@@ -237,13 +176,13 @@ class RequestHelper
     }
 
     /**
-     * @internal
-     *
      * @param string $uri
      *
      * @return Request
+     *
+     * @internal
      */
-    public function createRequestWithContext($uri = '/')
+    public function createRequestWithContext(string $uri = '/'): Request
     {
         $port = '';
         $scheme = $this->requestContext->getScheme();

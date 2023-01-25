@@ -61,7 +61,7 @@ Pimcore uses by default Symfony Twig engine, so you have the full power of Symfo
 For details concerning editables (like `pimcore_input`, `pimcore_block`, ...) see [Editables](../03_Documents/01_Editables/README.md). 
 
 ### Add a Layout
-We can use Symfony`s [template inheritance and layout](https://symfony.com/doc/5.2/templates.html#template-inheritance-and-layouts) functionality 
+We can use Symfony`s [template inheritance and layout](https://symfony.com/doc/current/templates.html#template-inheritance-and-layouts) functionality 
 to wrap our content page with another template which contains the main navigation, a sidebar, … using the following code:
 
 ```twig
@@ -78,9 +78,7 @@ Then we can also put some HTML and template code into it:
 <head>
     <meta charset="UTF-8">
     <title>Example</title>
-</head>
-<body>
-    <style type="text/css">
+    <style>
         body {
             padding: 0;
             margin: 0;
@@ -171,6 +169,8 @@ Then we can also put some HTML and template code into it:
         }
     
     </style>
+</head>
+<body>
     <div id="site">
         <div id="logo">
             <a href="http://www.pimcore.com/"><img src="/bundles/pimcoreadmin/img/logo-claim-gray.svg"

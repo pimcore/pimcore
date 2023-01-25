@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ class SearchBackendHandler implements BatchHandlerInterface
     use BatchHandlerTrait;
     use HandlerHelperTrait;
 
-    public function __invoke(SearchBackendMessage $message, Acknowledger $ack = null)
+    public function __invoke(SearchBackendMessage $message, Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }

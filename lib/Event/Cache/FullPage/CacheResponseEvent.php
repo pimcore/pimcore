@@ -25,15 +25,9 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class CacheResponseEvent extends Event
 {
-    /**
-     * @var Response
-     */
-    private $response;
+    private Response $response;
 
-    /**
-     * @var bool
-     */
-    private $cache;
+    private bool $cache;
 
     public function __construct(Response $response, bool $cache)
     {
@@ -51,7 +45,7 @@ class CacheResponseEvent extends Event
         return $this->cache;
     }
 
-    public function setCache(bool $cache)
+    public function setCache(bool $cache): void
     {
         $this->cache = $cache;
     }

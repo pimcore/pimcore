@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,26 +30,12 @@ use Psr\Log\LoggerInterface;
  */
 class LogArchiveTask implements TaskInterface
 {
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @param Connection $db
-     * @param Config $config
-     * @param LoggerInterface $logger
-     */
     public function __construct(Connection $db, Config $config, LoggerInterface $logger)
     {
         $this->db = $db;
@@ -59,13 +46,13 @@ class LogArchiveTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $db = $this->db;
         $storage = Storage::get('application_log');
 
         $date = new \DateTime('now');
-        $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('m').'_'.$date->format('Y');
+        $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('Y').'_'.$date->format('m');
 
         if (!empty($this->config['applicationlog']['archive_alternative_database'])) {
             $tablename = $db->quoteIdentifier($this->config['applicationlog']['archive_alternative_database']).'.'.$tablename;
@@ -132,8 +119,7 @@ class LogArchiveTask implements TaskInterface
 
                 $folderName = $deleteArchiveLogDate->format('Y/m');
 
-                // TODO: change fileExists to directoryExists once bumped flysystem to 3.*
-                if ($storage->fileExists($folderName)) {
+                if ($storage->directoryExists($folderName)) {
                     $storage->deleteDirectory($folderName);
                 } else {
                     // Fallback, if is not found and deleted in the flysystem, tries to delete from local

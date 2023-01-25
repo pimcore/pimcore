@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,52 +24,27 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
  */
 trait FieldcollectionObjectbrickDefinitionTrait
 {
-    /**
-     * @var string|null
-     */
-    public $key;
+    public ?string $key = null;
 
-    /**
-     * @var string|null
-     */
-    public $parentClass;
+    public ?string $parentClass = null;
 
     /**
      * Comma separated list of interfaces
-     *
-     * @var string|null
      */
-    public $implementsInterfaces;
+    public ?string $implementsInterfaces = null;
 
-    /**
-     * @var string|null
-     */
-    public $title;
+    public ?string $title = null;
 
-    /**
-     * @var string|null
-     */
-    public $group;
+    public ?string $group = null;
 
-    /**
-     * @var Layout|null
-     */
-    public $layoutDefinitions;
-
-    /**
-     * @var bool
-     */
-    public $generateTypeDeclarations = true;
+    public ?Layout $layoutDefinitions = null;
 
     /**
      * @var Data[]
      */
-    protected $fieldDefinitions = [];
+    protected array $fieldDefinitions = [];
 
-    /**
-     * @return string|null
-     */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
@@ -78,17 +54,14 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setKey($key)
+    public function setKey($key): static
     {
         $this->key = $key;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getParentClass()
+    public function getParentClass(): ?string
     {
         return $this->parentClass;
     }
@@ -98,37 +71,31 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setParentClass($parentClass)
+    public function setParentClass($parentClass): static
     {
         $this->parentClass = $parentClass;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
     /**
-     * @param string|null $title
+     * @param string $title
      *
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 
         return $this;
     }
 
-    /**
-     * @return Layout|null
-     */
-    public function getLayoutDefinitions()
+    public function getLayoutDefinitions(): ?Layout
     {
         return $this->layoutDefinitions;
     }
@@ -138,12 +105,14 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setLayoutDefinitions($layoutDefinitions)
+    public function setLayoutDefinitions(?Layout $layoutDefinitions): static
     {
-        $this->layoutDefinitions = $layoutDefinitions;
+        if ($layoutDefinitions) {
+            $this->layoutDefinitions = $layoutDefinitions;
 
-        $this->fieldDefinitions = [];
-        $this->extractDataDefinitions($this->layoutDefinitions);
+            $this->fieldDefinitions = [];
+            $this->extractDataDefinitions($this->layoutDefinitions);
+        }
 
         return $this;
     }
@@ -153,7 +122,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return Data[]
      */
-    public function getFieldDefinitions($context = [])
+    public function getFieldDefinitions(array $context = []): array
     {
         if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitions;
@@ -175,7 +144,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setFieldDefinitions(array $fieldDefinitions)
+    public function setFieldDefinitions(array $fieldDefinitions): static
     {
         $this->fieldDefinitions = $fieldDefinitions;
 
@@ -188,7 +157,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function addFieldDefinition($key, $data)
+    public function addFieldDefinition(string $key, Data $data): static
     {
         $this->fieldDefinitions[$key] = $data;
 
@@ -201,7 +170,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return Data|null
      */
-    public function getFieldDefinition($key, $context = [])
+    public function getFieldDefinition(string $key, array $context = []): ?Data
     {
         if (is_array($this->fieldDefinitions)) {
             $fieldDefinition = null;
@@ -225,62 +194,31 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return null;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getGroup()
+    public function getGroup(): ?string
     {
         return $this->group;
     }
 
     /**
-     * @param string|null $group
+     * @param string $group
      *
      * @return $this
      */
-    public function setGroup($group)
+    public function setGroup(?string $group): static
     {
         $this->group = $group;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getImplementsInterfaces(): ?string
     {
         return $this->implementsInterfaces;
     }
 
-    /**
-     * @param string|null $implementsInterfaces
-     *
-     * @return $this
-     */
-    public function setImplementsInterfaces(?string $implementsInterfaces)
+    public function setImplementsInterfaces(?string $implementsInterfaces): static
     {
         $this->implementsInterfaces = $implementsInterfaces;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getGenerateTypeDeclarations()
-    {
-        return (bool) $this->generateTypeDeclarations;
-    }
-
-    /**
-     * @param bool $generateTypeDeclarations
-     *
-     * @return $this
-     */
-    public function setGenerateTypeDeclarations($generateTypeDeclarations)
-    {
-        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
 
         return $this;
     }
@@ -291,7 +229,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      * @param Data $fieldDefinition
      * @param array $context
      *
-     * @return Data
+     * @return mixed
      */
-    abstract protected function doEnrichFieldDefinition($fieldDefinition, $context = []);
+    abstract protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data;
 }

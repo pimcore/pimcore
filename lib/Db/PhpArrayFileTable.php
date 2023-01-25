@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,32 +25,15 @@ use Pimcore\File;
  */
 final class PhpArrayFileTable
 {
-    /**
-     * @var array
-     */
-    protected static $tables = [];
+    protected static array $tables = [];
 
-    /**
-     * @var string
-     */
-    protected $filePath;
+    protected string $filePath;
 
-    /**
-     * @var array
-     */
-    protected $data = [];
+    protected array $data = [];
 
-    /**
-     * @var int
-     */
-    protected $lastInsertId;
+    protected int $lastInsertId;
 
-    /**
-     * @param string $filePath
-     *
-     * @return self
-     */
-    public static function get($filePath)
+    public static function get(string $filePath): PhpArrayFileTable
     {
         if (!isset(self::$tables[$filePath])) {
             self::$tables[$filePath] = new self($filePath);
@@ -61,19 +45,16 @@ final class PhpArrayFileTable
     /**
      * PhpArrayFileTable constructor.
      *
-     * @param string $filePath
+     * @param string|null $filePath
      */
-    public function __construct($filePath = null)
+    public function __construct(string $filePath = null)
     {
         if ($filePath) {
             $this->setFilePath($filePath);
         }
     }
 
-    /**
-     * @param string $filePath
-     */
-    public function setFilePath($filePath)
+    public function setFilePath(string $filePath): void
     {
         $this->filePath = $filePath;
         $this->load();
@@ -81,11 +62,11 @@ final class PhpArrayFileTable
 
     /**
      * @param array $data
-     * @param string|int $id
+     * @param int|string|null $id
      *
      * @throws \Exception
      */
-    public function insertOrUpdate($data, $id = null)
+    public function insertOrUpdate(array $data, int|string $id = null): void
     {
         if (!$id) {
             $id = $this->getNextId();
@@ -98,10 +79,7 @@ final class PhpArrayFileTable
         $this->lastInsertId = $id;
     }
 
-    /**
-     * @param string|int $id
-     */
-    public function delete($id)
+    public function delete(int|string $id): void
     {
         if (isset($this->data[$id])) {
             unset($this->data[$id]);
@@ -109,12 +87,7 @@ final class PhpArrayFileTable
         }
     }
 
-    /**
-     * @param string|int $id
-     *
-     * @return array|null
-     */
-    public function getById($id)
+    public function getById(int|string $id): ?array
     {
         if (isset($this->data[$id])) {
             return $this->data[$id];
@@ -129,7 +102,7 @@ final class PhpArrayFileTable
      *
      * @return array
      */
-    public function fetchAll($filter = null, $order = null)
+    public function fetchAll(callable $filter = null, callable $order = null): array
     {
         $data = $this->data;
 
@@ -151,10 +124,7 @@ final class PhpArrayFileTable
         return $data;
     }
 
-    /**
-     * @return int
-     */
-    public function getNextId()
+    public function getNextId(): int
     {
         $ids = array_keys($this->data);
         if (count($ids)) {
@@ -166,21 +136,18 @@ final class PhpArrayFileTable
         return 1;
     }
 
-    /**
-     * @return int
-     */
-    public function getLastInsertId()
+    public function getLastInsertId(): int
     {
         return $this->lastInsertId;
     }
 
-    public function truncate()
+    public function truncate(): void
     {
         $this->data = [];
         $this->save();
     }
 
-    protected function load()
+    protected function load(): void
     {
         if (file_exists($this->filePath)) {
             $this->data = include($this->filePath);
@@ -190,7 +157,7 @@ final class PhpArrayFileTable
         }
     }
 
-    protected function save()
+    protected function save(): void
     {
         $contents = to_php_data_file_format($this->data);
         File::putPhpFile($this->filePath, $contents);

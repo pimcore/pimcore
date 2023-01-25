@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,14 +24,8 @@ use Pimcore\Maintenance\TaskInterface;
  */
 class TmpStoreCleanupTask implements TaskInterface
 {
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @param Connection $db
-     */
     public function __construct(Connection $db)
     {
         $this->db = $db;
@@ -39,7 +34,7 @@ class TmpStoreCleanupTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $this->db->executeQuery('DELETE FROM tmp_store WHERE `expiryDate` < :time', ['time' => time()]);
     }

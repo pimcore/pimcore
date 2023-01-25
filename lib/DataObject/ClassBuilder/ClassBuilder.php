@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -77,7 +78,7 @@ class ClassBuilder implements ClassBuilderInterface
                     $classDefinition->getName()
                 ).'|null getBy'.ucfirst(
                     $fieldDefinition->getName()
-                ).'($field, $value, $locale = null, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
+                ).'(string $field, mixed $value, ?string $locale = null, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)'."\n";
 
                 foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldDefinition) {
                     $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
@@ -86,14 +87,14 @@ class ClassBuilder implements ClassBuilderInterface
                         $classDefinition->getName()
                     ).'|null getBy'.ucfirst(
                         $localizedFieldDefinition->getName()
-                    ).'($value, $locale = null, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
+                    ).'(mixed $value, ?string $locale = null, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)'."\n";
                 }
             } elseif ($fieldDefinition->isFilterable()) {
                 $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                     $classDefinition->getName()
                 ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                     $classDefinition->getName()
-                ).'|null getBy'.ucfirst($fieldDefinition->getName()).'($value, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
+                ).'|null getBy'.ucfirst($fieldDefinition->getName()).'(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)'."\n";
             }
         }
 
@@ -109,16 +110,17 @@ class ClassBuilder implements ClassBuilderInterface
         $useParts = [];
 
         $cd .= ClassDefinition\Service::buildUseTraitsCode($useParts, $classDefinition->getUseTraits());
+        $cd .= ClassDefinition\Service::buildFieldConstantsCode(...$classDefinition->getFieldDefinitions());
 
         $cd .= $this->propertiesBuilder->buildProperties($classDefinition);
         $cd .= "\n\n";
 
         $cd .= '/**'."\n";
         $cd .= '* @param array $values'."\n";
-        $cd .= '* @return \\Pimcore\\Model\\DataObject\\'.ucfirst($classDefinition->getName())."\n";
+        $cd .= '* @return static'."\n";
         $cd .= '*/'."\n";
-        $cd .= 'public static function create($values = array()) {';
-        $cd .= "\n";
+        $cd .= 'public static function create(array $values = []): static'."\n";
+        $cd .= "{\n";
         $cd .= "\t".'$object = new static();'."\n";
         $cd .= "\t".'$object->setValues($values);'."\n";
         $cd .= "\t".'return $object;'."\n";
@@ -126,10 +128,8 @@ class ClassBuilder implements ClassBuilderInterface
 
         $cd .= "\n\n";
 
-        if (is_array($classDefinition->getFieldDefinitions()) && count($classDefinition->getFieldDefinitions())) {
-            foreach ($classDefinition->getFieldDefinitions() as $def) {
-                $cd .= $this->fieldDefinitionBuilder->buildFieldDefinition($classDefinition, $def);
-            }
+        foreach ($classDefinition->getFieldDefinitions() as $def) {
+            $cd .= $this->fieldDefinitionBuilder->buildFieldDefinition($classDefinition, $def);
         }
 
         $cd .= "}\n";

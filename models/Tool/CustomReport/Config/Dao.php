@@ -24,7 +24,7 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    public function configure()
+    public function configure(): void
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
@@ -32,7 +32,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             'containerConfig' => $config['custom_report']['definitions'],
             'settingsStoreScope' => 'pimcore_custom_reports',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS'] ?? PIMCORE_CONFIGURATION_DIRECTORY  . '/custom-reports',
-            'legacyConfigFile' => 'custom-reports.php',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_CUSTOM_REPORTS',
         ]);
     }
@@ -42,7 +41,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByName($id = null)
+    public function getByName(string $id = null): void
     {
         if ($id != null) {
             $this->model->setName($id);
@@ -68,7 +67,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -93,7 +92,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleteData($this->model->getName());
     }
@@ -101,7 +100,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [

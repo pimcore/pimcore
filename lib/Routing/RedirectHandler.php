@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -45,37 +46,19 @@ final class RedirectHandler implements LoggerAwareInterface
 
     const RESPONSE_HEADER_NAME_ID = 'X-Pimcore-Redirect-ID';
 
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
+
+    private SiteResolver $siteResolver;
 
     /**
-     * @var SiteResolver
+     * @var Redirect[]|null
      */
-    private $siteResolver;
+    private ?array $redirects = null;
 
-    /**
-     * @var Redirect[]
-     */
-    private $redirects;
+    private Config $config;
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private ?LockInterface $lock = null;
 
-    /**
-     * @var null|LockInterface
-     */
-    private $lock = null;
-
-    /**
-     * @param RequestHelper $requestHelper
-     * @param SiteResolver $siteResolver
-     * @param Config $config
-     * @param LockFactory $lockFactory
-     */
     public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config, LockFactory $lockFactory)
     {
         $this->requestHelper = $requestHelper;
@@ -93,7 +76,7 @@ final class RedirectHandler implements LoggerAwareInterface
      *
      * @throws \Exception
      */
-    public function checkForRedirect(Request $request, $override = false, $sourceSite = null)
+    public function checkForRedirect(Request $request, bool $override = false, Site $sourceSite = null): ?RedirectResponse
     {
         // not for admin requests
         if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
@@ -122,13 +105,6 @@ final class RedirectHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param Redirect $redirect
-     * @param Request $request
-     * @param RedirectUrlPartResolver $partResolver
-     * @param Site|null $sourceSite
-     *
-     * @return RedirectResponse|null
-     *
      * @throws \Exception
      */
     private function matchRegexRedirect(
@@ -136,7 +112,7 @@ final class RedirectHandler implements LoggerAwareInterface
         Request $request,
         RedirectUrlPartResolver $partResolver,
         Site $sourceSite = null
-    ) {
+    ): ?RedirectResponse {
         if (empty($redirect->getType())) {
             return null;
         }
@@ -175,7 +151,7 @@ final class RedirectHandler implements LoggerAwareInterface
      *
      * @throws \Exception
      */
-    protected function buildRedirectResponse(Redirect $redirect, Request $request, $matches = [])
+    protected function buildRedirectResponse(Redirect $redirect, Request $request, array $matches = []): ?RedirectResponse
     {
         $this->dispatchEvent(new RedirectEvent($redirect), RedirectEvents::PRE_BUILD);
         $target = $redirect->getTarget();
@@ -259,19 +235,23 @@ final class RedirectHandler implements LoggerAwareInterface
     /**
      * @return Redirect[]
      */
-    private function getRegexRedirects()
+    private function getRegexRedirects(): array
     {
-        if (null !== $this->redirects && is_array($this->redirects)) {
+        if (is_array($this->redirects)) {
             return $this->redirects;
         }
 
         $cacheKey = 'system_route_redirect';
-        if (($this->redirects = Cache::load($cacheKey)) === false) {
+        $valueFromCache = Cache::load($cacheKey);
+        $this->redirects = $valueFromCache === false ? null : $valueFromCache;
+        if (!isset($this->redirects)) {
             // acquire lock to avoid concurrent redirect cache warm-up
             $this->lock->acquire(true);
 
             //check again if redirects are cached to avoid re-warming cache
-            if (($this->redirects = Cache::load($cacheKey)) === false) {
+            $valueFromCache = Cache::load($cacheKey);
+            $this->redirects = $valueFromCache === false ? null : $valueFromCache;
+            if (!isset($this->redirects)) {
                 try {
                     $list = new Redirect\Listing();
                     $list->setCondition('active = 1 AND regex = 1');
@@ -301,11 +281,9 @@ final class RedirectHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param bool $override
-     *
      * @return Redirect[]
      */
-    private function getRegexFilteredRedirects($override = false)
+    private function getRegexFilteredRedirects(bool $override = false): array
     {
         $now = time();
 

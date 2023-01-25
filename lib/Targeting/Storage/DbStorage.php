@@ -29,15 +29,9 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
 {
     use TimestampsTrait;
 
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @var string
-     */
-    private $tableName = 'targeting_storage';
+    private string $tableName = 'targeting_storage';
 
     public function __construct(Connection $db, array $options = [])
     {
@@ -49,12 +43,12 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         $this->handleOptions($resolver->resolve($options));
     }
 
-    protected function handleOptions(array $options)
+    protected function handleOptions(array $options): void
     {
         $this->tableName = $options['tableName'];
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'tableName' => 'targeting_storage',
@@ -64,9 +58,6 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         $resolver->setAllowedTypes('tableName', 'string');
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function all(VisitorInfo $visitorInfo, string $scope): array
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -89,7 +80,7 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
 
         $this->addExpiryParam($qb, $scope);
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery();
         $data = [];
 
         if ($stmt instanceof Result) {
@@ -101,9 +92,6 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         return $data;
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -126,7 +114,7 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
 
         $this->addExpiryParam($qb, $scope);
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery();
         $result = 0;
 
         if ($stmt instanceof Result) {
@@ -136,10 +124,7 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         return 1 === $result;
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value): void
     {
         if (!$visitorInfo->hasVisitorId()) {
             return;
@@ -172,7 +157,7 @@ EOF;
     /**
      * {@inheritdoc}
      */
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed
     {
         if (!$visitorInfo->hasVisitorId()) {
             return $default;
@@ -194,7 +179,7 @@ EOF;
 
         $this->addExpiryParam($qb, $scope);
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery();
         $result = false;
 
         if ($stmt instanceof Result) {
@@ -216,7 +201,7 @@ EOF;
     /**
      * {@inheritdoc }
      */
-    public function clear(VisitorInfo $visitorInfo, string $scope = null)
+    public function clear(VisitorInfo $visitorInfo, string $scope = null): void
     {
         if (!$visitorInfo->hasVisitorId()) {
             return;
@@ -240,10 +225,7 @@ EOF;
         }
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): void
     {
         // only allow migration if a visitor ID is available as otherwise the fallback
         // would clear the original storage although data was not stored
@@ -277,18 +259,12 @@ EOF;
         }
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         return $this->loadDate($visitorInfo, $scope, 'MIN(creationDate)');
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         return $this->loadDate($visitorInfo, $scope, 'MAX(modificationDate)');
     }
@@ -296,7 +272,7 @@ EOF;
     /**
      * {@inheritdoc }
      */
-    public function maintenance()
+    public function maintenance(): void
     {
         // clean up expired keys scopes with an expiration
         foreach (self::VALID_SCOPES as $scope) {
@@ -308,7 +284,7 @@ EOF;
         }
     }
 
-    private function loadDate(VisitorInfo $visitorInfo, string $scope, string $select)
+    private function loadDate(VisitorInfo $visitorInfo, string $scope, string $select): ?\DateTimeImmutable
     {
         if (!$visitorInfo->hasVisitorId()) {
             return null;
@@ -328,7 +304,7 @@ EOF;
 
         $this->addExpiryParam($qb, $scope);
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery();
 
         if ($stmt instanceof Result) {
             return $this->convertToDateTime($stmt->fetchOne());
@@ -337,7 +313,7 @@ EOF;
         return null;
     }
 
-    private function convertToDateTime($result = null)
+    private function convertToDateTime(mixed $result = null): ?\DateTimeImmutable
     {
         if (!$result) {
             return null;
@@ -353,7 +329,7 @@ EOF;
         string $scope,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    ) {
+    ): void {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         $query = <<<EOF
@@ -392,7 +368,7 @@ EOF;
         return $expiry;
     }
 
-    private function addExpiryParam(QueryBuilder $qb, string $scope)
+    private function addExpiryParam(QueryBuilder $qb, string $scope): void
     {
         $expiry = $this->expiryFor($scope);
         if (0 === $expiry) {
@@ -403,7 +379,7 @@ EOF;
         $qb->setParameter('expiry', $expiry);
     }
 
-    private function cleanup(string $scope)
+    private function cleanup(string $scope): void
     {
         $expiry = $this->expiryFor($scope);
         if (0 === $expiry) {

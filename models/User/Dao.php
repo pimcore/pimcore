@@ -25,7 +25,7 @@ class Dao extends UserRole\Dao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         parent::delete();
 
@@ -42,8 +42,8 @@ class Dao extends UserRole\Dao
         $this->db->update('documents', ['userModification' => null], ['userModification' => $userId]);
 
         // objects
-        $this->db->update('objects', ['o_userOwner' => null], ['o_userOwner' => $userId]);
-        $this->db->update('objects', ['o_userModification' => null], ['o_userModification' => $userId]);
+        $this->db->update('objects', ['userOwner' => null], ['userOwner' => $userId]);
+        $this->db->update('objects', ['userModification' => null], ['userModification' => $userId]);
 
         // versions
         $this->db->update('versions', ['userId' => null], ['userId' => $userId]);

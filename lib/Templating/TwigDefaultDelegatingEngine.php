@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,6 +20,7 @@ use Pimcore\Config;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 use Symfony\Component\Templating\EngineInterface;
+use Symfony\Component\Templating\TemplateReferenceInterface;
 use Twig\Environment;
 use Twig\Extension\SandboxExtension;
 
@@ -27,10 +29,7 @@ use Twig\Extension\SandboxExtension;
  */
 class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 {
-    /**
-     * @var bool
-     */
-    protected $delegate = false;
+    protected bool $delegate = false;
 
     /**
      * @param EngineInterface[] $engines
@@ -43,7 +42,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     /**
      * {@inheritdoc}
      */
-    public function exists($name): bool
+    public function exists(string|TemplateReferenceInterface $name): bool
     {
         if (!$this->delegate) {
             return $this->twig->getLoader()->exists($name);
@@ -57,7 +56,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
      *
      * @throws \Exception
      */
-    public function render($name, array $parameters = []): string
+    public function render(string|TemplateReferenceInterface $name, array $parameters = []): string
     {
         if (!$this->delegate) {
             return $this->twig->render($name, $parameters);
@@ -69,7 +68,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     /**
      * {@inheritdoc}
      */
-    public function supports($name): bool
+    public function supports(string|TemplateReferenceInterface $name): bool
     {
         if (!$this->delegate) {
             return true;
@@ -78,10 +77,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
         }
     }
 
-    /**
-     * @param bool $delegate
-     */
-    public function setDelegate(bool $delegate)
+    public function setDelegate(bool $delegate): void
     {
         $this->delegate = $delegate;
     }
@@ -89,7 +85,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     /**
      * @return bool $delegate
      */
-    public function isDelegate()
+    public function isDelegate(): bool
     {
         return $this->delegate;
     }
@@ -121,7 +117,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
      *
      * @throws \Exception
      */
-    public function renderResponse($view, array $parameters = [], Response $response = null)
+    public function renderResponse(string $view, array $parameters = [], Response $response = null): Response
     {
         if (null === $response) {
             $response = new Response();

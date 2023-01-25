@@ -27,10 +27,7 @@ class AssignTargetGroup implements ActionHandlerInterface
 {
     const STORAGE_KEY = 'tg';
 
-    /**
-     * @var TargetingStorageInterface
-     */
-    private $storage;
+    private TargetingStorageInterface $storage;
 
     // @phpstan-ignore-next-line
     public function __construct(
@@ -40,7 +37,7 @@ class AssignTargetGroup implements ActionHandlerInterface
         $this->storage = $storage;
     }
 
-    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
+    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null): void
     {
         $targetGroupId = $action['targetGroup'] ?? null;
         if (!$targetGroupId) {
@@ -70,7 +67,7 @@ class AssignTargetGroup implements ActionHandlerInterface
         $this->assignToVisitor($visitorInfo, $targetGroup, $count);
     }
 
-    public function reset(VisitorInfo $visitorInfo)
+    public function reset(VisitorInfo $visitorInfo): void
     {
         $success = $this->deleteAssignments($visitorInfo);
     }
@@ -80,7 +77,7 @@ class AssignTargetGroup implements ActionHandlerInterface
      *
      * @param VisitorInfo $visitorInfo
      */
-    public function loadStoredAssignments(VisitorInfo $visitorInfo)
+    public function loadStoredAssignments(VisitorInfo $visitorInfo): void
     {
         $data = $this->storage->get(
             $visitorInfo,
@@ -139,7 +136,7 @@ class AssignTargetGroup implements ActionHandlerInterface
         return true;
     }
 
-    protected function assignToVisitor(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $count)
+    protected function assignToVisitor(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $count): void
     {
         $threshold = (int)$targetGroup->getThreshold();
 

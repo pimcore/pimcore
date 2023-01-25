@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,7 @@
 
 namespace Pimcore\Log;
 
+use Monolog\Level;
 use Monolog\Logger;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Model\Element\ElementInterface;
@@ -24,43 +26,19 @@ use Psr\Log\LoggerInterface;
 
 class ApplicationLogger implements LoggerInterface
 {
-    /**
-     * @var string|null
-     */
-    protected $component;
+    protected ?string $component = null;
 
-    /**
-     * @var \Pimcore\Log\FileObject|string|null
-     */
-    protected $fileObject;
+    protected string|null|FileObject $fileObject = null;
 
-    /**
-     * @var \Pimcore\Model\DataObject\AbstractObject|\Pimcore\Model\Document|\Pimcore\Model\Asset|int|null
-     */
-    protected $relatedObject;
+    protected \Pimcore\Model\DataObject\AbstractObject|\Pimcore\Model\Document|int|\Pimcore\Model\Asset|null $relatedObject = null;
 
-    /**
-     * @var string
-     */
-    protected $relatedObjectType = 'object';
+    protected string $relatedObjectType = 'object';
 
-    /**
-     * @var array
-     */
-    protected $loggers = [];
+    protected array $loggers = [];
 
-    /**
-     * @var array
-     */
-    protected static $instances = [];
+    protected static array $instances = [];
 
-    /**
-     * @param string $component
-     * @param bool $initDbHandler
-     *
-     * @return ApplicationLogger
-     */
-    public static function getInstance($component = 'default', $initDbHandler = false)
+    public static function getInstance(string $component = 'default', bool $initDbHandler = false): ApplicationLogger
     {
         $container = \Pimcore::getContainer();
         $containerId = 'pimcore.app_logger.' . $component;
@@ -81,15 +59,12 @@ class ApplicationLogger implements LoggerInterface
         return $logger;
     }
 
-    /**
-     * @param object $writer
-     */
-    public function addWriter($writer)
+    public function addWriter(object $writer): void
     {
         if ($writer instanceof \Monolog\Handler\HandlerInterface) {
             if (!isset($this->loggers['default-monolog'])) {
                 // auto init Monolog logger
-                $this->loggers['default-monolog'] = new \Monolog\Logger('app');
+                $this->loggers['default-monolog'] = new Logger('app');
             }
             $this->loggers['default-monolog']->pushHandler($writer);
         } elseif ($writer instanceof \Psr\Log\LoggerInterface) {
@@ -97,30 +72,28 @@ class ApplicationLogger implements LoggerInterface
         }
     }
 
-    /**
-     * @param string $component
-     */
-    public function setComponent($component)
+    public function setComponent(string $component): void
     {
         $this->component = $component;
     }
 
     /**
+     * @param \Pimcore\Log\FileObject|string $fileObject
+     *
      * @deprecated
      *
-     * @param \Pimcore\Log\FileObject|string $fileObject
      */
-    public function setFileObject($fileObject)
+    public function setFileObject(FileObject|string $fileObject): void
     {
         $this->fileObject = $fileObject;
     }
 
     /**
-     * @deprecated
+     * @param \Pimcore\Model\Asset|int|\Pimcore\Model\Document|\Pimcore\Model\DataObject\AbstractObject $relatedObject
      *
-     * @param \Pimcore\Model\DataObject\AbstractObject|\Pimcore\Model\Document|\Pimcore\Model\Asset|int $relatedObject
+     * @deprecated
      */
-    public function setRelatedObject($relatedObject)
+    public function setRelatedObject(\Pimcore\Model\Asset|int|\Pimcore\Model\Document|\Pimcore\Model\DataObject\AbstractObject $relatedObject): void
     {
         $this->relatedObject = $relatedObject;
 
@@ -140,9 +113,9 @@ class ApplicationLogger implements LoggerInterface
      *
      * @return void
      */
-    public function log($level, $message, array $context = [])// : void
+    public function log($level, $message, array $context = []): void
     {
-        if (!isset($context['component']) || is_null($context['component'])) {
+        if (!isset($context['component'])) {
             $context['component'] = $this->component;
         }
 
@@ -194,7 +167,7 @@ class ApplicationLogger implements LoggerInterface
      *
      * @return string
      */
-    protected function resolveLoggingSource()
+    protected function resolveLoggingSource(): string
     {
         $validMethods = [
             'log', 'logException', 'emergency', 'critical', 'error',
@@ -261,7 +234,7 @@ class ApplicationLogger implements LoggerInterface
      *
      * @return void
      */
-    public function emergency($message, array $context = [])// : void
+    public function emergency($message, array $context = []): void
     {
         $this->handleLog('emergency', $message, func_get_args());
     }
@@ -271,7 +244,7 @@ class ApplicationLogger implements LoggerInterface
      *
      * @return void
      */
-    public function critical($message, array $context = [])// : void
+    public function critical($message, array $context = []): void
     {
         $this->handleLog('critical', $message, func_get_args());
     }
@@ -281,7 +254,7 @@ class ApplicationLogger implements LoggerInterface
      *
      * @return void
      */
-    public function error($message, array $context = [])// : void
+    public function error($message, array $context = []): void
     {
         $this->handleLog('error', $message, func_get_args());
     }
@@ -291,7 +264,7 @@ class ApplicationLogger implements LoggerInterface
      *
      * @return void
      */
-    public function alert($message, array $context = [])// : void
+    public function alert($message, array $context = []): void
     {
         $this->handleLog('alert', $message, func_get_args());
     }
@@ -301,7 +274,7 @@ class ApplicationLogger implements LoggerInterface
      *
      * @return void
      */
-    public function warning($message, array $context = [])// : void
+    public function warning($message, array $context = []): void
     {
         $this->handleLog('warning', $message, func_get_args());
     }
@@ -311,7 +284,7 @@ class ApplicationLogger implements LoggerInterface
      *
      * @return void
      */
-    public function notice($message, array $context = [])// : void
+    public function notice($message, array $context = []): void
     {
         $this->handleLog('notice', $message, func_get_args());
     }
@@ -321,7 +294,7 @@ class ApplicationLogger implements LoggerInterface
      *
      * @return void
      */
-    public function info($message, array $context = [])// : void
+    public function info($message, array $context = []): void
     {
         $this->handleLog('info', $message, func_get_args());
     }
@@ -331,17 +304,12 @@ class ApplicationLogger implements LoggerInterface
      *
      * @return void
      */
-    public function debug($message, array $context = [])// : void
+    public function debug($message, array $context = []): void
     {
         $this->handleLog('debug', $message, func_get_args());
     }
 
-    /**
-     * @param mixed $level
-     * @param string $message
-     * @param array $params
-     */
-    protected function handleLog($level, $message, $params)
+    protected function handleLog(mixed $level, string $message, array $params): void
     {
         $context = [];
 
@@ -376,7 +344,7 @@ class ApplicationLogger implements LoggerInterface
      * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
      * @param string|null $component
      */
-    public function logException($message, $exceptionObject, $priority = 'alert', $relatedObject = null, $component = null)
+    public function logException(string $message, \Throwable $exceptionObject, ?string $priority = 'alert', \Pimcore\Model\DataObject\AbstractObject $relatedObject = null, string $component = null): void
     {
         if (is_null($priority)) {
             $priority = 'alert';
@@ -396,22 +364,15 @@ class ApplicationLogger implements LoggerInterface
     /**
      * Logs a throwable to a given logger. This can be used to format an exception in the same format
      * as the logException method to any PSR/monolog logger (e.g. when consumed via DI)
-     *
-     * @param LoggerInterface $logger
-     * @param string $message
-     * @param \Throwable $exception
-     * @param mixed $level
-     * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
-     * @param array $context
      */
     public static function logExceptionObject(
         LoggerInterface $logger,
         string $message,
         \Throwable $exception,
-        $level = Logger::ALERT,
-        $relatedObject = null,
+        int|string|Level $level = Level::Alert,
+        \Pimcore\Model\DataObject\AbstractObject $relatedObject = null,
         array $context = []
-    ) {
+    ): void {
         $message .= ' : ' . $exception->getMessage();
 
         $fileObject = self::createExceptionFileObject($exception);
@@ -442,12 +403,7 @@ class ApplicationLogger implements LoggerInterface
         return implode("\n", $data);
     }
 
-    /**
-     * @param \Throwable $exceptionObject
-     *
-     * @return FileObject
-     */
-    private static function createExceptionFileObject(\Throwable $exceptionObject)
+    private static function createExceptionFileObject(\Throwable $exceptionObject): FileObject
     {
         $data = self::exceptionToString($exceptionObject, true, true);
 

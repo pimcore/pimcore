@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,8 @@
 
 namespace Pimcore\Translation\ImporterService\Importer;
 
+use Pimcore\Event\Model\TranslationXliffEvent;
+use Pimcore\Event\TranslationEvents;
 use Pimcore\Model\Element;
 use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\AttributeSet\AttributeSet;
@@ -24,10 +27,15 @@ class AbstractElementImporter implements ImporterInterface
     /**
      * {@inheritdoc}
      */
-    public function import(AttributeSet $attributeSet, bool $saveElement = true)
+    public function import(AttributeSet $attributeSet, bool $saveElement = true): void
     {
         $translationItem = $attributeSet->getTranslationItem();
         $element = $translationItem->getElement();
+
+        $event = new TranslationXliffEvent($attributeSet);
+        \Pimcore::getEventDispatcher()->dispatch($event, TranslationEvents::XLIFF_ATTRIBUTE_SET_IMPORT);
+
+        $attributeSet = $event->getAttributeSet();
 
         if (!$element instanceof Element\ElementInterface || $attributeSet->isEmpty()) {
             return;
@@ -44,13 +52,9 @@ class AbstractElementImporter implements ImporterInterface
     }
 
     /**
-     * @param Element\ElementInterface $element
-     * @param string $targetLanguage
-     * @param Attribute $attribute
-     *
      * @throws \Exception
      */
-    protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute)
+    protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute): void
     {
         if ($attribute->getType() === Attribute::TYPE_PROPERTY) {
             $property = $element->getProperty($attribute->getName(), true);
@@ -63,11 +67,9 @@ class AbstractElementImporter implements ImporterInterface
     }
 
     /**
-     * @param Element\ElementInterface $element
-     *
      * @throws \Exception
      */
-    protected function saveElement(Element\ElementInterface $element)
+    protected function saveElement(Element\ElementInterface $element): void
     {
         try {
             $element->save();

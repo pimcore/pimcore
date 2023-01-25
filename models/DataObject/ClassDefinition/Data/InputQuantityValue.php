@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\InputQuantityValue as InputQuantityValueDataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 
@@ -36,7 +38,7 @@ class InputQuantityValue extends QuantityValue
      *
      * @var string
      */
-    public $fieldtype = 'inputQuantityValue';
+    public string $fieldtype = 'inputQuantityValue';
 
     /**
      * Type for the column to query
@@ -62,14 +64,7 @@ class InputQuantityValue extends QuantityValue
         'unit' => 'varchar(50)',
     ];
 
-    /**
-     * @param array $data
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return InputQuantityValueDataObject|null
-     */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?InputQuantityValueDataObject
     {
         if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {
             $dataObject = $this->getNewDataObject($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
@@ -86,21 +81,15 @@ class InputQuantityValue extends QuantityValue
         return null;
     }
 
-    /**
-     * @param array $data
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return InputQuantityValueDataObject|null
-     */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?InputQuantityValueDataObject
     {
-        if ($data['value'] || $data['unit']) {
-            if (empty($data['unit']) || $data['unit'] == -1) {
-                return $this->getNewDataObject($data['value'], null);
-            }
+        if (is_array($data)) {
+            $dataValue = $data['value'] === null || $data['value'] === '' ? null : $data['value'];
+            $dataUnit = $data['unit'] === null || $data['unit'] == -1 ? null : $data['unit'];
 
-            return $this->getNewDataObject($data['value'], $data['unit']);
+            if ($dataValue || $dataUnit) {
+                return $this->getNewDataObject($dataValue, $dataUnit);
+            }
         }
 
         return null;
@@ -109,7 +98,7 @@ class InputQuantityValue extends QuantityValue
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($omitMandatoryCheck) {
             return;
@@ -121,53 +110,32 @@ class InputQuantityValue extends QuantityValue
         }
     }
 
-    /**
-     * @param string|null $value
-     * @param Unit|string|null $unitId
-     *
-     * @return InputQuantityValueDataObject
-     */
-    private function getNewDataObject($value = null, $unitId = null)
+    private function getNewDataObject(string $value = null, Unit|string $unitId = null): InputQuantityValueDataObject
     {
         return new InputQuantityValueDataObject($value, $unitId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof Model\DataObject\Data\InputQuantityValue) {
             return [
@@ -175,12 +143,11 @@ class InputQuantityValue extends QuantityValue
                 'unitId' => $value->getUnitId(),
             ];
         }
+
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?InputQuantityValueDataObject
     {
         if (is_array($value)) {
             return new Model\DataObject\Data\InputQuantityValue($value['value'], $value['unitId']);

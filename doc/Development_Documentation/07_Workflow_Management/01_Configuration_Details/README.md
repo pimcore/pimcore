@@ -265,7 +265,10 @@ pimcore:
                                 mailPath:             '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig'
 
                         # Change published state of element while transition (only available for documents and data objects).
-                        changePublishedState: no_change # One of "no_change"; "force_unpublished"; "force_published", "save_version" (since Pimcore 6.6.0)
+                        changePublishedState: no_change # One of "no_change", "force_unpublished", "force_published", "save_version"
+                        
+                        # behaviour when transition gets applied but there are unsaved changes
+                        unsavedChangesBehaviour: warn # One of "warn", "save", "ignore"
 
             # Actions which will be added to actions button independently of the current workflow place.
             globalActions:

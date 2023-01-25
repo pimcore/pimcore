@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ class Tree extends DAV\Tree
      * @param string $sourcePath
      * @param string $destinationPath
      */
-    public function move($sourcePath, $destinationPath)
+    public function move($sourcePath, $destinationPath): void
     {
         $nameParts = explode('/', $sourcePath);
         $nameParts[count($nameParts) - 1] = Element\Service::getValidKey($nameParts[count($nameParts) - 1], 'asset');

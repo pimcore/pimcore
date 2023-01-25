@@ -40,12 +40,6 @@ final class Factory extends ImplementationLoader implements FactoryInterface
         return $map;
     }
 
-    /**
-     * @param string $name
-     * @param array $params
-     *
-     * @return AbstractModel
-     */
     public function build(string $name, array $params = []): AbstractModel
     {
         return parent::build($name, $params);

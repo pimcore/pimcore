@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,35 +28,24 @@ use Pimcore\Web2Print\Exception\CancelException;
 use Pimcore\Web2Print\Exception\NotPreparedException;
 use Pimcore\Web2Print\Processor\HeadlessChrome;
 use Pimcore\Web2Print\Processor\PdfReactor;
-use Pimcore\Web2Print\Processor\WkHtmlToPdf;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Twig\Sandbox\SecurityError;
 
 abstract class Processor
 {
-    /**
-     * @var LockInterface|null
-     */
-    private static $lock = null;
+    private static ?LockInterface $lock = null;
 
-    /**
-     * @return Processor
-     *
-     * @throws \Exception
-     */
-    public static function getInstance()
+    public static function getInstance(): PdfReactor|Processor|HeadlessChrome
     {
         $config = Config::getWeb2PrintConfig();
 
-        if ($config->get('generalTool') === 'pdfreactor') {
+        if ($config['generalTool'] === 'pdfreactor') {
             return new PdfReactor();
-        } elseif ($config->get('generalTool') === 'wkhtmltopdf') {
-            return new WkHtmlToPdf();
-        } elseif ($config->get('generalTool') === 'headlesschrome') {
+        } elseif ($config['generalTool'] === 'headlesschrome') {
             return new HeadlessChrome();
         } else {
-            throw new \Exception('Invalid Configuration - ' . $config->get('generalTool'));
+            throw new \Exception('Invalid Configuration - ' . $config['generalTool']);
         }
     }
 
@@ -67,7 +57,7 @@ abstract class Processor
      *
      * @throws \Exception
      */
-    public function preparePdfGeneration($documentId, $config)
+    public function preparePdfGeneration(int $documentId, array $config): bool
     {
         $document = $this->getPrintDocument($documentId);
         if (Model\Tool\TmpStore::get($document->getLockKey())) {
@@ -103,7 +93,7 @@ abstract class Processor
      * @throws Model\Element\ValidationException
      * @throws NotPreparedException
      */
-    public function startPdfGeneration($documentId)
+    public function startPdfGeneration(int $documentId): ?string
     {
         $jobConfigFile = $this->loadJobConfigObject($documentId);
         if (!$jobConfigFile) {
@@ -161,26 +151,16 @@ abstract class Processor
      *
      * @throws \Exception
      */
-    abstract protected function buildPdf(Document\PrintAbstract $document, $config);
+    abstract protected function buildPdf(Document\PrintAbstract $document, object $config): string;
 
-    /**
-     * @param \stdClass $jobConfig
-     *
-     * @return bool
-     */
-    protected function saveJobConfigObjectFile($jobConfig)
+    protected function saveJobConfigObjectFile(\stdClass $jobConfig): bool
     {
         file_put_contents(static::getJobConfigFile($jobConfig->documentId), json_encode($jobConfig));
 
         return true;
     }
 
-    /**
-     * @param int $documentId
-     *
-     * @return \stdClass|null
-     */
-    protected function loadJobConfigObject($documentId)
+    protected function loadJobConfigObject(int $documentId): ?\stdClass
     {
         $file = static::getJobConfigFile($documentId);
         if (file_exists($file)) {
@@ -197,7 +177,7 @@ abstract class Processor
      *
      * @throws \Exception
      */
-    protected function getPrintDocument($documentId)
+    protected function getPrintDocument(int $documentId): Document\PrintAbstract
     {
         $document = Document\PrintAbstract::getById($documentId);
         if (empty($document)) {
@@ -207,20 +187,12 @@ abstract class Processor
         return $document;
     }
 
-    /**
-     * @param int $processId
-     *
-     * @return string
-     */
-    public static function getJobConfigFile($processId)
+    public static function getJobConfigFile(int $processId): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'pdf-creation-job-' . $processId . '.json';
     }
 
-    /**
-     * @return array
-     */
-    abstract public function getProcessingOptions();
+    abstract public function getProcessingOptions(): array;
 
     /**
      * @param int $documentId
@@ -229,7 +201,7 @@ abstract class Processor
      *
      * @throws CancelException
      */
-    protected function updateStatus($documentId, $status, $statusUpdate)
+    protected function updateStatus(int $documentId, int $status, string $statusUpdate): void
     {
         $jobConfig = $this->loadJobConfigObject($documentId);
         if (!$jobConfig) {
@@ -240,12 +212,7 @@ abstract class Processor
         $this->saveJobConfigObjectFile($jobConfig);
     }
 
-    /**
-     * @param int $documentId
-     *
-     * @return array|null
-     */
-    public function getStatusUpdate($documentId)
+    public function getStatusUpdate(int $documentId): ?array
     {
         $jobConfig = $this->loadJobConfigObject($documentId);
         if ($jobConfig) {
@@ -263,7 +230,7 @@ abstract class Processor
      *
      * @throws \Exception
      */
-    public function cancelGeneration($documentId)
+    public function cancelGeneration(int $documentId): void
     {
         $document = Document\PrintAbstract::getById($documentId);
         if (empty($document)) {
@@ -283,7 +250,7 @@ abstract class Processor
      *
      * @throws \Exception
      */
-    protected function processHtml($html, $params)
+    protected function processHtml(string $html, array $params): string
     {
         $document = $params['document'] ?? null;
         $hostUrl = $params['hostUrl'] ?? null;
@@ -305,11 +272,6 @@ abstract class Processor
         return Mail::setAbsolutePaths($html, $document, $hostUrl);
     }
 
-    /**
-     * @param Document\PrintAbstract $document
-     *
-     * @return LockInterface
-     */
     protected function getLock(Document\PrintAbstract $document): LockInterface
     {
         if (!self::$lock) {
@@ -328,5 +290,5 @@ abstract class Processor
      *
      * @return string
      */
-    abstract public function getPdfFromString($html, $params = [], $returnFilePath = false);
+    abstract public function getPdfFromString(string $html, array $params = [], bool $returnFilePath = false): string;
 }

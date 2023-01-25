@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,9 +17,9 @@
 namespace Pimcore\Model\Staticroute;
 
 use Pimcore\Model;
+use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\CallableFilterListingInterface;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
-use Pimcore\Model\Listing\JsonListing;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
 use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
@@ -26,7 +27,7 @@ use Pimcore\Model\Listing\Traits\OrderListingTrait;
  * @method \Pimcore\Model\Staticroute\Listing\Dao getDao()
  * @method int getTotalCount()
  */
-class Listing extends JsonListing implements CallableFilterListingInterface, CallableOrderListingInterface
+class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
     use FilterListingTrait;
     use OrderListingTrait;
@@ -34,12 +35,12 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
     /**
      * @var \Pimcore\Model\Staticroute[]|null
      */
-    protected $routes = null;
+    protected ?array $routes = null;
 
     /**
      * @return \Pimcore\Model\Staticroute[]
      */
-    public function getRoutes()
+    public function getRoutes(): array
     {
         if ($this->routes === null) {
             $this->getDao()->loadList();
@@ -53,7 +54,7 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
      *
      * @return $this
      */
-    public function setRoutes($routes)
+    public function setRoutes(?array $routes): static
     {
         $this->routes = $routes;
 
@@ -63,7 +64,7 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
     /**
      * @return Model\Staticroute[]
      */
-    public function load()
+    public function load(): array
     {
         return $this->getRoutes();
     }

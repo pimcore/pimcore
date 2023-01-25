@@ -17,16 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Cache;
 
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Part\TextPart;
 
 class MailTest extends TestCase
 {
-    /**
-     * @var array
-     */
-    private $defaultSettings = [
+    private array $defaultSettings = [
         'from' => 'jane@doe.com',
         'to' => 'john@doe.com',
         'cc' => 'john-cc@doe.com',

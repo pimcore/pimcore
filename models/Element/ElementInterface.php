@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,134 +23,64 @@ use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
 
-/**
- * @method static setParent(?ElementInterface $parent)
- */
 interface ElementInterface extends ModelInterface
 {
-    /**
-     * @return int|null
-     */
-    public function getId();
+    public function getId(): ?int;
 
-    /**
-     * @return string|null
-     */
-    public function getKey();
+    public function getKey(): ?string;
 
-    /**
-     * @param string $key
-     *
-     * @return $this
-     */
-    public function setKey($key);
+    public function setKey(string $key): static;
 
-    /**
-     * @return string|null
-     */
-    public function getPath();
+    public function getPath(): ?string;
 
-    /**
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function setPath($path);
+    public function setPath(string $path): static;
 
-    /**
-     * @return string
-     */
-    public function getRealPath();
+    public function getRealPath(): ?string;
 
-    /**
-     * @return string
-     */
-    public function getFullPath();
+    public function getFullPath(): string;
 
-    /**
-     * @return string
-     */
-    public function getRealFullPath();
+    public function getRealFullPath(): string;
 
-    /**
-     * @return string
-     */
-    public function getType();
+    public function getType(): string;
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate();
+    public function setType(string $type): static;
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate);
+    public function getCreationDate(): ?int;
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate();
+    public function setCreationDate(int $creationDate): static;
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate);
+    public function getModificationDate(): ?int;
 
-    /**
-     * @return int|null
-     */
-    public function getUserOwner();
+    public function setModificationDate(int $modificationDate): static;
 
-    /**
-     * @param int $userOwner
-     *
-     * @return $this
-     */
-    public function setUserOwner($userOwner);
+    public function getUserOwner(): ?int;
 
-    /**
-     * @return int|null
-     */
-    public function getUserModification();
+    public function setUserOwner(int $userOwner): static;
 
-    /**
-     * @param int $userModification
-     *
-     * @return $this
-     */
-    public function setUserModification($userModification);
+    public function getUserModification(): ?int;
 
-    /**
-     *
-     * @param int $id
-     *
-     * @return static|null
-     */
-    public static function getById($id);
+    public function setUserModification(int $userModification): static;
+
+    public static function getById(int $id): ?static;
 
     /**
      * get possible types
      *
      * @return array
      */
-    public static function getTypes();
+    public static function getTypes(): array;
 
     /**
      * @return Property[]
      */
-    public function getProperties();
+    public function getProperties(): array;
 
     /**
      * @param Property[]|null $properties
      *
      * @return $this
      */
-    public function setProperties(?array $properties);
+    public function setProperties(?array $properties): static;
 
     /**
      * Get specific property data or the property object itself ($asContainer=true) by its name, if the
@@ -160,32 +91,18 @@ interface ElementInterface extends ModelInterface
      *
      * @return mixed
      */
-    public function getProperty($name, $asContainer = false);
+    public function getProperty(string $name, bool $asContainer = false): mixed;
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     * @param bool $inherited
-     * @param bool $inheritable
-     *
-     * @return $this
-     */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false);
+    public function setProperty(string $name, string $type, mixed $data, bool $inherited = false, bool $inheritable = false): static;
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasProperty($name);
+    public function hasProperty(string $name): bool;
 
     /**
      * returns true if the element is locked
      *
      * @return bool
      */
-    public function isLocked();
+    public function isLocked(): bool;
 
     /**
      * enum('self','propagate') nullable
@@ -194,72 +111,53 @@ interface ElementInterface extends ModelInterface
      *
      * @return $this
      */
-    public function setLocked($locked);
+    public function setLocked(?string $locked): static;
 
     /**
      * enum('self','propagate') nullable
      *
      * @return string|null
      */
-    public function getLocked();
+    public function getLocked(): ?string;
 
-    /**
-     * @return int|null
-     */
-    public function getParentId();
+    public function getParentId(): ?int;
 
-    /**
-     * @return self|null
-     */
-    public function getParent();
+    public function setParentId(?int $id): static;
 
-    /**
-     * @return string
-     */
-    public function getCacheTag();
+    public function getParent(): ?ElementInterface;
 
-    /**
-     * @param array $tags
-     *
-     * @return array
-     */
+    public function setParent(?ElementInterface $parent): static;
+
+    public function getCacheTag(): string;
+
     public function getCacheTags(array $tags = []): array;
 
-    /**
-     * @return bool
-     */
-    public function __isBasedOnLatestData();
+    public function __isBasedOnLatestData(): bool;
 
     /**
-     * @param int|null $versionCount
-     *
      * @return $this
      */
-    public function setVersionCount(?int $versionCount): self;
+    public function setVersionCount(?int $versionCount): static;
 
-    /**
-     * @return int
-     */
     public function getVersionCount(): int;
 
     /**
-     * @return $this
-     */
-    public function save();
-
-    public function delete();
-
-    /**
-     * @param array $additionalTags
-     */
-    public function clearDependentCache($additionalTags = []);
-
-    /**
-     * @param int|null $id
+     * Save this Element.
+     *
+     * Items in the $parameters array are also passed on to Events triggered during this method's execution.
+     *
+     * @param array{versionNote?: string} $parameters Optional. Associative array currently using these keys:
+     *  - versionNote: Optional. Descriptive text saved alongside versioned data
      *
      * @return $this
      */
-    public function setId($id);
+    public function save(array $parameters = []): static;
+
+    public function delete(): void;
+
+    public function clearDependentCache(array $additionalTags = []): void;
+
+    public function setId(?int $id): static;
 
     /**
      * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
@@ -269,22 +167,19 @@ interface ElementInterface extends ModelInterface
      *
      * @return bool
      */
-    public function isAllowed($type, ?User $user = null);
+    public function isAllowed(string $type, ?User $user = null): bool;
 
     /**
      * @return Task[]
      */
-    public function getScheduledTasks();
+    public function getScheduledTasks(): array;
 
     /**
      * @return Version[]
      */
-    public function getVersions();
+    public function getVersions(): array;
 
-    /**
-     * @return Dependency
-     */
-    public function getDependencies();
+    public function getDependencies(): Dependency;
 
     /**
      * @return string

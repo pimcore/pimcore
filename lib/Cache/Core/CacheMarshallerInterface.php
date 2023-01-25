@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,8 +21,5 @@ namespace Pimcore\Cache\Core;
  */
 interface CacheMarshallerInterface
 {
-    /**
-     * @return mixed
-     */
-    public function marshalForCache();
+    public function marshalForCache(): mixed;
 }

@@ -24,10 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CodeSnippet implements ActionHandlerInterface, ResponseTransformingActionHandlerInterface
 {
-    /**
-     * @var CodeInjector
-     */
-    private $codeInjector;
+    private CodeInjector $codeInjector;
 
     public function __construct(CodeInjector $codeInjector)
     {
@@ -37,7 +34,7 @@ class CodeSnippet implements ActionHandlerInterface, ResponseTransformingActionH
     /**
      * {@inheritdoc}
      */
-    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
+    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null): void
     {
         $code = $action['code'] ?? '';
         $selector = $action['selector'] ?? '';
@@ -56,7 +53,7 @@ class CodeSnippet implements ActionHandlerInterface, ResponseTransformingActionH
         ]);
     }
 
-    public function transformResponse(VisitorInfo $visitorInfo, Response $response, array $actions)
+    public function transformResponse(VisitorInfo $visitorInfo, Response $response, array $actions): void
     {
         foreach ($actions as $action) {
             $this->codeInjector->inject(

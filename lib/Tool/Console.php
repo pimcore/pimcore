@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,47 +24,14 @@ use Symfony\Component\Process\Process;
 
 final class Console
 {
-    /**
-     * @var string system environment
-     */
-    private static $systemEnvironment;
+    protected static array $executableCache = [];
 
     /**
-     * @var array
-     */
-    protected static $executableCache = [];
-
-    /**
-     * @deprecated since v.6.9.
-     *
-     * @static
-     *
-     * @return string "windows" or "unix"
-     */
-    public static function getSystemEnvironment()
-    {
-        if (self::$systemEnvironment == null) {
-            if (stripos(php_uname('s'), 'windows') !== false) {
-                self::$systemEnvironment = 'windows';
-            } elseif (stripos(php_uname('s'), 'darwin') !== false) {
-                self::$systemEnvironment = 'darwin';
-            } else {
-                self::$systemEnvironment = 'unix';
-            }
-        }
-
-        return self::$systemEnvironment;
-    }
-
-    /**
-     * @param string $name
-     * @param bool $throwException
-     *
-     * @return bool|string
+     * @return ($throwException is true ? string : string|false)
      *
      * @throws \Exception
      */
-    public static function getExecutable($name, $throwException = false)
+    public static function getExecutable(string $name, bool $throwException = false): string|false
     {
         if (isset(self::$executableCache[$name])) {
             if (!self::$executableCache[$name] && $throwException) {
@@ -148,41 +116,9 @@ final class Console
     }
 
     /**
-     * @param string $process
-     *
-     * @return bool
-     */
-    protected static function checkComposite($process)
-    {
-        return self::checkConvert($process);
-    }
-
-    /**
-     * @param string $executablePath
-     *
-     * @return bool
-     */
-    protected static function checkConvert($executablePath)
-    {
-        try {
-            $process = new Process([$executablePath, '--help']);
-            $process->run();
-            if (strpos($process->getOutput() . $process->getErrorOutput(), 'imagemagick.org') !== false) {
-                return true;
-            }
-        } catch (\Exception $e) {
-            // noting to do
-        }
-
-        return false;
-    }
-
-    /**
-     * @return mixed
-     *
      * @throws \Exception
      */
-    public static function getPhpCli()
+    public static function getPhpCli(): string
     {
         try {
             return self::getExecutable('php', true);
@@ -197,21 +133,17 @@ final class Console
         }
     }
 
-    /**
-     * @return bool|string
-     */
-    public static function getTimeoutBinary()
+    public static function getTimeoutBinary(): string|false
     {
         return self::getExecutable('timeout');
     }
 
     /**
-     * @param string $script
-     * @param array $arguments
+     * @param string[] $arguments
      *
-     * @return array
+     * @return string[]
      */
-    protected static function buildPhpScriptCmd(string $script, array $arguments = [])
+    protected static function buildPhpScriptCmd(string $script, array $arguments = []): array
     {
         $phpCli = self::getPhpCli();
 
@@ -221,22 +153,15 @@ final class Console
             array_push($cmd, '--env=' . Config::getEnvironment());
         }
 
-        if (!empty($arguments)) {
-            $cmd = array_merge($cmd, $arguments);
-        }
+        $cmd = array_merge($cmd, $arguments);
 
         return $cmd;
     }
 
     /**
-     * @param string $script
-     * @param array $arguments
-     * @param string|null $outputFile
-     * @param float|null $timeout
-     *
-     * @return string
+     * @param string[] $arguments
      */
-    public static function runPhpScript($script, $arguments = [], $outputFile = null, $timeout = 60)
+    public static function runPhpScript(string $script, array $arguments = [], string $outputFile = null, float $timeout = 60): string
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         self::addLowProcessPriority($cmd);
@@ -260,130 +185,11 @@ final class Console
     }
 
     /**
-     * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
+     * @param string[]|string $cmd
      *
-     * @param string $script
-     * @param array $arguments
-     * @param string|null $outputFile
-     *
-     * @return int
-     */
-    public static function runPhpScriptInBackground($script, $arguments = [], $outputFile = null)
-    {
-        $cmd = self::buildPhpScriptCmd($script, $arguments);
-        $process = new Process($cmd);
-        $commandLine = $process->getCommandLine();
-
-        return self::execInBackground($commandLine, $outputFile);
-    }
-
-    /**
-     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
-     *
-     * @static
-     *
-     * @param string $cmd
-     * @param null|string $outputFile
-     *
-     * @return int
-     */
-    public static function execInBackground($cmd, $outputFile = null)
-    {
-        // windows systems
-        if (self::getSystemEnvironment() == 'windows') {
-            return self::execInBackgroundWindows($cmd, $outputFile);
-        } elseif (self::getSystemEnvironment() == 'darwin') {
-            return self::execInBackgroundUnix($cmd, $outputFile, false);
-        } else {
-            return self::execInBackgroundUnix($cmd, $outputFile);
-        }
-    }
-
-    /**
-     * @deprecated since v.6.9. For long running background tasks use queues.
-     *
-     * @static
-     *
-     * @param string $cmd
-     * @param string $outputFile
-     * @param bool $useNohup
-     *
-     * @return int
-     */
-    protected static function execInBackgroundUnix($cmd, $outputFile, $useNohup = true)
-    {
-        if (!$outputFile) {
-            $outputFile = '/dev/null';
-        }
-
-        $nice = (string) self::getExecutable('nice');
-        if ($nice) {
-            $nice .= ' -n 19 ';
-        }
-
-        if ($useNohup) {
-            $nohup = (string) self::getExecutable('nohup');
-            if ($nohup) {
-                $nohup .= ' ';
-            }
-        } else {
-            $nohup = '';
-        }
-
-        /**
-         * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
-         */
-        if (strpos(php_sapi_name(), 'apache') !== false) {
-            foreach (['APP_ENV'] as $envVarName) {
-                if ($envValue = $_SERVER[$envVarName] ?? $_SERVER['REDIRECT_' . $envVarName] ?? null) {
-                    putenv($envVarName . '='.$envValue);
-                }
-            }
-        }
-
-        $commandWrapped = $nohup . $nice . $cmd . ' > '. $outputFile .' 2>&1 & echo $!';
-        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
-        $pid = shell_exec($commandWrapped);
-
-        Logger::debug('Process started with PID ' . $pid);
-
-        return (int)$pid;
-    }
-
-    /**
-     * @deprecated since v.6.9. For long running background tasks use queues.
-     *
-     * @static
-     *
-     * @param string $cmd
-     * @param string $outputFile
-     *
-     * @return int
-     */
-    protected static function execInBackgroundWindows($cmd, $outputFile)
-    {
-        if (!$outputFile) {
-            $outputFile = 'NUL';
-        }
-
-        $commandWrapped = 'cmd /c ' . $cmd . ' > '. $outputFile . ' 2>&1';
-        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
-
-        $WshShell = new \COM('WScript.Shell');
-        $WshShell->Run($commandWrapped, 0, false);
-        Logger::debug('Process started - returning the PID is not supported on Windows Systems');
-
-        return 0;
-    }
-
-    /**
      * @internal
-     *
-     * @param array|string $cmd
-     *
-     * @return void
      */
-    public static function addLowProcessPriority(&$cmd): void
+    public static function addLowProcessPriority(array|string &$cmd): void
     {
         $nice = (string) self::getExecutable('nice');
         if ($nice) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,7 +22,7 @@ use Pimcore\Tests\Ecommerce\PricingManager\Rule\AbstractRuleTest;
 
 class GiftActionTest extends AbstractRuleTest
 {
-    protected $productDefinitions1 = [
+    protected array $productDefinitions1 = [
         'singleProduct' => [
             'id' => 4,
             'price' => 100,
@@ -39,7 +40,7 @@ class GiftActionTest extends AbstractRuleTest
 
     ];
 
-    protected $tests1 = [
+    protected array $tests1 = [
         'productPriceSingle' => 100,
         'productPriceTotal' => 200,
         'cartSubTotal' => 140,
@@ -49,7 +50,7 @@ class GiftActionTest extends AbstractRuleTest
         'giftItemCount' => 0,
     ];
 
-    protected $productDefinitions2 = [
+    protected array $productDefinitions2 = [
         'singleProduct' => [
             'id' => 4,
             'price' => 100,

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,15 +25,9 @@ class CommitOrderProcessorEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var CommitOrderProcessorInterface
-     */
-    protected $commitOrderProcessor;
+    protected CommitOrderProcessorInterface $commitOrderProcessor;
 
-    /**
-     * @var AbstractOrder
-     */
-    protected $order;
+    protected ?AbstractOrder $order = null;
 
     /**
      * CommitOrderProcessorEvent constructor.
@@ -48,33 +43,21 @@ class CommitOrderProcessorEvent extends Event
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return CommitOrderProcessorInterface
-     */
     public function getCommitOrderProcessor(): CommitOrderProcessorInterface
     {
         return $this->commitOrderProcessor;
     }
 
-    /**
-     * @param CommitOrderProcessorInterface $commitOrderProcessor
-     */
     public function setCommitOrderProcessor(CommitOrderProcessorInterface $commitOrderProcessor): void
     {
         $this->commitOrderProcessor = $commitOrderProcessor;
     }
 
-    /**
-     * @return AbstractOrder|null
-     */
     public function getOrder(): ?AbstractOrder
     {
         return $this->order;
     }
 
-    /**
-     * @param AbstractOrder $order
-     */
     public function setOrder(AbstractOrder $order): void
     {
         $this->order = $order;

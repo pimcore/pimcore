@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,8 +22,8 @@ use Pimcore\Model\Version;
 use Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
-use Pimcore\Tests\Test\TestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class VersionTest
@@ -301,7 +302,7 @@ class VersionTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return true;
     }
@@ -323,12 +324,7 @@ class VersionTest extends TestCase
                                 )");
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Version
-     */
-    protected function getNewestVersion($id)
+    protected function getNewestVersion(int $id): Version
     {
         $list = new Version\Listing();
         $list->setCondition("ctype = 'object' and cid = " . $id);

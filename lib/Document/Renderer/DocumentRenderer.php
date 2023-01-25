@@ -28,53 +28,24 @@ use Pimcore\Templating\Renderer\ActionRenderer;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class DocumentRenderer implements DocumentRendererInterface
 {
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
 
-    /**
-     * @var ActionRenderer
-     */
-    private $actionRenderer;
+    private ActionRenderer $actionRenderer;
 
-    /**
-     * @var FragmentRendererInterface
-     */
-    private $fragmentRenderer;
+    private FragmentRendererInterface $fragmentRenderer;
 
-    /**
-     * @var DocumentRouteHandler
-     */
-    private $documentRouteHandler;
+    private DocumentRouteHandler $documentRouteHandler;
 
-    /**
-     * @var DocumentTargetingConfigurator
-     */
-    private $targetingConfigurator;
+    private DocumentTargetingConfigurator $targetingConfigurator;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var LocaleService
-     */
-    private $localeService;
+    private LocaleService $localeService;
 
-    /**
-     * @param RequestHelper $requestHelper
-     * @param ActionRenderer $actionRenderer
-     * @param FragmentRendererInterface $fragmentRenderer
-     * @param DocumentRouteHandler $documentRouteHandler
-     * @param DocumentTargetingConfigurator $targetingConfigurator
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param LocaleService $localeService
-     */
     public function __construct(
         RequestHelper $requestHelper,
         ActionRenderer $actionRenderer,
@@ -93,12 +64,8 @@ class DocumentRenderer implements DocumentRendererInterface
         $this->localeService = $localeService;
     }
 
-    /**
-     * @required
-     *
-     * @param ContainerService $containerService
-     */
-    public function setContainerService(ContainerService $containerService)
+    #[Required]
+    public function setContainerService(ContainerService $containerService): void
     {
         // we have to ensure that the ContainerService was initialized at the time this service is created
         // this is necessary, since the ContainerService registers a listener for DocumentEvents::RENDERER_PRE_RENDER

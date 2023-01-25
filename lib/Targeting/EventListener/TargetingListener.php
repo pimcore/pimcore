@@ -48,30 +48,15 @@ class TargetingListener implements EventSubscriberInterface
     use ResponseInjectionTrait;
     use StaticPageContextAwareTrait;
 
-    /**
-     * @var VisitorInfoResolver
-     */
-    private $visitorInfoResolver;
+    private VisitorInfoResolver $visitorInfoResolver;
 
-    /**
-     * @var DelegatingActionHandler|ActionHandlerInterface
-     */
-    private $actionHandler;
+    private ActionHandlerInterface|DelegatingActionHandler $actionHandler;
 
-    /**
-     * @var VisitorInfoStorageInterface
-     */
-    private $visitorInfoStorage;
+    private VisitorInfoStorageInterface $visitorInfoStorage;
 
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
 
-    /**
-     * @var TargetingCodeGenerator
-     */
-    private $codeGenerator;
+    private TargetingCodeGenerator $codeGenerator;
 
     public function __construct(
         VisitorInfoResolver $visitorInfoResolver,
@@ -87,10 +72,7 @@ class TargetingListener implements EventSubscriberInterface
         $this->codeGenerator = $codeGenerator;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()//: array
+    public static function getSubscribedEvents(): array
     {
         return [
             // needs to run before ElementListener to make sure there's a
@@ -101,7 +83,7 @@ class TargetingListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (!$this->enabled) {
             return;
@@ -150,7 +132,7 @@ class TargetingListener implements EventSubscriberInterface
         }
     }
 
-    public function onPreResolve(TargetingEvent $event)
+    public function onPreResolve(TargetingEvent $event): void
     {
         $this->startStopwatch('Targeting:loadStoredAssignments', 'targeting');
 
@@ -164,7 +146,7 @@ class TargetingListener implements EventSubscriberInterface
         $this->stopStopwatch('Targeting:loadStoredAssignments');
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if (!$this->enabled) {
             return;
@@ -197,7 +179,7 @@ class TargetingListener implements EventSubscriberInterface
         }
     }
 
-    private function injectTargetingCode(Response $response, VisitorInfo $visitorInfo)
+    private function injectTargetingCode(Response $response, VisitorInfo $visitorInfo): void
     {
         if (!$this->isHtmlResponse($response)) {
             return;
@@ -211,7 +193,7 @@ class TargetingListener implements EventSubscriberInterface
         $this->injectBeforeHeadEnd($response, $code);
     }
 
-    private function handleResponseActions(VisitorInfo $visitorInfo, Response $response)
+    private function handleResponseActions(VisitorInfo $visitorInfo, Response $response): void
     {
         $actions = $this->getResponseActions($visitorInfo);
         if (empty($actions)) {

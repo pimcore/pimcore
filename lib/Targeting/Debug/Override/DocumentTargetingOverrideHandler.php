@@ -27,17 +27,14 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DocumentTargetingOverrideHandler implements OverrideHandlerInterface
 {
-    /**
-     * @var DocumentTargetingConfigurator
-     */
-    private $documentTargetingConfigurator;
+    private DocumentTargetingConfigurator $documentTargetingConfigurator;
 
     public function __construct(DocumentTargetingConfigurator $documentTargetingConfigurator)
     {
         $this->documentTargetingConfigurator = $documentTargetingConfigurator;
     }
 
-    public function buildOverrideForm(FormBuilderInterface $form, Request $request)
+    public function buildOverrideForm(FormBuilderInterface $form, Request $request): void
     {
         $form->add('documentTargetGroup', ChoiceType::class, [
             'label' => 'Document Target Group',
@@ -54,7 +51,7 @@ class DocumentTargetingOverrideHandler implements OverrideHandlerInterface
         ]);
     }
 
-    public function overrideFromRequest(array $overrides, Request $request)
+    public function overrideFromRequest(array $overrides, Request $request): void
     {
         $targetGroup = $overrides['documentTargetGroup'] ?? null;
         if ($targetGroup && $targetGroup instanceof TargetGroup) {

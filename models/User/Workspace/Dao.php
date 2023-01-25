@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\User\Workspace;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\User\Workspace;
 
@@ -25,7 +26,7 @@ use Pimcore\Model\User\Workspace;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    public function save()
+    public function save(): void
     {
         $tableName = '';
         if ($this->model instanceof Workspace\Asset) {
@@ -49,6 +50,6 @@ class Dao extends Model\Dao\AbstractDao
                 $data[$key] = $value;
             }
         }
-        $this->db->insert($tableName, $data);
+        $this->db->insert($tableName, Helper::quoteDataIdentifiers($this->db, $data));
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,12 +31,12 @@ class Scheduledblock extends Block implements BlockInterface
      *
      * @var array|null
      */
-    protected $cachedCurrentElement = null;
+    protected ?array $cachedCurrentElement = null;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'scheduledblock';
     }
@@ -43,7 +44,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->indices = $data;
 
@@ -61,7 +62,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    protected function setDefault()
+    protected function setDefault(): static
     {
         if (empty($this->indices)) {
             $this->indices[] = [
@@ -73,7 +74,7 @@ class Scheduledblock extends Block implements BlockInterface
         return $this;
     }
 
-    private function filterElements()
+    private function filterElements(): ?array
     {
         if ($this->getEditmode()) {
             return $this->indices;
@@ -112,11 +113,8 @@ class Scheduledblock extends Block implements BlockInterface
 
     /**
      * Set cache lifetime to timestamp of next element
-     *
-     * @param int $outputTimestamp
-     * @param array $nextElement
      */
-    private function updateOutputCacheLifetime($outputTimestamp, $nextElement)
+    private function updateOutputCacheLifetime(int $outputTimestamp, array $nextElement): void
     {
         $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
 
@@ -133,7 +131,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function loop()
+    public function loop(): bool
     {
         $this->setDefault();
         $elements = $this->filterElements();
@@ -164,7 +162,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function start()
+    public function start(): void
     {
         if ($this->getEditmode()) {
             // this is actually to add the block to the EditmodeEditableDefinitionCollector
@@ -181,26 +179,24 @@ class Scheduledblock extends Block implements BlockInterface
         $this->outputEditmode('<div ' . $attributeString . '>');
 
         $this->outputEditmode('<div class="pimcore_scheduled_block_controls" ></div>');
-
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function blockConstruct()
+    public function blockConstruct(): void
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
         // this will be removed in blockDestruct
         $elements = $this->filterElements();
 
-        $this->getBlockState()->pushIndex($elements[$this->current]['key']);
+        $this->getBlockState()->pushIndex((int) $elements[$this->current]['key']);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function blockStart($showControls = true, $return = false, $additionalClass = '')
+    public function blockStart(bool $showControls = true, bool $return = false, string $additionalClass = '')
     {
         $attributes = [
             'data-name' => $this->getName(),
@@ -224,15 +220,12 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getCurrentIndex()
+    public function getCurrentIndex(): int
     {
-        return $this->indices[$this->getCurrent()]['key'];
+        return (int) $this->indices[$this->getCurrent()]['key'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
+    public function getIterator(): \Generator
     {
         while ($this->loop()) {
             yield $this->getCurrentIndex();
@@ -242,7 +235,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getElements()
+    public function getElements(): array
     {
         $document = $this->getDocument();
 
@@ -257,10 +250,7 @@ class Scheduledblock extends Block implements BlockInterface
         return $list;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfig($config)
+    public function setConfig(array $config): static
     {
         $config['reload'] = true;
         parent::setConfig($config);
@@ -271,7 +261,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * If object was serialized, set cached elements to null
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         parent::__wakeup();
         $this->cachedCurrentElement = null;

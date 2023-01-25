@@ -20,21 +20,18 @@ namespace Pimcore\Tests\Unit\HttpKernel\BundleCollection;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\BundleCollection\Item;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class BundleCollectionTest extends TestCase
 {
-    /**
-     * @var BundleCollection
-     */
-    private $collection;
+    private BundleCollection $collection;
 
     /**
      * @var BundleInterface[]
      */
-    private $bundles;
+    private array $bundles;
 
     /**
      * {@inheritdoc}
@@ -324,7 +321,7 @@ class BundleD extends Bundle
 
 class BundleE extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection)
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
         $collection->addBundle(new BundleF());
     }
@@ -336,7 +333,7 @@ class BundleF extends Bundle
 
 class BundleG extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection)
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
         $collection->addBundle(new BundleH, 8);
     }
@@ -344,7 +341,7 @@ class BundleG extends Bundle implements DependentBundleInterface
 
 class BundleH extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection)
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
         $collection->addBundle(new BundleG, 5);
     }
@@ -352,7 +349,7 @@ class BundleH extends Bundle implements DependentBundleInterface
 
 class BundleI extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection)
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
         $collection->addBundle(new BundleA);
         $collection->addBundle(new BundleB);
@@ -362,7 +359,7 @@ class BundleI extends Bundle implements DependentBundleInterface
 
 class BundleJ extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection)
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
         $collection->addBundle(new BundleH(), 9);
     }

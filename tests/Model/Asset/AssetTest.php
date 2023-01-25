@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,8 +17,8 @@
 namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore\Model\Asset;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
 
 /**
@@ -35,8 +36,7 @@ class AssetTest extends ModelTestCase
         TestHelper::clearThumbnailConfigurations();
     }
 
-    /** @var Asset */
-    protected $testAsset;
+    protected Asset $testAsset;
 
     public function testCRUD()
     {
@@ -44,7 +44,7 @@ class AssetTest extends ModelTestCase
         $path = TestHelper::resolveFilePath('assets/images/image5.jpg');
         $expectedData = file_get_contents($path);
         $fileSize = strlen($expectedData);
-        $this->assertTrue(strlen($fileSize) > 0);
+        $this->assertTrue(strlen((string)$fileSize) > 0);
 
         $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image5.jpg');
         $this->assertInstanceOf(Asset\Image::class, $this->testAsset);
@@ -77,7 +77,7 @@ class AssetTest extends ModelTestCase
         $path = TestHelper::resolveFilePath('assets/images/image4.jpg');
         $expectedData = file_get_contents($path);
         $fileSize = strlen($expectedData);
-        $this->assertTrue(strlen($fileSize) > 0);
+        $this->assertTrue(strlen((string)$fileSize) > 0);
         $this->testAsset->setData($expectedData);
         $this->testAsset->save();
         $this->reloadAsset();
@@ -87,6 +87,50 @@ class AssetTest extends ModelTestCase
         // delete
         $this->testAsset->delete();
         $this->assertFalse($newParent->hasChildren());
+    }
+
+    /**
+     * Parent ID of a new object cannot be 0
+     */
+    public function testParentIs0()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+        $savedObject = TestHelper::createImageAsset('', null, false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(0);
+        $savedObject->save();
+    }
+
+    /**
+     * Verifies that an object with the same parent ID cannot be created.
+     */
+    public function testParentIdentical()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
+        $savedObject = TestHelper::createImageAsset();
+        $this->assertTrue($savedObject->getId() > 0);
+
+        $savedObject->setParentId($savedObject->getId());
+        $savedObject->save();
+    }
+
+    /**
+     * Parent ID must resolve to an existing element
+     *
+     * @group notfound
+     */
+    public function testParentNotFound()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ParentID not found.');
+        $savedObject = TestHelper::createImageAsset('', null, false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(999999);
+        $savedObject->save();
     }
 
     /**

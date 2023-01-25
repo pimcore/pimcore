@@ -30,9 +30,6 @@ class SessionStorage implements TargetingStorageInterface
 
     const STORAGE_KEY_UPDATED_AT = '_u';
 
-    /**
-     * {@inheritdoc }
-     */
     public function all(VisitorInfo $visitorInfo, string $scope): array
     {
         $bag = $this->getSessionBag($visitorInfo, $scope, true);
@@ -54,9 +51,6 @@ class SessionStorage implements TargetingStorageInterface
         return $result;
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         $bag = $this->getSessionBag($visitorInfo, $scope, true);
@@ -67,10 +61,7 @@ class SessionStorage implements TargetingStorageInterface
         return $bag->has($name);
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value): void
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
         if (null === $bag) {
@@ -85,7 +76,7 @@ class SessionStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc }
      */
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed
     {
         $bag = $this->getSessionBag($visitorInfo, $scope, true);
         if (null === $bag) {
@@ -98,7 +89,7 @@ class SessionStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc }
      */
-    public function clear(VisitorInfo $visitorInfo, string $scope = null)
+    public function clear(VisitorInfo $visitorInfo, string $scope = null): void
     {
         if (null !== $scope) {
             $bag = $this->getSessionBag($visitorInfo, $scope, true);
@@ -115,10 +106,7 @@ class SessionStorage implements TargetingStorageInterface
         }
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): void
     {
         // only allow migration if a session bag is available as otherwise the fallback
         // would clear the original storage although data was not stored
@@ -140,10 +128,7 @@ class SessionStorage implements TargetingStorageInterface
         );
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
         if (null === $bag || !$bag->has(self::STORAGE_KEY_CREATED_AT)) {
@@ -153,10 +138,7 @@ class SessionStorage implements TargetingStorageInterface
         return \DateTimeImmutable::createFromFormat('U', (string)$bag->get(self::STORAGE_KEY_CREATED_AT));
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
 
@@ -170,15 +152,9 @@ class SessionStorage implements TargetingStorageInterface
     /**
      * Loads a session bag
      *
-     * @param VisitorInfo $visitorInfo
-     * @param string $scope
-     * @param bool $checkPreviousSession
-     *
      * @throws \Exception
-     *
-     * @return null|AttributeBag
      */
-    private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false)
+    private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false): ?AttributeBag
     {
         $request = $visitorInfo->getRequest();
 
@@ -221,7 +197,7 @@ class SessionStorage implements TargetingStorageInterface
         AttributeBag $bag,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    ) {
+    ): void {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (!$bag->has(self::STORAGE_KEY_CREATED_AT)) {

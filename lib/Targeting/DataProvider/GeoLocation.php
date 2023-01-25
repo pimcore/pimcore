@@ -33,15 +33,9 @@ class GeoLocation implements DataProviderInterface
 
     const COOKIE_NAME_GEOLOCATION = '_pc_tgl';
 
-    /**
-     * @var GeoIp
-     */
-    private $geoIpDataProvider;
+    private GeoIp $geoIpDataProvider;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(
         GeoIp $geoIpProvider,
@@ -51,7 +45,7 @@ class GeoLocation implements DataProviderInterface
         $this->logger = $logger;
     }
 
-    public function load(VisitorInfo $visitorInfo)
+    public function load(VisitorInfo $visitorInfo): void
     {
         $location = $this->loadLocation($visitorInfo);
         $location = $this->handleOverrides($visitorInfo->getRequest(), $location);
@@ -62,7 +56,7 @@ class GeoLocation implements DataProviderInterface
         );
     }
 
-    private function handleOverrides(Request $request, GeoLocationModel $location = null)
+    private function handleOverrides(Request $request, GeoLocationModel $location = null): ?GeoLocationModel
     {
         $overrides = OverrideAttributeResolver::getOverrideValue($request, 'location');
         if (empty($overrides)) {
@@ -86,9 +80,11 @@ class GeoLocation implements DataProviderInterface
                 $data['altitude']
             );
         }
+
+        return null;
     }
 
-    private function loadLocation(VisitorInfo $visitorInfo)
+    private function loadLocation(VisitorInfo $visitorInfo): ?GeoLocationModel
     {
         $location = $this->loadGeolocationData($visitorInfo);
         if ($location) {
@@ -99,7 +95,7 @@ class GeoLocation implements DataProviderInterface
         return $this->loadGeoIpData($visitorInfo);
     }
 
-    private function loadGeolocationData(VisitorInfo $visitorInfo)
+    private function loadGeolocationData(VisitorInfo $visitorInfo): ?GeoLocationModel
     {
         // inform frontend that geolocation is wanted - this will work after the first request
         $visitorInfo->addFrontendDataProvider(self::PROVIDER_KEY);
@@ -147,7 +143,7 @@ class GeoLocation implements DataProviderInterface
         return null;
     }
 
-    private function loadGeoIpData(VisitorInfo $visitorInfo)
+    private function loadGeoIpData(VisitorInfo $visitorInfo): ?GeoLocationModel
     {
         $city = $this->geoIpDataProvider->loadData($visitorInfo);
 

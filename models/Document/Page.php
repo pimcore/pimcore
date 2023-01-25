@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ class Page extends TargetingDocument
      *
      * @var string
      */
-    protected $title = '';
+    protected string $title = '';
 
     /**
      * Contains the description of the page (meta-description)
@@ -40,14 +41,14 @@ class Page extends TargetingDocument
      *
      * @var string
      */
-    protected $description = '';
+    protected string $description = '';
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $metaData = [];
+    protected array $metaData = [];
 
     /**
      * {@inheritdoc}
@@ -59,7 +60,7 @@ class Page extends TargetingDocument
      *
      * @var string|null
      */
-    protected $prettyUrl;
+    protected ?string $prettyUrl = null;
 
     /**
      * Comma separated IDs of target groups
@@ -68,12 +69,12 @@ class Page extends TargetingDocument
      *
      * @var string
      */
-    protected $targetGroupIds = '';
+    protected string $targetGroupIds = '';
 
     /**
      * {@inheritdoc}
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
@@ -87,70 +88,43 @@ class Page extends TargetingDocument
         parent::doDelete();
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return \Pimcore\Tool\Text::removeLineBreaks($this->title);
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = str_replace("\n", ' ', $description);
 
         return $this;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
-    public function setTitle($title)
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
         return $this;
     }
 
-    /**
-     * @param array $metaData
-     *
-     * @return $this
-     */
-    public function setMetaData($metaData)
+    public function setMetaData(array $metaData): static
     {
         $this->metaData = $metaData;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getMetaData()
+    public function getMetaData(): array
     {
         return $this->metaData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFullPath(bool $force = false)
+    public function getFullPath(bool $force = false): string
     {
         $path = parent::getFullPath($force);
 
@@ -166,12 +140,7 @@ class Page extends TargetingDocument
         return $path;
     }
 
-    /**
-     * @param string|null $prettyUrl
-     *
-     * @return $this
-     */
-    public function setPrettyUrl($prettyUrl)
+    public function setPrettyUrl(?string $prettyUrl): static
     {
         if (!$prettyUrl) {
             $this->prettyUrl = null;
@@ -185,10 +154,7 @@ class Page extends TargetingDocument
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getPrettyUrl()
+    public function getPrettyUrl(): ?string
     {
         return $this->prettyUrl;
     }
@@ -196,9 +162,9 @@ class Page extends TargetingDocument
     /**
      * Set linked Target Groups as set in properties panel as list of IDs
      *
-     * @param string|array $targetGroupIds
+     * @param array|string $targetGroupIds
      */
-    public function setTargetGroupIds($targetGroupIds)
+    public function setTargetGroupIds(array|string $targetGroupIds): void
     {
         if (is_array($targetGroupIds)) {
             $targetGroupIds = implode(',', $targetGroupIds);
@@ -228,7 +194,7 @@ class Page extends TargetingDocument
      *
      * @param TargetGroup[]|int[] $targetGroups
      */
-    public function setTargetGroups(array $targetGroups)
+    public function setTargetGroups(array $targetGroups): void
     {
         $ids = array_map(function ($targetGroup) {
             if (is_numeric($targetGroup)) {
@@ -269,17 +235,14 @@ class Page extends TargetingDocument
         return $targetGroups;
     }
 
-    /**
-     * @return string
-     */
-    public function getPreviewImageFilesystemPath()
+    public function getPreviewImageFilesystemPath(): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $this->getId() . '@2x.jpg';
     }
 
-    public function save()
+    public function save(array $parameters = []): static
     {
-        $response = parent::save(...func_get_args());
+        $page = parent::save($parameters);
 
         // Dispatch page preview message, if preview is enabled.
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
@@ -289,6 +252,6 @@ class Page extends TargetingDocument
             );
         }
 
-        return $response;
+        return $page;
     }
 }

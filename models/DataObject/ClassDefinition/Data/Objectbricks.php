@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,6 +20,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
@@ -34,60 +38,44 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      * @var string
      */
-    public $fieldtype = 'objectbricks';
+    public string $fieldtype = 'objectbricks';
 
     /**
      * @internal
      *
      * @var array
      */
-    public $allowedTypes = [];
+    public array $allowedTypes = [];
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public $maxItems;
+    public ?int $maxItems = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
-    /**
-     * @param int|null $maxItems
-     *
-     * @return $this
-     */
-    public function setMaxItems($maxItems)
+    public function setMaxItems(?int $maxItems): static
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMaxItems()
+    public function getMaxItems(): ?int
     {
         return $this->maxItems;
     }
 
-    /**
-     * @return bool
-     */
     public function getBorder(): bool
     {
         return $this->border;
     }
 
-    /**
-     * @param bool $border
-     */
     public function setBorder(bool $border): void
     {
         $this->border = $border;
@@ -102,7 +90,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      * @return array
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $editmodeData = [];
 
@@ -128,16 +116,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $editmodeData;
     }
 
-    /**
-     * @param string $getter
-     * @param DataObject\Objectbrick $data
-     * @param array|null $params
-     * @param string $allowedBrickType
-     * @param int $level
-     *
-     * @return array|null
-     */
-    private function doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $level = 0)
+    private function doGetDataForEditmode(string $getter, Objectbrick $data, ?array $params, string $allowedBrickType, int $level = 0): ?array
     {
         $object = $data->getObject();
         if ($object) {
@@ -178,10 +157,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             }
         }
 
-        $calculatedChilds = [];
-        self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
+        $calculatedChildren = [];
+        self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChildren);
 
-        foreach ($calculatedChilds as $fd) {
+        foreach ($calculatedChildren as $fd) {
             $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
             $fieldData->setContextualData('objectbrick', $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
             $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
@@ -203,18 +182,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
     /**
      * gets recursively attribute data from parent and fills objectData and metaData
-     *
-     * @param Objectbrick\Data\AbstractData $item
-     * @param string $key
-     * @param Data $fielddefinition
-     * @param int $level
-     * @param DataObject\Concrete|null $baseObject
-     * @param string $getter
-     * @param array|null $params
-     *
-     * @return \stdClass
      */
-    private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $params)
+    private function getDataForField(Objectbrick\Data\AbstractData $item, string $key, Data $fielddefinition, int $level, ?DataObject\Concrete $baseObject, string $getter, ?array $params): \stdClass
     {
         $result = new \stdClass();
         if ($baseObject) {
@@ -289,9 +258,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return Objectbrick\Data\AbstractData
+     * @return Objectbrick
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Objectbrick
     {
         $container = $this->getDataFromObjectParam($object);
 
@@ -352,25 +321,22 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         // this is handled directly in the template
-        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
+        // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
         return 'BRICKS';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return 'NOT SUPPORTED';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $dataString = '';
         $obData = $this->getDataFromObjectParam($object, $params);
@@ -393,10 +359,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $dataString;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($object, $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $container = $this->getDataFromObjectParam($object);
         if ($container instanceof DataObject\Objectbrick) {
@@ -404,10 +367,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load($object, $params = [])
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): mixed
     {
         $classname = '\\Pimcore\\Model\\DataObject\\' . ucfirst($object->getClass()->getName()) . '\\' . ucfirst($this->getName());
 
@@ -421,10 +381,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($object, $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $container = $this->load($object);
         if ($container) {
@@ -432,20 +389,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getAllowedTypes()
+    public function getAllowedTypes(): array
     {
         return $this->allowedTypes;
     }
 
-    /**
-     * @param string|array|null $allowedTypes
-     *
-     * @return $this
-     */
-    public function setAllowedTypes($allowedTypes)
+    public function setAllowedTypes(array|string|null $allowedTypes): static
     {
         if (is_string($allowedTypes)) {
             $allowedTypes = explode(',', $allowedTypes);
@@ -469,7 +418,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * {@inheritdoc}
      */
-    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if ($data instanceof DataObject\Objectbrick) {
             $data->setFieldname($this->getName());
@@ -478,12 +427,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
-    public function resolveDependencies($data)
+    public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
 
@@ -507,10 +451,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheTags($data, array $tags = [])
+    public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($data instanceof DataObject\Objectbrick) {
             $items = $data->getItems();
@@ -535,11 +476,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * {@inheritdoc}
      */
-    public function getGetterCode($class)
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         // getter
 
-        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -566,8 +507,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}' . "\n";
 
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
+        if ($this instanceof PreGetDataInterface) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         }
 
@@ -582,7 +522,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data instanceof DataObject\Objectbrick) {
             $validationExceptions = [];
@@ -669,23 +609,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      * @return string
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?Objectbrick $data, Concrete $object = null, array $params = []): string
     {
         return 'NOT SUPPORTED';
     }
 
-    /**
-     * @param Objectbrick\Data\AbstractData $item
-     * @param string $key
-     * @param Data $fielddefinition
-     * @param int $level
-     * @param DataObject\Concrete $baseObject
-     * @param string $getter
-     * @param array $params
-     *
-     * @return array|null
-     */
-    private function getDiffDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $params = [])
+    private function getDiffDataForField(Objectbrick\Data\AbstractData $item, string $key, Data $fielddefinition, int $level, DataObject\Concrete $baseObject, string $getter, array $params = []): ?array
     {
         $valueGetter = 'get' . ucfirst($key);
 
@@ -694,15 +623,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $value;
     }
 
-    /**
-     * @param Objectbrick $data
-     * @param string $getter
-     * @param array $params
-     * @param int $level
-     *
-     * @return array|null
-     */
-    private function doGetDiffDataForEditmode($data, $getter, $params = [], $level = 0)
+    private function doGetDiffDataForEditmode(Objectbrick $data, string $getter, array $params = [], int $level = 0): ?array
     {
         $parent = DataObject\Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();
@@ -761,7 +682,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null, $params = [])
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $editmodeData = [];
 
@@ -790,7 +711,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      *
      * @return mixed
      */
-    public function getDiffDataFromEditmode($data, $object = null, $params = [])
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         $valueGetter = 'get' . ucfirst($this->getName());
         $valueSetter = 'set' . ucfirst($this->getName());
@@ -835,7 +756,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
@@ -843,7 +764,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 
@@ -859,13 +780,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    //TODO Pimcore 11: remove method_exists BC layer
-                    if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
-                        if (!$fd instanceof IdRewriterInterface) {
-                            trigger_deprecation('pimcore/pimcore', '10.1',
-                                sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                                'Implement the %s interface instead.', IdRewriterInterface::class));
-                        }
+                    if ($fd instanceof IdRewriterInterface) {
                         $d = $fd->rewriteIds($item, $idMapping, $params);
                         $setter = 'set' . ucfirst($fd->getName());
                         $item->$setter($d);
@@ -880,7 +795,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * @param DataObject\ClassDefinition\Data\Objectbricks $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->allowedTypes = $masterDefinition->allowedTypes;
         $this->maxItems = $masterDefinition->maxItems;
@@ -892,7 +807,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved($class, $params = [])
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $allowedType) {
@@ -902,13 +817,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        //TODO Pimcore 11 remove method_exists call
-                        if (!$fd instanceof DataContainerAwareInterface && ($fd instanceof ClassSavedInterface || method_exists($fd, 'classSaved'))) {
-                            if (!$fd instanceof ClassSavedInterface) {
-                                trigger_deprecation('pimcore/pimcore', '10.6',
-                                    sprintf('Usage of method_exists is deprecated since version 10.6 and will be removed in Pimcore 11.' .
-                                    'Implement the %s interface instead.', ClassSavedInterface::class));
-                            }
+                        if ($fd instanceof ClassSavedInterface) {
                             // defer creation
                             $fd->classSaved($class, $params);
                         }
@@ -924,10 +833,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param DataObject\ClassDefinition\Data[] $container
      * @param CalculatedValue[] $list
      */
-    public static function collectCalculatedValueItems($container, &$list = [])
+    public static function collectCalculatedValueItems(array $container, array &$list = []): void
     {
         if (is_array($container)) {
-            /** @var DataObject\ClassDefinition\Data $childDef */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;
@@ -936,42 +844,27 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Objectbrick::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Objectbrick::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Objectbrick::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Objectbrick::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof Objectbrick) {
             $result = [];
@@ -1002,10 +895,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
             $result = [];

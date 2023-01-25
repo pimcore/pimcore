@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,8 +22,8 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class AbstractLazyLoadingTest extends ModelTestCase
 {
@@ -67,9 +68,6 @@ class AbstractLazyLoadingTest extends ModelTestCase
         }
     }
 
-    /**
-     * @return LazyLoading
-     */
     protected function createDataObject(): LazyLoading
     {
         $object = new LazyLoading();
@@ -87,7 +85,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    protected function createChildDataObject($parent): LazyLoading
+    protected function createChildDataObject(AbstractObject $parent): LazyLoading
     {
         $object = new LazyLoading();
         $object->setParent($parent);

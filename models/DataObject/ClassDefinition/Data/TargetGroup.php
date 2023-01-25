@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\Tool;
 
@@ -28,18 +30,18 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @var string
      */
-    public $fieldtype = 'targetGroup';
+    public string $fieldtype = 'targetGroup';
 
     /**
+     * @param mixed $data
+     * @param DataObject\Concrete|null $object
+     * @param array $params
+     *
+     * @return string|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, Dataobject\Concrete $object = null, array $params = []): ?string
     {
         if (!empty($data)) {
             try {
@@ -53,15 +55,15 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param string|null $data
-     * @param Model\DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param mixed $data
+     * @param DataObject\Concrete|null $object
+     * @param array $params
      *
      * @return null|string
+     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (!empty($data)) {
             try {
@@ -77,7 +79,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @internal
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
         /** @var Tool\Targeting\TargetGroup\Listing|Tool\Targeting\TargetGroup\Listing\Dao $list */
         $list = new Tool\Targeting\TargetGroup\Listing();
@@ -100,14 +102,14 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (!empty($data)) {
-            $targetGroup = Tool\Targeting\TargetGroup::getById($data);
+            $targetGroup = Tool\Targeting\TargetGroup::getById((int)$data);
 
             if (!$targetGroup instanceof Tool\Targeting\TargetGroup) {
                 throw new Model\Element\ValidationException('Invalid target group reference');
@@ -115,12 +117,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         }
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
         $options = $obj->getOptions();
@@ -131,11 +128,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

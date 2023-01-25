@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM versions WHERE id = ?', [$id]);
 
@@ -50,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @todo: $data could be undefined
      */
-    public function save()
+    public function save(): int
     {
         $version = $this->model->getObjectVars();
         $data = [];
@@ -78,28 +78,18 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('versions', ['id' => $this->model->getId()]);
     }
 
-    /**
-     * @param Model\Version $version
-     *
-     * @return bool
-     */
-    public function isVersionUsedInScheduler($version)
+    public function isVersionUsedInScheduler(Model\Version $version): bool
     {
         $exists = $this->db->fetchOne('SELECT id FROM schedule_tasks WHERE version = ?', [$version->getId()]);
 
         return (bool) $exists;
     }
 
-    /**
-     * @param string $hash
-     *
-     * @return int|null
-     */
     public function getBinaryFileIdForHash(string $hash): ?int
     {
         $id = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? AND storageType = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid(), $this->model->getStorageType()]);
@@ -110,11 +100,6 @@ class Dao extends Model\Dao\AbstractDao
         return (int)$id;
     }
 
-    /**
-     * @param string|null $hash
-     *
-     * @return bool
-     */
     public function isBinaryHashInUse(?string $hash): bool
     {
         $count = $this->db->fetchOne('SELECT count(*) FROM versions WHERE binaryFileHash = ? AND cid = ?', [$hash, $this->model->getCid()]);
@@ -123,13 +108,7 @@ class Dao extends Model\Dao\AbstractDao
         return $returnValue;
     }
 
-    /**
-     * @param array $elementTypes
-     * @param array $ignoreIds
-     *
-     * @return array
-     */
-    public function maintenanceGetOutdatedVersions($elementTypes, $ignoreIds = [])
+    public function maintenanceGetOutdatedVersions(array $elementTypes, array $ignoreIds = []): array
     {
         $ignoreIdsList = implode(',', $ignoreIds);
         if (!$ignoreIdsList) {
@@ -143,7 +122,7 @@ class Dao extends Model\Dao\AbstractDao
             $count = 0;
             $stop = false;
             foreach ($elementTypes as $elementType) {
-                if (isset($elementType['days']) && !is_null($elementType['days'])) {
+                if (isset($elementType['days'])) {
                     // by days
                     $deadline = time() - ($elementType['days'] * 86400);
                     $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);

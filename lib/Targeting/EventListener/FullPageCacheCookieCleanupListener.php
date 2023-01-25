@@ -32,14 +32,14 @@ class FullPageCacheCookieCleanupListener implements EventSubscriberInterface
     /**
      * @return string[]
      */
-    public static function getSubscribedEvents()//: array
+    public static function getSubscribedEvents(): array
     {
         return [
             FullPageCacheEvents::PREPARE_RESPONSE => 'onPrepareFullPageCacheResponse',
         ];
     }
 
-    public function onPrepareFullPageCacheResponse(PrepareResponseEvent $event)
+    public function onPrepareFullPageCacheResponse(PrepareResponseEvent $event): void
     {
         $response = $event->getResponse();
         $cookies = $response->headers->getCookies();

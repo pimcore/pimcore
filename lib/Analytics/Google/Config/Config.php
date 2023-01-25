@@ -17,33 +17,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics\Google\Config;
 
-use Pimcore\Config\Config as ConfigObject;
-
 class Config
 {
-    /**
-     * @var ConfigObject
-     */
-    private $config;
+    private array $config;
 
-    public function __construct(ConfigObject $config)
+    public function __construct(array $config)
     {
         $this->config = $config;
     }
 
-    public static function fromReportConfig(ConfigObject $reportConfig): self
+    public static function fromReportConfig(array $reportConfig): self
     {
-        $config = null;
-        if ($reportConfig->get('analytics')) {
-            $config = $reportConfig->get('analytics');
-        } else {
-            $config = new ConfigObject([]);
-        }
-
-        return new self($config);
+        return new self($reportConfig['analytics'] ?? []);
     }
 
-    public function getConfig(): ConfigObject
+    public function getConfig(): array
     {
         return $this->config;
     }
@@ -56,7 +44,7 @@ class Config
             return false;
         }
 
-        $trackId = $this->normalizeStringValue($config->get('trackid'));
+        $trackId = $this->normalizeStringValue($config['trackid']);
         if (null === $trackId) {
             return false;
         }
@@ -64,25 +52,20 @@ class Config
         return true;
     }
 
-    /**
-     * @param string $configKey
-     *
-     * @return null|ConfigObject
-     */
-    public function getConfigForSite(string $configKey)
+    public function getConfigForSite(string $configKey): ?array
     {
-        if (!$this->config->get('sites') || !$this->config->get('sites')->$configKey) {
+        if (!isset($this->config['sites']) || !isset($this->config['sites'][$configKey])) {
             return null;
         }
 
-        return $this->config->get('sites')->$configKey;
+        return $this->config['sites'][$configKey];
     }
 
     public function getConfiguredSites(): array
     {
-        $sites = $this->config->get('sites');
-        if ($sites && $sites instanceof ConfigObject) {
-            return array_keys($sites->toArray());
+        $sites = $this->config['sites'];
+        if (is_array($sites)) {
+            return $sites;
         }
 
         return [];
@@ -96,7 +79,7 @@ class Config
             return false;
         }
 
-        $profile = $this->normalizeStringValue($config->get('profile'));
+        $profile = $this->normalizeStringValue($config['profile']);
         if (null === $profile) {
             return false;
         }
@@ -104,12 +87,7 @@ class Config
         return true;
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return string|null
-     */
-    private function normalizeStringValue($value)
+    private function normalizeStringValue(mixed $value): ?string
     {
         if (null === $value) {
             return $value;

@@ -30,10 +30,7 @@ use Pimcore\Sitemap\Element\GeneratorContextInterface;
  */
 class SiteRootFilter implements FilterInterface
 {
-    /**
-     * @var array
-     */
-    private $siteRoots;
+    private ?array $siteRoots = null;
 
     public function canBeAdded(ElementInterface $element, GeneratorContextInterface $context): bool
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,19 +29,17 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @var string
      */
-    public $fieldtype = 'language';
-
-    /**
-     * @internal
-     *
-     * @var bool
-     */
-    public $onlySystemLanguages = false;
+    public string $fieldtype = 'language';
 
     /**
      * @internal
      */
-    public function configureOptions()
+    public bool $onlySystemLanguages = false;
+
+    /**
+     * @internal
+     */
+    public function configureOptions(): void
     {
         $validLanguages = (array) Tool::getValidLanguages();
         $locales = Tool::getSupportedLocales();
@@ -62,32 +61,19 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /**
-     * @return bool
-     */
-    public function getOnlySystemLanguages()
+    public function getOnlySystemLanguages(): bool
     {
         return $this->onlySystemLanguages;
     }
 
-    /**
-     * @param int|bool $value
-     *
-     * @return $this
-     */
-    public function setOnlySystemLanguages($value)
+    public function setOnlySystemLanguages(bool|int $value): static
     {
         $this->onlySystemLanguages = (bool) $value;
 
         return $this;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
         $obj->configureOptions();
@@ -95,11 +81,7 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

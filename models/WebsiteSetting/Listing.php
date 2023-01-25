@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,12 +31,12 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @var WebsiteSetting[]|null
      */
-    protected $settings = null;
+    protected ?array $settings = null;
 
     /**
      * @param WebsiteSetting[]|null $settings
      */
-    public function setSettings($settings)
+    public function setSettings(?array $settings): void
     {
         $this->settings = $settings;
     }
@@ -43,7 +44,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return WebsiteSetting[]
      */
-    public function getSettings()
+    public function getSettings(): array
     {
         if ($this->settings === null) {
             $this->getDao()->load();

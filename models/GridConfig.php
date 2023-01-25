@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,72 +25,33 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class GridConfig extends AbstractModel
 {
-    /**
-     * @var int|null
-     */
-    protected $id;
+    protected ?int $id = null;
 
-    /**
-     * @var int|null
-     */
-    protected $ownerId;
+    protected ?int $ownerId = null;
 
-    /**
-     * @var string
-     */
-    protected $classId;
+    protected string $classId;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var string
-     */
-    protected $searchType;
+    protected string $searchType;
 
-    /**
-     * @var string
-     */
-    protected $config;
+    protected string $config;
 
-    /**
-     * @var string|null
-     */
-    protected $description;
+    protected ?string $description = null;
 
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
-    /**
-     * @var bool
-     */
-    protected $shareGlobally;
+    protected bool $shareGlobally = false;
 
-    /**
-     * @var bool
-     */
-    protected $setAsFavourite;
+    protected bool $setAsFavourite = false;
 
-    /**
-     * @var string
-     */
-    protected $type = 'object';
+    protected bool $saveFilters = false;
 
-    /**
-     * @param int $id
-     *
-     * @return GridConfig|null
-     */
-    public static function getById($id)
+    protected string $type = 'object';
+
+    public static function getById(int $id): ?GridConfig
     {
         if (!$id) {
             return null;
@@ -108,7 +70,7 @@ class GridConfig extends AbstractModel
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->getId()) {
             $this->setCreationDate(time());
@@ -122,185 +84,129 @@ class GridConfig extends AbstractModel
     /**
      * Delete this GridConfig
      */
-    public function delete()
+    public function delete(): void
     {
         $this->getDao()->delete();
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = (int) $id;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getOwnerId()
+    public function getOwnerId(): ?int
     {
         return $this->ownerId;
     }
 
-    /**
-     * @param int $ownerId
-     */
-    public function setOwnerId($ownerId)
+    public function setOwnerId(int $ownerId): void
     {
         $this->ownerId = $ownerId;
     }
 
-    /**
-     * @return string
-     */
-    public function getClassId()
+    public function getClassId(): string
     {
         return $this->classId;
     }
 
-    /**
-     * @param string $classId
-     */
-    public function setClassId($classId)
+    public function setClassId(string $classId): void
     {
         $this->classId = $classId;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getSearchType()
+    public function getSearchType(): string
     {
         return $this->searchType;
     }
 
-    /**
-     * @param string $searchType
-     */
-    public function setSearchType($searchType)
+    public function setSearchType(string $searchType): void
     {
         $this->searchType = $searchType;
     }
 
-    /**
-     * @return string
-     */
-    public function getConfig()
+    public function getConfig(): string
     {
         return $this->config;
     }
 
-    /**
-     * @param string $config
-     */
-    public function setConfig($config)
+    public function setConfig(string $config): void
     {
         $this->config = $config;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param string|null $description
-     */
-    public function setDescription($description)
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param int $creationDate
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): void
     {
         $this->creationDate = $creationDate;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): void
     {
         $this->modificationDate = $modificationDate;
     }
 
-    /**
-     * @return bool
-     */
-    public function isShareGlobally()
+    public function isShareGlobally(): bool
     {
         return $this->shareGlobally;
     }
 
-    /**
-     * @param bool $shareGlobally
-     */
-    public function setShareGlobally($shareGlobally)
+    public function setShareGlobally(bool $shareGlobally): void
     {
-        $this->shareGlobally = $shareGlobally;
+        $this->shareGlobally = (bool) $shareGlobally;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSetAsFavourite()
+    public function isSetAsFavourite(): bool
     {
         return $this->setAsFavourite;
     }
 
-    /**
-     * @param bool $setAsFavourite
-     */
-    public function setSetAsFavourite($setAsFavourite)
+    public function setSetAsFavourite(bool $setAsFavourite): void
     {
-        $this->setAsFavourite = $setAsFavourite;
+        $this->setAsFavourite = (bool) $setAsFavourite;
+    }
+
+    public function isSaveFilters(): bool
+    {
+        return $this->saveFilters;
+    }
+
+    public function setSaveFilters(bool $saveFilters): void
+    {
+        $this->saveFilters = $saveFilters;
     }
 
     /**
@@ -308,7 +214,7 @@ class GridConfig extends AbstractModel
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -318,7 +224,7 @@ class GridConfig extends AbstractModel
      *
      * @param string $type
      */
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }

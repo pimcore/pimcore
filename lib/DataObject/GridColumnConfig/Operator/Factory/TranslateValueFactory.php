@@ -26,23 +26,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class TranslateValueFactory implements OperatorFactoryInterface
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
 
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function build(\stdClass $configElement, $context = null): OperatorInterface
+    public function build(\stdClass $configElement, array $context = []): OperatorInterface
     {
         return new TranslateValue($this->translator, $configElement, $context);
     }

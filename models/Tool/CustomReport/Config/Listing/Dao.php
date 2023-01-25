@@ -28,7 +28,7 @@ class Dao extends \Pimcore\Model\Tool\CustomReport\Config\Dao
     /**
      * @return Config[]
      */
-    public function loadList()
+    public function loadList(): array
     {
         $configs = [];
 
@@ -45,7 +45,7 @@ class Dao extends \Pimcore\Model\Tool\CustomReport\Config\Dao
      *
      * @return Config[]
      */
-    public function loadForGivenUser(Model\User $user)
+    public function loadForGivenUser(Model\User $user): array
     {
         $allConfigs = $this->loadList();
 
@@ -67,10 +67,7 @@ class Dao extends \Pimcore\Model\Tool\CustomReport\Config\Dao
         return $filteredConfigs;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         return count($this->loadIdList());
     }

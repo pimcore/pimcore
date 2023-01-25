@@ -21,7 +21,7 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class LazyLoadedItemTest extends TestCase
@@ -131,10 +131,7 @@ class LazyLoadedItemTest extends TestCase
 
 class LazyLoadedItemTestBundleA extends Bundle
 {
-    /**
-     * @var int
-     */
-    private static $counter = 0;
+    private static int $counter = 0;
 
     public function __construct()
     {
@@ -154,10 +151,7 @@ class LazyLoadedItemTestBundleA extends Bundle
 
 class LazyLoadedItemTestBundleB extends AbstractPimcoreBundle
 {
-    /**
-     * @var int
-     */
-    private static $counter = 0;
+    private static int $counter = 0;
 
     public function __construct()
     {
@@ -177,7 +171,7 @@ class LazyLoadedItemTestBundleB extends AbstractPimcoreBundle
 
 class LazyLoadedItemTestBundleC extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection)
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
         $collection->add(new LazyLoadedItem(LazyLoadedItemTestBundleA::class));
     }
