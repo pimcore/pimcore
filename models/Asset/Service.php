@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Asset;
 
-use JetBrains\PhpStorm\ArrayShape;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
@@ -553,16 +552,12 @@ class Service extends Model\Element\Service
             }
 
             if ($asset instanceof Asset\Video) {
-                if ($config['type'] == 'video') {
-                    return $asset->getThumbnail($config['thumbnail_name'], [$config['thumbnail_extension']]);
-                } else {
-                    $time = 1;
-                    if (preg_match("|~\-~time\-(\d+)\.|", $config['thumbnail_name'], $matchesThumbs)) {
-                        $time = (int)$matchesThumbs[1];
-                    }
-
-                    return $asset->getImageThumbnail($thumbnailConfig, $time);
+                $time = 1;
+                if (preg_match("|~\-~time\-(\d+)\.|", $config['thumbnail_name'], $matchesThumbs)) {
+                    $time = (int)$matchesThumbs[1];
                 }
+
+                return $asset->getImageThumbnail($thumbnailConfig, $time);
             } elseif ($asset instanceof Asset\Document) {
                 $page = 1;
                 if (preg_match("|~\-~page\-(\d+)\.|", $config['thumbnail_name'], $matchesThumbs)) {
@@ -598,7 +593,6 @@ class Service extends Model\Element\Service
         return null;
     }
 
-    #[ArrayShape(['thumbnail_extension' => 'string', 'thumbnail_name' => 'string', 'thumbnail_config_name' => 'string', 'asset_id' => 'string', 'asset_path' => 'string', 'type' => 'image|video'])]
     public static function extractThumbnailInfoFromUri(string $uri): ?array
     {
         $parsedUrl = parse_url($uri);
