@@ -79,7 +79,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @internal
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
         /** @var Tool\Targeting\TargetGroup\Listing|Tool\Targeting\TargetGroup\Listing\Dao $list */
         $list = new Tool\Targeting\TargetGroup\Listing();
@@ -102,14 +102,14 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (!empty($data)) {
-            $targetGroup = Tool\Targeting\TargetGroup::getById($data);
+            $targetGroup = Tool\Targeting\TargetGroup::getById((int)$data);
 
             if (!$targetGroup instanceof Tool\Targeting\TargetGroup) {
                 throw new Model\Element\ValidationException('Invalid target group reference');
@@ -117,12 +117,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         }
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
         $options = $obj->getOptions();

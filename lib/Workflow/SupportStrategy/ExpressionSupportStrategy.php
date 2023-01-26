@@ -48,13 +48,15 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
         $this->expression = $expression;
     }
 
-    public function supports(WorkflowInterface $workflow, $subject): bool
+    public function supports(WorkflowInterface $workflow, object $subject): bool
     {
         if (!$this->supportsClass($subject)) {
             return false;
         }
 
-        return $this->expressionService->evaluateExpression($workflow, $subject, $this->expression);
+        $ret = $this->expressionService->evaluateExpression($workflow, $subject, $this->expression);
+
+        return filter_var($ret, FILTER_VALIDATE_BOOL) ? (bool)$ret : false;
     }
 
     private function supportsClass(object $subject): bool
@@ -63,11 +65,9 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
             return $subject instanceof $this->className;
         }
 
-        if (is_array($this->className)) {
-            foreach ($this->className as $className) {
-                if ($subject instanceof $className) {
-                    return true;
-                }
+        foreach ($this->className as $className) {
+            if ($subject instanceof $className) {
+                return true;
             }
         }
 

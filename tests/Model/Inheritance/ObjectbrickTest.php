@@ -49,7 +49,7 @@ class ObjectbrickTest extends ModelTestCase
      * value to three(second level child). asserts inherited and non-inherited values on children
      *
      */
-    public function testInheritance()
+    public function testInheritance(): void
     {
         $one = new Inheritance();
         $one->setKey('one');

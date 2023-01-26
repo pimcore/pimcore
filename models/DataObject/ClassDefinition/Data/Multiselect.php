@@ -41,6 +41,8 @@ class Multiselect extends Data implements
     use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
 
     /**
      * Static type of this element
@@ -59,20 +61,6 @@ class Multiselect extends Data implements
      * @var array|null
      */
     public ?array $options = null;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
 
     /**
      * @internal
@@ -141,36 +129,6 @@ class Multiselect extends Data implements
         return $this;
     }
 
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
-    public function setHeight(int|string $height): static
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
-
     public function setMaxItems(?int $maxItems): static
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
@@ -196,14 +154,13 @@ class Multiselect extends Data implements
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
-     *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -215,14 +172,13 @@ class Multiselect extends Data implements
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null
-     *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -234,14 +190,13 @@ class Multiselect extends Data implements
     }
 
     /**
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
-     *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -253,14 +208,13 @@ class Multiselect extends Data implements
     }
 
     /**
+     * @see Data::getDataForEditmode
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
-     *
-     * @see Data::getDataForEditmode
-     *
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -278,7 +232,7 @@ class Multiselect extends Data implements
      *
      * @return array|string|null
      */
-    public function getDataForGrid(array $data, Concrete $object = null, array $params = []): array|string|null
+    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array|string|null
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
@@ -313,14 +267,27 @@ class Multiselect extends Data implements
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string
+     * @return mixed
      *
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDiffDataFromEditmode($data, $object = null, $params = []): ?array
+    {
+        $data = $data[0]['data'];
+        if (is_string($data) && $data !== '') {
+            return explode(',', $data);
+        }
+
+        return null;
     }
 
     /**
@@ -347,14 +314,14 @@ class Multiselect extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (!is_array($data) && !empty($data)) {
-            throw new Model\Element\ValidationException('Invalid multiselect data');
+            throw new Model\Element\ValidationException("Invalid multiselect data on field [ {$this->getName()} ]");
         }
     }
 
@@ -488,7 +455,7 @@ class Multiselect extends Data implements
     /**
      * @param DataObject\ClassDefinition\Data\Multiselect $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->maxItems = $masterDefinition->maxItems;
         $this->options = $masterDefinition->options;
@@ -499,7 +466,7 @@ class Multiselect extends Data implements
         return $this->optionsProviderClass;
     }
 
-    public function setOptionsProviderClass(?string $optionsProviderClass)
+    public function setOptionsProviderClass(?string $optionsProviderClass): void
     {
         $this->optionsProviderClass = $optionsProviderClass;
     }
@@ -509,7 +476,7 @@ class Multiselect extends Data implements
         return $this->optionsProviderData;
     }
 
-    public function setOptionsProviderData(?string $optionsProviderData)
+    public function setOptionsProviderData(?string $optionsProviderData): void
     {
         $this->optionsProviderData = $optionsProviderData;
     }
@@ -598,7 +565,7 @@ class Multiselect extends Data implements
      * @param mixed $containerDefinition
      * @param array $params
      */
-    public function preSave(mixed $containerDefinition, array $params = [])
+    public function preSave(mixed $containerDefinition, array $params = []): void
     {
         /** @var DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface|null $optionsProvider */
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
@@ -619,19 +586,19 @@ class Multiselect extends Data implements
             $options = $this->getOptions();
         }
         if (is_array($options) && array_reduce($options, static function ($containsComma, $option) {
-            return $containsComma || str_contains($option['value'], ',');
+            return $containsComma || str_contains((string)$option['value'], ',');
         }, false)) {
             throw new \Exception("Field {$this->getName()}: Multiselect option values may not contain commas (,) for now, see <a href='https://github.com/pimcore/pimcore/issues/5010' target='_blank'>issue #5010</a>.");
         }
     }
 
-    public function postSave(mixed $containerDefinition, array $params = [])
+    public function postSave(mixed $containerDefinition, array $params = []): void
     {
         // nothing to do
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function enrichFieldDefinition(array $context = []): static
     {

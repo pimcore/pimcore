@@ -16,12 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
+use Elastic\Elasticsearch\Client;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 abstract class AbstractElasticSearch implements ProductListInterface
@@ -59,11 +61,11 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
     protected string $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
-    protected int $limit;
+    protected ?int $limit = null;
 
-    protected string $order;
+    protected ?string $order = null;
 
-    protected string|array $orderKey;
+    protected string|array $orderKey = '';
 
     protected bool $orderByPrice = false;
 
@@ -170,7 +172,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @param array|string $condition
      * @param string $fieldname - must be set for elastic search
      */
-    public function addCondition(array|string $condition, string $fieldname = '')
+    public function addCondition(array|string $condition, string $fieldname = ''): void
     {
         $this->filterConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
@@ -195,7 +197,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @param string $fieldname
      * @param string|array $condition
      */
-    public function addRelationCondition(string $fieldname, string|array $condition)
+    public function addRelationCondition(string $fieldname, string|array $condition): void
     {
         $this->relationConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
@@ -205,7 +207,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * Resets all conditions of product list
      */
-    public function resetConditions()
+    public function resetConditions(): void
     {
         $this->relationConditions = [];
         $this->filterConditions = [];
@@ -219,10 +221,10 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * Fieldname is optional but highly recommended - needed for resetting condition based on fieldname
      * and exclude functionality in group by results
      *
-     * @param string $condition
+     * @param string|array $condition
      * @param string $fieldname - must be set for elastic search
      */
-    public function addQueryCondition(string $condition, string $fieldname = '')
+    public function addQueryCondition(string|array $condition, string $fieldname = ''): void
     {
         $this->queryConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
@@ -234,7 +236,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @param string $fieldname
      */
-    public function resetQueryCondition(string $fieldname)
+    public function resetQueryCondition(string $fieldname): void
     {
         unset($this->queryConditions[$fieldname]);
         $this->preparedGroupByValuesLoaded = false;
@@ -247,7 +249,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @param float|null $from
      * @param float|null $to
      */
-    public function addPriceCondition(float $from = null, float $to = null)
+    public function addPriceCondition(float $from = null, float $to = null): void
     {
         $this->conditionPriceFrom = $from;
         $this->conditionPriceTo = $to;
@@ -283,9 +285,9 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * gets order direction
      *
-     * @return string
+     * @return string|null
      */
-    public function getOrder(): string
+    public function getOrder(): ?string
     {
         return $this->order;
     }
@@ -340,7 +342,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         }
     }
 
-    public function getLimit(): int
+    public function getLimit(): ?int
     {
         return $this->limit;
     }
@@ -385,7 +387,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * loads search results from index and returns them
      *
-     * @return array
+     * @return IndexableInterface[]
      *
      * @throws \Exception
      */
@@ -417,7 +419,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $this->products = $this->productPositionMap = [];
         $i = 0;
         foreach ($objectRaws as $raw) {
-            $product = $this->loadElementById($raw);
+            $product = $this->loadElementById((int) $raw);
             if ($product) {
                 $this->products[] = $product;
                 $this->productPositionMap[$product->getId()] = $i;
@@ -452,7 +454,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
         $params = [];
         $params['index'] = $this->getIndexName();
-        $params['type'] = $this->getTenantConfig()->getElasticSearchClientParams()['indexType'];
         $params['track_total_hits'] = true;
         $params['rest_total_hits_as_int'] = true;
 
@@ -556,7 +557,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $raws = [];
 
         foreach ($objectRaws as $raw) {
-            $raws[] = $raw['o_id'];
+            $raws[] = $raw['id'];
         }
 
         return $raws;
@@ -642,7 +643,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected function buildSystemConditions(array $boolFilters): array
     {
         $boolFilters[] = ['term' => ['system.active' => true]];
-        $boolFilters[] = ['term' => ['system.o_virtualProductActive' => true]];
+        $boolFilters[] = ['term' => ['system.virtualProductActive' => true]];
         if ($this->inProductList) {
             $boolFilters[] = ['term' => ['system.inProductList' => true]];
         }
@@ -752,7 +753,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @param int $elementId
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup|null
+     * @return DefaultMockup|null
      */
     protected function loadElementById(int $elementId): ?\Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup
     {
@@ -797,7 +798,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @throws \Exception
      */
-    public function prepareGroupByValuesWithConfig(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true, array $aggregationConfig = [])
+    public function prepareGroupByValuesWithConfig(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true, array $aggregationConfig = []): void
     {
         if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             throw new \Exception('Custom sub aggregations are not supported for variant mode VARIANT_MODE_INCLUDE_PARENT_OBJECT');
@@ -938,7 +939,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @throws \Exception
      */
-    protected function doLoadGroupByValues()
+    protected function doLoadGroupByValues(): void
     {
         // create general filters and queries
         $toExcludeFieldnames = [];
@@ -1013,7 +1014,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                 //necessary to calculate correct counts of search results for filter values
                 if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'][$fieldname]['aggs'] = [
-                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']],
+                        'objectCount' => ['cardinality' => ['field' => 'system.virtualProductId']],
                     ];
                 }
             } else {
@@ -1022,7 +1023,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                 //necessary to calculate correct counts of search results for filter values
                 if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'] = [
-                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']],
+                        'objectCount' => ['cardinality' => ['field' => 'system.virtualProductId']],
                     ];
                 }
             }
@@ -1161,39 +1162,35 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
     /**
      * send a request to elasticsearch
-     *
-     * @param array $params
-     *
-     * @return array
      */
     protected function sendRequest(array $params): array
     {
-        $tenantWorker = $this->tenantConfig->getTenantWorker();
-        if (!($tenantWorker instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch)) {
-            throw new InvalidConfigException('Invalid tenant worker configured. Should be instance of AbstractElasticSearch.');
+        $worker = $this->tenantConfig->getTenantWorker();
+        if (!$worker instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch) {
+            throw new InvalidConfigException('Invalid worker configured, AbstractElasticSearch compatible worker expected.');
         }
 
         /**
-         * @var \Elasticsearch\Client $esClient
+         * @var Client $esClient
          */
-        $esClient = $tenantWorker->getElasticSearchClient();
+        $esClient = $worker->getElasticSearchClient();
         $result = [];
 
-        if ($esClient instanceof \Elasticsearch\Client) {
+        if ($esClient instanceof Client) {
             if ($this->doScrollRequest) {
                 $params = array_merge(['scroll' => $this->scrollRequestKeepAlive], $params);
                 //kind of dirty hack :/
                 $params['body']['size'] = $this->getLimit();
             }
 
-            $result = $esClient->search($params);
+            $result = $esClient->search($params)->asArray();
 
             if ($this->doScrollRequest) {
                 $additionalHits = [];
                 $scrollId = $result['_scroll_id'];
 
                 while (true) {
-                    $additionalResult = $esClient->scroll(['scroll_id' => $scrollId, 'scroll' => $this->scrollRequestKeepAlive]);
+                    $additionalResult = $esClient->scroll(['scroll_id' => $scrollId, 'scroll' => $this->scrollRequestKeepAlive])->asArray();
 
                     if (count($additionalResult['hits']['hits'])) {
                         $additionalHits = array_merge($additionalHits, $additionalResult['hits']['hits']);

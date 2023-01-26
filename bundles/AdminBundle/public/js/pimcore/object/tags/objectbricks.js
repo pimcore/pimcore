@@ -12,12 +12,16 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.objectbricks");
+/**
+ * @private
+ */
 pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
     type: "objectbricks",
     dirty: false,
     addedTypes: {},
     preventDelete: {},
+    inheritedCount: 0,
 
     initialize: function (data, fieldConfig) {
 
@@ -42,7 +46,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_dataobject_class_objectbricktree'),
             params: {
-                class_id: this.object.data.general.o_classId,
+                class_id: this.object.data.general.classId,
                 object_id: this.object.id,
                 field_name: this.getName(),
                 layoutId: this.object.data.currentLayoutId,
@@ -236,7 +240,12 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             if (!this.layoutDefinitions[type]) {
                 return;
             }
-            if (this.fieldConfig.maxItems && this.getCurrentElementsCount() >= this.fieldConfig.maxItems) {
+
+            if(blockData && blockData.inherited) {
+                this.inheritedCount++;
+            }
+
+            if (this.fieldConfig.maxItems && this.getCurrentElementsCount() >= this.fieldConfig.maxItems + this.inheritedCount) {
                 Ext.Msg.alert(t("error"), t("limit_reached"));
                 return;
             }

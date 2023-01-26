@@ -47,8 +47,7 @@ class Asset extends Data
      *
      * @return string
      *
-     *@deprecated use denormalize() instead, will be removed in Pimcore 11
-     *
+     * @deprecated use denormalize() instead, will be removed in Pimcore 11
      */
     public function unmarshal(mixed $value, array $params = []): mixed
     {
@@ -74,7 +73,7 @@ class Asset extends Data
     public function transformGetterData(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
-            return \Pimcore\Model\Asset\Service::getElementById('asset', $data);
+            return \Pimcore\Model\Asset\Service::getElementById('asset', (int) $data);
         }
 
         return $data;

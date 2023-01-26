@@ -89,6 +89,7 @@ final class Config
         $repository = self::getRepository();
 
         foreach ($data as $key => $value) {
+            $key = (string) $key;
             list($configKey, $dataSource) = $repository->loadConfigByKey($key);
             if ($repository->isWriteable($key, $dataSource) === true) {
                 unset($value['writeable']);
@@ -208,7 +209,7 @@ final class Config
         ];
     }
 
-    public static function getRuntimePerspective(User $currentUser = null)
+    public static function getRuntimePerspective(User $currentUser = null): mixed
     {
         if (null === $currentUser) {
             $currentUser = Tool\Admin::getCurrentUser();
@@ -253,8 +254,7 @@ final class Config
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     protected static function getRuntimeElementTreeConfig(string $name): array
     {
@@ -336,7 +336,7 @@ final class Config
         return $result;
     }
 
-    public static function getAvailablePerspectives($user): array
+    public static function getAvailablePerspectives(?User $user): array
     {
         $currentConfigName = null;
         $masterConfig = self::get();

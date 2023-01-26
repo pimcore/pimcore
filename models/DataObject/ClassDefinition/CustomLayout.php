@@ -38,9 +38,9 @@ class CustomLayout extends Model\AbstractModel
 
     protected ?string $id = null;
 
-    protected string $name;
+    protected string $name = '';
 
-    protected string $description;
+    protected string $description = '';
 
     protected ?int $creationDate = null;
 
@@ -54,7 +54,7 @@ class CustomLayout extends Model\AbstractModel
 
     protected ?Layout $layoutDefinitions = null;
 
-    protected int $default = 0;
+    protected bool $default = false;
 
     public static function getById(string $id): ?CustomLayout
     {
@@ -174,7 +174,7 @@ class CustomLayout extends Model\AbstractModel
      *
      * @throws DataObject\Exception\DefinitionWriteException
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->isWriteable()) {
             throw new DataObject\Exception\DefinitionWriteException();
@@ -220,11 +220,12 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @internal
+     *
      * @param string $classId
      *
      * @return UuidV4|null
      *
-     *@internal
      *
      */
     public static function getIdentifier(string $classId): ?UuidV4
@@ -240,7 +241,7 @@ class CustomLayout extends Model\AbstractModel
         }
     }
 
-    public function delete()
+    public function delete(): void
     {
         // empty object cache
         try {
@@ -311,14 +312,17 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
-    public function getDefault(): int
+    public function getDefault(): bool
     {
         return $this->default;
     }
 
-    public function setDefault(int $default): static
+    /**
+     * @return $this
+     */
+    public function setDefault(bool $default): static
     {
-        $this->default = (int)$default;
+        $this->default = $default;
 
         return $this;
     }
@@ -363,7 +367,7 @@ class CustomLayout extends Model\AbstractModel
         return $this->description;
     }
 
-    public function setLayoutDefinitions(?Layout $layoutDefinitions)
+    public function setLayoutDefinitions(?Layout $layoutDefinitions): void
     {
         $this->layoutDefinitions = $layoutDefinitions;
     }
@@ -373,7 +377,7 @@ class CustomLayout extends Model\AbstractModel
         return $this->layoutDefinitions;
     }
 
-    public function setClassId(string $classId)
+    public function setClassId(string $classId): void
     {
         $this->classId = $classId;
     }

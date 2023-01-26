@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.helpers.gridConfigDialog");
+/**
+ * @private
+ */
 pimcore.element.helpers.gridConfigDialog = Class.create({
 
     showFieldname: true,
@@ -447,7 +450,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
         });
         items.push(this.itemsPerPage);
 
-        if (this.previewSettings.showPreviewSelector) {
+        if (this.previewSettings.showPreviewSelector && pimcore.helpers.hasSearchImplementation()) {
             items.push({
                 xtype: "button",
                 text: t("preview_item"),

@@ -23,6 +23,9 @@ use Pimcore\Model\Version;
  */
 class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
 {
+    /**
+     * @var array<string, VersionStorageAdapterInterface>
+     */
     private array $adapters = [];
 
     public function __construct(protected int $byteThreshold,

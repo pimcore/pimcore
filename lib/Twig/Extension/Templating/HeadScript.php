@@ -93,7 +93,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * Capture type and/or attributes (used for hinting during capture)
      * @var bool
      */
-    protected bool $_captureLock;
+    protected bool $_captureLock = false;
 
     protected ?string $_captureScriptType = null;
 
@@ -260,7 +260,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @throws Exception if too few arguments or invalid method
      */
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args): mixed
     {
         if (preg_match('/^(?P<action>set|(ap|pre)pend|offsetSet)(?P<mode>File|Script)$/', $method, $matches)) {
             if (1 > count($args)) {
@@ -555,7 +555,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
         return $return;
     }
 
-    protected function prepareEntries()
+    protected function prepareEntries(): void
     {
         foreach ($this as &$item) {
             if (!$this->_isValid($item)) {

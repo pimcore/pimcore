@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.gridexport.csv");
+/**
+ * @private
+ */
 pimcore.asset.gridexport.csv = Class.create(pimcore.element.gridexport.abstract, {
     name: "csv",
     text: t("export_csv"),

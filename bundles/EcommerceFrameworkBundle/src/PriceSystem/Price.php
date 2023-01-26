@@ -30,7 +30,7 @@ class Price implements PriceInterface
 
     private Decimal $netAmount;
 
-    private string $taxEntryCombinationMode = TaxEntry::CALCULATION_MODE_COMBINE;
+    private ?string $taxEntryCombinationMode = TaxEntry::CALCULATION_MODE_COMBINE;
 
     private bool $minPrice;
 
@@ -61,7 +61,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false)
+    public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false): void
     {
         switch ($priceMode) {
             case self::PRICE_MODE_GROSS:
@@ -85,7 +85,7 @@ class Price implements PriceInterface
         return $this->grossAmount;
     }
 
-    public function setCurrency(Currency $currency)
+    public function setCurrency(Currency $currency): void
     {
         $this->currency = $currency;
     }
@@ -122,7 +122,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function getTaxEntryCombinationMode(): string
+    public function getTaxEntryCombinationMode(): ?string
     {
         return $this->taxEntryCombinationMode;
     }
@@ -162,7 +162,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setTaxEntryCombinationMode(string $taxEntryCombinationMode): void
+    public function setTaxEntryCombinationMode(?string $taxEntryCombinationMode = null): void
     {
         $this->taxEntryCombinationMode = $taxEntryCombinationMode;
     }
@@ -172,7 +172,7 @@ class Price implements PriceInterface
      *
      * @param string $calculationMode
      */
-    protected function updateTaxes(string $calculationMode)
+    protected function updateTaxes(string $calculationMode): void
     {
         $taxCalculationService = new TaxCalculationService();
         $taxCalculationService->updateTaxes($this, $calculationMode);

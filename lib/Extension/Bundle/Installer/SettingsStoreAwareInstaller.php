@@ -23,6 +23,7 @@ use Pimcore\Migrations\FilteredMigrationsRepository;
 use Pimcore\Migrations\FilteredTableMetadataStorage;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 {
@@ -40,31 +41,19 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         $this->bundle = $bundle;
     }
 
-    /**
-     * @param FilteredMigrationsRepository $migrationRepository
-     *
-     * @required
-     */
+    #[Required]
     public function setMigrationRepository(FilteredMigrationsRepository $migrationRepository): void
     {
         $this->migrationRepository = $migrationRepository;
     }
 
-    /**
-     * @param FilteredTableMetadataStorage $tableMetadataStorage
-     *
-     * @required
-     */
+    #[Required]
     public function setTableMetadataStorage(FilteredTableMetadataStorage $tableMetadataStorage): void
     {
         $this->tableMetadataStorage = $tableMetadataStorage;
     }
 
-    /**
-     * @param DependencyFactory $dependencyFactory
-     *
-     * @required
-     */
+    #[Required]
     public function setDependencyFactory(DependencyFactory $dependencyFactory): void
     {
         $this->dependencyFactory = $dependencyFactory;
@@ -80,7 +69,7 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         return null;
     }
 
-    protected function markInstalled()
+    protected function markInstalled(): void
     {
         $migrationVersion = $this->getLastMigrationVersionClassName();
         if ($migrationVersion) {
@@ -106,7 +95,7 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         SettingsStore::set($this->getSettingsStoreInstallationId(), true, 'bool', 'pimcore');
     }
 
-    protected function markUninstalled()
+    protected function markUninstalled(): void
     {
         SettingsStore::set($this->getSettingsStoreInstallationId(), false, 'bool', 'pimcore');
 
@@ -122,13 +111,13 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         }
     }
 
-    public function install()
+    public function install(): void
     {
         parent::install();
         $this->markInstalled();
     }
 
-    public function uninstall()
+    public function uninstall(): void
     {
         parent::uninstall();
         $this->markUninstalled();

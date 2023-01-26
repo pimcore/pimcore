@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM versions WHERE id = ?', [$id]);
 
@@ -78,7 +78,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('versions', ['id' => $this->model->getId()]);
     }
@@ -108,6 +108,12 @@ class Dao extends Model\Dao\AbstractDao
         return $returnValue;
     }
 
+    /**
+     * @param list<array{elementType: string, days?: int, steps?: int}> $elementTypes
+     * @param int[] $ignoreIds
+     *
+     * @return int[]
+     */
     public function maintenanceGetOutdatedVersions(array $elementTypes, array $ignoreIds = []): array
     {
         $ignoreIdsList = implode(',', $ignoreIds);
@@ -122,7 +128,7 @@ class Dao extends Model\Dao\AbstractDao
             $count = 0;
             $stop = false;
             foreach ($elementTypes as $elementType) {
-                if (isset($elementType['days']) && !is_null($elementType['days'])) {
+                if (isset($elementType['days'])) {
                     // by days
                     $deadline = time() - ($elementType['days'] * 86400);
                     $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
@@ -158,6 +164,6 @@ class Dao extends Model\Dao\AbstractDao
         }
         Logger::info('return ' .  count($versionIds) . " ids\n");
 
-        return $versionIds;
+        return array_map('intval', $versionIds);
     }
 }

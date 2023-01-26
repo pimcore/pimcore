@@ -628,7 +628,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $result[] = [
                 'id' => $item->getId(),
                 'name' => $item->getName(),
-                'default' => $item->getDefault() ?: 0,
+                'default' => $item->getDefault(),
             ];
         }
 
@@ -1314,7 +1314,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         $forObjectEditor = $request->get('forObjectEditor');
 
-        $context = null;
+        $context = [];
         $layoutDefinitions = [];
         $groups = [];
         $definitions = [];
@@ -1844,7 +1844,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         return $response;
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

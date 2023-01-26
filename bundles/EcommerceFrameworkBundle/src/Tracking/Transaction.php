@@ -18,27 +18,27 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 class Transaction extends AbstractData
 {
-    protected string $type;
+    protected ?string $type = null;
 
-    protected string $affiliation;
+    protected ?string $affiliation = null;
 
-    protected float $total;
+    protected ?float $total = null;
 
-    protected float $subTotal;
+    protected ?float $subTotal = null;
 
-    protected float $tax;
+    protected ?float $tax = null;
 
-    protected float $shipping;
+    protected ?float $shipping = null;
 
-    protected string $coupon;
+    protected ?string $coupon = null;
 
-    protected string $list;
+    protected ?string $list = null;
 
-    protected string $step;
+    protected ?string $step = null;
 
-    protected string $option;
+    protected ?string $option = null;
 
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -50,7 +50,7 @@ class Transaction extends AbstractData
         return $this;
     }
 
-    public function getAffiliation(): string
+    public function getAffiliation(): ?string
     {
         return $this->affiliation;
     }
@@ -62,7 +62,7 @@ class Transaction extends AbstractData
         return $this;
     }
 
-    public function getTotal(): float
+    public function getTotal(): ?float
     {
         return $this->total;
     }
@@ -74,7 +74,7 @@ class Transaction extends AbstractData
         return $this;
     }
 
-    public function getSubTotal(): float
+    public function getSubTotal(): ?float
     {
         return $this->subTotal;
     }
@@ -86,7 +86,7 @@ class Transaction extends AbstractData
         return $this;
     }
 
-    public function getTax(): float
+    public function getTax(): ?float
     {
         return $this->tax;
     }
@@ -98,7 +98,7 @@ class Transaction extends AbstractData
         return $this;
     }
 
-    public function getShipping(): float
+    public function getShipping(): ?float
     {
         return $this->shipping;
     }
@@ -110,7 +110,7 @@ class Transaction extends AbstractData
         return $this;
     }
 
-    public function getCoupon(): string
+    public function getCoupon(): ?string
     {
         return $this->coupon;
     }
@@ -122,7 +122,7 @@ class Transaction extends AbstractData
         return $this;
     }
 
-    public function getList(): string
+    public function getList(): ?string
     {
         return $this->list;
     }
@@ -134,7 +134,7 @@ class Transaction extends AbstractData
         return $this;
     }
 
-    public function getStep(): string
+    public function getStep(): ?string
     {
         return $this->step;
     }
@@ -146,7 +146,7 @@ class Transaction extends AbstractData
         return $this;
     }
 
-    public function getOption(): string
+    public function getOption(): ?string
     {
         return $this->option;
     }

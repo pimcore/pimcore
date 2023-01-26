@@ -19,6 +19,7 @@ namespace Pimcore;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
+use Knp\Bundle\PaginatorBundle\KnpPaginatorBundle;
 use League\FlysystemBundle\FlysystemBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
@@ -44,6 +45,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 abstract class Kernel extends SymfonyKernel
 {
@@ -121,7 +123,7 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
@@ -196,7 +198,7 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
-    public function boot()
+    public function boot(): void
     {
         if (true === $this->booted) {
             // make sure container reset is handled properly
@@ -214,7 +216,7 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
-    public function shutdown()
+    public function shutdown(): void
     {
         if (true === $this->booted) {
             // cleanup runtime cache, doctrine, monolog ... to free some memory and avoid locking issues
@@ -227,7 +229,7 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
-    protected function initializeContainer()
+    protected function initializeContainer(): void
     {
         parent::initializeContainer();
 
@@ -307,13 +309,14 @@ abstract class Kernel extends SymfonyKernel
      *
      * @param BundleCollection $collection
      */
-    protected function registerCoreBundlesToCollection(BundleCollection $collection)
+    protected function registerCoreBundlesToCollection(BundleCollection $collection): void
     {
         $collection->addBundles([
             // symfony "core"/standard
             new FrameworkBundle(),
             new SecurityBundle(),
             new TwigBundle(),
+            new TwigExtraBundle(),
             new MonologBundle(),
             new DoctrineBundle(),
             new DoctrineMigrationsBundle(),
@@ -323,6 +326,7 @@ abstract class Kernel extends SymfonyKernel
             new SchebTwoFactorBundle(),
             new FOSJsRoutingBundle(),
             new FlysystemBundle(),
+            new KnpPaginatorBundle(),
         ], 100);
 
         // pimcore bundles
@@ -340,6 +344,9 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
+    /**
+     * @return string[]
+     */
     protected function getEnvironmentsForDevBundles(): array
     {
         return ['dev', 'test'];
@@ -353,14 +360,14 @@ abstract class Kernel extends SymfonyKernel
      *
      * @param BundleCollection $collection
      */
-    public function registerBundlesToCollection(BundleCollection $collection)
+    public function registerBundlesToCollection(BundleCollection $collection): void
     {
     }
 
     /**
      * Handle system settings and requirements
      */
-    protected function setSystemRequirements()
+    protected function setSystemRequirements(): void
     {
         // try to set system-internal variables
         $maxExecutionTime = 240;

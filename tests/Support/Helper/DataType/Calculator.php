@@ -37,3 +37,5 @@ class Calculator implements CalculatorClassInterface
     {
     }
 }
+
+@class_alias(Calculator::class, 'Pimcore\Tests\Support\Helper\DataType\Calculator');

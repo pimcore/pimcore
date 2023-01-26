@@ -54,7 +54,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -82,7 +82,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
      * @param string $context
      * @param Request $request
      */
-    protected function initializeContext(string $context, Request $request)
+    protected function initializeContext(string $context, Request $request): void
     {
         if ($context == PimcoreContextResolver::CONTEXT_ADMIN) {
             \Pimcore::setAdminMode();

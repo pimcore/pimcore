@@ -26,7 +26,7 @@ interface AreabrickInterface
      *
      * @param string $id
      */
-    public function setId(string $id);
+    public function setId(string $id): void;
 
     /**
      * Brick ID - needs to be unique throughout the system.

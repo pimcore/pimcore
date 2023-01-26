@@ -23,6 +23,9 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
     var user = pimcore.globalmanager.get("user");
     var bindings = [];
 
+    // firing event to enable bundles/extensions to add key bindings
+    document.dispatchEvent(new CustomEvent(pimcore.events.preRegisterKeyBindings));
+
     var decodedKeyBindings = Ext.decode(user.keyBindings);
     if (decodedKeyBindings) {
         for (var i = 0; i < decodedKeyBindings.length; i++) {
@@ -653,7 +656,7 @@ pimcore.helpers.handleCtrlS = function (keyCode, e) {
             }
         }
         else if (el.object) {
-            if (el.object.data.general.o_published) {
+            if (el.object.data.general.published) {
                 el.object.publish();
             } else {
                 el.object.save('version');
@@ -808,9 +811,25 @@ pimcore.helpers.loadingHide = function () {
 };
 
 pimcore.helpers.itemselector = function (multiselect, callback, restrictions, config) {
-    var itemselector = new pimcore.element.selector.selector(multiselect, callback, restrictions, config);
+    pimcore.globalmanager.get('searchImplementationRegistry').openItemSelector(
+        multiselect,
+        callback,
+        restrictions,
+        config
+    );
 };
 
+pimcore.helpers.hasSearchImplementation = function () {
+    return pimcore.globalmanager.get('searchImplementationRegistry').hasImplementation();
+}
+
+pimcore.helpers.getObjectRelationInlineSearchRoute = function () {
+    if(pimcore.helpers.hasSearchImplementation()) {
+        return pimcore.globalmanager.get('searchImplementationRegistry').getObjectRelationInlineSearchRoute();
+    }
+
+    return null;
+}
 
 pimcore.helpers.activateMaintenance = function () {
 
@@ -949,7 +968,7 @@ pimcore.helpers.openMemorizedTabs = function () {
     }
 };
 
-pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context) {
+pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context, uploadAssetType) {
 
     var params = {};
     params['parent' + ucfirst(parentType)] = parent;
@@ -957,6 +976,10 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
     var url = Routing.generate('pimcore_admin_asset_addassetcompatibility', params);
     if (context) {
         url += "&context=" + Ext.encode(context);
+    }
+
+    if(uploadAssetType) {
+        url += "&uploadAssetType=" + uploadAssetType;
     }
 
     pimcore.helpers.uploadDialog(url, 'Filedata', success, failure);
@@ -1497,34 +1520,40 @@ pimcore.helpers.sendTestEmail = function (from, to, subject, emailType, document
     });
     emailContentTextField.hide();
 
-    var documentTextField = new Ext.form.TextField({
+    const documentTextField = new Ext.form.TextField({
         name: 'documentPath',
         flex: 1,
         editable: false
     });
-    var searchDocumentButton = new Ext.Button({
-        name: 'searchDocument',
-        fieldLabel: t('document'),
-        iconCls: 'pimcore_icon_search',
-        handler: function() {
-            pimcore.helpers.itemselector(false, function(e) {
-                documentTextField.setValue(e.fullpath);
-            }, {
-                type: ["document"],
-                subtype: {
-                    document: ["email", "newsletter"]
-                }
-            });
-        }
-    });
+
+    const items = [
+        documentTextField
+    ];
+
+    if(pimcore.helpers.hasSearchImplementation()) {
+        const searchDocumentButton = new Ext.Button({
+            name: 'searchDocument',
+            fieldLabel: t('document'),
+            iconCls: 'pimcore_icon_search',
+            handler: function() {
+                pimcore.helpers.itemselector(false, function(e) {
+                    documentTextField.setValue(e.fullpath);
+                }, {
+                    type: ["document"],
+                    subtype: {
+                        document: ["email", "newsletter"]
+                    }
+                });
+            }
+        });
+
+        items.push(searchDocumentButton);
+    }
 
     var documentComponent = Ext.create('Ext.form.FieldContainer', {
         fieldLabel: t('document'),
         layout: 'hbox',
-        items: [
-            documentTextField,
-            searchDocumentButton
-        ],
+        items: items,
         componentCls: "object_field",
         border: false,
         style: {
@@ -1824,6 +1853,30 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         });
     }.bind(this));
 
+    const fcItems = [
+        fieldPath
+    ];
+
+    if(pimcore.helpers.hasSearchImplementation()) {
+        fcItems.push({
+            xtype: "button",
+            iconCls: "pimcore_icon_search",
+            style: "margin-left: 5px",
+            handler: function () {
+                pimcore.helpers.itemselector(false, function (item) {
+                    if (item) {
+                        internalTypeField.setValue(item.type);
+                        linkTypeField.setValue('internal');
+                        fieldPath.setValue(item.fullpath);
+                        return true;
+                    }
+                }, {
+                    type: ["asset", "document", "object"]
+                });
+            }
+        });
+    }
+
     var form = new Ext.FormPanel({
         itemId: "form",
         items: [
@@ -1852,23 +1905,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                 xtype: "fieldcontainer",
                                 layout: 'hbox',
                                 border: false,
-                                items: [fieldPath, {
-                                    xtype: "button",
-                                    iconCls: "pimcore_icon_search",
-                                    style: "margin-left: 5px",
-                                    handler: function () {
-                                        pimcore.helpers.itemselector(false, function (item) {
-                                            if (item) {
-                                                internalTypeField.setValue(item.type);
-                                                linkTypeField.setValue('internal');
-                                                fieldPath.setValue(item.fullpath);
-                                                return true;
-                                            }
-                                        }, {
-                                            type: ["asset", "document", "object"]
-                                        });
-                                    }
-                                }]
+                                items: fcItems
                             },
                             {
                                 xtype: 'fieldset',
@@ -1994,9 +2031,9 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
     const allowedTypes = data.allowedTypes;
-    var window = null;
-    var form = null;
-    var fieldPath = new Ext.form.TextField({
+    let window = null;
+    let form = null;
+    const fieldPath = new Ext.form.TextField({
         fieldLabel: t('path'),
         itemId: "path",
         value: data.path,
@@ -2022,8 +2059,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             }.bind(this)
         }
     });
-
-    var poster = new Ext.form.TextField({
+    const poster = new Ext.form.TextField({
         fieldLabel: t('poster_image'),
         value: data.poster,
         name: "poster",
@@ -2037,7 +2073,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
-    var initDD = function (el) {
+    const initDD = function (el) {
         // register at global DnD manager
         new Ext.dd.DropZone(el.getEl(), {
             reference: this,
@@ -2096,24 +2132,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         poster.on("render", initDD);
     }
 
-    var searchButton = new Ext.Button({
-        iconCls: "pimcore_icon_search",
-        handler: function () {
-            pimcore.helpers.itemselector(false, function (item) {
-                if (item) {
-                    fieldPath.setValue(item.fullpath);
-                    return true;
-                }
-            }, {
-                type: ["asset"],
-                subtype: {
-                    asset: ["video"]
-                }
-            });
-        }
-    });
-
-    var openButton = new Ext.Button({
+    const openButton = new Ext.Button({
         iconCls: "pimcore_icon_open",
         handler: function () {
             pimcore.helpers.openElement(fieldPath.getValue(), 'asset');
@@ -2121,24 +2140,45 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
-    var posterImageSearchButton = new Ext.Button({
-        iconCls: "pimcore_icon_search",
-        handler: function () {
-            pimcore.helpers.itemselector(false, function (item) {
-                if (item) {
-                    poster.setValue(item.fullpath);
-                    return true;
-                }
-            }, {
-                type: ["asset"],
-                subtype: {
-                    asset: ["image"]
-                }
-            });
-        }
-    });
+    let searchButton = undefined;
+    let posterImageSearchButton = undefined;
+    if(pimcore.helpers.hasSearchImplementation()){
+        searchButton = new Ext.Button({
+            iconCls: "pimcore_icon_search",
+            handler: function () {
+                pimcore.helpers.itemselector(false, function (item) {
+                    if (item) {
+                        fieldPath.setValue(item.fullpath);
+                        return true;
+                    }
+                }, {
+                    type: ["asset"],
+                    subtype: {
+                        asset: ["video"]
+                    }
+                });
+            }
+        });
 
-    var posterImageOpenButton = new Ext.Button({
+        posterImageSearchButton = new Ext.Button({
+            iconCls: "pimcore_icon_search",
+            handler: function () {
+                pimcore.helpers.itemselector(false, function (item) {
+                    if (item) {
+                        poster.setValue(item.fullpath);
+                        return true;
+                    }
+                }, {
+                    type: ["asset"],
+                    subtype: {
+                        asset: ["image"]
+                    }
+                });
+            }
+        });
+    }
+
+    const posterImageOpenButton = new Ext.Button({
         iconCls: "pimcore_icon_open",
         handler: function () {
             pimcore.helpers.openElement(poster.getValue(), 'asset');
@@ -2146,15 +2186,19 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
-    var updateType = function (type) {
-        searchButton.enable();
+    const updateType = function (type) {
+        if(typeof searchButton !== 'undefined') {
+            searchButton.enable();
+        }
         openButton.enable();
 
         var labelEl = form.getComponent("pathContainer").getComponent("path").labelEl;
         labelEl.update(t("path"));
 
         if (type != "asset") {
-            searchButton.disable();
+            if(typeof searchButton !== 'undefined') {
+                searchButton.disable();
+            }
             openButton.disable();
 
             poster.hide();
@@ -2184,6 +2228,20 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     };
 
+    const pathContainerItems = [
+        fieldPath
+    ];
+    const posterContainerItems = [
+        poster
+    ];
+
+    if(pimcore.helpers.hasSearchImplementation()) {
+        pathContainerItems.push(searchButton);
+        posterContainerItems.push(posterImageSearchButton, posterImageOpenButton);
+    }
+
+    pathContainerItems.push(openButton);
+
     form = new Ext.FormPanel({
         itemId: "form",
         bodyStyle: "padding:10px;",
@@ -2209,13 +2267,13 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             layout: 'hbox',
             border: false,
             itemId: "pathContainer",
-            items: [fieldPath, searchButton, openButton]
+            items: pathContainerItems
         }, {
             xtype: "fieldcontainer",
             layout: 'hbox',
             border: false,
             itemId: "posterContainer",
-            items: [poster, posterImageSearchButton, posterImageOpenButton]
+            items: posterContainerItems
         }, {
             xtype: "textfield",
             name: "title",
@@ -2275,7 +2333,7 @@ pimcore.helpers.showAbout = function () {
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
     html += '<br><b>Git Hash: <a href="https://github.com/pimcore/pimcore/commit/' + pimcore.settings.build + '" target="_blank">' + pimcore.settings.build + '</a></b>';
     html += '<br><br>&copy; by pimcore GmbH (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
-    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/10.5/LICENSE.md" target="_blank">License</a> | ';
+    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/11.x/LICENSE.md" target="_blank">License</a> | ';
     html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a>';
     html += '<img src="/bundles/pimcoreadmin/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
     html += '</div>';
@@ -2751,13 +2809,6 @@ pimcore.helpers.searchAndReplaceAssignments = function() {
     }
 };
 
-pimcore.helpers.glossary = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("glossary")) {
-        pimcore.layout.toolbar.prototype.editGlossary();
-    }
-};
-
 pimcore.helpers.redirects = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("redirects")) {
@@ -2790,41 +2841,6 @@ pimcore.helpers.applicationLogger = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("application_logging")) {
         pimcore.layout.toolbar.prototype.logAdmin();
-    }
-};
-
-pimcore.helpers.reports = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("reports")) {
-        pimcore.layout.toolbar.prototype.showReports(null);
-    }
-};
-
-pimcore.helpers.seoDocumentEditor = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
-        pimcore.layout.toolbar.prototype.showDocumentSeo();
-    }
-};
-
-pimcore.helpers.robots = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("robots.txt")) {
-        pimcore.layout.toolbar.prototype.showRobotsTxt();
-    }
-};
-
-pimcore.helpers.httpErrorLog = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("http_errors")) {
-        pimcore.layout.toolbar.prototype.showHttpErrorLog();
-    }
-};
-
-pimcore.helpers.customReports = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("reports")) {
-        pimcore.layout.toolbar.prototype.showCustomReports();
     }
 };
 
@@ -2863,47 +2879,6 @@ pimcore.helpers.clearDataCache = function() {
     }
 };
 
-pimcore.helpers.showQuickSearch = function () {
-
-    // close all windows, tooltips and previews
-    // we use each() because .hideAll() doesn't hide the modal (seems to be an ExtJS bug)
-    Ext.WindowManager.each(function (win) {
-        win.close();
-    });
-    pimcore.helpers.treeNodeThumbnailPreviewHide();
-    pimcore.helpers.treeToolTipHide();
-
-    var quicksearchContainer = Ext.get('pimcore_quicksearch');
-    quicksearchContainer.show();
-    quicksearchContainer.removeCls('filled');
-
-    var combo = Ext.getCmp('quickSearchCombo');
-    combo.reset();
-    combo.focus();
-
-    Ext.get('pimcore_body').addCls('blurry');
-    Ext.get('pimcore_sidebar').addCls('blurry');
-    var elem = document.createElement('div');
-    elem.id = 'pimcore_quickSearch_overlay';
-    elem.style.cssText = 'position:absolute;width:100vw;height:100vh;z-index:100;top:0;left:0;opacity:0';
-    elem.addEventListener('click', function(e) {
-        document.body.removeChild(elem);
-        pimcore.helpers.hideQuickSearch();
-    });
-    document.body.appendChild(elem);
-};
-
-pimcore.helpers.hideQuickSearch = function () {
-    var quicksearchContainer = Ext.get('pimcore_quicksearch');
-    quicksearchContainer.hide();
-    Ext.get('pimcore_body').removeCls('blurry');
-    Ext.get('pimcore_sidebar').removeCls('blurry');
-    if (Ext.get('pimcore_quickSearch_overlay')) {
-        Ext.get('pimcore_quickSearch_overlay').remove();
-    }
-};
-
-
 // HAS TO BE THE VERY LAST ENTRY !!!
 pimcore.helpers.keyBindingMapping = {
     "save": pimcore.helpers.handleCtrlS,
@@ -2923,24 +2898,17 @@ pimcore.helpers.keyBindingMapping = {
     "showElementHistory": pimcore.helpers.showElementHistory,
     "closeAllTabs": pimcore.helpers.closeAllTabs,
     "searchAndReplaceAssignments": pimcore.helpers.searchAndReplaceAssignments,
-    "glossary": pimcore.helpers.glossary,
     "redirects": pimcore.helpers.redirects,
     "sharedTranslations": pimcore.helpers.sharedTranslations,
     "recycleBin": pimcore.helpers.recycleBin,
     "notesEvents": pimcore.helpers.notesEvents,
     "applicationLogger": pimcore.helpers.applicationLogger,
-    "reports": pimcore.helpers.reports,
     "tagManager": pimcore.helpers.tagManager,
-    "seoDocumentEditor": pimcore.helpers.seoDocumentEditor,
-    "robots": pimcore.helpers.robots,
-    "httpErrorLog": pimcore.helpers.httpErrorLog,
-    "customReports": pimcore.helpers.customReports,
     "tagConfiguration": pimcore.helpers.tagConfiguration,
     "users": pimcore.helpers.users,
     "roles": pimcore.helpers.roles,
     "clearAllCaches": pimcore.helpers.clearAllCaches,
-    "clearDataCache": pimcore.helpers.clearDataCache,
-    "quickSearch": pimcore.helpers.showQuickSearch
+    "clearDataCache": pimcore.helpers.clearDataCache
 };
 
 pimcore.helpers.showPermissionError = function(permission) {
@@ -3220,7 +3188,7 @@ pimcore.helpers.formatTimeDuration = function (dataDuration) {
 };
 
 /**
- * Delete confim dialog box
+ * Delete confirm dialog box
  *
  * @param title
  * @param name
@@ -3237,3 +3205,100 @@ pimcore.helpers.deleteConfirm = function (title, name, deleteCallback) {
             }
         }.bind(this))
 };
+
+/**
+ * Building menu with priority
+ * @param items
+ */
+pimcore.helpers.buildMenu = function(items) {
+    // priority for every menu and submenu starts at 10
+    // leaving enough space for bundles etc.
+    let priority = 10;
+    for(let i = 0; i < items.length; i++) {
+        // only adding priority if not set yet
+        if(items[i].priority === undefined && items[i].text !== undefined) {
+            items[i].priority = priority;
+            priority += 10;
+        }
+        // if there are no submenus left, skip to the next item
+        if(items[i].menu === undefined || null === items[i].menu) {
+            continue;
+        }
+
+        // if the submenu has no items, remove the submenu itself
+        if(items[i].menu.items.length === 0){
+            items.splice(i, 1);
+            continue;
+        }
+
+        pimcore.helpers.buildMenu(items[i].menu.items);
+        items[i].menu = Ext.create('pimcore.menu.menu', items[i].menu);
+    }
+};
+
+pimcore.helpers.buildMainNavigationMarkup = function(menu) {
+    // priority for main menu starts at 10
+    // leaving enough space for bundles etc.
+
+    let priority = 10;
+    Object.keys(menu).forEach(key => {
+        if(menu[key].priority === undefined) {
+            menu[key].priority = priority;
+            priority += 10;
+        }
+    });
+
+
+    const dh = Ext.DomHelper;
+    const ul = Ext.get("pimcore_navigation_ul");
+    const menuPrefix = 'pimcore_menu_';
+    
+    // sorting must be done manually here.
+    Object.keys(menu).sort((a, b) => {
+        // a and b are the keys like file, extras e.t.c
+        // we use the keys to get the menu object themselves with the priorities
+        return pimcore.helpers.priorityCompare(menu[a], menu[b]);
+    }).filter(key => {
+        // the notifications are excluded from this
+        return !menu[key]['exclude'];
+    }).forEach(key => {
+        const li = {
+            id: menuPrefix + key,
+            tag: 'li',
+            cls: 'pimcore_menu_item pimcore_menu_needs_children',
+            html: '<div id="menuitem-' + key + '-iconEl" data-ref="iconEl" class="x-menu-item-main-icon x-menu-item-icon ' + menu[key]['iconCls'] + '"></div>',
+            'data-menu-tooltip': menu[key]['label']
+        };
+        if(menu[key]['style']) {
+            li.style = menu[key]['style'];
+        }
+        dh.append(ul, li);
+    });
+
+    // add the maintenance at last
+    dh.append(ul,
+        {
+            id: menuPrefix + 'maintenance',
+            tag: 'li',
+            cls: 'pimcore_menu_item',
+            style: 'display:none;',
+            'data-menu-tooltip': t('deactivate_maintenance')
+        }
+    );
+}
+
+pimcore.helpers.priorityCompare = function(a, b) {
+    let priorityA = a.priority ?? Number.MAX_VALUE;
+    let priorityB = b.priority ?? Number.MAX_VALUE;
+
+    if(priorityA > priorityB) {
+        return 1;
+    }
+
+    if(priorityA < priorityB) {
+        return -1;
+    }
+
+    return 0;
+}
+

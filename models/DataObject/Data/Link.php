@@ -37,7 +37,7 @@ class Link implements OwnerAwareFieldInterface
 
     protected ?int $internal = null;
 
-    protected string $direct;
+    protected ?string $direct = null;
 
     protected ?string $linktype = null;
 
@@ -98,12 +98,12 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getDirect(): string
+    public function getDirect(): ?string
     {
         return $this->direct;
     }
 
-    public function setDirect(string $direct): static
+    public function setDirect(?string $direct): static
     {
         $this->direct = $direct;
         $this->markMeDirty();
@@ -215,7 +215,7 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function setAttributes(string $attributes)
+    public function setAttributes(string $attributes): void
     {
         $this->attributes = $attributes;
         $this->markMeDirty();
@@ -226,7 +226,7 @@ class Link implements OwnerAwareFieldInterface
         return $this->attributes;
     }
 
-    public function setClass(string $class)
+    public function setClass(string $class): void
     {
         $this->class = $class;
         $this->markMeDirty();
@@ -359,8 +359,7 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     *@deprecated use setElement() instead - will be removed in Pimcore 11
-     *
+     * @deprecated use setElement() instead - will be removed in Pimcore 11
      */
     public function setObject(ElementInterface $object): static
     {

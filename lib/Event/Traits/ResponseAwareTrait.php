@@ -61,6 +61,6 @@ trait ResponseAwareTrait
      */
     public function hasResponse(): bool
     {
-        return null !== $this->response;
+        return isset($this->response);
     }
 }

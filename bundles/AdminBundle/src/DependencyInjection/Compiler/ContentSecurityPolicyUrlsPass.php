@@ -29,7 +29,7 @@ final class ContentSecurityPolicyUrlsPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(ContentSecurityPolicyHandler::class);
 

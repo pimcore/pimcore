@@ -49,7 +49,7 @@ interface PriceInterface
      * @param string $priceMode - default to PRICE_MODE_GROSS
      * @param bool $recalc - default to false
      */
-    public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false);
+    public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false): void;
 
     /**
      * Returns gross amount of price
@@ -75,9 +75,9 @@ interface PriceInterface
     /**
      * Returns tax entry combination mode needed for tax calculation
      *
-     * @return string
+     * @return string|null
      */
-    public function getTaxEntryCombinationMode(): string;
+    public function getTaxEntryCombinationMode(): ?string;
 
     /**
      * Sets gross amount of price. If $recalc is set to true, corresponding net price
@@ -113,9 +113,9 @@ interface PriceInterface
     /**
      * Sets $taxEntryCombinationMode for price.
      *
-     * @param string $taxEntryCombinationMode
+     * @param string|null $taxEntryCombinationMode
      *
      * @return void
      */
-    public function setTaxEntryCombinationMode(string $taxEntryCombinationMode): void;
+    public function setTaxEntryCombinationMode(?string $taxEntryCombinationMode = null): void;
 }

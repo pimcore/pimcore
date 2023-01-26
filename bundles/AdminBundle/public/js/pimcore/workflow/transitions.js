@@ -13,6 +13,9 @@
 
 pimcore.registerNS("pimcore.workflow.transitions.x");
 
+/**
+ * @private
+ */
 pimcore.workflow.transitions.perform = function (ctype, cid, elementEditor, workflow, transition) {
 
 

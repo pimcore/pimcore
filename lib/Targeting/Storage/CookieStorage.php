@@ -102,7 +102,7 @@ class CookieStorage implements TargetingStorageInterface
         return $default;
     }
 
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value): void
     {
         $this->loadData($visitorInfo, $scope);
 
@@ -115,7 +115,7 @@ class CookieStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc }
      */
-    public function clear(VisitorInfo $visitorInfo, string $scope = null)
+    public function clear(VisitorInfo $visitorInfo, string $scope = null): void
     {
         if (null === $scope) {
             $this->data = [];
@@ -128,7 +128,7 @@ class CookieStorage implements TargetingStorageInterface
         $this->addSaveListener($visitorInfo);
     }
 
-    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): void
     {
         $values = $storage->all($visitorInfo, $scope);
 

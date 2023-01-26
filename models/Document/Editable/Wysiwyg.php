@@ -29,10 +29,8 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
      * Contains the text
      *
      * @internal
-     *
-     * @var string
      */
-    protected string $text;
+    protected ?string $text = null;
 
     /**
      * {@inheritdoc}
@@ -47,7 +45,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
      */
     public function getData(): mixed
     {
-        return $this->text;
+        return (string) $this->text;
     }
 
     public function getText(): string
@@ -55,9 +53,6 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $this->getData();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): ?string
     {
         $document = $this->getDocument();
@@ -120,7 +115,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function rewriteIds(array $idMapping): void
     {

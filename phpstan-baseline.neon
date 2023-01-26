@@ -1,24 +1,9 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Offset 'image' on array\\{\\} in empty\\(\\) does not exist\\.$#"
-			count: 1
-			path: bundles/AdminBundle/src/GDPR/DataProvider/DataObjects.php
-
-		-
-			message: "#^Offset 'object' on array\\{\\} in empty\\(\\) does not exist\\.$#"
-			count: 1
-			path: bundles/AdminBundle/src/GDPR/DataProvider/DataObjects.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 3
 			path: bundles/CoreBundle/src/DependencyInjection/PimcoreCoreExtension.php
-
-		-
-			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: bundles/CoreBundle/src/EventListener/Frontend/RoutingListener.php
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
@@ -51,11 +36,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/src/FilterService/FilterType/Findologic/NumberRangeSelection.php
 
 		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/FilterService/FilterType/SelectCategory.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/FilterService/ListHelper.php
@@ -79,11 +59,6 @@ parameters:
 			message: "#^Call to function is_null\\(\\) with string will always evaluate to false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/OrderManager/Order/Listing.php
-
-		-
-			message: "#^Parameter \\#2 \\$value of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListInterface\\:\\:addCondition\\(\\) expects string\\|null, int\\|null given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/OrderManager/Order/Listing/Filter/CustomerObject.php
 
 		-
 			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrderItem\\:\\:setProduct\\(\\) expects Pimcore\\\\Model\\\\Element\\\\AbstractElement\\|null, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface given\\.$#"
@@ -141,62 +116,6 @@ parameters:
 			path: lib/Tool/Serialize.php
 
 		-
-			message: "#^Parameter \\#1 \\$separator of function explode expects non\\-empty\\-string, string given\\.$#"
-			count: 1
-			path: lib/Tool/Text/Csv.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: models/Asset/Video/ImageThumbnail.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 2
-			path: models/DataObject/ClassDefinition/Data/ManyToManyRelation.php
-
-		-
-			message: "#^Left side of && is always true\\.$#"
-			count: 2
-			path: models/DataObject/ClassDefinition/Data/ManyToOneRelation.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Email.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Folder.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Hardlink.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Link.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Page.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Printcontainer.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Printpage.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
-			count: 1
-			path: models/Document/Hardlink/Wrapper/Snippet.php
-

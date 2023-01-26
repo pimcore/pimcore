@@ -1,1 +1,10 @@
-{% include '@PimcoreAdmin/admin/asset/show_version_unknown.html.twig' %}
+{% if asset.getMimeType() == 'application/pdf' %}
+    {% set tempFile = asset.getTemporaryFile() %}
+    {% set dataUri = pimcore_asset_version_preview(tempFile) %}
+    
+    <div style="display: flex; width: 100%; height: 100%; flex-direction: column; overflow: hidden;">
+        <iframe src="{{ dataUri }}" frameborder="0" style="flex-grow: 1; border: none; margin: 0; padding: 0;"></iframe>
+    </div>
+{% else %}
+    {% include '@PimcoreAdmin/admin/asset/show_version_unknown.html.twig' %}
+{% endif %}

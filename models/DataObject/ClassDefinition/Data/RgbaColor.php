@@ -33,6 +33,7 @@ class RgbaColor extends Data implements
     BeforeEncryptionMarshallerInterface,
     AfterDecryptionUnmarshallerInterface
 {
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -44,13 +45,6 @@ class RgbaColor extends Data implements
      * @var string
      */
     public string $fieldtype = 'rgbaColor';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * Type for the column to query
@@ -74,21 +68,6 @@ class RgbaColor extends Data implements
     public $columnType = ['rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
         'a' => 'VARCHAR(2) NULL DEFAULT NULL',
     ];
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
 
     /**
      * @param mixed $data
@@ -156,8 +135,7 @@ class RgbaColor extends Data implements
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -222,7 +200,7 @@ class RgbaColor extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         parent::checkValidity($data, $omitMandatoryCheck);
 
@@ -249,7 +227,7 @@ class RgbaColor extends Data implements
     /**
      * @param Model\DataObject\ClassDefinition\Data\RgbaColor $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->width = $masterDefinition->width;
     }

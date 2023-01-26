@@ -44,17 +44,17 @@ final class SecurityPolicy implements SecurityPolicyInterface
         $this->allowedFunctions = $allowedFunctions;
     }
 
-    public function setAllowedTags(array $tags)
+    public function setAllowedTags(array $tags): void
     {
         $this->allowedTags = $tags;
     }
 
-    public function setAllowedFilters(array $filters)
+    public function setAllowedFilters(array $filters): void
     {
         $this->allowedFilters = $filters;
     }
 
-    public function setAllowedFunctions(array $functions)
+    public function setAllowedFunctions(array $functions): void
     {
         $this->allowedFunctions = $functions;
     }

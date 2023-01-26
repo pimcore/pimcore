@@ -11,8 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
 pimcore.registerNS("pimcore.element.helpers.gridColumnConfig");
+/**
+ * @private
+ */
 pimcore.element.helpers.gridColumnConfig = {
 
     batchJobDelay: 50,
@@ -566,7 +568,19 @@ pimcore.element.helpers.gridColumnConfig = {
                     text: t("save"),
                     handler: function () {
                         if (formPanel.isValid()) {
-                            this.batchProcess(jobs, append, remove, editor, fieldInfo, true);
+                            if (jobs.length > 25) {
+                                Ext.Msg.confirm("Confirmation", sprintf(t('batch_confirmation'), `<b>${new Intl.NumberFormat(navigator.language).format(jobs.length)}</b>`),
+                                    (btn) => {
+                                        if (btn === "yes") {
+                                            this.batchProcess(jobs, append, remove, editor, fieldInfo, true);
+                                        } else {
+                                            this.batchWin.close()
+                                            return;
+                                        }
+                                    });
+                            } else {
+                                this.batchProcess(jobs, append, remove, editor, fieldInfo, true);
+                            }
                         }
                     }.bind(this)
                 }
@@ -614,15 +628,37 @@ pimcore.element.helpers.gridColumnConfig = {
 
             this.batchProgressBar = new Ext.ProgressBar({
                 text: t('initializing'),
-                style: "margin: 10px;",
+                style: "margin-top: 0px;",
                 width: 500
+            });
+
+            this.cancelBtn = Ext.create('Ext.Button', {
+                scale: 'small',
+                text: t('cancel'),
+                tooltip: t('cancel'),
+                icon : '/bundles/pimcoreadmin/img/flat-color-icons/cancel.svg',
+                style: 'margin-left:5px;height:30px',
+                handler: () => {
+                    // Stop the batch processing
+                    this.batchJobCurrent = Infinity;
+                }
+            });
+
+            this.progressPanel = Ext.create('Ext.panel.Panel', {
+                layout: {
+                    type: 'hbox',
+                },
+                items: [
+                    this.batchProgressBar,
+                    this.cancelBtn
+                ],
             });
 
             this.batchProgressWin = new Ext.Window({
                 title: t('batch_operation'),
-                items: [this.batchProgressBar],
+                items: [this.progressPanel],
                 layout: 'fit',
-                width: 400,
+                width: 650,
                 bodyStyle: "padding: 10px;",
                 closable: false,
                 plain: true,
@@ -713,6 +749,7 @@ pimcore.element.helpers.gridColumnConfig = {
         settings = Ext.encode(settings);
         params["settings"] = settings;
         Ext.Ajax.request({
+            method: 'POST',
             url: this.exportPrepareUrl,
             params: params,
             success: function (response) {

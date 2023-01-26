@@ -65,12 +65,12 @@ class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
         $cd .= 'class ' . ucfirst($definition->getKey()) . ' extends ' . $extendClass . $implements . "\n";
         $cd .= '{' . "\n";
 
+        $cd .= ClassDefinition\Service::buildFieldConstantsCode(...$definition->getFieldDefinitions());
+
         $cd .= 'protected string $type = "' . $definition->getKey() . "\";\n";
 
-        if (is_array($definition->getFieldDefinitions()) && count($definition->getFieldDefinitions())) {
-            foreach ($definition->getFieldDefinitions() as $key => $def) {
-                $cd .= 'protected $' . $key . ";\n";
-            }
+        foreach ($definition->getFieldDefinitions() as $key => $def) {
+            $cd .= 'protected $' . $key . ";\n";
         }
 
         $cd .= "\n\n";
@@ -88,19 +88,17 @@ class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
 
         $cd .= "\n\n";
 
-        if (is_array($definition->getFieldDefinitions()) && count($definition->getFieldDefinitions())) {
-            foreach ($definition->getFieldDefinitions() as $key => $def) {
-                $cd .= $def->getGetterCodeObjectbrick($definition);
+        foreach ($definition->getFieldDefinitions() as $def) {
+            $cd .= $def->getGetterCodeObjectbrick($definition);
 
-                if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                    $cd .= $def->getGetterCode($definition);
-                }
+            if ($def instanceof ClassDefinition\Data\Localizedfields) {
+                $cd .= $def->getGetterCode($definition);
+            }
 
-                $cd .= $def->getSetterCodeObjectbrick($definition);
+            $cd .= $def->getSetterCodeObjectbrick($definition);
 
-                if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                    $cd .= $def->getSetterCode($definition);
-                }
+            if ($def instanceof ClassDefinition\Data\Localizedfields) {
+                $cd .= $def->getSetterCode($definition);
             }
         }
 

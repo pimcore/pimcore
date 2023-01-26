@@ -42,7 +42,7 @@ class DependenciesTest extends ModelTestCase
         TestHelper::cleanUp();
     }
 
-    public function testRelation()
+    public function testRelation(): void
     {
         /** @var Unittest $source */
         $db = Db::get();
@@ -87,7 +87,7 @@ class DependenciesTest extends ModelTestCase
      * Verifies that an object requires and requiredBy dependencies are stored and fetched
      *
      */
-    public function testObjectDependencies()
+    public function testObjectDependencies(): void
     {
         $source = TestHelper::createEmptyObject();
 
@@ -114,7 +114,7 @@ class DependenciesTest extends ModelTestCase
      * Verifies that a document requires and requiredBy dependencies are stored and fetched
      *
      */
-    public function testDocumentDependencies()
+    public function testDocumentDependencies(): void
     {
         $source = TestHelper::createEmptyDocumentPage();
         /** @var Unittest[] $targets */
@@ -140,7 +140,7 @@ class DependenciesTest extends ModelTestCase
      * Verifies that an asset requires and requiredBy dependencies are stored and fetched
      *
      */
-    public function testAssetDependencies()
+    public function testAssetDependencies(): void
     {
         $source = TestHelper::createImageAsset();
         /** @var Unittest[] $targets */

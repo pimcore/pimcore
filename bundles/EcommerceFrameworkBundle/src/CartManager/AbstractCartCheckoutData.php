@@ -20,11 +20,11 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
 {
     protected string $key;
 
-    protected array $data;
+    protected array|string|null $data = null;
 
     protected ?CartInterface $cart = null;
 
-    public function setCart(CartInterface $cart)
+    public function setCart(CartInterface $cart): void
     {
         $this->cart = $cart;
     }
@@ -39,19 +39,19 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
         return $this->getCart()->getId();
     }
 
-    abstract public function save();
+    abstract public function save(): void;
 
-    public static function getByKeyCartId($key, $cartId)
+    public static function getByKeyCartId(string $key, int|string $cartId): ?self
     {
         throw new \Exception('Not implemented.');
     }
 
-    public static function removeAllFromCart(int|string $cartId)
+    public static function removeAllFromCart(int|string $cartId): void
     {
         throw new \Exception('Not implemented.');
     }
 
-    public function setKey(string $key)
+    public function setKey(string $key): void
     {
         $this->key = $key;
     }
@@ -61,12 +61,12 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
         return $this->key;
     }
 
-    public function setData($data)
+    public function setData(array|string|null $data): void
     {
         $this->data = $data;
     }
 
-    public function getData(): array
+    public function getData(): array|string|null
     {
         return $this->data;
     }

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.targeting.action.abstract");
+/**
+ * @private
+ */
 pimcore.settings.targeting.action.abstract = Class.create({
     getName: function () {
         console.error('Name is not set for action', this);

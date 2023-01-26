@@ -22,15 +22,15 @@ abstract class AbstractProductData extends AbstractData
 
     protected string $name;
 
-    protected string $brand;
+    protected ?string $brand = null;
 
     protected array $categories;
 
-    protected string $variant;
+    protected ?string $variant = null;
 
-    protected int $position;
+    protected int $position = 0;
 
-    protected float $price;
+    protected ?float $price = null;
 
     public function getTransactionId(): string
     {
@@ -56,12 +56,15 @@ abstract class AbstractProductData extends AbstractData
         return $this;
     }
 
-    public function getBrand(): string
+    public function getBrand(): ?string
     {
         return $this->brand;
     }
 
-    public function setBrand(string $brand): static
+    /**
+     * @return $this
+     */
+    public function setBrand(?string $brand = null): static
     {
         $this->brand = $brand;
 
@@ -89,7 +92,7 @@ abstract class AbstractProductData extends AbstractData
         return $this;
     }
 
-    public function getVariant(): string
+    public function getVariant(): ?string
     {
         return $this->variant;
     }
@@ -113,7 +116,7 @@ abstract class AbstractProductData extends AbstractData
         return $this;
     }
 
-    public function getPrice(): float
+    public function getPrice(): ?float
     {
         return $this->price;
     }

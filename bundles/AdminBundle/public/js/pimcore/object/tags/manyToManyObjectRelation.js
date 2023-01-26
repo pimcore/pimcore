@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.manyToManyObjectRelation");
+/**
+ * @private
+ */
 pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.abstractRelations, {
 
     type: "manyToManyObjectRelation",
@@ -61,15 +64,15 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
         };
 
-        if (this.fieldConfig.displayMode == 'combo') {
+        if (pimcore.helpers.hasSearchImplementation() && this.fieldConfig.displayMode === 'combo') {
             storeConfig.proxy = {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list'),
+                url: pimcore.helpers.getObjectRelationInlineSearchRoute(),
                 extraParams: {
                     fieldConfig: JSON.stringify(this.fieldConfig),
-                    data: this.data.map(function(element) {
-                        return element.id;
-                    }).join(','),
+                    data: JSON.stringify(this.data.map(function(element) {
+                        return {id: element.id, type: element.type};
+                    })),
                 },
                 reader: {
                     type: 'json',
@@ -186,12 +189,19 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             disabled: true
         });
 
-        this.parentChooseButton = new Ext.Button({
-            labelStyle: 'padding-left: 10px;',
-            iconCls: 'pimcore_icon_search',
-            handler: this.openParentSearchEditor.bind(this)
-        });
+        const panelFcItems = [
+            this.parentField
+        ];
 
+        if(pimcore.helpers.hasSearchImplementation()) {
+            this.parentChooseButton = new Ext.Button({
+                labelStyle: 'padding-left: 10px;',
+                iconCls: 'pimcore_icon_search',
+                handler: this.openParentSearchEditor.bind(this)
+            });
+
+            panelFcItems.push(this.parentChooseButton);
+        }
 
         var panel = new Ext.Panel({
             bodyStyle: "padding: 10px;",
@@ -199,10 +209,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 this.nameField,
                 new Ext.form.FieldContainer({
                     layout: 'hbox',
-                    items: [
-                        this.parentField,
-                        this.parentChooseButton
-                    ]
+                    items: panelFcItems
                 })
 
             ],
@@ -395,7 +402,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             this.fieldConfig.height = null;
         }
 
-        if (this.fieldConfig.displayMode == 'combo') {
+        if (pimcore.helpers.hasSearchImplementation() && this.fieldConfig.displayMode === 'combo') {
             this.component = Ext.create('Ext.form.field.Tag', {
                 store: this.store,
                 autoLoadOnValue: true,
@@ -658,14 +665,16 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                     }.bind(this)
                 });
             }
-            toolbarItems = toolbarItems.concat([
-                {
+
+            if(pimcore.helpers.hasSearchImplementation()) {
+                toolbarItems.push({
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
                     handler: this.openSearchEditor.bind(this)
-                },
-                this.getCreateControl()
-            ]);
+                });
+            }
+
+            toolbarItems = toolbarItems.concat(this.getCreateControl());
         }
 
         return toolbarItems;
@@ -753,14 +762,16 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }.bind(this, data)
         }));
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: "pimcore_icon_search",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.openSearchEditor();
-            }.bind(this.reference)
-        }));
+        if(pimcore.helpers.hasSearchImplementation()) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this.reference)
+            }));
+        }
 
         e.stopEvent();
         menu.showAt(e.getXY());

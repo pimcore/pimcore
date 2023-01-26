@@ -140,7 +140,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @throws \Exception
      */
-    public function save(bool $saveDefinitionFile = true)
+    public function save(bool $saveDefinitionFile = true): void
     {
         if (!$this->getKey()) {
             throw new \Exception('A object-brick needs a key to be saved!');
@@ -229,7 +229,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * {@inheritdoc}
      */
-    protected function generateClassFiles(bool $generateDefinitionFile = true)
+    protected function generateClassFiles(bool $generateDefinitionFile = true): void
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
             throw new DataObject\Exception\DefinitionWriteException();
@@ -447,8 +447,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getContainerClassName(string $classname, string $fieldname): string
     {
@@ -461,8 +460,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getContainerNamespace(string $classname, string $fieldname): string
     {
@@ -474,8 +472,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getContainerClassFolder(string $classname): string
     {
@@ -485,7 +482,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * Delete Brick Definition
      */
-    public function delete()
+    public function delete(): void
     {
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
@@ -550,12 +547,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @internal
-     *
-     * @return bool
      */
     public function isWritable(): bool
     {
-        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return (bool) ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
     }
 
     /**
@@ -563,8 +558,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getDefinitionFile(string $key = null): string
     {

@@ -30,7 +30,7 @@ class Reservation extends AbstractModel
 
     public ?string $token = null;
 
-    public ?int $timestamp = null;
+    public ?string $timestamp = null;
 
     public ?string $cart_id = null;
 
@@ -76,8 +76,7 @@ class Reservation extends AbstractModel
      *
      * @return bool
      *
-     *@deprecated
-     *
+     * @deprecated
      */
     public function check(int $cart_id): bool
     {
@@ -137,11 +136,8 @@ class Reservation extends AbstractModel
 
     /**
      * @param int $duration in Minutes
-     * @param string|null $seriesId
-     *
-     * @return bool
      */
-    public static function cleanUpReservations(int $duration, string $seriesId = null): bool
+    public static function cleanUpReservations(int $duration, int $seriesId = null): bool
     {
         $query = 'DELETE FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' WHERE TIMESTAMPDIFF(MINUTE, timestamp , NOW())  >= ?';
         $params[] = $duration;
@@ -203,7 +199,7 @@ class Reservation extends AbstractModel
         return $this->cart_id;
     }
 
-    public function setCartId(?string $cart_id)
+    public function setCartId(?string $cart_id): void
     {
         $this->cart_id = $cart_id;
     }
@@ -213,17 +209,17 @@ class Reservation extends AbstractModel
         return $this->id;
     }
 
-    public function setId(?int $id)
+    public function setId(?int $id): void
     {
         $this->id = $id;
     }
 
-    public function getTimestamp(): ?int
+    public function getTimestamp(): ?string
     {
         return $this->timestamp;
     }
 
-    public function setTimestamp(?int $timestamp): void
+    public function setTimestamp(?string $timestamp): void
     {
         $this->timestamp = $timestamp;
     }

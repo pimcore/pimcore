@@ -23,7 +23,7 @@ trait SimpleComparisonTrait
 {
     public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
-        return $oldValue == $newValue;
+        return $oldValue === $newValue;
     }
 
     protected function isEqualArray(?array $array1, ?array $array2): bool

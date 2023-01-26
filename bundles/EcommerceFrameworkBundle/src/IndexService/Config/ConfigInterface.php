@@ -114,7 +114,7 @@ interface ConfigInterface
      * @throws \LogicException If the config used from the worker does not match the config object the worker is
      *                         about to be set to
      */
-    public function setTenantWorker(WorkerInterface $tenantWorker);
+    public function setTenantWorker(WorkerInterface $tenantWorker): void;
 
     /**
      * creates and returns tenant worker suitable for this tenant configuration

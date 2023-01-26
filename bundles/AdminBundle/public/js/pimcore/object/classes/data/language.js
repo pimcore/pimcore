@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.language");
+/**
+ * @private
+ */
 pimcore.object.classes.data.language = Class.create(pimcore.object.classes.data.data, {
 
     type: "language",

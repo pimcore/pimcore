@@ -37,7 +37,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative("SELECT documents.*, tree_locks.locked FROM documents
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
@@ -46,7 +46,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new  Model\Exception\NotFoundException('document with id ' . $id . ' not found');
+            throw new Model\Exception\NotFoundException('document with id ' . $id . ' not found');
         }
     }
 
@@ -57,10 +57,10 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPath(string $path)
+    public function getByPath(string $path): void
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE path = BINARY :path AND `key` = BINARY :key', $params);
+        $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE `path` = BINARY :path AND `key` = BINARY :key', $params);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -78,7 +78,7 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    public function create()
+    public function create(): void
     {
         $this->db->insert('documents', Helper::quoteDataIdentifiers($this->db, [
             'key' => $this->model->getKey(),
@@ -98,7 +98,7 @@ class Dao extends Model\Element\Dao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         $typeSpecificTable = null;
         $validColumnsTypeSpecific = [];
@@ -162,7 +162,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('documents', ['id' => $this->model->getId()]);
     }
@@ -172,7 +172,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Exception
      */
-    public function updateWorkspaces()
+    public function updateWorkspaces(): void
     {
         $this->db->update('users_workspaces_document', [
             'cpath' => $this->model->getRealFullPath(),
@@ -188,13 +188,12 @@ class Dao extends Model\Element\Dao
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public function updateChildPaths(string $oldPath): array
     {
         //get documents to empty their cache
-        $documents = $this->db->fetchAllAssociative('SELECT id, CONCAT(path,`key`) AS path FROM documents WHERE path LIKE ?', [Helper::escapeLike($oldPath) . '%']);
+        $documents = $this->db->fetchAllAssociative('SELECT id, CONCAT(`path`,`key`) as `path` FROM documents WHERE `path` like ?', [Helper::escapeLike($oldPath) . '%']);
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -203,7 +202,7 @@ class Dao extends Model\Element\Dao
 
         //update documents child paths
         // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
-        $this->db->executeQuery('update documents set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->executeQuery('update documents set `path` = replace(`path`,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where `path` like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
         //update documents child permission paths
         $this->db->executeQuery('update users_workspaces_document set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
@@ -224,7 +223,7 @@ class Dao extends Model\Element\Dao
         $path = null;
 
         try {
-            $path = $this->db->fetchOne('SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?', [$this->model->getId()]);
+            $path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM documents WHERE id = ?', [$this->model->getId()]);
         } catch (\Exception $e) {
             Logger::error('could not  get current document path from DB');
         }
@@ -274,14 +273,17 @@ class Dao extends Model\Element\Dao
 
         foreach ($propertiesRaw as $propertyRaw) {
             try {
+                $id = $this->model->getId();
                 $property = new Model\Property();
                 $property->setType($propertyRaw['type']);
-                $property->setCid($this->model->getId());
+                if (isset($id)) {
+                    $property->setCid($id);
+                }
                 $property->setName($propertyRaw['name']);
                 $property->setCtype('document');
                 $property->setDataFromResource($propertyRaw['data']);
                 $property->setInherited(true);
-                if ($propertyRaw['cid'] == $this->model->getId()) {
+                if ($propertyRaw['cid'] == $id) {
                     $property->setInherited(false);
                 }
                 $property->setInheritable(false);
@@ -312,7 +314,7 @@ class Dao extends Model\Element\Dao
     /**
      * Deletes all object properties from the database.
      */
-    public function deleteAllProperties()
+    public function deleteAllProperties(): void
     {
         $this->db->delete('properties', ['cid' => $this->model->getId(), 'ctype' => 'document']);
     }
@@ -439,7 +441,7 @@ class Dao extends Model\Element\Dao
         }
 
         $parentIds = $this->getParentIds();
-        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN (' . implode(',', $parentIds) . ") AND type='document' AND locked = 'propagate' LIMIT 1");
+        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN (' . implode(',', $parentIds) . ") AND `type`='document' AND locked = 'propagate' LIMIT 1");
 
         if ($inhertitedLocks > 0) {
             return true;
@@ -453,7 +455,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Exception
      */
-    public function updateLocks()
+    public function updateLocks(): void
     {
         $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'document']);
         if ($this->model->getLocked()) {
@@ -472,8 +474,8 @@ class Dao extends Model\Element\Dao
      */
     public function unlockPropagate(): array
     {
-        $lockIds = $this->db->fetchFirstColumn('SELECT id from documents WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
-        $this->db->executeStatement("DELETE FROM tree_locks WHERE type = 'document' AND id IN (" . implode(',', $lockIds) . ')');
+        $lockIds = $this->db->fetchFirstColumn('SELECT id from documents WHERE `path` like ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
+        $this->db->executeStatement("DELETE FROM tree_locks WHERE `type` = 'document' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;
     }
@@ -562,7 +564,7 @@ class Dao extends Model\Element\Dao
      *
      * @param int $index
      */
-    public function saveIndex(int $index)
+    public function saveIndex(int $index): void
     {
         $this->db->update('documents', [
             'index' => $index,

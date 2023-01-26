@@ -181,8 +181,7 @@ final class Config extends Model\AbstractModel
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public function addItem(string $name, array $parameters, string $media = null): bool
     {
@@ -204,10 +203,9 @@ final class Config extends Model\AbstractModel
 
     /**
      *
-     *@internal
-     *
+     * @internal
      */
-    public function addItemAt(int $position, string $name, array $parameters, $media = null): bool
+    public function addItemAt(int $position, string $name, array $parameters, ?string $media = null): bool
     {
         if (!$media || $media == 'default') {
             $itemContainer = &$this->items;
@@ -248,7 +246,7 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      */
-    public function resetItems()
+    public function resetItems(): void
     {
         $this->items = [];
         $this->medias = [];
@@ -278,7 +276,7 @@ final class Config extends Model\AbstractModel
         return $this->items;
     }
 
-    public function setMedias(array $medias)
+    public function setMedias(array $medias): void
     {
         $this->medias = $medias;
     }
@@ -293,7 +291,7 @@ final class Config extends Model\AbstractModel
         return !empty($this->medias);
     }
 
-    public function setFilenameSuffix(string $filenameSuffix)
+    public function setFilenameSuffix(string $filenameSuffix): void
     {
         $this->filenameSuffix = $filenameSuffix;
     }
@@ -315,9 +313,9 @@ final class Config extends Model\AbstractModel
         return $this->name;
     }
 
-    public function setAudioBitrate(int $audioBitrate): static
+    public function setAudioBitrate(?int $audioBitrate): static
     {
-        $this->audioBitrate = (int) $audioBitrate;
+        $this->audioBitrate = $audioBitrate;
 
         return $this;
     }
@@ -327,9 +325,9 @@ final class Config extends Model\AbstractModel
         return $this->audioBitrate;
     }
 
-    public function setVideoBitrate(int $videoBitrate): static
+    public function setVideoBitrate(?int $videoBitrate): static
     {
-        $this->videoBitrate = (int) $videoBitrate;
+        $this->videoBitrate = $videoBitrate;
 
         return $this;
     }
@@ -370,7 +368,7 @@ final class Config extends Model\AbstractModel
         return $this->modificationDate;
     }
 
-    public function setModificationDate(int $modificationDate)
+    public function setModificationDate(int $modificationDate): void
     {
         $this->modificationDate = $modificationDate;
     }
@@ -380,7 +378,7 @@ final class Config extends Model\AbstractModel
         return $this->creationDate;
     }
 
-    public function setCreationDate(int $creationDate)
+    public function setCreationDate(int $creationDate): void
     {
         $this->creationDate = $creationDate;
     }

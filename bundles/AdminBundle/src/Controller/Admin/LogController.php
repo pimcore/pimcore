@@ -36,7 +36,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class LogController extends AdminController implements KernelControllerEventInterface
 {
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$this->getAdminUser()->isAllowed('application_logging')) {
             throw new AccessDeniedHttpException("Permission denied, user needs 'application_logging' permission.");
@@ -54,8 +54,8 @@ class LogController extends AdminController implements KernelControllerEventInte
         $qb
             ->select('*')
             ->from(ApplicationLoggerDb::TABLE_NAME)
-            ->setFirstResult($request->get('start', 0))
-            ->setMaxResults($request->get('limit', 50));
+            ->setFirstResult((int) $request->get('start', 0))
+            ->setMaxResults((int) $request->get('limit', 50));
 
         $sortingSettings = QueryParams::extractSortingSettings(array_merge(
             $request->request->all(),
@@ -133,7 +133,7 @@ class LogController extends AdminController implements KernelControllerEventInte
                 'pid' => $row['pid'],
                 'message' => $row['message'],
                 'timestamp' => $row['timestamp'],
-                'priority' => $this->getPriorityName($row['priority']),
+                'priority' => $row['priority'],
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
@@ -168,13 +168,6 @@ class LogController extends AdminController implements KernelControllerEventInte
         }
 
         return $dateTime;
-    }
-
-    private function getPriorityName(int $priority): string
-    {
-        $p = ApplicationLoggerDb::getPriorities();
-
-        return $p[$priority];
     }
 
     /**
@@ -226,12 +219,8 @@ class LogController extends AdminController implements KernelControllerEventInte
         $storage = Storage::get('application_log');
 
         if ($storage->fileExists($filePath)) {
-            $fileData = $storage->readStream($filePath);
-            $response = new StreamedResponse(
-                static function () use ($fileData) {
-                    echo stream_get_contents($fileData);
-                }
-            );
+            $fileHandle = $storage->readStream($filePath);
+            $response = $this->getResponseForFileHandle($fileHandle);
             $response->headers->set('Content-Type', 'text/plain');
         } else {
             // Fallback to local path when file is not found in flysystem that might still be using the constant
@@ -251,13 +240,8 @@ class LogController extends AdminController implements KernelControllerEventInte
             }
 
             if (file_exists($filePath)) {
-                $response = new StreamedResponse(
-                    static function () use ($filePath) {
-                        $handle = fopen($filePath, 'rb');
-                        fpassthru($handle);
-                        fclose($handle);
-                    }
-                );
+                $fileHandle = fopen($filePath, 'rb');
+                $response = $this->getResponseForFileHandle($fileHandle);
                 $response->headers->set('Content-Type', 'text/plain');
             } else {
                 $response = new Response();
@@ -268,5 +252,20 @@ class LogController extends AdminController implements KernelControllerEventInte
         }
 
         return $response;
+    }
+
+    /**
+     * @param resource $fileHandle
+     */
+    private function getResponseForFileHandle($fileHandle): StreamedResponse
+    {
+        return new StreamedResponse(
+            static function () use ($fileHandle) {
+                while (!feof($fileHandle)) {
+                    echo fread($fileHandle, 8192);
+                }
+                fclose($fileHandle);
+            }
+        );
     }
 }

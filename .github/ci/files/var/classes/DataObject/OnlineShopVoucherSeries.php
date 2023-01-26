@@ -22,8 +22,8 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class OnlineShopVoucherSeries extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries
 {
-protected $o_classId = "EF_OSVS";
-protected $o_className = "OnlineShopVoucherSeries";
+protected $classId = "EF_OSVS";
+protected $className = "OnlineShopVoucherSeries";
 protected ?string $name = null;
 protected ?Fieldcollection $tokenSettings = null;
 

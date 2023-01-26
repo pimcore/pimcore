@@ -25,9 +25,10 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
+    use DataObject\Traits\DataWidthTrait;
+    use DataObject\Traits\SimpleNormalizerTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\Traits\SimpleNormalizerTrait;
 
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
 
@@ -39,13 +40,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var string
      */
     public string $fieldtype = 'password';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * Type for the column to query
@@ -88,21 +82,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public ?int $minimumLength = null;
 
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
     public function getMinimumLength(): ?int
     {
         return $this->minimumLength;
@@ -113,7 +92,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->minimumLength = $minimumLength;
     }
 
-    public function setAlgorithm(string $algorithm)
+    public function setAlgorithm(string $algorithm): void
     {
         $this->algorithm = $algorithm;
     }
@@ -123,7 +102,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->algorithm;
     }
 
-    public function setSalt(string $salt)
+    public function setSalt(string $salt): void
     {
         $this->salt = $salt;
     }
@@ -133,7 +112,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->salt;
     }
 
-    public function setSaltlocation(string $saltlocation)
+    public function setSaltlocation(string $saltlocation): void
     {
         $this->saltlocation = $saltlocation;
     }
@@ -150,8 +129,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -209,8 +187,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function calculateHash(string $data): string
     {
@@ -245,8 +222,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public function verifyPassword(string $password, DataObject\Concrete $object, bool $updateHash = true): bool
     {
@@ -285,8 +261,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -300,8 +275,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -318,23 +292,21 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
 
     /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     *
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
+        if ($data === '') {
+            return null;
+        }
+
         return $data;
     }
 
@@ -353,7 +325,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return '******';
     }
 
-    public function getDataForGrid(string $data, Concrete $object, array $params = []): string
+    public function getDataForGrid(?string $data, Concrete $object, array $params = []): string
     {
         return '******';
     }
@@ -415,7 +387,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @param DataObject\ClassDefinition\Data\Password $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->algorithm = $masterDefinition->algorithm;
         $this->salt = $masterDefinition->salt;
@@ -449,7 +421,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @throws Model\Element\ValidationException|\Exception
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && ($this->getMinimumLength() && is_string($data) && strlen($data) < $this->getMinimumLength())) {
             throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength() . ' characters');

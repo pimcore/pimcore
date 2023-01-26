@@ -16,16 +16,22 @@ declare(strict_types=1);
 
 namespace Pimcore\Console\Traits;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Webmozarts\Console\Parallelization\Input\ParallelizationInput;
 
 if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
     trait ParallelizationBase
     {
         use \Webmozarts\Console\Parallelization\Parallelization
         {
-            \Webmozarts\Console\Parallelization\Parallelization::configureParallelization as parentConfigureParallelization;
             \Webmozarts\Console\Parallelization\Parallelization::execute as parentExecute;
+        }
+
+        protected static function configureCommand(Command $command): void
+        {
+            ParallelizationInput::configureCommand($command);
         }
     }
 } else {
@@ -46,7 +52,7 @@ if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
             }
 
             foreach ($items as $item) {
-                $this->runSingleCommand(trim($item), $input, $output);
+                $this->runSingleCommand(trim((string)$item), $input, $output);
             }
 
             //Method executed after executing all the items
@@ -57,6 +63,11 @@ if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
             $this->runAfterLastCommand($input, $output);
 
             return 0;
+        }
+
+        protected static function configureCommand(Command $command): void
+        {
+            // nothing to do here since parallelization is disabled
         }
     }
 }

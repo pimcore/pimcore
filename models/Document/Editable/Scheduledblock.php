@@ -162,7 +162,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function start(): static
+    public function start(): void
     {
         if ($this->getEditmode()) {
             // this is actually to add the block to the EditmodeEditableDefinitionCollector
@@ -179,26 +179,24 @@ class Scheduledblock extends Block implements BlockInterface
         $this->outputEditmode('<div ' . $attributeString . '>');
 
         $this->outputEditmode('<div class="pimcore_scheduled_block_controls" ></div>');
-
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function blockConstruct()
+    public function blockConstruct(): void
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
         // this will be removed in blockDestruct
         $elements = $this->filterElements();
 
-        $this->getBlockState()->pushIndex($elements[$this->current]['key']);
+        $this->getBlockState()->pushIndex((int) $elements[$this->current]['key']);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function blockStart($showControls = true, $return = false, $additionalClass = '')
+    public function blockStart(bool $showControls = true, bool $return = false, string $additionalClass = '')
     {
         $attributes = [
             'data-name' => $this->getName(),
@@ -224,7 +222,7 @@ class Scheduledblock extends Block implements BlockInterface
      */
     public function getCurrentIndex(): int
     {
-        return $this->indices[$this->getCurrent()]['key'];
+        return (int) $this->indices[$this->getCurrent()]['key'];
     }
 
     public function getIterator(): \Generator
@@ -263,7 +261,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * If object was serialized, set cached elements to null
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         parent::__wakeup();
         $this->cachedCurrentElement = null;

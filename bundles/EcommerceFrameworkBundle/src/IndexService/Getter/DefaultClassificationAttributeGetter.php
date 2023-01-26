@@ -32,11 +32,11 @@ class DefaultClassificationAttributeGetter implements GetterInterface
      * note that this getter does not support localization at the moment
      *
      * @param object $object
-     * @param array|null $config
+     * @param array $config
      *
      * @return mixed
      */
-    public function get($object, $config = null): mixed
+    public function get(object $object, array $config = null): mixed
     {
         $config = $this->resolveOptions($config ?? []);
         $sourceList = $config['source'];
@@ -57,7 +57,7 @@ class DefaultClassificationAttributeGetter implements GetterInterface
         return null;
     }
 
-    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver): void
     {
         if ('default' === $resolverName) {
             $resolver->setRequired('source');

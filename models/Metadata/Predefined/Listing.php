@@ -101,12 +101,12 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
 
     /**
      * @param string $key
-     * @param string $language
+     * @param string|null $language
      * @param string|null $targetSubtype
      *
      * @return \Pimcore\Model\Metadata\Predefined|null
      */
-    public static function getByKeyAndLanguage(string $key, string $language, string $targetSubtype = null): ?\Pimcore\Model\Metadata\Predefined
+    public static function getByKeyAndLanguage(string $key, ?string $language, string $targetSubtype = null): ?\Pimcore\Model\Metadata\Predefined
     {
         $list = new self();
 

@@ -40,7 +40,7 @@ class ScheduledTasksTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $list = new Listing();
         $list->setCondition('active = 1 AND date < ?', time());

@@ -191,7 +191,7 @@ class LocationAwareConfigRepository
                 continue;
             }
 
-            if (preg_match('/%([^%\s]+)%/', $value, $match)) {
+            if (preg_match('/%([^%\s]+)%/', (string) $value, $match)) {
                 $key = $match[1];
 
                 if (str_starts_with($key, 'env(') && str_ends_with($key, ')')  && 'env()' !== $key) {

@@ -29,7 +29,7 @@ final class Substring extends AbstractOperator
 
     private bool $ellipses;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -101,7 +101,7 @@ final class Substring extends AbstractOperator
         return $this->start;
     }
 
-    public function setStart(int $start)
+    public function setStart(int $start): void
     {
         $this->start = $start;
     }
@@ -111,7 +111,7 @@ final class Substring extends AbstractOperator
         return $this->length;
     }
 
-    public function setLength(int $length)
+    public function setLength(int $length): void
     {
         $this->length = $length;
     }
@@ -121,7 +121,7 @@ final class Substring extends AbstractOperator
         return $this->ellipses;
     }
 
-    public function setEllipses(bool $ellipses)
+    public function setEllipses(bool $ellipses): void
     {
         $this->ellipses = $ellipses;
     }

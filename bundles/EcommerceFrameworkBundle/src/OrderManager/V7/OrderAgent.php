@@ -628,7 +628,7 @@ class OrderAgent implements OrderAgentInterface
      * @param StatusInterface $status
      * @param AbstractPaymentInformation $currentPaymentInformation
      */
-    protected function extractAdditionalPaymentInformation(StatusInterface $status, AbstractPaymentInformation $currentPaymentInformation)
+    protected function extractAdditionalPaymentInformation(StatusInterface $status, AbstractPaymentInformation $currentPaymentInformation): void
     {
     }
 
@@ -652,7 +652,7 @@ class OrderAgent implements OrderAgentInterface
                 }
             }
 
-            $noteList->addConditionParam('type = ?', 'order-agent');
+            $noteList->addConditionParam('`type` = ?', 'order-agent');
             $noteList->addConditionParam(sprintf('cid in(%s)', implode(',', $cid)), '');
 
             $noteList->setOrderKey('date');

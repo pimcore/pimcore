@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -96,7 +95,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @internal
      */
-    public function setValue(string $key, mixed $value): static
+    public function setValue(string $key, mixed $value, bool $ignoreEmptyValues = false): static
     {
         $method = 'set' . $key;
         if (method_exists($this, $method)) {
@@ -278,7 +277,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * delete item
      */
-    public function delete()
+    public function delete(): void
     {
         $this->getDao()->delete();
     }

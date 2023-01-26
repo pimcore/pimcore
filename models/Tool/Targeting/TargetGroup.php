@@ -30,7 +30,7 @@ class TargetGroup extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    protected int $id;
+    protected ?int $id = null;
 
     protected string $name;
 
@@ -94,7 +94,7 @@ class TargetGroup extends Model\AbstractModel
         return $this;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -111,7 +111,7 @@ class TargetGroup extends Model\AbstractModel
         return $this->name;
     }
 
-    public function setThreshold(int $threshold)
+    public function setThreshold(int $threshold): void
     {
         $this->threshold = $threshold;
     }
@@ -121,7 +121,7 @@ class TargetGroup extends Model\AbstractModel
         return $this->threshold;
     }
 
-    public function setActive(bool $active)
+    public function setActive(bool $active): void
     {
         $this->active = (bool)$active;
     }

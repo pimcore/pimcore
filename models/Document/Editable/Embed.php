@@ -25,10 +25,8 @@ class Embed extends Model\Document\Editable
 {
     /**
      * @internal
-     *
-     * @var string
      */
-    protected string $url;
+    protected ?string $url = null;
 
     /**
      * {@inheritdoc}
@@ -48,7 +46,7 @@ class Embed extends Model\Document\Editable
         ];
     }
 
-    public function getUrl(): string
+    public function getUrl(): ?string
     {
         return $this->url;
     }

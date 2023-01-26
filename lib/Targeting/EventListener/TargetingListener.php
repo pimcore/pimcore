@@ -83,7 +83,7 @@ class TargetingListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (!$this->enabled) {
             return;
@@ -132,7 +132,7 @@ class TargetingListener implements EventSubscriberInterface
         }
     }
 
-    public function onPreResolve(TargetingEvent $event)
+    public function onPreResolve(TargetingEvent $event): void
     {
         $this->startStopwatch('Targeting:loadStoredAssignments', 'targeting');
 
@@ -146,7 +146,7 @@ class TargetingListener implements EventSubscriberInterface
         $this->stopStopwatch('Targeting:loadStoredAssignments');
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if (!$this->enabled) {
             return;

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.multiselect");
+/**
+ * @private
+ */
 pimcore.document.editables.multiselect = Class.create(pimcore.document.editable, {
 
     initialize: function($super, id, name, config, data, inherited) {

@@ -30,6 +30,7 @@ use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Authentication;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,7 +54,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     ) {
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         // use browser language for login page if possible
         $locale = 'en';
@@ -67,12 +68,12 @@ class LoginController extends AdminController implements KernelControllerEventIn
             }
         }
 
-        if ($this->getTranslator() instanceof LocaleAwareInterface) {
-            $this->getTranslator()->setLocale($locale);
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($locale);
         }
     }
 
-    public function onKernelResponseEvent(ResponseEvent $event)
+    public function onKernelResponseEvent(ResponseEvent $event): void
     {
         $response = $event->getResponse();
         $response->headers->set('X-Frame-Options', 'deny', true);
@@ -83,8 +84,12 @@ class LoginController extends AdminController implements KernelControllerEventIn
      * @Route("/login", name="pimcore_admin_login")
      * @Route("/login/", name="pimcore_admin_login_fallback")
      */
-    public function loginAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config): RedirectResponse|Response
-    {
+    public function loginAction(
+        Request $request,
+        CsrfProtectionHandler $csrfProtection,
+        Config $config,
+        EventDispatcherInterface $eventDispatcher
+    ): RedirectResponse|Response {
         if ($request->get('_route') === 'pimcore_admin_login_fallback') {
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
         }
@@ -118,6 +123,15 @@ class LoginController extends AdminController implements KernelControllerEventIn
         $params['browserSupported'] = $this->detectBrowser();
         $params['debug'] = \Pimcore::inDebugMode();
 
+        $params['includeTemplates'] = [];
+        $event = new GenericEvent($this, [
+            'parameters' => $params,
+            'config' => $config,
+            'request' => $request,
+        ]);
+        $eventDispatcher->dispatch($event, AdminEvents::LOGIN_BEFORE_RENDER);
+        $params = $event->getArgument('parameters');
+
         return $this->render('@PimcoreAdmin/admin/login/login.html.twig', $params);
     }
 
@@ -138,7 +152,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     /**
      * @Route("/logout", name="pimcore_admin_logout" , methods={"POST"})
      */
-    public function logoutAction()
+    public function logoutAction(): void
     {
         // this route will never be matched, but will be handled by the logout handler
     }
@@ -226,14 +240,14 @@ class LoginController extends AdminController implements KernelControllerEventIn
     /**
      * @Route("/login/deeplink", name="pimcore_admin_login_deeplink")
      */
-    public function deeplinkAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function deeplinkAction(Request $request, EventDispatcherInterface $eventDispatcher): Response
     {
         // check for deeplink
         $queryString = $_SERVER['QUERY_STRING'];
 
         if (preg_match('/(document|asset|object)_([0-9]+)_([a-z]+)/', $queryString, $deeplink)) {
             $deeplink = $deeplink[0];
-            $perspective = strip_tags($request->get('perspective'));
+            $perspective = strip_tags($request->get('perspective', ''));
 
             if (strpos($queryString, 'token')) {
                 $event = new LoginRedirectEvent('pimcore_admin_login', [
@@ -259,13 +273,18 @@ class LoginController extends AdminController implements KernelControllerEventIn
                 ]);
             }
         }
+
+        throw $this->createNotFoundException();
     }
 
+    /**
+     * @return array{config: Config, pluginCssPaths: string[]}
+     */
     protected function buildLoginPageViewParams(Config $config): array
     {
         return [
             'config' => $config,
-            'pluginCssPaths' => $this->getBundleManager()->getCssPaths(),
+            'pluginCssPaths' => $this->bundleManager->getCssPaths(),
         ];
     }
 
@@ -296,7 +315,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
      *
      * @param Request $request
      */
-    public function twoFactorAuthenticationVerifyAction(Request $request)
+    public function twoFactorAuthenticationVerifyAction(Request $request): void
     {
     }
 

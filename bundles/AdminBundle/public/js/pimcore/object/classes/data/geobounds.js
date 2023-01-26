@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.object.classes.data.geobounds');
+/**
+ * @private
+ */
 pimcore.object.classes.data.geobounds = Class.create(pimcore.object.classes.data.geo.abstract, {
 
     type: "geobounds",

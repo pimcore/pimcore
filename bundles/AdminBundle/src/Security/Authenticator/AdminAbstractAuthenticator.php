@@ -38,6 +38,7 @@ use Symfony\Component\Security\Core\Exception\TooManyLoginAttemptsAuthentication
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -79,14 +80,21 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
     /**
      * {@inheritdoc}
      */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $securityUser = $token->getUser();
+        if (!$securityUser instanceof User) {
+            throw new \Exception('Invalid user object. User has to be instance of ' . User::class);
+        }
+
         /** @var UserModel $user */
-        $user = $token->getUser()->getUser();
+        $user = $securityUser->getUser();
 
         // set user language
         $request->setLocale($user->getLanguage());
-        $this->translator->setLocale($user->getLanguage());
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($user->getLanguage());
+        }
 
         // set user on runtime cache for legacy compatibility
         RuntimeCache::set('pimcore_admin_user', $user);
@@ -113,7 +121,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         } else {
             $url = $this->router->generate('pimcore_admin_index', [
                 '_dc' => time(),
-                'perspective' => strip_tags($request->get('perspective')),
+                'perspective' => strip_tags($request->get('perspective', '')),
             ]);
         }
 
@@ -129,7 +137,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
 
     protected function saveUserToSession(User $user): void
     {
-        if ($user && Authentication::isValidUser($user->getUser())) {
+        if (Authentication::isValidUser($user->getUser())) {
             $pimcoreUser = $user->getUser();
 
             Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser) {

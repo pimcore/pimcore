@@ -32,10 +32,8 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      * ID of the referenced image
      *
      * @internal
-     *
-     * @var int
      */
-    protected int $id;
+    protected ?int $id = null;
 
     /**
      * The ALT text of the image
@@ -44,7 +42,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var string
      */
-    protected string $alt;
+    protected ?string $alt = null;
 
     /**
      * Contains the imageobject itself
@@ -67,28 +65,28 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var float
      */
-    protected float $cropWidth;
+    protected float $cropWidth = 0.0;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected float $cropHeight;
+    protected float $cropHeight = 0.0;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected float $cropTop;
+    protected float $cropTop = 0.0;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected float $cropLeft;
+    protected float $cropLeft = 0.0;
 
     /**
      * @internal
@@ -111,7 +109,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var string
      */
-    protected string $thumbnail;
+    protected ?string $thumbnail = null;
 
     /**
      * {@inheritdoc}
@@ -379,7 +377,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this;
     }
 
-    private function setData(array $data)
+    private function setData(array $data): void
     {
         $this->id = $data['id'] ?? null;
         $this->alt = (string)($data['alt'] ?? '');
@@ -398,7 +396,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->alt;
     }
 
-    public function setText(string $text)
+    public function setText(string $text): void
     {
         $this->alt = $text;
     }
@@ -425,7 +423,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     public function getImage(): Asset\Image|ElementDescriptor|ElementInterface|null
     {
-        if (!$this->image) {
+        if (!$this->image && $this->id) {
             $this->image = Asset\Image::getById($this->getId());
         }
 
@@ -443,6 +441,10 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this;
     }
 
+    /**
+     *
+     * @return $this
+     */
     public function setId(int $id): static
     {
         $this->id = $id;
@@ -450,9 +452,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
     public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $conf, bool $deferred = true): Asset\Image\Thumbnail|string
@@ -649,7 +651,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->cropWidth;
     }
 
-    public function setHotspots(array $hotspots)
+    public function setHotspots(array $hotspots): void
     {
         $this->hotspots = $hotspots;
     }
@@ -659,7 +661,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->hotspots;
     }
 
-    public function setMarker(array $marker)
+    public function setMarker(array $marker): void
     {
         $this->marker = $marker;
     }
@@ -670,7 +672,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function rewriteIds(array $idMapping): void
     {
@@ -685,7 +687,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         }
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

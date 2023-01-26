@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.document.doctypes");
+/**
+ * @private
+ */
 pimcore.settings.document.doctypes = Class.create({
 
     initialize: function () {
@@ -146,13 +149,14 @@ pimcore.settings.document.doctypes = Class.create({
             },
             {
                 text: t("priority"),
-                flex: 50,
+                flex: 30,
                 sortable: true,
                 dataIndex: 'priority',
-                editor: new Ext.form.ComboBox({
-                    store: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                editor: new Ext.form.NumberField({
                     mode: "local",
-                    editable: false,
+                    editable: true,
+                    minValue: 0,
+                    decimalPrecision: 0,
                     triggerAction: "all"
                 })
             },
@@ -243,11 +247,11 @@ pimcore.settings.document.doctypes = Class.create({
                     handler: function (grid, rowIndex) {
                         var rec = grid.getStore().getAt(rowIndex);
                         try {
-                            pimcore.globalmanager.get("translationadminmanager").activate(rec.data.name);
+                            pimcore.globalmanager.get("translationdomainmanager").activate(rec.data.name);
                         }
                         catch (e) {
-                            pimcore.globalmanager.add("translationadminmanager",
-                                new pimcore.settings.translation.admin(rec.data.name));
+                            pimcore.globalmanager.add("translationdomainmanager",
+                                new pimcore.settings.translation.domain("admin",rec.data.name));
                         }
                     }.bind(this)
                 }]

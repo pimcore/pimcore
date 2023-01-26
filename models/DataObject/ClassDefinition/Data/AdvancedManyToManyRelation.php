@@ -28,7 +28,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 
-class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface
+class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface, ClassSavedInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
@@ -134,7 +134,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
             $db = Db::get();
             foreach ($targets as $targetType => $targetIds) {
-                $identifier = $targetType === 'object' ? 'o_id' : 'id';
+                $identifier = 'id';
 
                 $result = $db->fetchFirstColumn(
                     'SELECT ' . $identifier . ' FROM ' . $targetType . 's'
@@ -264,28 +264,23 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             $db = Db::get();
 
             foreach ($targets as $targetType => $targetIds) {
-                $identifier = $targetType == 'object' ? 'o_id' : 'id';
+                $identifier = 'id';
+                $pathCol = 'path';
+                $typeCol = 'type';
+
+                $keyCol = 'key';
+                $className = '';
                 if ($targetType == 'object') {
-                    $pathCol = 'o_path';
-                    $keyCol = 'o_key';
-                    $typeCol = 'o_type';
-                    $className = ', o_ClassName className';
-                } else {
-                    $pathCol = 'path';
-                    if ($targetType == 'asset') {
-                        $keyCol = 'filename';
-                    } else {
-                        $keyCol = '`key`';
-                    }
-                    $typeCol = 'type';
-                    $className = '';
+                    $className = ', className';
+                } elseif ($targetType == 'asset') {
+                    $keyCol = 'filename';
                 }
 
                 $result = $db->fetchAllAssociative(
                     'SELECT '
                     . $identifier . ' id, '
                     . $typeCol . ' type' . $className
-                    . ' ,concat(' . $pathCol . ',' . $keyCol . ') fullpath FROM ' . $targetType . 's'
+                    . ' ,concat(' . $db->quoteIdentifier($pathCol) . ',' . $db->quoteIdentifier($keyCol) . ') fullpath FROM ' . $targetType . 's'
                     . ' WHERE ' . $identifier . ' IN (' . implode(',', $targetIds) . ')'
                 );
 
@@ -487,7 +482,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -605,12 +600,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
             }
 
-            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
+            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
                 . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
         } else {
-            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
 
             if ($context) {
@@ -678,7 +673,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
-    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $db = Db::get();
         $context = $params['context'] ?? null;
@@ -689,7 +684,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             if ($context['containerType'] === 'objectbrick') {
                 $db->executeStatement(
                     'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
-                    Db\Helper::quoteInto($db, 'o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                    Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
                     . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/%')
                     . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 );
@@ -698,14 +693,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
                 $db->executeStatement(
                     'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
-                    Db\Helper::quoteInto($db, 'o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                    Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
                     . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%')
                     . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 );
             }
         } else {
             $deleteCondition = [
-                'o_id' => $object->getId(),
+                'id' => $object->getId(),
                 'fieldname' => $this->getName(),
             ];
 
@@ -757,7 +752,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this->columnKeys;
     }
 
-    public function classSaved(DataObject\ClassDefinition $class)
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         /** @var DataObject\Data\ElementMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
@@ -799,7 +794,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * @param DataObject\ClassDefinition\Data\AdvancedManyToManyRelation $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         parent::synchronizeWithMasterDefinition($masterDefinition);
         $this->columns = $masterDefinition->columns;
@@ -977,8 +972,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     protected function buildUniqueKeyForAppending(ElementInterface $item): string
     {
@@ -996,7 +990,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this->optimizedAdminLoading;
     }
 
-    public function setOptimizedAdminLoading(bool $optimizedAdminLoading)
+    public function setOptimizedAdminLoading(bool $optimizedAdminLoading): void
     {
         $this->optimizedAdminLoading = (bool) $optimizedAdminLoading;
     }
@@ -1018,7 +1012,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this->enableBatchEdit;
     }
 
-    public function setEnableBatchEdit(bool $enableBatchEdit)
+    public function setEnableBatchEdit(bool $enableBatchEdit): void
     {
         $this->enableBatchEdit = (bool) $enableBatchEdit;
     }

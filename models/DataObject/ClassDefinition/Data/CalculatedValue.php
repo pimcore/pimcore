@@ -25,8 +25,9 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
-    use Extension\QueryColumnType;
+    use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
+    use Extension\QueryColumnType;
 
     /**
      * @internal
@@ -53,13 +54,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @var string
      */
     public string $elementType = 'input';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * @internal
@@ -113,19 +107,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this;
     }
 
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-    }
-
     public function getColumnLength(): int
     {
         return $this->columnLength;
@@ -148,7 +129,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this->calculatorClass;
     }
 
-    public function setCalculatorClass(string $calculatorClass)
+    public function setCalculatorClass(string $calculatorClass): void
     {
         $this->calculatorClass = $calculatorClass;
     }
@@ -180,8 +161,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @return string|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -239,7 +219,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         // nothing to do
     }

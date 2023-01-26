@@ -40,3 +40,5 @@ class EcommerceTester extends \Codeception\Actor
      * Define custom actions here
      */
 }
+
+@class_alias(EcommerceTester::class, 'Pimcore\Tests\Support\EcommerceTester');

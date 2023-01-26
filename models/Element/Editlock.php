@@ -28,7 +28,7 @@ use Pimcore\Tool\Session;
  */
 final class Editlock extends Model\AbstractModel
 {
-    protected int $id;
+    protected ?int $id = null;
 
     protected int $cid;
 
@@ -114,7 +114,7 @@ final class Editlock extends Model\AbstractModel
         return $this->cid;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -131,9 +131,9 @@ final class Editlock extends Model\AbstractModel
         return $this;
     }
 
-    public function setId(int $id): static
+    public function setId(?int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }

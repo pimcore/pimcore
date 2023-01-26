@@ -32,7 +32,7 @@ class ResultEvent extends Event
         return $this->result;
     }
 
-    public function setResult(bool $result)
+    public function setResult(bool $result): void
     {
         $this->result = (bool)$result;
     }

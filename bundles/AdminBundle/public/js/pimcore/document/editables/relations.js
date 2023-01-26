@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.relations");
+/**
+ * @private
+ */
 pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
 
     initialize: function ($super, id, name, config, data, inherited) {
@@ -54,13 +57,16 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
                 xtype: "button",
                 iconCls: "pimcore_icon_delete",
                 handler: this.empty.bind(this)
-            },
-            {
+            }
+        ];
+
+        if(pimcore.helpers.hasSearchImplementation()){
+            tbar.push({
                 xtype: "button",
                 iconCls: "pimcore_icon_search",
                 handler: this.openSearchEditor.bind(this)
-            }
-        ];
+            });
+        }
 
         if (this.canInlineUpload()) {
             tbar.push({
@@ -403,14 +409,16 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
             }));
         }
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: "pimcore_icon_search",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.openSearchEditor();
-            }.bind(this)
-        }));
+        if(pimcore.helpers.hasSearchImplementation()) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+        }
 
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);

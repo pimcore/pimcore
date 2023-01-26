@@ -1,5 +1,5 @@
 parameters:
-    level: 5
+    level: 6
 
     paths:
         - bundles
@@ -13,10 +13,8 @@ parameters:
         container_xml_path: var/cache/test/App_KernelTestDebugContainer.xml
 
     excludePaths:
-        - '**/External/AdminerController.php'
         - '**/Processor/PdfReactor.php'
         - '**/PDFreactor.class.php'
-        - '**/bundles/AdminBundle/src/Security/Authenticator/AdminAbstractAuthenticator.php'
 
     ignoreErrors:
         - '~^Unsafe usage of new static\(\)~'
@@ -25,3 +23,6 @@ parameters:
     universalObjectCratesClasses:
         - Pimcore\Config\Config
         - Pimcore\Templating\Model\ViewModel
+
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false

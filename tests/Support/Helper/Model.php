@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Definition;
 
 class Model extends AbstractDefinitionHelper
 {
-    public function _beforeSuite(array $settings = [])
+    public function _beforeSuite(array $settings = []): void
     {
         DataObject::setHideUnpublished(false);
         parent::_beforeSuite($settings);
@@ -1027,3 +1027,5 @@ class Model extends AbstractDefinitionHelper
         $this->setupUnit('km');
     }
 }
+
+@class_alias(Model::class, 'Pimcore\Tests\Support\Helper\Model');

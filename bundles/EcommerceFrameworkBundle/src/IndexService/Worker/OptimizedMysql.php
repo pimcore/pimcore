@@ -69,14 +69,14 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         $this->doCleanupOldZombieData($object, $subObjectIds);
     }
 
-    protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null)
+    protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null): void
     {
         try {
             $this->db->beginTransaction();
-            $this->db->delete($this->tenantConfig->getTablename(), ['o_id' => $subObjectId]);
+            $this->db->delete($this->tenantConfig->getTablename(), ['id' => $subObjectId]);
             $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $subObjectId]);
             if ($this->tenantConfig->getTenantRelationTablename()) {
-                $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['o_id' => $subObjectId]);
+                $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['id' => $subObjectId]);
             }
 
             $this->deleteFromMockupCache($subObjectId);
@@ -115,10 +115,10 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
      * @param array|null $data
      * @param array|null $metadata
      */
-    public function doUpdateIndex(int $objectId, array $data = null, array $metadata = null)
+    public function doUpdateIndex(int $objectId, array $data = null, array $metadata = null): void
     {
         if (empty($data)) {
-            $data = $this->db->fetchOne('SELECT data FROM ' . self::STORE_TABLE_NAME . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
+            $data = $this->db->fetchOne('SELECT data FROM ' . self::STORE_TABLE_NAME . ' WHERE id = ? AND tenant = ?', [$objectId, $this->name]);
             $data = json_decode($data, true);
         }
 
@@ -135,7 +135,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
                 }
 
                 //insert sub tenant data
-                $this->tenantConfig->updateSubTenantEntries($objectId, $data['subtenants'], $data['data']['o_id']);
+                $this->tenantConfig->updateSubTenantEntries($objectId, $data['subtenants'], $data['data']['id']);
 
                 //save new indexed element to mockup cache
                 $this->saveToMockupCache($objectId, $data);
@@ -148,11 +148,17 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         }
     }
 
-    protected function getValidTableColumns($table)
+    /**
+     * @return string[]
+     */
+    protected function getValidTableColumns(string $table): array
     {
         return $this->mySqlHelper->getValidTableColumns($table);
     }
 
+    /**
+     * @return string[]
+     */
     protected function getSystemAttributes(): array
     {
         return $this->mySqlHelper->getSystemAttributes();

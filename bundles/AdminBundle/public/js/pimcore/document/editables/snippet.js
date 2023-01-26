@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS('pimcore.document.editables.snippet');
+/**
+ * @private
+ */
 pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
     defaultHeight: 100,
@@ -202,15 +205,16 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
             }
         }
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: 'pimcore_icon_search',
-            handler: function (item) {
-                item.parentMenu.destroy();
-
-                this.openSearchEditor();
-            }.bind(this)
-        }));
+        if(pimcore.helpers.hasSearchImplementation()) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: 'pimcore_icon_search',
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+        }
 
         menu.showAt(e.getXY());
 
