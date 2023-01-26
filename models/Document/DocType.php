@@ -31,8 +31,6 @@ class DocType extends Model\AbstractModel
      * ID of the document-type
      *
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $id = null;
 
@@ -40,8 +38,6 @@ class DocType extends Model\AbstractModel
      * Name of the document-type
      *
      * @internal
-     *
-     * @var string
      */
     protected string $name;
 
@@ -49,17 +45,13 @@ class DocType extends Model\AbstractModel
      * Group of document-types
      *
      * @internal
-     *
-     * @var string
      */
-    protected string $group;
+    protected ?string $group = null;
 
     /**
      * The specified controller
      *
      * @internal
-     *
-     * @var ?string
      */
     protected ?string $controller = null;
 
@@ -67,8 +59,6 @@ class DocType extends Model\AbstractModel
      * The specified template
      *
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $template = null;
 
@@ -76,29 +66,21 @@ class DocType extends Model\AbstractModel
      * Type, must be one of the following: page,snippet,email
      *
      * @internal
-     *
-     * @var string
      */
     protected string $type;
 
     /**
      * @internal
-     *
-     * @var int
      */
     protected int $priority = 0;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $creationDate = null;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $modificationDate = null;
 
@@ -109,10 +91,6 @@ class DocType extends Model\AbstractModel
 
     /**
      * Static helper to retrieve an instance of Document\DocType by the given ID
-     *
-     * @param string $id
-     *
-     * @return self|null
      */
     public static function getById(string $id): ?DocType
     {
@@ -132,8 +110,6 @@ class DocType extends Model\AbstractModel
 
     /**
      * Shortcut to quickly create a new instance
-     *
-     * @return DocType
      */
     public static function create(): DocType
     {
@@ -158,7 +134,7 @@ class DocType extends Model\AbstractModel
         return $this->name;
     }
 
-    public function getGroup(): string
+    public function getGroup(): ?string
     {
         return $this->group;
     }
@@ -171,13 +147,16 @@ class DocType extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setController(string $controller): static
+    public function setController(?string $controller): static
     {
         $this->controller = $controller;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(string $id): static
     {
         $this->id = $id;
@@ -185,6 +164,9 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -195,7 +177,7 @@ class DocType extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setGroup(string $group): static
+    public function setGroup(?string $group): static
     {
         $this->group = $group;
 
@@ -205,7 +187,7 @@ class DocType extends Model\AbstractModel
     /**
      * @return $this
      */
-    public function setTemplate(string $template): static
+    public function setTemplate(?string $template): static
     {
         $this->template = $template;
 

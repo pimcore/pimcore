@@ -113,27 +113,6 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
 
-                        ->arrayNode('data_object')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->arrayNode('translation_extractor')
-                                    ->children()
-                                        ->arrayNode('attributes')
-                                            ->info('Can be used to restrict the extracted localized fields (e.g. used by XLIFF exporter in the Pimcore backend)')
-                                            ->prototype('array')
-                                                ->prototype('scalar')->end()
-                                            ->end()
-                                            ->example(
-                                                [
-                                                    'Product' => ['name', 'description'],
-                                                    'Brand' => ['name'],
-                                                ]
-                                            )
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
                     ->end()
                 ->end()
                 ->arrayNode('maps')
@@ -167,14 +146,12 @@ final class Configuration implements ConfigurationInterface
         $this->addSecurityNode($rootNode);
         $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
-        $this->addCustomReportsNode($rootNode);
         $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
-        $this->addStaticRoutesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
@@ -904,10 +881,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('types')
-                    ->info('list of supported document types')
-                    ->scalarPrototype()->end()
-                ->end()
                 ->arrayNode('valid_tables')
                     ->info('list of supported documents_* tables')
                     ->scalarPrototype()->end()
@@ -981,6 +954,8 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                 ->end()
             ->end();
+
+        $this->addImplementationLoaderNode($documentsNode, 'type_definitions');
     }
 
     /**
@@ -1235,60 +1210,6 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                         ->arrayNode('source_adapters')
-                            ->useAttributeAsKey('name')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    /**
-     * Adds configuration tree for custom report adapters
-     */
-    private function addCustomReportsNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('custom_report')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('definitions')
-                                ->normalizeKeys(false)
-                                ->prototype('array')
-                                    ->children()
-                                        ->scalarNode('id')->end()
-                                        ->scalarNode('name')->end()
-                                        ->scalarNode('niceName')->end()
-                                        ->scalarNode('sql')->end()
-                                        ->scalarNode('group')->end()
-                                        ->scalarNode('groupIconClass')->end()
-                                        ->scalarNode('iconClass')->end()
-                                        ->booleanNode('menuShortcut')->end()
-                                        ->scalarNode('reportClass')->end()
-                                        ->scalarNode('chartType')->end()
-                                        ->scalarNode('pieColumn')->end()
-                                        ->scalarNode('pieLabelColumn')->end()
-                                        ->variableNode('xAxis')->end()
-                                        ->variableNode('yAxis')->end()
-                                        ->integerNode('modificationDate')->end()
-                                        ->integerNode('creationDate')->end()
-                                        ->booleanNode('shareGlobally')->end()
-                                        ->variableNode('sharedUserNames')->end()
-                                        ->variableNode('sharedRoleNames')->end()
-                                        ->arrayNode('dataSourceConfig')
-                                            ->prototype('variable')
-                                            ->end()
-                                        ->end()
-                                        ->arrayNode('columnConfiguration')
-                                            ->prototype('variable')
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                        ->end()
-                        ->arrayNode('adapters')
                             ->useAttributeAsKey('name')
                                 ->prototype('scalar')
                             ->end()
@@ -1935,44 +1856,6 @@ final class Configuration implements ConfigurationInterface
                                         })
                                         ->end()
                                 ->end()
-                                ->integerNode('creationDate')->end()
-                                ->integerNode('modificationDate')->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
-    }
-
-    /**
-     * Add static routes specific extension config
-     */
-    private function addStaticroutesNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-        ->children()
-            ->arrayNode('staticroutes')
-                ->ignoreExtraKeys()
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('definitions')
-                    ->normalizeKeys(false)
-                        ->prototype('array')
-                            ->children()
-                                ->scalarNode('name')->end()
-                                ->scalarNode('pattern')->end()
-                                ->scalarNode('reverse')->end()
-                                ->scalarNode('controller')->end()
-                                ->scalarNode('variables')->end()
-                                ->scalarNode('defaults')->end()
-                                ->arrayNode('siteId')
-                                    ->integerPrototype()->end()
-                                ->end()
-                                ->arrayNode('methods')
-                                    ->scalarPrototype()->end()
-                                ->end()
-                                ->integerNode('priority')->end()
                                 ->integerNode('creationDate')->end()
                                 ->integerNode('modificationDate')->end()
                             ->end()

@@ -96,12 +96,6 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $cd = $object->getClass();
         $fd = $cd->getFieldDefinition($field);
-        if (!$fd) {
-            $localizedFields = $cd->getFieldDefinition('localizedfields');
-            if ($localizedFields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                $fd = $localizedFields->getFieldDefinition($field);
-            }
-        }
 
         return $fd;
     }
@@ -911,9 +905,9 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     // @todo
-    public function assertWysiwyg(Concrete $object, string $field, int $seed = 1)
+    public function assertWysiwyg(Concrete $object, string $field, int $seed = 1): void
     {
-        return $this->assertTextarea($object, $field, $seed);
+        $this->assertTextarea($object, $field, $seed);
     }
 
     public function assertTextarea(Concrete $object, string $field, int $seed = 1): void

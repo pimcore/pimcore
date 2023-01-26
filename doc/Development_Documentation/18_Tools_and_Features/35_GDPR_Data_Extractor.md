@@ -51,6 +51,8 @@ pimcore_admin:
 Pimcore ships with a reasonable default configuration. By using it, all data object classes are considered in the search, 
 export concludes all attributes directly attached to the data object (no relations) and allows deletion of the data objects 
 directly in the result list. 
+
+> Please note: The GDPR search will be very limited if haven`t installed the simpleBackendSearchBundle!
  
  
 ## Extending GDPR Data Extractor with Custom Data Sources

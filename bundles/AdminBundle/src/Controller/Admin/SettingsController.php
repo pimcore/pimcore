@@ -32,7 +32,6 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
-use Pimcore\Model\Staticroute;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -784,103 +783,6 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/staticroutes", name="pimcore_admin_settings_staticroutes", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function staticroutesAction(Request $request): JsonResponse
-    {
-        if ($request->get('data')) {
-            $this->checkPermission('routes');
-
-            $data = $this->decodeJson($request->get('data'));
-
-            if (is_array($data)) {
-                foreach ($data as &$value) {
-                    if (is_string($value)) {
-                        $value = trim($value);
-                    }
-                }
-            }
-
-            if ($request->get('xaction') == 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
-                $id = $data['id'];
-                $route = Staticroute::getById($id);
-                if (!$route->isWriteable()) {
-                    throw new ConfigWriteException();
-                }
-                $route->delete();
-
-                return $this->adminJson(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') == 'update') {
-                // save routes
-                $route = Staticroute::getById($data['id']);
-                if (!$route->isWriteable()) {
-                    throw new ConfigWriteException();
-                }
-
-                $route->setValues($data);
-
-                $route->save();
-
-                return $this->adminJson(['data' => $route->getObjectVars(), 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
-                if (!(new Staticroute())->isWriteable()) {
-                    throw new ConfigWriteException();
-                }
-                unset($data['id']);
-
-                // save route
-                $route = new Staticroute();
-                $route->setValues($data);
-
-                $route->save();
-
-                $responseData = $route->getObjectVars();
-                $responseData['writeable'] = $route->isWriteable();
-
-                return $this->adminJson(['data' => $responseData, 'success' => true]);
-            }
-        } else {
-            // get list of routes
-
-            $list = new Staticroute\Listing();
-
-            if ($filter = $request->get('filter')) {
-                $list->setFilter(function (Staticroute $staticRoute) use ($filter) {
-                    foreach ($staticRoute->getObjectVars() as $value) {
-                        if (!is_scalar($value)) {
-                            continue;
-                        }
-                        if (stripos((string)$value, $filter) !== false) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                });
-            }
-
-            $routes = [];
-            foreach ($list->getRoutes() as $routeFromList) {
-                $route = $routeFromList->getObjectVars();
-                $route['writeable'] = $routeFromList->isWriteable();
-                if (is_array($routeFromList->getSiteId())) {
-                    $route['siteId'] = implode(',', $routeFromList->getSiteId());
-                }
-                $routes[] = $route;
-            }
-
-            return $this->adminJson(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
-        }
-
-        return $this->adminJson(['success' => false]);
-    }
-
-    /**
      * @Route("/get-available-admin-languages", name="pimcore_admin_settings_getavailableadminlanguages", methods={"GET"})
      *
      * @param Request $request
@@ -1537,6 +1439,9 @@ class SettingsController extends AdminController
         return $this->adminJson(['success' => false]);
     }
 
+    /**
+     * @return array{id: ?int, name: string, language: string, type: string, data: mixed, siteId: ?int, creationDate: ?int, modificationDate: ?int}
+     */
     private function getWebsiteSettingForEditMode(WebsiteSetting $item): array
     {
         $resultItem = [
