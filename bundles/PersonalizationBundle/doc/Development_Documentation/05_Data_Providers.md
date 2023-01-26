@@ -1,14 +1,14 @@
 # Data Providers
 
-A data provider is a service implementing the [`DataProviderInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/DataProvider/DataProviderInterface.php).
-Components (e.g. conditions) which implement the [`DataProviderDependentInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/DataProviderDependentInterface.php)
+A data provider is a service implementing the [`DataProviderInterface`](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/DataProvider/DataProviderInterface.php).
+Components (e.g. conditions) which implement the [`DataProviderDependentInterface`](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/DataProviderDependentInterface.php)
 can define a set of data providers they depend on, triggering the data provider to load its data before the component
 is used.
 
 A data provider does not directly return its value, but is expected to set it on the `VisitorInfo` instance instead. As
 best practice, the core data providers expose their storage key as constant. This constant is used to store and retrieve
-the data from the `VisitorInfo` storage. As example: the [GeoIP](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/DataProvider/GeoIp.php)
-data provider defines the [GeoIP::PROVIDER_KEY](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/DataProvider/GeoIp.php#L28)
+the data from the `VisitorInfo` storage. As example: the [GeoIP](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/DataProvider/GeoIp.php)
+data provider defines the [GeoIP::PROVIDER_KEY](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/DataProvider/GeoIp.php#L28)
 constant which is used when storing and retrieving the data.
 
 ## Implementing a Data Provider
@@ -33,8 +33,8 @@ reusable `DateTime` data provider which stores the current `DateTime` on the `Vi
 
 namespace App\Targeting\DataProvider;
 
-use Pimcore\Targeting\DataProvider\DataProviderInterface;
-use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\DataProviderInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 
 class DateTime implements DataProviderInterface
 {
@@ -69,7 +69,7 @@ services:
 And register the provider to the targeting engine with its provider key:
 
 ```yaml
-pimcore:
+pimcore_personalization:
     targeting:
         data_providers:
             datetime: App\Targeting\DataProvider\DateTime
@@ -90,9 +90,9 @@ provider:
 namespace App\Targeting\Condition;
 
 use App\Targeting\DataProvider\DateTime;
-use Pimcore\Targeting\Condition\AbstractVariableCondition;
-use Pimcore\Targeting\DataProviderDependentInterface;
-use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\AbstractVariableCondition;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\DataProviderDependentInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 
 class TimeOfTheDay extends AbstractVariableCondition implements DataProviderDependentInterface
 {

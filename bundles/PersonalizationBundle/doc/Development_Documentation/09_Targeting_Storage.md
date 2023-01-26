@@ -20,17 +20,17 @@ The targeting storage needs to be defined as service and its service ID needs to
 entry:
 
 ```yaml
-pimcore:
+pimcore_personalization:
     targeting:           
-        storage_id: Pimcore\Targeting\Storage\CookieStorage
+        storage_id: Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\CookieStorage
 ```
 
 
 ## Implement a Custom Targeting Storage
 
-Basically, a targeting storage is a class implementing the [`TargetingStorageInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/Storage/TargetingStorageInterface.php)
+Basically, a targeting storage is a class implementing the [`TargetingStorageInterface`](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/Storage/TargetingStorageInterface.php)
 which is registered as service. Details how to handle data varies heavily on the underlying storage, but you can take the
-[core storages](https://github.com/pimcore/pimcore/tree/11.x/lib/Targeting/Storage) as starting point.
+[core storages](https://github.com/pimcore/personalization-bundle/tree/blob/main/src/Targeting/Storage) as starting point.
 
 
 ## Core Storage Implementations
@@ -53,7 +53,7 @@ sure the cookie data isn't being tampered with. The cookie storage delegates the
 | `JWT` (default) | Stores cookie data as JWT signed JSON using the `kernel.secret` parameter to sign and verify the data. This is done to make sure the data can't be altered on the client side to inject malicious data into the targeting engine. |                       |
 | `JSON`          | Stores cookie data as JSON string.                                                                                                                                                                                                | Use only for testing! |
 
-To change the save handler, override the [service definition](https://github.com/pimcore/pimcore/blob/11.x/bundles/CoreBundle/Resources/config/targeting.yaml#L24)
+To change the save handler, override the [service definition](https://github.com/pimcore/personalization-bundle/blob/main/config/targeting.yaml#L24)
 and set your own handler.
 
 <div class="alert alert-danger">
@@ -96,7 +96,7 @@ Cons
 ### Redis
 
 Stores data in a redis DB. To use this storage, define a service using the storage implementation as class and add connection
-details to the service definition. An example is shipped with the [core service definitions](https://github.com/pimcore/pimcore/blob/11.x/bundles/CoreBundle/Resources/config/targeting.yaml#L35).
+details to the service definition. An example is shipped with the [core service definitions](https://github.com/pimcore/personalization-bundle/blob/main/config/targeting.yaml#L35).
 
 Default session scope timeout: 30 minutes
 
@@ -121,14 +121,14 @@ To use the session storage, an additional config entry is needed as the session 
 performance reasons:
 
 ```yaml
-pimcore:
+pimcore_personalization:
     targeting:
         # enable session support
         session:
             enabled: true
             
         # use the session storage
-        storage_id: Pimcore\Targeting\Storage\SessionStorage
+        storage_id: Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\SessionStorage
 ```
 
 Pros

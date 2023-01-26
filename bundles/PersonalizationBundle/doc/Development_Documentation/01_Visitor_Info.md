@@ -46,7 +46,7 @@ As an example, a sample service working with the `VisitorInfo`:
 
 namespace App\Targeting;
 
-use Pimcore\Targeting\VisitorInfoStorageInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 
 class MyService
 {
@@ -91,7 +91,7 @@ services:
     # if you don't use autowiring you need to manually wire your dependency
     App\Targeting\MyService:
         arguments:
-            $visitorInfoStorage: '@Pimcore\Targeting\VisitorInfoStorageInterface'
+            $visitorInfoStorage: '@Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface'
 ``` 
 
 If your controllers are defined as services, you can make use of argument injection:
@@ -101,7 +101,7 @@ If your controllers are defined as services, you can make use of argument inject
 
 namespace App\Controller;
 
-use Pimcore\Targeting\VisitorInfoStorageInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 

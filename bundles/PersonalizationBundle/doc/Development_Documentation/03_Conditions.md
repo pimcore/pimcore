@@ -5,17 +5,17 @@ to implement `match()` method which always returns a boolean.
 
 To implement a condition, you need to implement 2 parts:
 
-* A PHP class implementing the [`ConditionInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/Condition/ConditionInterface.php).
-  Have a look at [existing implementations](https://github.com/pimcore/pimcore/tree/11.x/lib/Targeting/Condition)
+* A PHP class implementing the [`ConditionInterface`](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/Condition/ConditionInterface.php).
+  Have a look at [existing implementations](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/Condition)
   to get an idea how to implement your own conditions.
-* A frontend JS class defining the admin UI for your condition. You can have a look at [Pimcore's core conditions](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/public/js/pimcore/settings/targeting/conditions.js)
+* A frontend JS class defining the admin UI for your condition. You can have a look at [this bundle's conditions](https://github.com/pimcore/personalization-bundle/blob/main/public/js/settings/conditions.js)
   for UI examples and at the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/conditions.js)
   as example for a third-party integration.
 
 
 ## Implementing a Condition
 
-As stated before, a condition needs to implement the [`ConditionInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/Condition/ConditionInterface.php).
+As stated before, a condition needs to implement the [`ConditionInterface`](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/Condition/ConditionInterface.php).
 The most important method in the interface is the `match()` method which receives the current `VisitorInfo` instance and
 is expected to return a boolean which indicates if the condition matches or not.
 
@@ -32,8 +32,8 @@ hour, not the full time.
 
 namespace App\Targeting\Condition;
 
-use Pimcore\Targeting\Condition\ConditionInterface;
-use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\ConditionInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 
 class TimeOfTheDay implements ConditionInterface
 {
@@ -79,7 +79,7 @@ After implementing your condition, you need to register it to the system with th
 name when implementing the JS class.
 
 ```yaml
-pimcore:
+pimcore_personalization:
     targeting:
         conditions:
             timeoftheday: App\Targeting\Condition\TimeOfTheDay
@@ -88,7 +88,7 @@ pimcore:
 
 ### Building a Condition Instance
 
-When an instance of your condition is build, by default the [`ConditionFactory`](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/ConditionFactory.php)
+When an instance of your condition is build, by default the [`ConditionFactory`](https://github.com/pimcore/personalization-bundle/blob/main/src/TargetingConditionFactory.php)
 will call the static `fromConfig()` method with the data configured in the admin UI. Avoid injecting any services or
 custom data into your condition and use the data provider system instead to add data to the `VisitorInfo`. However, if
 you need more control over how your condition is built you can either:
@@ -102,19 +102,19 @@ you need more control over how your condition is built you can either:
 
 ## Condition Data
 
-If your condition needs any outside data, implement the [`DataProviderDependentInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/DataProviderDependentInterface.php)
+If your condition needs any outside data, implement the [`DataProviderDependentInterface`](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/DataProviderDependentInterface.php)
 and define a list of data provider keys which need to be set on the `VisitorInfo` before matching. We'll enhance our `TimeOfTheDay`
-condition on the [Data Providers](./05_Data_Providers.md) chapter. For further examples, you can take a look at [existing core conditions](https://github.com/pimcore/pimcore/tree/11.x/pimcore/lib/Pimcore/Targeting/Condition).
+condition on the [Data Providers](./05_Data_Providers.md) chapter. For further examples, you can take a look at [existing core conditions](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/Condition).
 
 
 ## Condition Variables
 
-An important part are [variable conditions](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/Condition/VariableConditionInterface.php)
+An important part are [variable conditions](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/Condition/VariableConditionInterface.php)
 which support the `session_with_variables` rule matching scope. A condition implementing this interface is expected to return
 an array of the variables which led to match the condition in the `getMatchedVariables()` method. This data will be used
 to determine if the rule was already applied with the exact same data.
 
-You should implement this interface whenever possible. To get started, you can use the [`AbstractVariableCondition`](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/Condition/AbstractVariableCondition.php)
+You should implement this interface whenever possible. To get started, you can use the [`AbstractVariableCondition`](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/Condition/AbstractVariableCondition.php)
 which contains helper methods to collect variable data. Make sure you build your data in a deterministic way (e.g. using 
 the same order of keys in an array structure or the same format when serializing data) as a hash of this data is used to
 compare it to previous evaluations in order to decide if a rule needs to be applied.
@@ -131,8 +131,8 @@ resolved current hour.
 
 namespace App\Targeting\Condition;
 
-use Pimcore\Targeting\Condition\AbstractVariableCondition;
-use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\AbstractVariableCondition;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 
 class TimeOfTheDay extends AbstractVariableCondition
 {
@@ -156,10 +156,10 @@ class TimeOfTheDay extends AbstractVariableCondition
 ## Admin UI
 
 To make your condition configurable, you need to create a JS class defining the admin interface for your condition. To do
-so, create a class extending `pimcore.settings.targeting.condition.abstract` and register it to the system by calling
-`pimcore.settings.targeting.conditions.register()`. 
+so, create a class extending `pimcore.bundle.personalization.settings.condition.abstract` and register it to the system by calling
+`pimcore.bundle.personalization.settings.conditions.register()`. 
 
-Have a look at [Pimcore's core conditions](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/public/js/pimcore/settings/targeting/conditions.js)
+Have a look at [this bundle's conditions](https://github.com/pimcore/personalization-bundle/blob/main/public/js/settings/conditions.js)
 and the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/conditions.js)
 for examples.
 
@@ -171,9 +171,9 @@ Start by adding a new JS file implementing the admin UI panel for your condition
 (function () {
     'use strict';
 
-    pimcore.settings.targeting.conditions.register(
+    pimcore.bundle.personalization.settings.conditions.register(
         'timeoftheday',
-        Class.create(pimcore.settings.targeting.condition.abstract, {
+        Class.create(pimcore.bundle.personalization.settings.condition.abstract, {
             getName: function () {
                 return 'Time of the Day';
             },
@@ -191,7 +191,7 @@ Start by adding a new JS file implementing the admin UI panel for your condition
                     forceLayout: true,
                     style: 'margin: 10px 0 0 0',
                     bodyStyle: 'padding: 10px 30px 10px 30px; min-height:40px;',
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
+                    tbar: pimcore.bundle.personalization.settings.conditions.getTopBar(this, id, panel, data),
                     items: [
                         {
                             name: 'hour',

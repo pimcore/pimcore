@@ -1,15 +1,15 @@
 # Action Handlers
 
 After a targeting rule matched it executes one or more actions as configured in the admin UI. These actions are actually
-executed by action handlers, which are services implementing the [`ActionHandlerInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/ActionHandler/ActionHandlerInterface.php).
+executed by action handlers, which are services implementing the [`ActionHandlerInterface`](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/ActionHandler/ActionHandlerInterface.php).
 
 As with conditions, an action handler consists of 2 parts:
 
-* A PHP class implementing the [`ActionHandlerInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/ActionHandler/ActionHandlerInterface.php).
-  Have a look at [existing implementations](https://github.com/pimcore/pimcore/tree/11.x/pimcore/lib/Pimcore/Targeting/ActionHandler)
+* A PHP class implementing the [`ActionHandlerInterface`](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/ActionHandler/ActionHandlerInterface.php).
+  Have a look at [existing implementations](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/Targeting/ActionHandler)
   to get an idea how to implement your own action handlers.
 * A frontend JS class defining the admin UI for your action handler as shown on the actions tab of a targeting rule. You
-  can have a look at [Pimcore's core actions](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/public/js/pimcore/settings/targeting/actions.js)
+  can have a look at [Pimcore's core actions](https://github.com/pimcore/personalization-bundle/blob/main/public/js/settings/actions.js)
   for UI examples and at the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/actions.js)
   as example for a third-party integration.
 
@@ -33,8 +33,8 @@ check those values before using them!
 namespace App\Targeting\ActionHandler;
 
 use Pimcore\Model\Tool\Targeting\Rule;
-use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
-use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
 
 class Log implements ActionHandlerInterface
@@ -83,7 +83,7 @@ As last step, register the action handler to the targeting engine. Make sure the
 as you'll need to use it when implementing the admin UI JS part.
 
 ```yaml
-pimcore:
+pimcore_personalization:
     targeting:
         action_handlers:
             log: App\Targeting\ActionHandler\Log
@@ -95,7 +95,7 @@ If your action handler needs to apply data in a later stage of the request/respo
 the `VisitorInfo` which can be consumed later. Currently only the `response` action scope is defined which is executed
 in the `onKernelResponse` event, but more action scopes might be added in the future. 
 
-Have a look at the [CodeSnippet](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/ActionHandler/CodeSnippet.php)
+Have a look at the [CodeSnippet](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/ActionHandler/CodeSnippet.php)
 action handler as example. It registers an action via `$visitorInfo->addAction()` and implements the `ResponseTransformingActionHandlerInterface::transformResponse()`
 which is called by the targeting engine for every action registered with the `response` scope.
 
@@ -106,7 +106,7 @@ To make your action handler appear in the admin UI, you need to create and regis
 for your action. Create a class extending `pimcore.settings.targeting.action.abstract` and register it to the system by
 calling `pimcore.settings.targeting.actions.register()`. 
 
-Have a look at [Pimcore's core actions](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/public/js/pimcore/settings/targeting/actions.js)
+Have a look at [this bundle's actions](https://github.com/pimcore/personalization-bundle/blob/main/public/js/settings/actions.js)
 and the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/actions.js)
 for examples.
 
@@ -118,9 +118,9 @@ Start by adding a new JS file implementing the admin UI panel for your action:
 (function () {
     'use strict';
 
-    pimcore.settings.targeting.actions.register(
+    pimcore.bundle.personalization.settings.actions.register(
         'log',
-        Class.create(pimcore.settings.targeting.action.abstract, {
+        Class.create(pimcore.bundle.personalization.settings.action.abstract, {
             getName: function () {
                 return 'Log';
             },
@@ -133,7 +133,7 @@ Start by adding a new JS file implementing the admin UI panel for your action:
                     forceLayout: true,
                     style: 'margin: 10px 0 0 0',
                     bodyStyle: 'padding: 10px 30px 10px 30px; min-height:40px;',
-                    tbar: pimcore.settings.targeting.actions.getTopBar(this, id, panel),
+                    tbar: pimcore.bundle.personalization.settings.actions.getTopBar(this, id, panel),
                     items: [
                         {
                             name: 'level',
