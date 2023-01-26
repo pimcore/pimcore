@@ -517,7 +517,7 @@ abstract class PageSnippet extends Model\Document
         if ($this->editables === null) {
             $documentEditables = $this->getDao()->getEditables();
 
-            if (self::getGetInheritedValues() && $this->supportsContentMaster() && $this->getContentMasterDocument()){
+            if (self::getGetInheritedValues() && $this->supportsContentMaster() && $this->getContentMasterDocument()) {
                 $contentMasterEditables = $this->getContentMasterDocument()->getEditables();
                 $documentEditables = array_merge($contentMasterEditables, $documentEditables);
                 $this->inheritedEditables = $documentEditables;
