@@ -42,9 +42,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Document extends Element\AbstractElement
 {
-    private const EXCLUDED_TYPES = [
-        'folder'
-    ];
     private static bool $hideUnpublished = false;
 
     /**
@@ -139,9 +136,7 @@ class Document extends Element\AbstractElement
     public static function getTypes(): array
     {
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
-        $types = array_keys($documentsConfig['type_definitions']['map']);
-        // exclude some types like folder
-        return array_diff($types, self::EXCLUDED_TYPES);
+        return  array_keys($documentsConfig['type_definitions']['map']);
     }
 
     /**
