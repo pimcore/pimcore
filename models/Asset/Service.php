@@ -512,7 +512,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $config['asset_path'] ?? '');
+        $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $config['asset_path']);
         $prefix = preg_replace('@' . $asset->getId() . '/$@', '', $prefix);
 
         if ($asset->getPath() === $prefix) {
