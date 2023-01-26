@@ -94,9 +94,9 @@ document.addEventListener(pimcore.events.pimcoreReady, (e) => {
 
 function initializeMenu(toolbar, menuItems) {
     // add e-commerce framework main menu
-    let navEl = Ext.get('pimcore_menu_ecommerce');
-    navEl.show();
-    navEl.on("mousedown", toolbar.showSubMenu.bind(menuItems));
+   //let navEl = Ext.get('pimcore_menu_ecommerce');
+   //navEl.show();
+   //navEl.on("mousedown", toolbar.showSubMenu.bind(menuItems));
 
     pimcore.helpers.initMenuTooltips();
 }
