@@ -593,6 +593,10 @@ class Service extends Model\Element\Service
         return null;
     }
 
+    /**
+     * @param string $uri
+     * @return array{'thumbnail_extension': string, 'thumbnail_name': string, 'thumbnail_config_name': string, 'asset_id': string, 'asset_path': string, 'type': string}|null
+     */
     public static function extractThumbnailInfoFromUri(string $uri): ?array
     {
         $parsedUrl = parse_url($uri);
