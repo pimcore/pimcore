@@ -25,25 +25,25 @@ final class Version20221116115427 extends AbstractMigration
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('fieldcollections', 'Data Objects')");
 
 
-        $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('quantityValue', 'Data Objects')");
+        $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('quantityValueUnits', 'Data Objects')");
 
 
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('classificationstore', 'Data Objects')");
 
 
-        $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',objectbricks,fieldcollections,quantityValue,classificationstore\') WHERE `permissions` REGEXP \'(?:^|,)classes(?:$|,)\'');
+        $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',objectbricks,fieldcollections,quantityValueUnits,classificationstore\') WHERE `permissions` REGEXP \'(?:^|,)classes(?:$|,)\'');
     }
 
     public function down(Schema $schema): void
     {
         $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)objectbricks(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)objectbricks(?:$|,)\'');
         $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)fieldcollections(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)fieldcollections(?:$|,)\'');
-        $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)quantityValue(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)quantityValue(?:$|,)\'');
+        $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)quantityValueUnits(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)quantityValueUnits(?:$|,)\'');
         $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)classificationstore(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)classificationstore(?:$|,)\'');
 
         $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'objectbricks'");
         $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'fieldcollections'");
-        $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'quantityValue'");
+        $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'quantityValueUnits'");
         $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'classificationstore'");
     }
 }

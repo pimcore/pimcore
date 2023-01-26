@@ -652,7 +652,7 @@ pimcore.layout.toolbar = Class.create({
                      });
                  }
 
-                 if (perspectiveCfg.inToolbar("settings.objects.quantityValue") && user.isAllowed("quantityValue")) {
+                 if (perspectiveCfg.inToolbar("settings.objects.quantityValue") && user.isAllowed("quantityValueUnits")) {
                      objectMenu.menu.items.push({
                          text: t("quantityValue_field"),
                          iconCls: "pimcore_nav_icon_quantityValue",

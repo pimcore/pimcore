@@ -1635,7 +1635,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
                 return $this->adminJson(['success' => $success !== false]);
             } elseif ($type === 'fieldcollection' && $item['key'] == $name) {
-                $this->checkPermission('classes');
+                $this->checkPermission('fieldcollections');
                 if (!$fieldCollection = DataObject\Fieldcollection\Definition::getByKey($name)) {
                     $fieldCollection = new DataObject\Fieldcollection\Definition();
                     $fieldCollection->setKey($name);
@@ -1726,17 +1726,19 @@ class ClassController extends AdminController implements KernelControllerEventIn
     {
         $result = [];
 
-        $fieldCollections = new DataObject\Fieldcollection\Definition\Listing();
-        $fieldCollections = $fieldCollections->load();
+        if($this->getAdminUser()->isAllowed('fieldcollections')) {
+            $fieldCollections = new DataObject\Fieldcollection\Definition\Listing();
+            $fieldCollections = $fieldCollections->load();
 
-        foreach ($fieldCollections as $fieldCollection) {
-            $result[] = [
-                'icon' => 'fieldcollection',
-                'checked' => true,
-                'type' => 'fieldcollection',
-                'name' => $fieldCollection->getKey(),
-                'displayName' => $fieldCollection->getKey(),
-            ];
+            foreach ($fieldCollections as $fieldCollection) {
+                $result[] = [
+                    'icon' => 'fieldcollection',
+                    'checked' => true,
+                    'type' => 'fieldcollection',
+                    'name' => $fieldCollection->getKey(),
+                    'displayName' => $fieldCollection->getKey(),
+                ];
+            }
         }
 
         if($this->getAdminUser()->isAllowed('classes')) {
