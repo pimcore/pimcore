@@ -51,8 +51,6 @@ final class KeyConfig extends Model\AbstractModel
 
     /**
      * The key description.
-     *
-     * @var string
      */
     protected ?string $description = null;
 
@@ -170,8 +168,6 @@ final class KeyConfig extends Model\AbstractModel
 
     /**
      * Returns the description.
-     *
-     * @return string
      */
     public function getDescription(): ?string
     {
@@ -183,7 +179,7 @@ final class KeyConfig extends Model\AbstractModel
      *
      * @param string $description
      *
-     * @return Model\DataObject\Classificationstore\KeyConfig
+     * @return $this
      */
     public function setDescription(?string $description): static
     {
