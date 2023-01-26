@@ -117,8 +117,7 @@ class Document extends Element\AbstractElement
     public static function getTypes(): array
     {
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
-
-        return $documentsConfig['types'];
+        return  array_keys($documentsConfig['type_definitions']['map']);
     }
 
     /**
@@ -220,32 +219,9 @@ class Document extends Element\AbstractElement
                 return null;
             }
 
-            try {
-                // Getting Typeloader from container
-                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
-                $newDocument = $loader->build($document->getType());
-            } catch(UnsupportedException $ex) {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '10.6.0',
-                    sprintf('%s - Loading documents via fixed namespace is deprecated and will be removed in Pimcore 11. Use pimcore:type_definitions instead', $ex->getMessage())
-                );
-                /**
-                 * @deprecated since Pimcore 10.6 and will be removed in Pimcore 11. Use type_definitions instead
-                 */
-                $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
-
-                // this is the fallback for custom document types using prefixes
-                // so we need to check if the class exists first
-                if (!Tool::classExists($className)) {
-                    $oldStyleClass = 'Document_' . ucfirst($document->getType());
-                    if (Tool::classExists($oldStyleClass)) {
-                        $className = $oldStyleClass;
-                    }
-                }
-                /** @var Document $newDocument */
-                $newDocument = self::getModelFactory()->build($className);
-            }
+            // Getting Typeloader from container
+            $loader = \Pimcore::getContainer()->get(TypeLoader::class);
+            $newDocument = $loader->build($document->getType());
 
             if (get_class($document) !== get_class($newDocument)) {
                 $document = $newDocument;
