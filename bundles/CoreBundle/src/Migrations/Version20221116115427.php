@@ -21,19 +21,17 @@ final class Version20221116115427 extends AbstractMigration
     {
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('objectbricks', 'Data Objects')");
 
-        $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',objectbricks\') WHERE `permissions` REGEXP \'(?:^|,)classes(?:$|,)\'');
 
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('fieldcollections', 'Data Objects')");
 
-        $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',fieldcollections\') WHERE `permissions` REGEXP \'(?:^|,)classes(?:$|,)\'');
 
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('quantityValue', 'Data Objects')");
 
-        $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',quantityValue\') WHERE `permissions` REGEXP \'(?:^|,)classes(?:$|,)\'');
 
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('classificationstore', 'Data Objects')");
 
-        $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',classificationstore\') WHERE `permissions` REGEXP \'(?:^|,)classes(?:$|,)\'');
+
+        $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',objectbricks,fieldcollections,quantityValue,classificationstore\') WHERE `permissions` REGEXP \'(?:^|,)classes(?:$|,)\'');
     }
 
     public function down(Schema $schema): void
