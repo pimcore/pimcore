@@ -157,7 +157,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
   Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
 - [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - Removed deprecated `SensioFrameworkExtraBundle` which affects the following:
-  - `@template` annotation must be replaced with `#[template]` attribute. Template guessing based on controller::action is not supported anymore.
+  - `@Template` annotation must be replaced with `#[Template]` attribute. Template guessing based on controller::action is not supported anymore.
   - `@ResponseHeader` annotation must be replaced with `#[ResponseHeader]` attribute
   - `@ParamConverter` annotation must be replaced with `#[DataObjectParam]` attribute
   Replace other annotations provided by [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers)
