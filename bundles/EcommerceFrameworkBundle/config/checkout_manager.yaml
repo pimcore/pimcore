@@ -27,7 +27,7 @@ services:
             - '@Symfony\Component\Lock\LockFactory'
             - '@pimcore_ecommerce.locator.order_manager'
             - '@event_dispatcher'
-            - '@Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger'
+            - '@Pimcore\Log\ApplicationLogger'
             - [] # options
         calls:
             - [setLogger, ['@logger']]
