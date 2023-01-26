@@ -472,6 +472,7 @@ inputQuantityValue_field: Input Quantity Value
 abbreviation: Abbreviation
 longname: Longname
 baseunit: Base Unit
+quantityValue: Quantity Value
 quantityValue_units: QuantityValue Unit Definition
 valid_quantityValue_units: Valid units
 calculatedValue_calculatorclass: Calculator class
@@ -701,6 +702,7 @@ custom_layout_changed: Layout was changed in the meantime. Please reload the lay
 rule_violation: Rule Violation
 emails: Emails
 log_applicationlog: Application Logger
+classificationstore: Classification Store
 classification_store: Classification Store
 quantityValue_field: Quantity Value
 expanded: Expanded
