@@ -801,7 +801,9 @@ class UserController extends AdminController implements KernelControllerEventInt
         //Check if uploaded file is an image
         $avatarFile = $request->files->get('Filedata');
 
-        if (!$avatarFile instanceof UploadedFile || !str_starts_with($avatarFile->getMimeType(), 'image/')) {
+        $assetType = Asset::getTypeFromMimeMapping($avatarFile->getMimeType(), $avatarFile);
+
+        if (!$avatarFile instanceof UploadedFile || $assetType !== 'image') {
             throw new \Exception('Unsupported file format.');
         }
 
