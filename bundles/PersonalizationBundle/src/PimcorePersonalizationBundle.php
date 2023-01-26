@@ -24,6 +24,13 @@ class PimcorePersonalizationBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
+    // @TODO Enable when bundle is moved to own repo
+
+    /*public function getComposerPackageName(): string
+    {
+       return 'pimcore/personalization-bundle';
+    }*/
+
     public function getCssPaths (): array
     {
         return [

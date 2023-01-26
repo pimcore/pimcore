@@ -6,7 +6,7 @@ to implement `match()` method which always returns a boolean.
 To implement a condition, you need to implement 2 parts:
 
 * A PHP class implementing the [`ConditionInterface`](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/Condition/ConditionInterface.php).
-  Have a look at [existing implementations](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/Condition)
+  Have a look at [existing implementations](https://github.com/pimcore/personalization-bundle/tree/main/src/Targeting/Condition)
   to get an idea how to implement your own conditions.
 * A frontend JS class defining the admin UI for your condition. You can have a look at [this bundle's conditions](https://github.com/pimcore/personalization-bundle/blob/main/public/js/settings/conditions.js)
   for UI examples and at the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/conditions.js)
@@ -88,7 +88,7 @@ pimcore_personalization:
 
 ### Building a Condition Instance
 
-When an instance of your condition is build, by default the [`ConditionFactory`](https://github.com/pimcore/personalization-bundle/blob/main/src/TargetingConditionFactory.php)
+When an instance of your condition is build, by default the [`ConditionFactory`](https://github.com/pimcore/personalization-bundle/blob/main/src/Targeting/ConditionFactory.php)
 will call the static `fromConfig()` method with the data configured in the admin UI. Avoid injecting any services or
 custom data into your condition and use the data provider system instead to add data to the `VisitorInfo`. However, if
 you need more control over how your condition is built you can either:
