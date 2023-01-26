@@ -177,8 +177,6 @@ final class KeyConfig extends Model\AbstractModel
     /**
      * Sets the description.
      *
-     * @param string $description
-     *
      * @return $this
      */
     public function setDescription(?string $description): static
