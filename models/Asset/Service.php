@@ -20,7 +20,6 @@ use JetBrains\PhpStorm\ArrayShape;
 use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
-use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -28,9 +27,9 @@ use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\TmpStore;
-use Symfony\Cmf\Component\Routing\ChainRouter;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
+use Pimcore\Model\Asset\Video\ImageThumbnail as VideoImageThumbnail;
+use Pimcore\Model\Asset\Document\ImageThumbnail as DocumentImageThumbnail;
+use Pimcore\Model\Asset\Image\Thumbnail as ImageThumbnail;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -502,7 +501,7 @@ class Service extends Model\Element\Service
         return $key;
     }
 
-    public static function getImageThumbnailByUri(string $uri): ?Asset\Image\Thumbnail
+    public static function getImageThumbnailByUri(string $uri): null|ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail
     {
         $config = self::extractThumbnailInfoFromUri($uri);
         if (!$config) {
@@ -599,6 +598,7 @@ class Service extends Model\Element\Service
         return null;
     }
 
+    #[ArrayShape(['thumbnail_extension' => 'string', 'thumbnail_name' => 'string', 'thumbnail_config_name' => 'string', 'asset_id' => 'string', 'asset_path' => 'string', 'type' => 'image|video'])]
     public static function extractThumbnailInfoFromUri(string $uri): ?array
     {
         $parsedUrl = parse_url($uri);
@@ -616,14 +616,14 @@ class Service extends Model\Element\Service
         $assetPath = implode('/', array_slice($parts, 0, $totalCount - 3));
 
         // If the uri does not contain thumb__, the url is invalid
-        if (strpos($thumbnailPart, '-thumb__') < 0) {
+        if (!str_contains($thumbnailPart, '-thumb__')) {
             return null;
         }
         $thumbnailParts = explode('__', $thumbnailPart);
 
         // Config name is the last one after the __assetId__
         $configName = $thumbnailParts[count($thumbnailParts) - 1];
-        $type = strpos($thumbnailParts[0], 'image') >= 0 ? 'image' : 'video';
+        $type = str_contains($thumbnailParts[0], 'image') ? 'image' : 'video';
 
         return [
             'thumbnail_extension' => pathinfo($fileName, PATHINFO_EXTENSION),
