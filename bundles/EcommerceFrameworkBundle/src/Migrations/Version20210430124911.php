@@ -22,9 +22,6 @@ use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 use Pimcore\Db;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20210430124911 extends AbstractMigration
 {
     public function getDescription(): string
