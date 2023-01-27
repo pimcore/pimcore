@@ -26,7 +26,12 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle
 
     public function getCssPaths(): array
     {
-        return [];
+        return $this->getBuildPaths($this->getPath() . '/public/build/tinymce/entrypoints.json', ['tinymce'], 'css');
+    }
+
+    public function getEditmodeCssPaths(): array
+    {
+        return $this->getBuildPaths($this->getPath() . '/public/build/tinymce/entrypoints.json', ['tinymce'], 'css');
     }
 
     public function getJsPaths(): array
@@ -59,6 +64,7 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle
         return $paths;
     }
 
+    //TODO move to core
     private function getBuildPaths(string $entrypointsFile, array $entrypoints, string $type = 'js'): array
     {
         $entrypointsContent = file_get_contents($entrypointsFile);
