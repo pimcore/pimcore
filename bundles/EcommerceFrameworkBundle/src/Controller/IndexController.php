@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\AdminEvents;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Event\AdminEvents;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;

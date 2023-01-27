@@ -18,12 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tests\Support\Helper;
 
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\Fieldcollection\Definition;
-use Pimcore\Model\DataObject\Unittest;
-use Pimcore\Tests\Support\Helper\ClassManager;
-use Pimcore\Tests\Support\Helper\DataType\TestDataHelper;
 use Pimcore\Tests\Support\Helper\Model;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class EcommerceModel extends Model
 {

@@ -37,8 +37,7 @@ abstract class AbstractAnalyticsTracker extends EcommerceTracker
         array $options = [],
         array $assortmentTenants = [],
         array $checkoutTenants = []
-    )
-    {
+    ) {
         parent::__construct($trackingItemBuilder, $twig, $options, $assortmentTenants, $checkoutTenants);
         $this->tracker = $tracker;
     }

@@ -16,12 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\IndexServiceEvents;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\Helper;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Event\IndexServiceEvents;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessAttributeErrorEvent;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessErrorEvent;
 use Pimcore\Logger;

@@ -21,7 +21,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Model\DataObject;
-use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class AbstractConfig implements ConfigInterface
 {

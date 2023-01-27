@@ -17,25 +17,13 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tests\Support\Helper;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
-use Pimcore\Cache;
-use Pimcore\Cache\RuntimeCache;
-use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\Document;
-use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\ValidationException;
-use Pimcore\Model\Property;
-use Pimcore\Model\User;
 use Pimcore\Tests\Support\Helper\AbstractTestDataHelper;
-use Pimcore\Tests\Support\Util\TestHelper;
-use Pimcore\Tool\Authentication;
 
 class TestDataHelper extends AbstractTestDataHelper
 {
-
     public function assertIndexFieldSelectionCombo(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);

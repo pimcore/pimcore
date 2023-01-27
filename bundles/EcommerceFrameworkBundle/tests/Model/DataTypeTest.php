@@ -19,9 +19,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tests\Model;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tests\Support\Helper\TestDataHelper;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
-use Pimcore\Model\DataObject\Unittest;
 
 /**
  * @group dataTypeLocal

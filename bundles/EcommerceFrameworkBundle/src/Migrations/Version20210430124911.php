@@ -29,14 +29,16 @@ final class Version20210430124911 extends AbstractMigration
         return 'Changes addedDateTimestamp of Cart Items to mirco seconds';
     }
 
-    public function getColumnType(){
+    public function getColumnType()
+    {
         $db = Db::get();
+
         return $db->fetchOne(
             'SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND COLUMN_NAME  = ?',
             [
                 $db->getDatabase(),
                 'ecommerceframework_cartitem',
-                'addedDateTimestamp'
+                'addedDateTimestamp',
             ]);
     }
 

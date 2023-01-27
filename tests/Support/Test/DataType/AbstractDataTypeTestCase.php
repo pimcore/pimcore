@@ -436,7 +436,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertImageGallery($this->testObject, 'imageGallery', $this->seed);
     }
 
-
     public function testInput(): void
     {
         $this->createTestObject('input');

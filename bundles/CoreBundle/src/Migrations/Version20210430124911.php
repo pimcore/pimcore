@@ -20,7 +20,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
-use Pimcore\Db;
 
 /**
  * Auto-generated Migration: Please modify to your needs!

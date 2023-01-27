@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\CommitOrderProcessorEvents;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotSuccessfulException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -25,7 +26,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInte
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Event\CommitOrderProcessorEvents;
 use Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent;
 use Pimcore\Event\Model\Ecommerce\SendConfirmationMailEvent;
 use Pimcore\Log\ApplicationLogger;

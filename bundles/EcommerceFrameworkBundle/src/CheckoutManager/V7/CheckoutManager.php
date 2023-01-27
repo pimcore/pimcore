@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterfac
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\HandlePendingPaymentsStrategyInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\CheckoutManagerEvents;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
@@ -32,7 +33,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPayme
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Event\CheckoutManagerEvents;
 use Pimcore\Event\Model\Ecommerce\CheckoutManagerStepsEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
