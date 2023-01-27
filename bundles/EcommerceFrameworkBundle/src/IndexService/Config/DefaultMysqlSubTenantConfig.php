@@ -35,19 +35,19 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      * {@inheritdoc}
      */
     public function __construct(
+        AttributeFactory $attributeFactory,
         string $tenantName,
         array $attributes,
         array $searchAttributes,
         array $filterTypes,
         array $options,
-        AttributeFactory $attributeFactory,
         EnvironmentInterface $environment,
         Connection $db
     ) {
         $this->environment = $environment;
         $this->db = $db;
 
-        parent::__construct($tenantName, $attributes, $searchAttributes, $filterTypes, $attributeFactory, $options);
+        parent::__construct($attributeFactory, $tenantName, $attributes, $searchAttributes, $filterTypes, $options);
     }
 
     /**
