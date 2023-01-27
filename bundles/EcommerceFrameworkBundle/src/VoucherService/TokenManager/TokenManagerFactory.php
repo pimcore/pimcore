@@ -17,21 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
+use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 
 class TokenManagerFactory implements TokenManagerFactoryInterface
 {
-    private array $mapping;
-
     /**
      * @var TokenManagerInterface[]
      */
     private array $tokenManagers = [];
 
-    public function __construct(array $mapping)
+    public function __construct(private array $mapping, protected PaginatorInterface $paginator)
     {
-        $this->mapping = $mapping;
     }
 
     public function getTokenManager(AbstractVoucherTokenType $configuration): TokenManagerInterface
@@ -48,7 +46,7 @@ class TokenManagerFactory implements TokenManagerFactoryInterface
         }
 
         $tokenManagerClass = $this->mapping[$type];
-        $this->tokenManagers[$id] = new $tokenManagerClass($configuration);
+        $this->tokenManagers[$id] = new $tokenManagerClass($configuration, $this->paginator);
 
         return $this->tokenManagers[$id];
     }
