@@ -446,8 +446,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw new \Exception('The filename of the asset is empty');
         }
 
-        $parentId = $request->request->getInt('parentId');
-        $parentPath = $request->request->get('parentPath');
+        $parentId = $request->query->getInt('parentId');
+        $parentPath = $request->query->get('parentPath');
 
         if ($request->get('dir') && $request->get('parentId')) {
             // this is for uploading folders with Drag&Drop
