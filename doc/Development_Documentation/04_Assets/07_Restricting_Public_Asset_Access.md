@@ -125,7 +125,7 @@ namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;
-use Pimcore\Tool\Storage;
+use Pimcore\Model\Asset\Service;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -153,29 +153,18 @@ class MyAssetController extends FrontendController
                 'Content-Type' => 'application/pdf',
             ]);
         } elseif (preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
-            $storage = Storage::get('thumbnail');
-            $storagePath = urldecode($pathInfo);
-            if($storage->fileExists($storagePath)){
-                $stream = $storage->readStream($storagePath);
+            $thumbnail = Service::getImageThumbnailByUri($pathinfo);
+
+            if ($thumbnail) {
+                $stream = $thumbnail->getStream();
                 return new StreamedResponse(function () use ($stream) {
                     fpassthru($stream);
                 }, 200, [
-                    'Content-Type' => $storage->mimeType($storagePath),
+                    'Content-Type' => $thumbnail->getMimeType(),
                 ]);
-            } else {
-                $pimcoreThumbnailRoute = '_pimcore_service_thumbnail';
-                $route = $router->getRouteCollection()->get($pimcoreThumbnailRoute);
-                $collection = new RouteCollection();
-                $collection->add($pimcoreThumbnailRoute, $route);
-                $matcher = new UrlMatcher($collection, $router->getContext());
-
-                try {
-                    $parameters = $matcher->matchRequest($request);
-                    return $this->forward('Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::thumbnailAction', $parameters);
-                } catch (\Exception $e) {
-                    // nothing to do
-                }
             }
+
+            throw new \Exception('Could not generate thumbnail.');
         }
 
         throw new AccessDeniedHttpException('Access denied.');
