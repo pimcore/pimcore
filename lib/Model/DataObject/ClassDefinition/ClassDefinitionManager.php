@@ -60,7 +60,7 @@ class ClassDefinitionManager
      */
     public function createOrUpdateClassDefinitions(): array
     {
-        $objectClassesFolders = [PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY];
+        $objectClassesFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY]);
 
         foreach ($objectClassesFolders as $objectClassesFolder) {
             $files = glob($objectClassesFolder.'/*.php');
