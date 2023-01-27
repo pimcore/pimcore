@@ -143,11 +143,6 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
             Session::useBag($session, function (AttributeBagInterface $adminSession, SessionInterface $session) use ($pimcoreUser) {
                 $session->migrate();
                 $adminSession->set('user', $pimcoreUser);
-
-                // this flag gets removed after successful authentication in \Pimcore\Bundle\AdminBundle\EventListener\TwoFactorListener
-                if ($pimcoreUser->getTwoFactorAuthentication('required') && $pimcoreUser->getTwoFactorAuthentication('enabled')) {
-                    $adminSession->set('2fa_required', true);
-                }
             });
         }
     }

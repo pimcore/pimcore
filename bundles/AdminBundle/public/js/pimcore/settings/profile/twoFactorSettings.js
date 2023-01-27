@@ -89,7 +89,7 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
             buttons: [{
                 text: t('2fa_alert_submit'),
                 handler: function() {
-                    window.location.reload();
+                    document.getElementById('pimcore_logout_form').submit();
                 }
             }]
         });

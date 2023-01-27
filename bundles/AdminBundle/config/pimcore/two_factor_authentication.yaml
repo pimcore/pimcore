@@ -1,4 +1,5 @@
 scheb_two_factor:
+    two_factor_condition: Pimcore\Bundle\AdminBundle\Security\PimcoreUserTwoFactorCondition
     google:
         enabled: true                                       # If Google Authenticator should be enabled, default false
         server_name: Pimcore                                # Server name used in QR code
@@ -8,3 +9,11 @@ scheb_two_factor:
         - Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken
         - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
         - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Bundle\AdminBundle\Security\PimcoreUserTwoFactorCondition: ~
