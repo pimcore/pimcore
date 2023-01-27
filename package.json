@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@symfony/webpack-encore": "^4.2.0",
+    "file-loader": "^6.2.0",
     "webpack-notifier": "^1.15.0"
   },
   "scripts": {

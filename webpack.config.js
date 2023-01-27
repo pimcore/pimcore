@@ -21,7 +21,11 @@ const standardConfigs = [
         bundleFolderName: "TinymceBundle",
         name: "tinymce",
         bundleName: "pimcoretinymce",
-        configName: "pimcoreTinymce"
+        configName: "pimcoreTinymce",
+        copyFiles: {
+            from: "node_modules/tinymce/skins",
+            to: "skins/[path]/[name].[ext]"
+        }
     }
 ]
 
@@ -53,6 +57,10 @@ standardConfigs.map((par) => {
         .enableBuildNotifications()
         .enableSourceMaps(!Encore.isProduction())
     ;
+
+    if(par.copyFiles) {
+        Encore.copyFiles(par.copyFiles);
+    }
 
     let encoreConfig = Encore.getWebpackConfig();
     encoreConfig.name = par.configName;
