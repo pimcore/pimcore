@@ -15,36 +15,19 @@ services:
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce:
         arguments:
-            - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
-        bind:
-            $options: []
-            $assortmentTenants: []
-            $checkoutTenants: []
-
+            $trackingItemBuilder: '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce:
         arguments:
-            - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
-        bind:
-            $options: []
-            $assortmentTenants: []
-            $checkoutTenants: []
+            $trackingItemBuilder: '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce:
         arguments:
-            - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
-        bind:
-            $options: []
-            $assortmentTenants: []
-            $checkoutTenants: []
+            $trackingItemBuilder: '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\GoogleTagManager:
         arguments:
-            - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
-        bind:
-            $options: []
-            $assortmentTenants: []
-            $checkoutTenants: []
+            $trackingItemBuilder: '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
 
     #
     # GOOGLE TAG MANAGER

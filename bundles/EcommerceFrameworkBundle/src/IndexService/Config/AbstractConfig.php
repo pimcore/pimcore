@@ -52,11 +52,11 @@ abstract class AbstractConfig implements ConfigInterface
      * @param array[]|Attribute[] $attributes
      */
     public function __construct(
-        string $tenantName,
-        array $attributes,
-        array $searchAttributes,
-        array $filterTypes,
         AttributeFactory $attributeFactory,
+        string $tenantName,
+        array $attributes = [],
+        array $searchAttributes = [],
+        array $filterTypes = [],
         array $options = [],
     ) {
         $this->tenantName = $tenantName;
