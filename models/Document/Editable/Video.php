@@ -188,7 +188,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     public function getData(): mixed
     {
         $path = $this->id;
-        if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
+        if ($this->id && $this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
             $path = $video->getFullPath();
         }
 
