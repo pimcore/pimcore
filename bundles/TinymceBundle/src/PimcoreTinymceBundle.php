@@ -31,16 +31,12 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle
 
     public function getJsPaths(): array
     {
-        return [
-            '/bundles/pimcoretinymce/js/editor.js'
-        ];
+        return $this->getAllJsPaths();
     }
 
     public function getEditmodeJsPaths(): array
     {
-        return [
-            '/bundles/pimcoretinymce/js/editor.js'
-        ];
+        return $this->getAllJsPaths();
     }
 
     /**
@@ -54,5 +50,24 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle
     public function getPath(): string
     {
         return \dirname(__DIR__);
+    }
+
+    private function getAllJsPaths(): array
+    {
+        $paths = $this->getBuildPaths($this->getPath() . '/public/build/tinymce/entrypoints.json', ['tinymce']);
+        $paths []= '/bundles/pimcoretinymce/js/editor.js';
+        return $paths;
+    }
+
+    private function getBuildPaths(string $entrypointsFile, array $entrypoints, string $type = 'js'): array
+    {
+        $entrypointsContent = file_get_contents($entrypointsFile);
+        $entrypointsJson = json_decode($entrypointsContent,true)['entrypoints'];
+
+        $jsPaths = [];
+        foreach($entrypoints as $entrypoint){
+            $jsPaths = array_merge($jsPaths, $entrypointsJson[$entrypoint][$type]);
+        }
+        return $jsPaths;
     }
 }
