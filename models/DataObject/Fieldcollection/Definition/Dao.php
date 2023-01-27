@@ -39,13 +39,13 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_collection_' . $this->model->getKey() . '_localized_' . $class->getId();
     }
 
-    public function delete(DataObject\ClassDefinition $class)
+    public function delete(DataObject\ClassDefinition $class): void
     {
         $table = $this->getTableName($class);
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
-    public function createUpdateTable(DataObject\ClassDefinition $class)
+    public function createUpdateTable(DataObject\ClassDefinition $class): void
     {
         $table = $this->getTableName($class);
 
@@ -68,7 +68,8 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 
-            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
+                && $value instanceof DataObject\ClassDefinition\Data) {
                 if (is_array($value->getColumnType())) {
                     // if a datafield requires more than one field
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
@@ -101,7 +102,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->tableDefinitions = [];
     }
 
-    public function classSaved(DataObject\ClassDefinition $classDefinition)
+    public function classSaved(DataObject\ClassDefinition $classDefinition): void
     {
         $this->handleEncryption($classDefinition, [$this->getTableName($classDefinition)]);
     }

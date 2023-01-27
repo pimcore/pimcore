@@ -64,7 +64,7 @@ class RoutingListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -109,7 +109,7 @@ class RoutingListener implements EventSubscriberInterface
         }
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         // in case routing didn't find a matching route, check for redirects without override
         $exception = $event->getThrowable();
@@ -150,7 +150,7 @@ class RoutingListener implements EventSubscriberInterface
         return $path;
     }
 
-    protected function handleFrontControllerRedirect(RequestEvent $event, string $path)
+    protected function handleFrontControllerRedirect(RequestEvent $event, string $path): void
     {
         $request = $event->getRequest();
 
@@ -171,7 +171,7 @@ class RoutingListener implements EventSubscriberInterface
      * @param RequestEvent $event
      * @param bool $adminContext
      */
-    protected function handleMainDomainRedirect(RequestEvent $event, bool $adminContext = false)
+    protected function handleMainDomainRedirect(RequestEvent $event, bool $adminContext = false): void
     {
         $request = $event->getRequest();
 

@@ -29,7 +29,7 @@ final class RequiredBy extends AbstractOperator
 
     private bool $onlyCount;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -85,7 +85,7 @@ final class RequiredBy extends AbstractOperator
         return $this->elementType;
     }
 
-    public function setElementType(?string $elementType)
+    public function setElementType(?string $elementType): void
     {
         $this->elementType = $elementType;
     }
@@ -95,7 +95,7 @@ final class RequiredBy extends AbstractOperator
         return $this->onlyCount;
     }
 
-    public function setOnlyCount(bool $onlyCount)
+    public function setOnlyCount(bool $onlyCount): void
     {
         $this->onlyCount = $onlyCount;
     }

@@ -29,8 +29,8 @@ Since the language is a simple property you can access it like every other prope
  ```
  
  
-Once you have defined the language of your documents you can also use the [translate helper](./04_Shared_Translations) 
-in your views, as described [here](./04_Shared_Translations). Pimcore uses the standard Symfony translator, 
+Once you have defined the language of your documents you can also use the [translate helper](./04_Shared_Translations.md) 
+in your views, as described [here](./04_Shared_Translations.md). Pimcore uses the standard Symfony translator, 
 so you can even access all the translations provided by your bundles. 
 
 ## Translating terms on the website

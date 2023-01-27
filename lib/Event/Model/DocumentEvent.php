@@ -43,7 +43,7 @@ class DocumentEvent extends Event implements ElementEventInterface
         return $this->document;
     }
 
-    public function setDocument(Document $document)
+    public function setDocument(Document $document): void
     {
         $this->document = $document;
     }

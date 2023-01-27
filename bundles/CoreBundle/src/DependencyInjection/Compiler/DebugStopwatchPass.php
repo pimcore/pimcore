@@ -34,7 +34,7 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class DebugStopwatchPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $debug = $container->getParameter('kernel.debug');
         if (!$debug) {

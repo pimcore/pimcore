@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(Model\DataObject\Concrete $object, array $params = [], bool|array $saveRelationalData = true)
+    public function save(Model\DataObject\Concrete $object, array $params = [], bool|array $saveRelationalData = true): void
     {
         $tableName = $this->model->getDefinition()->getTableName($object->getClass());
         $data = [
@@ -46,7 +46,8 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($this->model->getDefinition()->getFieldDefinitions() as $fieldName => $fd) {
             $getter = 'get' . ucfirst($fieldName);
 
-            if ($fd instanceof CustomResourcePersistingInterface) {
+            if ($fd instanceof CustomResourcePersistingInterface
+                && $fd instanceof Model\DataObject\ClassDefinition\Data) {
                 if (!$fd instanceof Model\DataObject\ClassDefinition\Data\Localizedfields && $fd->supportsDirtyDetection() && !$saveRelationalData) {
                     continue;
                 }
@@ -72,7 +73,8 @@ class Dao extends Model\Dao\AbstractDao
                     $this->model, $params
                 );
             }
-            if ($fd instanceof ResourcePersistenceAwareInterface) {
+            if ($fd instanceof ResourcePersistenceAwareInterface
+                && $fd instanceof Model\DataObject\ClassDefinition\Data) {
                 $fieldDefinitionParams = [
                     'owner' => $this->model, //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
                     'fieldname' => $fd->getName(),

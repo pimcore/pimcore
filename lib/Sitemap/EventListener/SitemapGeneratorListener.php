@@ -48,7 +48,7 @@ class SitemapGeneratorListener implements EventSubscriberInterface
         ];
     }
 
-    public function onPopulateSitemap(SitemapPopulateEvent $event)
+    public function onPopulateSitemap(SitemapPopulateEvent $event): void
     {
         $container = $event->getUrlContainer();
         $section = $event->getSection();

@@ -33,12 +33,12 @@ class IndexActionSettingsEvent extends Event
         return $this->settings;
     }
 
-    public function setSettings(array $settings)
+    public function setSettings(array $settings): void
     {
         $this->settings = $settings;
     }
 
-    public function addSetting(string $key, mixed $value)
+    public function addSetting(string $key, mixed $value): void
     {
         $this->settings[$key] = $value;
     }

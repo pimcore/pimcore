@@ -98,8 +98,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
     /**
      * @Route("/get-data-by-id", name="pimcore_admin_asset_getdatabyid", methods={"GET"})
-     *
-     *
      */
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
@@ -117,7 +115,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 return $this->getEditLockResponse($assetId, 'asset');
             }
 
-            Element\Editlock::lock($request->get('id'), 'asset');
+            Element\Editlock::lock($request->query->getInt('id'), 'asset');
         }
 
         $asset = clone $asset;
@@ -428,7 +426,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      * @param Request $request
      * @param Config $config
      *
-     * @return array
+     * @return array{success: bool, asset: ?Asset}
      *
      * @throws \Exception
      */
@@ -448,8 +446,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw new \Exception('The filename of the asset is empty');
         }
 
-        $parentId = $request->get('parentId');
-        $parentPath = $request->get('parentPath');
+        $parentId = $request->request->getInt('parentId');
+        $parentPath = $request->request->get('parentPath');
 
         if ($request->get('dir') && $request->get('parentId')) {
             // this is for uploading folders with Drag&Drop
@@ -533,13 +531,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         // check if there is a requested type and if matches the asset type of the uploaded file
-        $type = $request->get('type');
-        if ($type) {
+        $uploadAssetType = $request->get('uploadAssetType');
+        if ($uploadAssetType) {
             $mimetype = MimeTypes::getDefault()->guessMimeType($sourcePath);
             $assetType = Asset::getTypeFromMimeMapping($mimetype, $filename);
 
-            if ($type !== $assetType) {
-                throw new \Exception("Mime type does not match with asset type: $type");
+            if ($uploadAssetType !== $assetType) {
+                throw new \Exception("Mime type $mimetype does not match with asset type: $uploadAssetType");
             }
         }
 
@@ -928,7 +926,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     /**
      * @Route("/webdav{path}", name="pimcore_admin_webdav", requirements={"path"=".*"})
      */
-    public function webdavAction()
+    public function webdavAction(): void
     {
         $homeDir = Asset::getById(1);
 
@@ -1076,8 +1074,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function publishVersionAction(Request $request): JsonResponse
     {
-        $version = Model\Version::getById((int) $request->get('id'));
-        $asset = $version->loadData();
+        $id = (int)$request->get('id');
+        $version = Model\Version::getById($id);
+        $asset = $version?->loadData();
+
+        if (!$asset) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
+        }
 
         $currentAsset = Asset::getById($asset->getId());
         if ($currentAsset->isAllowed('publish')) {
@@ -1107,10 +1110,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
-        if (!$version) {
-            throw $this->createNotFoundException('Version not found');
+        $asset = $version?->loadData();
+        if (!$asset) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
-        $asset = $version->loadData();
 
         if (!$asset->isAllowed('versions')) {
             throw $this->createAccessDeniedHttpException('Permission denied, version id [' . $id . ']');
@@ -1122,6 +1125,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             '@PimcoreAdmin/admin/asset/show_version_' . strtolower($asset->getType()) . '.html.twig',
             [
                 'asset' => $asset,
+                'version' => $version,
                 'loader' => $loader,
             ]
         );
@@ -1592,7 +1596,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         return $response;
     }
 
-    protected function addThumbnailCacheHeaders(Response $response)
+    protected function addThumbnailCacheHeaders(Response $response): void
     {
         $lifetime = 300;
         $date = new \DateTime('now');
@@ -1826,7 +1830,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
-        $folder = Asset::getById($allParams['id']);
+        $folder = Asset::getById((int) $allParams['id']);
 
         $start = 0;
         $limit = 10;
@@ -2474,7 +2478,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         ]);
     }
 
-    protected function checkForPharStreamWrapper($path)
+    protected function checkForPharStreamWrapper(string $path): void
     {
         if (stripos($path, 'phar://') !== false) {
             throw $this->createAccessDeniedException('Using PHAR files is not allowed!');
@@ -2494,10 +2498,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $success = true;
 
-        $data = Tool::getHttpData($request->get('url'));
-        $filename = basename($request->get('url'));
-        $parentId = $request->get('id');
-        $parentAsset = Asset::getById((int)$parentId);
+        $data = Tool::getHttpData($request->request->get('url'));
+        $filename = basename($request->request->get('url'));
+        $parentId = $request->request->getInt('id');
+        $parentAsset = Asset::getById($parentId);
 
         if (!$parentAsset) {
             throw $this->createNotFoundException('Parent asset not found');
@@ -2814,7 +2818,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         throw $this->createAccessDeniedHttpException();
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -2836,7 +2840,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             && 'object' === $context['containerType']
             && $object = Concrete::getById($context['objectId'])
         ) {
-            $fieldDefinition = $object->getClass()?->getFieldDefinition($context['fieldname']);
+            $fieldDefinition = $object->getClass()->getFieldDefinition($context['fieldname']);
             if (!$fieldDefinition instanceof ManyToManyRelation) {
                 return;
             }

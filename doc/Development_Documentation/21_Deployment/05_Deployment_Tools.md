@@ -67,22 +67,22 @@ To get a list of all available commands use `./bin/console list`.
 
 #### Potentially useful commands:
 
-| Command                                              | Description                                                                                     |
-|------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| pimcore:mysql-tools                                  | Optimize and warm up mysql database                                                              |
-| pimcore:search-backend-reindex                       | Re-indexes the backend search of Pimcore                                                        |
-| pimcore:cache:clear                                  | Clear Pimcore core caches                                                                                    |
-| cache:clear                                          | Clear Symfony caches                                                                                    |
-| pimcore:cache:warming                                | Warm up caches                                                                                  |
-| pimcore:classificationstore:delete-store                     | Delete Classification Store                                                                     |
-| pimcore:definition:import:class                      | Import Class definition from a JSON export                                                      |
-| pimcore:definition:import:customlayout               | Import Customlayout definition from a JSON export                                               |
-| pimcore:definition:import:fieldcollection            | Import FieldCollection definition from a JSON export                                            |
-| pimcore:definition:import:objectbrick                | Import ObjectBrick definition from a JSON export                                                |
-| pimcore:deployment:classes-rebuild                   | Rebuilds classes and db structure based on updated `var/classes/definition_*.php` files |
-| pimcore:thumbnails:image                             | Generate image thumbnails, useful to pre-generate thumbnails in the background. Use `--processes` option for parallel processing.                   |
-| pimcore:thumbnails:optimize-images                   | Optimize file size of all images in `web/var/tmp`                       |
-| pimcore:thumbnails:video                             | Generate video thumbnails, useful to pre-generate thumbnails in the background. Use `--processes` option for parallel processing.                   |
+| Command                                              | Description                                                                                                                       |
+|------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| pimcore:mysql-tools                                  | Optimize and warm up mysql database                                                                                               |
+| pimcore:search-backend-reindex                       | Re-indexes the backend search of Pimcore (only available if you have installed the simpleBackendSearchBundle)                     |
+| pimcore:cache:clear                                  | Clear Pimcore core caches                                                                                                         |
+| cache:clear                                          | Clear Symfony caches                                                                                                              |
+| pimcore:cache:warming                                | Warm up caches                                                                                                                    |
+| pimcore:classificationstore:delete-store                     | Delete Classification Store                                                                                                       |
+| pimcore:definition:import:class                      | Import Class definition from a JSON export                                                                                        |
+| pimcore:definition:import:customlayout               | Import Customlayout definition from a JSON export                                                                                 |
+| pimcore:definition:import:fieldcollection            | Import FieldCollection definition from a JSON export                                                                              |
+| pimcore:definition:import:objectbrick                | Import ObjectBrick definition from a JSON export                                                                                  |
+| pimcore:deployment:classes-rebuild                   | Rebuilds classes and db structure based on updated `var/classes/definition_*.php` files                                           |
+| pimcore:thumbnails:image                             | Generate image thumbnails, useful to pre-generate thumbnails in the background. Use `--processes` option for parallel processing. |
+| pimcore:thumbnails:optimize-images                   | Optimize file size of all images in `web/var/tmp`                                                                                 |
+| pimcore:thumbnails:video                             | Generate video thumbnails, useful to pre-generate thumbnails in the background. Use `--processes` option for parallel processing. |
 
 Find more about the Pimcore Console on the [dedicated page](../19_Development_Tools_and_Details/11_Console_CLI.md).
 

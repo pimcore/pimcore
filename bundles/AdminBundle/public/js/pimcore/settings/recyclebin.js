@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.recyclebin");
+/**
+ * @private
+ */
 pimcore.settings.recyclebin = Class.create({
 
     initialize: function () {

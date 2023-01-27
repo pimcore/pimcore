@@ -165,10 +165,10 @@ trait DataObjectActionsTrait
         $user = Tool\Admin::getCurrentUser();
         $languagePermissions = [];
         if (!$user->isAdmin()) {
-            $languagePermissions = $object->getPermissions('lEdit', $user);
+            $languagePermissionsData = $object->getPermissions('lEdit', $user);
 
-            if ($languagePermissions['lEdit']) {
-                $languagePermissions = explode(',', $languagePermissions['lEdit']);
+            if ($languagePermissionsData['lEdit']) {
+                $languagePermissions = explode(',', $languagePermissionsData['lEdit']);
             }
         }
 
@@ -291,11 +291,6 @@ trait DataObjectActionsTrait
         $fieldDefinition = $class->getFieldDefinition($key);
         if ($fieldDefinition) {
             return $fieldDefinition;
-        }
-
-        $localized = $class->getFieldDefinition('localizedfields');
-        if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-            $fieldDefinition = $localized->getFieldDefinition($key);
         }
 
         return $fieldDefinition;

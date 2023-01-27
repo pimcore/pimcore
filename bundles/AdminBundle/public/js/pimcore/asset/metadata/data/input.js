@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.metadata.data.input");
+/**
+ * @private
+ */
 pimcore.asset.metadata.data.input = Class.create(pimcore.asset.metadata.data.data, {
 
     type: "input"

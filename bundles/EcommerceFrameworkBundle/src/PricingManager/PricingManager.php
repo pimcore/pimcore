@@ -67,7 +67,7 @@ class PricingManager implements PricingManagerInterface
         $this->options = $resolver->resolve($options);
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $classProperties = ['rule_class', 'price_info_class', 'environment_class'];
 
@@ -84,7 +84,7 @@ class PricingManager implements PricingManagerInterface
         }
     }
 
-    public function setEnabled(bool $enabled)
+    public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
     }

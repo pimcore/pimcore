@@ -33,7 +33,7 @@ class IndexUpdateListener implements EventSubscriberInterface
         ];
     }
 
-    public function onObjectUpdate(DataObjectEvent $event)
+    public function onObjectUpdate(DataObjectEvent $event): void
     {
         $object = $event->getObject();
 
@@ -43,7 +43,7 @@ class IndexUpdateListener implements EventSubscriberInterface
         }
     }
 
-    public function onObjectDelete(DataObjectEvent $event)
+    public function onObjectDelete(DataObjectEvent $event): void
     {
         $object = $event->getObject();
 

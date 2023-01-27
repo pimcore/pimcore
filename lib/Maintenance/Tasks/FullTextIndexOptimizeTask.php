@@ -37,7 +37,7 @@ class FullTextIndexOptimizeTask implements TaskInterface
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function execute()
+    public function execute(): void
     {
         if ($this->lock->acquire(false)) {
             Db::get()->fetchAllAssociative('OPTIMIZE TABLE search_backend_data');

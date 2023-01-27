@@ -38,7 +38,7 @@ class PimcoreClassDefinitionReplaceFilter implements Filter
         $this->callback = $callable;
     }
 
-    public function apply($object, $property, $objectCopier)
+    public function apply($object, $property, $objectCopier): void
     {
         if (!$object instanceof Concrete) {
             return;

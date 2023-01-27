@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
  * @method void commit()
  * @method void rollBack()
  * @method void configure()
- * @method array getValidTableColumns(string $table, bool $cache)
+ * @method string[] getValidTableColumns(string $table, bool $cache)
  * @method void resetValidTableColumnsCache(string $table)
  */
 abstract class AbstractModel implements ModelInterface
@@ -61,12 +61,9 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @param string|null $key
-     * @param bool $forceDetection
-     *
      * @throws \Exception
      */
-    public function initDao(string $key = null, bool $forceDetection = false)
+    public function initDao(string $key = null, bool $forceDetection = false): void
     {
         $myClass = get_class($this);
         $cacheKey = $myClass . ($key ? ('-' . $key) : '');
@@ -167,11 +164,11 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @return $this
      */
-    public function setValues(array $data = []): static
+    public function setValues(array $data = [], bool $ignoreEmptyValues = false): static
     {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $key => $value) {
-                $this->setValue($key, $value);
+                $this->setValue($key, $value, $ignoreEmptyValues);
             }
         }
 
@@ -181,11 +178,12 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @return $this
      */
-    public function setValue(string $key, mixed $value): static
+    public function setValue(string $key, mixed $value, bool $ignoreEmptyValues = false): static
     {
         $method = 'set' . $key;
         if (strcasecmp($method, __FUNCTION__) !== 0
-            && isset($value)) {
+            && (isset($value) || !$ignoreEmptyValues)
+        ) {
             if (method_exists($this, $method)) {
                 $this->$method($value);
             } elseif (method_exists($this, 'set' . preg_replace('/^o_/', '', $key))) {
@@ -200,7 +198,7 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $blockedVars = ['dao', 'dirtyFields', 'activeDispatchingEvents'];
 
@@ -210,12 +208,9 @@ abstract class AbstractModel implements ModelInterface
     }
 
     /**
-     * @param string $method
-     * @param array $args
-     *
-     * @return mixed
-     *
      * @throws \Exception
+     *
+     * @return mixed|void
      */
     public function __call(string $method, array $args)
     {
@@ -270,7 +265,7 @@ abstract class AbstractModel implements ModelInterface
      *
      * @throws \Exception
      */
-    protected static function checkCreateData(array $data)
+    protected static function checkCreateData(array $data): void
     {
         if (isset($data['id'])) {
             throw new \Exception(sprintf('Calling %s including `id` key in the data-array is not supported, use setId() instead.', __METHOD__));

@@ -68,7 +68,7 @@ class EditmodeListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -85,7 +85,7 @@ class EditmodeListener implements EventSubscriberInterface
         $this->editmodeResolver->isEditmode($request);
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         $request = $event->getRequest();
         $response = $event->getResponse();
@@ -144,7 +144,7 @@ class EditmodeListener implements EventSubscriberInterface
      * @param Document $document
      * @param Response $response
      */
-    protected function addEditmodeAssets(Document $document, Response $response)
+    protected function addEditmodeAssets(Document $document, Response $response): void
     {
         if (Document\Service::isValidType($document->getType())) {
             $html = $response->getContent();

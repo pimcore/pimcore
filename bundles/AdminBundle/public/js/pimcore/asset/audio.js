@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.audio");
+/**
+ * @private
+ */
 pimcore.asset.audio = Class.create(pimcore.asset.asset, {
 
     initialize: function(id, options) {
@@ -25,10 +28,15 @@ pimcore.asset.audio = Class.create(pimcore.asset.asset, {
             detail: {
                 object: this,
                 type: "audio"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenAssetAudio);
+        const isAllowed = document.dispatchEvent(preOpenAssetAudio);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
         var user = pimcore.globalmanager.get("user");
 

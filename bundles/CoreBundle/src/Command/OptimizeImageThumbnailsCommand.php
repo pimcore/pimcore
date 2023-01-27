@@ -33,7 +33,7 @@ class OptimizeImageThumbnailsCommand extends AbstractCommand
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:thumbnails:optimize-images')

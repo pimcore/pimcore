@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.editables.wysiwyg");
+/**
+ * @private
+ */
 pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
     type: "wysiwyg",

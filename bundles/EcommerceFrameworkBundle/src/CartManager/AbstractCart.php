@@ -459,7 +459,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param CartItemInterface[]|null $items
      */
-    public function setItems(?array $items)
+    public function setItems(?array $items): void
     {
         $this->items = $items;
 
@@ -499,7 +499,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         return true;
     }
 
-    public function setId(int|string $id)
+    public function setId(int|string $id): void
     {
         $this->id = $id;
     }
@@ -532,7 +532,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         }
     }
 
-    public function setCreationDateTimestamp(int $creationDateTimestamp)
+    public function setCreationDateTimestamp(int $creationDateTimestamp): void
     {
         $this->creationDateTimestamp = $creationDateTimestamp;
         $this->creationDate = null;
@@ -566,7 +566,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         }
     }
 
-    public function setModificationDateTimestamp(int $modificationDateTimestamp)
+    public function setModificationDateTimestamp(int $modificationDateTimestamp): void
     {
         $this->modificationDateTimestamp = $modificationDateTimestamp;
         $this->modificationDate = null;
@@ -582,7 +582,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         return $this->userId ?: Factory::getInstance()->getEnvironment()->getCurrentUserId();
     }
 
-    public function setUserId(int $userId)
+    public function setUserId(int $userId): void
     {
         $this->userId = (int)$userId;
     }
@@ -601,7 +601,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         return null;
     }
 
-    public function setCheckoutData(string $key, string $data)
+    public function setCheckoutData(string $key, string $data): void
     {
         $className = $this->getCartCheckoutDataClassName();
         $value = new $className();
@@ -620,7 +620,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         return $this->priceCalculator;
     }
 
-    public function setPriceCalculator(CartPriceCalculatorInterface $priceCalculator)
+    public function setPriceCalculator(CartPriceCalculatorInterface $priceCalculator): void
     {
         $this->priceCalculator = $priceCalculator;
     }
@@ -704,14 +704,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         return false;
     }
 
-    /**
-     * Checks if an error code is a defined Voucher Error Code.
-     *
-     * @param int $errorCode
-     *
-     * @return bool
-     */
-    public function isVoucherErrorCode($errorCode): bool
+    public function isVoucherErrorCode(int $errorCode): bool
     {
         return $errorCode > 0 && $errorCode < 10;
     }
@@ -721,7 +714,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      *
      * @throws InvalidConfigException
      */
-    public function removeAllVoucherTokens()
+    public function removeAllVoucherTokens(): void
     {
         foreach ($this->getVoucherTokenCodes() as $code) {
             $this->removeVoucherToken($code);
@@ -789,7 +782,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * Checks if checkout data voucher tokens are valid reservations
      */
-    protected function validateVoucherTokenReservations()
+    protected function validateVoucherTokenReservations(): void
     {
         if ($this->getVoucherTokenCodes()) {
             $order = Factory::getInstance()->getOrderManager()->getOrderFromCart($this);

@@ -42,7 +42,7 @@ class TargetGroupEvent extends Event
         return $this->targetGroup;
     }
 
-    public function setTargetGroup(TargetGroup $targetGroup)
+    public function setTargetGroup(TargetGroup $targetGroup): void
     {
         $this->targetGroup = $targetGroup;
     }

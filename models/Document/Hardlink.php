@@ -202,7 +202,7 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
@@ -219,7 +219,7 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         parent::update($params);
         $this->saveScheduledTasks();

@@ -481,7 +481,7 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @throws \Exception            if method does not exist
      */
-    public function __call(string $method, array $arguments)
+    public function __call(string $method, array $arguments): mixed
     {
         if (@preg_match('/(find(?:One|All)?By)(.+)/', $method, $match)) {
             return $this->{$match[1]}($match[2], $arguments[0], !empty($arguments[1]));

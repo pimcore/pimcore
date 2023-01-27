@@ -402,7 +402,7 @@ class Log extends Model\AbstractModel
     /**
      * Removes the log file entry from the db and removes the log files on the system
      */
-    public function delete()
+    public function delete(): void
     {
         $storage = Storage::get('email_log');
         $storage->delete($this->getHtmlLogFilename());
@@ -410,7 +410,7 @@ class Log extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-    public function save()
+    public function save(): void
     {
         $this->getDao()->save();
 

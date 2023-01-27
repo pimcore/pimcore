@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.checkbox");
+/**
+ * @private
+ */
 pimcore.object.classes.data.checkbox = Class.create(pimcore.object.classes.data.data, {
 
     type: "checkbox",

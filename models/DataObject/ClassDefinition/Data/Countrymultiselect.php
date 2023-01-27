@@ -39,7 +39,7 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
      */
     public ?string $restrictTo = null;
 
-    public function setRestrictTo(array|string|null $restrictTo)
+    public function setRestrictTo(array|string|null $restrictTo): void
     {
         /**
          * @extjs6

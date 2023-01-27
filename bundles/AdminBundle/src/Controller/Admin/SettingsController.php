@@ -32,8 +32,6 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
-use Pimcore\Model\Staticroute;
-use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -403,14 +401,12 @@ class SettingsController extends AdminController
         $valueArray['general']['valid_language'] = explode(',', $valueArray['general']['valid_languages']);
 
         //for "wrong" legacy values
-        if (is_array($valueArray['general']['valid_language'])) {
-            foreach ($valueArray['general']['valid_language'] as $existingValue) {
-                if (!in_array($existingValue, $validLanguages)) {
-                    $languageOptions[] = [
-                        'language' => $existingValue,
-                        'display' => $existingValue,
-                    ];
-                }
+        foreach ($valueArray['general']['valid_language'] as $existingValue) {
+            if (!in_array($existingValue, $validLanguages)) {
+                $languageOptions[] = [
+                    'language' => $existingValue,
+                    'display' => $existingValue,
+                ];
             }
         }
 
@@ -556,7 +552,7 @@ class SettingsController extends AdminController
      *
      * @throws \Exception
      */
-    protected function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = [])
+    protected function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = []): void
     {
         if (isset($definitions[$source])) {
             $targets = explode(',', $definitions[$source]);
@@ -784,103 +780,6 @@ class SettingsController extends AdminController
         $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
 
         return $this->adminJson(['success' => true]);
-    }
-
-    /**
-     * @Route("/staticroutes", name="pimcore_admin_settings_staticroutes", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function staticroutesAction(Request $request): JsonResponse
-    {
-        if ($request->get('data')) {
-            $this->checkPermission('routes');
-
-            $data = $this->decodeJson($request->get('data'));
-
-            if (is_array($data)) {
-                foreach ($data as &$value) {
-                    if (is_string($value)) {
-                        $value = trim($value);
-                    }
-                }
-            }
-
-            if ($request->get('xaction') == 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
-                $id = $data['id'];
-                $route = Staticroute::getById($id);
-                if (!$route->isWriteable()) {
-                    throw new ConfigWriteException();
-                }
-                $route->delete();
-
-                return $this->adminJson(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') == 'update') {
-                // save routes
-                $route = Staticroute::getById($data['id']);
-                if (!$route->isWriteable()) {
-                    throw new ConfigWriteException();
-                }
-
-                $route->setValues($data);
-
-                $route->save();
-
-                return $this->adminJson(['data' => $route->getObjectVars(), 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
-                if (!(new Staticroute())->isWriteable()) {
-                    throw new ConfigWriteException();
-                }
-                unset($data['id']);
-
-                // save route
-                $route = new Staticroute();
-                $route->setValues($data);
-
-                $route->save();
-
-                $responseData = $route->getObjectVars();
-                $responseData['writeable'] = $route->isWriteable();
-
-                return $this->adminJson(['data' => $responseData, 'success' => true]);
-            }
-        } else {
-            // get list of routes
-
-            $list = new Staticroute\Listing();
-
-            if ($filter = $request->get('filter')) {
-                $list->setFilter(function (Staticroute $staticRoute) use ($filter) {
-                    foreach ($staticRoute->getObjectVars() as $value) {
-                        if (!is_scalar($value)) {
-                            continue;
-                        }
-                        if (stripos((string)$value, $filter) !== false) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                });
-            }
-
-            $routes = [];
-            foreach ($list->getRoutes() as $routeFromList) {
-                $route = $routeFromList->getObjectVars();
-                $route['writeable'] = $routeFromList->isWriteable();
-                if (is_array($routeFromList->getSiteId())) {
-                    $route['siteId'] = implode(',', $routeFromList->getSiteId());
-                }
-                $routes[] = $route;
-            }
-
-            return $this->adminJson(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
-        }
-
-        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -1441,49 +1340,6 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxtget", methods={"GET"})
-     *
-     * @return JsonResponse
-     */
-    public function robotsTxtGetAction(): JsonResponse
-    {
-        $this->checkPermission('robots.txt');
-
-        $config = Config::getRobotsConfig();
-
-        return $this->adminJson([
-            'success' => true,
-            'data' => $config,
-            'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt'),
-        ]);
-    }
-
-    /**
-     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxtput", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function robotsTxtPutAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('robots.txt');
-
-        $values = $request->get('data');
-        if (!is_array($values)) {
-            $values = [];
-        }
-
-        foreach ($values as $siteId => $robotsContent) {
-            SettingsStore::set('robots.txt-' . $siteId, $robotsContent, 'string', 'robots.txt');
-        }
-
-        return $this->adminJson([
-            'success' => true,
-        ]);
-    }
-
-    /**
      * @Route("/website-settings", name="pimcore_admin_settings_websitesettings", methods={"POST"})
      *
      * @param Request $request
@@ -1583,6 +1439,9 @@ class SettingsController extends AdminController
         return $this->adminJson(['success' => false]);
     }
 
+    /**
+     * @return array{id: ?int, name: string, language: string, type: string, data: mixed, siteId: ?int, creationDate: ?int, modificationDate: ?int}
+     */
     private function getWebsiteSettingForEditMode(WebsiteSetting $item): array
     {
         $resultItem = [
@@ -1652,7 +1511,7 @@ class SettingsController extends AdminController
      * @param string $language
      * @param string $dbName
      */
-    protected function deleteViews(string $language, string $dbName)
+    protected function deleteViews(string $language, string $dbName): void
     {
         $db = \Pimcore\Db::get();
         $views = $db->fetchAllAssociative('SHOW FULL TABLES IN ' . $db->quoteIdentifier($dbName) . " WHERE TABLE_TYPE LIKE 'VIEW'");

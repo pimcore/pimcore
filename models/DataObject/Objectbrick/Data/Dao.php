@@ -39,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(DataObject\Concrete $object, array $params = [])
+    public function save(DataObject\Concrete $object, array $params = []): void
     {
         // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
         $inheritedValues = DataObject::doGetInheritedValues();
@@ -186,7 +186,8 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd instanceof QueryResourcePersistenceAwareInterface) {
+            if ($fd instanceof QueryResourcePersistenceAwareInterface
+                && $fd instanceof DataObject\ClassDefinition\Data) {
                 $method = 'get' . $key;
                 $fieldValue = $this->model->$method();
                 $insertData = $fd->getDataForQueryResource($fieldValue, $object);
@@ -286,7 +287,7 @@ class Dao extends Model\Dao\AbstractDao
         DataObject::setGetInheritedValues($inheritedValues);
     }
 
-    public function delete(DataObject\Concrete $object)
+    public function delete(DataObject\Concrete $object): void
     {
         // update data for store table
         $storeTable = $this->model->getDefinition()->getTableName($object->getClass(), false);

@@ -88,54 +88,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * @deprecated
-     *
-     * @return TranslatorInterface
-     */
-    public function getTranslator()
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated, please use $this->translator instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->translator;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return PimcoreBundleManager
-     */
-    public function getBundleManager()
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated, please use $this->bundleManager instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->bundleManager;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return TokenStorageUserResolver
-     */
-    public function getTokenResolver()
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated, please use $this->tokenResolver instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->tokenResolver;
-    }
-
-    /**
      * Get user from user proxy object which is registered on security component
      *
      * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model
@@ -158,7 +110,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      *
      * @throws AccessDeniedHttpException
      */
-    protected function checkPermission(string $permission)
+    protected function checkPermission(string $permission): void
     {
         if (!$this->getAdminUser() || !$this->getAdminUser()->isAllowed($permission)) {
             Logger::error(
@@ -190,7 +142,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * @param string[] $permissions
      */
-    protected function checkPermissionsHasOneOf(array $permissions)
+    protected function checkPermissionsHasOneOf(array $permissions): void
     {
         $allowed = false;
         $permission = null;
@@ -222,7 +174,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @param string $permission
      * @param array $unrestrictedActions
      */
-    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = [])
+    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = []): void
     {
         $actionName = null;
         $controller = $event->getController();

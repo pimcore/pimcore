@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.countrymultiselect");
+/**
+ * @private
+ */
 pimcore.object.tags.countrymultiselect = Class.create(pimcore.object.tags.multiselect, {
 
     type: "countrymultiselect"

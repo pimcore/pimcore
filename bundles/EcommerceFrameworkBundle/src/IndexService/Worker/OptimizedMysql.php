@@ -69,7 +69,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         $this->doCleanupOldZombieData($object, $subObjectIds);
     }
 
-    protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null)
+    protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null): void
     {
         try {
             $this->db->beginTransaction();
@@ -115,7 +115,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
      * @param array|null $data
      * @param array|null $metadata
      */
-    public function doUpdateIndex(int $objectId, array $data = null, array $metadata = null)
+    public function doUpdateIndex(int $objectId, array $data = null, array $metadata = null): void
     {
         if (empty($data)) {
             $data = $this->db->fetchOne('SELECT data FROM ' . self::STORE_TABLE_NAME . ' WHERE id = ? AND tenant = ?', [$objectId, $this->name]);
@@ -148,11 +148,17 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         }
     }
 
-    protected function getValidTableColumns($table)
+    /**
+     * @return string[]
+     */
+    protected function getValidTableColumns(string $table): array
     {
         return $this->mySqlHelper->getValidTableColumns($table);
     }
 
+    /**
+     * @return string[]
+     */
     protected function getSystemAttributes(): array
     {
         return $this->mySqlHelper->getSystemAttributes();

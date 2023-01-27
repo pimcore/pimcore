@@ -26,7 +26,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     /**
      * {@inheritdoc}
      */
-    public function lock()
+    public function lock(): void
     {
         $this->locked = true;
     }
@@ -34,7 +34,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     /**
      * {@inheritdoc}
      */
-    public function unlock()
+    public function unlock(): void
     {
         $this->locked = false;
     }
@@ -50,7 +50,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     /**
      * {@inheritdoc}
      */
-    public function set($name, $value)
+    public function set(string $name, mixed $value): void
     {
         $this->checkLock();
 
@@ -60,7 +60,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     /**
      * {@inheritdoc}
      */
-    public function replace(array $attributes)
+    public function replace(array $attributes): void
     {
         $this->checkLock();
 
@@ -72,7 +72,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      *
      * @return mixed
      */
-    public function remove($name): mixed
+    public function remove(string $name): mixed
     {
         $this->checkLock();
 
@@ -95,7 +95,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      * @throws AttributeBagLockedException
      *      if lock is set
      */
-    protected function checkLock()
+    protected function checkLock(): void
     {
         if ($this->locked) {
             throw new AttributeBagLockedException('Attribute bag is locked');

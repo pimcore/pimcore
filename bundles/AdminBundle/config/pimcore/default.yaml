@@ -121,34 +121,9 @@ pimcore_admin:
                 action: applicationLogger
                 ctrl: true
                 alt: true
-            reports:
-                key: 'M'
-                action: reports
-                ctrl: true
-                alt: true
             tag_manager:
                 key: 'H'
                 action: tagManager
-                ctrl: true
-                alt: true
-            seo_document_editor:
-                key: 'S'
-                action: seoDocumentEditor
-                ctrl: true
-                alt: true
-            robots:
-                key: 'J'
-                action: robots
-                ctrl: true
-                alt: true
-            http_error_log:
-                key: 'O'
-                action: httpErrorLog
-                ctrl: true
-                alt: true
-            custom_reports:
-                key: 'C'
-                action: customReports
                 ctrl: true
                 alt: true
             tag_configuration:
@@ -176,11 +151,6 @@ pimcore_admin:
                 action: clearDataCache
                 ctrl: false
                 alt: true
-            quick_search:
-                key: 'F'
-                action: quickSearch
-                ctrl: true
-                shift: true
 
 # adds support for admin related routes that will be used to determine the request context in PimcoreContextGuesser
 pimcore:

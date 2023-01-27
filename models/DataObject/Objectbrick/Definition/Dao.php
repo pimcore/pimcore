@@ -48,7 +48,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function delete(DataObject\ClassDefinition $class)
+    public function delete(DataObject\ClassDefinition $class): void
     {
         $table = $this->getTableName($class, false);
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
@@ -57,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
-    public function createUpdateTable(DataObject\ClassDefinition $class)
+    public function createUpdateTable(DataObject\ClassDefinition $class): void
     {
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
@@ -96,7 +96,8 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 
-            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
+                && $value instanceof DataObject\ClassDefinition\Data) {
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
@@ -113,7 +114,8 @@ class Dao extends Model\Dao\AbstractDao
                 $this->addIndexToField($value, $tableStore, 'getColumnType', true);
             }
 
-            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
+            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
+                && $value instanceof DataObject\ClassDefinition\Data) {
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
@@ -145,7 +147,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->removeUnusedColumns($tableQuery, $columnsToRemoveQuery, $protectedColumnsQuery);
     }
 
-    public function classSaved(DataObject\ClassDefinition $classDefinition)
+    public function classSaved(DataObject\ClassDefinition $classDefinition): void
     {
         $tableStore = $this->getTableName($classDefinition, false);
         $tableQuery = $this->getTableName($classDefinition, true);
@@ -153,12 +155,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->handleEncryption($classDefinition, [$tableQuery, $tableStore]);
     }
 
-    /**
-     * @param string $table
-     * @param array $columnsToRemove
-     * @param array $protectedColumns
-     */
-    protected function removeIndices($table, $columnsToRemove, $protectedColumns)
+    protected function removeIndices(string $table, array $columnsToRemove, array $protectedColumns): void
     {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             $indexPrefix = str_starts_with($table, 'object_brick_query_') ? 'p_index_' : 'u_index_';

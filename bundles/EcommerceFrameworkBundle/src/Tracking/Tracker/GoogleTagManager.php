@@ -56,7 +56,7 @@ class GoogleTagManager extends Tracker implements
 
     protected array $deferred = [];
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -68,14 +68,14 @@ class GoogleTagManager extends Tracker implements
     /**
      * {@inheritdoc}
      */
-    public function trackProductImpression(ProductInterface $product, string $list = 'default')
+    public function trackProductImpression(ProductInterface $product, string $list = 'default'): void
     {
         $item = $this->trackingItemBuilder->buildProductImpressionItem($product, $list);
 
         $this->addDeferredItem(self::DEFERRED_DIMENSION_IMPRESSIONS, $this->transformProductImpression($item));
     }
 
-    public function trackProductView(ProductInterface $product)
+    public function trackProductView(ProductInterface $product): void
     {
         $item = $this->trackingItemBuilder->buildProductViewItem($product);
 
@@ -95,7 +95,7 @@ class GoogleTagManager extends Tracker implements
         $this->trackCode($result);
     }
 
-    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, float|int $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, float|int $quantity = 1): void
     {
         $item = $this->trackingItemBuilder->buildProductActionItem($product, $quantity);
 
@@ -117,7 +117,7 @@ class GoogleTagManager extends Tracker implements
         $this->trackCode($result);
     }
 
-    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, float|int $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, float|int $quantity = 1): void
     {
         $item = $this->trackingItemBuilder->buildProductActionItem($product, $quantity);
 
@@ -139,7 +139,7 @@ class GoogleTagManager extends Tracker implements
         $this->trackCode($result);
     }
 
-    public function trackCheckout(CartInterface $cart)
+    public function trackCheckout(CartInterface $cart): void
     {
         $items = $this->trackingItemBuilder->buildCheckoutItemsByCart($cart);
 
@@ -162,7 +162,7 @@ class GoogleTagManager extends Tracker implements
         $this->trackCode($result);
     }
 
-    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, string $stepNumber = null, string $checkoutOption = null)
+    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, string $stepNumber = null, string $checkoutOption = null): void
     {
         $items = $this->trackingItemBuilder->buildCheckoutItemsByCart($cart);
 
@@ -186,7 +186,7 @@ class GoogleTagManager extends Tracker implements
         $this->trackCode($result);
     }
 
-    public function trackCheckoutComplete(AbstractOrder $order)
+    public function trackCheckoutComplete(AbstractOrder $order): void
     {
         $transaction = $this->trackingItemBuilder->buildCheckoutTransaction($order);
         $items = $this->trackingItemBuilder->buildCheckoutItems($order);
@@ -299,17 +299,17 @@ class GoogleTagManager extends Tracker implements
         ]);
     }
 
-    protected function addDeferredItem(string $dimension, array $item)
+    protected function addDeferredItem(string $dimension, array $item): void
     {
         $this->deferred[$dimension][] = $item;
     }
 
-    protected function getDeferredItems(string $dimension)
+    protected function getDeferredItems(string $dimension): ?array
     {
         return $this->deferred[$dimension] ?? null;
     }
 
-    protected function consolidateDeferredDimensions()
+    protected function consolidateDeferredDimensions(): void
     {
         foreach (self::DEFERRED_DIMENSIONS as $dimension) {
             if ($items = $this->getDeferredItems($dimension)) {

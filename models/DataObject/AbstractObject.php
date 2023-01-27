@@ -55,7 +55,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * possible types of a document
      *
-     * @var array
+     * @var string[]
      */
     public static array $types = [self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT];
 
@@ -163,13 +163,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     protected ?int $userModification = null;
 
     /**
-     * @internal
-     *
-     * @var bool[]
-     */
-    protected array $hasChildren = [];
-
-    /**
      * Contains a list of sibling documents
      *
      * @internal
@@ -177,15 +170,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @var array
      */
     protected array $siblings = [];
-
-    /**
-     * Indicator if object has siblings or not
-     *
-     * @internal
-     *
-     * @var bool[]
-     */
-    protected array $hasSiblings = [];
 
     /**
      * @internal
@@ -231,7 +215,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @deprecated
      *
-     * @var array|null
+     * @var array<string, Model\Property>|null
      */
     protected ?array $properties = null;
 
@@ -240,7 +224,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['hasChildren', 'versions', 'class', 'scheduledTasks', 'parent', 'parent', 'omitMandatoryCheck'];
+        $blockedVars = ['versions', 'class', 'scheduledTasks', 'parent', 'parent', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -268,7 +252,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param bool $hideUnpublished
      */
-    public static function setHideUnpublished(bool $hideUnpublished)
+    public static function setHideUnpublished(bool $hideUnpublished): void
     {
         self::$hideUnpublished = $hideUnpublished;
     }
@@ -288,7 +272,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param bool $getInheritedValues
      */
-    public static function setGetInheritedValues(bool $getInheritedValues)
+    public static function setGetInheritedValues(bool $getInheritedValues): void
     {
         self::$getInheritedValues = $getInheritedValues;
     }
@@ -321,11 +305,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return self::$getInheritedValues;
     }
 
-    /**
-     * get possible types
-     *
-     * @return array
-     */
     public static function getTypes(): array
     {
         return self::$types;
@@ -333,15 +312,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * Static helper to get an object by the passed ID
-     *
      */
     public static function getById(int|string $id, array $params = []): ?static
     {
-        if (!is_numeric($id) || $id < 1) {
+        if (is_string($id)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0',
+                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
+            );
+            $id = is_numeric($id) ? (int) $id : 0;
+        }
+        if ($id < 1) {
             return null;
         }
 
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         $params = Model\Element\Service::prepareGetByIdParams($params);
@@ -384,6 +369,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     throw new Model\Exception\NotFoundException('No entry for object id ' . $id);
                 }
             } catch (Model\Exception\NotFoundException $e) {
+                Logger::error($e->getMessage());
+
                 return null;
             }
         } else {
@@ -487,7 +474,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $list = new Listing();
                 $list->setObjects([]);
                 $this->children[$cacheKey] = $list;
-                $this->hasChildren[$cacheKey] = false;
             }
         }
 
@@ -502,13 +488,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
         bool $includingUnpublished = null
     ): bool {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasChildren[$cacheKey])) {
-            return $this->hasChildren[$cacheKey];
-        }
-
-        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($objectTypes, $includingUnpublished);
+        return $this->getDao()->hasChildren($objectTypes, $includingUnpublished);
     }
 
     /**
@@ -536,7 +516,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $list = new Listing();
                 $list->setObjects([]);
                 $this->siblings[$cacheKey] = $list;
-                $this->hasSiblings[$cacheKey] = false;
             }
         }
 
@@ -545,19 +524,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * Returns true if the object has at least one sibling
-     *
      */
     public function hasSiblings(
         array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
         bool $includingUnpublished = null
     ): bool {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasSiblings[$cacheKey])) {
-            return $this->hasSiblings[$cacheKey];
-        }
-
-        return $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
+        return $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
     }
 
     /**
@@ -565,14 +537,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @throws \Exception
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // delete children
         $children = $this->getChildren(self::$types, true);
-        if (count($children) > 0) {
-            foreach ($children as $child) {
-                $child->delete();
-            }
+        foreach ($children as $child) {
+            $child->delete();
         }
 
         // remove dependencies
@@ -586,7 +556,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
 
@@ -776,7 +746,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @throws \Exception|DuplicateFullPathException
      */
-    protected function correctPath()
+    protected function correctPath(): void
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
@@ -834,7 +804,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @internal
      */
-    protected function update(bool $isUpdate = null, array $params = [])
+    protected function update(bool $isUpdate = null, array $params = []): void
     {
         $this->updateModificationInfos();
 
@@ -874,7 +844,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
     }
 
-    public function clearDependentCache(array $additionalTags = [])
+    public function clearDependentCache(array $additionalTags = []): void
     {
         self::clearDependentCacheByObjectId($this->getId(), $additionalTags);
     }
@@ -885,7 +855,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @internal
      */
-    public static function clearDependentCacheByObjectId(int $objectId, array $additionalTags = [])
+    public static function clearDependentCacheByObjectId(int $objectId, array $additionalTags = []): void
     {
         if (!$objectId) {
             throw new \Exception('object ID missing');
@@ -906,7 +876,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @internal
      */
-    public function saveIndex(int $index)
+    public function saveIndex(int $index): void
     {
         $this->getDao()->saveIndex($index);
         $this->clearDependentCache();
@@ -966,7 +936,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         parent::setParentId($parentId);
 
         $this->siblings = [];
-        $this->hasSiblings = [];
 
         return $this;
     }
@@ -992,11 +961,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    public function setChildrenSortBy(?string $childrenSortBy)
+    public function setChildrenSortBy(?string $childrenSortBy): void
     {
         if ($this->childrenSortBy !== $childrenSortBy) {
             $this->children = [];
-            $this->hasChildren = [];
         }
         $this->childrenSortBy = $childrenSortBy;
     }
@@ -1012,12 +980,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         if ($children === null) {
             // unset all cached children
             $this->children = [];
-            $this->hasChildren = [];
         } else {
             //default cache key
             $cacheKey = $this->getListingCacheKey([$objectTypes, $includingUnpublished]);
             $this->children[$cacheKey] = $children;
-            $this->hasChildren[$cacheKey] = (bool) $children->count();
         }
 
         return $this;
@@ -1050,7 +1016,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return self::$doNotRestoreKeyAndPath;
     }
 
-    public static function setDoNotRestoreKeyAndPath(bool $doNotRestoreKeyAndPath)
+    public static function setDoNotRestoreKeyAndPath(bool $doNotRestoreKeyAndPath): void
     {
         self::$doNotRestoreKeyAndPath = (bool) $doNotRestoreKeyAndPath;
     }
@@ -1105,7 +1071,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param bool $disableDirtyDetection
      */
-    public static function setDisableDirtyDetection(bool $disableDirtyDetection)
+    public static function setDisableDirtyDetection(bool $disableDirtyDetection): void
     {
         self::$disableDirtyDetection = $disableDirtyDetection;
     }
@@ -1113,7 +1079,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      */
-    public static function disableDirtyDetection()
+    public static function disableDirtyDetection(): void
     {
         self::setDisableDirtyDetection(true);
     }
@@ -1121,7 +1087,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      */
-    public static function enableDirtyDetection()
+    public static function enableDirtyDetection(): void
     {
         self::setDisableDirtyDetection(false);
     }
@@ -1173,7 +1139,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $this->parent = null;
         // note that children is currently needed for the recycle bin
-        $this->hasSiblings = [];
         $this->siblings = [];
     }
 

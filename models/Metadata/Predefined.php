@@ -191,7 +191,7 @@ final class Predefined extends Model\AbstractModel
         return $this->modificationDate;
     }
 
-    public function setLanguage(?string $language)
+    public function setLanguage(?string $language): void
     {
         $this->language = $language;
     }
@@ -201,7 +201,7 @@ final class Predefined extends Model\AbstractModel
         return $this->language;
     }
 
-    public function setGroup(?string $group)
+    public function setGroup(?string $group): void
     {
         $this->group = $group;
     }
@@ -211,7 +211,7 @@ final class Predefined extends Model\AbstractModel
         return $this->group;
     }
 
-    public function setTargetSubtype(?string $targetSubtype)
+    public function setTargetSubtype(?string $targetSubtype): void
     {
         $this->targetSubtype = $targetSubtype;
     }
@@ -226,12 +226,12 @@ final class Predefined extends Model\AbstractModel
         return $this->config;
     }
 
-    public function setConfig(?string $config)
+    public function setConfig(?string $config): void
     {
         $this->config = $config;
     }
 
-    public function minimize()
+    public function minimize(): void
     {
         try {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -243,7 +243,7 @@ final class Predefined extends Model\AbstractModel
         }
     }
 
-    public function expand()
+    public function expand(): void
     {
         try {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');

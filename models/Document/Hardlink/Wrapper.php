@@ -45,7 +45,7 @@ trait Wrapper
      *
      * @throws \Exception
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         throw $this->getHardlinkError();
     }
@@ -53,7 +53,7 @@ trait Wrapper
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         throw $this->getHardlinkError();
     }
@@ -128,7 +128,7 @@ trait Wrapper
     /**
      * @param bool $includingUnpublished
      *
-     * @return listing
+     * @return Listing
      */
     public function getChildren(bool $includingUnpublished = false): Listing
     {
@@ -189,8 +189,10 @@ trait Wrapper
         return $this->sourceDocument;
     }
 
-    public function setSourceDocument(Document $sourceDocument): void
+    public function setSourceDocument(Document $sourceDocument): static
     {
         $this->sourceDocument = $sourceDocument;
+
+        return $this;
     }
 }
