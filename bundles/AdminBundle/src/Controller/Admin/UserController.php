@@ -831,44 +831,6 @@ class UserController extends AdminController implements KernelControllerEventInt
     }
 
     /**
-     * @Route("/user/renew-2fa-qr-secret", name="pimcore_admin_user_renew2fasecret", methods={"GET"})
-     *
-     * @param Request $request
-     * @param GoogleAuthenticatorInterface $twoFactor
-     *
-     * @return BinaryFileResponse
-     */
-    public function renew2FaSecretAction(Request $request, GoogleAuthenticatorInterface $twoFactor): BinaryFileResponse
-    {
-        $user = $this->getAdminUser();
-        $proxyUser = $this->getAdminUser(true);
-
-        $newSecret = $twoFactor->generateSecret();
-        $user->setTwoFactorAuthentication('enabled', true);
-        $user->setTwoFactorAuthentication('type', 'google');
-        $user->setTwoFactorAuthentication('secret', $newSecret);
-        $user->save();
-
-        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession, SessionInterface $session) {
-            $session->migrate();
-            $adminSession->set('2fa_required', true);
-        });
-
-        $url = $twoFactor->getQRContent($proxyUser);
-
-        $result = Builder::create()
-            ->writer(new PngWriter())
-            ->data($url)
-            ->size(200)
-            ->build();
-
-        $qrCodeFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/qr-code-' . uniqid() . '.png';
-        $result->saveToFile($qrCodeFile);
-
-        return new BinaryFileResponse($qrCodeFile);
-    }
-
-    /**
      * @Route("/user/disable-2fa", name="pimcore_admin_user_disable2fasecret", methods={"DELETE"})
      *
      * @param Request $request
@@ -905,6 +867,25 @@ class UserController extends AdminController implements KernelControllerEventInt
         if (!$user) {
             throw $this->createNotFoundException();
         }
+        $user->setTwoFactorAuthentication('enabled', false);
+        $user->setTwoFactorAuthentication('secret', '');
+        $user->save();
+
+        return $this->adminJson([
+            'success' => true,
+        ]);
+    }
+
+    /**
+     * @Route("/user/reset-my-2fa-secret", name="pimcore_admin_user_reset_my_2fa_secret", methods={"PUT"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function resetMy2FaSecretAction(Request $request): JsonResponse
+    {
+        $user = $this->getAdminUser();
         $user->setTwoFactorAuthentication('enabled', false);
         $user->setTwoFactorAuthentication('secret', '');
         $user->save();

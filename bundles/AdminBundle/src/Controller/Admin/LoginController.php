@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Writer\PngWriter;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
@@ -29,6 +31,7 @@ use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Authentication;
+use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -310,6 +313,63 @@ class LoginController extends AdminController implements KernelControllerEventIn
         }
 
         return $this->render('@PimcoreAdmin/admin/login/two_factor_authentication.html.twig', $params);
+    }
+
+
+    /**
+     * @Route("/login/2fa-setup", name="pimcore_admin_2fa_setup")
+     */
+    public function twoFactorSetupAuthenticationAction(Request $request, Config $config, GoogleAuthenticatorInterface $twoFactor): Response
+    {
+        $params = $this->buildLoginPageViewParams($config);
+        $params['setup'] = true;
+
+        $user = $this->getAdminUser();
+        $proxyUser = $this->getAdminUser(true);
+
+        if ($request->query->get('error')) {
+            $params['error'] = $request->query->get('error');
+        }
+
+        if ($request->isMethod('post')) {
+            $secret = $request->getSession()->get('2fa_secret');
+
+            if (!$secret) {
+                throw new \Exception('2fa secret not found');
+            }
+
+            $user->setTwoFactorAuthentication('enabled', true);
+            $user->setTwoFactorAuthentication('type', 'google');
+            $user->setTwoFactorAuthentication('secret', $secret);
+
+            if (!$twoFactor->checkCode($proxyUser, $request->request->get('_auth_code'))) {
+                return new RedirectResponse($this->generateUrl('pimcore_admin_2fa_setup', ['error' => '2fa_wrong']));
+            }
+
+            $user->save();
+
+            return new RedirectResponse($this->generateUrl('pimcore_admin_login'));
+        }
+
+        $newSecret = $twoFactor->generateSecret();
+
+        $request->getSession()->set('2fa_secret', $newSecret);
+
+        $user->setTwoFactorAuthentication('enabled', true);
+        $user->setTwoFactorAuthentication('type', 'google');
+        $user->setTwoFactorAuthentication('secret', $newSecret);
+
+        $url = $twoFactor->getQRContent($proxyUser);
+
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->data($url)
+            ->size(200)
+            ->build();
+
+        $params['image'] = $result->getDataUri();
+
+        return $this->render('@PimcoreAdmin/admin/login/two_factor_setup.html.twig', $params);
     }
 
     /**

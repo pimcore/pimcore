@@ -93,16 +93,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtection, $siteConfigProvider);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
-            // only one login is allowed to setup 2FA by the user himself
-            $user->setTwoFactorAuthentication('enabled', true);
-            // disable the 2FA prompt for the current session
-            Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession) {
-                $adminSession->set('2fa_required', false);
-            });
-
-            $user->save();
-
-            $templateParams['settings']['twoFactorSetupRequired'] = true;
+            return $this->redirectToRoute('pimcore_admin_2fa_setup');
         }
 
         // allow to alter settings via an event
