@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
+use Pimcore\Db;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -33,17 +34,17 @@ final class Version20210430124911 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if ($schema->hasTable(CartItem\Dao::TABLE_NAME)) {
-            $this->addSql('ALTER TABLE ecommerceframework_cartitem modify addedDateTimestamp bigint not null;');
-            $this->addSql('UPDATE ecommerceframework_cartitem SET addedDateTimestamp = addedDateTimestamp * 1000000;');
-        }
+        $this->warnIf(
+            $schema->hasTable(CartItem\Dao::TABLE_NAME),
+            sprintf('Unable to migrate %s as the EcommerceFramework being moved in own bundle since Pimcore 11. Please execute "Pimcore\Bundle\EcommerceFrameworkBundle\%s" instead', self::class, self::class)
+        );
     }
 
     public function down(Schema $schema): void
     {
-        if ($schema->hasTable(CartItem\Dao::TABLE_NAME)) {
-            $this->addSql('UPDATE ecommerceframework_cartitem SET addedDateTimestamp = FLOOR(addedDateTimestamp / 1000000);');
-            $this->addSql('ALTER TABLE ecommerceframework_cartitem modify addedDateTimestamp int(10) not null;');
-        }
+        $this->warnIf(
+            $schema->hasTable(CartItem\Dao::TABLE_NAME),
+            sprintf('Unable to migrate %s as the EcommerceFramework being moved in own bundle since Pimcore 11. Please execute "Pimcore\Bundle\EcommerceFrameworkBundle\%s" instead', self::class, self::class)
+        );
     }
 }

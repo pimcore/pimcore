@@ -436,29 +436,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertImageGallery($this->testObject, 'imageGallery', $this->seed);
     }
 
-    public function testIndexFieldSelectionField(): void
-    {
-        $this->createTestObject('indexFieldSelectionField');
-
-        $this->refreshObject();
-        $this->testDataHelper->assertIndexFieldSelectionField($this->testObject, 'indexFieldSelectionField', $this->seed);
-    }
-
-    public function testIndexFieldSelection(): void
-    {
-        $this->createTestObject('indexFieldSelection');
-
-        $this->refreshObject();
-        $this->testDataHelper->assertIndexFieldSelection($this->testObject, 'indexFieldSelection', $this->seed);
-    }
-
-    public function testIndexFieldSelectionCombo(): void
-    {
-        $this->createTestObject('indexFieldSelectionCombo');
-
-        $this->refreshObject();
-        $this->testDataHelper->assertIndexFieldSelectionCombo($this->testObject, 'indexFieldSelectionCombo', $this->seed);
-    }
 
     public function testInput(): void
     {

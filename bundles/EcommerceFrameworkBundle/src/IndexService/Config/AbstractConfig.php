@@ -49,18 +49,15 @@ abstract class AbstractConfig implements ConfigInterface
     protected array $options;
 
     /**
-     * @param string $tenantName
      * @param array[]|Attribute[] $attributes
-     * @param array $searchAttributes
-     * @param array $filterTypes
-     * @param array $options
      */
     public function __construct(
+        AttributeFactory $attributeFactory,
         string $tenantName,
-        array $attributes,
-        array $searchAttributes,
-        array $filterTypes,
-        array $options = []
+        array $attributes = [],
+        array $searchAttributes = [],
+        array $filterTypes = [],
+        array $options = [],
     ) {
         $this->tenantName = $tenantName;
 
@@ -68,6 +65,14 @@ abstract class AbstractConfig implements ConfigInterface
         $this->searchAttributeConfig = $searchAttributes;
 
         $this->filterTypes = $filterTypes;
+
+        $this->attributeFactory = $attributeFactory;
+        $this->buildAttributes($this->attributeConfig);
+
+        foreach ($this->searchAttributeConfig as $searchAttribute) {
+            $this->addSearchAttribute($searchAttribute);
+        }
+
         $this->processOptions($options);
     }
 
@@ -81,32 +86,7 @@ abstract class AbstractConfig implements ConfigInterface
         return $this->attributeConfig;
     }
 
-    /**
-     * Sets attribute factory as dependency. This was added as setter for BC reasons and will be added to the constructor
-     * signature in Pimcore 10.
-     *
-     * TODO Pimcore 10 add to constructor signature.
-     */
-    #[Required]
-    public function setAttributeFactory(AttributeFactory $attributeFactory): void
-    {
-        if (null !== $this->attributeFactory) {
-            throw new \RuntimeException('Attribute factory is already set.');
-        }
-
-        $this->attributeFactory = $attributeFactory;
-
-        $this->attributes = [];
-        $this->searchAttributes = [];
-
-        $this->buildAttributes($this->attributeConfig);
-
-        foreach ($this->searchAttributeConfig as $searchAttribute) {
-            $this->addSearchAttribute($searchAttribute);
-        }
-    }
-
-    protected function buildAttributes(array $attributes): void
+    protected function buildAttributes(array $attributes)
     {
         foreach ($attributes as $attribute) {
             if ($attribute instanceof Attribute) {

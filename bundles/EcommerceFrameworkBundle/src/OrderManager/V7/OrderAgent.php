@@ -31,7 +31,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Event\Ecommerce\OrderAgentEvents;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\OrderAgentEvents;
 use Pimcore\Event\Model\Ecommerce\OrderAgentEvent;
 use Pimcore\Log\Simple;
 use Pimcore\Logger;
