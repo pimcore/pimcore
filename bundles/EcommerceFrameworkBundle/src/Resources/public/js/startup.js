@@ -21,6 +21,7 @@ pimcore.registerNS("pimcore.bundle.ecommerce.startup");
 pimcore.bundle.ecommerce.startup = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
+        document.addEventListener(pimcore.events.postOpenObject, this.postOpenObject.bind(this));
     },
 
     preMenuBuild: function (e) {
@@ -45,7 +46,9 @@ pimcore.bundle.ecommerce.startup = Class.create({
         let config = pimcore.bundle.EcommerceFramework.config;
 
         // pricing rules
-        if (perspectiveCfg.inToolbar("ecommerce.rules") && user.isAllowed("bundle_ecommerce_pricing_rules") && (!config.menu || config.menu.pricing_rules.enabled)) {
+        if (perspectiveCfg.inToolbar("ecommerce.rules")
+            && user.isAllowed("bundle_ecommerce_pricing_rules")
+            && (!config.menu || config.menu.pricing_rules.enabled)) {
             // add pricing rules to menu
             const pricingPanelId = "bundle_ecommerce_pricing_config";
             const item = {
@@ -66,7 +69,9 @@ pimcore.bundle.ecommerce.startup = Class.create({
         }
 
         // order backend
-        if (perspectiveCfg.inToolbar("ecommerce.orderbackend") && user.isAllowed("bundle_ecommerce_back-office_order") && (!config.menu || config.menu.order_list.enabled)) {
+        if (perspectiveCfg.inToolbar("ecommerce.orderbackend")
+            && user.isAllowed("bundle_ecommerce_back-office_order")
+            && (!config.menu || config.menu.order_list.enabled)) {
             const orderPanelId = "bundle_ecommerce_back-office_order";
             const item = {
                 text: t("bundle_ecommerce_back-office_order"),
@@ -85,31 +90,31 @@ pimcore.bundle.ecommerce.startup = Class.create({
             items.push(item);
         }
         menu.ecommerce.items = items;
-    }
-});
+    },
 
-document.addEventListener(pimcore.events.postOpenObject, (e) => {
-    if (pimcore.globalmanager.get("user").isAllowed("bundle_ecommerce_pricing_rules")) {
+    postOpenObject: function (e) {
+        if (pimcore.globalmanager.get("user").isAllowed("bundle_ecommerce_pricing_rules")) {
 
-        if (e.detail.type == "object" && e.detail.object.data.general.className == "OnlineShopVoucherSeries") {
-            const tab = new pimcore.bundle.EcommerceFramework.VoucherSeriesTab(e.detail.object, e.detail.type);
+            if (e.detail.type == "object" && e.detail.object.data.general.className == "OnlineShopVoucherSeries") {
+                const tab = new pimcore.bundle.EcommerceFramework.VoucherSeriesTab(e.detail.object, e.detail.type);
 
-            e.detail.object.tab.items.items[1].insert(1, tab.getLayout());
-            e.detail.object.tab.items.items[1].updateLayout();
-            pimcore.layout.refresh();
+                e.detail.object.tab.items.items[1].insert(1, tab.getLayout());
+                e.detail.object.tab.items.items[1].updateLayout();
+                pimcore.layout.refresh();
+            }
+        }
+
+        if (pimcore.globalmanager.get("user").isAllowed("bundle_ecommerce_back-office_order")) {
+
+            if (e.detail.type == "object" && e.detail.object.data.general.className == "OnlineShopOrder") {
+                const tab = new pimcore.bundle.EcommerceFramework.OrderTab(e.detail.object, e.detail.type);
+                e.detail.object.tab.items.items[1].insert(0, tab.getLayout());
+                e.detail.object.tab.items.items[1].updateLayout();
+                e.detail.object.tab.items.items[1].setActiveTab(0);
+                pimcore.layout.refresh();
+            }
         }
     }
-    if (pimcore.globalmanager.get("user").isAllowed("bundle_ecommerce_back-office_order")) {
-
-        if (e.detail.type == "object" && e.detail.object.data.general.className == "OnlineShopOrder") {
-            const tab = new pimcore.bundle.EcommerceFramework.OrderTab(e.detail.object, e.detail.type);
-            e.detail.object.tab.items.items[1].insert(0, tab.getLayout());
-            e.detail.object.tab.items.items[1].updateLayout();
-            e.detail.object.tab.items.items[1].setActiveTab(0);
-            pimcore.layout.refresh();
-        }
-    }
 });
-
 
 const pimcoreBundleEcommerce = new pimcore.bundle.ecommerce.startup();

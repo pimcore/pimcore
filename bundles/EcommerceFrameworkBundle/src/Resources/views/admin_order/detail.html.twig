@@ -1,12 +1,7 @@
 {% extends '@PimcoreEcommerceFramework/back-office.html.twig' %}
 
-{% block styles %}
-    {% apply spaceless %}
-        {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css')) %}
-        {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.js')) %}
-    {% endapply %}
-{% endblock %}
-
+{% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css')) %}
+{% do pimcore_head_script().appendFile(asset('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.js')) %}
 
 {% set order = orderAgent.getOrder() %}
 {% set currency = orderAgent.getCurrency() %}
