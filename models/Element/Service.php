@@ -386,7 +386,7 @@ class Service extends Model\AbstractModel
      *
      * @return string
      *
-     *@deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
+     * @deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
      *
      */
     public static function getSaveCopyName(string $type, string $sourceKey, ElementInterface $target): string
