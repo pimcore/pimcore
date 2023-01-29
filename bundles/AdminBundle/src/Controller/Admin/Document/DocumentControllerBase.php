@@ -369,7 +369,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      * @throws Element\ValidationException
      * @throws \Exception
      */
-    protected function saveDocument(Model\Document $document, Request $request, bool $latestVersion = false, $task = null): array
+    protected function saveDocument(Model\Document $document, Request $request, bool $latestVersion = false, ?string $task = null): array
     {
         if ($latestVersion && $document instanceof  Model\Document\PageSnippet) {
             $document = $this->getLatestVersion($document);
