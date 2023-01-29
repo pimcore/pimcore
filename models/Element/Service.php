@@ -58,7 +58,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param ElementInterface $element
      *
      * @return string
@@ -83,7 +82,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param ElementInterface $element
      *
      * @return string
@@ -112,7 +110,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param ElementInterface $element
      *
      * @return string
@@ -143,7 +140,6 @@ class Service extends Model\AbstractModel
      * @return int[]
      *
      * @internal
-     *
      */
     public static function getIdList(Model\Listing\AbstractListing|array $list, string $idGetter = 'getId'): array
     {
@@ -174,7 +170,6 @@ class Service extends Model\AbstractModel
      * @return array
      *
      * @internal
-     *
      */
     public static function getRequiredByDependenciesForFrontend(Dependency $d, ?int $offset, ?int $limit): array
     {
@@ -203,7 +198,6 @@ class Service extends Model\AbstractModel
      * @return array
      *
      * @internal
-     *
      */
     public static function getRequiresDependenciesForFrontend(Dependency $d, ?int $offset, ?int $limit): array
     {
@@ -259,7 +253,6 @@ class Service extends Model\AbstractModel
      * @return bool
      *
      * @internal
-     *
      */
     public static function isPublished(ElementInterface $element = null): bool
     {
@@ -282,7 +275,6 @@ class Service extends Model\AbstractModel
      * @throws \Exception
      *
      * @internal
-     *
      */
     public static function filterUnpublishedAdvancedElements(?array $data): array
     {
@@ -368,7 +360,6 @@ class Service extends Model\AbstractModel
      * @throws \Exception
      *
      * @internal
-     *
      */
     public static function getBaseClassNameForElement(string|ElementInterface $element): string
     {
@@ -476,7 +467,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param array $params
      *
      * @return array
@@ -512,7 +502,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param string $className
      *
      * @return string|null
@@ -530,7 +519,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param ElementInterface $element
      *
      * @return string|null
@@ -551,7 +539,6 @@ class Service extends Model\AbstractModel
      * @return array
      *
      * @internal
-     *
      */
     public static function minimizePropertiesForEditmode(array $props): array
     {
@@ -605,7 +592,6 @@ class Service extends Model\AbstractModel
      * @param ElementInterface $new the newly inserted child
      *
      * @internal
-     *
      */
     protected function updateChildren(DataObject|Document|Asset\Folder $target, ElementInterface $new): void
     {
@@ -628,7 +614,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param  ElementInterface $element
      *
      * @return array
@@ -664,7 +649,6 @@ class Service extends Model\AbstractModel
      * @return array{forbidden: array, allowed: array}
      *
      * @internal
-     *
      */
     public static function findForbiddenPaths(string $type, Model\User $user): array
     {
@@ -742,7 +726,6 @@ class Service extends Model\AbstractModel
      * @return mixed
      *
      * @internal
-     *
      */
     public static function renewReferences(mixed $data, bool $initial = true, string $key = null): mixed
     {
@@ -810,7 +793,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param string $path
      *
      * @return string
@@ -834,7 +816,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param ElementInterface $element
      *
      * @return ElementInterface
@@ -955,7 +936,6 @@ class Service extends Model\AbstractModel
      * @param Model\Asset\Listing|Model\DataObject\Listing|Model\Document\Listing $childrenList
      *
      * @internal
-     *
      */
     public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList): void
     {
@@ -998,7 +978,6 @@ class Service extends Model\AbstractModel
      * @return array|null
      *
      * @internal
-     *
      */
     public static function getCustomViewById(string $id): ?array
     {
@@ -1098,7 +1077,6 @@ class Service extends Model\AbstractModel
      * @return array
      *
      * @internal
-     *
      */
     public static function fixAllowedTypes(array $data, string $type): array
     {
@@ -1140,7 +1118,6 @@ class Service extends Model\AbstractModel
      * @return array
      *
      * @internal
-     *
      */
     public static function getSafeVersionInfo(array $versions): array
     {
@@ -1255,7 +1232,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param Note $note
      *
      * @return array
@@ -1338,7 +1314,6 @@ class Service extends Model\AbstractModel
      * @return string
      *
      * @internal
-     *
      */
     public static function getSessionKey(string $type, int $elementId, string $sessionId, ?string $postfix = ''): string
     {
@@ -1391,7 +1366,6 @@ class Service extends Model\AbstractModel
      * @param bool $clone save a copy
      *
      * @internal
-     *
      */
     public static function saveElementToSession(ElementInterface $element, string $sessionId, string $postfix = '', bool $clone = true): void
     {
@@ -1432,8 +1406,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     */
+     * @internal/
     public static function removeElementFromSession(string $type, int $elementId, string $sessionId, string $postfix = ''): void
     {
         $tmpStoreKey = self::getSessionKey($type, $elementId, $sessionId, $postfix);
@@ -1442,7 +1415,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param mixed $element
      * @param array|null $context
      *
@@ -1510,7 +1482,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param array $rowData
      *
      * @return array
@@ -1532,7 +1503,6 @@ class Service extends Model\AbstractModel
      * @return string
      *
      * @internal
-     *
      */
     public static function getElementCacheTag(string $type, int|string|null $id): string
     {

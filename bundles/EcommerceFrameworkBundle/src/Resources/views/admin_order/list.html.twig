@@ -86,25 +86,25 @@
         {% for item in paginator.items %}
             {% set totalSum = totalSum + item['TotalPrice'] %}
 
-        <tr>
-            <td>
-                {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item['OrderId']}|merge(urlParams)) %}
-                <a href="{{ urlDetail }}">{{ item['OrderNumber'] }}</a>
-            </td>
-            <td>
-                {% set date = item['OrderDate'] %}
+            <tr>
+                <td>
+                    {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item['OrderId']}|merge(urlParams)) %}
+                    <a href="{{ urlDetail }}">{{ item['OrderNumber'] }}</a>
+                </td>
+                <td>
+                    {% set date = item['OrderDate'] %}
 
-                {% if date.timestamp is defined %}
-                    {% set date = date() %}
-                    {% do date.setTimestamp(item['OrderDate']) %}
-                {% endif %}
+                    {% if date.timestamp is defined %}
+                        {% set date = date() %}
+                        {% do date.setTimestamp(item['OrderDate']) %}
+                    {% endif %}
 
-                {{ formatter.formatDateTime(date, constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) }}
-            </td>
-            <td>{{ item['Items'] }}</td>
-            </td>
-            <td class="text-right">{{ formatter.formatCurrency(item['TotalPrice'], defaultCurrency.getShortName()) }}</td>
-        </tr>
+                    {{ formatter.formatDateTime(date, constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) }}
+                </td>
+                <td>{{ item['Items'] }}</td>
+                </td>
+                <td class="text-right">{{ formatter.formatCurrency(item['TotalPrice'], defaultCurrency.getShortName()) }}</td>
+            </tr>
         {% endfor %}
         </tbody>
         <tfoot>
@@ -122,18 +122,17 @@
     {% endif %}
 
     {% do pimcore_head_script().captureStart() %}
-            //datepicker
-            flatpickr(".date", {allowInput: true});
+    //datepicker
+    flatpickr(".date", {allowInput: true});
 
-            document.querySelectorAll('.search-filter-item').forEach(function(el){
-                el.addEventListener('click', function() {
-                    document.querySelector('#search-filter-label').innerHTML = this.text;
-                    document.querySelector('#search-query').setAttribute("value", this.getAttribute('data-value'));
-                });
-            });
+    document.querySelectorAll('.search-filter-item').forEach(function(el){
+    el.addEventListener('click', function() {
+    document.querySelector('#search-filter-label').innerHTML = this.text;
+    document.querySelector('#search-query').setAttribute("value", this.getAttribute('data-value'));
+    });
+    });
 
     {% do pimcore_head_script().captureEnd() %}
 {% endblock %}
-
 
 

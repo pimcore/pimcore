@@ -349,8 +349,8 @@ class ElementController extends AdminController
         $success = false;
         $hasHidden = false;
         $total = 0;
-        $limit = (int)$request->query->get('limit', 50);
-        $offset = (int)$request->query->get('start', 0);
+        $limit = (int)$request->get('limit', 50);
+        $offset = (int)$request->get('start', 0);
 
         if ($element instanceof Element\ElementInterface) {
             $total = $element->getDependencies()->getRequiredByTotalCount();
@@ -411,7 +411,7 @@ class ElementController extends AdminController
 
         if ($request->query->get('id')) {
             $element = Element\Service::getElementById($request->query->get('type'), $request->query->getInt('id'));
-        } elseif ($request->get('path')) {
+        } elseif ($request->query->get('path')) {
             $element = Element\Service::getElementByPath($request->query->get('type'), $request->query->get('path'));
         }
 
