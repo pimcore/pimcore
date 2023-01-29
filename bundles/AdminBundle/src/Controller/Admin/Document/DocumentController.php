@@ -673,7 +673,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         // get list of types
         $list = new DocType\Listing();
-        $list->load();
 
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {

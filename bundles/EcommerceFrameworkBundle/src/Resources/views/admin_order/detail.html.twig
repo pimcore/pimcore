@@ -62,12 +62,12 @@
                     <tfoot>
                     <tr class="card-header">
                         <td colspan="6"></td>
-                        {% for modification in order.getPriceModifications() ?: [] %}
-                    <tr>
-                        <td colspan="4" class="text-right">{{ modification.getName() }}</td>
-                        <th class="text-right">{{ currency.toCurrency(modification.getAmount()) ?: '-' }}</th>
-                        <th></th>
-                    </tr>
+                    {% for modification in order.getPriceModifications() ?: [] %}
+                        <tr>
+                            <td colspan="4" class="text-right">{{ modification.getName() }}</td>
+                            <th class="text-right">{{ currency.toCurrency(modification.getAmount()) ?: '-' }}</th>
+                            <th></th>
+                        </tr>
                     {% endfor %}
                     <tr class="card-header">
                         <td colspan="4"  class="text-right">Total</td>
@@ -117,28 +117,28 @@
                                 {% if item.isEditAble() %}
                                     {% set urlEdit = path("pimcore_ecommerce_backend_admin-order_item-edit", {'id': item.getId()}) %}
 
-                                    <div class="btn-group btn-group-sm">
-                                        <button href="{{ urlEdit }}" class="popup-modal btn btn-secondary input-group-text"><span class="fa fa-pen"></span></button>
-                                        <button type="button" class="input-group-append btn btn-secondary input-group-text dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li>
-                                                {% if (item.isCancelAble()) %}
-                                                    {% set urlCancel = path("pimcore_ecommerce_backend_admin-order_item-cancel", {'id': item.getId()}) %}
-                                                    <a class="dropdown-item popup-modal" href="{{ urlCancel }}" class="text-danger">
-                                                        <span class="fa fa-times pr-2 text-danger"></span>
-                                                        {{ ('bundle_ecommerce.back-office.order.cancel.item')|trans([],'admin') }}
-                                                    </a>
-                                                {% endif %}
-                                                {% if (item.isComplaintAble()) %}
-                                                    {% set urlComplaint = path("pimcore_ecommerce_backend_admin-order_item-complaint", {'id': item.getId()}) %}
-                                                    <a class="dropdown-item popup-modal" href="{{ urlComplaint }}" class="text-danger">
-                                                        <span class="fa fa-share pr-1"></span>
-                                                        {{ ('bundle_ecommerce.back-office.order.complaint.item')|trans([],'admin') }}
-                                                    </a>
-                                                {% endif %}
-                                            </li>
-                                        </ul>
-                                    </div>
+                                <div class="btn-group btn-group-sm">
+                                    <button href="{{ urlEdit }}" class="popup-modal btn btn-secondary input-group-text"><span class="fa fa-pen"></span></button>
+                                    <button type="button" class="input-group-append btn btn-secondary input-group-text dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            {% if (item.isCancelAble()) %}
+                                                {% set urlCancel = path("pimcore_ecommerce_backend_admin-order_item-cancel", {'id': item.getId()}) %}
+                                                <a class="dropdown-item popup-modal" href="{{ urlCancel }}" class="text-danger">
+                                                    <span class="fa fa-times pr-2 text-danger"></span>
+                                                    {{ ('bundle_ecommerce.back-office.order.cancel.item')|trans([],'admin') }}
+                                                </a>
+                                            {% endif %}
+                                            {% if (item.isComplaintAble()) %}
+                                                {% set urlComplaint = path("pimcore_ecommerce_backend_admin-order_item-complaint", {'id': item.getId()}) %}
+                                                <a class="dropdown-item popup-modal" href="{{ urlComplaint }}" class="text-danger">
+                                                    <span class="fa fa-share pr-1"></span>
+                                                    {{ ('bundle_ecommerce.back-office.order.complaint.item')|trans([],'admin') }}
+                                                </a>
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                </div>
                                 {% endif %}
                             </td>
                         </tr>
@@ -182,21 +182,21 @@
 
             {#payment history#}
             {% if orderAgent.hasPayment() %}
-                <div class="card">
-                    <div class="card-header">
-                        <span class="fa fa-credit-card"></span> {{ ('bundle_ecommerce.back-office.order.payment.history')|trans([],'admin')}}
-                    </div>
-                    <table class="table table-condensed mb-0">
-                        {% set class = null %}
-                        <tbody>
+            <div class="card">
+                <div class="card-header">
+                    <span class="fa fa-credit-card"></span> {{ ('bundle_ecommerce.back-office.order.payment.history')|trans([],'admin')}}
+                </div>
+                <table class="table table-condensed mb-0">
+                    {% set class = null %}
+                    <tbody>
                         {% for item in order.getPaymentInfo() %}
                             {% if item.getPaymentFinish() %}
                                 {% if item.getPaymentState() == 'paymentAuthorized' %}
-                                    {% set class = 'alert-info' %}
+                                        {% set class = 'alert-info' %}
                                 {% elseif item.getPaymentState() == 'committed' %}
-                                    {% set class = 'alert-success' %}
+                                        {% set class = 'alert-success' %}
                                 {% elseif item.getPaymentState() == 'aborted' %}
-                                    {% set class = 'alert-danger' %}
+                                        {% set class = 'alert-danger' %}
                                 {% endif %}
                             {% endif %}
                             <tr>
@@ -229,9 +229,9 @@
                                 <td class="text-right"><small>{{ item.getPaymentReference() }}</small></td>
                             </tr>
                         {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
+            </div>
             {% endif %}
         </div>
 
@@ -244,10 +244,10 @@
                             {{ ('bundle_ecommerce.back-office.order.address.invoice')|trans([],'admin') }}</a>
                     </li>
                     {% if order.hasDeliveryAddress() %}
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="addressDeliveryTab" href="#addressDelivery" aria-controls="addressDelivery" role="tab" data-toggle="tab"><span class="fa fa-home"></span>
-                                {{ ('bundle_ecommerce.back-office.order.address.delivery')|trans([],'admin') }}</a>
-                        </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="addressDeliveryTab" href="#addressDelivery" aria-controls="addressDelivery" role="tab" data-toggle="tab"><span class="fa fa-home"></span>
+                            {{ ('bundle_ecommerce.back-office.order.address.delivery')|trans([],'admin') }}</a>
+                    </li>
                     {% endif %}
 
                     {% if order.getCustomer() %}
@@ -278,7 +278,7 @@
                                             {{ (regionArray[order.getCustomerCountry()])|upper }}<br/>
                                         {% else %}
                                             {{ order.getCustomerCountry()|upper }}<br/>
-                                        {% endif %}
+                                        {% endif %}                                        
                                     {% endif %}
 
                                     {% if order.getCustomer() and attribute(order.getCustomer(), 'email') is defined %}
@@ -342,8 +342,8 @@
                                         {% for field, value in arrCustomerAccount %}
                                             {{ ('<div title="%1$s" class="col-md-12 p-1"><span  class="%3$s"></span> %2$s</div>'|format(
                                                 ('bundle_ecommerce.back-office.order.customer-account.'~ field)|trans([],'admin'),
-                                            value,
-                                            arrIcon[field]
+                                                value,
+                                                arrIcon[field]
                                             )) | raw }}
                                         {% endfor %}
                                         </tbody>
@@ -414,41 +414,41 @@
     </div>
 
     {% do pimcore_head_script().captureStart() %}
-    document.addEventListener("DOMContentLoaded", function(event) {
-    // pimcore open object
-    document.querySelectorAll('[data-action=open]').forEach(function(el){
-    el.addEventListener('click', function() {
-    pimcore.helpers.openObject(this.getAttribute('data-id') , "object");
-    });
-    });
+        document.addEventListener("DOMContentLoaded", function(event) {
+            // pimcore open object
+            document.querySelectorAll('[data-action=open]').forEach(function(el){
+                el.addEventListener('click', function() {
+                    pimcore.helpers.openObject(this.getAttribute('data-id') , "object");
+                });
+            });
 
 
-    var elementsPopover = document.querySelectorAll('[data-toggle="popover"]');
-    for (var i = 0; i < elementsPopover.length; i++){
-    new Popover(elementsPopover[i], {
-    placement: 'right',
-    delay: 100,
-    dismissible: true,
-    })
-    }
+            var elementsPopover = document.querySelectorAll('[data-toggle="popover"]');
+            for (var i = 0; i < elementsPopover.length; i++){
+                new Popover(elementsPopover[i], {
+                placement: 'right',
+                delay: 100,
+                dismissible: true,
+                })
+            }
 
-    var tileLayerUrl = "{{ pimcoreSymfonyConfig['maps']['tile_layer_url_template'] }}";
-    {% if geoAddressInvoice %}
-        var leafletMapInvoice =  L.map("leafletmap-invoice").setView([{{ geoAddressInvoice.lat }}, {{  geoAddressInvoice.lon }}], 10);
-        L.tileLayer(tileLayerUrl).addTo(leafletMapInvoice);
-        L.marker([{{ geoAddressInvoice.lat }}, {{ geoAddressInvoice.lon }}]).addTo(leafletMapInvoice);
-    {% endif %}
+            var tileLayerUrl = "{{ pimcoreSymfonyConfig['maps']['tile_layer_url_template'] }}";
+            {% if geoAddressInvoice %}
+                var leafletMapInvoice =  L.map("leafletmap-invoice").setView([{{ geoAddressInvoice.lat }}, {{  geoAddressInvoice.lon }}], 10);
+                L.tileLayer(tileLayerUrl).addTo(leafletMapInvoice);
+                L.marker([{{ geoAddressInvoice.lat }}, {{ geoAddressInvoice.lon }}]).addTo(leafletMapInvoice);
+            {% endif %}
 
-    {% if geoAddressDelivery %}
-        var leafletMapDelivery =  L.map("leafletmap-delivery").setView([{{ geoAddressDelivery.lat }}, {{ geoAddressDelivery.lon }}], 10);
-        L.tileLayer(tileLayerUrl).addTo(leafletMapDelivery);
-        L.marker([{{ geoAddressDelivery.lat }}, {{ geoAddressDelivery.lon }}]).addTo(leafletMapDelivery);
+            {% if geoAddressDelivery %}
+                var leafletMapDelivery =  L.map("leafletmap-delivery").setView([{{ geoAddressDelivery.lat }}, {{ geoAddressDelivery.lon }}], 10);
+                L.tileLayer(tileLayerUrl).addTo(leafletMapDelivery);
+                L.marker([{{ geoAddressDelivery.lat }}, {{ geoAddressDelivery.lon }}]).addTo(leafletMapDelivery);
 
-        document.getElementById('addressDeliveryTab').onclick = function(el){
-        leafletMapDelivery.invalidateSize();
-        };
-    {% endif %}
+                document.getElementById('addressDeliveryTab').onclick = function(el){
+                    leafletMapDelivery.invalidateSize();
+                };
+            {% endif %}
 
-    });
+        });
     {% do pimcore_head_script().captureEnd() %}
 {% endblock %}

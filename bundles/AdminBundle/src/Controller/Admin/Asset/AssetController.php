@@ -115,7 +115,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 return $this->getEditLockResponse($assetId, 'asset');
             }
 
-            Element\Editlock::lock($request->get('id'), 'asset', $request->getSession()->getId());
+            Element\Editlock::lock($request->query->getInt('id'), 'asset', $request->getSession()->getId());
         }
 
         $asset = clone $asset;
