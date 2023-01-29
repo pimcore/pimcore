@@ -107,7 +107,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         throw $this->createAccessDeniedHttpException();
     }
 
-    protected function addPropertiesToDocument(Request $request, Model\Document $document)
+    protected function addPropertiesToDocument(Request $request, Model\Document $document): void
     {
         // properties
         if ($request->get('properties')) {
@@ -340,9 +340,9 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $this->checkPermission('documents');
     }
 
-    abstract protected function setValuesToDocument(Request $request, Model\Document $page);
+    abstract protected function setValuesToDocument(Request $request, Model\Document $document): void;
 
-    protected function handleTask(string $task, Model\Document\PageSnippet $page)
+    protected function handleTask(string $task, Model\Document\PageSnippet $page): void
     {
         if ($task === self::TASK_PUBLISH || $task === self::TASK_VERSION) {
             $page->deleteAutoSaveVersions($this->getAdminUser()->getId());

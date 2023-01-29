@@ -672,7 +672,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function docTypesGetAction(Request $request): JsonResponse
     {
         // get list of types
-        $list = new Document\DocType\Listing();
+        $list = new DocType\Listing();
         $list->load();
 
         $docTypes = [];
@@ -758,12 +758,12 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function getDocTypesAction(Request $request): JsonResponse
     {
-        $list = new Document\DocType\Listing();
+        $list = new DocType\Listing();
         if ($type = $request->get('type')) {
             if (!Document\Service::isValidType($type)) {
                 throw new BadRequestHttpException('Invalid type: ' . $type);
             }
-            $list->setFilter(function (Document\DocType $docType) use ($type) {
+            $list->setFilter(static function (Document\DocType $docType) use ($type) {
                 return $docType->getType() === $type;
             });
         }
@@ -785,11 +785,12 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function versionToSessionAction(Request $request): Response
     {
-        $version = Version::getById((int) $request->get('id'));
-        if (!$version) {
-            throw $this->createNotFoundException();
+        $id = (int)$request->get('id');
+        $version = Version::getById($id);
+        $document = $version?->loadData();
+        if (!$document) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
-        $document = $version->loadData();
         Document\Service::saveElementToSession($document, $request->getSession()->getId());
 
         return new Response();
@@ -806,9 +807,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $this->versionToSessionAction($request);
 
-        $version = Version::getById((int) $request->get('id'));
-        if (!$version) {
-            throw $this->createNotFoundException();
+        $id = (int)$request->get('id');
+        $version = Version::getById($id);
+        $document = $version?->loadData();
+        if (!$document) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
         $document = $version->loadData();
 
@@ -1131,7 +1134,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
         }
 
         $versionFrom = Version::getById($from);
-        $docFrom = $versionFrom->loadData();
+        $docFrom = $versionFrom?->loadData();
+
+        if (!$docFrom) {
+            throw $this->createNotFoundException('Version with id [' . $from . "] doesn't exist");
+        }
 
         $prefix = Config::getSystemConfiguration('documents')['preview_url_prefix'];
         if (empty($prefix)) {
@@ -1220,107 +1227,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
         } else {
             return $this->adminJson(false);
         }
-    }
-
-    /**
-     * SEO PANEL
-     */
-
-    /**
-     * @Route("/seopanel-tree-root", name="pimcore_admin_document_document_seopaneltreeroot", methods={"GET"})
-     *
-     * @param DocumentRouteHandler $documentRouteHandler
-     *
-     * @return JsonResponse
-     */
-    public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler): JsonResponse
-    {
-        $this->checkPermission('seo_document_editor');
-
-        /** @var Document\Page $root */
-        $root = Document\Page::getById(1);
-        if ($root->isAllowed('list')) {
-            // make sure document routes are also built for unpublished documents
-            $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
-
-            $nodeConfig = $this->getSeoNodeConfig($root);
-
-            return $this->adminJson($nodeConfig);
-        }
-
-        throw $this->createAccessDeniedHttpException();
-    }
-
-    /**
-     * @Route("/seopanel-tree", name="pimcore_admin_document_document_seopaneltree", methods={"GET"})
-     *
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param DocumentRouteHandler $documentRouteHandler
-     *
-     * @return JsonResponse
-     */
-    public function seopanelTreeAction(
-        Request $request,
-        EventDispatcherInterface $eventDispatcher,
-        DocumentRouteHandler $documentRouteHandler
-    ): JsonResponse {
-        $allParams = array_merge($request->request->all(), $request->query->all());
-
-        $filterPrepareEvent = new GenericEvent($this, [
-            'requestParams' => $allParams,
-        ]);
-        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE);
-
-        $allParams = $filterPrepareEvent->getArgument('requestParams');
-
-        $this->checkPermission('seo_document_editor');
-
-        // make sure document routes are also built for unpublished documents
-        $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
-
-        $document = Document::getById($allParams['node']);
-
-        $documents = [];
-        if ($document->hasChildren()) {
-            $list = new Document\Listing();
-            $list->setCondition('parentId = ?', $document->getId());
-            $list->setOrderKey('index');
-            $list->setOrder('asc');
-
-            $beforeListLoadEvent = new GenericEvent($this, [
-                'list' => $list,
-                'context' => $allParams,
-            ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
-            /** @var Document\Listing $list */
-            $list = $beforeListLoadEvent->getArgument('list');
-
-            $childrenList = $list->load();
-
-            foreach ($childrenList as $childDocument) {
-                // only display document if listing is allowed for the current user
-                if ($childDocument->isAllowed('list')) {
-                    $list = new Document\Listing();
-                    $list->setCondition('`path` LIKE ? and `type` = ?', [$list->escapeLike($childDocument->getRealFullPath()). '/%', 'page']);
-
-                    if ($childDocument instanceof Document\Page || $list->getTotalCount() > 0) {
-                        $documents[] = $this->getSeoNodeConfig($childDocument);
-                    }
-                }
-            }
-        }
-
-        $result = ['data' => $documents, 'success' => true, 'total' => count($documents)];
-
-        $afterListLoadEvent = new GenericEvent($this, [
-            'list' => $result,
-            'context' => $allParams,
-        ]);
-        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD);
-        $result = $afterListLoadEvent->getArgument('list');
-
-        return $this->adminJson($result['data']);
     }
 
     /**
@@ -1620,7 +1526,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         return $nodeConfig;
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
