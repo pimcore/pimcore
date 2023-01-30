@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
@@ -66,7 +67,8 @@ class Exporter
                 foreach ($fDefs as $fd) {
                     $getter = 'get' . ucfirst($fd->getName());
                     $value = $brickValue->$getter();
-                    if ($fd instanceof NormalizerInterface) {
+                    if ($fd instanceof NormalizerInterface
+                        && $fd instanceof DataObject\ClassDefinition\Data) {
                         $marshalledValue = $fd->normalize($value);
                         $resultContainer[$brickType][$fd->getName()] = $marshalledValue;
                     }
@@ -101,7 +103,8 @@ class Exporter
                 $getter = 'get' . ucfirst($fd->getName());
                 $value = $item->$getter();
 
-                if ($fd instanceof NormalizerInterface) {
+                if ($fd instanceof NormalizerInterface
+                    && $fd instanceof DataObject\ClassDefinition\Data) {
                     $marshalledValue = $fd->normalize($value);
                     $itemValues[$fd->getName()] = $marshalledValue;
                 }
@@ -137,7 +140,8 @@ class Exporter
             } elseif ($fd instanceof Data\Objectbricks && $value instanceof Objectbrick) {
                 self::doExportBrick($object, $result, $value, $fd);
             } else {
-                if ($fd instanceof NormalizerInterface) {
+                if ($fd instanceof NormalizerInterface
+                    && $fd instanceof DataObject\ClassDefinition\Data) {
                     $marshalledValue = $fd->normalize($value);
                     $result[$fd->getName()] = $marshalledValue;
                 }

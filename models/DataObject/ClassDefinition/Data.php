@@ -72,7 +72,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     //TODO remove childs in Pimcore 12
     /**
-     * @var array
+     * @var string[]
      */
     protected const FORBIDDEN_NAMES = [
         'id', 'key', 'path', 'type', 'index', 'classname', 'creationdate', 'userowner', 'value', 'class', 'list',

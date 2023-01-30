@@ -44,8 +44,14 @@ class PimcoreBundleManager
 
     protected RouterInterface $router;
 
+    /**
+     * @var string[]|null
+     */
     protected ?array $availableBundles = null;
 
+    /**
+     * @var array<string, array{enabled: bool, priority: int, environments: string[]}>|null
+     */
     protected ?array $manuallyRegisteredBundles = null;
 
     public function __construct(
@@ -98,7 +104,7 @@ class PimcoreBundleManager
     /**
      * List of available bundles from a defined set of paths
      *
-     * @return array
+     * @return string[]
      */
     public function getAvailableBundles(): array
     {
@@ -132,6 +138,8 @@ class PimcoreBundleManager
 
     /**
      * Returns names of manually registered bundles
+     *
+     * @return string[]
      */
     private function getManuallyRegisteredBundleNames(bool $onlyEnabled = false): array
     {
@@ -153,6 +161,8 @@ class PimcoreBundleManager
 
     /**
      * Builds state infos & return manually configured bundles
+     *
+     * @return array<string, array{enabled: bool, priority: int, environments: string[]}>
      */
     private function getManuallyRegisteredBundles(): array
     {
@@ -411,7 +421,7 @@ class PimcoreBundleManager
     /**
      * Resolves all admin javascripts to load
      *
-     * @return array
+     * @return string[]
      */
     public function getJsPaths(): array
     {
@@ -423,7 +433,7 @@ class PimcoreBundleManager
     /**
      * Resolves all admin stylesheets to load
      *
-     * @return array
+     * @return string[]
      */
     public function getCssPaths(): array
     {
@@ -435,7 +445,7 @@ class PimcoreBundleManager
     /**
      * Resolves all editmode javascripts to load
      *
-     * @return array
+     * @return string[]
      */
     public function getEditmodeJsPaths(): array
     {
@@ -447,7 +457,7 @@ class PimcoreBundleManager
     /**
      * Resolves all editmode stylesheets to load
      *
-     * @return array
+     * @return string[]
      */
     public function getEditmodeCssPaths(): array
     {
@@ -462,7 +472,7 @@ class PimcoreBundleManager
      * @param string $type
      * @param string|null $mode
      *
-     * @return array
+     * @return string[]
      */
     protected function resolvePaths(string $type, string $mode = null): array
     {
@@ -500,10 +510,9 @@ class PimcoreBundleManager
     /**
      * Emits given path event
      *
-     * @param array  $paths
-     * @param string $eventName
+     * @param string[] $paths
      *
-     * @return array
+     * @return string[]
      */
     protected function resolveEventPaths(array $paths, string $eventName): array
     {

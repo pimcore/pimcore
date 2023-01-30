@@ -196,7 +196,8 @@ class Dao extends Model\Dao\AbstractDao
                         $fd->save($this->model, $childParams);
                     }
                 }
-                if ($fd instanceof ResourcePersistenceAwareInterface) {
+                if ($fd instanceof ResourcePersistenceAwareInterface
+                    && $fd instanceof DataObject\ClassDefinition\Data) {
                     if (is_array($fd->getColumnType())) {
                         $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
                         $insertDataArray = $fd->getDataForResource(
@@ -307,7 +308,8 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 foreach ($fieldDefinitions as $fd) {
-                    if ($fd instanceof QueryResourcePersistenceAwareInterface) {
+                    if ($fd instanceof QueryResourcePersistenceAwareInterface
+                        &&  $fd instanceof DataObject\ClassDefinition\Data) {
                         $key = $fd->getName();
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
@@ -646,7 +648,9 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     $params['context']['object'] = $object;
 
-                    if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
+                    if ($fd instanceof LazyLoadingSupportInterface
+                        && $fd instanceof DataObject\ClassDefinition\Data
+                        && $fd->getLazyLoading()) {
                         $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
                     } else {
                         $value = $fd->load($this->model, $params);
@@ -837,7 +841,8 @@ QUERY;
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
         if ($localizedFieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
             foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
-                if ($value instanceof ResourcePersistenceAwareInterface) {
+                if ($value instanceof ResourcePersistenceAwareInterface
+                    && $value instanceof DataObject\ClassDefinition\Data) {
                     if ($value->getColumnType()) {
                         $key = $value->getName();
 

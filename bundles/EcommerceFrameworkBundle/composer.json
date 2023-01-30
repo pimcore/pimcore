@@ -1,0 +1,52 @@
+{
+  "name": "pimcore/ecommerce-framework-bundle",
+  "license": "GPL-3.0+",
+  "type": "pimcore-bundle",
+  "description": "Pimcore Ecommerce Bundle",
+  "config": {
+    "sort-packages": true,
+    "preferred-install": {
+      "pimcore/pimcore": "source",
+      "*": "dist"
+    }
+  },
+  "prefer-stable": true,
+  "minimum-stability": "dev",
+  "require": {
+    "pimcore/pimcore": "^11.0",
+    "knplabs/knp-paginator-bundle": "^6.0.0"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^1.9",
+    "codeception/codeception": "^5.0.3",
+    "codeception/module-asserts": "^2",
+    "codeception/module-symfony": "^3.1",
+    "codeception/phpunit-wrapper": "^9",
+    "elasticsearch/elasticsearch": "^8.0",
+    "pimcore/elasticsearch-client": "^1.0.0"
+  },
+  "suggest": {
+    "elasticsearch/elasticsearch": "Required for Elastic Search service",
+    "webmozarts/console-parallelization": "Required for parallelization of console commands"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tests\\": "tests"
+    },
+    "files": [
+      "kernel/Kernel.php"
+    ]
+  },
+  "extra": {
+    "pimcore": {
+      "bundles": [
+        "Pimcore\\Bundle\\EcommerceFrameworkBundle\\PimcoreEcommerceFrameworkBundle"
+      ]
+    }
+  }
+}

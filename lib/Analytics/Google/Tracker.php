@@ -163,6 +163,11 @@ class Tracker extends AbstractTracker
         return $this->renderTemplate($event);
     }
 
+    /**
+     * @param array<string, mixed> $defaultConfig
+     *
+     * @return array<string, mixed>
+     */
     private function getTrackerConfigurationFromJson(string $configValue = null, array $defaultConfig = []): array
     {
         $config = [];
@@ -180,6 +185,12 @@ class Tracker extends AbstractTracker
         return array_merge($defaultConfig, $config);
     }
 
+    /**
+     * @param SiteId $siteId
+     * @param array<string, mixed> $siteConfig
+     *
+     * @return array<string, CodeBlock>
+     */
     private function buildCodeBlocks(SiteId $siteId, array $siteConfig): array
     {
         $blockData = $this->buildBlockData($siteConfig);
@@ -200,6 +211,11 @@ class Tracker extends AbstractTracker
         return $blocks;
     }
 
+    /**
+     * @param array<string, mixed> $siteConfig
+     *
+     * @return array<string, mixed>
+     */
     private function buildBlockData(array $siteConfig): array
     {
         $blockData = [];
