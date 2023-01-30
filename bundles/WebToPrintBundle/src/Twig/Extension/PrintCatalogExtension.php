@@ -233,7 +233,7 @@ class PrintCatalogExtension extends AbstractExtension
         return self::toUrl($name);
     }
 
-    public static function toUrl($text): string
+    public static function toUrl(?string $text): string
     {
         // to ASCII
         $text = trim(transliterator_transliterate('Any-Latin; Latin-ASCII; [^\u001F-\u007f] remove', $text));
