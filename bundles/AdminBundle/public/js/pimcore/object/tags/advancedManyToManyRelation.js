@@ -50,7 +50,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
         var i;
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
-            var defaultValue = null;
+            let defaultValue = null;
             switch(this.fieldConfig.columns[i].type.toLowerCase()){
                 case "bool":
                 case "columnbool":
