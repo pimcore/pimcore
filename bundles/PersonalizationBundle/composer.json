@@ -28,12 +28,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "src/"
+            "Pimcore\\Bundle\\PersonalizationBundle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Pimcore\\Bundle\\EcommerceFrameworkBundle\\Tests\\": "tests"
+            "Pimcore\\Bundle\\PersonalizationBundle\\Tests\\": "tests"
         },
         "files": [
             "kernel/Kernel.php"
