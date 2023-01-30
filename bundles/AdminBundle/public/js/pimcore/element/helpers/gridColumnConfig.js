@@ -804,7 +804,7 @@ pimcore.element.helpers.gridColumnConfig = {
                 title: t("export"),
                 items: [this.progressPanel],
                 layout: 'fit',
-                width: 700,
+                width: 650,
                 bodyStyle: "padding: 10px;",
                 closable: false,
                 plain: true,
