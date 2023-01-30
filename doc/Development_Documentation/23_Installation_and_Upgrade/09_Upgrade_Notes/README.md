@@ -94,6 +94,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Video] It's now possible to drop a video asset directly into an video editable in class
 - [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
 - [Config] The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
+- [Config] The deprecated config node `pimcore.error_handling` and the related parameter `pimcore.response_exception_listener.render_error_document` was removed.
 - [DataObjects] Removed deprecated preview url in class editor.
 - [DataObjects] Removed sql filter functionality for data object grid
 - [DataObjects] Loading non-Concrete objects with the Concrete class is no longer possible
