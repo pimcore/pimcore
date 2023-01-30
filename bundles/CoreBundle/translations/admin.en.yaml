@@ -1055,3 +1055,48 @@ display_mode_combo: Tag field
 display_mode_display: Display path reference
 display_mode_inline_search: Inline Search
 batch_confirmation: You are about to update %s dataObjects. Do you want to continue ?
+gdpr_dataSource_dataObjects: Data Objects
+parent_id: Parent ID
+modificationDate: Modification Date
+creationDate: Creation Date
+classificationstore_tag_col_group: Group
+none: None
+redirects_type_path: Path
+email_subject: Subject
+gdpr_dataSource_sentMail: Sent Emails
+email_log_subject: Subject
+gdpr_data_extractor_label_email: Email Address
+workflow_notes: Notes
+2fa_code: Code
+password: Password
+show_metainfo: Info
+email_log_from: From
+email_from: From
+log_search_from: From
+email_log_to: To
+email_to: To
+log_search_to: To
+structuredtable_type_text: Text
+objectsMetadata_type_text: Text
+gdpr_data_extractor_label_id: ID
+navigation_target: Target
+log_type: Type
+gdpr_dataSource_export: Export
+classificationstore_configuration: Configuration
+gdpr_dataSource_assets: Assets
+structuredtable_type_bool: Checkbox
+objectsMetadata_type_select: Select
+objectsMetadata_type_bool: Bool
+gdpr_data_extractor_label_firstname: Firstname
+gdpr_data_extractor_label_lastname: Lastname
+log_source: Source
+classificationstore_error_addgroup_title: Error
+classificationstore_error_addkey_title: Error
+element_lock_message: 'The desired element is currently opened by another person:'
+log_message: Message
+operator_substring_settings: Settings
+delete_gridconfig_dblcheck: Do you really want to delete this item?
+email_log_cc: Cc
+email_log_bcc: Bcc
+cols: Columns
+log_search_message: Message
