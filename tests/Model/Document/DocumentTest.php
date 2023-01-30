@@ -16,13 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Document;
 
+use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
+use Pimcore\Bundle\WebToPrintBundle\Model\Document\Printpage;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Link;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Document\Page;
-use Pimcore\Model\Document\PrintAbstract;
-use Pimcore\Model\Document\Printpage;
 use Pimcore\Model\Document\Service;
 use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -370,7 +370,7 @@ class DocumentTest extends ModelTestCase
 
     public function testDocumentPrint(): void
     {
-        $printpage = TestHelper::createEmptyDocument('print-', true, true, '\\Pimcore\\Model\\Document\\Printpage');
+        $printpage = TestHelper::createEmptyDocument('print-', true, true, '\\Pimcore\\Bundle\\WebToPrintBundle\\Model\\Document\\Printpage');
         $this->assertInstanceOf(Printpage::class, $printpage);
 
         //Load via abstract class
