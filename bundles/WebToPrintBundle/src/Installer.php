@@ -21,7 +21,7 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 class Installer extends SettingsStoreAwareInstaller
 {
 
-    protected const USER_PERMISSION_CATEGORY = 'Pimcore Static Routes Bundle';
+    protected const USER_PERMISSION_CATEGORY = 'Pimcore Web2Print Bundle';
     protected const USER_PERMISSIONS = [
         'web2print_settings',
     ];
