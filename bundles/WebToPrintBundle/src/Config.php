@@ -120,7 +120,7 @@ final class Config
      *
      * @internal
      */
-    public static function setWeb2PrintConfig(array $config)
+    public static function setWeb2PrintConfig(array $config): void
     {
         RuntimeCache::set('pimcore_bundle_web2print_config', $config);
     }

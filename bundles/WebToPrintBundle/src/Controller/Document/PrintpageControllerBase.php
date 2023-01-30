@@ -220,7 +220,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
      * @Route("/start-pdf-generation", name="startpdfgeneration", methods={"POST"})
      *
      * @param Request $request
-     * @param Config $config
+     * @param \Pimcore\Config $config
      *
      * @return JsonResponse
      *

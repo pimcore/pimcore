@@ -17,6 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
+use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
+use Pimcore\Bundle\WebToPrintBundle\Model\Document\Printcontainer;
+use Pimcore\Bundle\WebToPrintBundle\Model\Document\Printpage;
+use Pimcore\Bundle\WebToPrintBundle\PimcoreWebToPrintBundle;
 use Pimcore\Model\Document;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigTest;
@@ -28,7 +32,7 @@ class DocumentHelperExtensions extends AbstractExtension
 {
     public function getTests(): array
     {
-        return [
+        $tests = [
             new TwigTest('pimcore_document', static function ($object) {
                 return $object instanceof Document;
             }),
@@ -53,18 +57,27 @@ class DocumentHelperExtensions extends AbstractExtension
             new TwigTest('pimcore_document_page_snippet', static function ($object) {
                 return $object instanceof Document\PageSnippet;
             }),
-            new TwigTest('pimcore_document_print', static function ($object) {
-                return $object instanceof Document\PrintAbstract;
-            }),
-            new TwigTest('pimcore_document_print_container', static function ($object) {
-                return $object instanceof Document\Printcontainer;
-            }),
-            new TwigTest('pimcore_document_print_page', static function ($object) {
-                return $object instanceof Document\Printpage;
-            }),
             new TwigTest('pimcore_document_snippet', static function ($object) {
                 return $object instanceof Document\Snippet;
             }),
         ];
+
+        if(class_exists(PimcoreWebToPrintBundle::class)) {
+            $webToPrintTests = [
+                new TwigTest('pimcore_document_print', static function ($object) {
+                    return $object instanceof PrintAbstract;
+                }),
+                new TwigTest('pimcore_document_print_container', static function ($object) {
+                    return $object instanceof Printcontainer;
+                }),
+                new TwigTest('pimcore_document_print_page', static function ($object) {
+                    return $object instanceof Printpage;
+                }),
+            ];
+
+            $tests = array_merge($tests, $webToPrintTests);
+        }
+
+        return $tests;
     }
 }

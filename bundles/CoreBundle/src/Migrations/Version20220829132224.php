@@ -75,8 +75,8 @@ final class Version20220829132224 extends AbstractMigration
     private function migrateWeb2PrintSettings(): void
     {
         $configs = $this->loadLegacyConfigs('web2print.php');
-        if (count($configs) > 0) {
-            $web2PrintConfigs = Config::getWeb2PrintConfig();
+        if (count($configs) > 0 && class_exists('Pimcore\Bundle\WebToPrintBundle\Config')) {
+            $web2PrintConfigs = \Pimcore\Bundle\WebToPrintBundle\Config::getWeb2PrintConfig();
             foreach ($configs as $key => $config) {
                 if (!isset($web2PrintConfigs[$key])) {
                     $web2PrintConfigs[$key] = $config;
