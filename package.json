@@ -13,7 +13,6 @@
   "dependencies": {
     "ace-builds": "^1.14.0",
     "chart.js": "^4.2.0",
-    "flatpickr": "^4.6.13",
     "leaflet": "^1.9.3",
     "leaflet-draw": "^1.0.4",
     "tinymce": "^6.3.1"

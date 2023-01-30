@@ -20,13 +20,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Compiler\Registe
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
-use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\Version;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 
-class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle implements DependentBundleInterface
+class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 {
     /**
      * {@inheritdoc}
@@ -86,10 +83,5 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle implements D
     public function getPath(): string
     {
         return \dirname(__DIR__);
-    }
-
-    public static function registerDependentBundles(BundleCollection $collection): void
-    {
-        $collection->addBundle(new WebpackEncoreBundle());
     }
 }

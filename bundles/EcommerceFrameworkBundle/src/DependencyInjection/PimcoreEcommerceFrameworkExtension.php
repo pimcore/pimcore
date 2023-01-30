@@ -37,7 +37,6 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
@@ -46,7 +45,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 /**
  * @internal
  */
-final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension implements PrependExtensionInterface
+final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
     const SERVICE_ID_FACTORY = 'pimcore_ecommerce.factory';
 
@@ -679,18 +678,5 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension imp
         }
 
         return $serviceLocator;
-    }
-
-    public function prepend(ContainerBuilder $container)
-    {
-        $builds = [
-            'pimcoreEcommerceFramework' => realpath(__DIR__ . '/../../public/build'),
-        ];
-
-        $container->prependExtensionConfig('webpack_encore', [
-            //'output_path' => realpath(__DIR__ . '/../Resources/public/build')
-            'output_path' => false,
-            'builds' => $builds
-        ]);
     }
 }

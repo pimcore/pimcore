@@ -102,6 +102,7 @@
     <script src="{{ path('fos_js_routing_js', {'callback' : 'fos.Router.setData'}) }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
 
     {{ encore_entry_script_tags('admin', null, 'pimcoreAdmin') }}
+    {{ encore_entry_link_tags('admin', null, 'pimcoreAdmin') }}
 </head>
 
 <body class="pimcore_version_11" data-app-env="{{ app.environment }}">
