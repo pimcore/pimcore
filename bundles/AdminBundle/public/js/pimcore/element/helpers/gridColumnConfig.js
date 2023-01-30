@@ -909,7 +909,7 @@ pimcore.element.helpers.gridColumnConfig = {
         }
 
         var fields = this.getGridConfig().columns;
-        var fieldKeys = Object.keys(fields);
+        var fieldKeys = Object.entries(fields).map(([key, value]) => value.fieldConfig?.label || key);
         params["fields[]"] = fieldKeys;
 
         return params;
