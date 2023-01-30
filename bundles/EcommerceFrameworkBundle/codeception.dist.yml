@@ -1,0 +1,17 @@
+namespace: Pimcore\Bundle\EcommerceFrameworkBundle\Tests\Support
+actor_suffix: Tester
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/Support/Data
+    support: tests/Support
+    envs: tests/_envs
+settings:
+    colors: true
+    memory_limit: 1024M
+bootstrap: _bootstrap.php
+params:
+    - env
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed

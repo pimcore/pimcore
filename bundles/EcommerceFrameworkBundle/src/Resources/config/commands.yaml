@@ -1,0 +1,14 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    Pimcore\Bundle\EcommerceFrameworkBundle\Command\:
+        resource: '../../Command'
+        tags: ['console.command']
