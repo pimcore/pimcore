@@ -1,9 +1,9 @@
 # Rendering PDFs
 
 Instead of directly returning the HTML code of your website you could also return a PDF version. 
-You can use the Web2PrintBundle functionality to accomplish this.
+You can use the PimcoreWebToPrintBundle functionality to accomplish this.
 
-Please make sure that you have set up and installed the Web2PrintBundle correctly ("Settings" -> "Web2Print Settings").
+Please make sure that you have set up and installed the PimcoreWebToPrintBundle correctly ("Settings" -> "Web2Print Settings").
 
 You need to enable and install the Web2PrintBundle via the bundles.php, and then you 
 just have to provide the correct settings (Tool -> HeadlessChrome / PDFreactor) and the corresponding settings.
@@ -25,7 +25,7 @@ class BlogController extends FrontendController
             'editmode' => $this->editmode,
         ]);
         return new \Symfony\Component\HttpFoundation\Response(
-            \Pimcore\Bundle\Web2PrintBundle\Processor::getInstance()->getPdfFromString($html),
+            \Pimcore\Bundle\WebToPrintBundle\Processor::getInstance()->getPdfFromString($html),
             200,
             array(
                 'Content-Type' => 'application/pdf',
@@ -50,9 +50,9 @@ class BlogController extends FrontendController
             $params['testPlaceholder'] = ' :-)';
             $html = $this->renderView(':Blog:index.html.php', $params);
 
-            $adapter = \Pimcore\Bundle\Web2PrintBundle\Processor::getInstance();
+            $adapter = \Pimcore\Bundle\WebToPrintBundle\Processor::getInstance();
             //add custom settings if necessary
-            if ($adapter instanceof \Pimcore\Bundle\Web2PrintBundle\Processor\HeadlessChrome) {
+            if ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome) {
                 $params['adapterConfig'] = [
                     'landscape' => false,
                     'printBackground' => true,
@@ -65,7 +65,7 @@ class BlogController extends FrontendController
                     ],
                     'displayHeaderFooter' => false,
                 ];
-            } elseif($adapter instanceof \Pimcore\Bundle\Web2PrintBundle\Processor\PdfReactor) {
+            } elseif($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
                 //Config settings -> http://www.pdfreactor.com/product/doc/webservice/php.html#Configuration
                 $params['adapterConfig'] = [
                     'author' => 'Max Mustermann',

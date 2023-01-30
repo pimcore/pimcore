@@ -1,4 +1,4 @@
-# Web2PrintBundle - Extending PDF Creation Config for PDF/X Conformance
+# PimcoreWebToPrintBundle - Extending PDF Creation Config for PDF/X Conformance
 
 Sometimes it is necessary to add additional configuration options to the PDF processing configuration in the Pimcore backend UI - 
 for example when creating PDF/X conform PDFs with PDF Reactor.
@@ -39,13 +39,13 @@ namespace App\EventListener;
 
 class PDFConfigListener
 {
-    public function modifyProcessingOptions(\Pimcore\Bundle\Web2PrintBundle\Event\Model\PrintConfigEvent $event) {
+    public function modifyProcessingOptions(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event) {
 
         $arguments = $event->getArguments();
         $options = $arguments['options'];
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Bundle\Web2PrintBundle\Processor\PdfReactor) {
+        if($processor instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
             
             //add option to append log into generated PDF (pdf reactor functionality) 
             $options[] = ['name' => 'appendLog', 'type' => 'bool', 'default' => false];
@@ -55,12 +55,12 @@ class PDFConfigListener
         $event->setArguments($arguments);
     }
 
-    public function modifyConfig(\Pimcore\Bundle\Web2PrintBundle\Event\Model\PrintConfigEvent $event) {
+    public function modifyConfig(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event) {
 
         $arguments = $event->getArguments();
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Bundle\Web2PrintBundle\Processor\PdfReactor) {
+        if($processor instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
             
             //check if option for appending log to PDF is set in configuration and apply it to reactor config accordingly  
             if($arguments['config']->appendLog == 'true'){
@@ -87,16 +87,16 @@ namespace App\EventListener;
 
 class PDFConfigListener
 {
-    public function modifyProcessingOptions(\Pimcore\Bundle\Web2PrintBundle\Event\Model\PrintConfigEvent $event) {
+    public function modifyProcessingOptions(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event) {
         //optionally add some configuration options for user interface here - e.g. some select options for user
     }
 
-    public function modifyConfig(\Pimcore\Bundle\Web2PrintBundle\Event\Model\PrintConfigEvent $event){
+    public function modifyConfig(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event){
 
         $arguments = $event->getArguments();
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Bundle\Web2PrintBundle\Processor\PdfReactor) {
+        if($processor instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
             
             //Set pdf reactor config for generating PDF/X conform PDF  
             $arguments['reactorConfig']['conformance'] = \Conformance::PDFX4;
