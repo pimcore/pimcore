@@ -182,30 +182,11 @@ pimcore.bundle.tinymce.editor = Class.create({
         let wrappedText = data.text;
         let textIsSelected = false;
 
-        // try {
-        //     const selection = tinymce.activeEditor.getSelection();
-        //     const bookmarks = selection.createBookmarks();
-        //     const range = selection.getRanges()[0];
-        //     const fragment = range.clone().cloneContents();
-        //
-        //     selection.selectBookmarks(bookmarks);
-        //     let retval = "";
-        //     const childList = fragment.getChildren();
-        //     const childCount = childList.count();
-        //
-        //     let child;
-        //     for (let i = 0; i < childCount; i++) {
-        //         child = childList.getItem(i);
-        //         retval += (child.getOuterHtml ?
-        //             child.getOuterHtml() : child.getText());
-        //     }
-        //
-        //     if (retval.length > 0) {
-        //         wrappedText = retval;
-        //         textIsSelected = true;
-        //     }
-        // } catch (e2) {
-        // }
+        let retval = tinymce.activeEditor.selection.getContent();
+        if (retval.length > 0) {
+            wrappedText = retval;
+            textIsSelected = true;
+        }
 
         // remove existing links out of the wrapped text
         wrappedText = wrappedText.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, function ($0, $1) {
@@ -215,7 +196,6 @@ pimcore.bundle.tinymce.editor = Class.create({
             return $0;
         });
 
-        let insertEl = null;
         const id = data.id;
         let uri = data.path;
         const browserPossibleExtensions = ["jpg", "jpeg", "gif", "png"];
