@@ -26,7 +26,7 @@ return [
     "Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle" => [
         "all" => TRUE
     ],
-    "Pimcore\\Bundle\\Web2PrintBundle\\Web2PrintBundle" => [
+    "Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle" => [
         "all" => TRUE
     ],
 ];
