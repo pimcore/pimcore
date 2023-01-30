@@ -32,7 +32,7 @@ check those values before using them!
 
 namespace App\Targeting\ActionHandler;
 
-use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;

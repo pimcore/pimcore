@@ -23,7 +23,7 @@ use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingEvent;
 use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingResolveVisitorInfoEvent;
 use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingRuleEvent;
 use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
-use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;

@@ -17,7 +17,9 @@ pimcore.registerNS("pimcore.bundle.personalization.document.areatoolbar");
  */
 pimcore.bundle.personalization.document.areatoolbar = Class.create({
 
-    addTargetingPanel: function (document , lbar, cleanupFunction) {
+
+
+    addTargetingPanel: function (document , lbar) {
         if (!Ext.Array.contains(['page', 'snippet'], document.getType())) {
             return;
         }
@@ -25,6 +27,23 @@ pimcore.bundle.personalization.document.areatoolbar = Class.create({
         if (pimcore.globalmanager.get("target_group_store").getCount() === 0) {
             return;
         }
+
+        var cleanupFunction = function () {
+            console.log("remove editable");
+            Ext.Ajax.request({
+                url: Routing.generate('pimcore_bundle_personalization_clear_targeting_editable_data'),
+                method: "PUT",
+                params: {
+                    targetGroup: this["targetGroup"] ? this.targetGroup.getValue() : "",
+                    id: document.id
+                },
+                success: function () {
+                    docEdit.reload(true);
+                }.bind(this)
+            });
+        };
+
+        var docEdit = pimcore.globalmanager.get("document_" + document.id).edit;
 
         this.targetGroupText = Ext.create('Ext.toolbar.TextItem', {
             scale: "medium",
@@ -59,13 +78,13 @@ pimcore.bundle.personalization.document.areatoolbar = Class.create({
                             + "<br />" + t("continue") + "?",
                             function (btn) {
                                 if (btn === 'yes') {
-                                    pimcore.document.edit.reload(true);
+                                    docEdit.reload(true);
                                     this.updateTargetGroupText(this.targetGroup.getValue());
                                 }
                             }.bind(this)
                         );
-                    } else { document.
-                        pimcore.document.edit.reload(true);
+                    } else {
+                        docEdit.reload(true);
                         this.updateTargetGroupText(this.targetGroup.getValue());
                     }
                 }.bind(this)
@@ -99,6 +118,7 @@ pimcore.bundle.personalization.document.areatoolbar = Class.create({
         } else {
             this.targetGroupText.update('');
         }
-    }
+    },
+
 })
 const areatoolbar = new pimcore.bundle.personalization.document.areatoolbar();

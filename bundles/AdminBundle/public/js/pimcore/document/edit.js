@@ -53,7 +53,6 @@ pimcore.document.edit = Class.create({
                     url: Routing.generate('pimcore_admin_document_page_cleareditabledata'),
                     method: "PUT",
                     params: {
-                        targetGroup: this["targetGroup"] ? this.targetGroup.getValue() : "",
                         id: this.document.id
                     },
                     success: function () {
@@ -102,7 +101,7 @@ pimcore.document.edit = Class.create({
 
             if (pimcore.bundle.personalization) {
                 areatoolbar.addTargetingPanel(this.document
-               , lbar, cleanupFunction);
+               , lbar);
             }
 
             // edit panel configuration
@@ -223,7 +222,6 @@ pimcore.document.edit = Class.create({
     },
 
     reload: function (disableSaveToSession) {
-
         this.areaToolbarTrigger.toggle(false);
 
         if (this.reloadInProgress) {

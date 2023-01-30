@@ -19,7 +19,7 @@ namespace Pimcore\Templating\Renderer;
 use Pimcore\Cache;
 use Pimcore\Model;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
+use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
@@ -103,7 +103,7 @@ class IncludeRenderer
             });
 
             // TODO is this enough for cache or should we disable caching completely?
-            if ($include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
+            if (class_exists (TargetingDocumentInterface::class) && $include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
                 $cacheParams['target_group'] = $include->getUseTargetGroup();
             }
 

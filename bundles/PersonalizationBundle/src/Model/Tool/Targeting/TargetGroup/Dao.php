@@ -13,16 +13,16 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\Targeting\Rule;
+namespace Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 
 use Pimcore\Model;
-use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Tool\Serialize;
 
 /**
  * @internal
  *
- * @property Rule|Model\Tool\Targeting\Rule\Dao $model
+ * @property TargetGroup $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
@@ -33,48 +33,44 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById(int $id = null): void
     {
-        if ($id != null) {
+        if (null !== $id) {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchAssociative('SELECT * FROM targeting_rules WHERE id = ?', [$this->model->getId()]);
+        $data = $this->db->fetchAssociative('SELECT * FROM targeting_target_groups WHERE id = ?', [$this->model->getId()]);
 
         if (!empty($data['id'])) {
-            $data['conditions'] = (isset($data['conditions']) ? Serialize::unserialize($data['conditions']) : []);
             $data['actions'] = (isset($data['actions']) ? Serialize::unserialize($data['actions']) : []);
 
             $this->assignVariablesToModel($data);
         } else {
-            throw new Model\Exception\NotFoundException('target with id ' . $this->model->getId() . " doesn't exist");
+            throw new Model\Exception\NotFoundException('Target Group with id ' . $this->model->getId() . " doesn't exist");
         }
     }
 
     /**
      * @param string|null $name
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByName(string $name = null): void
     {
-        if ($name != null) {
+        if (null !== $name) {
             $this->model->setName($name);
         }
 
-        $data = $this->db->fetchAllAssociative('SELECT id FROM targeting_rules WHERE name = ?', [$this->model->getName()]);
+        $data = $this->db->fetchAllAssociative('SELECT id FROM targeting_target_groups WHERE name = ?', [$this->model->getName()]);
 
         if (count($data) === 1) {
             $this->getById($data[0]['id']);
         } else {
             throw new Model\Exception\NotFoundException(sprintf(
-                'Targeting rule with name "%s" does not exist.',
+                'Targeting group with name "%s" does not exist or is not unique.',
                 $this->model->getName()
             ));
         }
     }
 
-    /**
-     * Save object to database
-     */
     public function save(): void
     {
         if (!$this->model->getId()) {
@@ -84,40 +80,36 @@ class Dao extends Model\Dao\AbstractDao
         $this->update();
     }
 
-    /**
-     * Deletes object from database
-     */
     public function delete(): void
     {
-        $this->db->delete('targeting_rules', ['id' => $this->model->getId()]);
+        $this->db->delete('targeting_target_groups', ['id' => $this->model->getId()]);
     }
 
-    /**
-     * @throws \Exception
-     */
     public function update(): void
     {
         $type = $this->model->getObjectVars();
         $data = [];
 
         foreach ($type as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns('targeting_rules'))) {
+            if (in_array($key, $this->getValidTableColumns('targeting_target_groups'))) {
                 if (is_array($value) || is_object($value)) {
                     $value = Serialize::serialize($value);
                 }
+
                 if (is_bool($value)) {
-                    $value = (int) $value;
+                    $value = (int)$value;
                 }
+
                 $data[$key] = $value;
             }
         }
 
-        $this->db->update('targeting_rules', $data, ['id' => $this->model->getId()]);
+        $this->db->update('targeting_target_groups', $data, ['id' => $this->model->getId()]);
     }
 
     public function create(): void
     {
-        $this->db->insert('targeting_rules', []);
+        $this->db->insert('targeting_target_groups', []);
         $this->model->setId((int) $this->db->lastInsertId());
     }
 }

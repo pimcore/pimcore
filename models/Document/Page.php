@@ -18,12 +18,12 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Redirect;
-use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
  */
-class Page extends TargetingDocument
+class Page extends PageSnippet
 {
     /**
      * Contains the title of the page (meta-title)

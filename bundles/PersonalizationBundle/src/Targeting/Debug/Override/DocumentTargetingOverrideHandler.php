@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\Override;
 
-use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\OverrideHandlerInterface;
 use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;

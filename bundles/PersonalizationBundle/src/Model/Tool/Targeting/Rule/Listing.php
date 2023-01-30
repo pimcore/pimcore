@@ -14,10 +14,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\Targeting\Rule;
+namespace Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 
 use Pimcore\Model;
-use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 
 /**
  * @internal

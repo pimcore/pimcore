@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler;
 
-use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\DataLoaderInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\DataProviderDependentInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;

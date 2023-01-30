@@ -23,7 +23,8 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
+use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -133,9 +134,11 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
             }
 
             // apply best matching target group (if any)
-            if ($this->o instanceof Document\Targeting\TargetingDocumentInterface) {
-                $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
-                $targetingConfigurator->configureTargetGroup($this->o);
+            if(class_exists (TargetingDocumentInterface::class)) {
+                if ($this->o instanceof TargetingDocumentInterface) {
+                    $targetingConfigurator = $container->get (DocumentTargetingConfigurator::class);
+                    $targetingConfigurator->configureTargetGroup ($this->o);
+                }
             }
 
             $blockparams = ['controller', 'template'];

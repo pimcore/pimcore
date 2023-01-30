@@ -19,8 +19,8 @@ namespace Pimcore\Bundle\PersonalizationBundle\Targeting\Debug;
 
 use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
-use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\TargetingStorage;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\VisitedPagesCounter;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;

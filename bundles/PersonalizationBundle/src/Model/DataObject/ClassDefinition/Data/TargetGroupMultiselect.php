@@ -14,11 +14,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\DataObject\ClassDefinition\Data;
+namespace Pimcore\Bundle\PersonalizationBundle\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
-use Pimcore\Model\Tool;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool;
 
 class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {

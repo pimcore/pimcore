@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting;
 
-use Pimcore\Event\Targeting\BuildConditionEvent;
-use Pimcore\Event\TargetingEvents;
+use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\BuildConditionEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\ConditionInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 

@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Document\Targeting;
+namespace Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting;
 
 interface TargetingDocumentDaoInterface
 {

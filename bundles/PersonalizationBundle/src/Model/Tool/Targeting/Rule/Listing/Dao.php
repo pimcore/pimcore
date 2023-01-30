@@ -13,15 +13,15 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\Targeting\Rule\Listing;
+namespace Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule\Listing;
 
 use Pimcore\Model;
-use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Tool\Targeting\Rule\Listing $model
+ * @property Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {

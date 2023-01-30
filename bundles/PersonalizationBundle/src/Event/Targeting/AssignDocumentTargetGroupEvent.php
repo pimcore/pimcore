@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\PersonalizationBundle\Event\Targeting;
 
 use Pimcore\Model\Document;
-use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 
 class AssignDocumentTargetGroupEvent extends TargetingEvent

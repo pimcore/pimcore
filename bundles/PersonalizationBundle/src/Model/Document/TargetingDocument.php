@@ -15,9 +15,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Document;
+namespace Pimcore\Bundle\PersonalizationBundle\Model\Document;
 
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
+use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
+use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Model\Document\Editable;
 
 /**
  * @method \Pimcore\Model\Document\Targeting\TargetingDocumentDaoInterface getDao()

@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler;
 
 use Pimcore\Http\Response\CodeInjector;
-use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 use Symfony\Component\HttpFoundation\Response;
 

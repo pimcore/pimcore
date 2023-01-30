@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\Targeting;
+namespace Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting;
 
 use Pimcore\Model;
 

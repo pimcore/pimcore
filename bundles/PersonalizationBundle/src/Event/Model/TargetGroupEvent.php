@@ -14,9 +14,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Model;
+namespace Pimcore\Bundle\PersonalizationBundle\Event\Model;
 
-use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class TargetGroupEvent extends Event

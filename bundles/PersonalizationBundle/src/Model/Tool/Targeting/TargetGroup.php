@@ -14,9 +14,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\Targeting;
+namespace Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting;
 
-use Pimcore\Event\Model\TargetGroupEvent;
+use Pimcore\Bundle\PersonalizationBundle\Event\Model\TargetGroupEvent;
 use Pimcore\Bundle\PersonalizationBundle\Event\TargetGroupEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
@@ -66,7 +66,7 @@ class TargetGroup extends Model\AbstractModel
 
     public static function isIdActive(int $id): bool
     {
-        $targetGroup = Model\Tool\Targeting\TargetGroup::getById($id);
+        $targetGroup = TargetGroup::getById($id);
 
         if ($targetGroup) {
             return $targetGroup->getActive();
