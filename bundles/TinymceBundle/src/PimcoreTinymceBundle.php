@@ -26,12 +26,16 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle
 
     public function getCssPaths(): array
     {
-        return $this->getBuildPaths($this->getPath() . '/public/build/tinymce/entrypoints.json', ['tinymce'], 'css');
+        return [
+            '/bundles/pimcoretinymce/css/editor.css'
+        ];
     }
 
     public function getEditmodeCssPaths(): array
     {
-        return $this->getBuildPaths($this->getPath() . '/public/build/tinymce/entrypoints.json', ['tinymce'], 'css');
+        return [
+            '/bundles/pimcoretinymce/css/editor.css'
+        ];
     }
 
     public function getJsPaths(): array
@@ -59,20 +63,20 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle
 
     private function getAllJsPaths(): array
     {
-        $paths = $this->getBuildPaths($this->getPath() . '/public/build/tinymce/entrypoints.json', ['tinymce']);
+        $paths = $this->getBuildPathsFromEntrypoints($this->getPath() . '/public/build/tinymce/entrypoints.json', ['tinymce']);
         $paths []= '/bundles/pimcoretinymce/js/editor.js';
         return $paths;
     }
 
     //TODO move to core
-    private function getBuildPaths(string $entrypointsFile, array $entrypoints, string $type = 'js'): array
+    private function getBuildPathsFromEntrypoints(string $entrypointsFile, array $entrypoints, string $type = 'js'): array
     {
         $entrypointsContent = file_get_contents($entrypointsFile);
         $entrypointsJson = json_decode($entrypointsContent,true)['entrypoints'];
 
         $jsPaths = [];
         foreach($entrypoints as $entrypoint){
-            $jsPaths = array_merge($jsPaths, $entrypointsJson[$entrypoint][$type]);
+            $jsPaths = array_merge($jsPaths, $entrypointsJson[$entrypoint][$type] ?? []);
         }
         return $jsPaths;
     }
