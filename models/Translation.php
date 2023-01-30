@@ -276,8 +276,7 @@ final class Translation extends AbstractModel
     }
 
     /**
-     *
-     * @return array
+     * @return string[]
      */
     public static function getRegisteredDomains(): array
     {

@@ -243,9 +243,6 @@ pimcore:
         profiler:
             routes:
                 - { path: ^/_(profiler|wdt)(/.*)?$ }
-        plugin:
-            routes:
-                - { path: ^/plugin(/.*)?$ }
     translations:
         domains:
             - messages
