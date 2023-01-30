@@ -50,8 +50,11 @@ class SearchController extends AdminController
      * @return JsonResponse
      *
      * @todo: $conditionTypeParts could be undefined
+     *
      * @todo: $conditionSubtypeParts could be undefined
+     *
      * @todo: $conditionClassnameParts could be undefined
+     *
      * @todo: $data could be undefined
      */
     public function findAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)

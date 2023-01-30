@@ -309,6 +309,7 @@ class PageController extends DocumentControllerBase
                 if ($siteId === $checkSiteId) {
                     $success   = false;
                     $message[] = 'URL path already exists.';
+
                     break;
                 }
             }
