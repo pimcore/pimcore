@@ -33,5 +33,5 @@ pimcore:
         class_definitions:
             data:
                 map:
-                    targetGroup: \Pimcore\Bundle\PersonalizationBundle\Model\DataObject\ClassDefinition\Data\TargetGroup
-                    targetGroupMultiselect: \Pimcore\Bundle\PersonalizationBundle\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect
+                    targetGroup: Pimcore\Bundle\PersonalizationBundle\Model\DataObject\ClassDefinition\Data\TargetGroup
+                    targetGroupMultiselect: Pimcore\Bundle\PersonalizationBundle\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect

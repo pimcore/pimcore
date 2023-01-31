@@ -50,8 +50,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         protected DocumentResolver $documentResolver,
         protected EditmodeResolver $editmodeResolver,
         protected RequestHelper $requestHelper,
-        protected UserLoader $userLoader,
-        private DocumentTargetingConfigurator $targetingConfigurator
+        protected UserLoader $userLoader
     ) {
     }
 
@@ -97,8 +96,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 // for public versions
                 $document = $this->handleVersion($request, $document);
 
-                // apply target group configuration
-                $this->applyTargetGroups($request, $document);
 
                 $this->documentResolver->setDocument($request, $document);
             }
@@ -126,29 +123,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         return $document;
-    }
-
-    protected function applyTargetGroups(Request $request, Document $document): void
-    {
-        if (!$document instanceof Document\Targeting\TargetingDocumentInterface) {
-            return;
-        }
-
-        if (class_exists(Staticroute::class) && null !== Staticroute::getCurrentRoute()) {
-            return;
-        }
-
-        // reset because of preview and editmode (saved in session)
-        $document->setUseTargetGroup(null);
-
-        $this->targetingConfigurator->configureTargetGroup($document);
-
-        if ($document->getUseTargetGroup()) {
-            $this->logger->info('Setting target group to {targetGroup} for document {document}', [
-                'targetGroup' => $document->getUseTargetGroup(),
-                'document' => $document->getFullPath(),
-            ]);
-        }
     }
 
     private function handleAdminUserDocumentParams(Request $request, ?Document $document, User $user): ?Document

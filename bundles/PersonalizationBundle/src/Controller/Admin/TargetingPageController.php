@@ -18,6 +18,8 @@ namespace Pimcore\Bundle\PersonalizationBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\Document\PageController;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Model\Element\ElementInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,7 +42,7 @@ class TargetingPageController extends PageController
      */
     public function clearTargetingEditableDataAction (Request $request): JsonResponse
     {
-        $targetGroupId = $request->request->get ('targetGroup');
+        $targetGroupId = $request->request->getInt('targetGroup');
         $docId = $request->request->getInt ('id');
 
         $doc = Document\PageSnippet::getById ($docId);
@@ -66,4 +68,21 @@ class TargetingPageController extends PageController
             'success' => true,
         ]);
     }
+
+    public function configureElementTargeting (Request $request, ElementInterface $element): void
+    {
+        if (!$element instanceof TargetingDocumentInterface) {
+            return;
+        }
+
+        // set selected target group on element
+        if ($request->get ('_ptg')) {
+            $targetGroup = TargetGroup::getById ((int)$request->get ('_ptg'));
+            if ($targetGroup) {
+                $element->setUseTargetGroup ($targetGroup->getId ());
+            }
+        }
+    }
+
+
 }
