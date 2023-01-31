@@ -1700,14 +1700,14 @@ class Service extends Model\Element\Service
         $objectData = [];
         $mappedFieldnames = [];
         foreach ($fields as $field) {
-            if (static::isHelperGridColumnConfig($field) && $validLanguages = static::expandGridColumnForExport($helperDefinitions, $field)) {
+            if (static::isHelperGridColumnConfig($field['key']) && $validLanguages = static::expandGridColumnForExport($helperDefinitions, $field['key'])) {
                 $currentLocale = $localeService->getLocale();
                 $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions);
 
                 foreach ($validLanguages as $validLanguage) {
                     $localeService->setLocale($validLanguage);
-                    $fieldData = self::getCsvFieldData($currentLocale, $field, $object, $validLanguage, $helperDefinitions);
-                    $localizedFieldKey = $field . '-' . $validLanguage;
+                    $fieldData = self::getCsvFieldData($currentLocale, $field['key'], $object, $validLanguage, $helperDefinitions);
+                    $localizedFieldKey = $field['key'] . '-' . $validLanguage;
                     if (!isset($mappedFieldnames[$localizedFieldKey])) {
                         $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
                     }
@@ -1716,12 +1716,12 @@ class Service extends Model\Element\Service
 
                 $localeService->setLocale($currentLocale);
             } else {
-                $fieldData = self::getCsvFieldData($requestedLanguage, $field, $object, $requestedLanguage, $helperDefinitions);
-                if (!isset($mappedFieldnames[$field])) {
-                    $mappedFieldnames[$field] = self::mapFieldname($field, $helperDefinitions);
+                $fieldData = self::getCsvFieldData($requestedLanguage, $field['key'], $object, $requestedLanguage, $helperDefinitions);
+                if (!isset($mappedFieldnames[$field['key']])) {
+                    $mappedFieldnames[$field['key']] = self::mapFieldname($field, $helperDefinitions);
                 }
 
-                $objectData[$field] = $fieldData;
+                $objectData[$field['key']] = $fieldData;
             }
         }
 
@@ -1787,18 +1787,18 @@ class Service extends Model\Element\Service
         return $data;
     }
 
-    protected static function mapFieldname(string $field, array $helperDefinitions): string
+    protected static function mapFieldname(array $field, array $helperDefinitions): string
     {
-        if (strpos($field, '#') === 0) {
-            if (isset($helperDefinitions[$field])) {
-                if ($helperDefinitions[$field]->attributes) {
-                    return $helperDefinitions[$field]->attributes->label ? $helperDefinitions[$field]->attributes->label : $field;
+        if (strpos($field['key'], '#') === 0) {
+            if (isset($helperDefinitions[$field['key']])) {
+                if ($helperDefinitions[$field['key']]->attributes) {
+                    return $helperDefinitions[$field['key']]->attributes->label ? $helperDefinitions[$field['key']]->attributes->label : $field['label'];
                 }
 
-                return $field;
+                return $field['label'];
             }
-        } elseif (substr($field, 0, 1) == '~') {
-            $fieldParts = explode('~', $field);
+        } elseif (substr($field['key'], 0, 1) == '~') {
+            $fieldParts = explode('~', $field['key']);
             $type = $fieldParts[1];
 
             if ($type == 'classificationstore') {
@@ -1810,11 +1810,11 @@ class Service extends Model\Element\Service
                 $groupConfig = DataObject\Classificationstore\GroupConfig::getById($groupId);
                 $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
 
-                $field = $fieldname . '~' . $groupConfig->getName() . '~' . $keyConfig->getName();
+                $field['key'] = $fieldname . '~' . $groupConfig->getName() . '~' . $keyConfig->getName();
             }
         }
 
-        return $field;
+        return $field['label'];
     }
 
     /**

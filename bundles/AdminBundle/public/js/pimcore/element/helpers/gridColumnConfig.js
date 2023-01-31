@@ -740,7 +740,8 @@ pimcore.element.helpers.gridColumnConfig = {
         let params = this.getGridParams();
 
         var fields = this.getGridConfig().columns;
-        var fieldKeys = Object.keys(fields);
+        var fieldKeys = Object.entries(fields).map(([key, value]) => ({ key: key, label: value.fieldConfig?.label || key }));
+        fieldKeys = Ext.encode(fieldKeys);
         params["fields[]"] = fieldKeys;
         if (this.context) {
             params["context"] = Ext.encode(this.context);
@@ -909,7 +910,7 @@ pimcore.element.helpers.gridColumnConfig = {
         }
 
         var fields = this.getGridConfig().columns;
-        var fieldKeys = Object.entries(fields).map(([key, value]) => value.fieldConfig?.label || key);
+        var fieldKeys = Object.keys(fields);
         params["fields[]"] = fieldKeys;
 
         return params;

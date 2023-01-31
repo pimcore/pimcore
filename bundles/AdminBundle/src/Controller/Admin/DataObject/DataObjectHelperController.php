@@ -1328,7 +1328,7 @@ class DataObjectHelperController extends AdminController
 
         $list = $beforeListExportEvent->getArgument('list');
 
-        $fields = $request->get('fields');
+        $fields = json_decode($request->get('fields')[0], true);
 
         $addTitles = (bool) $request->get('initial');
 
