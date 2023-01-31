@@ -26,7 +26,7 @@ use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
-use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoResolver;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,7 +54,6 @@ class FullPageCacheListener
     protected string $defaultCacheKey;
 
     public function __construct(
-        private VisitorInfoStorageInterface $visitorInfoStorage,
         private SessionStatus $sessionStatus,
         private EventDispatcherInterface $eventDispatcher,
         protected Config $config
@@ -285,7 +284,7 @@ class FullPageCacheListener
         }
     }
 
-    public function onKernelResponse(ResponseEvent $event): void
+    public function onKernelResponse(ResponseEvent $event, ?VisitorInfoResolver $visitorInfoResolver = null): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -309,14 +308,13 @@ class FullPageCacheListener
         if (!$this->responseCanBeCached($response)) {
             $this->disable('Response can\'t be cached');
         }
-
-        // check if targeting matched anything and disable cache
-        if ($this->disabledByTargeting()) {
-            $this->disable('Targeting matched rules/target groups');
-
-            return;
+        if (class_exists(VisitorInfoResolver::class)) {
+            // check if targeting matched anything and disable cache
+            if ($visitorInfoResolver->disabledByTargeting ()) {
+                $this->disable ('Targeting matched rules/target groups');
+                return;
+            }
         }
-
         if ($this->enabled && $this->sessionStatus->isDisabledBySession($request)) {
             $this->disable('Session in use');
         }
@@ -387,24 +385,5 @@ class FullPageCacheListener
         $this->eventDispatcher->dispatch($event, FullPageCacheEvents::CACHE_RESPONSE);
 
         return $event->getCache();
-    }
-
-    private function disabledByTargeting(): bool
-    {
-        if (!$this->visitorInfoStorage->hasVisitorInfo()) {
-            return false;
-        }
-
-        $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
-
-        if (!empty($visitorInfo->getMatchingTargetingRules())) {
-            return true;
-        }
-
-        if (!empty($visitorInfo->getTargetGroupAssignments())) {
-            return true;
-        }
-
-        return false;
     }
 }

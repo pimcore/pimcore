@@ -21,7 +21,7 @@ use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Traits\TargetDocumentTrait;
 
 /**
- * @method \Pimcore\Model\Document\Page\Dao getDao()
+ * @method \Pimcore\Bundle\PersonalizationBundle\Model\Document\Page\Dao getDao()
  */
 class Page extends \Pimcore\Model\Document\Page implements TargetingDocumentInterface
 {

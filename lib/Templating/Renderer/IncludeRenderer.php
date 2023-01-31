@@ -33,14 +33,12 @@ class IncludeRenderer
 {
     protected ActionRenderer $actionRenderer;
 
-    private DocumentTargetingConfigurator $targetingConfigurator;
+
 
     public function __construct(
-        ActionRenderer $actionRenderer,
-        DocumentTargetingConfigurator $targetingConfigurator
+        ActionRenderer $actionRenderer
     ) {
         $this->actionRenderer = $actionRenderer;
-        $this->targetingConfigurator = $targetingConfigurator;
     }
 
     /**
@@ -53,7 +51,7 @@ class IncludeRenderer
      *
      * @return string
      */
-    public function render(mixed $include, array $params = [], bool $editmode = false, bool $cacheEnabled = true): string
+    public function render(mixed $include, array $params = [], bool $editmode = false, bool $cacheEnabled = true, ?DocumentTargetingConfigurator $targetingConfigurator = null): string
     {
         if (!is_array($params)) {
             $params = [];
@@ -82,7 +80,9 @@ class IncludeRenderer
 
         if ($include instanceof PageSnippet && $include->isPublished()) {
             // apply best matching target group (if any)
-            $this->targetingConfigurator->configureTargetGroup($include);
+            if (class_exists (DocumentTargetingConfigurator::class)) {
+                $targetingConfigurator->configureTargetGroup($include);
+            }
         }
 
         // check if output-cache is enabled, if so, we're also using the cache here

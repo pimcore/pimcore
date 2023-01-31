@@ -40,8 +40,6 @@ class DocumentRenderer implements DocumentRendererInterface
 
     private DocumentRouteHandler $documentRouteHandler;
 
-    private DocumentTargetingConfigurator $targetingConfigurator;
-
     private EventDispatcherInterface $eventDispatcher;
 
     private LocaleService $localeService;
@@ -51,7 +49,6 @@ class DocumentRenderer implements DocumentRendererInterface
         ActionRenderer $actionRenderer,
         FragmentRendererInterface $fragmentRenderer,
         DocumentRouteHandler $documentRouteHandler,
-        DocumentTargetingConfigurator $targetingConfigurator,
         EventDispatcherInterface $eventDispatcher,
         LocaleService $localeService
     ) {
@@ -59,7 +56,6 @@ class DocumentRenderer implements DocumentRendererInterface
         $this->actionRenderer = $actionRenderer;
         $this->fragmentRenderer = $fragmentRenderer;
         $this->documentRouteHandler = $documentRouteHandler;
-        $this->targetingConfigurator = $targetingConfigurator;
         $this->eventDispatcher = $eventDispatcher;
         $this->localeService = $localeService;
     }
@@ -76,7 +72,7 @@ class DocumentRenderer implements DocumentRendererInterface
     /**
      * {@inheritdoc}
      */
-    public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
+    public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = [], ?DocumentTargetingConfigurator $targetingConfigurator = null): string
     {
         $this->eventDispatcher->dispatch(
             new DocumentEvent($document, $attributes),
@@ -84,7 +80,10 @@ class DocumentRenderer implements DocumentRendererInterface
         );
 
         // apply best matching target group (if any)
-        $this->targetingConfigurator->configureTargetGroup($document);
+        if (class_exists (DocumentTargetingConfigurator::class)) {
+            $this->targetingConfigurator->configureTargetGroup ($document);
+        }
+
 
         // add document route to request if no route is set
         // this is needed for logic relying on the current route (e.g. pimcoreUrl helper)

@@ -21,7 +21,7 @@ use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 
 /**
@@ -93,7 +93,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         $container = \Pimcore::getContainer();
 
         $editableHandler = $container->get(EditableHandler::class);
-        $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
+
 
         if (!$this->snippet instanceof Document\Snippet) {
             return '';
@@ -102,9 +102,11 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         if (!$this->snippet->isPublished()) {
             return '';
         }
-
-        // apply best matching target group (if any)
-        $targetingConfigurator->configureTargetGroup($this->snippet);
+        if(class_exists (DocumentTargetingConfigurator::class)) {
+            $targetingConfigurator = $container->get (DocumentTargetingConfigurator::class);
+            // apply best matching target group (if any)
+            $targetingConfigurator->configureTargetGroup ($this->snippet);
+        }
 
         $params = $this->config;
         $params['document'] = $this->snippet;
