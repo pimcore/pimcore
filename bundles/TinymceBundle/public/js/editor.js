@@ -58,7 +58,7 @@ pimcore.bundle.tinymce.editor = Class.create({
                 editor.on('input', function (eChange) {
                     const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
                     if(this.maxChars != -1 && charCount > this.maxChars) {
-                        //TODO
+                        pimcore.helpers.showNotification(t('error'), t('char_count_limit_reached'), 'error');
                     }
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
@@ -67,8 +67,8 @@ pimcore.bundle.tinymce.editor = Class.create({
                             context: e.detail.context
                         }
                     }));
-                });
-            }
+                }.bind(this));
+            }.bind(this)
 
         }, language));
 
