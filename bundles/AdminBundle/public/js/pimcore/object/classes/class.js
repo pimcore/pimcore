@@ -1074,6 +1074,14 @@ pimcore.object.classes.klass = Class.create({
             value: data.index_key
         };
 
+        //fixes data to match store model
+        const indexesArray = [];
+        if(data.index_columns){
+            Object.values(data.index_columns).forEach(column => {
+                indexesArray.push({id: column, value: column});
+            });
+        }  
+
         var tagsField = new Ext.form.field.Tag({
             name: "index_columns",
             width:550,
@@ -1081,7 +1089,7 @@ pimcore.object.classes.klass = Class.create({
             minChars: 2,
             store: this.tagstore,
             fieldLabel: t("columns"),
-            value: data.columns,
+            value: indexesArray,
             draggable: true,
             displayField: 'value',
             valueField: 'value',
@@ -1089,7 +1097,7 @@ pimcore.object.classes.klass = Class.create({
             delimiter: '\x01',
             createNewOnEnter: true,
             componentCls: 'superselect-no-drop-down',
-            value: data.index_columns
+            valueParam: indexesArray
         });
 
         var removeButton = new Ext.button.Button({

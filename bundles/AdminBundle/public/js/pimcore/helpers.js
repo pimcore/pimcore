@@ -3221,7 +3221,7 @@ pimcore.helpers.buildMenu = function(items) {
             priority += 10;
         }
         // if there are no submenus left, skip to the next item
-        if(items[i].menu === undefined) {
+        if(items[i].menu === undefined || null === items[i].menu) {
             continue;
         }
 
@@ -3235,3 +3235,70 @@ pimcore.helpers.buildMenu = function(items) {
         items[i].menu = Ext.create('pimcore.menu.menu', items[i].menu);
     }
 };
+
+pimcore.helpers.buildMainNavigationMarkup = function(menu) {
+    // priority for main menu starts at 10
+    // leaving enough space for bundles etc.
+
+    let priority = 10;
+    Object.keys(menu).forEach(key => {
+        if(menu[key].priority === undefined) {
+            menu[key].priority = priority;
+            priority += 10;
+        }
+    });
+
+
+    const dh = Ext.DomHelper;
+    const ul = Ext.get("pimcore_navigation_ul");
+    const menuPrefix = 'pimcore_menu_';
+    
+    // sorting must be done manually here.
+    Object.keys(menu).sort((a, b) => {
+        // a and b are the keys like file, extras e.t.c
+        // we use the keys to get the menu object themselves with the priorities
+        return pimcore.helpers.priorityCompare(menu[a], menu[b]);
+    }).filter(key => {
+        // the notifications are excluded from this
+        return !menu[key]['exclude'];
+    }).forEach(key => {
+        const li = {
+            id: menuPrefix + key,
+            tag: 'li',
+            cls: 'pimcore_menu_item pimcore_menu_needs_children',
+            html: '<div id="menuitem-' + key + '-iconEl" data-ref="iconEl" class="x-menu-item-main-icon x-menu-item-icon ' + menu[key]['iconCls'] + '"></div>',
+            'data-menu-tooltip': menu[key]['label']
+        };
+        if(menu[key]['style']) {
+            li.style = menu[key]['style'];
+        }
+        dh.append(ul, li);
+    });
+
+    // add the maintenance at last
+    dh.append(ul,
+        {
+            id: menuPrefix + 'maintenance',
+            tag: 'li',
+            cls: 'pimcore_menu_item',
+            style: 'display:none;',
+            'data-menu-tooltip': t('deactivate_maintenance')
+        }
+    );
+}
+
+pimcore.helpers.priorityCompare = function(a, b) {
+    let priorityA = a.priority ?? Number.MAX_VALUE;
+    let priorityB = b.priority ?? Number.MAX_VALUE;
+
+    if(priorityA > priorityB) {
+        return 1;
+    }
+
+    if(priorityA < priorityB) {
+        return -1;
+    }
+
+    return 0;
+}
+

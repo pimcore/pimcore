@@ -120,14 +120,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->vertical;
     }
 
-    /**
-     * @return null
-     */
-    public function getDefaultValue()
-    {
-        return null;
-    }
-
     public function setVertical(bool $vertical): static
     {
         $this->vertical = (bool) $vertical;
