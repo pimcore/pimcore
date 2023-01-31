@@ -386,6 +386,22 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
         return this.datax;
     },
 
+    isValid: function ($super) {
+        if(!$super()) {
+            return false;
+        }
+
+        const data = this.getData();
+        const allowedClassId = trim(data.allowedClassId);
+
+        if (!allowedClassId || allowedClassId === "null" || allowedClassId.length < 1) {
+            this.datax.invalidFieldError = t("mandatory_field_empty") + " - " + t('objectsMetadata_allowed_class');
+            return false;
+        }
+
+        return true;
+    },
+
     applyData: function ($super){
         $super();
         return this.getData();

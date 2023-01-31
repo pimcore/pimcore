@@ -1388,15 +1388,6 @@ pimcore.object.classes.klass = Class.create({
                     fieldValidation = node.data.editor.isValid();
                 }
 
-                if (fieldValidation && data.fieldtype === 'advancedManyToManyObjectRelation') {
-                    const allowedClassId = trim(data.allowedClassId);
-
-                    if (!allowedClassId || allowedClassId === "null" || allowedClassId.length < 1) {
-                        fieldValidation = false;
-                        data.invalidFieldError = t("mandatory_field_empty") + " - " + t('objectsMetadata_allowed_class');
-                    }
-                }
-
                 var view = this.tree.getView();
                 // check if the name is unique, localizedfields can be used more than once
                 var nodeEl = Ext.fly(view.getNodeByRecord(node));
