@@ -74,5 +74,3 @@ abstract class AbstractDefinitionHelper extends Module
 
     abstract public function initializeDefinitions(): void;
 }
-
-@class_alias(AbstractDefinitionHelper::class, 'Pimcore\Tests\Support\Helper\AbstractDefinitionHelper');
