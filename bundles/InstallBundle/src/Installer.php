@@ -26,9 +26,9 @@ use Doctrine\DBAL\DriverManager;
 use PDO;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
+use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
 use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
-use Pimcore\Bundle\SystemInfoBundle\PimcoreSystemInfoBundle;
 use Pimcore\Bundle\UuidBundle\PimcoreUuidBundle;
 use Pimcore\Bundle\WordExportBundle\PimcoreWordExportBundle;
 use Pimcore\Bundle\XliffBundle\PimcoreXliffBundle;
@@ -49,7 +49,6 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 
 /**
  * @internal
