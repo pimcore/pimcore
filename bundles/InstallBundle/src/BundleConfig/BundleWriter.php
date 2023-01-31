@@ -15,13 +15,20 @@ class BundleWriter
         if (!file_exists($bundlesPhpFile)) {
             throw new FileNotFoundException();
         }
-
-        $installableBundles = [];
-        foreach($bundles as $index => $bundle) {
-            if (array_key_exists($index, Installer::INSTALLABLE_BUNDLES)) {
-                $installableBundles[$bundle] = ['all' => true];
+        $bundlesToInstall = [];
+        foreach($bundles as $bundle) {
+            if (in_array($bundle, Installer::INSTALLABLE_BUNDLES)) {
+                $bundlesToInstall[$bundle] = ['all' => true];
             }
         }
-        File::putPhpFile($bundlesPhpFile, to_php_data_file_format($installableBundles));
+
+        // get installed bundles, they have to stay in the bundles.php, but won't be installed a second time
+        $enabledBundles = include $bundlesPhpFile;
+
+        if(is_array($enabledBundles) && !empty($enabledBundles)) {
+            $bundlesToInstall = array_merge($bundlesToInstall, $enabledBundles);
+        }
+
+        File::putPhpFile($bundlesPhpFile, to_php_data_file_format($bundlesToInstall));
     }
 }

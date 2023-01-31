@@ -29,11 +29,13 @@ use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
 use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
 use Pimcore\Bundle\SystemInfoBundle\PimcoreSystemInfoBundle;
+use Pimcore\Bundle\UuidBundle\PimcoreUuidBundle;
 use Pimcore\Bundle\WordExportBundle\PimcoreWordExportBundle;
 use Pimcore\Bundle\XliffBundle\PimcoreXliffBundle;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Helper;
+use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\User;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
@@ -57,13 +59,13 @@ class Installer
     const EVENT_NAME_STEP = 'pimcore.installer.step';
 
     public const INSTALLABLE_BUNDLES = [
-        PimcoreSeoBundle::class,
         PimcoreGlossaryBundle::class,
+        PimcoreSeoBundle::class,
         PimcoreSimpleBackendSearchBundle::class,
         PimcoreStaticRoutesBundle::class,
-        PimcoreSystemInfoBundle::class,
+        PimcoreUuidBundle::class,
         PimcoreWordExportBundle::class,
-        PimcoreXliffBundle::class
+        PimcoreXliffBundle::class,
     ];
 
     private LoggerInterface $logger;
@@ -501,9 +503,8 @@ class Installer
     {
         $writer = new BundleWriter();
         $writer->addBundlesToConfig($this->bundlesToInstall);
-        foreach(self::INSTALLABLE_BUNDLES as $index => $bundle) {
-            // add the bundle to bundles.php
-            if(in_array($index, $this->bundlesToInstall)) {
+        foreach($this->bundlesToInstall as $bundle) {
+            if(in_array($bundle, self::INSTALLABLE_BUNDLES) && !$this->isBundleInstalled($bundle)) {
                 $this->runCommand([
                     'pimcore:bundle:install',
                     $bundle,
@@ -829,5 +830,10 @@ class Installer
 
         // set the id of the system user to 0
         $db->update('users', ['id' => 0], ['name' => 'system', 'type' => 'user' ]);
+    }
+
+    private function isBundleInstalled(string $bundle): bool
+    {
+        return null !== SettingsStore::get('BUNDLE_INSTALLED__' . $bundle, 'pimcore');
     }
 }
