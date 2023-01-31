@@ -305,7 +305,7 @@ class InstallCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->isInteractive() && $this->io->confirm('Do you want to install bundles?', false)) {
-            $bundles = $this->io->choice('Which bundle(s) do you want to install? You can choose multiple e.g. 0,1,2,3', Installer::INSTALLABLE_BUNDLES, null, true);
+            $bundles = $this->io->choice('Which bundle(s) do you want to install? You can choose multiple e.g. 0,1,2,3', Installer::INSTALLABLE_BUNDLES, [], true);
             $this->installer->setBundlesToInstall($bundles);
         }
 
