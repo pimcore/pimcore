@@ -110,6 +110,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             name: 'allowedClassId',
             value: this.datax.allowedClassId,
             forceSelection:true,
+            allowBlank: false,
             listeners: {
                 change: function(field, classNamevalue, oldValue) {
                     this.datax.allowedClassId = classNamevalue;
@@ -118,7 +119,6 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                     }
                 }.bind(this)
             }
-
         });
 
         this.specificPanel.add(this.classCombo);

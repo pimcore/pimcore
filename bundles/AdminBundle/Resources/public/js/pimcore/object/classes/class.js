@@ -1360,9 +1360,6 @@ pimcore.object.classes.klass = Class.create({
         }
     },
 
-
-
-
     removeChild: function (tree, record) {
         if (this.id != 0) {
             if (this.currentNode == record.data.editor) {
@@ -1382,13 +1379,22 @@ pimcore.object.classes.klass = Class.create({
         if (node.data.editor) {
             if (typeof node.data.editor.getData == "function") {
                 data = node.data.editor.getData();
-
+                data.invalidFieldError = null;
                 data.name = trim(data.name);
 
                 // field specific validation
                 var fieldValidation = true;
                 if(typeof node.data.editor.isValid == "function") {
                     fieldValidation = node.data.editor.isValid();
+                }
+
+                if (fieldValidation && data.fieldtype === 'advancedManyToManyObjectRelation') {
+                    const allowedClassId = trim(data.allowedClassId);
+
+                    if (!allowedClassId || allowedClassId === "null" || allowedClassId.length < 1) {
+                        fieldValidation = false;
+                        data.invalidFieldError = t("mandatory_field_empty") + " - " + t('objectsMetadata_allowed_class');
+                    }
                 }
 
                 var view = this.tree.getView();
@@ -1425,6 +1431,10 @@ pimcore.object.classes.klass = Class.create({
                     }
 
                     var invalidFieldsText = t("class_field_name_error") + ": '" + data.name + "'";
+
+                    if (data.invalidFieldError) {
+                        invalidFieldsText = invalidFieldsText + " (" + data.invalidFieldError + ")";
+                    }
 
                     if(node.data.editor.invalidFieldNames){
                         invalidFieldsText = t("reserved_field_names_error")
