@@ -304,6 +304,11 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if ($input->isInteractive() && $this->io->confirm('Do you want to install bundles?', false)) {
+            $bundles = $this->io->choice('Which bundle(s) do you want to install? You can choose multiple e.g. 0,1,2,3', Installer::INSTALLABLE_BUNDLES, null, true);
+            $this->installer->setBundlesToInstall($bundles);
+        }
+
         if ($input->isInteractive() && !$this->io->confirm('This will install Pimcore with the given settings. Do you want to continue?')) {
             return 0;
         }
@@ -407,5 +412,15 @@ class InstallCommand extends Command
             $this->io->getErrorStyle()->write($errorResults);
             $this->io->getErrorStyle()->newLine(2);
         }
+    }
+
+    private function generateBundleListText(): string
+    {
+        $bundles = Installer::INSTALLABLE_BUNDLES;
+        $bundleText = '';
+        foreach($bundles as $index => $bundle) {
+            $bundleText .= sprintf("%d: %s\n", $index, $bundle);
+        }
+        return $bundleText;
     }
 }

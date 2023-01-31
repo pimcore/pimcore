@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle;
 
+use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
+use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
@@ -24,6 +26,11 @@ use Doctrine\DBAL\DriverManager;
 use PDO;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
+use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
+use Pimcore\Bundle\StaticRoutesBundle\PimcoreStaticRoutesBundle;
+use Pimcore\Bundle\SystemInfoBundle\PimcoreSystemInfoBundle;
+use Pimcore\Bundle\WordExportBundle\PimcoreWordExportBundle;
+use Pimcore\Bundle\XliffBundle\PimcoreXliffBundle;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Helper;
@@ -40,6 +47,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 
 /**
  * @internal
@@ -47,6 +55,16 @@ use Symfony\Component\Process\Process;
 class Installer
 {
     const EVENT_NAME_STEP = 'pimcore.installer.step';
+
+    public const INSTALLABLE_BUNDLES = [
+        PimcoreSeoBundle::class,
+        PimcoreGlossaryBundle::class,
+        PimcoreSimpleBackendSearchBundle::class,
+        PimcoreStaticRoutesBundle::class,
+        PimcoreSystemInfoBundle::class,
+        PimcoreWordExportBundle::class,
+        PimcoreXliffBundle::class
+    ];
 
     private LoggerInterface $logger;
 
@@ -90,6 +108,12 @@ class Installer
      */
     private bool $skipDatabaseConfig = false;
 
+    /**
+     * Bundles that will be installed
+     * @var array
+     */
+    private array $bundlesToInstall =  [];
+
     public function setSkipDatabaseConfig(bool $skipDatabaseConfig): void
     {
         $this->skipDatabaseConfig = $skipDatabaseConfig;
@@ -104,6 +128,7 @@ class Installer
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
+        'install_bundles' => 'Installing bundles ...',
         'migrations' => 'Marking all migrations as done ...',
         'complete' => 'Install complete!',
     ];
@@ -144,6 +169,11 @@ class Installer
     public function needsDbCredentials(): bool
     {
         return empty($this->dbCredentials);
+    }
+
+    public function setBundlesToInstall(array $bundlesToInstall): void
+    {
+        $this->bundlesToInstall = $bundlesToInstall;
     }
 
     public function checkPrerequisites(Connection $db = null): array
@@ -387,6 +417,11 @@ class Installer
         $this->dispatchStepEvent('install_classes');
         $this->installClasses();
 
+        if(!empty($this->bundlesToInstall)) {
+            $this->dispatchStepEvent('install_bundles');
+            $this->installBundles();
+        }
+
         $this->dispatchStepEvent('migrations');
         $this->markMigrationsAsDone();
 
@@ -460,6 +495,21 @@ class Installer
             'pimcore:deployment:classes-rebuild',
             '-c',
         ], 'Installing class definitions');
+    }
+
+    private function installBundles(): void
+    {
+        $writer = new BundleWriter();
+        $writer->addBundlesToConfig($this->bundlesToInstall);
+        foreach(self::INSTALLABLE_BUNDLES as $index => $bundle) {
+            // add the bundle to bundles.php
+            if(in_array($index, $this->bundlesToInstall)) {
+                $this->runCommand([
+                    'pimcore:bundle:install',
+                    $bundle,
+                ], 'Installing ' . $bundle);
+            }
+        }
     }
 
     private function installAssets(KernelInterface $kernel): void
