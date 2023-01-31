@@ -1,14 +1,14 @@
 pimcore.registerNS("pimcore.bundle.tinymce.editor");
 pimcore.bundle.tinymce.editor = Class.create({
     languageMapping: {
-        zh_Hans: 'zh_CN',
-        en: 'en_GB',
         fr: 'fr_FR',
         pt: 'pt_PT',
         sv: 'sv_SE',
         th: 'th_TH',
         hu: 'hu_HU'
     },
+
+    maxChars: -1,
 
     initialize: function () {
         document.addEventListener(parent.pimcore.events.initializeWysiwyg, this.initializeWysiwyg.bind(this));
@@ -18,120 +18,9 @@ pimcore.bundle.tinymce.editor = Class.create({
     },
 
     initializeWysiwyg: function (e) {
-        this.eConfig = {};
-        //
-        // if(e.detail.context === 'object') {
-        //     this.eConfig = {
-        //         width: e.detail.config.width,
-        //         height: e.detail.config.height,
-        //         language: pimcore.settings["language"],
-        //         resize_enabled: false,
-        //         entities: false,
-        //         entities_greek: false,
-        //         entities_latin: false,
-        //         extraAllowedContent: "*[pimcore_type,pimcore_id,pimcore_disable_thumbnail]",
-        //         baseFloatZIndex: 40000 // prevent that the editor gets displayed behind the grid cell editor window
-        //     };
-        // }
-        //
-        // let specificConfig = Object.assign({}, e.detail.config);
-        //
-        // if (!e.detail.config["toolbarGroups"] && e.detail.config['toolbarGroups'] !== false) {
-        //     this.eConfig.toolbarGroups = [
-        //         {name: 'basicstyles', groups: ['undo', "find", 'basicstyles', 'list']},
-        //         '/',
-        //         {name: 'paragraph', groups: ['align', 'indent']},
-        //         {name: 'blocks'},
-        //         {name: 'links'},
-        //         {name: 'insert'},
-        //         "/",
-        //         {name: 'styles'},
-        //         {name: 'tools', groups: ['colors', "tools", 'cleanup', 'mode', "others"]}
-        //     ];
-        // }
-        //
-        // delete specificConfig.width;
-        //
-        // if(e.detail.context === 'document') {
-        //     this.eConfig.language = pimcore.settings["language"];
-        //     this.eConfig.entities = false;
-        //     this.eConfig.entities_greek = false;
-        //     this.eConfig.entities_latin = false;
-        //     this.eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
-        // }
-        //
-        // if(e.detail.context === 'document' || e.detail.context === 'document') {
-        //     if (typeof (pimcore[e.detail.context].tags.wysiwyg.defaultEditorConfig) == 'object') {
-        //         this.eConfig = mergeObject(this.eConfig, pimcore[e.detail.context].tags.wysiwyg.defaultEditorConfig);
-        //     }
-        // }
-        //
-        // if(e.detail.context === 'document') {
-        //     this.eConfig = mergeObject(this.eConfig, specificConfig);
-        // } else if(e.detail.context === 'object') {
-        //     if(this.eConfig.hasOwnProperty('removePlugins')) {
-        //         this.eConfig.removePlugins += ",tableresize";
-        //     } else {
-        //         this.eConfig.removePlugins = "tableresize";
-        //     }
-        //
-        //     if(e.detail.config.toolbarConfig) {
-        //         const useNativeJson = Ext.USE_NATIVE_JSON;
-        //         Ext.USE_NATIVE_JSON = false;
-        //         var elementCustomConfig = Ext.decode(e.detail.config.toolbarConfig);
-        //         Ext.USE_NATIVE_JSON = useNativeJson;
-        //         this.eConfig = mergeObject(this.eConfig, elementCustomConfig);
-        //     }
-        //
-        //     if(!isNaN(e.detail.config.maxCharacters) && e.detail.config.maxCharacters > 0) {
-        //         const maxChars = e.detail.config.maxCharacters;
-        //         this.eConfig.wordcount = {
-        //             showParagraphs: false,
-        //             showWordCount: false,
-        //             showCharCount: true,
-        //             maxCharCount: maxChars
-        //         }
-        //     } else {
-        //         this.eConfig.wordcount = {
-        //             showParagraphs: false,
-        //             showWordCount: false,
-        //             showCharCount: true,
-        //             maxCharCount: -1
-        //         }
-        //     }
-        // } else if (e.detail.context === 'translation') {
-        //     if(this.eConfig.hasOwnProperty('removePlugins')) {
-        //         this.eConfig.removePlugins += ",tableresize";
-        //     } else {
-        //         this.eConfig.removePlugins = "tableresize";
-        //     }
-        //
-        //     //prevent override important settings!
-        //     this.eConfig.resize_enabled = false;
-        //     this.eConfig.enterMode = CKEDITOR.ENTER_BR;
-        //     this.eConfig.entities = false;
-        //     this.eConfig.entities_greek = false;
-        //     this.eConfig.entities_latin = false;
-        //     this.eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
-        //     this.eConfig.baseFloatZIndex = 40000;   // prevent that the editor gets displayed behind the grid cell editor window
-        // }
-
         if (e.detail.context === 'object') {
             if (!isNaN(e.detail.config.maxCharacters) && e.detail.config.maxCharacters > 0) {
-                const maxChars = e.detail.config.maxCharacters;
-                this.eConfig.wordcount = {
-                    showParagraphs: false,
-                    showWordCount: false,
-                    showCharCount: true,
-                    maxCharCount: maxChars
-                }
-            } else {
-                this.eConfig.wordcount = {
-                    showParagraphs: false,
-                    showWordCount: false,
-                    showCharCount: true,
-                    maxCharCount: -1
-                }
+                this.maxChars = e.detail.config.maxCharacters;
             }
         }
     },
@@ -143,15 +32,34 @@ pimcore.bundle.tinymce.editor = Class.create({
         if (!language) {
             language = userLanguage;
         }
-        tinymce.init({
+        if(language !== 'en') {
+            language = {language: language};
+        } else {
+            language = {};
+        }
+        tinymce.init(mergeObject({
             selector: `#${this.textareaId}`,
+            height: 500,
+            menubar: false,
+            plugins: [
+                'autolink', 'lists', 'link', 'image', 'code',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | ' +
+                'bold italic | alignleft aligncenter ' +
+                'alignright alignjustify | link | table | bullist numlist outdent indent | ' +
+                'removeformat | code | help',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
             inline: true,
             base_url: '/bundles/pimcoretinymce/build/tinymce',
             suffix: '.min',
             extended_valid_elements: 'a[name|href|target|title|pimcore_type|pimcore_id],img[style|longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|pimcore_type|pimcore_id]',
-            language: language,
             init_instance_callback: function (editor) {
                 editor.on('input', function (eChange) {
+                    const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
+                    if(this.maxChars != -1 && charCount > this.maxChars) {
+                        //TODO
+                    }
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,
@@ -162,7 +70,7 @@ pimcore.bundle.tinymce.editor = Class.create({
                 });
             }
 
-        });
+        }, language));
 
     },
 
