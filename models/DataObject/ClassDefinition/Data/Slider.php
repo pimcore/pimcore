@@ -421,6 +421,16 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
+     * @param string|null $data
+     *
+     * @return bool
+     */
+    public function isEmpty($data)
+    {
+        return !is_numeric($data);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getParameterTypeDeclaration(): ?string
