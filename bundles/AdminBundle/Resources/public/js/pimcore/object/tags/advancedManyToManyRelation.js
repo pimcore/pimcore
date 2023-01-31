@@ -64,7 +64,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             fields.push({name: this.fieldConfig.columns[i].key, defaultValue: defaultValue});
         }
 
-        fields.push("rowId");
+        fields.push({name: "rowId"});
 
         var modelName = 'ObjectsMultihrefMetadataEntry';
         if (!Ext.ClassManager.isCreated(modelName)) {
