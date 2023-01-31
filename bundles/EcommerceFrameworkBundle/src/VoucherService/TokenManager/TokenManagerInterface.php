@@ -28,8 +28,6 @@ use Pimcore\Model\DataObject\OnlineShopVoucherToken;
  */
 interface TokenManagerInterface
 {
-    public function __construct(AbstractVoucherTokenType $configuration);
-
     /**
      * Checks if the configuration objects contains valid values to
      * generate the new token(s).

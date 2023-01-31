@@ -20,25 +20,14 @@ Ext.define('pimcore.menu.menu', {
 
     initComponent: function() {
 
-        var me = this,
-            items = me.items;
+        let me = this;
+        let items = me.items;
 
-        me.items = Ext.Array.sort(items, function(a, b) {
-            let priorityA = a.priority ?? Number.MAX_VALUE;
-            let priorityB = b.priority ?? Number.MAX_VALUE;
-
-            if(priorityA > priorityB) {
-                return 1;
-            }
-
-            if(priorityA < priorityB) {
-                return -1;
-            }
-
-            return 0;
-
-        });
+        if(items) {
+            me.items = Ext.Array.sort(items, pimcore.helpers.priorityCompare);
+        }
 
         me.callParent();
     }
 });
+

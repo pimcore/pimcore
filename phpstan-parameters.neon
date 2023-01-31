@@ -15,6 +15,7 @@ parameters:
     excludePaths:
         - '**/Processor/PdfReactor.php'
         - '**/PDFreactor.class.php'
+        - 'bundles/EcommerceFrameworkBundle/*'
         - 'bundles/GoogleMarketingBundle/tests/*'
 
     ignoreErrors:

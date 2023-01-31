@@ -186,7 +186,8 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd instanceof QueryResourcePersistenceAwareInterface) {
+            if ($fd instanceof QueryResourcePersistenceAwareInterface
+                && $fd instanceof DataObject\ClassDefinition\Data) {
                 $method = 'get' . $key;
                 $fieldValue = $this->model->$method();
                 $insertData = $fd->getDataForQueryResource($fieldValue, $object);

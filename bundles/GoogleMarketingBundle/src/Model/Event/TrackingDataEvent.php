@@ -28,6 +28,9 @@ class TrackingDataEvent extends Event
 
     private SiteId $siteId;
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $data;
 
     /**
@@ -37,6 +40,10 @@ class TrackingDataEvent extends Event
 
     private string $template;
 
+    /**
+     * @param array<string, mixed> $data
+     * @param CodeBlock[] $blocks
+     */
     public function __construct(
         Config $config,
         SiteId $siteId,
@@ -61,11 +68,17 @@ class TrackingDataEvent extends Event
         return $this->siteId;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         return $this->data;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function setData(array $data): void
     {
         $this->data = $data;

@@ -115,27 +115,7 @@
 
 <div id="pimcore_sidebar">
     <div id="pimcore_navigation" style="display:none;">
-        <ul>
-            {% set navigations = {
-                'file': {'label': 'file', 'icon': 'file'},
-                'extras': {'label': 'tools', 'icon': 'build'},
-                'marketing': {'label': 'marketing', 'icon': 'bar_chart'},
-                'settings': {'label': 'settings', 'icon': 'settings'},
-                'ecommerce': {'label': 'bundle_ecommerce_mainmenu', 'icon': 'shopping_cart', 'extraAttr': 'style="display: none;"'},
-                'search': {'label': 'search', 'icon': 'search'}
-            } %}
-
-            {% set extraAttr = {'ecommerce': 'style="display: none;"'} %}
-
-            {% for navKey,navData in navigations %}
-                {% if config.inPerspective(runtimePerspective, navKey) %}
-                    <li id="pimcore_menu_{{ navKey }}" data-menu-tooltip="{{ navData["label"]|trans([],'admin') }}" class="pimcore_menu_item pimcore_menu_needs_children" {{ navData["extraAttr"] ?? '' }}>
-                        <img src="/bundles/pimcoreadmin/img/material-icons/outline-{{ navData["icon"] }}-24px.svg">
-                    </li>
-                {% endif %}
-            {% endfor %}
-            <li id="pimcore_menu_maintenance" data-menu-tooltip="{{ "deactivate_maintenance"|trans([], 'admin') }}" class="pimcore_menu_item " style="display:none;"></li>
-        </ul>
+        <ul id="pimcore_navigation_ul"></ul>
     </div>
 
     <div id="pimcore_status"></div>

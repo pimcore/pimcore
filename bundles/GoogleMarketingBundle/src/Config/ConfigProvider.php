@@ -21,10 +21,13 @@ class ConfigProvider
 {
     private ?Config $config = null;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     private ?array $configObject = null;
 
     /**
-     * @param array|null $configObject
+     * @param array<string, mixed>|null $configObject
      */
     public function __construct(array $configObject = null)
     {
@@ -40,6 +43,9 @@ class ConfigProvider
         return $this->config;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getConfigObject(): array
     {
         if (null === $this->configObject) {
@@ -49,6 +55,9 @@ class ConfigProvider
         return $this->configObject;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function loadDefaultConfigObject(): array
     {
         $reportConfig = \Pimcore\Config::getReportConfig();
