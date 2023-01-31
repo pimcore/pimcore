@@ -17,13 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle;
 
-use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
-use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
 use PDO;
+use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
+use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
