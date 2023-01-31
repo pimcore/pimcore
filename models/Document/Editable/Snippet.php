@@ -29,6 +29,7 @@ use Pimcore\Tool\DeviceDetector;
  */
 class Snippet extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
+
     /**
      * Contains the ID of the linked snippet
      *
@@ -105,7 +106,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         if(class_exists (DocumentTargetingConfigurator::class)) {
             $targetingConfigurator = $container->get (DocumentTargetingConfigurator::class);
             // apply best matching target group (if any)
-            $targetingConfigurator->configureTargetGroup ($this->snippet);
+            $targetingConfigurator->configureTargetGroup($this->snippet);
         }
 
         $params = $this->config;
@@ -125,6 +126,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
 
             // TODO is this enough for cache or should we disable caching completely?
             if ($this->snippet->getUseTargetGroup()) {
+
                 $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
             }
 

@@ -284,7 +284,7 @@ class FullPageCacheListener
         }
     }
 
-    public function onKernelResponse(ResponseEvent $event, ?VisitorInfoResolver $visitorInfoResolver = null): void
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -308,13 +308,10 @@ class FullPageCacheListener
         if (!$this->responseCanBeCached($response)) {
             $this->disable('Response can\'t be cached');
         }
-        if (class_exists(VisitorInfoResolver::class)) {
-            // check if targeting matched anything and disable cache
-            if ($visitorInfoResolver->disabledByTargeting ()) {
-                $this->disable ('Targeting matched rules/target groups');
-                return;
-            }
+        if (class_exists(VisitorInfoResolver::class) && $this->enabled && $this->disableReason == 'Targeting matched rules/target groups') {
+            return;
         }
+
         if ($this->enabled && $this->sessionStatus->isDisabledBySession($request)) {
             $this->disable('Session in use');
         }
@@ -367,7 +364,7 @@ class FullPageCacheListener
         }
     }
 
-    private function responseCanBeCached(Response $response): bool
+    public function responseCanBeCached(Response $response): bool
     {
         $cache = true;
 

@@ -15,13 +15,14 @@
 
 namespace Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule\Listing;
 
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule\Listing;
 use Pimcore\Model;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 
 /**
  * @internal
  *
- * @property Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule\Listing $model
+ * @property Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {

@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\Condition;
 
-use Pimcore\Event\TargetingEvents;
+use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\VisitedPagesCounter;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\DataProviderDependentInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;

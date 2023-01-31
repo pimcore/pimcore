@@ -81,7 +81,7 @@ class DocumentRenderer implements DocumentRendererInterface
 
         // apply best matching target group (if any)
         if (class_exists (DocumentTargetingConfigurator::class)) {
-            $this->targetingConfigurator->configureTargetGroup ($document);
+            $targetingConfigurator->configureTargetGroup($document);
         }
 
 

@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoResolver;
 use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;
@@ -51,7 +52,8 @@ class RenderletController extends AdminController
         Request $request,
         ActionRenderer $actionRenderer,
         EditableHandler $editableHandler,
-        LocaleServiceInterface $localeService
+        LocaleServiceInterface $localeService,
+        ?TargetingPageController $targetingPageController = null
     ): Response {
         $query = $request->query->all();
         $attributes = [];
@@ -61,7 +63,7 @@ class RenderletController extends AdminController
 
         // apply targeting to element
         if(class_exists (TargetingPageController::class)) {
-            TargetingPageController::configureElementTargeting ($request, $element);
+            $targetingPageController->configureElementTargeting ($request, $element);
         }
 
         $controller = $request->get('controller');

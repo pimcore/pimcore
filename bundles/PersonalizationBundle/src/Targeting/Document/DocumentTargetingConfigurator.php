@@ -24,6 +24,7 @@ use Pimcore\Model\Document;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
+use Pimcore\Model\Document\PageSnippet;
 
 class DocumentTargetingConfigurator
 {
@@ -196,7 +197,8 @@ class DocumentTargetingConfigurator
         if (!$document instanceof TargetingDocumentInterface) {
             return [];
         }
-        /** @var Document\TargetingDocument $document */
+
+        /** @var PageSnippet $document */
         $cacheKey = sprintf('document_target_groups_%d', $document->getId());
 
         if ($targetGroups = $this->cache->load($cacheKey)) {

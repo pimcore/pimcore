@@ -21,7 +21,7 @@ use Pimcore\Bundle\PersonalizationBundle\Model\Document\Traits\TargetDocumentTra
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 
 /**
- * @method \Pimcore\Model\Document\Snippet\Dao getDao()
+ * @method \Pimcore\Bundle\PersonalizationBundle\Model\Document\Snippet\Dao getDao()
  */
 class Snippet extends PageSnippet implements TargetingDocumentInterface
 {

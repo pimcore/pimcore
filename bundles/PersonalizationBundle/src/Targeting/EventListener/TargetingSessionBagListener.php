@@ -18,8 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
 use Pimcore\Config;
-use Pimcore\Bundle\PersonalizationBundle\Event\Cache\FullPage\IgnoredSessionKeysEvent;
-use Pimcore\Bundle\PersonalizationBundle\Event\Cache\FullPage\PrepareResponseEvent;
+use Pimcore\Event\Cache\FullPage\IgnoredSessionKeysEvent;
+use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;

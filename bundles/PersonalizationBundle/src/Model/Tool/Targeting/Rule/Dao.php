@@ -22,7 +22,7 @@ use Pimcore\Tool\Serialize;
 /**
  * @internal
  *
- * @property Rule|Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule\Dao $model
+ * @property Rule|Dao $model
  */
 class Dao extends Model\Dao\AbstractDao
 {

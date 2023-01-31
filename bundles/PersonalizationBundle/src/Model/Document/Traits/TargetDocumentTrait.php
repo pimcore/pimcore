@@ -16,10 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Model\Document\Traits;
 
+use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentDaoInterface;
 use Pimcore\Model\Document\Editable;
 
 /**
  * @internal
+ *
+ *
+ * @method TargetingDocumentDaoInterface getDao()
  */
 trait TargetDocumentTrait
 {
@@ -84,7 +88,7 @@ trait TargetDocumentTrait
      */
     public function hasTargetGroupSpecificEditables (): bool
     {
-        return $this->getDao ()->hasTargetGroupSpecificEditables ();
+        return $this->getDao()->hasTargetGroupSpecificEditables ();
     }
 
     /**
@@ -92,7 +96,7 @@ trait TargetDocumentTrait
      */
     public function getTargetGroupSpecificEditableNames (): array
     {
-        return $this->getDao ()->getTargetGroupSpecificEditableNames ();
+        return $this->getDao()->getTargetGroupSpecificEditableNames ();
     }
 
     /**

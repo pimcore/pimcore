@@ -299,25 +299,4 @@ class VisitorInfoResolver
 
         return false;
     }
-
-    public function disabledByTargeting(): bool
-    {
-
-        if (!$this->visitorInfoStorage->hasVisitorInfo ()) {
-            return false;
-        }
-
-        $visitorInfo = $this->visitorInfoStorage->getVisitorInfo ();
-
-        if (!empty($visitorInfo->getMatchingTargetingRules ())) {
-            return true;
-        }
-
-        if (!empty($visitorInfo->getTargetGroupAssignments ())) {
-            return true;
-        }
-
-        return false;
-
-    }
 }

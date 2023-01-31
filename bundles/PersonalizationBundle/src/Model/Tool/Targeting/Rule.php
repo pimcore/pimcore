@@ -54,7 +54,7 @@ class Rule extends Model\AbstractModel
 
     public static function inTarget(mixed $target): bool
     {
-        if ($target instanceof Model\Tool\Targeting\Rule) {
+        if ($target instanceof Rule) {
             $targetId = $target->getId();
         } elseif (is_string($target)) {
             $target = self::getByName($target);
