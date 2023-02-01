@@ -30,6 +30,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Templating\Renderer\EditableRenderer;
+use Pimcore\Tool\Frontend;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -293,8 +294,25 @@ class PageController extends DocumentControllerBase
         ]);
 
         if ($list->getTotalCount() > 0) {
-            $success = false;
-            $message[] = 'URL path already exists.';
+            $checkDocument = Document::getById($docId);
+            $checkSite     = Frontend::getSiteForDocument($checkDocument);
+            $checkSiteId   = empty($checkSite) ? 0 : $checkSite->getId();
+
+            foreach ($list as $document) {
+                if (empty($document)) {
+                    continue;
+                }
+
+                $site   = Frontend::getSiteForDocument($document);
+                $siteId = empty($site) ? 0 : $site->getId();
+
+                if ($siteId === $checkSiteId) {
+                    $success   = false;
+                    $message[] = 'URL path already exists.';
+
+                    break;
+                }
+            }
         }
 
         return $this->adminJson([

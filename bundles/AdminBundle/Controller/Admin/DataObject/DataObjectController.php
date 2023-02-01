@@ -513,7 +513,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             if ($currentLayoutId === null && count($validLayouts) > 0) {
-                $currentLayoutId = $validLayouts[0]->getId();
+                $currentLayoutId = reset($validLayouts)->getId();
             }
 
             if (!empty($validLayouts)) {
@@ -1568,11 +1568,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function publishVersionAction(Request $request)
     {
-        $version = Model\Version::getById((int) $request->get('id'));
-        if (!$version) {
-            throw $this->createNotFoundException();
+        $id = (int)$request->get('id');
+        $version = Model\Version::getById($id);
+        $object = $version?->loadData();
+        if (!$object) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
-        $object = $version->loadData();
 
         $currentObject = DataObject::getById($object->getId());
         if ($currentObject->isAllowed('publish')) {
@@ -1613,17 +1614,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
-        $object = $version->loadData();
-
-        if (method_exists($object, 'getLocalizedFields')) {
-            /** @var DataObject\Localizedfield $localizedFields */
-            $localizedFields = $object->getLocalizedFields();
-            $localizedFields->setLoadedAllLazyData();
-        }
-
-        DataObject::setDoNotRestoreKeyAndPath(false);
+        $object = $version?->loadData();
 
         if ($object) {
+            if (method_exists($object, 'getLocalizedFields')) {
+                /** @var DataObject\Localizedfield $localizedFields */
+                $localizedFields = $object->getLocalizedFields();
+                $localizedFields->setLoadedAllLazyData();
+            }
+
+            DataObject::setDoNotRestoreKeyAndPath(false);
+
             if ($object->isAllowed('versions')) {
                 return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/previewVersion.html.twig',
                     [
@@ -1658,7 +1659,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $id2 = (int)$to;
 
         $version1 = Model\Version::getById($id1);
-        $object1 = $version1->loadData();
+        $object1 = $version1?->loadData();
+
+        if (!$object1) {
+            throw $this->createNotFoundException('Version with id [' . $id1 . "] doesn't exist");
+        }
 
         if (method_exists($object1, 'getLocalizedFields')) {
             /** @var DataObject\Localizedfield $localizedFields1 */
@@ -1667,7 +1672,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         $version2 = Model\Version::getById($id2);
-        $object2 = $version2->loadData();
+        $object2 = $version2?->loadData();
+
+        if (!$object2) {
+            throw $this->createNotFoundException('Version with id [' . $id2 . "] doesn't exist");
+        }
 
         if (method_exists($object2, 'getLocalizedFields')) {
             /** @var DataObject\Localizedfield $localizedFields2 */
@@ -1677,22 +1686,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         DataObject::setDoNotRestoreKeyAndPath(false);
 
-        if ($object1 && $object2) {
-            if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
-                return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig',
-                    [
-                        'object1' => $object1,
-                        'versionNote1' => $version1->getNote(),
-                        'object2' => $object2,
-                        'versionNote2' => $version2->getNote(),
-                        'validLanguages' => Tool::getValidLanguages(),
-                    ]);
-            }
-
-            throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
+        if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
+            return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig',
+                [
+                    'object1' => $object1,
+                    'versionNote1' => $version1->getNote(),
+                    'object2' => $object2,
+                    'versionNote2' => $version2->getNote(),
+                    'validLanguages' => Tool::getValidLanguages(),
+                ]);
         }
 
-        throw $this->createNotFoundException('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
+        throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
     }
 
     /**

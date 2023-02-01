@@ -34,6 +34,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\ObjectAwareFieldInterface;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\DeepCopy\MarshalMatcher;
@@ -875,6 +876,12 @@ class Service extends Model\AbstractModel
             if ($data instanceof Model\AbstractModel) {
                 $properties = $data->getObjectVars();
                 foreach ($properties as $name => $value) {
+                    //do not renew object reference of ObjectAwareFieldInterface - as object might point to a
+                    //specific version of the object and must not be reloaded with DB version of object
+                    if (($data instanceof ObjectAwareFieldInterface || $data instanceof DataObject\Localizedfield) && $name === 'object') {
+                        continue;
+                    }
+
                     $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
                 }
             } else {
@@ -1114,6 +1121,8 @@ class Service extends Model\AbstractModel
 
         // replace all 4 byte unicode characters
         $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
+        // replace left to right marker characters ( lrm )
+        $key = preg_replace('/(\x{200e}|\x{200f})/u', '-', $key);
         // replace slashes with a hyphen
         $key = str_replace('/', '-', $key);
 

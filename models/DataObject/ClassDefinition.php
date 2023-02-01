@@ -27,6 +27,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
@@ -1422,6 +1423,16 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function setCompositeIndices($compositeIndices)
     {
+        $class = $this->getFieldDefinitions([]);
+        foreach ($compositeIndices as $indexInd => $compositeIndex) {
+            foreach ($compositeIndex['index_columns'] as $fieldInd => $fieldName) {
+                if (isset($class[$fieldName]) && $class[$fieldName] instanceof ManyToOneRelation) {
+                    $compositeIndices[$indexInd]['index_columns'][$fieldInd] = $fieldName . '__id';
+                    $compositeIndices[$indexInd]['index_columns'][] = $fieldName . '__type';
+                    $compositeIndices[$indexInd]['index_columns'] = array_unique($compositeIndices[$indexInd]['index_columns']);
+                }
+            }
+        }
         $this->compositeIndices = $compositeIndices ?? [];
 
         return $this;

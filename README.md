@@ -20,7 +20,7 @@ Pimcore - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM,
 ## Contribute  
 **Bug fixes:** please create a pull request including a step by step description to reproduce the problem  
 **Contribute features:** contact the core-team on our [Gitter channel](https://gitter.im/pimcore/pimcore) before you start developing   
-**Security vulnerabilities:** please use [this form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/)
+**Security vulnerabilities:** please see our [security policy](https://github.com/pimcore/pimcore/security/policy)
   
 For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 

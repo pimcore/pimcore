@@ -378,6 +378,8 @@ class Asset extends Element\AbstractElement
                 $suggestion_1 = (int) round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
 
                 $mp = $maxPixels / 1_000_000;
+                // unlink file before throwing exception
+                unlink($localPath);
 
                 throw new ValidationException("<p>Image dimensions of <em>{$data['filename']}</em> are too large.</p>
 <p>Max size: <code>{$mp}</code> <abbr title='Million pixels'>Megapixels</abbr></p>
@@ -442,7 +444,7 @@ class Asset extends Element\AbstractElement
         $mappings = [
             'unknown' => ["/\.stp$/"],
             'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/", '/photoshop/'],
-            'text' => ['/text/', '/xml$/', '/\.json$/'],
+            'text' => ['/text\//', '/xml$/', '/\.json$/'],
             'audio' => ['/audio/'],
             'video' => ['/video/'],
             'document' => ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/'],
