@@ -29,11 +29,15 @@ final class Version20211016084043 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE gridconfigs ADD setAsFavourite TINYINT(1) NULL');
+        if (!$schema->getTable('gridconfigs')->hasColumn('setAsFavourite')) {
+            $this->addSql('ALTER TABLE gridconfigs ADD setAsFavourite TINYINT(1) NULL');
+        }
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE gridconfigs DROP setAsFavourite');
+        if ($schema->getTable('gridconfigs')->hasColumn('setAsFavourite')) {
+            $this->addSql('ALTER TABLE gridconfigs DROP setAsFavourite');
+        }
     }
 }

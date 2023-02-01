@@ -32,11 +32,16 @@ final class Version20210624085031 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE email_log ADD error TEXT NULL');
+        if(!$schema->getTable('email_log')->hasColumn('error')) {
+            $this->addSql('ALTER TABLE email_log ADD error TEXT NULL');
+        }
+
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE email_log DROP error');
+        if ($schema->getTable('email_log')->hasColumn('error')) {
+            $this->addSql('ALTER TABLE email_log DROP error');
+        }
     }
 }
