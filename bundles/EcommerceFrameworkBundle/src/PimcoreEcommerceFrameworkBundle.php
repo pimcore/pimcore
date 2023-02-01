@@ -58,7 +58,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
             '/bundles/pimcoreecommerceframework/js/indexfieldselectionfield/tags/indexFieldSelectionCombo.js',
             '/bundles/pimcoreecommerceframework/js/indexfieldselectionfield/data/indexFieldSelection.js',
             '/bundles/pimcoreecommerceframework/js/indexfieldselectionfield/tags/indexFieldSelection.js',
-            '/bundles/pimcoreecommerceframework/js/bundle.js',
+            '/bundles/pimcoreecommerceframework/js/startup.js',
             '/bundles/pimcoreecommerceframework/js/pricing/config/panel.js',
             '/bundles/pimcoreecommerceframework/js/pricing/config/item.js',
             '/bundles/pimcoreecommerceframework/js/pricing/config/objects.js',
@@ -78,10 +78,5 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);
-    }
-
-    public function getPath(): string
-    {
-        return \dirname(__DIR__);
     }
 }

@@ -103,8 +103,14 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - Removed BruteforceProtection
 - Removed PreAuthenticatedAdminToken
 - [Logger] Bumped `monolog/monolog` to [^3.2](https://github.com/Seldaek/monolog/blob/main/UPGRADE.md#300) and `symfony/monolog-bundle` to [^3.8](https://github.com/symfony/monolog-bundle/blob/master/CHANGELOG.md#380-2022-05-10) (which adds support for monolog v3). Please adapt your custom implementation accordingly eg. log records are now `LogRecord` Objects instead of array.
-- [Ecommerce] The constructor of the indexing services (eg. `DefaultMysql`, `AbstractElasticSearch`) and related workers were changed to support the injection of monolog logger, please adapt your custom implementation.
-- [Bundles] 
+- [Ecommerce] 
+  - Ecommerce bundle has been moved into a package `pimcore/ecommerce-bundle`. If you wish to continue using the ecommerce framework, then please require the package in your composer.json and install it after enabling in `config/bundles.php`.
+  - The constructor of the following services has been changed, please adapt your custom implementation accordingly:
+    - `IndexService\ProductList\DefaultMysql`, `IndexService\ProductList\DefaultFindologic`
+    - `IndexService\Worker\AbstractElasticSearch`, `IndexService\Worker\DefaultFindologic`, `IndexService\Worker\DefaultMysql`, `IndexService\Worker\OptimizedMysql`
+    - `IndexService\Config\AbstractConfig` and it's sub-classes.
+    - `Tracking\Tracker\Analytics\AbstractAnalyticsTracker` and it's sub-classes.
+- [Bundles]
   - Removed support for loading bundles through `extensions.php`.
   - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.
   - Removed commands: `pimcore:bundle:enable`, `pimcore:bundle:disable`.

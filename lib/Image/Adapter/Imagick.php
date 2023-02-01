@@ -558,8 +558,8 @@ class Imagick extends Adapter
 
         $this->contain($width, $height, $forceResize);
 
-        $x = ($width - $this->getWidth()) / 2;
-        $y = ($height - $this->getHeight()) / 2;
+        $x = (int)(($width - $this->getWidth()) / 2);
+        $y = (int)(($height - $this->getHeight()) / 2);
 
         $newImage = $this->createCompositeImageFromResource($width, $height, $x, $y);
         $this->resource = $newImage;
