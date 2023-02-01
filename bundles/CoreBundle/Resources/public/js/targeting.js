@@ -293,6 +293,19 @@
 
         User.prototype.save = function () {
             if (util.featureDetect('localStorage')) {
+                // Ensure activityLog doesn't eat up all the local storage.
+                // It is assumed 10MB of localStorage group space, activityLog
+                // entries can vastly vary in size e.g. for pageView entries due
+                // to the saved URL.
+                // For now 0.5 KB per log entry are assumed. Using a
+                // conservative 20% of the assumed available space as limit
+                // allows us to fill 2MB of storage which equals about 4000
+                // activityLog entries.
+                const activityLogLimit = 4000;
+                if (this.data.activityLog.length > activityLogLimit) {
+                    util.logger.canLog('info') && console.info('[TARGETING] ' + this.data.activityLog.length + ' acitvityLog items exceed limit of ' + activityLogLimit + '. Evicting excess.', this);
+                    this.data.activityLog = this.data.activityLog.slice(0, activityLogLimit);
+                }
                 localStorage.setItem("_ptg.user", JSON.stringify(this.data));
             }
 
