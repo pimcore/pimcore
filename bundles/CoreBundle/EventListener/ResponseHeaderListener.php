@@ -17,8 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Controller\Configuration\ResponseHeader;
 use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -40,6 +42,7 @@ class ResponseHeaderListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
+            KernelEvents::CONTROLLER_ARGUMENTS => ['onKernelControllerArguments', 10],
             KernelEvents::RESPONSE => ['onKernelResponse', 32],
         ];
     }
@@ -56,5 +59,28 @@ class ResponseHeaderListener implements EventSubscriberInterface
         foreach ($headers as $header) {
             $response->headers->set($header->getKey(), $header->getValues(), $header->getReplace());
         }
+    }
+
+    public function onKernelControllerArguments(ControllerArgumentsEvent $event): void
+    {
+        $request = $event->getRequest();
+        /** @var $configurations ResponseHeader */
+        if (!$attributes = $request->attributes->get('_response_header')) {
+            return;
+        }
+
+        foreach ($attributes as $attribute) {
+            if (!$attributes instanceof ResponseHeader) {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.6',
+                    'Usage of @ResponseHeader annotation is deprecated. please use #[ResponseHeader] attribute instead.'
+                );
+            }
+        }
+
+        $responseHeaders = array_merge($this->responseHeaderResolver->getResponseHeaders($request), $attributes);
+
+        $request->attributes->set($this->responseHeaderResolver::ATTRIBUTE_RESPONSE_HEADER, $responseHeaders);
     }
 }

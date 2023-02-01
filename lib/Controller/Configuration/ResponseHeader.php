@@ -20,7 +20,7 @@ namespace Pimcore\Controller\Configuration;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
 
 /**
- * Allows to set HTTP headers on the response via annotation. The annotation will
+ * Allows to set HTTP headers on the response via annotation/attributes. The annotation/attribute will
  * be processed by ResponseHeaderListener which will set the HTTP headers on the
  * response.
  *
@@ -28,39 +28,27 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
  *
  * @Annotation
  */
-class ResponseHeader extends ConfigurationAnnotation
+#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
+final class ResponseHeader extends ConfigurationAnnotation
 {
-    /**
-     * @var string
-     */
-    protected $key;
+    public function __construct(
+        public string|array|null $key = null,
+        public string|array $values = '',
+        public bool $replace = false,
+    ) {
+        if (is_array($key)) {
+            // value is the default key if attribute was called without assignment
+            // e.g. #[ResponseHeader("X-Foo")] instead of #[ResponseHeader(key="X-Foo")]
+            if (isset($key['value'])) {
+                $key['key'] = $key['value'];
+                unset($key['value']);
+            }
 
-    /**
-     * @var string|array
-     */
-    protected $values;
-
-    /**
-     * @var bool
-     */
-    protected $replace = false;
-
-    /**
-     * @param array $data
-     */
-    public function __construct(array $data)
-    {
-        // value is the default key if annotation was called without assignment
-        // e.g. @ResponseHeader("X-Foo") instead of @ResponseHeader(key="X-Foo")
-        if (isset($data['value'])) {
-            $data['key'] = $data['value'];
-            unset($data['value']);
+            parent::__construct($key);
         }
 
-        parent::__construct($data);
-
         if (empty($this->key)) {
-            throw new \InvalidArgumentException('The @ResponseHeaderAnnotation needs at least a key to be set');
+            throw new \InvalidArgumentException('The ResponseHeader Annotation/Attribute needs at least a key to be set');
         }
     }
 

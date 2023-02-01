@@ -54,8 +54,8 @@ class DefaultController extends FrontendController
      * access to the final response object (as it is automatically created when rendering the view).
      *
      * @Template
-     * @ResponseHeader("X-Foo", values={"123456", "98765"})
      */
+     #[ResponseHeader(key: "X-Foo", values: ["123456", "98765"])]
     public function headerAction(Request $request)
     {
         // schedule a response header via code
