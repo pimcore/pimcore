@@ -98,8 +98,6 @@ On Debian based systems, you can use the following command to install all requir
 ### Additional Server Software 
 - FFMPEG (>= 3)
 - Ghostscript (>= 9.16)
-- LibreOffice (>= 4.3)
-- Chromium/Chrome
 - xvfb
 - timeout (GNU core utils)
 - pdftotext (poppler utils)

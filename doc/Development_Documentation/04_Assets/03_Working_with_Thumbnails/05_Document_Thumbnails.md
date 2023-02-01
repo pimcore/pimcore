@@ -30,5 +30,5 @@ if($asset instanceof Asset\Document) {
 }
 ```
 
-> This feature requires Ghostscript and LibreOffice on the server installed.
+> This feature requires Ghostscript and Gotenberg on the server installed.
 

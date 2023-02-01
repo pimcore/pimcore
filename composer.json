@@ -62,6 +62,7 @@
     "friendsofsymfony/jsrouting-bundle": "^3.2.1",
     "geoip2/geoip2": "^2.9",
     "google/apiclient": "^2.12",
+    "gotenberg/gotenberg-php": "^1.1",
     "guzzlehttp/guzzle": "^7.2",
     "http-interop/http-factory-guzzle": "^1.0.0",
     "lcobucci/jwt": "^4.0",
