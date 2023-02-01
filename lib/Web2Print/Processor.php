@@ -28,6 +28,7 @@ use Pimcore\Web2Print\Exception\CancelException;
 use Pimcore\Web2Print\Exception\NotPreparedException;
 use Pimcore\Web2Print\Processor\HeadlessChrome;
 use Pimcore\Web2Print\Processor\PdfReactor;
+use Pimcore\Web2Print\Processor\Chromium;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use Twig\Sandbox\SecurityError;
@@ -40,13 +41,12 @@ abstract class Processor
     {
         $config = Config::getWeb2PrintConfig();
 
-        if ($config['generalTool'] === 'pdfreactor') {
-            return new PdfReactor();
-        } elseif ($config['generalTool'] === 'headlesschrome') {
-            return new HeadlessChrome();
-        } else {
-            throw new \Exception('Invalid Configuration - ' . $config['generalTool']);
-        }
+        return match ($config['generalTool']) {
+            'pdfreactor' => new PdfReactor(),
+            'headlesschrome' => new HeadlessChrome(),
+            'chromium' => new Chromium(),
+            default => throw new \Exception('Invalid Configuration - ' . $config['generalTool'])
+        };
     }
 
     /**

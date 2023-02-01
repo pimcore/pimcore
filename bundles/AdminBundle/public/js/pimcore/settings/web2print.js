@@ -206,7 +206,55 @@ pimcore.settings.web2print = Class.create({
                     }
                 ]
             });
-
+            
+            this.chromiumSettings = Ext.create("Ext.form.FieldSet", {
+                title: t('web2print_chromium_settings'),
+                collapsible: true,
+                collapsed: false,
+                autoHeight: true,
+                hidden: this.getValue("generalTool") != 'chromium',
+                defaultType: 'textfield',
+                defaults: {width: 450},
+                items: [
+                    {
+                        xtype: 'textarea',
+                        width: 850,
+                        height: 200,
+                        fieldLabel: t("web2print_chromium_settings"),
+                        name: 'chromiumSettings',
+                        value: this.getValue("chromiumSettings")
+                    },{
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_chromium_documentation"),
+                        name: 'documentation',
+                        width: 600,
+                        value: t('web2print_chromium_options_documentation'),
+                        autoEl:{
+                            tag: 'a',
+                            target: '_blank',
+                            href: "https://gotenberg.dev/docs/modules/chromium#routes",
+                        }
+                    },{
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_chromium_documentation_additions"),
+                        name: 'additions',
+                        width: 850,
+                        value: t('web2print_chromium_documentation_additions_text'),
+                    },{
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_chromium_json_converter"),
+                        name: 'json_converter',
+                        width: 600,
+                        value: t('web2print_chromium_json_converter_link'),
+                        autoEl:{
+                            tag: 'a',
+                            target: '_blank',
+                            href: "https://jsonformatter.org/",
+                        }
+                    }
+                ]
+            });
+            
             this.layout = Ext.create('Ext.form.Panel', {
                 bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,
@@ -261,18 +309,22 @@ pimcore.settings.web2print = Class.create({
                                 store: [
                                     ["pdfreactor", "PDFreactor"],
                                     ["headlesschrome", "Headless Chrome"],
+                                    ["chromium", "Chromium (Gotenberg)"],
                                 ],
                                 mode: "local",
                                 triggerAction: "all",
                                 listeners: {
                                     select: function(combo, record) {
+                                        this.pdfReactorSettings.hide();
+                                        this.headlessChromeSettings.hide();
+                                        this.chromiumSettings.hide();
 
                                         if(combo.getValue() == "pdfreactor") {
                                             this.pdfReactorSettings.show();
-                                            this.headlessChromeSettings.hide();
                                         } else if(combo.getValue() == "headlesschrome") {
-                                            this.pdfReactorSettings.hide();
                                             this.headlessChromeSettings.show();
+                                        } else if(combo.getValue() == "chromium") {
+                                            this.chromiumSettings.show();
                                         }
 
                                     }.bind(this)
@@ -299,7 +351,7 @@ pimcore.settings.web2print = Class.create({
                             }
                         ]
                     }
-                    , this.pdfReactorSettings, this.headlessChromeSettings
+                    , this.pdfReactorSettings, this.headlessChromeSettings, this.chromiumSettings
                 ]
             });
 

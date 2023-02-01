@@ -1552,6 +1552,10 @@ class SettingsController extends AdminController
             $params = Config::getWeb2PrintConfig();
             $params = $params['headlessChromeSettings'];
             $params = json_decode($params, true);
+        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\Chromium) {
+            $params = Config::getWeb2PrintConfig();
+            $params = $params['chromiumSettings'];
+            $params = json_decode($params, true);
         }
 
         $responseOptions = [

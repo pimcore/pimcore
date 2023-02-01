@@ -932,6 +932,7 @@ final class Configuration implements ConfigurationInterface
                             ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
                             ->booleanNode('pdfreactorEnableDebugMode')->end()
                             ->scalarNode('headlessChromeSettings')->end()
+                            ->scalarNode('chromiumSettings')->end()
                         ->end()
                 ->end()
                 ->integerNode('auto_save_interval')
