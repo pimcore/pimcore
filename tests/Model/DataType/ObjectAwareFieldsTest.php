@@ -29,7 +29,7 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
     private function reloadObject(int $id): array
     {
         //reload object from database
-        $databaseObject = AbstractObject::getById($id, true);
+        $databaseObject = AbstractObject::getById($id, ['force' => true]);
 
         //load latest version of object
         $latestVersion = $databaseObject->getLatestVersion();
