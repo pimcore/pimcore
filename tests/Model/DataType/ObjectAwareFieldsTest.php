@@ -55,7 +55,7 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->save();
 
         //create new unpublished version of object
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();
 
@@ -81,7 +81,7 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->save();
 
         //create new unpublished version of object
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $object->getFieldcollection();
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();
@@ -109,7 +109,7 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->save();
 
         //create new unpublished version of object
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $object->getBricks();
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();
