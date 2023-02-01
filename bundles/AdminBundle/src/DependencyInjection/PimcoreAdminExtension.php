@@ -74,7 +74,7 @@ final class PimcoreAdminExtension extends Extension implements PrependExtensionI
         $container->setParameter('pimcore_admin.translations.path', $config['translations']['path']);
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $builds = [
             'pimcoreAdmin' => realpath(__DIR__ . '/../../public/build/admin'),
