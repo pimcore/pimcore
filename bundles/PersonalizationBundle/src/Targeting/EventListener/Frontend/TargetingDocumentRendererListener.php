@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\PersonalizationBundle\Tageting\EventListener\Frontend;
+namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend;
 
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Event\DocumentEvents;

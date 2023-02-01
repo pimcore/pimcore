@@ -2,7 +2,7 @@ parameters:
 	ignoreErrors:
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
-			count: 3
+			count: 2
 			path: bundles/CoreBundle/src/DependencyInjection/PimcoreCoreExtension.php
 
 		-

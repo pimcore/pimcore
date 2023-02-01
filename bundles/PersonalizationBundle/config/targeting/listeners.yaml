@@ -12,4 +12,4 @@ services:
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\TargetingSessionBagListener: ~
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingElementListener: ~
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingFullPageCacheListener: ~
-    Pimcore\Bundle\PersonalizationBundle\Tageting\EventListener\Frontend\TargetingDocumentRendererListener: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingDocumentRendererListener: ~
