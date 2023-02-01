@@ -10,5 +10,6 @@ services:
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\VisitedPagesCountListener: ~
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\ToolbarListener: ~
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\TargetingSessionBagListener: ~
-    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\TargetingElementListener: ~
-    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\TargetingFullPageCacheListener: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingElementListener: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingFullPageCacheListener: ~
+    Pimcore\Bundle\PersonalizationBundle\Tageting\EventListener\Frontend\TargetingDocumentRendererListener: ~

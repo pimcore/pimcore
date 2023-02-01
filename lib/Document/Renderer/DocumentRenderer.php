@@ -72,18 +72,12 @@ class DocumentRenderer implements DocumentRendererInterface
     /**
      * {@inheritdoc}
      */
-    public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = [], ?DocumentTargetingConfigurator $targetingConfigurator = null): string
+    public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
         $this->eventDispatcher->dispatch(
             new DocumentEvent($document, $attributes),
             DocumentEvents::RENDERER_PRE_RENDER
         );
-
-        // apply best matching target group (if any)
-        if (class_exists (DocumentTargetingConfigurator::class)) {
-            $targetingConfigurator->configureTargetGroup($document);
-        }
-
 
         // add document route to request if no route is set
         // this is needed for logic relying on the current route (e.g. pimcoreUrl helper)

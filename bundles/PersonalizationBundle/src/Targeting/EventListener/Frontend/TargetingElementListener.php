@@ -13,7 +13,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\PersonalizationBundle\Tageting\EventListener;
+namespace Pimcore\Bundle\PersonalizationBundle\Tageting\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;

@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
+namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend;
 
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
