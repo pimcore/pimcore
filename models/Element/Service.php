@@ -35,6 +35,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\ObjectAwareFieldInterface;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
@@ -781,6 +782,12 @@ class Service extends Model\AbstractModel
             if ($data instanceof Model\AbstractModel) {
                 $properties = $data->getObjectVars();
                 foreach ($properties as $name => $value) {
+                    //do not renew object reference of ObjectAwareFieldInterface - as object might point to a
+                    //specific version of the object and must not be reloaded with DB version of object
+                    if (($data instanceof ObjectAwareFieldInterface || $data instanceof DataObject\Localizedfield) && $name === 'object') {
+                        continue;
+                    }
+
                     $data->setObjectVar($name, self::renewReferences($value, false, $name), true);
                 }
             } else {
