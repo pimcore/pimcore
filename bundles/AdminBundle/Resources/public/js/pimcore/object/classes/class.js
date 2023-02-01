@@ -1360,9 +1360,6 @@ pimcore.object.classes.klass = Class.create({
         }
     },
 
-
-
-
     removeChild: function (tree, record) {
         if (this.id != 0) {
             if (this.currentNode == record.data.editor) {
@@ -1382,7 +1379,7 @@ pimcore.object.classes.klass = Class.create({
         if (node.data.editor) {
             if (typeof node.data.editor.getData == "function") {
                 data = node.data.editor.getData();
-
+                data.invalidFieldError = null;
                 data.name = trim(data.name);
 
                 // field specific validation
@@ -1425,6 +1422,10 @@ pimcore.object.classes.klass = Class.create({
                     }
 
                     var invalidFieldsText = t("class_field_name_error") + ": '" + data.name + "'";
+
+                    if (data.invalidFieldError) {
+                        invalidFieldsText = invalidFieldsText + " (" + data.invalidFieldError + ")";
+                    }
 
                     if(node.data.editor.invalidFieldNames){
                         invalidFieldsText = t("reserved_field_names_error")
