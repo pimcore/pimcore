@@ -22,7 +22,7 @@ use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Model\LazyLoading\AbstractLazyLoadingTest;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
 {
