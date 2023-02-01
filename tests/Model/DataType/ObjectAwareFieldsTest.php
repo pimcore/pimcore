@@ -1,20 +1,33 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Tests\Model\DataType;
 
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\LazyLoading;
+use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Model\LazyLoading\AbstractLazyLoadingTest;
-use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
-use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Tests\Util\TestHelper;
 
 class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
 {
-
-    private function reloadObject(int $id): array {
+    private function reloadObject(int $id): array
+    {
         //reload object from database
         $databaseObject = AbstractObject::getById($id, true);
 
@@ -30,7 +43,8 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         return [$databaseObject, $latestObjectVersion];
     }
 
-    public function testLocalizedField(): void {
+    public function testLocalizedField(): void
+    {
         /**
          * @var Unittest $object
          */
@@ -50,7 +64,8 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $this->assertEquals($latestObjectVersion->getLocalizedfields()->getObject()->getInput(), $latestObjectVersion->getInput(), 'Object reference in localized field is not right.');
     }
 
-    public function testLocalizedFieldInFieldCollection(): void {
+    public function testLocalizedFieldInFieldCollection(): void
+    {
         /**
          * @var Unittest $object
          */
@@ -74,15 +89,14 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         list($databaseObject, $latestObjectVersion) = $this->reloadObject($object->getId());
 
         $fieldCollectionItems = $latestObjectVersion->getFieldcollection()->getItems();
-        foreach($fieldCollectionItems as $item) {
+        foreach ($fieldCollectionItems as $item) {
             $this->assertEquals($item->getObject()->getInput(), $latestObjectVersion->getInput(), 'Object reference in field collection is not right.');
             $this->assertEquals($item->getLocalizedFields()->getObject()->getInput(), $latestObjectVersion->getInput(), 'Object reference in localized field in field collection is not right.');
         }
-
     }
 
-    public function testLocalizedFieldInObjectBrick(): void {
-
+    public function testLocalizedFieldInObjectBrick(): void
+    {
         /**
          * @var LazyLoading $object
          */
@@ -103,11 +117,9 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         list($databaseObject, $latestObjectVersion) = $this->reloadObject($object->getId());
 
         $brickItems = $latestObjectVersion->getBricks()->getItems();
-        foreach($brickItems as $item) {
+        foreach ($brickItems as $item) {
             $this->assertEquals($item->getObject()->getInput(), $latestObjectVersion->getInput(), 'Object reference in object brick is not right.');
             $this->assertEquals($item->getLocalizedFields()->getObject()->getInput(), $latestObjectVersion->getInput(), 'Object reference in localized field in object brick is not right.');
         }
-
     }
-
 }
