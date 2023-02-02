@@ -16,14 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Model\Document;
 
-use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Traits\TargetDocumentTrait;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 
 /**
  * @method \Pimcore\Bundle\PersonalizationBundle\Model\Document\Snippet\Dao getDao()
  */
-class Snippet extends PageSnippet implements TargetingDocumentInterface
+class Snippet extends \Pimcore\Model\Document\Snippet implements TargetingDocumentInterface
 {
     use TargetDocumentTrait;
     /**

@@ -27,6 +27,17 @@ class Page extends \Pimcore\Model\Document\Page implements TargetingDocumentInte
 {
     use TargetDocumentTrait;
 
+    protected string $type = 'page';
+
+    /**
+     * Comma separated IDs of target groups
+     *
+     * @internal
+     *
+     * @var string
+     */
+    protected string $targetGroupIds = '';
+
     /**
      * Set linked Target Groups as set in properties panel as list of IDs
      *

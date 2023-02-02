@@ -18,7 +18,8 @@ namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend;
 
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Model\Document;
+use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -28,7 +29,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class TargetingDocumentRendererListener implements EventSubscriberInterface
 {
-    public function __construct(private DocumentTargetingConfigurator $targetingConfigurator)
+    public function __construct(
+        private DocumentTargetingConfigurator $targetingConfigurator,
+        protected DocumentResolver $documentResolver
+    )
     {
     }
 
@@ -38,12 +42,13 @@ class TargetingDocumentRendererListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            DocumentEvents::RENDERER_POST_RENDER => 'onPostRender',
+            DocumentEvents::RENDERER_PRE_RENDER => 'onPreRender',
         ];
     }
 
-    public function onPostRender(Document $document): void
+    public function onPreRender(DocumentEvent $event): void
     {
+        $document = $event->getDocument();
         $this->targetingConfigurator->configureTargetGroup($document);
     }
 }
