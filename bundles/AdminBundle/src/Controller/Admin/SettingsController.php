@@ -530,7 +530,7 @@ class SettingsController extends AdminController
         $configFile = Config::locateConfigFile('system.yaml');
         File::put($configFile, $settingsYaml);
         if ($existingValues) {
-            $saveSettingsEvent = new GenericEvent(null, [$existingValues['pimcore']['general']['valid_languages'], $filteredLanguages]);
+            $saveSettingsEvent = new GenericEvent(null, [$existingValues, $values]);
             $eventDispatcher->dispatch($saveSettingsEvent, AdminEvents::SAVE_ACTION_SYSTEM_SETTINGS);
         }
 
