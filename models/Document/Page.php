@@ -18,7 +18,6 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Redirect;
-use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
