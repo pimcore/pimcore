@@ -33,10 +33,13 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @internal
@@ -548,8 +551,9 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function updateCurrentUserAction(Request $request): JsonResponse
+    public function updateCurrentUserAction(Request $request, ValidatorInterface $validator): JsonResponse
     {
+        //TODO Can be completely validated with Symfony Validator
         $user = $this->getAdminUser();
         if ($user != null) {
             if ($user->getId() == $request->get('id')) {
@@ -567,7 +571,7 @@ class UserController extends AdminController implements KernelControllerEventInt
 
                     if (empty($values['old_password'])) {
                         // if the user want to reset the password, the old password isn't required
-                        $oldPasswordCheck = Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+                        $oldPasswordCheck = Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession) {
                             if ($adminSession->get('password_reset')) {
                                 return true;
                             }
@@ -575,9 +579,9 @@ class UserController extends AdminController implements KernelControllerEventInt
                             return false;
                         });
                     } else {
-                        // the password has to match
-                        $checkUser = Tool\Authentication::authenticatePlaintext($user->getName(), $values['old_password']);
-                        if ($checkUser) {
+                        $errors = $validator->validate($values['old_password'], [new UserPassword()]);
+
+                        if (count($errors) === 0) {
                             $oldPasswordCheck = true;
                         }
                     }
@@ -650,7 +654,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         $userData['twoFactorAuthentication']['isActive'] = $user->getTwoFactorAuthentication('enabled') && $user->getTwoFactorAuthentication('secret');
         $userData['hasImage'] = $user->hasImage();
 
-        $userData['isPasswordReset'] = Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+        $userData['isPasswordReset'] = Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession) {
             return $adminSession->get('password_reset');
         });
 
@@ -838,44 +842,6 @@ class UserController extends AdminController implements KernelControllerEventInt
     }
 
     /**
-     * @Route("/user/renew-2fa-qr-secret", name="pimcore_admin_user_renew2fasecret", methods={"GET"})
-     *
-     * @param Request $request
-     * @param GoogleAuthenticatorInterface $twoFactor
-     *
-     * @return BinaryFileResponse
-     */
-    public function renew2FaSecretAction(Request $request, GoogleAuthenticatorInterface $twoFactor): BinaryFileResponse
-    {
-        $user = $this->getAdminUser();
-        $proxyUser = $this->getAdminUser(true);
-
-        $newSecret = $twoFactor->generateSecret();
-        $user->setTwoFactorAuthentication('enabled', true);
-        $user->setTwoFactorAuthentication('type', 'google');
-        $user->setTwoFactorAuthentication('secret', $newSecret);
-        $user->save();
-
-        Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
-            Tool\Session::regenerateId();
-            $adminSession->set('2fa_required', true);
-        });
-
-        $url = $twoFactor->getQRContent($proxyUser);
-
-        $result = Builder::create()
-            ->writer(new PngWriter())
-            ->data($url)
-            ->size(200)
-            ->build();
-
-        $qrCodeFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/qr-code-' . uniqid() . '.png';
-        $result->saveToFile($qrCodeFile);
-
-        return new BinaryFileResponse($qrCodeFile);
-    }
-
-    /**
      * @Route("/user/disable-2fa", name="pimcore_admin_user_disable2fasecret", methods={"DELETE"})
      *
      * @param Request $request
@@ -912,6 +878,25 @@ class UserController extends AdminController implements KernelControllerEventInt
         if (!$user) {
             throw $this->createNotFoundException();
         }
+        $user->setTwoFactorAuthentication('enabled', false);
+        $user->setTwoFactorAuthentication('secret', '');
+        $user->save();
+
+        return $this->adminJson([
+            'success' => true,
+        ]);
+    }
+
+    /**
+     * @Route("/user/reset-my-2fa-secret", name="pimcore_admin_user_reset_my_2fa_secret", methods={"PUT"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function resetMy2FaSecretAction(Request $request): JsonResponse
+    {
+        $user = $this->getAdminUser();
         $user->setTwoFactorAuthentication('enabled', false);
         $user->setTwoFactorAuthentication('secret', '');
         $user->save();

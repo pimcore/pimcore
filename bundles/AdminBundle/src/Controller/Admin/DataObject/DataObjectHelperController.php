@@ -464,7 +464,7 @@ class DataObjectHelperController extends AdminController
                             }
                         } else {
                             if (DataObject\Service::isHelperGridColumnConfig($key)) {
-                                $calculatedColumnConfig = $this->getCalculatedColumnConfig($savedColumns[$key]);
+                                $calculatedColumnConfig = $this->getCalculatedColumnConfig($request, $savedColumns[$key]);
                                 if ($calculatedColumnConfig) {
                                     $availableFields[] = $calculatedColumnConfig;
                                 }
@@ -670,10 +670,10 @@ class DataObjectHelperController extends AdminController
         }
     }
 
-    protected function getCalculatedColumnConfig(array $config): mixed
+    protected function getCalculatedColumnConfig(Request $request, array $config): mixed
     {
         try {
-            $calculatedColumnConfig = Tool\Session::useSession(function (AttributeBagInterface $session) use ($config) {
+            $calculatedColumnConfig = Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($config) {
                 //otherwise create a new one
 
                 $calculatedColumn = [];
@@ -742,7 +742,7 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        Tool\Session::useSession(function (AttributeBagInterface $session) use ($helperColumns) {
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($helperColumns) {
             $existingColumns = $session->get('helpercolumns', []);
             $helperColumns = array_merge($helperColumns, $existingColumns);
             $session->set('helpercolumns', $helperColumns);

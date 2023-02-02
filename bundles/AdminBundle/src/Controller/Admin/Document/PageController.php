@@ -65,7 +65,7 @@ class PageController extends DocumentControllerBase
             throw $this->createNotFoundException('Page not found');
         }
 
-        if (($lock = $this->checkForLock($page)) instanceof JsonResponse) {
+        if (($lock = $this->checkForLock($page, $request->getSession()->getId())) instanceof JsonResponse) {
             return $lock;
         }
 
@@ -125,7 +125,7 @@ class PageController extends DocumentControllerBase
         }
 
         /** @var Document\Page|null $pageSession */
-        $pageSession = $this->getFromSession($oldPage);
+        $pageSession = $this->getFromSession($oldPage, $request->getSession());
 
         if ($pageSession) {
             $page = $pageSession;
@@ -190,7 +190,7 @@ class PageController extends DocumentControllerBase
                 'data' => $data,
             ]);
         } else {
-            $this->saveToSession($page);
+            $this->saveToSession($page, $request->getSession());
 
             $draftData = [];
             if ($version) {
@@ -355,7 +355,7 @@ class PageController extends DocumentControllerBase
             }
         }
 
-        $this->saveToSession($doc, true);
+        $this->saveToSession($doc, $request->getSession(), true);
 
         return $this->adminJson([
             'success' => true,

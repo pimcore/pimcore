@@ -88,7 +88,7 @@ class MaintenancePageListener implements EventSubscriberInterface
 
         $conf = include($file);
         if (isset($conf['sessionId'])) {
-            $requestSessionId = Session::getSessionId();
+            $requestSessionId = $request->getSession()->getId();
 
             $maintenance = true;
             if ($conf['sessionId'] === $requestSessionId) {

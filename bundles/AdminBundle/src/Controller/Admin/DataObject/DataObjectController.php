@@ -37,7 +37,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Helper\OptionsProviderResolver;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Schedule\Task;
-use Pimcore\Model\Version;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -374,11 +373,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         // check for lock
         if ($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($objectId, 'object')) {
+            if (Element\Editlock::isLocked($objectId, 'object', $request->getSession()->getId())) {
                 return $this->getEditLockResponse($objectId, 'object');
             }
 
-            Element\Editlock::lock($objectId, 'object');
+            Element\Editlock::lock($request->get('id'), 'object', $request->getSession()->getId());
         }
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
@@ -543,7 +542,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GET_PRE_SEND_DATA);
             $data = $event->getArgument('data');
 
-            DataObject\Service::removeElementFromSession('object', $object->getId());
+            DataObject\Service::removeElementFromSession('object', $object->getId(), $request->getSession()->getId());
 
             return $this->adminJson($data);
         }
@@ -1432,7 +1431,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             ]);
         } elseif ($request->get('task') == 'session') {
             //TODO https://github.com/pimcore/pimcore/issues/9536
-            DataObject\Service::saveElementToSession($object, '', false);
+            DataObject\Service::saveElementToSession($object, $request->getSession()->getId(), '', false);
 
             return $this->adminJson(['success' => true]);
         } elseif ($request->get('task') == 'scheduler') {
@@ -1600,6 +1599,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if (!$object) {
             throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
+        $object = $version->loadData();
 
         $currentObject = DataObject::getById($object->getId());
         if ($currentObject->isAllowed('publish')) {
@@ -1785,7 +1785,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $transactionId = time();
         $pasteJobs = [];
 
-        Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId) {
             $session->set((string) $transactionId, ['idMapping' => []]);
         }, 'pimcore_copy');
 
@@ -1876,7 +1876,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $transactionId = $request->get('transactionId');
 
-        $idStore = Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+        $idStore = Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId) {
             return $session->get($transactionId);
         }, 'pimcore_copy');
 
@@ -1896,7 +1896,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object->save();
 
         // write the store back to the session
-        Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId, $idStore) {
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId, $idStore) {
             $session->set($transactionId, $idStore);
         }, 'pimcore_copy');
 
@@ -1919,7 +1919,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $sourceId = (int)$request->get('sourceId');
         $source = DataObject::getById($sourceId);
 
-        $session = Tool\Session::get('pimcore_copy');
+        $session = Tool\Session::getSessionBag($request->getSession(), 'pimcore_copy');
         $sessionBag = $session->get($request->get('transactionId'));
 
         $targetId = (int)$request->get('targetId');
@@ -1963,7 +1963,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 }
 
                 $session->set($request->get('transactionId'), $sessionBag);
-                Tool\Session::writeClose();
 
                 return $this->adminJson(['success' => true, 'message' => $message]);
             } else {
@@ -1986,7 +1985,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     public function previewAction(Request $request): RedirectResponse|Response
     {
         $id = $request->query->getInt('id');
-        $object = DataObject\Service::getElementFromSession('object', $id);
+        $object = DataObject\Service::getElementFromSession('object', $id, $request->getSession()->getId());
 
         if ($object instanceof DataObject\Concrete) {
             $url = null;

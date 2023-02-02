@@ -111,11 +111,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         // check for lock on non-folder items only.
         if ($type !== 'folder' && ($asset->isAllowed('publish') || $asset->isAllowed('delete'))) {
-            if (Element\Editlock::isLocked($assetId, 'asset')) {
+            if (Element\Editlock::isLocked($assetId, 'asset', $request->getSession()->getId())) {
                 return $this->getEditLockResponse($assetId, 'asset');
             }
 
-            Element\Editlock::lock($request->query->getInt('id'), 'asset');
+            Element\Editlock::lock($request->query->getInt('id'), 'asset', $request->getSession()->getId());
         }
 
         $asset = clone $asset;
@@ -1045,7 +1045,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $asset->setUserModification($this->getAdminUser()->getId());
             if ($request->get('task') === 'session') {
                 // save to session only
-                Asset\Service::saveElementToSession($asset);
+                Asset\Service::saveElementToSession($asset, $request->getSession()->getId());
             } else {
                 $asset->save();
             }
@@ -1920,7 +1920,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $transactionId = time();
         $pasteJobs = [];
 
-        Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId) {
             $session->set((string) $transactionId, []);
         }, 'pimcore_copy');
 
@@ -2000,7 +2000,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $sourceId = (int)$request->get('sourceId');
         $source = Asset::getById($sourceId);
 
-        $session = Tool\Session::get('pimcore_copy');
+        $session = Tool\Session::getSessionBag($request->getSession(), 'pimcore_copy');
         $sessionBag = $session->get($request->get('transactionId'));
 
         $targetId = (int)$request->get('targetId');
@@ -2039,7 +2039,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 }
 
                 $session->set($request->get('transactionId'), $sessionBag);
-                Tool\Session::writeClose();
 
                 $success = true;
             } else {
@@ -2050,8 +2049,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             throw $this->createAccessDeniedHttpException();
         }
-
-        Tool\Session::writeClose();
 
         return $this->adminJson(['success' => $success]);
     }

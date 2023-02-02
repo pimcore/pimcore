@@ -46,15 +46,9 @@ class Chromium
     }
 
     /**
-     * @param string $url
-     * @param string $outputFile
-     * @param string $windowSize
-     *
-     * @return bool
-     *
      * @throws \Exception
      */
-    public static function convert(string $url, string $outputFile, string $windowSize = '1280,1024'): bool
+    public static function convert(string $url, string $outputFile, ?string $sessionId = null, ?string $sessionName = null, string $windowSize = '1280,1024'): bool
     {
         $binary = self::getChromiumBinary();
         if (!$binary) {
@@ -71,10 +65,8 @@ class Chromium
 
         try {
             $headers = [];
-            if (php_sapi_name() !== 'cli') {
-                $headers['Cookie'] = Session::useSession(function (AttributeBagInterface $session) {
-                    return Session::getSessionName() . '=' . Session::getSessionId();
-                });
+            if (null !== $sessionId && null !== $sessionName) {
+                $headers['Cookie'] = $sessionName . '=' . $sessionId;
             }
 
             $page = $browser->createPage();

@@ -59,7 +59,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param ElementInterface $element
      *
      * @return string
@@ -84,7 +83,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param ElementInterface $element
      *
      * @return string
@@ -113,7 +111,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param ElementInterface $element
      *
      * @return string
@@ -174,7 +171,6 @@ class Service extends Model\AbstractModel
      * @return array
      *
      * @internal
-     *
      */
     public static function getRequiredByDependenciesForFrontend(Dependency $d, ?int $offset, ?int $limit): array
     {
@@ -203,7 +199,6 @@ class Service extends Model\AbstractModel
      * @return array
      *
      * @internal
-     *
      */
     public static function getRequiresDependenciesForFrontend(Dependency $d, ?int $offset, ?int $limit): array
     {
@@ -393,6 +388,7 @@ class Service extends Model\AbstractModel
      * @return string
      *
      * @deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
+     *
      */
     public static function getSaveCopyName(string $type, string $sourceKey, ElementInterface $target): string
     {
@@ -472,7 +468,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param array $params
      *
      * @return array
@@ -508,7 +503,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param string $className
      *
      * @return string|null
@@ -516,7 +510,6 @@ class Service extends Model\AbstractModel
     public static function getElementTypeByClassName(string $className): ?string
     {
         $className = trim($className, '\\');
-
         return match (true) {
             is_a($className, Asset::class, true) => 'asset',
             is_a($className, Document::class, true) => 'document',
@@ -527,7 +520,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param ElementInterface $element
      *
      * @return string|null
@@ -623,7 +615,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param  ElementInterface $element
      *
      * @return array
@@ -809,7 +800,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param string $path
      *
      * @return string
@@ -833,7 +823,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param ElementInterface $element
      *
      * @return ElementInterface
@@ -954,7 +943,6 @@ class Service extends Model\AbstractModel
      * @param Model\Asset\Listing|Model\DataObject\Listing|Model\Document\Listing $childrenList
      *
      * @internal
-     *
      */
     public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList): void
     {
@@ -1251,7 +1239,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param Note $note
      *
      * @return array
@@ -1335,18 +1322,15 @@ class Service extends Model\AbstractModel
      *
      * @internal
      */
-    public static function getSessionKey(string $type, int $elementId, ?string $postfix = ''): string
+    public static function getSessionKey(string $type, int $elementId, string $sessionId, ?string $postfix = ''): string
     {
-        $sessionId = Session::getSessionId();
-        $tmpStoreKey = $type . '_session_' . $elementId . '_' . $sessionId . $postfix;
-
-        return $tmpStoreKey;
+        return $type . '_session_' . $elementId . '_' . $sessionId . $postfix;
     }
 
-    public static function getElementFromSession(string $type, int $elementId, ?string $postfix = ''): Asset|Document|AbstractObject|null
+    public static function getElementFromSession(string $type, int $elementId, string $sessionId, ?string $postfix = ''): Asset|Document|AbstractObject|null
     {
         $element = null;
-        $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
+        $tmpStoreKey = self::getSessionKey($type, $elementId, $sessionId, $postfix);
 
         $tmpStore = TmpStore::get($tmpStoreKey);
         if ($tmpStore) {
@@ -1390,7 +1374,7 @@ class Service extends Model\AbstractModel
      *
      * @internal
      */
-    public static function saveElementToSession(ElementInterface $element, string $postfix = '', bool $clone = true): void
+    public static function saveElementToSession(ElementInterface $element, string $sessionId, string $postfix = '', bool $clone = true): void
     {
         if ($clone) {
             $context = [
@@ -1418,7 +1402,7 @@ class Service extends Model\AbstractModel
         }
 
         $elementType = Service::getElementType($element);
-        $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $postfix);
+        $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $sessionId, $postfix);
         $tag = $elementType . '-session' . $postfix;
 
         self::loadAllFields($element);
@@ -1429,21 +1413,16 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
-     * @param int $elementId
-     * @param string $postfix
-     *
      * @internal
      */
-    public static function removeElementFromSession(string $type, int $elementId, string $postfix = ''): void
+    public static function removeElementFromSession(string $type, int $elementId, string $sessionId, string $postfix = ''): void
     {
-        $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
+        $tmpStoreKey = self::getSessionKey($type, $elementId, $sessionId, $postfix);
         TmpStore::delete($tmpStoreKey);
     }
 
     /**
      * @internal
-     *
      * @param mixed $element
      * @param array|null $context
      *
@@ -1511,7 +1490,6 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
-     *
      * @param array $rowData
      *
      * @return array
