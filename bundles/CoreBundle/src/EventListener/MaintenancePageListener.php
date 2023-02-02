@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
-use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;

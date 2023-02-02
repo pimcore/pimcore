@@ -45,7 +45,6 @@ use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Serialize;
-use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -59,6 +58,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param ElementInterface $element
      *
      * @return string
@@ -83,6 +83,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param ElementInterface $element
      *
      * @return string
@@ -111,6 +112,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param ElementInterface $element
      *
      * @return string
@@ -468,6 +470,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param array $params
      *
      * @return array
@@ -503,6 +506,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string $className
      *
      * @return string|null
@@ -510,6 +514,7 @@ class Service extends Model\AbstractModel
     public static function getElementTypeByClassName(string $className): ?string
     {
         $className = trim($className, '\\');
+
         return match (true) {
             is_a($className, Asset::class, true) => 'asset',
             is_a($className, Document::class, true) => 'document',
@@ -520,6 +525,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param ElementInterface $element
      *
      * @return string|null
@@ -615,6 +621,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param  ElementInterface $element
      *
      * @return array
@@ -800,6 +807,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param string $path
      *
      * @return string
@@ -823,6 +831,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param ElementInterface $element
      *
      * @return ElementInterface
@@ -1239,6 +1248,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param Note $note
      *
      * @return array
@@ -1423,6 +1433,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param mixed $element
      * @param array|null $context
      *
@@ -1490,6 +1501,7 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param array $rowData
      *
      * @return array

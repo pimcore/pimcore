@@ -22,7 +22,6 @@ use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\ImportExportLocators
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\TranslatorPass;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface;
-use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

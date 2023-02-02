@@ -315,7 +315,6 @@ class LoginController extends AdminController implements KernelControllerEventIn
         return $this->render('@PimcoreAdmin/admin/login/two_factor_authentication.html.twig', $params);
     }
 
-
     /**
      * @Route("/login/2fa-setup", name="pimcore_admin_2fa_setup")
      */

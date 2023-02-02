@@ -20,8 +20,6 @@ use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Communication\Message;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
-use Pimcore\Tool\Session;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 /**
  * @internal
