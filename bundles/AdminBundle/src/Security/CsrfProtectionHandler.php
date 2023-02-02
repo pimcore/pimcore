@@ -21,6 +21,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Twig\Environment;
 
@@ -45,7 +46,7 @@ class CsrfProtectionHandler implements LoggerAwareInterface
 
     public function checkCsrfToken(Request $request): void
     {
-        $csrfToken = $this->getCsrfToken();
+        $csrfToken = $this->getCsrfToken($request->getSession());
         $requestCsrfToken = $request->headers->get('x_pimcore_csrf_token');
         if (!$requestCsrfToken) {
             $requestCsrfToken = $request->get('csrfToken');
@@ -60,21 +61,21 @@ class CsrfProtectionHandler implements LoggerAwareInterface
         }
     }
 
-    public function getCsrfToken(): ?string
+    public function getCsrfToken(SessionInterface $session): ?string
     {
         if (!$this->csrfToken) {
-            $this->csrfToken = Session::getReadOnly()->get('csrfToken');
+            $this->csrfToken = Session::getSessionBag($session)->get('csrfToken');
             if (!$this->csrfToken) {
-                $this->regenerateCsrfToken(false);
+                $this->regenerateCsrfToken($session, false);
             }
         }
 
         return $this->csrfToken;
     }
 
-    public function regenerateCsrfToken(bool $force = true): void
+    public function regenerateCsrfToken(SessionInterface $session, bool $force = true): void
     {
-        $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) use ($force) {
+        $this->csrfToken = Session::useBag($session, function (AttributeBagInterface $adminSession) use ($force) {
             if ($force || !$adminSession->get('csrfToken')) {
                 $adminSession->set('csrfToken', sha1(generateRandomSymfonySecret()));
             }
@@ -85,9 +86,9 @@ class CsrfProtectionHandler implements LoggerAwareInterface
         $this->twig->addGlobal('csrfToken', $this->csrfToken);
     }
 
-    public function generateCsrfToken(): void
+    public function generateCsrfToken(SessionInterface $session): void
     {
-        $this->twig->addGlobal('csrfToken', $this->getCsrfToken());
+        $this->twig->addGlobal('csrfToken', $this->getCsrfToken($session));
     }
 
     public function getExcludedRoutes(): array

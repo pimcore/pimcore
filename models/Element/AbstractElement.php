@@ -36,22 +36,16 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
-     *
-     * @var Model\Dependency|null
      */
     protected ?Model\Dependency $dependencies = null;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $__dataVersionTimestamp = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $path = null;
 
@@ -79,15 +73,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $modificationDate = null;
 
     /**
      * @internal
-     *
-     * @var int
      */
     protected int $versionCount = 0;
 

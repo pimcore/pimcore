@@ -126,6 +126,25 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/overlay-google.svg) center center no-repeat !important;
 }
 
+.pimcore_main_nav_icon_file {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-file-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_build {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-build-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_marketing {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-bar_chart-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_settings {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-settings-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_search {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-search-24px.svg) center center no-repeat !important;
+}
 
 .pimcore_nav_icon_perspective {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/reading.svg) center center no-repeat !important;

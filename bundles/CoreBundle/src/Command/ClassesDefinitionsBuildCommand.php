@@ -53,15 +53,18 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $objectClassesFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY;
-        $files = glob($objectClassesFolder.'/*.php');
+        $objectClassesFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY, PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY]);
 
-        $changes = [];
+        foreach ($objectClassesFolders as $objectClassesFolder) {
+            $files = glob($objectClassesFolder.'/*.php');
 
-        foreach ($files as $file) {
-            $class = include $file;
+            $changes = [];
 
-            $this->classDumper->dumpPHPClasses($class);
+            foreach ($files as $file) {
+                $class = include $file;
+
+                $this->classDumper->dumpPHPClasses($class);
+            }
         }
 
         $list = new DataObject\Objectbrick\Definition\Listing();
