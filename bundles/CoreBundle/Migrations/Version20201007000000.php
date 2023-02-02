@@ -30,7 +30,9 @@ final class Version20201007000000 extends AbstractMigration
     public function up(Schema $schema): void
     {
         if (!$schema->hasTable('cache_items')) {
-            $cacheAdapter = new DoctrineDbalAdapter(\Pimcore\Db::get());
+            /** @var \Doctrine\DBAL\Connection $db */
+            $db = \Pimcore\Db::get();
+            $cacheAdapter = new DoctrineDbalAdapter($db);
             $cacheAdapter->createTable();
         }
     }
