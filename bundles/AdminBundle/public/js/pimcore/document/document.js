@@ -117,7 +117,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             }
 
             Ext.Ajax.request({
-                url: Routing.generate(this.getSaveRoute()),
+                url: Routing.generate(this.getSaveRoute(), {'task': task}),
                 method: "PUT",
                 params: saveData,
                 success: function (response) {
@@ -692,7 +692,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         return "pimcore_admin_document_" + this.type + '_getdatabyid';
     },
 
-    getSaveRoute: function() {
+    getSaveRoute: function(params) {
         return "pimcore_admin_document_" + this.type + '_save';
     },
+
+    addTaskAsParam: function(task) {
+        return '?task=' + task;
+    }
 });

@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore\Db;
 use Pimcore\Model\Tool\SettingsStore;
 
 /**
@@ -35,12 +36,14 @@ final class Version20221220152444 extends AbstractMigration
     {
         if(!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle', 'pimcore')) {
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle', true, 'bool', 'pimcore');
+            // updating description
+            $db = Db::get();
+            $db->update('users_permission_definitions', ['category' => 'Pimcore Web2Print Bundle'], ['`key`' => 'web2print_settings']);
         }
 
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle', 'pimcore'),
            'Please make sure to enable the BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle manually in config/bundles.php'
         );
-
     }
 }
