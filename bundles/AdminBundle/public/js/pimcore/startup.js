@@ -885,19 +885,6 @@ Ext.onReady(function () {
 
     pimcore.helpers.registerKeyBindings(document);
 
-
-    if(pimcore.settings.twoFactorSetupRequired) {
-        Ext.Msg.show({
-            title: t('setup_two_factor'),
-            message: t('2fa_setup_message'),
-            buttons: Ext.Msg.OK,
-            icon: Ext.Msg.INFO,
-            fn: function(btn) {
-                pimcore.settings.profile.twoFactorSettings.prototype.openSetupWindow();
-            }
-        });
-    }
-
     if(pimcore.currentuser.isPasswordReset) {
         pimcore.helpers.openProfile();
     }
