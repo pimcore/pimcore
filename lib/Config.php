@@ -194,7 +194,7 @@ final class Config implements ArrayAccess
                 $cacheKey .= '_' . $language;
             }
 
-            $siteId = null;
+            $siteId = 0;
             if (Model\Site::isSiteRequest()) {
                 $siteId = Model\Site::getCurrentSite()->getId();
             } elseif (Tool::isFrontendRequestByAdmin()) {
