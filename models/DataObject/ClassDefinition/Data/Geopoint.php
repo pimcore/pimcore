@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\DataObject\Concrete;
@@ -29,9 +32,6 @@ class Geopoint extends AbstractGeo implements
     VarExporterInterface,
     NormalizerInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * Static type of this element
      *
@@ -41,29 +41,22 @@ class Geopoint extends AbstractGeo implements
      */
     public string $fieldtype = 'geopoint';
 
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'longitude' => 'double',
-        'latitude' => 'double',
-    ];
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__longitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__latitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+        ];
+    }
 
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'longitude' => 'double',
-        'latitude' => 'double',
-    ];
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
 
     /**
      * @param mixed $data

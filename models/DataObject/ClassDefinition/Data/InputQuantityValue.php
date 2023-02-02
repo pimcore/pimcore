@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Data\InputQuantityValue as InputQuantityValueDataObject;
@@ -30,9 +33,6 @@ use Pimcore\Model\DataObject\QuantityValue\Unit;
  */
 class InputQuantityValue extends QuantityValue
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * @internal
      *
@@ -40,29 +40,23 @@ class InputQuantityValue extends QuantityValue
      */
     public string $fieldtype = 'inputQuantityValue';
 
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'value' => 'varchar(255)',
-        'unit' => 'varchar(50)',
-    ];
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__value', Type::getType(Types::STRING), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__unit', Type::getType(Types::BIGINT), [
+                'length' => 20,
+                'notnull' => false
+            ]),
+        ];
+    }
 
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'value' => 'varchar(255)',
-        'unit' => 'varchar(50)',
-    ];
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
 
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?InputQuantityValueDataObject
     {

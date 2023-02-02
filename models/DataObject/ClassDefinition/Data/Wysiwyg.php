@@ -16,6 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
+use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
@@ -23,7 +27,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Text;
 
-class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
+class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
 {
     use DataObject\ClassDefinition\Data\Extension\Text;
     use DataObject\Traits\DataHeightTrait;
@@ -32,6 +36,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use DataObject\Traits\SimpleNormalizerTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use Model\DataObject\ClassDefinition\Data\Extension\Text;
 
     /**
      * Static type of this element
@@ -43,25 +48,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public string $fieldtype = 'wysiwyg';
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
      * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
-
-    /**
-     * @internal
      */
     public string $toolbarConfig = '';
 
@@ -99,6 +86,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this;
     }
 
+
     public function getMaxCharacters(): int|string
     {
         return $this->maxCharacters;
@@ -107,6 +95,20 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function setMaxCharacters(int|string $maxCharacters): void
     {
         $this->maxCharacters = $maxCharacters;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

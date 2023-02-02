@@ -20,6 +20,7 @@ use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
+use Pimcore\DataObject\ClassDefinition\Dbal\SchemaBuilderInterface;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
@@ -286,6 +287,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
             try {
                 $class = new self();
                 $name = $class->getDao()->getNameById($id);
+
                 if (!$name) {
                     throw new \Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
                 }
@@ -448,8 +450,12 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
 
         $this->setModificationDate(time());
 
-        $this->getDao()->save($isUpdate);
+//        $this->getDao()->save($isUpdate);
+        $migrateSchema = \Pimcore::getContainer()->get(SchemaBuilderInterface::class)->getMigrateSchema($this);
+        $this->getDao()->db->executeQuery($migrateSchema);
 
+        //TODO: Move to Controller? Only place this is needed inside Pimcore
+        //For other use cases, the service can be included and used instead
         $this->generateClassFiles($saveDefinitionFile);
 
         foreach ($fieldDefinitions as $fd) {

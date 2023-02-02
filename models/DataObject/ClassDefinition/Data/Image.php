@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -26,39 +29,66 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
-    use Extension\ColumnType;
     use ImageTrait;
-    use Extension\QueryColumnType;
     use Data\Extension\RelationFilterConditionParser;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
+     * @return int
      */
-    public string $fieldtype = 'image';
+    public function getWidth()
+    {
+        return $this->width;
+    }
 
     /**
-     * Type for the column to query
+     * @param int $width
      *
-     * @internal
-     *
-     * @var string
+     * @return $this
      */
-    public $queryColumnType = 'int(11)';
+    public function setWidth($width)
+    {
+        $this->width = $this->getAsIntegerCast($width);
+
+        return $this;
+    }
 
     /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
+     * @return int
      */
-    public $columnType = 'int(11)';
+    public function getHeight()
+    {
+        return $this->height;
+    }
 
     /**
+     * @param int $height
+     *
+     * @return $this
+     */
+    public function setHeight($height)
+    {
+        $this->height = $this->getAsIntegerCast($height);
+
+        return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::INTEGER), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
+
+    /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
      * @param array $params

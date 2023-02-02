@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\DataObject\Concrete;
@@ -30,9 +33,6 @@ class Geopolyline extends AbstractGeo implements
     VarExporterInterface,
     NormalizerInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * Static type of this element
      *
@@ -42,23 +42,20 @@ class Geopolyline extends AbstractGeo implements
      */
     public string $fieldtype = 'geopolyline';
 
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
 
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
 
     /**
      * @param mixed $data

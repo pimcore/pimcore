@@ -16,24 +16,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreSetDataInterface
+class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreSetDataInterface
 {
     use DataObject\Traits\DataWidthTrait;
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\Traits\SimpleNormalizerTrait;
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType {
-        getColumnType as public genericGetColumnType;
-    }
-    use Extension\QueryColumnType {
-        getQueryColumnType as public genericGetQueryColumnType;
-    }
 
     const DECIMAL_SIZE_DEFAULT = 64;
 
@@ -67,25 +64,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public string|int|null|float $defaultValue = null;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'double';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'double';
-
-    /**
-     * @internal
+     * @var bool
      */
     public bool $integer = false;
 
@@ -246,42 +225,16 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * {@inheritdoc}
      */
-    public function getColumnType(): array|string|null
+    public function getSchemaColumns(): array
     {
         if ($this->getInteger()) {
-            return 'bigint(20)';
+            return [
+                new Column($this->getName(), Type::getType(Types::BIGINT), [
+                    'notnull' => false
+                ])
+            ];
         }
 
-        if ($this->isDecimalType()) {
-            return $this->buildDecimalColumnType();
-        }
-
-        return $this->genericGetColumnType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueryColumnType(): array|string|null
-    {
-        if ($this->getInteger()) {
-            return 'bigint(20)';
-        }
-
-        if ($this->isDecimalType()) {
-            return $this->buildDecimalColumnType();
-        }
-
-        return $this->genericGetQueryColumnType();
-    }
-
-    private function isDecimalType(): bool
-    {
-        return null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision();
-    }
-
-    private function buildDecimalColumnType(): string
-    {
         // decimalPrecision already existed in earlier versions to denote the amount of digits after the
         // comma (and is used in ExtJS). To avoid migrations, decimalSize was chosen to denote the total amount
         // of supported digits despite the confusing naming.
@@ -317,7 +270,26 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             ));
         }
 
-        return sprintf('DECIMAL(%d, %d)', $precision, $scale);
+        return [
+            new Column($this->getName(), Type::getType('float'), [
+                'notnull' => false,
+                'scale' => $scale,
+                'precision' => $precision
+            ])
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
+
+    public function isDecimalType(): bool
+    {
+        return null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision();
     }
 
     /**

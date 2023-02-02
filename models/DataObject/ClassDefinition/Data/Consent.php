@@ -15,6 +15,8 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\DataObject\Consent\Service;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -22,11 +24,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -44,29 +44,32 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public int $defaultValue = 0;
 
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'tinyint(1)';
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__consent', Type::getType(Types::BOOLEAN), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__note', Type::getType(Types::INTEGER), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::BOOLEAN), [
+                'notnull' => false
+            ]),
+        ];
+    }
 
     /**
-     * Type for the column
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'consent' => 'tinyint(1)',
-        'note' => 'int(11)',
-    ];
-
-    /**
-     * @param mixed $data
+     * @param DataObject\Data\Consent $data
+>>>>>>> extract-php-class-generator
      * @param null|DataObject\Concrete $object
      * @param array $params
      *

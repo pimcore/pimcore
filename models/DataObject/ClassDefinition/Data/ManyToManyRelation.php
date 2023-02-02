@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -29,7 +32,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
-    use Extension\QueryColumnType;
+    use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
@@ -74,14 +77,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * Type for the column to query
      *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'text';
-
-    /**
-     * @internal
      */
     public bool $relationType = true;
 
@@ -184,6 +179,16 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, 'assetTypes');
 
         return $this;
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'length' => 65535,
+                'notnull' => false
+            ])
+        ];
     }
 
     /**

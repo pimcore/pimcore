@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -24,9 +27,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * Static type of this element
      *
@@ -58,24 +58,9 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     public ?int $previewHeight = null;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
+     * @return int
      */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
-
-    public function getPreviewWidth(): ?int
+    public function getPreviewWidth()
     {
         return $this->previewWidth;
     }
@@ -103,6 +88,20 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     public function setInputWidth(?int $inputWidth): void
     {
         $this->inputWidth = $this->getAsIntegerCast($inputWidth);
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

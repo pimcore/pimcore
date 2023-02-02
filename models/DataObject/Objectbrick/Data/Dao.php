@@ -128,6 +128,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             if ($fd instanceof ResourcePersistenceAwareInterface) {
+
                 $fieldDefinitionParams = [
                     'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
                     'fieldname' => $fieldName,
@@ -138,7 +139,7 @@ class Dao extends Model\Dao\AbstractDao
                         'fieldname' => $this->model->getFieldname(),
                     ],
                 ];
-                if (is_array($fd->getColumnType())) {
+                if (count($fd->getSchemaColumns()) > 1) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
                     $data = array_merge($data, $insertDataArray);
                     $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams));

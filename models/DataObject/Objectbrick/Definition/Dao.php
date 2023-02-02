@@ -59,6 +59,7 @@ class Dao extends Model\Dao\AbstractDao
 
     public function createUpdateTable(DataObject\ClassDefinition $class): void
     {
+        return;
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
 

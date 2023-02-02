@@ -134,6 +134,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('marshaller.yaml');
         $loader->load('message_handler.yaml');
         $loader->load('class_builder.yaml');
+        $loader->load('class_definition.yaml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
@@ -148,6 +149,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
         $this->addContextRoutes($container, $config['context']);
+
+        $container->setParameter('pimcore.constant.class_definition.directory', PIMCORE_CLASS_DIRECTORY . '/');
+        $container->setParameter('pimcore.constant.class_definition.php_file.directory', PIMCORE_CLASS_DIRECTORY . '/DataObject/');
     }
 
     private function configureModelFactory(ContainerBuilder $container, array $config): void

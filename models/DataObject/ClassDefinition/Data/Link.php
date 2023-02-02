@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -25,11 +28,9 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\ObjectVarTrait;
 
     /**
@@ -41,23 +42,20 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public string $fieldtype = 'link';
 
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'text';
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'length' => 65535,
+                'notnull' => false
+            ])
+        ];
+    }
 
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'text';
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
 
     /**
      * @param mixed $data

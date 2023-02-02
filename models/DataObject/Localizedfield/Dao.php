@@ -80,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(array $params = []): void
+    public function save(array $params = [])
     {
         $context = $this->model->getContext();
 
@@ -89,7 +89,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $forceUpdate = false;
         if ((isset($params['newParent']) && $params['newParent']) || DataObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
-        ) || $context['containerType'] == 'fieldcollection') {
+            ) || $context['containerType'] == 'fieldcollection') {
             $forceUpdate = $this->delete(false, true);
         }
 
@@ -196,9 +196,8 @@ class Dao extends Model\Dao\AbstractDao
                         $fd->save($this->model, $childParams);
                     }
                 }
-                if ($fd instanceof ResourcePersistenceAwareInterface
-                    && $fd instanceof DataObject\ClassDefinition\Data) {
-                    if (is_array($fd->getColumnType())) {
+                if ($fd instanceof ResourcePersistenceAwareInterface) {
+                    if (count($fd->getSchemaColumns()) > 1) {
                         $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fieldName, $language, true),
@@ -224,8 +223,8 @@ class Dao extends Model\Dao\AbstractDao
 
             try {
                 if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
-                    $language
-                )) {
+                        $language
+                    )) {
                     Helper::insertOrUpdate($this->db, $storeTable, $insertData);
                 }
             } catch (TableNotFoundException $e) {
@@ -257,7 +256,7 @@ class Dao extends Model\Dao\AbstractDao
                 );
                 $this->inheritanceHelper->resetFieldsToCheck();
                 $sql = 'SELECT * FROM '.$queryTable.' WHERE ooo_id = '.$object->getId(
-                )." AND language = '".$language."'";
+                    )." AND language = '".$language."'";
 
                 $oldData = [];
 
@@ -308,8 +307,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 foreach ($fieldDefinitions as $fd) {
-                    if ($fd instanceof QueryResourcePersistenceAwareInterface
-                        &&  $fd instanceof DataObject\ClassDefinition\Data) {
+                    if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                         $key = $fd->getName();
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
@@ -574,7 +572,7 @@ class Dao extends Model\Dao\AbstractDao
         return false;
     }
 
-    public function load(DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): void
+    public function load(DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = [])
     {
         $validLanguages = Tool::getValidLanguages();
         foreach ($validLanguages as &$language) {
@@ -648,9 +646,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     $params['context']['object'] = $object;
 
-                    if ($fd instanceof LazyLoadingSupportInterface
-                        && $fd instanceof DataObject\ClassDefinition\Data
-                        && $fd->getLazyLoading()) {
+                    if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
                         $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
                     } else {
                         $value = $fd->load($this->model, $params);
@@ -660,10 +656,10 @@ class Dao extends Model\Dao\AbstractDao
                     }
                 }
                 if ($fd instanceof ResourcePersistenceAwareInterface) {
-                    if (is_array($fd->getColumnType())) {
+                    if (count($fd->getSchemaColumns()) > 1) {
                         $multidata = [];
-                        foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                            $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
+                        foreach ($fd->getSchemaColumns() as $col) {
+                            $multidata[$col->getName()] = $row[$col->getName()];
                         }
                         $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
                         $this->model->setLocalizedValue($key, $value, $row['language'], false);
@@ -676,7 +672,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function createLocalizedViews(): void
+    public function createLocalizedViews()
     {
         // init
         $languages = Tool::getValidLanguages();
@@ -744,9 +740,9 @@ class Dao extends Model\Dao\AbstractDao
                         $localizedFields[] = $db->quoteIdentifier($language).'.'.$db->quoteIdentifier($row['Field']);
                     } else {
                         $localizedFields[] = $getFallbackValue($row['Field'], $fallbackLanguages).sprintf(
-                            ' as "%s"',
-                            $row['Field']
-                        );
+                                ' as "%s"',
+                                $row['Field']
+                            );
                     }
                 }
 
@@ -786,7 +782,7 @@ QUERY;
      *
      * @throws \Exception
      */
-    public function createUpdateTable(array $params = []): void
+    public function createUpdateTable(array $params = [])
     {
         $table = $this->getTableName();
 
@@ -841,12 +837,11 @@ QUERY;
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
         if ($localizedFieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
             foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
-                if ($value instanceof ResourcePersistenceAwareInterface
-                    && $value instanceof DataObject\ClassDefinition\Data) {
+                if ($value instanceof ResourcePersistenceAwareInterface) {
                     if ($value->getColumnType()) {
                         $key = $value->getName();
 
-                        if (is_array($value->getColumnType())) {
+                        if (count($value->getSchemaColumns())) {
                             // if a datafield requires more than one column
                             foreach ($value->getColumnType() as $fkey => $fvalue) {
                                 $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
@@ -917,7 +912,7 @@ QUERY;
                             $key = $value->getName();
 
                             // if a datafield requires more than one column in the query table
-                            if (is_array($value->getQueryColumnType())) {
+                            if (count($value->getQuerySchemaColumns()) > 1) {
                                 foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
                                     $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
                                     $protectedColumns[] = $key.'__'.$fkey;

@@ -56,3 +56,7 @@ services:
     Pimcore\Bundle\CoreBundle\Command\Migrate\StorageCommand:
         arguments:
             $locator: !tagged_locator { tag: flysystem.storage }
+
+    Pimcore\Bundle\CoreBundle\Command\UpdateClassDefinitionSchemaCommand:
+        tags:
+            - { name: console.command, command: 'pimcore:deployment:class-definition:schema:update' }

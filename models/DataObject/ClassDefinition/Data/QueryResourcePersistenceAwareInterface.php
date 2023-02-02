@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
 use Pimcore\Model\DataObject\Concrete;
 
 interface QueryResourcePersistenceAwareInterface
@@ -33,5 +34,8 @@ interface QueryResourcePersistenceAwareInterface
      */
     public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): mixed;
 
-    public function getQueryColumnType(): array|string|null;
+    /**
+     * @return Column[]
+     */
+    public function getQuerySchemaColumns(): array;
 }

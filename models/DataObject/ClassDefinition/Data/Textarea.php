@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -27,8 +30,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     use DataObject\Traits\DataWidthTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use Model\DataObject\Traits\SimpleNormalizerTrait;
 
     /**
@@ -58,23 +59,8 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public bool $excludeFromSearchIndex = false;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
+     * @return int
      */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
-
     public function getMaxLength(): ?int
     {
         return $this->maxLength;
@@ -105,6 +91,20 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
 
         return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

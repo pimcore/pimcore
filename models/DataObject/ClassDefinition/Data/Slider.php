@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -74,24 +77,49 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public ?int $decimalPrecision = null;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
+     * @return int
      */
-    public $queryColumnType = 'double';
+    public function getWidth()
+    {
+        return $this->width;
+    }
 
     /**
-     * Type for the column
+     * @param int $width
      *
-     * @internal
-     *
-     * @var string
+     * @return $this
      */
-    public $columnType = 'double';
+    public function setWidth($width)
+    {
+        $this->width = $this->getAsIntegerCast($width);
 
-    public function getMinValue(): ?float
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getHeight()
+    {
+        return $this->height;
+    }
+
+    /**
+     * @param int $height
+     *
+     * @return $this
+     */
+    public function setHeight($height)
+    {
+        $this->height = $this->getAsIntegerCast($height);
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMinValue()
     {
         return $this->minValue;
     }
@@ -149,6 +177,20 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $this->decimalPrecision = $this->getAsIntegerCast($decimalPrecision);
 
         return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

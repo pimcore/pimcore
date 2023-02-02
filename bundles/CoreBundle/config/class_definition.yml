@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    Pimcore\DataObject\ClassDefinition\Dbal\SchemaBuilderInterface: '@Pimcore\DataObject\ClassDefinition\Dbal\SchemaBuilder'
+    Pimcore\DataObject\ClassDefinition\Dbal\SchemaBuilder:

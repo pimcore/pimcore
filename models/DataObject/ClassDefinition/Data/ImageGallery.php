@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -28,35 +31,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 {
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'imageGallery';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = ['images' => 'text', 'hotspots' => 'longtext'];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = ['images' => 'text', 'hotspots' => 'longtext'];
 
     /**
      * @internal
@@ -124,6 +98,25 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function setUploadPath(string $uploadPath): void
     {
         $this->uploadPath = $uploadPath;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__images', Type::getType(Types::TEXT), [
+                'length' => 65535,
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__hotspots', Type::getType(Types::TEXT), [
+                'length' => 65535,
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

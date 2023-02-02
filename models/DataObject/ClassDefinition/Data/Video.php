@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -27,7 +30,6 @@ use Pimcore\Tool\Serialize;
 class Video extends Data implements
     ResourcePersistenceAwareInterface,
     QueryResourcePersistenceAwareInterface,
-    TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
     NormalizerInterface,
@@ -35,6 +37,7 @@ class Video extends Data implements
     FieldDefinitionEnrichmentInterface,
     LayoutDefinitionEnrichmentInterface
 {
+
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
@@ -63,27 +66,7 @@ class Video extends Data implements
     public string $uploadPath = '';
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'text';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'text';
-
-    /**
-     * @internal
-     *
-     * @var array|null
+     * @return int
      */
     public ?array $allowedTypes = null;
 
@@ -129,6 +112,21 @@ class Video extends Data implements
     public function getSupportedTypes(): array
     {
         return $this->supportedTypes;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'length' => 65535,
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

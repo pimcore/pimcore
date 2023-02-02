@@ -73,13 +73,14 @@ class Dao extends Model\Dao\AbstractDao
                     $this->model, $params
                 );
             }
+
             if ($fd instanceof ResourcePersistenceAwareInterface
-                && $fd instanceof Model\DataObject\ClassDefinition\Data) {
+                && $fd instanceof model\dataobject\classdefinition\Data)
                 $fieldDefinitionParams = [
                     'owner' => $this->model, //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
                     'fieldname' => $fd->getName(),
                 ];
-                if (is_array($fd->getColumnType())) {
+                if (count($fd->getSchemaColumns()) > 1) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, $fieldDefinitionParams);
                     $data = array_merge($data, $insertDataArray);
                     $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $object, $fieldDefinitionParams));

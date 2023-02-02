@@ -163,10 +163,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
             if ($value instanceof ResourcePersistenceAwareInterface) {
                 // if a datafield requires more than one field
-                if (is_array($value->getColumnType())) {
+                if (count($value->getSchemaColumns()) > 1) {
                     $multidata = [];
-                    foreach ($value->getColumnType() as $fkey => $fvalue) {
-                        $multidata[$key . '__' . $fkey] = $data[$key . '__' . $fkey];
+                    foreach ($value->getSchemaColumns() as $column) {
+                        $multidata[$column->getName()] = $data[$column->getName()];
                     }
                     $this->model->setValue($key, $value->getDataFromResource($multidata));
                 } else {
@@ -255,14 +255,19 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
             if ($fd instanceof ResourcePersistenceAwareInterface) {
                 // pimcore saves the values with getDataForResource
-
                 $fieldDefinitionParams = [
                     'isUpdate' => $isUpdate,
                     'owner' => $this->model,
                     'fieldname' => $fieldName,
                 ];
-                if (is_array($fd->getColumnType())) {
-                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $this->model, $fieldDefinitionParams);
+
+                if (count($fd->getSchemaColumns()) > 1) {
+                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $this->model,
+                        [
+                            'isUpdate' => $isUpdate,
+                            'owner' => $this->model,
+                            'fieldname' => $fieldName,
+                        ]);
                     if (is_array($insertDataArray)) {
                         $data = array_merge($data, $insertDataArray);
                         $this->model->set($fieldName, $fd->getDataFromResource($insertDataArray, $this->model, $fieldDefinitionParams));

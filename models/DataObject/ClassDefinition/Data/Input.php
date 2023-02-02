@@ -15,6 +15,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -24,7 +27,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Input extends Data implements
     ResourcePersistenceAwareInterface,
     QueryResourcePersistenceAwareInterface,
-    TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
     NormalizerInterface
@@ -48,24 +50,6 @@ class Input extends Data implements
      * @internal
      */
     public ?string $defaultValue = null;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'varchar';
 
     /**
      * Column length
@@ -96,6 +80,35 @@ class Input extends Data implements
 
     /**
      * @param mixed $data
+     *
+     * @return $this
+     */
+    public function setWidth($width)
+    {
+        $this->width = $width;
+
+        return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::STRING), [
+                'length' => $this->getColumnLength(),
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
+
+    /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
+     * @param string $data
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
@@ -232,6 +245,7 @@ class Input extends Data implements
     }
 
     /**
+<<<<<<< HEAD
      * {@inheritdoc}
      */
     public function getColumnType(): array|string|null
@@ -249,6 +263,14 @@ class Input extends Data implements
 
     /**
      * {@inheritdoc}
+=======
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     *
+     * @throws \Exception
+>>>>>>> extract-php-class-generator
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {

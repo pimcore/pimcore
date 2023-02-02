@@ -16,6 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
+use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -26,11 +30,10 @@ use Pimcore\Tool\Serialize;
 
 class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, NormalizerInterface, IdRewriterInterface
 {
-    use Extension\ColumnType;
     use ImageTrait;
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
+    use DataObject\Traits\SimpleComparisonTrait;
 
     /**
      * Static type of this element
@@ -42,26 +45,6 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     public string $fieldtype = 'hotspotimage';
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = ['image' => 'int(11)', 'hotspots' => 'text'];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
-
-    /**
-     * @internal
-     *
      * @var int
      */
     public int $ratioX;
@@ -108,6 +91,24 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     public function setPredefinedDataTemplates(string $predefinedDataTemplates): void
     {
         $this->predefinedDataTemplates = $predefinedDataTemplates;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__image', Type::getType(Types::INTEGER), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__hotspots', Type::getType(Types::TEXT), [
+                'length' => 65535, //SEE Doctrine\DBAL\Platforms\MySqlPlatform::LENGTH_LIMIT_TEXT
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -26,7 +29,6 @@ use Pimcore\Tool\Serialize;
 class RgbaColor extends Data implements
     ResourcePersistenceAwareInterface,
     QueryResourcePersistenceAwareInterface,
-    TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
     NormalizerInterface,
@@ -47,30 +49,49 @@ class RgbaColor extends Data implements
     public string $fieldtype = 'rgbaColor';
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
+     * @return int
      */
-    public $queryColumnType = [
-        'rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
-        'a' => 'VARCHAR(2) NULL DEFAULT NULL',
-    ];
+    public function getWidth()
+    {
+        return $this->width;
+    }
 
     /**
-     * Type for the column
+     * @param int $width
      *
-     * @internal
-     *
-     * @var array
+     * @return $this
      */
-    public $columnType = ['rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
-        'a' => 'VARCHAR(2) NULL DEFAULT NULL',
-    ];
+    public function setWidth($width)
+    {
+        $this->width = $width;
+
+        return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__rgb', Type::getType(Types::STRING), [
+                'length' => 6,
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__a', Type::getType(Types::STRING), [
+                'length' => 2,
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
 
     /**
-     * @param mixed $data
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
+     * @param Model\DataObject\Data\RgbaColor $data
+>>>>>>> extract-php-class-generator
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *

@@ -17,6 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use InvalidArgumentException;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -27,7 +30,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Select extends Data implements
     ResourcePersistenceAwareInterface,
     QueryResourcePersistenceAwareInterface,
-    TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
     \JsonSerializable,
@@ -36,8 +38,6 @@ class Select extends Data implements
     FieldDefinitionEnrichmentInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\Traits\DefaultValueTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
@@ -87,24 +87,6 @@ class Select extends Data implements
     public ?string $optionsProviderData = null;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'varchar';
-
-    /**
      * Column length
      *
      * @internal
@@ -132,6 +114,21 @@ class Select extends Data implements
         return $this;
     }
 
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::STRING), [
+                'length' => $this->getColumnLength(),
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
+
     /**
      * Correct old column definitions (e.g varchar(255)) to the new format
      *
@@ -149,25 +146,8 @@ class Select extends Data implements
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
-    public function getColumnType(): array|string|null
-    {
-        $this->correctColumnDefinition('columnType');
-
-        return $this->columnType . '(' . $this->getColumnLength() . ')';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueryColumnType(): array|string|null
-    {
-        $this->correctColumnDefinition('queryColumnType');
-
-        return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
-    }
-
     public function getOptions(): ?array
     {
         return $this->options;

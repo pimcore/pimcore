@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -28,8 +30,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -350,11 +350,35 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function getColumnType(): array|string|null
+    public function getFromCsvImport($importValue, $object = null, $params = [])
+    {
+        $dataArray = explode('##', $importValue);
+
+        $i = 0;
+        $dataTable = [];
+        foreach ($this->getRows() as $r) {
+            foreach ($this->getCols() as $c) {
+                $dataTable[$r['key']][$c['key']] = $dataArray[$i];
+                $i++;
+            }
+        }
+
+        $value = new DataObject\Data\StructuredTable($dataTable);
+
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSchemaColumns(): array
     {
         $columns = [];
+
         foreach ($this->calculateDbColumns() as $c) {
-            $columns[$c->name] = $c->type;
+            $columns[$c->name] = new Column($this->getName() . '__' . $c->name, Type::getType($c->type), [
+                'notnull' => false
+            ]);
         }
 
         return $columns;
@@ -363,14 +387,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType(): array|string|null
+    public function getQuerySchemaColumns(): array
     {
-        $columns = [];
-        foreach ($this->calculateDbColumns() as $c) {
-            $columns[$c->name] = $c->type;
-        }
-
-        return $columns;
+        return $this->getSchemaColumns();
     }
 
     protected function calculateDbColumns(): array
@@ -407,9 +426,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     protected function typeMapper(string $type, int $length = null): ?string
     {
         $mapper = [
-            'text' => 'varchar('.($length > 0 ? $length : '190').')',
-            'number' => 'double',
-            'bool' => 'tinyint(1)',
+            'text' => 'string',
+            'number' => 'float',
+            'bool' => 'boolean',
         ];
 
         return $mapper[$type];

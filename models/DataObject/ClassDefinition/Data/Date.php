@@ -17,6 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Carbon\Carbon;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -27,8 +30,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\DefaultValueTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -40,34 +41,43 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public string $fieldtype = 'date';
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'bigint(20)';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'bigint(20)';
-
-    /**
-     * @internal
-     *
-     * @var int|null
+     * @var int
      */
     public ?int $defaultValue = null;
 
     /**
      * @internal
+     * @var string
+     */
+    public $columnType;
+
+    /**
+     * @var bool
      */
     public bool $useCurrentDate = false;
+
+    public function getColumnType()
+    {
+        return $this->columnType;
+    }
+
+    public function setColumnType($columnType)
+    {
+        $this->columnType = $this->columnType;
+    }
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType($this->columnType === 'datetime' ? Types::DATE_MUTABLE : Types::BIGINT), [
+                'length' => 20,
+                'notnull' => false
+            ])
+        ];
+    }
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
 
     /**
      * @param mixed $data

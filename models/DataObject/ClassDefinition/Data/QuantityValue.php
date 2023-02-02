@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
@@ -29,12 +32,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
-    use Extension\ColumnType {
-        getColumnType as public genericGetColumnType;
-    }
-    use Extension\QueryColumnType {
-        getQueryColumnType as public genericGetQueryColumnType;
-    }
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\Traits\DataWidthTrait;
 
@@ -139,30 +136,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public bool $autoConvert = false;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
+     * @return int
      */
-    public $queryColumnType = [
-        'value' => 'double',
-        'unit' => 'varchar(64)',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'value' => 'double',
-        'unit' => 'varchar(64)',
-    ];
-
-    public function getUnitWidth(): int|string
+    public function getUnitWidth()
     {
         return $this->unitWidth;
     }
@@ -299,6 +275,24 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function setAutoConvert(bool $autoConvert): void
     {
         $this->autoConvert = (bool)$autoConvert;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__value', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__unit', Type::getType(Types::BIGINT), [
+                'length' => 20,
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -23,11 +26,10 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
+class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
-    use Extension\QueryColumnType;
 
     /**
      * @internal
@@ -73,15 +75,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public string $calculatorClass;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar';
-
-    /**
      * Column length
      *
      * @internal
@@ -124,6 +117,19 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this;
     }
 
+    public function getQuerySchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::STRING), [
+                'length' => $this->getColumnLength(),
+                'notnull' => false
+            ])
+        ];
+    }
+
+    /**
+     * @return string
+     */
     public function getCalculatorClass(): string
     {
         return $this->calculatorClass;
@@ -235,14 +241,12 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType(): array|string|null
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
+        // nothing to do
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();

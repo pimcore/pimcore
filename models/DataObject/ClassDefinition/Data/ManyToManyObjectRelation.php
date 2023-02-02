@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
@@ -27,6 +30,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface, LayoutDefinitionEnrichmentInterface
 {
+    use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait;
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
@@ -51,16 +55,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public ?int $maxItems = null;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'text';
-
-    /**
-     * @internal
+     * @var bool
      */
     public bool $relationType = true;
 
@@ -98,6 +93,19 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public array $visibleFieldDefinitions = [];
 
+    public function getQuerySchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'length' => 65535,
+                'notnull' => false
+            ])
+        ];
+    }
+
+    /**
+     * @return bool
+     */
     public function getObjectsAllowed(): bool
     {
         return true;

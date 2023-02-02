@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -30,8 +33,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -88,23 +89,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public array $columnConfig = [];
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
+     * @return int
      */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
-
     public function getCols(): ?int
     {
         return $this->cols;
@@ -197,6 +183,20 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return $valueArray;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

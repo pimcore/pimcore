@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Model\DataObject\Concrete;
@@ -29,9 +32,6 @@ class Geobounds extends AbstractGeo implements
     VarExporterInterface,
     NormalizerInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * Static type of this element
      *
@@ -41,33 +41,27 @@ class Geobounds extends AbstractGeo implements
      */
     public string $fieldtype = 'geobounds';
 
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'NElongitude' => 'double',
-        'NElatitude' => 'double',
-        'SWlongitude' => 'double',
-        'SWlatitude' => 'double',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'NElongitude' => 'double',
-        'NElatitude' => 'double',
-        'SWlongitude' => 'double',
-        'SWlatitude' => 'double',
-    ];
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__NElongitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__NElatitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__SWlongitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__SWlatitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+        ];
+    }
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
 
     /**
      * @param mixed $data

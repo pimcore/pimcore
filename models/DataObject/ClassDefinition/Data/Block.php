@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Db;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
@@ -30,9 +33,8 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
 {
-    use Extension\ColumnType;
     use DataObject\Traits\ClassSavedTrait;
     use DataObject\Traits\FieldDefinitionEnrichmentDataTrait;
 
@@ -78,17 +80,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public ?int $maxItems = null;
 
     /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
-
-    /**
-     * @internal
-     *
      * @var string
      */
     public string $styleElement = '';
@@ -115,6 +106,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @var array
      */
     protected array $referencedFields = [];
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'notnull' => false
+            ])
+        ];
+    }
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource

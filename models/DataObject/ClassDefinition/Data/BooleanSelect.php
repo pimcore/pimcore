@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -25,16 +28,14 @@ use Pimcore\Normalizer\NormalizerInterface;
 class BooleanSelect extends Data implements
     ResourcePersistenceAwareInterface,
     QueryResourcePersistenceAwareInterface,
-    TypeDeclarationSupportInterface,
     EqualComparisonInterface,
     VarExporterInterface,
     NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
+    use Model\DataObject\Traits\SimpleComparisonTrait;
 
     /** storage value for yes */
     const YES_VALUE = 1;
@@ -106,23 +107,8 @@ class BooleanSelect extends Data implements
     public array $options = self::DEFAULT_OPTIONS;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
+     * @return array
      */
-    public $queryColumnType = 'tinyint(1) null';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'tinyint(1) null';
-
     public function getOptions(): array
     {
         return $this->options;
@@ -134,8 +120,24 @@ class BooleanSelect extends Data implements
         return $this;
     }
 
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::BOOLEAN), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
+
     /**
-     * @param mixed $data
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
+     * @param int|null $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
