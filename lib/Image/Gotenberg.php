@@ -32,12 +32,6 @@ class Gotenberg
     }
 
     /**
-     * @param string $url
-     * @param string $outputFile
-     * @param string $windowSize
-     *
-     * @return bool
-     *
      * @throws \Exception
      */
     public static function convert(string $url, string $outputFile): bool
