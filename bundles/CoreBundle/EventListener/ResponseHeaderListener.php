@@ -70,7 +70,7 @@ class ResponseHeaderListener implements EventSubscriberInterface
         }
 
         foreach ($attributes as $attribute) {
-            if (!$attributes instanceof ResponseHeader) {
+            if (!$attribute instanceof ResponseHeader) {
                 trigger_deprecation(
                     'pimcore/pimcore',
                     '10.6',
