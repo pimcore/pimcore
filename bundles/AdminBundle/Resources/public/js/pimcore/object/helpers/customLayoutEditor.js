@@ -344,7 +344,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
                     if (target != source) {
                         var record = data.records[0];
-                        console.log(overModel);
                         if (record.data.type === "data" && overModel.data.root) {
                             dropHandlers.cancelDrop();
                         }
