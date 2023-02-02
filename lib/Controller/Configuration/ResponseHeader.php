@@ -29,13 +29,32 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
  * @Annotation
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
-final class ResponseHeader extends ConfigurationAnnotation
+class ResponseHeader extends ConfigurationAnnotation
 {
-    public function __construct(
-        public string|array|null $key = null,
-        public string|array $values = '',
-        public bool $replace = false,
-    ) {
+    /**
+     * @var string
+     */
+    protected $key;
+
+    /**
+     * @var string|array
+     */
+    protected $values;
+
+    /**
+     * @var bool
+     */
+    protected $replace = false;
+
+    /**
+     * @param string|array|null $key
+     * @param string|array $values
+     * @param bool $replace
+     */
+    public function __construct($key = null, $values = '', $replace = false) {
+        $this->values = $values;
+        $this->replace = $replace;
+
         if (is_array($key)) {
             // value is the default key if attribute was called without assignment
             // e.g. #[ResponseHeader("X-Foo")] instead of #[ResponseHeader(key="X-Foo")]
