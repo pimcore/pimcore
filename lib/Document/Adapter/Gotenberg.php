@@ -132,25 +132,28 @@ class Gotenberg extends Ghostscript
         if (!$storage->fileExists($storagePath)) {
 
             $localAssetTmpPath = $asset->getLocalFile();
-            $outputName = preg_replace("/\." . File::getFileExtension($localAssetTmpPath) . '$/', '', basename($localAssetTmpPath));
 
+            try {
             $request = GotenbergAPI::libreOffice('gotenberg:3000')
-                ->outputFilename($outputName)
                 ->convert(
                     Stream::path($localAssetTmpPath)
                 );
 
-            $filename = GotenbergAPI::save($request, PIMCORE_SYSTEM_TEMP_DIRECTORY);
-            $outputFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $filename;
+                $response = GotenbergAPI::send($request);
+                $fileContent = $response->getBody()->getContents();
+                $storage->write($storagePath, $fileContent);
 
-            if (file_exists($outputFilePath)) {
-                $storage->write($storagePath, file_get_contents($outputFilePath));
-                unlink($outputFilePath);
-            }else{
-                $message = "Couldn't convert document to PDF: " . $asset->getRealFullPath() . " with Gotenberg";
-                Logger::error($message);
+                $stream = fopen('php://memory','r+');
+                fwrite($stream, $fileContent);
+                rewind($stream);
 
-                throw new \Exception($message);
+                return $stream;
+
+            } catch (GotenbergApiErroed $e) {
+                $message = "Couldn't convert document to PDF: " . $asset->getRealFullPath() . " with Gotenberg: ";
+                Logger::error($message. $e->getMessage());
+
+                throw $e;
             }
         }
 
