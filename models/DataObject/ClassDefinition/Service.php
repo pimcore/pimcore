@@ -16,12 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Pimcore\Loader\ImplementationLoader\LoaderInterface;
+use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
-use Pimcore\Logger;
-use Pimcore\Loader\ImplementationLoader\LoaderInterface;
-use Pimcore\Tool;
 use Pimcore\Model\DataObject\ClassDefinition\Data\VarExporterInterface;
+use Pimcore\Tool;
 
 class Service
 {
