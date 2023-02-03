@@ -2,8 +2,9 @@
 ## 11.0.0
 - [General] **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. 
  This results in **various bc breaks**. Please make sure to add the corresponding types to your implementation.
+- [Symfony] Bumped Symfony packages to "^6.1". Pimcore 11 will only support Symfony 6.
+- [PHP] The minimum supported PHP version is now 8.1 and added support for 8.2 
 - [UrlSlug] Removed `index` column and `index` index from `object_url_slugs` table as it was not being used anywhere.
-- Bumped Symfony packages to "^6.1". Pimcore 11 will only support Symfony 6.
 - `FrontendController::renderTemplate()`: Changed the visibility to `protected`.
 - [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface`
 - [JSRouting Bundle] Bumped `friendsofsymfony/jsrouting-bundle` to version `^3.2.1`
