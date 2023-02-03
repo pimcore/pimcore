@@ -1100,3 +1100,5 @@ email_log_cc: Cc
 email_log_bcc: Bcc
 cols: Columns
 log_search_message: Message
+header: Header
+no_header: No Header

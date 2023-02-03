@@ -1695,19 +1695,20 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function getCsvDataForObject(Concrete $object, string $requestedLanguage, array $fields, array $helperDefinitions, LocaleServiceInterface $localeService, bool $returnMappedFieldNames = false, array $context = []): array
+    public static function getCsvDataForObject(Concrete $object, string $requestedLanguage, array $fields, array $helperDefinitions, LocaleServiceInterface $localeService, string $header, bool $returnMappedFieldNames = false, array $context = []): array
     {
         $objectData = [];
         $mappedFieldnames = [];
         foreach ($fields as $field) {
-            if (static::isHelperGridColumnConfig($field['key']) && $validLanguages = static::expandGridColumnForExport($helperDefinitions, $field['key'])) {
+            $key = $field['key'];
+            if (static::isHelperGridColumnConfig($key) && $validLanguages = static::expandGridColumnForExport($helperDefinitions, $key)) {
                 $currentLocale = $localeService->getLocale();
-                $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions);
+                $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions, $header);
 
                 foreach ($validLanguages as $validLanguage) {
                     $localeService->setLocale($validLanguage);
-                    $fieldData = self::getCsvFieldData($currentLocale, $field['key'], $object, $validLanguage, $helperDefinitions);
-                    $localizedFieldKey = $field['key'] . '-' . $validLanguage;
+                    $fieldData = self::getCsvFieldData($currentLocale, $key, $object, $validLanguage, $helperDefinitions);
+                    $localizedFieldKey = $key . '-' . $validLanguage;
                     if (!isset($mappedFieldnames[$localizedFieldKey])) {
                         $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
                     }
@@ -1716,12 +1717,12 @@ class Service extends Model\Element\Service
 
                 $localeService->setLocale($currentLocale);
             } else {
-                $fieldData = self::getCsvFieldData($requestedLanguage, $field['key'], $object, $requestedLanguage, $helperDefinitions);
-                if (!isset($mappedFieldnames[$field['key']])) {
-                    $mappedFieldnames[$field['key']] = self::mapFieldname($field, $helperDefinitions);
+                $fieldData = self::getCsvFieldData($requestedLanguage, $key, $object, $requestedLanguage, $helperDefinitions);
+                if (!isset($mappedFieldnames[$key])) {
+                    $mappedFieldnames[$key] = self::mapFieldname($field, $helperDefinitions, $header);
                 }
 
-                $objectData[$field['key']] = $fieldData;
+                $objectData[$key] = $fieldData;
             }
         }
 
@@ -1760,7 +1761,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function getCsvData(string $requestedLanguage, LocaleServiceInterface $localeService, Listing $list, array $fields, bool $addTitles = true, array $context = []): array
+    public static function getCsvData(string $requestedLanguage, LocaleServiceInterface $localeService, Listing $list, array $fields, string $header = '', bool $addTitles = true, array $context = []): array
     {
         $data = [];
         Logger::debug('objects in list:' . count($list->getObjects()));
@@ -1771,14 +1772,14 @@ class Service extends Model\Element\Service
             if ($fields) {
                 if ($addTitles && empty($data)) {
                     $tmp = [];
-                    $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, true, $context);
+                    $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $header, true, $context);
                     foreach ($mapped as $key => $value) {
                         $tmp[] = '"' . $key . '"';
                     }
                     $data[] = $tmp;
                 }
 
-                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, false, $context);
+                $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $header, false, $context);
                 $rowData = self::escapeCsvRecord($rowData);
                 $data[] = $rowData;
             }
@@ -1787,18 +1788,20 @@ class Service extends Model\Element\Service
         return $data;
     }
 
-    protected static function mapFieldname(array $field, array $helperDefinitions): string
+    protected static function mapFieldname(array $field, array $helperDefinitions, string $header): string
     {
-        if (strpos($field['key'], '#') === 0) {
-            if (isset($helperDefinitions[$field['key']])) {
-                if ($helperDefinitions[$field['key']]->attributes) {
-                    return $helperDefinitions[$field['key']]->attributes->label ? $helperDefinitions[$field['key']]->attributes->label : $field['label'];
+        $key = $field['key'];
+        $title = $field['label'];
+        if (strpos($key, '#') === 0) {
+            if (isset($helperDefinitions[$key])) {
+                if ($helperDefinitions[$key]->attributes) {
+                    return $helperDefinitions[$key]->attributes->label ? $helperDefinitions[$key]->attributes->label : $title;
                 }
 
-                return $field['label'];
+                return $title;
             }
-        } elseif (substr($field['key'], 0, 1) == '~') {
-            $fieldParts = explode('~', $field['key']);
+        } elseif (substr($key, 0, 1) == '~') {
+            $fieldParts = explode('~', $key);
             $type = $fieldParts[1];
 
             if ($type == 'classificationstore') {
@@ -1810,11 +1813,17 @@ class Service extends Model\Element\Service
                 $groupConfig = DataObject\Classificationstore\GroupConfig::getById($groupId);
                 $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
 
-                $field['key'] = $fieldname . '~' . $groupConfig->getName() . '~' . $keyConfig->getName();
+                $key = $fieldname . '~' . $groupConfig->getName() . '~' . $keyConfig->getName();
             }
         }
 
-        return $field['label'];
+        if ($header === 'name') {
+            return $key;
+        } elseif ($header === 'no_header') {
+            return '';
+        }
+
+        return $title;
     }
 
     /**

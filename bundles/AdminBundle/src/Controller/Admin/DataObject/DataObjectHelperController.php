@@ -1293,6 +1293,7 @@ class DataObjectHelperController extends AdminController
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
         $delimiter = $settings['delimiter'] ?? ';';
+        $header = $settings['header'] ?? 'title';
 
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -1330,7 +1331,7 @@ class DataObjectHelperController extends AdminController
 
         $fields = json_decode($request->get('fields')[0], true);
 
-        $addTitles = (bool) $request->get('initial');
+        $addTitles = (bool) $request->get('initial') && $header !== 'no_header';
 
         $requestedLanguage = $this->extractLanguage($request);
 
@@ -1347,7 +1348,7 @@ class DataObjectHelperController extends AdminController
             $context = array_merge($context, $contextFromRequest);
         }
 
-        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles, $context);
+        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $header, $addTitles, $context);
 
         $storage = Storage::get('temp');
         $csvFile = $this->getCsvFile($fileHandle);
