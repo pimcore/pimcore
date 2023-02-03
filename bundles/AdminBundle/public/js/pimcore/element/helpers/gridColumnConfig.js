@@ -756,7 +756,7 @@ pimcore.element.helpers.gridColumnConfig = {
                 var rdata = Ext.decode(response.responseText);
 
                 if (rdata.success && rdata.jobs) {
-                    var exportSize = rdata.jobs.reduce((a, b) => a + b.length, 0)
+                    const exportSize = rdata.jobs.reduce((a, b) => a + b.length, 0)
                     if (exportSize > 25) {
                         Ext.Msg.confirm("Confirmation", sprintf(t('batch_export_confirmation'), `<b>${new Intl.NumberFormat(navigator.language).format(exportSize)}</b>`),
                             (btn) => {
