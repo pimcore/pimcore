@@ -27,7 +27,7 @@ use Pimcore\Controller\Configuration\ResponseHeader as BaseResponseHeader;
  * See ResponseHeaderBag for documentation on the fields.
  *
  */
-#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
-class ResponseHeader extends BaseResponseHeader
+#[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
+final class ResponseHeader extends BaseResponseHeader
 {
 }
