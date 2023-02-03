@@ -27,8 +27,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
  * See ResponseHeaderBag for documentation on the fields.
  *
  * @Annotation
+ *
+ * @deprecated use Pimcore\Controller\Attribute\ResponseHeader instead.
  */
-#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
 class ResponseHeader extends ConfigurationAnnotation
 {
     /**
@@ -52,9 +53,6 @@ class ResponseHeader extends ConfigurationAnnotation
      * @param bool $replace
      */
     public function __construct($key = null, $values = '', $replace = false) {
-        $this->values = $values;
-        $this->replace = $replace;
-
         if (is_array($key)) {
             // value is the default key if attribute was called without assignment
             // e.g. #[ResponseHeader("X-Foo")] instead of #[ResponseHeader(key="X-Foo")]
@@ -64,6 +62,10 @@ class ResponseHeader extends ConfigurationAnnotation
             }
 
             parent::__construct($key);
+        } else {
+            $this->key = $key;
+            $this->values = $values;
+            $this->replace = $replace;
         }
 
         if (empty($this->key)) {
