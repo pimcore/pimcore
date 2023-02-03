@@ -68,8 +68,9 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
 
         this.dependencies = new pimcore.element.dependencies(this, "document");
         this.preview = new pimcore.document.pages.preview(this);
-        this.reports = new pimcore.report.panel("document_snippet", this);
-
+        if(pimcore.globalmanager.get('customReportsPanelImplementationFactory').hasImplementation()) {
+            this.reports = pimcore.globalmanager.get('customReportsPanelImplementationFactory').getNewReportInstance("document_snippet");
+        }
         this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
         this.workflows = new pimcore.element.workflows(this, "document");
     },
@@ -97,9 +98,11 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
 
         items.push(this.dependencies.getLayout());
 
-        var reportLayout = this.reports.getLayout();
-        if(reportLayout) {
-            items.push(reportLayout);
+        if(this.reports) {
+            var reportLayout = this.reports.getLayout();
+            if (reportLayout) {
+                items.push(reportLayout);
+            }
         }
 
         if (user.isAllowed("notes_events")) {

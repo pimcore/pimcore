@@ -41,7 +41,6 @@ framework:
             'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
-            'Pimcore\Messenger\SearchBackendMessage': pimcore_core
             'Pimcore\Messenger\SanityCheckMessage': pimcore_core
             'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_asset_update
             'Pimcore\Messenger\AssetPreviewImageMessage': pimcore_core
@@ -204,7 +203,6 @@ pimcore:
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-        types: ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer']
         valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
 
     routing:
@@ -214,12 +212,6 @@ pimcore:
         source_adapters:
             defaultAdapter: pimcore.document.newsletter.factory.default
             csvList: pimcore.document.newsletter.factory.csv
-            reportAdapter: pimcore.document.newsletter.factory.report
-
-    custom_report:
-        adapters:
-            sql: pimcore.custom_report.adapter.factory.sql
-            analytics: pimcore.custom_report.adapter.factory.analytics
 
     targeting:
         data_providers:
@@ -251,9 +243,6 @@ pimcore:
         profiler:
             routes:
                 - { path: ^/_(profiler|wdt)(/.*)?$ }
-        plugin:
-            routes:
-                - { path: ^/plugin(/.*)?$ }
 
     sitemaps:
         generators:

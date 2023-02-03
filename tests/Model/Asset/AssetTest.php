@@ -38,7 +38,7 @@ class AssetTest extends ModelTestCase
 
     protected Asset $testAsset;
 
-    public function testCRUD()
+    public function testCRUD(): void
     {
         // create
         $path = TestHelper::resolveFilePath('assets/images/image5.jpg');
@@ -92,7 +92,7 @@ class AssetTest extends ModelTestCase
     /**
      * Parent ID of a new object cannot be 0
      */
-    public function testParentIs0()
+    public function testParentIs0(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
@@ -106,7 +106,7 @@ class AssetTest extends ModelTestCase
     /**
      * Verifies that an object with the same parent ID cannot be created.
      */
-    public function testParentIdentical()
+    public function testParentIdentical(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
@@ -122,7 +122,7 @@ class AssetTest extends ModelTestCase
      *
      * @group notfound
      */
-    public function testParentNotFound()
+    public function testParentNotFound(): void
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('ParentID not found.');
@@ -136,7 +136,7 @@ class AssetTest extends ModelTestCase
     /**
      * Verifies that asset PHP API version note is saved
      */
-    public function testSavingVersionNotes()
+    public function testSavingVersionNotes(): void
     {
         $versionNote = ['versionNote' => 'a new version of this asset'];
         $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image1.jpg');
@@ -144,7 +144,7 @@ class AssetTest extends ModelTestCase
         $this->assertEquals($this->testAsset->getLatestVersion(null, true)->getNote(), $versionNote['versionNote']);
     }
 
-    public function testThumbnails()
+    public function testThumbnails(): void
     {
         $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image1.jpg');
         $this->assertInstanceOf(Asset\Image::class, $this->testAsset);
@@ -229,7 +229,7 @@ class AssetTest extends ModelTestCase
         $this->assertFalse(is_resource($stream1));
     }
 
-    public function reloadAsset()
+    public function reloadAsset(): void
     {
         $this->testAsset = Asset::getById($this->testAsset->getId(), ['force' => true]);
     }
@@ -238,7 +238,7 @@ class AssetTest extends ModelTestCase
      * Verifies that an asset can be saved with custom user modification id.
      *
      */
-    public function testCustomUserModification()
+    public function testCustomUserModification(): void
     {
         $userId = 101;
         $asset = TestHelper::createImageAsset();
@@ -258,7 +258,7 @@ class AssetTest extends ModelTestCase
      * Verifies that an asset can be saved with custom modification date.
      *
      */
-    public function testCustomModificationDate()
+    public function testCustomModificationDate(): void
     {
         $customDateTime = new \Carbon\Carbon();
         $customDateTime = $customDateTime->subHour();
@@ -277,7 +277,7 @@ class AssetTest extends ModelTestCase
         $this->assertGreaterThanOrEqual($currentTime, $asset->getModificationDate(), 'Expected auto assigned modification date');
     }
 
-    public function testForceReload()
+    public function testForceReload(): void
     {
         $asset = TestHelper::createImageAsset();
 
@@ -285,7 +285,7 @@ class AssetTest extends ModelTestCase
         $this->assertFalse(Asset::getById($asset->getId()) === Asset::getById($asset->getId(), ['force' => true]));
     }
 
-    public function testAssetFullPath()
+    public function testAssetFullPath(): void
     {
         $asset = TestHelper::createImageAsset();
 

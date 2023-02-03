@@ -6,8 +6,8 @@ and gives additional insights into how Pimcore works.
 
 The topics include insights to 
 [Database Model](./05_Database_Model.md) 
-and Tools like [Logging](./07_Logging), [Console CLI](./11_Console_CLI), [Magic Parameters](./15_Magic_Parameters)
+and Tools like [Logging](./07_Logging.md), [Console CLI](./11_Console_CLI.md), [Magic Parameters](./15_Magic_Parameters.md)
 and much more. 
 
-Just have a look at the sub pages and dive into the possibilities of Pimcore. 
+Just have a look at the sub-pages and dive into the possibilities of Pimcore. 
 

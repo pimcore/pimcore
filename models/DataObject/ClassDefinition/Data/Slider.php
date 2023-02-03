@@ -120,14 +120,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this->vertical;
     }
 
-    /**
-     * @return null
-     */
-    public function getDefaultValue()
-    {
-        return null;
-    }
-
     public function setVertical(bool $vertical): static
     {
         $this->vertical = (bool) $vertical;
@@ -317,6 +309,11 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         }
 
         return false;
+    }
+
+    public function isEmpty(mixed $data): bool
+    {
+        return !is_numeric($data);
     }
 
     public function getParameterTypeDeclaration(): ?string

@@ -774,15 +774,37 @@ pimcore.element.helpers.gridColumnConfig = {
             };
             this.exportProgressBar = new Ext.ProgressBar({
                 text: t('initializing'),
-                style: "margin: 10px;",
+                style: "margin-top: 0px;",
                 width: 500
+            });
+            
+            this.cancelBtn = Ext.create('Ext.Button', {
+                scale: 'small',
+                text: t('cancel'),
+                tooltip: t('cancel'),
+                icon: '/bundles/pimcoreadmin/img/flat-color-icons/cancel.svg',
+                style: 'margin-left:5px;height:30px',
+                handler: () => {
+                    // Stop the batch processing
+                    this.exportJobCurrent = Infinity;
+                }
+            });
+
+            this.progressPanel = Ext.create('Ext.panel.Panel', {
+                layout: {
+                    type: 'hbox',
+                },
+                items: [
+                    this.exportProgressBar,
+                    this.cancelBtn
+                ],
             });
 
             this.exportProgressWin = new Ext.Window({
                 title: t("export"),
-                items: [this.exportProgressBar],
+                items: [this.progressPanel],
                 layout: 'fit',
-                width: 200,
+                width: 650,
                 bodyStyle: "padding: 10px;",
                 closable: false,
                 plain: true,

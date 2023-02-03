@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SeoBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Config;
+use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

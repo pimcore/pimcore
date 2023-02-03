@@ -44,7 +44,7 @@ abstract class ModelTestCase extends TestCase
     /**
      * Set up test classes before running tests
      */
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
     }
 
@@ -73,5 +73,3 @@ abstract class ModelTestCase extends TestCase
         return $this->session;
     }
 }
-
-@class_alias(ModelTestCase::class, 'Pimcore\Tests\Support\Test\ModelTestCase');

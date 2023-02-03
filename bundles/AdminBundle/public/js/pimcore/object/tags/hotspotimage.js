@@ -256,12 +256,14 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             handler: this.empty.bind(this, false)
         });
 
-        items.push({
-            xtype: "button",
-            iconCls: "pimcore_icon_search",
-            overflowText: t('search'),
-            handler: this.openSearchEditor.bind(this)
-        });
+        if(pimcore.helpers.hasSearchImplementation()) {
+            items.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_search",
+                overflowText: t('search'),
+                handler: this.openSearchEditor.bind(this)
+            });
+        }
 
         items.push({
             xtype: "button",

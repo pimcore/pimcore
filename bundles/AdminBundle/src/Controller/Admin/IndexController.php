@@ -38,7 +38,6 @@ use Pimcore\Tool\Session;
 use Pimcore\Version;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -93,16 +92,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtection, $siteConfigProvider);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
-            // only one login is allowed to setup 2FA by the user himself
-            $user->setTwoFactorAuthentication('enabled', true);
-            // disable the 2FA prompt for the current session
-            Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
-                $adminSession->set('2fa_required', false);
-            });
-
-            $user->save();
-
-            $templateParams['settings']['twoFactorSetupRequired'] = true;
+            return $this->redirectToRoute('pimcore_admin_2fa_setup');
         }
 
         // allow to alter settings via an event
@@ -196,7 +186,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'disableMinifyJs'     => \Pimcore::disableMinifyJs(),
             'environment'         => $kernel->getEnvironment(),
             'cached_environments' => Tool::getCachedSymfonyEnvironments(),
-            'sessionId'           => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
+            'sessionId'           => htmlentities($request->getSession()->getId(), ENT_QUOTES, 'UTF-8'),
 
             // languages
             'language'         => $request->getLocale(),
@@ -240,7 +230,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
             // this stuff is used to decide whether the "add" button should be grayed out or not
             'image-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable(),
             'video-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Video\Thumbnail\Config())->isWriteable(),
-            'custom-reports-writeable'            => (new \Pimcore\Model\Tool\CustomReport\Config())->isWriteable(),
             'document-types-writeable'            => (new DocType())->isWriteable(),
             'web2print-writeable'                 => \Pimcore\Web2Print\Config::isWriteable(),
             'predefined-properties-writeable'     => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
@@ -258,7 +247,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             ->addCustomViewSettings($settings)
             ->addNotificationSettings($settings, $config);
 
-        $settings['csrfToken'] = $csrfProtection->getCsrfToken();
+        $settings['csrfToken'] = $csrfProtection->getCsrfToken($request->getSession());
 
         $templateParams['settings'] = $settings;
 
