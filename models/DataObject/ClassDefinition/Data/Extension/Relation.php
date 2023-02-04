@@ -39,7 +39,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\Document' . $strArray;
             } elseif (is_array($documentTypes)) {
                 foreach ($documentTypes as $item) {
-                    $class[] = sprintf('\Pimcore\Model\Document\%s', ucfirst($item['documentTypes']) . $strArray);
+                    $class[] = $this->getMappedClassName('\Pimcore\Model\Document\\' . ucfirst($item['documentTypes'])) . $strArray;
                 }
             }
         }
@@ -51,7 +51,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\Asset' . $strArray;
             } elseif (is_array($assetTypes)) {
                 foreach ($assetTypes as $item) {
-                    $class[] = sprintf('\Pimcore\Model\Asset\%s', ucfirst($item['assetTypes']) . $strArray);
+                    $class[] = $this->getMappedClassName('\Pimcore\Model\Asset\\' . ucfirst($item['assetTypes'])) . $strArray;
                 }
             }
         }
@@ -63,12 +63,24 @@ trait Relation
                 $class[] = '\Pimcore\Model\DataObject\AbstractObject' . $strArray;
             } elseif (is_array($classes)) {
                 foreach ($classes as $item) {
-                    $class[] = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes']) . $strArray);
+                    $class[] = $this->getMappedClassName('\Pimcore\Model\DataObject\\' . ucfirst($item['classes'])) . $strArray;
                 }
             }
         }
 
         return $class;
+    }
+
+    protected function getMappedClassName(string $className): string
+    {
+        try {
+            $className = \Pimcore::getContainer()->get('pimcore.model.factory')->getClassNameFor($className);
+            if ($className[0] !== '\\') {
+                $className = '\\' . $className;
+            }
+        } finally {
+            return $className;
+        }
     }
 
     /**
