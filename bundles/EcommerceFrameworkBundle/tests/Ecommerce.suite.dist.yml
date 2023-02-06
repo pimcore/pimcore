@@ -1,0 +1,6 @@
+actor: EcommerceTester
+modules:
+    enabled:
+        - \Pimcore\Tests\Support\Helper\Pimcore:
+            connect_db: true
+        - \Pimcore\Bundle\EcommerceFrameworkBundle\Tests\Support\Helper\Ecommerce

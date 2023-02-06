@@ -65,8 +65,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected static bool $disableDirtyDetection = false;
 
@@ -79,145 +77,44 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
-     */
-    protected ?int $id = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
-     */
-    protected ?int $parentId = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     */
-    protected ?Element\AbstractElement $parent = null;
-
-    /**
-     * @internal
-     *
-     * @var string
      */
     protected string $type = 'object';
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $key = null;
 
     /**
      * @internal
-     *
-     * @var string|null
-     */
-    protected ?string $path = null;
-
-    /**
-     * @internal
-     *
-     * @var int
      */
     protected int $index = 0;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
-     */
-    protected ?int $creationDate = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
-     */
-    protected ?int $modificationDate = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     */
-    protected ?int $userOwner = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     */
-    protected ?int $userModification = null;
 
     /**
      * Contains a list of sibling documents
      *
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $siblings = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $children = [];
 
     /**
      * @internal
-     *
-     * @deprecated
-     *
-     * @var string
-     */
-    protected ?string $locked = null;
-
-    /**
-     * @internal
-     *
-     * @var string|null
      */
     protected ?string $childrenSortBy = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $childrenSortOrder = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var int
-     */
-    protected int $versionCount = 0;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var array<string, Model\Property>|null
-     */
-    protected ?array $properties = null;
 
     /**
      * {@inheritdoc}
