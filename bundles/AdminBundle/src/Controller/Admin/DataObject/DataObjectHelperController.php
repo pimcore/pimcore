@@ -1331,7 +1331,7 @@ class DataObjectHelperController extends AdminController
 
         $fields = json_decode($request->get('fields')[0], true);
 
-        $addTitles = (bool) $request->get('initial') && $header !== 'no_header';
+        $addTitles = (bool) $request->get('initial');
 
         $requestedLanguage = $this->extractLanguage($request);
 
@@ -1359,6 +1359,12 @@ class DataObjectHelperController extends AdminController
         stream_copy_to_stream($fileStream, $temp, null, 0);
 
         $firstLine = true;
+
+        if ($request->get('initial') && $header === 'no_header') {
+            array_shift($csv);
+            $firstLine = false;
+        }
+
         $lineCount = count($csv);
 
         if (!$addTitles && $lineCount > 0) {
