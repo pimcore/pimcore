@@ -207,7 +207,7 @@ class DeviceDetector
 
             if (in_array($typeForced, $this->validDeviceTypes)) {
                 /**
-                 * @psalm-taint-escape eval
+                 * @psalm-taint-escape cookie
                  */
                 $type = $typeForced;
 
