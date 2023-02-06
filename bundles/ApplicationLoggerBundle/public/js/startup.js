@@ -1,6 +1,7 @@
 pimcore.registerNS("pimcore.bundle.applicationlogger.startup");
 
 pimcore.bundle.applicationlogger.startup = Class.create({
+
     initialize: function () {
         document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
@@ -37,7 +38,7 @@ pimcore.bundle.applicationlogger.startup = Class.create({
             pimcore.globalmanager.get("pimcore_applicationlog_admin").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("pimcore_applicationlog_admin", this.applicationLoggerPanel.getNewLoggerInstance());
+            pimcore.globalmanager.add("pimcore_applicationlog_admin", new pimcore.bundle.applicationlogger.log.admin());
         }
     },
 
