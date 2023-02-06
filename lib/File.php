@@ -95,7 +95,7 @@ class File
             self::mkdir(dirname($path));
         }
 
-        $return = file_put_contents($path, $data, self::$defaultFlags, self::getContext());
+        $return = file_put_contents(realpath($path), $data, self::$defaultFlags, self::getContext());
         @chmod($path, self::$defaultMode);
 
         return $return;
@@ -157,7 +157,7 @@ class File
                 $currentPath .= '/';
             }
         } else {
-            $return = @mkdir($path, $mode, false, self::getContext());
+            $return = @mkdir(realpath($path), $mode, false, self::getContext());
         }
 
         umask($oldMask);

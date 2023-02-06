@@ -259,6 +259,7 @@ class SettingsController extends AdminController
 
     /**
      * @throws \Exception
+     * @psalm-taint-specialize
      */
     private function getFileExplorerPath(Request $request, string $paramName = 'node'): string
     {
