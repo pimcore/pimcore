@@ -89,7 +89,7 @@ class HeadlessChrome extends Processor
     /**
      * @internal
      */
-    public function getPdfFromString(string $html, array $params = [], bool $returnFilePath = false): string
+    public function getPdfFromString(string $html, ?array $params = [], bool $returnFilePath = false): string
     {
         $params = $params ?: $this->getDefaultOptions();
 
