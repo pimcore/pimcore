@@ -23,6 +23,7 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\Version;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 
 class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle implements DependentBundleInterface
 {
