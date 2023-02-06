@@ -11,7 +11,7 @@ pimcore_uuid:
   instance_identifier: 'your_unique_instance_identifier'
 ```
 
-Once set, Pimcore automatically creates an UUID for each newly created document, asset, classes and object. 
+Once set, Pimcore automatically creates an UUID for each newly created document, asset, class and object. 
 With the class `Tool\UUID` you have access to the UUIDs as follows:
 
 ```php
