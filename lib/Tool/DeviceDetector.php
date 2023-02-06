@@ -204,12 +204,16 @@ class DeviceDetector
         }
 
         if ($typeForced) {
+
             if (in_array($typeForced, $this->validDeviceTypes)) {
+                /**
+                 * @psalm-taint-escape eval
+                 */
                 $type = $typeForced;
 
                 // we don't set a cookie if we're in preview mode, or if a cookie is set already
                 if (!isset($_COOKIE['forceDeviceType']) && !isset($_REQUEST['pimcore_preview'])) {
-                    setcookie('forceDeviceType', $typeForced);
+                    setcookie('forceDeviceType', $type);
                 }
             }
         }
