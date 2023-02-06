@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,8 +32,6 @@ class Newsletter extends Model\Document\PageSnippet
      * Contains the email subject
      *
      * @internal
-     *
-     * @var string
      */
     protected string $subject = '';
 
@@ -40,8 +39,6 @@ class Newsletter extends Model\Document\PageSnippet
      * Contains the plain text part of the email
      *
      * @internal
-     *
-     * @var string
      */
     protected string $plaintext = '';
 
@@ -49,8 +46,6 @@ class Newsletter extends Model\Document\PageSnippet
      * Contains the from email address
      *
      * @internal
-     *
-     * @var string
      */
     protected string $from = '';
 
@@ -58,36 +53,26 @@ class Newsletter extends Model\Document\PageSnippet
      * enables adding tracking parameters to all links
      *
      * @internal
-     *
-     * @var bool
      */
     protected bool $enableTrackingParameters = false;
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected string $trackingParameterSource = 'newsletter';
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected string $trackingParameterMedium = 'email';
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $trackingParameterName = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected string $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
 
@@ -103,7 +88,7 @@ class Newsletter extends Model\Document\PageSnippet
      *
      * @return $this
      */
-    public function setSubject($subject)
+    public function setSubject(string $subject): static
     {
         $this->subject = $subject;
 
@@ -115,7 +100,7 @@ class Newsletter extends Model\Document\PageSnippet
      *
      * @return string
      */
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
@@ -127,7 +112,7 @@ class Newsletter extends Model\Document\PageSnippet
      *
      * @return $this
      */
-    public function setFrom($from)
+    public function setFrom(string $from): static
     {
         $this->from = $from;
 
@@ -141,7 +126,7 @@ class Newsletter extends Model\Document\PageSnippet
      *
      * @return $this
      */
-    public function setPlaintext($plaintext)
+    public function setPlaintext(string $plaintext): static
     {
         $this->plaintext = $plaintext;
 
@@ -153,7 +138,7 @@ class Newsletter extends Model\Document\PageSnippet
      *
      * @return string
      */
-    public function getPlaintext()
+    public function getPlaintext(): string
     {
         return $this->plaintext;
     }
@@ -163,55 +148,37 @@ class Newsletter extends Model\Document\PageSnippet
      *
      * @return string
      */
-    public function getFrom()
+    public function getFrom(): string
     {
         return $this->from;
     }
 
-    /**
-     * @return bool
-     */
-    public function getEnableTrackingParameters()
+    public function getEnableTrackingParameters(): bool
     {
         return $this->enableTrackingParameters;
     }
 
-    /**
-     * @param bool $enableTrackingParameters
-     */
-    public function setEnableTrackingParameters($enableTrackingParameters)
+    public function setEnableTrackingParameters(bool $enableTrackingParameters): void
     {
         $this->enableTrackingParameters = $enableTrackingParameters;
     }
 
-    /**
-     * @return string
-     */
-    public function getTrackingParameterSource()
+    public function getTrackingParameterSource(): string
     {
         return $this->trackingParameterSource;
     }
 
-    /**
-     * @param string $trackingParameterSource
-     */
-    public function setTrackingParameterSource($trackingParameterSource)
+    public function setTrackingParameterSource(string $trackingParameterSource): void
     {
         $this->trackingParameterSource = $trackingParameterSource;
     }
 
-    /**
-     * @return string
-     */
-    public function getTrackingParameterMedium()
+    public function getTrackingParameterMedium(): string
     {
         return $this->trackingParameterMedium;
     }
 
-    /**
-     * @param string $trackingParameterMedium
-     */
-    public function setTrackingParameterMedium($trackingParameterMedium)
+    public function setTrackingParameterMedium(string $trackingParameterMedium): void
     {
         $this->trackingParameterMedium = $trackingParameterMedium;
     }
@@ -219,9 +186,9 @@ class Newsletter extends Model\Document\PageSnippet
     /**
      * returns key by default
      *
-     * @return string
+     * @return string|null
      */
-    public function getTrackingParameterName()
+    public function getTrackingParameterName(): ?string
     {
         if (is_null($this->trackingParameterName)) {
             return $this->getKey();
@@ -230,26 +197,17 @@ class Newsletter extends Model\Document\PageSnippet
         return $this->trackingParameterName;
     }
 
-    /**
-     * @param string $trackingParameterName
-     */
-    public function setTrackingParameterName($trackingParameterName)
+    public function setTrackingParameterName(string $trackingParameterName): void
     {
         $this->trackingParameterName = $trackingParameterName;
     }
 
-    /**
-     * @return string
-     */
-    public function getSendingMode()
+    public function getSendingMode(): string
     {
         return $this->sendingMode;
     }
 
-    /**
-     * @param string $sendingMode
-     */
-    public function setSendingMode($sendingMode)
+    public function setSendingMode(string $sendingMode): void
     {
         $this->sendingMode = $sendingMode;
     }
@@ -259,7 +217,7 @@ class Newsletter extends Model\Document\PageSnippet
      *
      * @return string
      */
-    public function getTmpStoreId()
+    public function getTmpStoreId(): string
     {
         return 'newsletter__' . $this->getId();
     }

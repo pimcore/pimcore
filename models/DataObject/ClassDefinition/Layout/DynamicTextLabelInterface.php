@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,10 +22,7 @@ interface DynamicTextLabelInterface
 {
     /**
      * @param string $data as provided in the class definition
-     * @param Concrete|null $object
-     * @param mixed $params
-     *
-     * @return string
+     * @param array<string, mixed> $params
      */
-    public function renderLayoutText($data, $object, $params);
+    public function renderLayoutText(string $data, ?Concrete $object, array $params): string;
 }

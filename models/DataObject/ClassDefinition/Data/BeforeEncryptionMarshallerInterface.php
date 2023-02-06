@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,5 +27,5 @@ interface BeforeEncryptionMarshallerInterface
      *
      * @return mixed
      */
-    public function marshalBeforeEncryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */;
+    public function marshalBeforeEncryption(mixed $value, Concrete $object = null, array $params = []): mixed;
 }

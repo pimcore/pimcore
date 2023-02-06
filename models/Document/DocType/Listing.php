@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,24 +17,32 @@
 namespace Pimcore\Model\Document\DocType;
 
 use Pimcore\Model;
+use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Listing\CallableFilterListingInterface;
+use Pimcore\Model\Listing\CallableOrderListingInterface;
+use Pimcore\Model\Listing\Traits\FilterListingTrait;
+use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
 /**
  * @method \Pimcore\Model\Document\DocType\Listing\Dao getDao()
  * @method int getTotalCount()
  */
-class Listing extends Model\Listing\JsonListing
+class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
+    use FilterListingTrait;
+    use OrderListingTrait;
+
     /**
      * @internal
      *
      * @var array|null
      */
-    protected $docTypes = null;
+    protected ?array $docTypes = null;
 
     /**
      * @return \Pimcore\Model\Document\DocType[]
      */
-    public function getDocTypes()
+    public function getDocTypes(): array
     {
         if ($this->docTypes === null) {
             $this->getDao()->loadList();
@@ -42,12 +51,7 @@ class Listing extends Model\Listing\JsonListing
         return $this->docTypes;
     }
 
-    /**
-     * @param array $docTypes
-     *
-     * @return $this
-     */
-    public function setDocTypes($docTypes)
+    public function setDocTypes(array $docTypes): static
     {
         $this->docTypes = $docTypes;
 
@@ -57,7 +61,7 @@ class Listing extends Model\Listing\JsonListing
     /**
      * @return Model\Document\DocType[]
      */
-    public function load()
+    public function load(): array
     {
         return $this->getDocTypes();
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,35 +16,32 @@
 
 namespace Pimcore;
 
-use Pimcore\Cache\Runtime;
-use Pimcore\Config\Config as PimcoreConfig;
+use ArrayAccess;
+use Exception;
+use Pimcore;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\ReportConfigWriter;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\SettingsStore;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Yaml\Yaml;
 
-final class Config implements \ArrayAccess
+final class Config implements ArrayAccess
 {
     /**
-     * @var array
+     * @var array<string, string>
      */
-    protected static $configFileCache = [];
+    protected static array $configFileCache = [];
+
+    protected static ?string $environment = null;
 
     /**
-     * @var string
+     * @var array<string, mixed>|null
      */
-    protected static $environment = null;
+    protected static ?array $systemConfig = null;
 
     /**
-     * @var array|null
-     */
-    protected static $systemConfig = null;
-
-    /**
-     * @param  mixed $offset
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function offsetExists($offset): bool
     {
@@ -51,30 +49,25 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @param  mixed $offset
-     * @param  mixed $value
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function offsetSet($offset, $value): void
     {
-        throw new \Exception("modifying the config isn't allowed");
+        throw new Exception("modifying the config isn't allowed");
     }
 
     /**
-     * @param  mixed $offset
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function offsetUnset($offset): void
     {
-        throw new \Exception("modifying the config isn't allowed");
+        throw new Exception("modifying the config isn't allowed");
     }
 
     /**
-     * @param string $offset
+     * {@inheritdoc}
      *
-     * @return array|null
+     * @return array<string, mixed>|null
      */
     public function offsetGet($offset): ?array
     {
@@ -136,12 +129,11 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
+     * @param array<string, mixed>|null $configuration
      *
-     * @param null|array $configuration
-     * @param null|mixed $offset
+     * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
      */
-    public static function setSystemConfiguration($configuration, $offset = null)
+    public static function setSystemConfiguration(?array $configuration, string $offset = null): void
     {
         if (null !== $offset) {
             self::getSystemConfiguration();
@@ -152,15 +144,13 @@ final class Config implements \ArrayAccess
     }
 
     /**
+     * @return null|array<string, mixed>
+     *
      * @internal
-     *
-     * @param null|mixed $offset
-     *
-     * @return null|array
      */
-    public static function getSystemConfiguration($offset = null)
+    public static function getSystemConfiguration(string $offset = null): ?array
     {
-        if (null === static::$systemConfig && $container = \Pimcore::getContainer()) {
+        if (null === static::$systemConfig && $container = Pimcore::getContainer()) {
             $config = $container->getParameter('pimcore.config');
             $adminConfig = $container->getParameter('pimcore_admin.config');
 
@@ -175,13 +165,13 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @internal
-     *
      * @param string|null $languange
      *
      * @return string
+     *
+     * @internal
      */
-    public static function getWebsiteConfigRuntimeCacheKey($languange = null)
+    public static function getWebsiteConfigRuntimeCacheKey(string $languange = null): string
     {
         $cacheKey = 'pimcore_config_website';
         if ($languange) {
@@ -192,14 +182,12 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @static
-     *
-     * @return mixed|\Pimcore\Config\Config
+     * @return array<string, mixed>
      */
-    public static function getWebsiteConfig($language = null)
+    public static function getWebsiteConfig(string $language = null): array
     {
-        if (\Pimcore\Cache\Runtime::isRegistered(self::getWebsiteConfigRuntimeCacheKey($language))) {
-            $config = \Pimcore\Cache\Runtime::get(self::getWebsiteConfigRuntimeCacheKey($language));
+        if (RuntimeCache::isRegistered(self::getWebsiteConfigRuntimeCacheKey($language))) {
+            $config = RuntimeCache::get(self::getWebsiteConfigRuntimeCacheKey($language));
         } else {
             $cacheKey = 'website_config';
             if ($language) {
@@ -212,7 +200,7 @@ final class Config implements \ArrayAccess
             } elseif (Tool::isFrontendRequestByAdmin()) {
                 // this is necessary to set the correct settings in editmode/preview (using the main domain)
                 // we cannot use the document resolver service here, because we need the document on the master request
-                $originDocument = \Pimcore::getContainer()->get('request_stack')->getMainRequest()->get(DynamicRouter::CONTENT_KEY);
+                $originDocument = Pimcore::getContainer()->get('request_stack')->getMainRequest()->get(DynamicRouter::CONTENT_KEY);
                 if ($originDocument) {
                     $site = Tool\Frontend::getSiteForDocument($originDocument);
                     if ($site) {
@@ -225,10 +213,8 @@ final class Config implements \ArrayAccess
                 $cacheKey = $cacheKey . '_site_' . $siteId;
             }
 
-            /** @var \Pimcore\Config\Config|null $config */
             $config = Cache::load($cacheKey);
             if (!$config) {
-                $settingsArray = [];
                 $cacheTags = ['website_config', 'system', 'config', 'output'];
 
                 $list = new Model\WebsiteSetting\Listing();
@@ -249,7 +235,7 @@ final class Config implements \ArrayAccess
 
                     $key = $item->getName();
 
-                    if (!$itemLanguage && isset($settingsArray[$key])) {
+                    if (!$itemLanguage && isset($config[$key])) {
                         continue;
                     }
 
@@ -280,21 +266,18 @@ final class Config implements \ArrayAccess
                     }
 
                     if (isset($s)) {
-                        $settingsArray[$key] = $s;
+                        $config[$key] = $s;
                     }
                 }
 
                 //TODO resolve for all langs, current lang first, then no lang
-                $config = new PimcoreConfig($settingsArray, true);
-
                 Cache::save($config, $cacheKey, $cacheTags, null, 998);
-            } elseif ($config instanceof PimcoreConfig) {
-                $data = $config->toArray();
-                foreach ($data as $key => $setting) {
+            } elseif (is_array($config)) {
+                foreach ($config as $key => $setting) {
                     if ($setting instanceof ElementInterface) {
                         $elementCacheKey = $setting->getCacheTag();
-                        if (!Runtime::isRegistered($elementCacheKey)) {
-                            Runtime::set($elementCacheKey, $setting);
+                        if (!RuntimeCache::isRegistered($elementCacheKey)) {
+                            RuntimeCache::set($elementCacheKey, $setting);
                         }
                     }
                 }
@@ -307,64 +290,47 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @internal
-     *
-     * @param Config\Config|null $config
+     * @param array<string, mixed>|null $config
      * @param string|null $language
+     *
+     * @internal
      */
-    public static function setWebsiteConfig(?PimcoreConfig $config, $language = null)
+    public static function setWebsiteConfig(?array $config, string $language = null): void
     {
-        \Pimcore\Cache\Runtime::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
+        RuntimeCache::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
     }
 
     /**
      * Returns whole website config or only a given setting for the current site
      *
-     * @param null|mixed $key       Config key to directly load. If null, the whole config will be returned
-     * @param null|mixed $default   Default value to use if the key is not set
-     * @param null|string $language   Language
+     * @param string|null $key  Config key to directly load. If null, the whole config will be returned
+     * @param mixed $default    Default value to use if the key is not set
+     * @param string|null $language
      *
-     * @return Config\Config|mixed
+     * @return mixed
      */
-    public static function getWebsiteConfigValue($key = null, $default = null, $language = null)
+    public static function getWebsiteConfigValue(string $key = null, mixed $default = null, string $language = null): mixed
     {
         $config = self::getWebsiteConfig($language);
         if (null !== $key) {
-            return $config->get($key, $default);
+            return $config[$key] ?? $default;
         }
 
         return $config;
     }
 
-    private static function getArrayValue($keys, $array)
-    {
-        $len = count($keys);
-        $pointer = $array;
-        for ($i = 0; $i < $len; $i++) {
-            $key = $keys[$i];
-            if (array_key_exists($key, $pointer)) {
-                $pointer = $pointer[$key];
-            } else {
-                return null;
-            }
-        }
-
-        return $pointer;
-    }
-
     /**
-     * @return PimcoreConfig
+     * @return array<string, mixed>
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @internal
-     * @static
      */
-    public static function getReportConfig(): PimcoreConfig
+    public static function getReportConfig(): array
     {
-        $config = null;
-        if (Runtime::isRegistered('pimcore_config_report')) {
-            $config = Runtime::get('pimcore_config_report');
+        $config = [];
+        if (RuntimeCache::isRegistered('pimcore_config_report')) {
+            $config = RuntimeCache::get('pimcore_config_report');
         } else {
             try {
                 $configJson = SettingsStore::get(
@@ -372,16 +338,11 @@ final class Config implements \ArrayAccess
                 );
 
                 if ($configJson) {
-                    $configArray = json_decode($configJson->getData(), true);
-                    $config = new PimcoreConfig($configArray);
+                    $config = json_decode($configJson->getData(), true);
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // nothing to do
             }
-        }
-
-        if (!$config) {
-            $config = new PimcoreConfig([]);
         }
 
         self::setReportConfig($config);
@@ -390,73 +351,26 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @internal
-     * @static
+     * @param array<string, mixed> $config
      *
-     * @param \Pimcore\Config\Config $config
+     * @internal
      */
-    public static function setReportConfig(\Pimcore\Config\Config $config)
+    public static function setReportConfig(array $config): void
     {
-        \Pimcore\Cache\Runtime::set('pimcore_config_report', $config);
+        RuntimeCache::set('pimcore_config_report', $config);
     }
 
     /**
-     * @static
-     *
-     * @return \Pimcore\Config\Config
+     * @return array<string, mixed>
      *
      * @internal
      */
-    public static function getRobotsConfig()
+    public static function getWeb2PrintConfig(): array
     {
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_robots')) {
-            $config = \Pimcore\Cache\Runtime::get('pimcore_config_robots');
+        if (RuntimeCache::isRegistered('pimcore_config_web2print')) {
+            $config = RuntimeCache::get('pimcore_config_web2print');
         } else {
-            try {
-                $settingsStoreScope = 'robots.txt';
-                $configData = [];
-                $robotsSettingsIds = SettingsStore::getIdsByScope($settingsStoreScope);
-                foreach ($robotsSettingsIds as $id) {
-                    $robots = SettingsStore::get($id, $settingsStoreScope);
-                    $siteId = \preg_replace('/^robots\.txt\-/', '', $robots->getId());
-                    $configData[$siteId] = $robots->getData();
-                }
-
-                $config = new \Pimcore\Config\Config($configData);
-            } catch (\Exception $e) {
-                $config = new \Pimcore\Config\Config([]);
-            }
-
-            self::setRobotsConfig($config);
-        }
-
-        return $config;
-    }
-
-    /**
-     * @static
-     *
-     * @param \Pimcore\Config\Config $config
-     *
-     * @internal
-     */
-    public static function setRobotsConfig(\Pimcore\Config\Config $config)
-    {
-        \Pimcore\Cache\Runtime::set('pimcore_config_robots', $config);
-    }
-
-    /**
-     * @internal
-     * @static
-     *
-     * @return \Pimcore\Config\Config
-     */
-    public static function getWeb2PrintConfig()
-    {
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_web2print')) {
-            $config = \Pimcore\Cache\Runtime::get('pimcore_config_web2print');
-        } else {
-            $config = \Pimcore\Web2Print\Config::get();
+            $config = Web2Print\Config::get();
             self::setWeb2PrintConfig($config);
         }
 
@@ -464,36 +378,31 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @internal
-     * @static
+     * @param array<string, mixed> $config
      *
-     * @param \Pimcore\Config\Config $config
+     * @internal
      */
-    public static function setWeb2PrintConfig(\Pimcore\Config\Config $config)
+    public static function setWeb2PrintConfig(array $config): void
     {
-        \Pimcore\Cache\Runtime::set('pimcore_config_web2print', $config);
+        RuntimeCache::set('pimcore_config_web2print', $config);
     }
 
     /**
-     * @internal
-     * @static
+     * @param array<string, mixed> $config
      *
-     * @param \Pimcore\Config\Config $config
+     * @internal
      */
-    public static function setModelClassMappingConfig($config)
+    public static function setModelClassMappingConfig(array $config): void
     {
-        \Pimcore\Cache\Runtime::set('pimcore_config_model_classmapping', $config);
+        RuntimeCache::set('pimcore_config_model_classmapping', $config);
     }
 
     /**
+     * @param array<string, mixed> $runtimeConfig
+     *
      * @internal
-     *
-     * @param array $runtimeConfig
-     * @param string $key
-     *
-     * @return bool
      */
-    public static function inPerspective($runtimeConfig, $key)
+    public static function inPerspective(array $runtimeConfig, string $key): bool
     {
         if (!isset($runtimeConfig['toolbar']) || !$runtimeConfig['toolbar']) {
             return true;
@@ -527,45 +436,35 @@ final class Config implements \ArrayAccess
         return true;
     }
 
-    /**
-     * @return string
-     */
     public static function getEnvironment(): string
     {
         return $_SERVER['APP_ENV'];
     }
 
     /**
+     * @return array<string, mixed>
+     *
+     * @throws Exception
+     *
      * @internal
-     *
-     * @param string $file
-     * @param bool $asArray
-     *
-     * @return null|Config\Config|array
-     *
-     * @throws \Exception
      */
-    public static function getConfigInstance($file, bool $asArray = false)
+    public static function getConfigInstance(string $file): array
     {
         $fileType = pathinfo($file, PATHINFO_EXTENSION);
         if (file_exists($file)) {
-            if ($fileType == 'yml') {
+            if ($fileType == 'yaml') {
                 $content = Yaml::parseFile($file);
             } else {
                 $content = include($file);
             }
 
             if (is_array($content)) {
-                if ($asArray) {
-                    return $content;
-                }
-
-                return new \Pimcore\Config\Config($content);
+                return $content;
             }
         } else {
-            throw new \Exception($file . " doesn't exist");
+            throw new Exception($file . " doesn't exist");
         }
 
-        throw new \Exception($file . ' is invalid');
+        throw new Exception($file . ' is invalid');
     }
 }

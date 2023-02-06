@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,7 +35,7 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
 
     const SAVE_VERSION = 'save_version';
 
-    public function onWorkflowCompleted(Event $event)
+    public function onWorkflowCompleted(Event $event): void
     {
         if (!$this->checkEvent($event)) {
             return;
@@ -57,10 +58,6 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
 
     /**
      * check's if the event subscriber should be executed
-     *
-     * @param Event $event
-     *
-     * @return bool
      */
     private function checkEvent(Event $event): bool
     {
@@ -68,7 +65,7 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
             && ($event->getSubject() instanceof Concrete || $event->getSubject() instanceof Document);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'workflow.completed' => 'onWorkflowCompleted',

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,20 +24,11 @@ use Pimcore\Model\Element\ElementInterface;
  */
 final class ObjectFieldGetter extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $attribute;
+    private string $attribute;
 
-    /**
-     * @var string
-     */
-    private $forwardAttribute;
+    private string $forwardAttribute;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -47,16 +39,16 @@ final class ObjectFieldGetter extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
         $getter = 'get' . ucfirst($this->attribute);
 
-        if (!$childs) {
+        if (!$children) {
             if ($this->attribute && method_exists($element, $getter)) {
                 $result->value = $element->$getter();
                 if ($result->value instanceof ElementInterface) {
@@ -66,7 +58,7 @@ final class ObjectFieldGetter extends AbstractOperator
                 return $result;
             }
         } else {
-            $c = $childs[0];
+            $c = $children[0];
             $forwardObject = $element;
 
             if ($this->forwardAttribute) {
@@ -91,7 +83,11 @@ final class ObjectFieldGetter extends AbstractOperator
                     if ($o instanceof Concrete) {
                         if ($this->attribute && method_exists($o, $getter)) {
                             $targetValue = $o->$getter();
-                            $newValues[] = $targetValue;
+                            if (is_array($targetValue)) {
+                                $newValues = array_merge($newValues, $targetValue);
+                            } else {
+                                $newValues[] = $targetValue;
+                            }
                         }
                     }
                 }

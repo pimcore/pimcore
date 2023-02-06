@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,7 +27,7 @@ class LogCleanupTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         // we don't use the RotatingFileHandler of Monolog, since rotating asynchronously is recommended + compression
         $logFiles = glob(PIMCORE_LOG_DIRECTORY.'/*.log');

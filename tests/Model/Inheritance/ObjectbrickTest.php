@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,13 +18,14 @@ namespace Pimcore\Tests\Model\Inheritance;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class ObjectbrickTest
  *
  * @package Pimcore\Tests\Model\Inheritance
+ *
  * @group model.inheritance.objectbrick
  */
 class ObjectbrickTest extends ModelTestCase
@@ -44,10 +46,10 @@ class ObjectbrickTest extends ModelTestCase
      *           |-three
      *
      * add brick field value to one(parent), then add another field value to two(first level child), then add another field
-     * value to three(second level child). asserts inherited and non-inherited values on childs
+     * value to three(second level child). asserts inherited and non-inherited values on children
      *
      */
-    public function testInheritance()
+    public function testInheritance(): void
     {
         $one = new Inheritance();
         $one->setKey('one');

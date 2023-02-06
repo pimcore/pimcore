@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,14 +20,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ResponseException extends \Exception
 {
-    /**
-     * @var Response
-     */
-    protected $response;
+    protected Response $response;
 
     /**
-     * @param Response   $response
-     * @param \Exception $previous
+     * @param Response $response
+     * @param \Exception|null $previous
      */
     public function __construct(Response $response, \Exception $previous = null)
     {
@@ -35,10 +33,7 @@ class ResponseException extends \Exception
         $this->response = $response;
     }
 
-    /**
-     * @return Response
-     */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->response;
     }

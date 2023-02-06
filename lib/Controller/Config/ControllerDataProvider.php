@@ -29,39 +29,23 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class ControllerDataProvider
 {
-    /**
-     * @var KernelInterface
-     */
-    private $kernel;
+    private ?KernelInterface $kernel = null;
 
     /**
      * id -> class mapping array of controllers defined as services
      *
      * @var array
      */
-    private $serviceControllers;
+    private array $serviceControllers;
 
-    /**
-     * @var array
-     */
-    private $bundles;
+    private ?array $bundles = null;
 
-    /**
-     * @var array
-     */
-    private $templates;
+    private ?array $templates = null;
 
-    /**
-     * @var array
-     */
-    private $templateNamePatterns = [
+    private array $templateNamePatterns = [
         '*.twig',
     ];
 
-    /**
-     * @param KernelInterface $kernel
-     * @param array $serviceControllers
-     */
     public function __construct(KernelInterface $kernel, array $serviceControllers)
     {
         $this->kernel = $kernel;
@@ -163,31 +147,24 @@ class ControllerDataProvider
 
         $templates = [];
 
-        $symfonyPath = realpath(implode(DIRECTORY_SEPARATOR, [PIMCORE_PROJECT_ROOT, 'templates']));
-        if ($symfonyPath && is_dir($symfonyPath)) {
-            $templates = array_merge($templates, $this->findTemplates($symfonyPath));
+        if (is_dir($symfonyPath = PIMCORE_PROJECT_ROOT.'/templates')) {
+            $templates[] = $this->findTemplates($symfonyPath);
         }
 
         foreach ($this->getBundles() as $bundle) {
-            $bundlePath = realpath(implode(DIRECTORY_SEPARATOR, [$bundle->getPath(), 'Resources', 'views']));
-            if ($bundlePath && is_dir($bundlePath)) {
-                $templates = array_merge($templates, $this->findTemplates($bundlePath, $bundle->getName()));
+            if (is_dir($bundlePath = $bundle->getPath().'/Resources/views') || is_dir($bundlePath = $bundle->getPath().'/templates')) {
+                $templates[] = $this->findTemplates($bundlePath, $bundle->getName());
             }
         }
 
-        $this->templates = $templates;
-
-        return $this->templates;
+        return $this->templates = array_merge(...$templates);
     }
 
     /**
      * Finds templates in a certain path. If bundleName is null, the global notation (templates/)
      * will be used.
      *
-     * @param string $path
-     * @param string|null $bundleName
-     *
-     * @return array
+     * @return string[]
      */
     private function findTemplates(string $path, string $bundleName = null): array
     {

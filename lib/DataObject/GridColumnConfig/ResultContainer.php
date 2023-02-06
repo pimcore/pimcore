@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,39 +21,39 @@ namespace Pimcore\DataObject\GridColumnConfig;
  */
 final class ResultContainer
 {
-    public $label;
+    public string $label;
 
-    public $value;
+    public mixed $value = null;
 
-    public $isEmpty;
+    public bool $isEmpty = false;
 
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    public function setLabel($label)
+    public function setLabel(string $label): void
     {
         $this->label = $label;
     }
 
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
 
-    public function setValue($value)
+    public function setValue(mixed $value): void
     {
         $this->value = $value;
     }
 
-    public function getIsEmpty()
+    public function getIsEmpty(): bool
     {
         return $this->isEmpty;
     }
 
-    public function setIsEmpty($isEmpty)
+    public function setIsEmpty(bool $isEmpty): void
     {
-        $this->isEmpty = $isEmpty;
+        $this->isEmpty = (bool) $isEmpty;
     }
 }

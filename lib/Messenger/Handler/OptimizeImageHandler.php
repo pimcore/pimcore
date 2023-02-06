@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,7 +35,7 @@ class OptimizeImageHandler implements BatchHandlerInterface
     {
     }
 
-    public function __invoke(OptimizeImageMessage $message, Acknowledger $ack = null)
+    public function __invoke(OptimizeImageMessage $message, Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }

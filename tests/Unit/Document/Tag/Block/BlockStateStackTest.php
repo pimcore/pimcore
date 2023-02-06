@@ -18,18 +18,18 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Document\Tag\Block;
 
 use Pimcore\Document\Editable\Block\BlockStateStack;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 
 class BlockStateStackTest extends TestCase
 {
-    public function testStackHasDefaultState()
+    public function testStackHasDefaultState(): void
     {
         $stack = new BlockStateStack();
 
         $this->assertEquals(1, $stack->count());
     }
 
-    public function testPushAndPop()
+    public function testPushAndPop(): void
     {
         $stack = new BlockStateStack();
 
@@ -62,7 +62,7 @@ class BlockStateStackTest extends TestCase
         $this->assertEquals(1, $stack->count());
     }
 
-    public function testExceptionOnPopLastState()
+    public function testExceptionOnPopLastState(): void
     {
         $stack = new BlockStateStack();
         $stack->push();
@@ -74,7 +74,7 @@ class BlockStateStackTest extends TestCase
         $stack->pop();
     }
 
-    public function testExceptionOnCurrentStateWithoutDefaultState()
+    public function testExceptionOnCurrentStateWithoutDefaultState(): void
     {
         // this should never happen, but just to check if the current state
         // handles an empty state properly

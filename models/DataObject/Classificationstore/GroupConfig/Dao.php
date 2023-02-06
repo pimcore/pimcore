@@ -24,24 +24,22 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
     const TABLE_NAME_GROUPS = 'classificationstore_groups';
 
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param int $id
+     * @param int|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_GROUPS . ' WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_GROUPS . ' WHERE id = ?', [$this->model->getId()]);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -55,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function getByName($name = null)
+    public function getByName(string $name = null): void
     {
         if ($name != null) {
             $this->model->setName($name);
@@ -64,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
         $name = $this->model->getName();
         $storeId = $this->model->getStoreId();
 
-        $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_GROUPS . ' WHERE name = ? and storeId = ?', [$name, $storeId]);
+        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME_GROUPS . ' WHERE name = ? and storeId = ?', [$name, $storeId]);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -73,22 +71,19 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return int
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         if (!$this->model->getId()) {
-            return 0;
+            return false;
         }
 
-        return (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . self::TABLE_NAME_GROUPS . ' WHERE parentId = ?', [$this->model->getId()]);
+        return (bool) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . self::TABLE_NAME_GROUPS . ' WHERE parentId = ?', [$this->model->getId()]);
     }
 
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
             $this->create();
@@ -100,7 +95,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::TABLE_NAME_GROUPS, ['id' => $this->model->getId()]);
     }
@@ -108,7 +103,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);
@@ -132,7 +127,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->update(self::TABLE_NAME_GROUPS, $data, ['id' => $this->model->getId()]);
     }
 
-    public function create()
+    public function create(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);
@@ -140,6 +135,6 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->insert(self::TABLE_NAME_GROUPS, []);
 
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 }

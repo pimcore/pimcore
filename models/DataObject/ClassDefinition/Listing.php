@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\DataObject\ClassDefinition[]
      */
-    public function getClasses()
+    public function getClasses(): array
     {
         return $this->getData();
     }
@@ -35,9 +36,9 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\DataObject\ClassDefinition[]|null $classes
      *
-     * @return static
+     * @return $this
      */
-    public function setClasses($classes)
+    public function setClasses(?array $classes): static
     {
         return $this->setData($classes);
     }

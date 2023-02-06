@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\Messenger\Handler;
 
 use Pimcore\Config;
 use Pimcore\Messenger\GenerateWeb2PrintPdfMessage;
+use Pimcore\Web2Print\Exception\NotPreparedException;
 use Pimcore\Web2Print\Processor;
 use Psr\Log\LoggerInterface;
 
@@ -29,9 +31,9 @@ class GenerateWeb2PrintPdfHandler
     {
     }
 
-    public function __invoke(GenerateWeb2PrintPdfMessage $message)
+    public function __invoke(GenerateWeb2PrintPdfMessage $message): void
     {
-        $generationId = $message->getProcessId();
+        $documentId = $message->getProcessId();
 
         // check for memory limit
         $memoryLimit = ini_get('memory_limit');
@@ -46,6 +48,10 @@ class GenerateWeb2PrintPdfHandler
             }
         }
 
-        Processor::getInstance()->startPdfGeneration($generationId);
+        try {
+            Processor::getInstance()->startPdfGeneration($documentId);
+        } catch (NotPreparedException $e) {
+            $this->logger->debug($e->getMessage());
+        }
     }
 }

@@ -33,10 +33,7 @@ final class ReportConfigWriter
 
     const REPORT_SETTING_SCOPE = 'pimcore';
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
@@ -46,7 +43,7 @@ final class ReportConfigWriter
     /**
      * @throws \Exception
      */
-    public function write(array $settings)
+    public function write(array $settings): void
     {
         $settingsEvent = new SettingsEvent($settings);
         $this->eventDispatcher->dispatch(
@@ -64,22 +61,13 @@ final class ReportConfigWriter
         );
     }
 
-    public function mergeConfig(Config $values)
+    public function mergeConfig(array $values): void
     {
         // the config returned from getReportConfig is readonly
         // so we create a new writable one here
-        $config = new Config(
-            \Pimcore\Config::getReportConfig()->toArray(),
-            true
-        );
+        $config = \Pimcore\Config::getReportConfig();
+        $config = array_merge($config, $values);
 
-        $config->merge($values);
-
-        $this->write($config->toArray());
-    }
-
-    public function mergeArray(array $values)
-    {
-        $this->mergeConfig(new Config($values));
+        $this->write($config);
     }
 }

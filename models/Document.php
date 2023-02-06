@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,15 +17,17 @@
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
+use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
-use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -37,174 +40,72 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Document extends Element\AbstractElement
 {
-    /**
-     * all possible types of documents
-     *
-     * @internal
-     *
-     * @deprecated will be removed in Pimcore 11. Use getTypes() method.
-     *
-     * @var array
-     */
-    public static $types = ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer'];
-
-    /**
-     * @var bool
-     */
-    private static $hideUnpublished = false;
+    private static bool $hideUnpublished = false;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $fullPathCache;
+    protected ?string $fullPathCache = null;
 
     /**
      * @internal
-     *
-     * @var int|null
-     */
-    protected $id;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected $parentId;
-
-    /**
-     * @internal
-     *
-     * @var self|null
-     */
-    protected $parent;
-
-    /**
-     * @internal
-     *
-     * @var string
      */
     protected string $type = '';
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $key;
+    protected ?string $key = null;
 
     /**
      * @internal
-     *
-     * @var string|null
-     */
-    protected $path;
-
-    /**
-     * @internal
-     *
-     * @var int|null
      */
     protected ?int $index = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $published = true;
 
     /**
      * @internal
-     *
-     * @var int|null
-     */
-    protected $creationDate;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected $modificationDate;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected ?int $userOwner = null;
-
-    /**
-     * @internal
-     *
-     * @var int|null
      */
     protected ?int $userModification = null;
 
     /**
      * @internal
      *
-     * @var array|null
+     * @var array<string, Listing>
      */
-    protected $properties = null;
+    protected array $children = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
-    protected $children = [];
+    protected array $siblings = [];
 
     /**
-     * @internal
-     *
-     * @var bool[]
+     * {@inheritdoc}
      */
-    protected $hasChildren = [];
+    protected function getBlockedVars(): array
+    {
+        $blockedVars = ['versions', 'scheduledTasks', 'parent', 'fullPathCache'];
 
-    /**
-     * @internal
-     *
-     * @var array
-     */
-    protected $siblings = [];
+        if (!$this->isInDumpState()) {
+            // this is if we want to cache the object
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
+        }
 
-    /**
-     * @internal
-     *
-     * @var bool[]
-     */
-    protected $hasSiblings = [];
+        return $blockedVars;
+    }
 
-    /**
-     * enum('self','propagate') nullable
-     *
-     * @internal
-     *
-     * @var string|null
-     */
-    protected $locked = null;
-
-    /**
-     * @internal
-     *
-     * @var int
-     */
-    protected $versionCount = 0;
-
-    /**
-     * get possible types
-     *
-     * @return array
-     */
-    public static function getTypes()
+    public static function getTypes(): array
     {
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
 
-        return $documentsConfig['types'];
+        return  array_keys($documentsConfig['type_definitions']['map']);
     }
 
     /**
@@ -219,13 +120,7 @@ class Document extends Element\AbstractElement
         return 'document_path_' . md5($path);
     }
 
-    /**
-     * @param string $path
-     * @param bool $force
-     *
-     * @return static|null
-     */
-    public static function getByPath($path, $force = false)
+    public static function getByPath(string $path, array $params = []): static|null
     {
         if (!$path) {
             return null;
@@ -234,9 +129,10 @@ class Document extends Element\AbstractElement
         $path = Element\Service::correctPath($path);
 
         $cacheKey = self::getPathCacheKey($path);
+        $params = Element\Service::prepareGetByIdParams($params);
 
-        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $document = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
+            $document = RuntimeCache::get($cacheKey);
             if ($document && static::typeMatch($document)) {
                 return $document;
             }
@@ -245,8 +141,8 @@ class Document extends Element\AbstractElement
         try {
             $helperDoc = new Document();
             $helperDoc->getDao()->getByPath($path);
-            $doc = static::getById($helperDoc->getId(), $force);
-            \Pimcore\Cache\Runtime::set($cacheKey, $doc);
+            $doc = static::getById($helperDoc->getId(), $params);
+            RuntimeCache::set($cacheKey, $doc);
         } catch (NotFoundException $e) {
             $doc = null;
         }
@@ -261,10 +157,10 @@ class Document extends Element\AbstractElement
      *
      * @return bool
      */
-    protected static function typeMatch(Document $document)
+    protected static function typeMatch(Document $document): bool
     {
-        $staticType = get_called_class();
-        if ($staticType != Document::class) {
+        $staticType = static::class;
+        if ($staticType !== Document::class) {
             if (!$document instanceof $staticType) {
                 return false;
             }
@@ -273,30 +169,37 @@ class Document extends Element\AbstractElement
         return true;
     }
 
-    /**
-     * @param int $id
-     * @param bool $force
-     *
-     * @return static|null
-     */
-    public static function getById($id, $force = false)
+    public static function getById(int|string $id, array $params = []): ?static
     {
-        if (!is_numeric($id) || $id < 1) {
+        if (is_string($id)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0',
+                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
+            );
+            $id = is_numeric($id) ? (int) $id : 0;
+        }
+        if ($id < 1) {
             return null;
         }
 
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
+        $params = Element\Service::prepareGetByIdParams($params);
 
-        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $document = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
+            $document = RuntimeCache::get($cacheKey);
             if ($document && static::typeMatch($document)) {
                 return $document;
             }
         }
 
-        if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
-            $document = new Document();
+        if ($params['force'] || !($document = \Pimcore\Cache::load($cacheKey))) {
+            $reflectionClass = new \ReflectionClass(static::class);
+            if ($reflectionClass->isAbstract()) {
+                $document = new Document();
+            } else {
+                $document = new static();
+            }
 
             try {
                 $document->getDao()->getById($id);
@@ -304,46 +207,40 @@ class Document extends Element\AbstractElement
                 return null;
             }
 
-            $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
+            // Getting Typeloader from container
+            $loader = \Pimcore::getContainer()->get(TypeLoader::class);
+            $newDocument = $loader->build($document->getType());
 
-            // this is the fallback for custom document types using prefixes
-            // so we need to check if the class exists first
-            if (!Tool::classExists($className)) {
-                $oldStyleClass = 'Document_' . ucfirst($document->getType());
-                if (Tool::classExists($oldStyleClass)) {
-                    $className = $oldStyleClass;
-                }
+            if (get_class($document) !== get_class($newDocument)) {
+                $document = $newDocument;
+                $document->getDao()->getById($id);
             }
 
-            /** @var Document $document */
-            $document = self::getModelFactory()->build($className);
-            \Pimcore\Cache\Runtime::set($cacheKey, $document);
-
-            $document->getDao()->getById($id);
-            $document->__setDataVersionTimestamp($document->getModificationDate());
+            RuntimeCache::set($cacheKey, $document);
+            if ($document->getModificationDate() !== null) {
+                $document->__setDataVersionTimestamp($document->getModificationDate());
+            }
 
             $document->resetDirtyMap();
 
             \Pimcore\Cache::save($document, $cacheKey);
         } else {
-            \Pimcore\Cache\Runtime::set($cacheKey, $document);
+            RuntimeCache::set($cacheKey, $document);
         }
 
         if (!$document || !static::typeMatch($document)) {
             return null;
         }
 
+        \Pimcore::getEventDispatcher()->dispatch(
+            new DocumentEvent($document, ['params' => $params]),
+            DocumentEvents::POST_LOAD
+        );
+
         return $document;
     }
 
-    /**
-     * @param int $parentId
-     * @param array $data
-     * @param bool $save
-     *
-     * @return static
-     */
-    public static function create($parentId, $data = [], $save = true)
+    public static function create(int $parentId, array $data = [], bool $save = true): static
     {
         $document = new static();
         $document->setParentId($parentId);
@@ -374,42 +271,22 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param array $config
-     *
-     * @return int count
-     */
-    public static function getTotalCount(array $config = []): int
-    {
-        $list = static::getList($config);
-
-        return $list->getTotalCount();
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
         $isUpdate = false;
 
         try {
-            // additional parameters (e.g. "versionNote" for the version note)
-            $params = [];
-            if (func_num_args() && is_array(func_get_arg(0))) {
-                $params = func_get_arg(0);
-            }
-
-            $preEvent = new DocumentEvent($this, $params);
+            $preEvent = new DocumentEvent($this, $parameters);
             if ($this->getId()) {
                 $isUpdate = true;
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, DocumentEvents::PRE_UPDATE);
+                $this->dispatchEvent($preEvent, DocumentEvents::PRE_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($preEvent, DocumentEvents::PRE_ADD);
+                $this->dispatchEvent($preEvent, DocumentEvents::PRE_ADD);
             }
 
-            $params = $preEvent->getArguments();
+            $parameters = $preEvent->getArguments();
 
             $this->correctPath();
             $differentOldPath = null;
@@ -434,7 +311,7 @@ class Document extends Element\AbstractElement
                         $oldPath = $this->getDao()->getCurrentFullPath();
                     }
 
-                    $this->update($params);
+                    $this->update($parameters);
 
                     // if the old path is different from the new path, update all children
                     $updatedChildren = [];
@@ -459,7 +336,7 @@ class Document extends Element\AbstractElement
                         $this->rollBack();
                     } catch (\Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
-                        Logger::error($er);
+                        Logger::error((string) $er);
                     }
 
                     // we try to start the transaction $maxRetries times again (deadlocks, ...)
@@ -483,30 +360,30 @@ class Document extends Element\AbstractElement
                     $additionalTags[] = $tag;
 
                     // remove the child also from registry (internal cache) to avoid path inconsistencies during long-running scripts, such as CLI
-                    \Pimcore\Cache\Runtime::set($tag, null);
-                    \Pimcore\Cache\Runtime::set(self::getPathCacheKey($updatedDocument['oldPath']), null);
+                    RuntimeCache::set($tag, null);
+                    RuntimeCache::set(self::getPathCacheKey($updatedDocument['oldPath']), null);
                 }
             }
             $this->clearDependentCache($additionalTags);
 
-            $postEvent = new DocumentEvent($this, $params);
+            $postEvent = new DocumentEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::POST_UPDATE);
+                $this->dispatchEvent($postEvent, DocumentEvents::POST_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($postEvent, DocumentEvents::POST_ADD);
+                $this->dispatchEvent($postEvent, DocumentEvents::POST_ADD);
             }
 
             return $this;
         } catch (\Exception $e) {
-            $failureEvent = new DocumentEvent($this, $params);
+            $failureEvent = new DocumentEvent($this, $parameters);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
+                $this->dispatchEvent($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_ADD_FAILURE);
+                $this->dispatchEvent($failureEvent, DocumentEvents::POST_ADD_FAILURE);
             }
 
             throw $e;
@@ -514,32 +391,33 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @throws \Exception
+     * @throws \Exception|DuplicateFullPathException
      */
-    private function correctPath()
+    private function correctPath(): void
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
-
             // check for a valid key, home has no key, so omit the check
             if (!Element\Service::isValidKey($this->getKey(), 'document')) {
                 throw new \Exception('invalid key for document with id [ ' . $this->getId() . ' ] key is: [' . $this->getKey() . ']');
             }
 
+            if (!$this->getParentId()) {
+                throw new \Exception('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+            }
+
             if ($this->getParentId() == $this->getId()) {
-                throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+                throw new \Exception("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
             }
 
             $parent = Document::getById($this->getParentId());
-            if ($parent) {
-                // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
-                // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
-                $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
-            } else {
-                // parent document doesn't exist anymore, set the parent to to root
-                $this->setParentId(1);
-                $this->setPath('/');
+            if (!$parent) {
+                throw new \Exception('ParentID not found.');
             }
+
+            // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
+            // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
+            $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
 
             if (strlen($this->getKey()) < 1) {
                 throw new \Exception('Document requires key, generated key automatically');
@@ -555,7 +433,11 @@ class Document extends Element\AbstractElement
         if (Document\Service::pathExists($this->getRealFullPath())) {
             $duplicate = Document::getByPath($this->getRealFullPath());
             if ($duplicate instanceof Document && $duplicate->getId() != $this->getId()) {
-                throw new \Exception('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save document');
+                $duplicateFullPathException = new DuplicateFullPathException('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save document');
+                $duplicateFullPathException->setDuplicateElement($duplicate);
+                $duplicateFullPathException->setCauseElement($this);
+
+                throw $duplicateFullPathException;
             }
         }
 
@@ -563,13 +445,13 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @internal
-     *
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    protected function update($params = [])
+    protected function update(array $params = []): void
     {
         $disallowedKeysInFirstLevel = ['install', 'admin', 'plugin'];
         if ($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
@@ -606,7 +488,7 @@ class Document extends Element\AbstractElement
                 // dont't add a reference to yourself
                 continue;
             } else {
-                $d->addRequirement($requirement['id'], $requirement['type']);
+                $d->addRequirement((int) $requirement['id'], $requirement['type']);
             }
         }
         $d->save();
@@ -614,24 +496,21 @@ class Document extends Element\AbstractElement
         $this->getDao()->update();
 
         //set document to registry
-        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), $this);
+        RuntimeCache::set(self::getCacheKey($this->getId()), $this);
     }
 
     /**
-     * @internal
-     *
      * @param int $index
+     *
+     * @internal
      */
-    public function saveIndex($index)
+    public function saveIndex(int $index): void
     {
         $this->getDao()->saveIndex($index);
         $this->clearDependentCache();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function clearDependentCache($additionalTags = [])
+    public function clearDependentCache(array $additionalTags = []): void
     {
         try {
             $tags = [$this->getCacheTag(), 'document_properties', 'output'];
@@ -639,28 +518,26 @@ class Document extends Element\AbstractElement
 
             \Pimcore\Cache::clearTags($tags);
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
     }
 
     /**
      * set the children of the document
      *
-     * @param self[] $children
+     * @param Listing|null $children
      * @param bool $includingUnpublished
      *
      * @return $this
      */
-    public function setChildren($children, $includingUnpublished = false)
+    public function setChildren(?Listing $children, bool $includingUnpublished = false): static
     {
-        if (empty($children)) {
+        if ($children === null) {
             // unset all cached children
-            $this->hasChildren = [];
             $this->children = [];
-        } elseif (is_array($children)) {
+        } else {
             $cacheKey = $this->getListingCacheKey([$includingUnpublished]);
             $this->children[$cacheKey] = $children;
-            $this->hasChildren[$cacheKey] = (bool) count($children);
         }
 
         return $this;
@@ -668,12 +545,8 @@ class Document extends Element\AbstractElement
 
     /**
      * Get a list of the children (not recursivly)
-     *
-     * @param bool $includingUnpublished
-     *
-     * @return self[]
      */
-    public function getChildren($includingUnpublished = false)
+    public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -684,9 +557,11 @@ class Document extends Element\AbstractElement
                 $list->setCondition('parentId = ?', $this->getId());
                 $list->setOrderKey('index');
                 $list->setOrder('asc');
-                $this->children[$cacheKey] = $list->load();
+                $this->children[$cacheKey] = $list;
             } else {
-                $this->children[$cacheKey] = [];
+                $list = new Document\Listing();
+                $list->setDocuments([]);
+                $this->children[$cacheKey] = $list;
             }
         }
 
@@ -695,30 +570,16 @@ class Document extends Element\AbstractElement
 
     /**
      * Returns true if the document has at least one child
-     *
-     * @param bool $includingUnpublished
-     *
-     * @return bool
      */
-    public function hasChildren($includingUnpublished = null)
+    public function hasChildren(bool $includingUnpublished = false): bool
     {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasChildren[$cacheKey])) {
-            return $this->hasChildren[$cacheKey];
-        }
-
-        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($includingUnpublished);
+        return $this->getDao()->hasChildren($includingUnpublished);
     }
 
     /**
      * Get a list of the sibling documents
-     *
-     * @param bool $includingUnpublished
-     *
-     * @return array
      */
-    public function getSiblings($includingUnpublished = false)
+    public function getSiblings(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -732,11 +593,11 @@ class Document extends Element\AbstractElement
                 }
                 $list->setOrderKey('index');
                 $list->setOrder('asc');
-                $this->siblings[$cacheKey] = $list->load();
-                $this->hasSiblings[$cacheKey] = (bool) count($this->siblings[$cacheKey]);
+                $this->siblings[$cacheKey] = $list;
             } else {
-                $this->siblings[$cacheKey] = [];
-                $this->hasSiblings[$cacheKey] = false;
+                $list = new Listing();
+                $list->setDocuments([]);
+                $this->siblings[$cacheKey] = $list;
             }
         }
 
@@ -745,42 +606,10 @@ class Document extends Element\AbstractElement
 
     /**
      * Returns true if the document has at least one sibling
-     *
-     * @param bool|null $includingUnpublished
-     *
-     * @return bool
      */
-    public function hasSiblings($includingUnpublished = null)
+    public function hasSiblings(bool $includingUnpublished = null): bool
     {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasSiblings[$cacheKey])) {
-            return $this->hasSiblings[$cacheKey];
-        }
-
-        return $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($includingUnpublished);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLocked()
-    {
-        if (empty($this->locked)) {
-            return null;
-        }
-
-        return $this->locked;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setLocked($locked)
-    {
-        $this->locked = $locked;
-
-        return $this;
+        return $this->getDao()->hasSiblings($includingUnpublished);
     }
 
     /**
@@ -788,7 +617,7 @@ class Document extends Element\AbstractElement
      *
      * @throws \Exception
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // remove children
         if ($this->hasChildren()) {
@@ -815,12 +644,9 @@ class Document extends Element\AbstractElement
         $service->removeTranslation($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete()
+    public function delete(): void
     {
-        \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
+        $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
 
         $this->beginTransaction();
 
@@ -836,9 +662,9 @@ class Document extends Element\AbstractElement
 
             //clear parent data from registry
             $parentCacheKey = self::getCacheKey($this->getParentId());
-            if (\Pimcore\Cache\Runtime::isRegistered($parentCacheKey)) {
+            if (RuntimeCache::isRegistered($parentCacheKey)) {
                 /** @var Document $parent */
-                $parent = \Pimcore\Cache\Runtime::get($parentCacheKey);
+                $parent = RuntimeCache::get($parentCacheKey);
                 if ($parent instanceof self) {
                     $parent->setChildren(null);
                 }
@@ -847,8 +673,8 @@ class Document extends Element\AbstractElement
             $this->rollBack();
             $failureEvent = new DocumentEvent($this);
             $failureEvent->setArgument('exception', $e);
-            \Pimcore::getEventDispatcher()->dispatch($failureEvent, DocumentEvents::POST_DELETE_FAILURE);
-            Logger::error($e);
+            $this->dispatchEvent($failureEvent, DocumentEvents::POST_DELETE_FAILURE);
+            Logger::error((string) $e);
 
             throw $e;
         }
@@ -857,16 +683,13 @@ class Document extends Element\AbstractElement
         $this->clearDependentCache();
 
         //clear document from registry
-        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
-        \Pimcore\Cache\Runtime::set(self::getPathCacheKey($this->getRealFullPath()), null);
+        RuntimeCache::set(self::getCacheKey($this->getId()), null);
+        RuntimeCache::set(self::getPathCacheKey($this->getRealFullPath()), null);
 
-        \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($this), DocumentEvents::POST_DELETE);
+        $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFullPath(bool $force = false)
+    public function getFullPath(bool $force = false): string
     {
         $link = $force ? null : $this->fullPathCache;
 
@@ -881,11 +704,11 @@ class Document extends Element\AbstractElement
                 }
             }
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
 
         $requestStack = \Pimcore::getContainer()->get('request_stack');
-        $masterRequest = $requestStack->getMainRequest();
+        $mainRequest = $requestStack->getMainRequest();
 
         // @TODO please forgive me, this is the dirtiest hack I've ever made :(
         // if you got confused by this functionality drop me a line and I'll buy you some beers :)
@@ -897,7 +720,7 @@ class Document extends Element\AbstractElement
         // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
-            if ($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
+            if ($mainRequest && ($masterDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
                 if ($masterDocument instanceof WrapperInterface) {
                     $hardlinkPath = '';
                     $hardlink = $masterDocument->getHardLinkSource();
@@ -947,7 +770,7 @@ class Document extends Element\AbstractElement
             $link = $this->getPath() . $this->getKey();
         }
 
-        if ($masterRequest) {
+        if ($mainRequest) {
             // caching should only be done when master request is available as it is done for performance reasons
             // of the web frontend, without a request object there's no need to cache anything
             // for details also see https://github.com/pimcore/pimcore/issues/5707
@@ -959,12 +782,7 @@ class Document extends Element\AbstractElement
         return $link;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    private function prepareFrontendPath($path)
+    private function prepareFrontendPath(string $path): string
     {
         if (\Pimcore\Tool::isFrontend()) {
             $path = urlencode_ignore_slash($path);
@@ -972,57 +790,19 @@ class Document extends Element\AbstractElement
             $event = new GenericEvent($this, [
                 'frontendPath' => $path,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::DOCUMENT_PATH);
+            $this->dispatchEvent($event, FrontendEvents::DOCUMENT_PATH);
             $path = $event->getArgument('frontendPath');
         }
 
         return $path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getModificationDate()
-    {
-        return $this->modificationDate;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParentId()
-    {
-        return $this->parentId;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPath()
+    public function getPath(): ?string
     {
         // check for site, if so rewrite the path for output
         try {
@@ -1039,54 +819,25 @@ class Document extends Element\AbstractElement
                 }
             }
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
 
         return $this->path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRealPath()
+    public function getRealPath(): ?string
     {
         return $this->path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRealFullPath()
+    public function getRealFullPath(): string
     {
         $path = $this->getRealPath() . $this->getKey();
 
         return $path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = (int) $creationDate;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setId($id)
-    {
-        $this->id = (int) $id;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setKey($key)
+    public function setKey(string $key): static
     {
         $this->key = (string)$key;
 
@@ -1094,40 +845,17 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function setModificationDate($modificationDate)
-    {
-        $this->markFieldDirty('modificationDate');
-
-        $this->modificationDate = (int) $modificationDate;
-
-        return $this;
-    }
-
-    /**
      * Set the parent id of the document.
      *
-     * @param int $parentId
+     * @param int|null $id
      *
-     * @return Document
+     * @return $this
      */
-    public function setParentId($parentId)
+    public function setParentId(?int $id): static
     {
-        $this->parentId = (int) $parentId;
-        $this->parent = null;
+        parent::setParentId($id);
+
         $this->siblings = [];
-        $this->hasSiblings = [];
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPath($path)
-    {
-        $this->path = $path;
 
         return $this;
     }
@@ -1147,19 +875,16 @@ class Document extends Element\AbstractElement
      *
      * @param int $index
      *
-     * @return Document
+     * @return $this
      */
-    public function setIndex($index)
+    public function setIndex(int $index): static
     {
         $this->index = (int) $index;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -1169,155 +894,49 @@ class Document extends Element\AbstractElement
      *
      * @param string $type
      *
-     * @return Document
+     * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUserModification()
-    {
-        return $this->userModification;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUserOwner()
-    {
-        return $this->userOwner;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserModification($userModification)
-    {
-        $this->markFieldDirty('userModification');
-
-        $this->userModification = (int) $userModification;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserOwner($userOwner)
-    {
-        $this->userOwner = (int) $userOwner;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isPublished()
+    public function isPublished(): bool
     {
         return $this->getPublished();
     }
 
-    /**
-     * @return bool
-     */
-    public function getPublished()
+    public function getPublished(): bool
     {
         return (bool) $this->published;
     }
 
-    /**
-     * @param bool $published
-     *
-     * @return Document
-     */
-    public function setPublished($published)
+    public function setPublished(bool $published): static
     {
-        $this->published = (bool) $published;
+        $this->published = $published;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
+    public function getParent(): ?Document
     {
-        if ($this->properties === null) {
-            // try to get from cache
-            $cacheKey = 'document_properties_' . $this->getId();
-            $properties = \Pimcore\Cache::load($cacheKey);
-            if (!is_array($properties)) {
-                $properties = $this->getDao()->getProperties();
-                $elementCacheTag = $this->getCacheTag();
-                $cacheTags = ['document_properties' => 'document_properties', $elementCacheTag => $elementCacheTag];
-                \Pimcore\Cache::save($properties, $cacheKey, $cacheTags);
-            }
+        $parent = parent::getParent();
 
-            $this->setProperties($properties);
-        }
-
-        return $this->properties;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(?array $properties)
-    {
-        $this->properties = $properties;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
-    {
-        $this->getProperties();
-
-        $property = new Property();
-        $property->setType($type);
-        $property->setCid($this->getId());
-        $property->setName($name);
-        $property->setCtype('document');
-        $property->setData($data);
-        $property->setInherited($inherited);
-        $property->setInheritable($inheritable);
-
-        $this->properties[$name] = $property;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
-    {
-        if ($this->parent === null) {
-            $this->setParent(Document::getById($this->getParentId()));
-        }
-
-        return $this->parent;
+        return $parent instanceof Document ? $parent : null;
     }
 
     /**
      * Set the parent document instance.
      *
-     * @param Document|null $parent
+     * @param ElementInterface|null $parent
      *
-     * @return Document
+     * @return $this
      */
-    public function setParent($parent)
+    public function setParent(?ElementInterface $parent): static
     {
+        /** @var Document $parent */
         $this->parent = $parent;
         if ($parent instanceof Document) {
             $this->parentId = $parent->getId();
@@ -1326,46 +945,12 @@ class Document extends Element\AbstractElement
         return $this;
     }
 
-    public function __sleep()
-    {
-        $parentVars = parent::__sleep();
-        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
-
-        if ($this->isInDumpState()) {
-            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $this->removeInheritedProperties();
-        } else {
-            // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
-        }
-
-        return array_diff($parentVars, $blockedVars);
-    }
-
-    public function __wakeup()
-    {
-        if ($this->isInDumpState()) {
-            // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
-            $originalElement = Document::getById($this->getId());
-            if ($originalElement) {
-                $this->setKey($originalElement->getKey());
-                $this->setPath($originalElement->getRealPath());
-            }
-        }
-
-        if ($this->isInDumpState() && $this->properties !== null) {
-            $this->renewInheritedProperties();
-        }
-
-        $this->setInDumpState(false);
-    }
-
     /**
      * Set true if want to hide documents.
      *
      * @param bool $hideUnpublished
      */
-    public static function setHideUnpublished($hideUnpublished)
+    public static function setHideUnpublished(bool $hideUnpublished): void
     {
         self::$hideUnpublished = $hideUnpublished;
     }
@@ -1375,27 +960,9 @@ class Document extends Element\AbstractElement
      *
      * @return bool
      */
-    public static function doHideUnpublished()
+    public static function doHideUnpublished(): bool
     {
         return self::$hideUnpublished;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersionCount(): int
-    {
-        return $this->versionCount ? $this->versionCount : 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setVersionCount(?int $versionCount): ElementInterface
-    {
-        $this->versionCount = (int) $versionCount;
-
-        return $this;
     }
 
     /**
@@ -1405,7 +972,7 @@ class Document extends Element\AbstractElement
      *
      * @return string
      */
-    protected function getListingCacheKey(array $args = [])
+    protected function getListingCacheKey(array $args = []): string
     {
         $includingUnpublished = (bool)($args[0] ?? false);
 
@@ -1416,7 +983,6 @@ class Document extends Element\AbstractElement
     {
         parent::__clone();
         $this->parent = null;
-        $this->hasSiblings = [];
         $this->siblings = [];
         $this->fullPathCache = null;
     }

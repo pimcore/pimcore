@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,20 +35,10 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface
 {
-    /**
-     * @var RequestContext
-     */
-    protected $context;
+    protected RequestContext $context;
 
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
+    protected RequestHelper $requestHelper;
 
-    /**
-     * @param RequestContext $context
-     * @param RequestHelper $requestHelper
-     */
     public function __construct(RequestContext $context, RequestHelper $requestHelper)
     {
         $this->context = $context;
@@ -57,50 +48,42 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->context = $context;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return RequestContext
      */
-    public function getContext()// : RequestContext
+    public function getContext(): RequestContext
     {
         return $this->context;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
-    public function supports($name)// : bool
-    {
-        return $name === 'pimcore_element';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRouteDebugMessage($name, array $parameters = [])// : string
+    public function getRouteDebugMessage(string $name, array $parameters = []): string
     {
         $element = $parameters['element'] ?? null;
         if ($element instanceof ElementInterface) {
-            return sprintf('Element (Type: %s, ID: %d)', $parameters['element']->getType(), $parameters['element']->getId());
+            return sprintf('pimcore_element (Type: %s, ID: %d)', $element->getType(), $element->getId());
         }
 
-        return 'No element';
+        return 'pimcore_element (No element)';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)// : string
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
+        if ($name !== 'pimcore_element') {
+            throw new RouteNotFoundException('Not supported name');
+        }
         $element = $parameters['element'] ?? null;
+        unset($parameters['element']);
         if ($element instanceof Document || $element instanceof Asset) {
             $schemeAuthority = '';
             $host = $this->context->getHost();
@@ -163,10 +146,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * Tries to get the current route name from current or master request
-     *
-     * @return string|null
      */
-    protected function getCurrentRoute()
+    protected function getCurrentRoute(): ?string
     {
         $route = null;
 
@@ -184,7 +165,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function matchRequest(Request $request)
+    public function matchRequest(Request $request): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $request->getPathInfo()));
     }
@@ -192,17 +173,15 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function match($pathinfo)
+    public function match(string $pathinfo): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @return RouteCollection
      */
-    public function getRouteCollection()// : RouteCollection
+    public function getRouteCollection(): RouteCollection
     {
         return new RouteCollection();
     }

@@ -1,5 +1,5 @@
 parameters:
-    level: 4
+    level: 6
 
     paths:
         - bundles
@@ -13,16 +13,17 @@ parameters:
         container_xml_path: var/cache/test/App_KernelTestDebugContainer.xml
 
     excludePaths:
-        - '**/External/AdminerController.php'
         - '**/Processor/PdfReactor.php'
         - '**/PDFreactor.class.php'
-        - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
+        - 'bundles/EcommerceFrameworkBundle/*'
 
     ignoreErrors:
-        - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
         - '~^Unsafe usage of new static\(\)~'
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
         - Pimcore\Config\Config
         - Pimcore\Templating\Model\ViewModel
+
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false

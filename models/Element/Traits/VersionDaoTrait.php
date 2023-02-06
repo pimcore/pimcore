@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,15 +25,17 @@ use Pimcore\Model\Version;
 trait VersionDaoTrait
 {
     /**
-     * Get latest available version, using $force always returns a version no matter if it is the same as the published one
+     * Get latest available version, using $includingPublished to also consider the published one
      *
      * @param int|null $userId
+     * @param bool $includingPublished
      *
      * @return Version|null
      */
-    public function getLatestVersion($userId = null)
+    public function getLatestVersion(int $userId = null, bool $includingPublished = false): ?Version
     {
-        $versionId = $this->db->fetchOne('SELECT id FROM versions WHERE cid = :cid AND ctype = :ctype AND (`date` > :mdate OR versionCount > :versionCount) AND ((autoSave = 1 AND userId = :userId) OR autoSave = 0) ORDER BY `versionCount` DESC LIMIT 1', [
+        $operator = $includingPublished ? '>=' : '>';
+        $versionId = $this->db->fetchOne('SELECT id FROM versions WHERE cid = :cid AND ctype = :ctype AND (`date` ' . $operator . ' :mdate OR versionCount ' . $operator . ' :versionCount) AND ((autoSave = 1 AND userId = :userId) OR autoSave = 0) ORDER BY `versionCount` DESC LIMIT 1', [
             'cid' => $this->model->getId(),
             'ctype' => Element\Service::getElementType($this->model),
             'userId' => $userId,
@@ -52,7 +55,7 @@ trait VersionDaoTrait
      *
      * @return Version[]
      */
-    public function getVersions()
+    public function getVersions(): array
     {
         $list = new Version\Listing();
         $list->setCondition('cid = :cid AND ctype = :ctype', [

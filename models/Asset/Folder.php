@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,7 @@
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Db\Helper;
 use Pimcore\File;
 use Pimcore\Messenger\AssetPreviewImageMessage;
 use Pimcore\Model;
@@ -29,45 +31,30 @@ class Folder extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'folder';
+    protected string $type = 'folder';
 
     /**
      * @internal
      *
-     * @var Asset[]
+     * @var Asset\Listing|null
      */
-    protected $children;
-
-    /**
-     * @internal
-     *
-     * @var bool|null
-     */
-    protected $hasChildren;
+    protected ?Listing $children = null;
 
     /**
      * set the children of the document
      *
-     * @param Asset[] $children
+     * @param Listing|null $children
      *
-     * @return Folder
+     * @return $this
      */
-    public function setChildren($children)
+    public function setChildren(?Listing $children): static
     {
         $this->children = $children;
-        if (is_array($children) && count($children) > 0) {
-            $this->hasChildren = true;
-        } else {
-            $this->hasChildren = false;
-        }
 
         return $this;
     }
 
-    /**
-     * @return Asset[]
-     */
-    public function getChildren()
+    public function getChildren(): Listing
     {
         if ($this->children === null) {
             if ($this->getId()) {
@@ -76,28 +63,19 @@ class Folder extends Model\Asset
                 $list->setOrderKey('filename');
                 $list->setOrder('asc');
 
-                $this->children = $list->getAssets();
+                $this->children = $list;
             } else {
-                $this->children = [];
+                $list = new Listing();
+                $list->setAssets([]);
+                $this->children = $list;
             }
         }
 
         return $this->children;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
-        if (is_bool($this->hasChildren)) {
-            if (($this->hasChildren && empty($this->children)) || (!$this->hasChildren && !empty($this->children))) {
-                return $this->getDao()->hasChildren();
-            }
-
-            return $this->hasChildren;
-        }
-
         return $this->getDao()->hasChildren();
     }
 
@@ -114,8 +92,10 @@ class Folder extends Model\Asset
     public function getPreviewImage(bool $force = false)
     {
         $storage = Storage::get('thumbnail');
-        $cacheFilePath = sprintf('%s/image-thumb__%s__-folder-preview%s.jpg',
-            rtrim($this->getRealFullPath(), '/'),
+        $cacheFilePath = sprintf(
+            '%s/%s/image-thumb__%s__-folder-preview%s.jpg',
+            rtrim($this->getRealPath(), '/'),
+            $this->getId(),
             $this->getId(),
             '-hdpi'
         );
@@ -124,9 +104,9 @@ class Folder extends Model\Asset
 
         $limit = 42;
         $db = \Pimcore\Db::get();
-        $condition = "path LIKE :path AND type IN ('image', 'video', 'document')";
+        $condition = "`path` LIKE :path AND `type` IN ('image', 'video', 'document')";
         $conditionParams = [
-            'path' => $db->escapeLike($this->getRealFullPath()) . '/%',
+            'path' => Helper::escapeLike($this->getRealFullPath()) . '/%',
         ];
 
         if ($storage->fileExists($cacheFilePath)) {
@@ -142,7 +122,7 @@ class Folder extends Model\Asset
         $list->setOrder('asc');
         $list->setLimit($limit);
 
-        $totalImages = $list->getTotalCount();
+        $totalImages = $list->getCount();
         $count = 0;
         $gutter = 5;
         $squareDimension = 130;
@@ -151,7 +131,7 @@ class Folder extends Model\Asset
         $skipped = false;
 
         if ($totalImages) {
-            $collage = imagecreatetruecolor(($squareDimension * $colums) + ($gutter * ($colums - 1)), ceil(($totalImages / $colums)) * ($squareDimension + $gutter));
+            $collage = imagecreatetruecolor(($squareDimension * $colums) + ($gutter * ($colums - 1)), (int) ceil(($totalImages / $colums)) * ($squareDimension + $gutter));
             $background = imagecolorallocate($collage, 12, 15, 18);
             imagefill($collage, 0, 0, $background);
 
@@ -180,7 +160,13 @@ class Folder extends Model\Asset
                         break;
                     }
 
-                    $tile = imagecreatefromstring(stream_get_contents($tileThumb->getStream()));
+                    $stream = $tileThumb->getStream();
+
+                    if (null === $stream) {
+                        break;
+                    }
+
+                    $tile = imagecreatefromstring(stream_get_contents($stream));
                     imagecopyresampled($collage, $tile, $offsetLeft, $offsetTop, 0, 0, $squareDimension, $squareDimension, $tileThumb->getWidth(), $tileThumb->getHeight());
 
                     $count++;
@@ -193,7 +179,10 @@ class Folder extends Model\Asset
             if ($count && !$skipped) {
                 $localFile = File::getLocalTempFilePath('jpg');
                 imagejpeg($collage, $localFile, 60);
-                $storage->write($cacheFilePath, file_get_contents($localFile));
+
+                if (filesize($localFile) > 0) {
+                    $storage->write($cacheFilePath, file_get_contents($localFile));
+                }
                 unlink($localFile);
 
                 return $storage->readStream($cacheFilePath);

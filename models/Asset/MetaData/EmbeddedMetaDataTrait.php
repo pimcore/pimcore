@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ trait EmbeddedMetaDataTrait
      *
      * @throws \Exception
      */
-    public function getEmbeddedMetaData(bool $force, bool $useExifTool = true)
+    public function getEmbeddedMetaData(bool $force, bool $useExifTool = true): array
     {
         if ($force) {
             $this->handleEmbeddedMetaData($useExifTool);
@@ -45,7 +46,7 @@ trait EmbeddedMetaDataTrait
      *
      * @throws \Exception
      */
-    public function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null)
+    public function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): void
     {
         if (!$this->getCustomSetting('embeddedMetaDataExtracted') || $this->getDataChanged()) {
             $this->readEmbeddedMetaData($useExifTool, $filePath);
@@ -99,12 +100,7 @@ trait EmbeddedMetaDataTrait
         return $embeddedMetaData;
     }
 
-    /**
-     * @param array $tempArray
-     *
-     * @return array
-     */
-    private function flattenArray(array $tempArray)
+    private function flattenArray(array $tempArray): array
     {
         array_walk($tempArray, function (&$value) {
             if (is_array($value)) {
@@ -115,12 +111,7 @@ trait EmbeddedMetaDataTrait
         return $tempArray;
     }
 
-    /**
-     * @param string|null $filePath
-     *
-     * @return array
-     */
-    public function getEXIFData(?string $filePath = null)
+    public function getEXIFData(?string $filePath = null): array
     {
         if (!$filePath) {
             $filePath = $this->getLocalFile();
@@ -142,7 +133,14 @@ trait EmbeddedMetaDataTrait
         return $data;
     }
 
-    public function getXMPData(?string $filePath = null)
+    /**
+     * @param string|null $filePath
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getXMPData(?string $filePath = null): array
     {
         if (!$filePath) {
             $filePath = $this->getLocalFile();
@@ -183,7 +181,7 @@ trait EmbeddedMetaDataTrait
                 $tagLength = strlen($tag);
                 $offset = 0;
                 while (($position = strpos($buffer, $tag, $offset)) === false && ($chunk = fread($file_pointer,
-                        $chunkSize)) !== false && !empty($chunk)) {
+                    $chunkSize)) !== false && !empty($chunk)) {
                     $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
                     $buffer .= $chunk;
                 }
@@ -233,10 +231,7 @@ trait EmbeddedMetaDataTrait
         return $resultData;
     }
 
-    /**
-     * @return array
-     */
-    public function getIPTCData(?string $filePath = null)
+    public function getIPTCData(?string $filePath = null): array
     {
         if (!$filePath) {
             $filePath = $this->getLocalFile();

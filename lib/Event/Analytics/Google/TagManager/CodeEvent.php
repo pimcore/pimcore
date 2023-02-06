@@ -22,20 +22,14 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class CodeEvent extends Event
 {
-    /**
-     * @var array
-     */
-    private $data;
+    private array $data;
 
     /**
      * @var CodeBlock[]
      */
-    private $blocks;
+    private array $blocks;
 
-    /**
-     * @var string
-     */
-    private $template;
+    private string $template;
 
     public function __construct(
         array $data,
@@ -52,7 +46,7 @@ class CodeEvent extends Event
         return $this->data;
     }
 
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
@@ -79,7 +73,7 @@ class CodeEvent extends Event
         return $this->template;
     }
 
-    public function setTemplate(string $template)
+    public function setTemplate(string $template): void
     {
         $this->template = $template;
     }

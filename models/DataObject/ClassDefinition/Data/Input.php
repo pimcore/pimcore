@@ -16,7 +16,9 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Input extends Data implements
@@ -27,8 +29,9 @@ class Input extends Data implements
     VarExporterInterface,
     NormalizerInterface
 {
-    use Model\DataObject\ClassDefinition\Data\Extension\Text;
-    use Model\DataObject\Traits\SimpleComparisonTrait;
+    use DataObject\ClassDefinition\Data\Extension\Text;
+    use DataObject\Traits\DataWidthTrait;
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
     use Model\DataObject\Traits\DefaultValueTrait;
@@ -38,24 +41,13 @@ class Input extends Data implements
      * Static type of this element
      *
      * @internal
-     *
-     * @var string
      */
-    public $fieldtype = 'input';
+    public string $fieldtype = 'input';
 
     /**
      * @internal
-     *
-     * @var string|int
      */
-    public $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    public $defaultValue;
+    public ?string $defaultValue = null;
 
     /**
      * Type for the column to query
@@ -79,65 +71,39 @@ class Input extends Data implements
      * Column length
      *
      * @internal
-     *
-     * @var int
      */
-    public $columnLength = 190;
+    public int $columnLength = 190;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public $regex = '';
+    public string $regex = '';
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $unique;
+    public array $regexFlags = [];
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $showCharCount;
+    public bool $unique = false;
 
     /**
-     * @return string|int
+     * @internal
      */
-    public function getWidth()
-    {
-        return $this->width;
-    }
+    public bool $showCharCount = false;
 
     /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param string $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return string|null
+     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, Concrete $object = null, array $params = []): ?string
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -145,87 +111,78 @@ class Input extends Data implements
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return string|null
+     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param string $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return string|null
+     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
+     * @param mixed $data
+     * @param null|Model\DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return string|null
+     *
      * @see Data::getDataForEditmode
      *
-     * @param string $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Data::getDataFromEditmode
-     *
-     * @param string $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
+        if ($data === '') {
+            return null;
+        }
+
         return $this->getDataFromResource($data, $object, $params);
     }
 
     /**
-     * @param float $data
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param string $data
+     * @param Model\DataObject\Concrete|null $object
+     * @param array $params
      *
-     * @return string
+     * @return string|null
      */
-    public function getDataFromGridEditor($data, $object = null, $params = [])
+    public function getDataFromGridEditor(string $data, Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * @return int
-     */
-    public function getColumnLength()
+    public function getColumnLength(): int
     {
         return $this->columnLength;
     }
 
-    /**
-     * @param int|null $columnLength
-     *
-     * @return $this
-     */
-    public function setColumnLength($columnLength)
+    public function setColumnLength(?int $columnLength): static
     {
         if ($columnLength) {
             $this->columnLength = $columnLength;
@@ -234,58 +191,50 @@ class Input extends Data implements
         return $this;
     }
 
-    /**
-     * @param string $regex
-     */
-    public function setRegex($regex)
+    public function setRegex(string $regex): void
     {
         $this->regex = $regex;
     }
 
-    /**
-     * @return string
-     */
-    public function getRegex()
+    public function getRegex(): string
     {
         return $this->regex;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUnique()
+    public function getRegexFlags(): array
+    {
+        return $this->regexFlags;
+    }
+
+    public function setRegexFlags(array $regexFlags): void
+    {
+        $this->regexFlags = $regexFlags;
+    }
+
+    public function getUnique(): bool
     {
         return $this->unique;
     }
 
-    /**
-     * @param bool $unique
-     */
-    public function setUnique($unique)
+    public function setUnique(bool $unique): void
     {
-        $this->unique = $unique;
+        $this->unique = (bool) $unique;
     }
 
-    /**
-     * @return bool
-     */
-    public function getShowCharCount()
+    public function getShowCharCount(): bool
     {
         return $this->showCharCount;
     }
 
-    /**
-     * @param bool $showCharCount
-     */
-    public function setShowCharCount($showCharCount)
+    public function setShowCharCount(bool $showCharCount): void
     {
-        $this->showCharCount = $showCharCount;
+        $this->showCharCount = (bool) $showCharCount;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getColumnType()
+    public function getColumnType(): array|string|null
     {
         return $this->columnType . '(' . $this->getColumnLength() . ')';
     }
@@ -293,7 +242,7 @@ class Input extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType()
+    public function getQueryColumnType(): array|string|null
     {
         return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
     }
@@ -301,10 +250,10 @@ class Input extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        if (!$omitMandatoryCheck && $this->getRegex() && strlen($data) > 0) {
-            if (!preg_match('#' . $this->getRegex() . '#u', $data)) {
+        if (!$omitMandatoryCheck && $this->getRegex() && is_string($data) && strlen($data) > 0) {
+            if (!preg_match('#' . $this->getRegex() . '#' . implode('', $this->getRegexFlags()), $data)) {
                 throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] doesn't match input validation '" . $this->getRegex() . "'");
             }
         }
@@ -315,7 +264,7 @@ class Input extends Data implements
     /**
      * @param Model\DataObject\ClassDefinition\Data\Input $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->columnLength = $masterDefinition->columnLength;
     }
@@ -328,28 +277,17 @@ class Input extends Data implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function doGetDefaultValue($object, $context = [])
+    protected function doGetDefaultValue(Concrete $object, array $context = []): ?string
     {
         return $this->getDefaultValue();
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDefaultValue()
+    public function getDefaultValue(): ?string
     {
         return $this->defaultValue;
     }
 
-    /**
-     * @param string $defaultValue
-     *
-     * @return $this
-     */
-    public function setDefaultValue($defaultValue)
+    public function setDefaultValue(string $defaultValue): static
     {
         if ((string)$defaultValue !== '') {
             $this->defaultValue = $defaultValue;
@@ -358,33 +296,21 @@ class Input extends Data implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';

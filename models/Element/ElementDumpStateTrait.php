@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,21 +23,13 @@ trait ElementDumpStateTrait
      *
      * @var bool
      */
-    protected $_fulldump = false;
+    protected bool $_fulldump = false;
 
-    /**
-     * @param bool $dumpState
-     *
-     * @return mixed|void
-     */
-    public function setInDumpState(bool $dumpState)
+    public function setInDumpState(bool $dumpState): void
     {
         $this->_fulldump = $dumpState;
     }
 
-    /**
-     * @return bool
-     */
     public function isInDumpState(): bool
     {
         return $this->_fulldump;

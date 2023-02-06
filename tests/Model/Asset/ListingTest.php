@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,32 +16,47 @@
 
 namespace Pimcore\Tests\Model\Asset;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Model\Element\Tag;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class ListingTest
  *
  * @package Pimcore\Tests\Model\Document
+ *
  * @group model.asset.asset
  */
 class ListingTest extends ModelTestCase
 {
-    public function testListCount()
+    public function testListCount(): void
     {
         $db = Db::get();
 
         $count = $db->fetchOne('SELECT count(*) from assets');
         $this->assertEquals(1, $count, 'expected 1 asset');
 
-        for ($i = 0; $i < 3; $i++) {
-            TestHelper::createImageAsset();
-        }
+        $tagA = TestHelper::createTag('A');
+        $tagB = TestHelper::createTag('B');
 
-        TestHelper::createDocumentAsset();
-        TestHelper::createVideoAsset();
+        $image1 = TestHelper::createImageAsset();
+        TestHelper::assignTag($tagA, $image1);
+        TestHelper::assignTag($tagB, $image1);
+
+        $image2 = TestHelper::createImageAsset();
+
+        $image3 = TestHelper::createImageAsset();
+        TestHelper::assignTag($tagB, $image3);
+
+        $document = TestHelper::createDocumentAsset();
+        TestHelper::assignTag($tagA, $document);
+        TestHelper::assignTag($tagB, $document);
+
+        $video = TestHelper::createVideoAsset();
+        TestHelper::assignTag($tagB, $video);
 
         $count = $db->fetchOne('SELECT count(*) from assets');
         $this->assertEquals(6, $count, 'expected 6 assets');
@@ -69,5 +85,51 @@ class ListingTest extends ModelTestCase
         $this->assertEquals(5, $count, 'expected 5 assets');
         $totalCount = $list->getTotalCount();
         $this->assertEquals(6, $totalCount, 'expected 6 assets');
+
+        // Test: on a grouped query, the ->getTotalCount() should correctly count the number of rows
+        $list = new Asset\Listing();
+        $list->getDao()->onCreateQueryBuilder(function (QueryBuilder $queryBuilder) use ($tagA, $tagB) {
+            $this->joinTags($queryBuilder, $tagA, $tagB);
+        });
+
+        $totalCount = $list->getTotalCount();
+        $this->assertEquals(4, $totalCount, 'expected 4 assets on totalCount of grouped query');
+        $list->load();
+        $count = $list->getCount();
+        $this->assertEquals(4, $count, 'expected 4 assets on grouped query');
+
+        // Test: on a grouped limited query, the ->getTotalCount() should correctly count the number of total rows
+        $list = new Asset\Listing();
+        $list->getDao()->onCreateQueryBuilder(function (QueryBuilder $queryBuilder) use ($tagA, $tagB) {
+            $this->joinTags($queryBuilder, $tagA, $tagB);
+        });
+        $list->setLimit(3);
+
+        $totalCount = $list->getTotalCount();
+        $this->assertEquals(4, $totalCount, 'expected 4 assets on totalCount of grouped limited query');
+        $list->load();
+        $count = $list->getCount();
+        $this->assertEquals(3, $count, 'expected 3 assets on grouped limited query');
+    }
+
+    private function joinTags(QueryBuilder $queryBuilder, Tag ...$tags): void
+    {
+        $expressionBuilder = $queryBuilder->expr();
+        $tagIds = array_map(fn (Tag $tag) => $expressionBuilder->literal($tag->getId()), $tags);
+
+        // Require assets to have one of the tags
+        $queryBuilder
+            ->innerJoin(
+                'assets',
+                'tags_assignment',
+                'ta',
+                $expressionBuilder->and(
+                    $expressionBuilder->in('ta.tagid', $tagIds),
+                    $expressionBuilder->eq('ta.ctype', $expressionBuilder->literal('asset')),
+                    $expressionBuilder->eq('ta.cid', 'assets.id')
+                )
+            )
+            ->groupBy('assets.id')
+        ;
     }
 }

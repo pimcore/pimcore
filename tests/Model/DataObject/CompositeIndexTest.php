@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,17 +19,17 @@ namespace Pimcore\Tests\Model\DataObject;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Unittest;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class CompositeIndexTest extends ModelTestCase
 {
-    public function testAddIndex()
+    public function testAddIndex(): void
     {
         $classId = Unittest::classId();
         $db = Db::get();
 
         try {
-            $db->query('ALTER TABLE `object_query_' . $classId . '` DROP INDEX `mycomposite`');
+            $db->executeQuery('ALTER TABLE `object_query_' . $classId . '` DROP INDEX `mycomposite`');
             $this->fail('expected that the index does not exist yet');
         } catch (\Exception $e) {
         }
@@ -47,6 +48,6 @@ class CompositeIndexTest extends ModelTestCase
         $definition->save();
 
         // this will throw an exception if the index does not exist
-        $db->query('ALTER TABLE `object_query_' . $classId . '` DROP INDEX `c_mycomposite`');
+        $db->executeQuery('ALTER TABLE `object_query_' . $classId . '` DROP INDEX `c_mycomposite`');
     }
 }

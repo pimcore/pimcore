@@ -27,22 +27,16 @@ use Symfony\Component\Process\Process;
  */
 class CacheClearer
 {
-    /**
-     * @var int
-     */
-    private $processTimeout;
+    private int $processTimeout;
 
-    /**
-     * @var \Closure
-     */
-    private $runCallback;
+    private \Closure $runCallback;
 
     public function __construct(array $options = [])
     {
         $this->resolveOptions($options);
     }
 
-    private function resolveOptions(array $options = [])
+    private function resolveOptions(array $options = []): void
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
@@ -93,14 +87,14 @@ class CacheClearer
     }
 
     /**
-     * @param \Closure $runCallback
+     * @param \Closure|null $runCallback
      */
-    public function setRunCallback(\Closure $runCallback = null)
+    public function setRunCallback(\Closure $runCallback = null): void
     {
         $this->runCallback = $runCallback;
     }
 
-    private function runCommand(string $command, array $arguments = [])
+    private function runCommand(string $command, array $arguments = []): Process
     {
         $process = $this->buildProcess($command, $arguments);
         $process->run($this->runCallback);

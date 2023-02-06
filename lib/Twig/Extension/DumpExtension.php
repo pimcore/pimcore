@@ -35,7 +35,7 @@ class DumpExtension extends AbstractExtension
         ];
     }
 
-    public function dump($value)
+    public function dump(mixed $value): ?string
     {
         $cloner = new VarCloner();
         $dumper = new HtmlDumper(null, null, AbstractDumper::DUMP_LIGHT_ARRAY | AbstractDumper::DUMP_TRAILING_COMMA);

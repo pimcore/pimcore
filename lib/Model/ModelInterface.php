@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,40 +16,20 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Model\Dao\DaoInterface;
+
 interface ModelInterface
 {
-    /**
-     * @return Dao\AbstractDao
-     */
-    public function getDao();
+    public function getDao(): DaoInterface;
+
+    public function setDao(Dao\AbstractDao $dao): static;
 
     /**
-     * @param Dao\AbstractDao $dao
-     *
-     * @return self
-     */
-    public function setDao($dao);
-
-    /**
-     * @param string|null $key
-     * @param bool $forceDetection
-     *
      * @throws \Exception
      */
-    public function initDao($key = null, $forceDetection = false);
+    public function initDao(string $key = null, bool $forceDetection = false): void;
 
-    /**
-     * @param array $data
-     *
-     * @return $this
-     */
-    public function setValues($data = []);
+    public function setValues(array $data = []): static;
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function setValue($key, $value);
+    public function setValue(string $key, mixed $value, bool $ignoreEmptyValues = false): static;
 }

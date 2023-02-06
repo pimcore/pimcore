@@ -27,7 +27,6 @@ use Pimcore\Twig\Extension\Templating\Navigation\Exception\InvalidRendererExcept
 use Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundException;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Twig\Extension\RuntimeExtensionInterface;
 
 /**
@@ -39,20 +38,10 @@ class Navigation implements RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
 
-    /**
-     * @var Builder
-     */
-    private $builder;
+    private Builder $builder;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $rendererLocator;
+    private ContainerInterface $rendererLocator;
 
-    /**
-     * @param Builder $builder
-     * @param ContainerInterface $rendererLocator
-     */
     public function __construct(Builder $builder, ContainerInterface $rendererLocator)
     {
         $this->builder = $builder;
@@ -61,7 +50,7 @@ class Navigation implements RuntimeExtensionInterface
 
     /**
      * Builds a navigation container by passing params
-     * Possible config params are: 'root', 'htmlMenuPrefix', 'pageCallback', 'cache', 'maxDepth', 'active'
+     * Possible config params are: 'root', 'htmlMenuPrefix', 'pageCallback', 'cache', 'cacheLifetime', 'maxDepth', 'active', 'markActiveTrail'
      *
      * @param array $params
      *
@@ -71,28 +60,7 @@ class Navigation implements RuntimeExtensionInterface
      */
     public function build(array $params): Container
     {
-        $optionsResolver = new OptionsResolver();
-        $optionsResolver->setDefaults([
-           'root' => null,
-           'htmlMenuPrefix' => null,
-           'pageCallback' => null,
-           'cache' => true,
-           'cacheLifetime' => null,
-           'maxDepth' => null,
-           'active' => null,
-        ]);
-
-        $options = $optionsResolver->resolve($params);
-
-        return $this->builder->getNavigation(
-            $options['active'],
-            $options['root'],
-            $options['htmlMenuPrefix'],
-            $options['pageCallback'],
-            $options['cache'],
-            $options['maxDepth'],
-            $options['cacheLifetime']
-        );
+        return $this->builder->getNavigation($params);
     }
 
     /**
@@ -132,7 +100,7 @@ class Navigation implements RuntimeExtensionInterface
         string $rendererName = 'menu',
         string $renderMethod = 'render',
         ...$rendererArguments
-    ) {
+    ): string {
         $renderer = $this->getRenderer($rendererName);
 
         if (!method_exists($renderer, $renderMethod)) {
@@ -152,7 +120,7 @@ class Navigation implements RuntimeExtensionInterface
      *
      * @return RendererInterface
      */
-    public function __call($method, array $arguments = []): RendererInterface
+    public function __call(string $method, array $arguments = []): RendererInterface
     {
         return $this->getRenderer($method);
     }

@@ -20,25 +20,26 @@ and after the string, if `Debug Admin-Translations (wrapped in +)` is activated 
 But you can use the admin translation also in your custom templates. 
 Admin translations use the same translator component (Symfony) but on a different domain.
 
-Admin translations underly the same case sensitivity logic as [shared translations](./04_Shared_Translations.md#page_Translations_case_sensitivity).
+Admin translations underlay the same case sensitivity logic as [shared translations](./04_Shared_Translations.md#page_Translations_case_sensitivity).
 
-#### Example: Translate Options of a Select Editable
+#### Example: Translate Options of a Select Editable in the language of the current user
 
 ```twig
 {{ pimcore_select("select", {
 	"store": [
-		["option1", {{ "Option One"|trans({}, 'admin') }}],
-		["option2", {{ "Option Two"|trans({}, 'admin') }}],
-		["option3", {{ "Option Three"|trans({}, 'admin') }}]
+		["option1", {{ "Option One"|trans({}, 'admin', pimcore_editmode_admin_language()) }}],
+		["option2", {{ "Option Two"|trans({}, 'admin', pimcore_editmode_admin_language()) }}],
+		["option3", {{ "Option Three"|trans({}, 'admin', pimcore_editmode_admin_language()) }}]
 	]
 }) }}
 ```
 
 #### Adding your own admin languages (since v6.3.6)
-Pimcore comes with a set of translations which are managed by [POEditor](https://poeditor.com/join/project/VWmZyvFVMH). 
+Pimcore comes with a set of translations which are managed by [POEditor](https://poeditor.com).
+There is a list of [essential translations](https://poeditor.com/join/project/VWmZyvFVMH) and another [extended translations](https://poeditor.com/join/project/XliCYYgILb) list.
 However, the amount of available languages is limited, because only languages with certain translation progress are
 included in the main distribution. 
-If you want make additional languages available for the admin interface, you can do so by putting a symfony translation
+If you want to make additional languages available for the admin interface, you can do so by putting a symfony translation
 file for the desired language into the default path for the symfony translator 
 (e.g. use `translations/admin.af.yaml` for making `Afrikaans` available, the translation file can be also empty). 
 If you haven't configured anything different this is `%kernel.project_dir%/translations` for Symfony 4 projects.

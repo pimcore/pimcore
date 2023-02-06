@@ -9,9 +9,6 @@ Depending on their priority, Redirects come second (priority 99) or fifth (all o
 
 ## Setting up Redirects
 Redirects are configured in the Redirects editor, accessible via the Tools menu. 
- 
- ![Configure Redirects](../../img/redirects.png)
-
 
 #### Regular Expression and Back-Reference Syntax
 
@@ -39,3 +36,19 @@ Pimcore provides the ability to automatically create Redirects when renaming and
 ![Redirect Priority](../../img/redirects4.png)
 
 ![Redirect Priority](../../img/redirects5.png)
+
+
+#### Creating custom redirect status codes
+The redirect status codes list can be extended by adding custom codes in config.yaml:
+
+```yaml
+pimcore:
+    redirects:
+        status_codes:
+            308: Permanent Redirect
+```
+
+
+The new status codes can be seen in admin.
+
+![Redirect Priority](../../img/redirects7.png)

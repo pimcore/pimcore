@@ -26,16 +26,13 @@ interface GeneratorContextInterface extends \IteratorAggregate, \Countable
 {
     public function getUrlContainer(): UrlContainerInterface;
 
-    /**
-     * @return string|null
-     */
-    public function getSection();
+    public function getSection(): ?string;
 
     public function all(): array;
 
     public function keys(): array;
 
-    public function get($key, $default = null);
+    public function get(int|string $key, mixed $default = null): mixed;
 
-    public function has($key): bool;
+    public function has(int|string $key): bool;
 }

@@ -15,23 +15,38 @@ Assumptions - change them to match your environment/distro:
 - PHP-FPM is configured to listen on the Socket `/var/run/php/pimcore.sock`. If your setup differs, change the `server` directive within the `upstream` block accordingly.
 - Before you change the order of location blocks, read [Understanding Nginx Server and Location Block Selection Algorithms](https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms)
 - Assets are set to expire after 14 days; adjust all `expires` directives to suit your needs.
+- Assets are NOT stored on a remote Storage like GCS or S3. If they are, see Section #Assets in the nginx configuration
 
 ### Development Environment
 
 The following configuration is used with the assumption that it is for development only. It is not approperiate for a production environment and *should not* be exposed towards public access.  
 
 ```nginx
-# mime types are covered in nginx.conf by:
-# http {
-#   include       mime.types;
-# }
+# mime types are already covered in nginx.conf
+#include mime.types;
+types {
+    image/avif avif;
+}
 
 upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
 }
 
+map $args $static_page_root {
+    default                                 /var/tmp/pages;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+}
+
+map $uri $static_page_uri {
+    default                                 $uri;
+    "/"                                     /%home;
+}
+
 server {
     listen 80;
+    listen [::]:80;
     server_name YOUPROJECT.local;
     root /var/www/pimcore/public;
     index index.php;
@@ -94,8 +109,8 @@ server {
     }
 
     # Some Admin Modules need this:
-    # Database Admin, Server Info
-    location ~* ^/admin/(adminer|external) {
+    # Server Info, Opcache
+    location ~* ^/admin/external {
         rewrite .* /index.php$is_args$args last;
     }
     
@@ -109,7 +124,9 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
-    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    # If you are using remote storages like S3 or Google Cloud Storage, this doesn't work. You either deactivate it and handle it in PHP
+    # or redirect these suffixes directly to your CDN URL. Additionally you should configure the frontend url prefixes accordingly, see: https://pimcore.com/docs/pimcore/current/Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/File_Storage_Setup.html
+    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;
@@ -119,7 +136,7 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        try_files $uri /index.php$is_args$args;
+        try_files $static_page_root$static_page_uri.html $uri /index.php$is_args$args;
     }
 
     # Use this location when the installer has to be run
@@ -129,12 +146,12 @@ server {
     location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
-        # regex to split $uri to $fastcgi_script_name and $fastcgi_path
+        # regex to split $uri to $fastcgi_script_name and $fastcgi_path_info
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # Check that the PHP script exists before passing it
         try_files $fastcgi_script_name =404;
         # include fastcgi.conf if needed
-        #include fastcgi.conf;
+        include fastcgi.conf;
         # Bypass the fact that try_files resets $fastcgi_path_info
         # see: http://trac.nginx.org/nginx/ticket/321
         set $path_info $fastcgi_path_info;
@@ -155,6 +172,7 @@ server {
     location /fpm- {
         access_log off;
         include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         location /fpm-status {
             allow 127.0.0.1;
             # add additional IP's or Ranges
@@ -181,13 +199,21 @@ server {
 The following configuration provides an approperiate base for a secure application hosting. It can be adapted to your setup and preferences. However it is primarily taking security into account. It is recommended to develop within a secured environment, too.
 
 ```nginx
-# mime types are covered in nginx.conf by:
-# http {
-#   include       mime.types;
-# }
+# mime types are already covered in nginx.conf
+#include mime.types;
+types {
+    image/avif avif;
+}
 
 upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
+}
+
+map $args $static_page_root {
+    default                                 /var/tmp/pages;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
 }
 
 server {
@@ -369,8 +395,8 @@ server {
     }
 
     # Some Admin Modules need this:
-    # Database Admin, Server Info
-    location ~* ^/admin/(adminer|external) {
+    # Server Info, Opcache
+    location ~* ^/admin/external {
         rewrite .* /index.php$is_args$args last;
     }
     
@@ -384,7 +410,9 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
-    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    # If you are using remote storages like S3 or Google Cloud Storage, this doesn't work. You either deactivate it and handle it in PHP
+    # or redirect these suffixes directly to your CDN URL. Additionally you should configure the frontend url prefixes accordingly, see: https://pimcore.com/docs/pimcore/current/Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/File_Storage_Setup.html
+    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;
@@ -394,7 +422,7 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        try_files $uri /index.php$is_args$args;
+        try_files $static_page_root$uri.html $uri /index.php$is_args$args;
     }
 
     # Use this location when the installer has to be run
@@ -404,7 +432,7 @@ server {
     location ~ ^/index\.php(/|$) {
         send_timeout 1800;
         fastcgi_read_timeout 1800;
-        # regex to split $uri to $fastcgi_script_name and $fastcgi_path
+        # regex to split $uri to $fastcgi_script_name and $fastcgi_path_info
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # Check that the PHP script exists before passing it
         try_files $fastcgi_script_name =404;
@@ -433,6 +461,7 @@ server {
     location /fpm- {
         access_log off;
         include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         location /fpm-status {
             allow 127.0.0.1;
             # add additional IP's or Ranges

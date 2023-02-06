@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,7 +16,6 @@
 
 namespace Pimcore\Video\Adapter;
 
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Pimcore\Video\Adapter;
@@ -26,25 +26,17 @@ use Symfony\Component\Process\Process;
  */
 class Ffmpeg extends Adapter
 {
-    /**
-     * @var string
-     */
-    public $file;
+    public string $file;
 
-    /**
-     * @var string
-     */
-    protected $processId;
+    protected string $processId;
 
-    /**
-     * @var array
-     */
-    protected $arguments = [];
+    protected array $arguments = [];
 
-    /**
-     * @return bool
-     */
-    public function isAvailable()
+    protected array $videoFilter = [];
+
+    protected ?float $inputSeeking = null;
+
+    public function isAvailable(): bool
     {
         try {
             $ffmpeg = self::getFfmpegCli();
@@ -53,29 +45,23 @@ class Ffmpeg extends Adapter
                 return true;
             }
         } catch (\Exception $e) {
-            Logger::warning($e);
+            Logger::warning((string) $e);
         }
 
         return false;
     }
 
     /**
-     * @return mixed
+     * @return string|bool
      *
      * @throws \Exception
      */
-    public static function getFfmpegCli()
+    public static function getFfmpegCli(): bool|string
     {
         return \Pimcore\Tool\Console::getExecutable('ffmpeg', true);
     }
 
-    /**
-     * @param string $file
-     * @param array $options
-     *
-     * @return $this
-     */
-    public function load($file, $options = [])
+    public function load(string $file, array $options = []): static
     {
         $this->file = $file;
         $this->setProcessId(uniqid());
@@ -88,7 +74,7 @@ class Ffmpeg extends Adapter
      *
      * @throws \Exception
      */
-    public function save()
+    public function save(): bool
     {
         $success = false;
 
@@ -98,6 +84,10 @@ class Ffmpeg extends Adapter
             }
             if (is_file($this->getDestinationFile())) {
                 @unlink($this->getDestinationFile());
+            }
+
+            if (count($this->videoFilter) > 0) {
+                $this->addArgument('-vf', implode(',', $this->videoFilter));
             }
 
             $command = $this->arguments;
@@ -167,7 +157,16 @@ class Ffmpeg extends Adapter
             // add some global arguments
             array_push($command, '-threads', '0');
             $command[] = str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile());
-            array_unshift($command, self::getFfmpegCli(), '-i', realpath($this->file));
+            array_unshift($command, '-i', realpath($this->file));
+            // prepend seeking before input file to use input seeking method
+            if (isset($this->inputSeeking)) {
+                $sourceDuration = $this->getDuration() * 100;
+                if ($this->inputSeeking >= $sourceDuration) {
+                    $this->inputSeeking = 0;
+                }
+                array_unshift($command, '-ss', $this->inputSeeking);
+            }
+            array_unshift($command, self::getFfmpegCli());
 
             Console::addLowProcessPriority($command);
             $process = new Process($command);
@@ -193,8 +192,10 @@ class Ffmpeg extends Adapter
             } else {
                 // create an error log file
                 if (file_exists($this->getConversionLogFile()) && filesize($this->getConversionLogFile())) {
-                    copy($this->getConversionLogFile(),
-                        str_replace('.log', '.error.log', $this->getConversionLogFile()));
+                    copy(
+                        $this->getConversionLogFile(),
+                        str_replace('.log', '.error.log', $this->getConversionLogFile())
+                    );
                 }
             }
         } else {
@@ -204,23 +205,18 @@ class Ffmpeg extends Adapter
         return $success;
     }
 
-    /**
-     * @param string $file
-     * @param int|null $timeOffset
-     */
-    public function saveImage($file, $timeOffset = null)
+    public function saveImage(string $file, int $timeOffset = null): void
     {
-        if (!$timeOffset) {
+        if (!is_numeric($timeOffset)) {
             $timeOffset = 5;
         }
-
-        $realTargetPath = null;
 
         $cmd = [
             self::getFfmpegCli(),
             '-ss', $timeOffset, '-i', realpath($this->file),
             '-vcodec', 'png', '-vframes', 1, '-vf', 'scale=iw*sar:ih',
-            str_replace('/', DIRECTORY_SEPARATOR, $file), ];
+            str_replace('/', DIRECTORY_SEPARATOR, $file),
+        ];
         Console::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         $process->run();
@@ -231,7 +227,7 @@ class Ffmpeg extends Adapter
      *
      * @throws \Exception
      */
-    protected function getVideoInfo()
+    protected function getVideoInfo(): string
     {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-info-' . uniqid() . '.out';
 
@@ -252,41 +248,54 @@ class Ffmpeg extends Adapter
         return $contents;
     }
 
-    /**
-     * @return float
-     *
-     * @throws \Exception
-     */
-    public function getDuration()
+    public function getDuration(): ?float
     {
-        $output = $this->getVideoInfo();
+        try {
+            $output = $this->getVideoInfo();
 
-        // get total video duration
-        preg_match("/Duration: ([0-9:\.]+),/", $output, $matches);
-        $durationRaw = $matches[1];
-        $durationParts = explode(':', $durationRaw);
+            // get total video duration
+            $result = preg_match('/Duration: (\d\d):(\d\d):(\d\d\.\d+),/', $output, $matches);
 
-        // calculate duration in seconds
-        $duration = ((int)$durationParts[0] * 3600) + ((int)$durationParts[1] * 60) + (float)$durationParts[2];
+            if ($result) {
+                // calculate duration in seconds
+                $duration = ((int)$matches[1] * 3600) + ((int)$matches[2] * 60) + (float)$matches[3];
 
-        return $duration;
+                return $duration;
+            }
+
+            throw new \Exception(
+                'Could not read duration with FFMPEG Adapter. File: ' . $this->file . '. Output: ' . $output
+            );
+        } catch (\Exception $e) {
+            Logger::error($e->getMessage());
+        }
+
+        return null;
     }
 
-    /**
-     * @return array
-     */
-    public function getDimensions()
+    public function getDimensions(): ?array
     {
-        $output = $this->getVideoInfo();
+        try {
+            $output = $this->getVideoInfo();
 
-        preg_match('/ ([0-9]+x[0-9]+)[, ]/', $output, $matches);
-        $durationRaw = $matches[1];
-        list($width, $height) = explode('x', $durationRaw);
+            if (preg_match('/ ([0-9]+x[0-9]+)[, ]/', $output, $matches)) {
+                $dimensionRaw = $matches[1];
+                list($width, $height) = explode('x', $dimensionRaw);
 
-        return ['width' => $width, 'height' => $height];
+                return ['width' => $width, 'height' => $height];
+            }
+
+            throw new \Exception(
+                'Could not read dimensions with FFMPEG Adapter. File: ' . $this->file . '. Output: ' . $output
+            );
+        } catch (\Exception $e) {
+            Logger::error($e->getMessage());
+        }
+
+        return null;
     }
 
-    public function destroy()
+    public function destroy(): void
     {
         if (file_exists($this->getConversionLogFile())) {
             Logger::debug("FFMPEG finished, last message was:\n" . file_get_contents($this->getConversionLogFile()));
@@ -294,67 +303,48 @@ class Ffmpeg extends Adapter
         }
     }
 
-    private function deleteConversionLogFile()
+    private function deleteConversionLogFile(): void
     {
         @unlink($this->getConversionLogFile());
     }
 
-    /**
-     * @param string $processId
-     *
-     * @return $this
-     */
-    public function setProcessId($processId)
+    public function setProcessId(string $processId): static
     {
         $this->processId = $processId;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getProcessId()
+    public function getProcessId(): string
     {
         return $this->processId;
     }
 
-    /**
-     * @return string
-     */
-    protected function getConversionLogFile()
+    protected function getConversionLogFile(): string
     {
         return PIMCORE_LOG_DIRECTORY . '/ffmpeg-' . $this->getProcessId() . '-' . $this->getFormat() . '.log';
     }
 
-    /**
-     * @param string $key
-     * @param string $value
-     */
-    public function addArgument($key, $value)
+    public function addArgument(string $key, string $value): void
     {
         array_push($this->arguments, $key, $value);
     }
 
-    /**
-     *
-     * @return array
-     */
-    public function getArguments()
+    public function addFlag(string $flag): void
+    {
+        array_push($this->arguments, $flag);
+    }
+
+    public function getArguments(): array
     {
         return $this->arguments;
     }
 
-    /**
-     * @param int $videoBitrate
-     *
-     * @return $this
-     */
-    public function setVideoBitrate($videoBitrate)
+    public function setVideoBitrate(int $videoBitrate): static
     {
         $videoBitrate = (int)$videoBitrate;
 
-        $videoBitrate = ceil($videoBitrate / 2) * 2;
+        $videoBitrate = (int) ceil($videoBitrate / 2) * 2;
 
         parent::setVideoBitrate($videoBitrate);
 
@@ -365,16 +355,11 @@ class Ffmpeg extends Adapter
         return $this;
     }
 
-    /**
-     * @param int $audioBitrate
-     *
-     * @return $this
-     */
-    public function setAudioBitrate($audioBitrate)
+    public function setAudioBitrate(int $audioBitrate): static
     {
         $audioBitrate = (int)$audioBitrate;
 
-        $audioBitrate = ceil($audioBitrate / 2) * 2;
+        $audioBitrate = (int) ceil($audioBitrate / 2) * 2;
 
         parent::setAudioBitrate($audioBitrate);
 
@@ -385,11 +370,7 @@ class Ffmpeg extends Adapter
         return $this;
     }
 
-    /**
-     * @param int $width
-     * @param int $height
-     */
-    public function resize($width, $height)
+    public function resize(int $width, int $height): void
     {
         // ensure $width & $height are even (mp4 requires this)
         $width = ceil($width / 2) * 2;
@@ -397,23 +378,48 @@ class Ffmpeg extends Adapter
         $this->addArgument('-s', $width.'x'.$height);
     }
 
-    /**
-     * @param int $width
-     */
-    public function scaleByWidth($width)
+    public function scaleByWidth(int $width): void
     {
         // ensure $width is even (mp4 requires this)
         $width = ceil($width / 2) * 2;
-        $this->addArgument('-filter:v', 'scale='.$width.':trunc(ow/a/2)*2');
+        $this->videoFilter[] = 'scale='.$width.':trunc(ow/a/2)*2';
     }
 
-    /**
-     * @param int $height
-     */
-    public function scaleByHeight($height)
+    public function scaleByHeight(int $height): void
     {
         // ensure $height is even (mp4 requires this)
         $height = ceil($height / 2) * 2;
-        $this->addArgument('-filter:v', 'scale=trunc(oh/(ih/iw)/2)*2:'.$height);
+        $this->videoFilter[] = 'scale=trunc(oh/(ih/iw)/2)*2:'.$height;
+    }
+
+    public function cut(?string $inputSeeking = null, ?string $targetDuration = null): void
+    {
+        if (!empty($inputSeeking)) {
+            $result = preg_match("/^(\d\d):(\d\d):(\d\d\.?\d*)$/", $inputSeeking, $matches);
+
+            if ($result) {
+                $this->inputSeeking = ((int)$matches[1] * 3600) + ((int)$matches[2] * 60) + (float)$matches[3];
+            }
+        }
+        if (!empty($targetDuration)) {
+            $this->addArgument('-t', $targetDuration);
+        }
+    }
+
+    public function setFramerate(int $fps): void
+    {
+        $this->videoFilter[] = 'fps='.$fps;
+    }
+
+    public function mute(): void
+    {
+        $this->addFlag('-an');
+    }
+
+    public function colorChannelMixer(?string $effect = null): void
+    {
+        if (!empty($effect)) {
+            $this->videoFilter[] = 'colorchannelmixer='.$effect;
+        }
     }
 }

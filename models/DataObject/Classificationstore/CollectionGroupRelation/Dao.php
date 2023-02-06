@@ -15,43 +15,56 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\CollectionGroupRelation;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Tool\Serialize;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\DataObject\Classificationstore\CollectionGroupRelation $model
+ * @property Classificationstore\CollectionGroupRelation $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    const TABLE_NAME_RELATIONS = 'classificationstore_collectionrelations';
+    public const TABLE_NAME_RELATIONS = 'classificationstore_collectionrelations';
 
     /**
-     * @param int|null $colId
-     * @param int|null $groupId
+     * @param int $colId
+     * @param int $groupId
+     *
+     * @throws NotFoundException
      */
-    public function getById($colId = null, $groupId = null)
+    public function getById(int $colId, int $groupId): void
     {
-        if ($colId != null) {
-            $this->model->setColId($colId);
+        $this->model->setColId($colId);
+        $this->model->setGroupId($groupId);
+
+        $data = $this->db->fetchAssociative(
+            sprintf(
+                'SELECT * FROM %1$s LEFT JOIN `%2$s` ON `%1$s`.`colId` = `%2$s`.`id` WHERE `%1$s`.`colId` = ? AND `%1$s`.`groupId` = ?',
+                self::TABLE_NAME_RELATIONS,
+                Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS
+            ),
+            [$this->model->getColId(), $this->model->getGroupId()]
+        );
+
+        if (!empty($data['colId'])) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new NotFoundException(sprintf(
+                'KeyGroupRelation with colId: %s and groupId: %s does not exist',
+                $this->model->getColId(),
+                $this->model->getGroupId()
+            ));
         }
-
-        if ($groupId != null) {
-            $this->model->setGroupId($groupId);
-        }
-
-        $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME_RELATIONS
-            . ',' . Model\DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS. ' WHERE colId = ? AND groupId = `?', [$this->model->getColId(), $this->model->getGroupId()]);
-
-        $this->assignVariablesToModel($data);
     }
 
     /**
-     * @return void
-     *
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         $this->update();
     }
@@ -59,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::TABLE_NAME_RELATIONS, [
             'colId' => $this->model->getColId(),
@@ -70,24 +83,25 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         $type = $this->model->getObjectVars();
+        $validTableColumns = $this->getValidTableColumns(self::TABLE_NAME_RELATIONS);
         $data = [];
 
         foreach ($type as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_RELATIONS))) {
+            if (in_array($key, $validTableColumns)) {
                 if (is_bool($value)) {
                     $value = (int) $value;
                 }
                 if (is_array($value) || is_object($value)) {
-                    $value = \Pimcore\Tool\Serialize::serialize($value);
+                    $value = Serialize::serialize($value);
                 }
 
                 $data[$key] = $value;
             }
         }
 
-        $this->db->insertOrUpdate(self::TABLE_NAME_RELATIONS, $data);
+        Helper::insertOrUpdate($this->db, self::TABLE_NAME_RELATIONS, $data);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,14 +26,8 @@ use Psr\Log\LoggerInterface;
  */
 class CleanupClassificationstoreTablesTask implements TaskInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -41,19 +36,19 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $db = Db::get();
         $tableTypes = ['object_classificationstore_data', 'object_classificationstore_groups'];
         foreach ($tableTypes as $tableType) {
             $prefix = $tableType . '_';
-            $tableNames = $db->fetchAll("SHOW TABLES LIKE '" . $prefix . "%'");
+            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $prefix . "%'");
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
                 $classId = substr($tableName, strlen($prefix));
 
-                $classDefinition = ClassDefinition::getById($classId);
+                $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
                 if (!$classDefinition) {
                     $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
 
@@ -61,14 +56,14 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
                 }
 
                 $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-                $fieldNames = $db->fetchCol($fieldsQuery);
+                $fieldNames = $db->fetchFirstColumn($fieldsQuery);
 
                 foreach ($fieldNames as $fieldName) {
                     $fieldDef = $classDefinition->getFieldDefinition($fieldName);
 
                     if (!$fieldDef) {
                         $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
-                        $db->deleteWhere($tableName, 'fieldname = ' . $db->quote($fieldName));
+                        $db->delete($tableName, ['fieldname' => $fieldName]);
                     }
                 }
             }

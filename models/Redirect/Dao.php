@@ -34,13 +34,13 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById($id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM redirects WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchAssociative('SELECT * FROM redirects WHERE id = ?', [$this->model->getId()]);
         if (!$data) {
             throw new NotFoundException(sprintf('Redirect with ID %d doesn\'t exist', $this->model->getId()));
         }
@@ -55,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getByExactMatch(Request $request, ?Site $site = null, bool $override = false)
+    public function getByExactMatch(Request $request, ?Site $site = null, bool $override = false): void
     {
         $partResolver = new RedirectUrlPartResolver($request);
         $siteId = $site ? $site->getId() : null;
@@ -79,7 +79,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $sql .= ' ORDER BY `priority` DESC';
 
-        $data = $this->db->fetchRow($sql, [
+        $data = $this->db->fetchAssociative($sql, [
             'sourcePath' => $partResolver->getRequestUriPart(Redirect::TYPE_PATH),
             'sourcePathQuery' => $partResolver->getRequestUriPart(Redirect::TYPE_PATH_QUERY),
             'sourceEntireUri' => $partResolver->getRequestUriPart(Redirect::TYPE_ENTIRE_URI),
@@ -99,13 +99,13 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
             // create in database
             $this->db->insert('redirects', []);
 
-            $this->model->setId($this->db->lastInsertId());
+            $this->model->setId((int) $this->db->lastInsertId());
         }
 
         $this->updateModificationInfos();
@@ -128,12 +128,12 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('redirects', ['id' => $this->model->getId()]);
     }
 
-    protected function updateModificationInfos()
+    protected function updateModificationInfos(): void
     {
         $updateTime = time();
         $this->model->setModificationDate($updateTime);

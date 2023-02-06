@@ -30,9 +30,9 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
-        $data = $this->db->fetchRow('SELECT * FROM sites WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE id = ?', [$id]);
         if (empty($data['id'])) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
@@ -44,9 +44,9 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getByRootId($id)
+    public function getByRootId(int $id): void
     {
-        $data = $this->db->fetchRow('SELECT * FROM sites WHERE rootId = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE rootId = ?', [$id]);
         if (empty($data['id'])) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
@@ -58,14 +58,13 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getByDomain($domain)
+    public function getByDomain(string $domain): void
     {
-        $data = $this->db->fetchRow('SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?', [$domain, '%"' . $domain . '"%']);
+        $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?', [$domain, '%"' . $domain . '"%']);
         if (empty($data['id'])) {
-
             // check for wildcards
             // @TODO: refactor this to be more clear
-            $sitesRaw = $this->db->fetchAll('SELECT id,domains FROM sites');
+            $sitesRaw = $this->db->fetchAllAssociative('SELECT id,domains FROM sites');
             $wildcardDomains = [];
             foreach ($sitesRaw as $site) {
                 if (!empty($site['domains']) && strpos($site['domains'], '*')) {
@@ -85,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
                 $wildcardDomain = preg_quote($wildcardDomain, '#');
                 $wildcardDomain = str_replace('\\*', '.*', $wildcardDomain);
                 if (preg_match('#^' . $wildcardDomain . '$#', $domain)) {
-                    $data = $this->db->fetchRow('SELECT * FROM sites WHERE id = ?', [$siteId]);
+                    $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE id = ?', [$siteId]);
                 }
             }
 
@@ -99,7 +98,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
             $this->create();
@@ -111,19 +110,19 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      */
-    public function create()
+    public function create(): void
     {
         $ts = time();
         $this->model->setCreationDate($ts);
         $this->model->setModificationDate($ts);
         $this->db->insert('sites', ['rootId' => $this->model->getRootId()]);
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 
     /**
      * Save changes to database, it's a good idea to use save() instead
      */
-    public function update()
+    public function update(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);
@@ -151,7 +150,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes site from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('sites', ['id' => $this->model->getId()]);
         //clean slug table

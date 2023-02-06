@@ -29,10 +29,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $gridConfigs = [];
-        $data = $this->db->fetchAll('SELECT * FROM gridconfig_shares' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $data = $this->db->fetchAllAssociative('SELECT * FROM gridconfig_shares' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($data as $configData) {
             $gridConfig = new Model\GridConfigShare();
@@ -45,10 +45,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $gridConfigs;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM gridconfig_shares ' . $this->getCondition(), $this->model->getConditionVariables());

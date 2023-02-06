@@ -30,70 +30,52 @@ class VisitorInfo implements \IteratorAggregate
 
     const ACTION_SCOPE_RESPONSE = 'response';
 
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
 
-    /**
-     * @var string|null
-     */
-    private $visitorId;
+    private ?string $visitorId = null;
 
-    /**
-     * @var string|null
-     */
-    private $sessionId;
+    private ?string $sessionId = null;
 
     /**
      * Matched targeting rules
      *
      * @var Rule[]
      */
-    private $matchingTargetingRules = [];
+    private array $matchingTargetingRules = [];
 
     /**
      * Assigned target groups with count
      *
      * @var TargetGroupAssignment[]
      */
-    private $targetGroupAssignments = [];
+    private array $targetGroupAssignments = [];
 
     /**
      * Target group assignments sorted by count
      *
      * @var TargetGroupAssignment[]|null
      */
-    private $sortedTargetGroupAssignments;
+    private ?array $sortedTargetGroupAssignments = null;
 
     /**
      * Plain list of assigned target groups
      *
      * @var TargetGroup[]|null
      */
-    private $targetGroups;
+    private ?array $targetGroups = null;
 
-    /**
-     * @var array
-     */
-    private $data = [];
+    private array $data = [];
 
-    /**
-     * @var array
-     */
-    private $actions = [];
+    private array $actions = [];
 
     /**
      * List of frontend data providers which are expected to provide data
      *
      * @var array
      */
-    private $frontendDataProviders = [];
+    private array $frontendDataProviders = [];
 
-    /**
-     * @var Response
-     */
-    private $response;
+    private ?Response $response = null;
 
     public function __construct(Request $request, string $visitorId = null, string $sessionId = null)
     {
@@ -102,7 +84,7 @@ class VisitorInfo implements \IteratorAggregate
         $this->sessionId = $sessionId;
     }
 
-    public static function fromRequest(Request $request): self
+    public static function fromRequest(Request $request): static
     {
         $visitorId = $request->cookies->get(self::VISITOR_ID_COOKIE_NAME);
         if (!empty($visitorId)) {
@@ -131,10 +113,7 @@ class VisitorInfo implements \IteratorAggregate
         return !empty($this->visitorId);
     }
 
-    /**
-     * @return string|null
-     */
-    public function getVisitorId()
+    public function getVisitorId(): ?string
     {
         return $this->visitorId;
     }
@@ -144,10 +123,7 @@ class VisitorInfo implements \IteratorAggregate
         return !empty($this->sessionId);
     }
 
-    /**
-     * @return string|null
-     */
-    public function getSessionId()
+    public function getSessionId(): ?string
     {
         return $this->sessionId;
     }
@@ -163,7 +139,7 @@ class VisitorInfo implements \IteratorAggregate
     /**
      * @param Rule[] $targetingRules
      */
-    public function setMatchingTargetingRules(array $targetingRules = [])
+    public function setMatchingTargetingRules(array $targetingRules = []): void
     {
         $this->matchingTargetingRules = [];
         foreach ($targetingRules as $targetingRule) {
@@ -171,7 +147,7 @@ class VisitorInfo implements \IteratorAggregate
         }
     }
 
-    public function addMatchingTargetingRule(Rule $targetingRule)
+    public function addMatchingTargetingRule(Rule $targetingRule): void
     {
         if (!in_array($targetingRule, $this->matchingTargetingRules, true)) {
             $this->matchingTargetingRules[] = $targetingRule;
@@ -189,7 +165,6 @@ class VisitorInfo implements \IteratorAggregate
             return $this->sortedTargetGroupAssignments;
         }
 
-        /** @var TargetGroupAssignment[] $assignments */
         $assignments = array_values($this->targetGroupAssignments);
 
         // sort reverse (highest count first)
@@ -219,7 +194,7 @@ class VisitorInfo implements \IteratorAggregate
         return $this->targetGroupAssignments[$targetGroup->getId()];
     }
 
-    public function assignTargetGroup(TargetGroup $targetGroup, int $count = 1, bool $overwrite = false)
+    public function assignTargetGroup(TargetGroup $targetGroup, int $count = 1, bool $overwrite = false): void
     {
         if ($count < 1) {
             throw new \InvalidArgumentException('Count must be greater than 0');
@@ -239,7 +214,7 @@ class VisitorInfo implements \IteratorAggregate
         $this->sortedTargetGroupAssignments = null;
     }
 
-    public function clearAssignedTargetGroup(TargetGroup $targetGroup)
+    public function clearAssignedTargetGroup(TargetGroup $targetGroup): void
     {
         if (isset($this->targetGroupAssignments[$targetGroup->getId()])) {
             unset($this->targetGroupAssignments[$targetGroup->getId()]);
@@ -270,7 +245,7 @@ class VisitorInfo implements \IteratorAggregate
         return $this->frontendDataProviders;
     }
 
-    public function setFrontendDataProviders(array $providers)
+    public function setFrontendDataProviders(array $providers): void
     {
         $this->frontendDataProviders = [];
         foreach ($providers as $provider) {
@@ -278,7 +253,7 @@ class VisitorInfo implements \IteratorAggregate
         }
     }
 
-    public function addFrontendDataProvider(string $key)
+    public function addFrontendDataProvider(string $key): void
     {
         if (!in_array($key, $this->frontendDataProviders, true)) {
             $this->frontendDataProviders[] = $key;
@@ -290,18 +265,12 @@ class VisitorInfo implements \IteratorAggregate
         return null !== $this->response;
     }
 
-    /**
-     * @return Response|null
-     */
-    public function getResponse()
+    public function getResponse(): ?Response
     {
         return $this->response;
     }
 
-    /**
-     * @param Response $response
-     */
-    public function setResponse(Response $response)
+    public function setResponse(Response $response): void
     {
         $this->response = $response;
     }
@@ -311,36 +280,32 @@ class VisitorInfo implements \IteratorAggregate
         return $this->data;
     }
 
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * @return \ArrayIterator
-     */
-    #[\ReturnTypeWillChange]
-    public function getIterator()// : \ArrayIterator
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->data);
     }
 
-    public function has($key): bool
+    public function has(int|string $key): bool
     {
         return isset($this->data[$key]);
     }
 
-    public function get($key, $default = null)
+    public function get(int|string $key, mixed $default = null): mixed
     {
         return $this->data[$key] ?? $default;
     }
 
-    public function set($key, $value)
+    public function set(int|string $key, mixed $value): void
     {
         $this->data[$key] = $value;
     }
 
-    public function addAction(array $action)
+    public function addAction(array $action): void
     {
         $this->actions[] = $action;
     }

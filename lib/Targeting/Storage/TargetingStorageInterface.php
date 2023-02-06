@@ -46,21 +46,15 @@ interface TargetingStorageInterface
 
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool;
 
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value);
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value): void;
 
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null);
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed;
 
-    public function clear(VisitorInfo $visitorInfo, string $scope = null);
+    public function clear(VisitorInfo $visitorInfo, string $scope = null): void;
 
-    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope);
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): void;
 
-    /**
-     * @return \DateTimeImmutable|null
-     */
-    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope);
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable;
 
-    /**
-     * @return \DateTimeImmutable|null
-     */
-    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope);
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable;
 }

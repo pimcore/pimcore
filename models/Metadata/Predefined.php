@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,77 +31,43 @@ use Pimcore\Model;
  */
 final class Predefined extends Model\AbstractModel
 {
-    /**
-     * @var string
-     */
-    protected $id;
+    protected ?string $id = null;
+
+    protected string $name;
+
+    protected ?string $description = null;
 
     /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $description;
-
-    /**
-     * @var string
-     */
-    protected $key;
-
-    /**
-     * @var string
-     */
-    protected $type;
-
-    /**
-     * @var string
-     */
-    protected $targetSubtype;
-
-    /**
-     * @var mixed
-     */
-    protected $data;
-
-    /**
-     * @var string
-     */
-    protected $config;
-
-    /**
-     * @var string
-     */
-    protected $ctype;
-
-    /**
-     * @var string
-     */
-    protected $language;
-
-    /**
-     * @var string
-     */
-    protected $group;
-
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
-
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
-
-    /**
-     * @param string $id
+     * @TODO if required?
      *
-     * @return self|null
+     * @var string
      */
-    public static function getById($id)
+    protected string $key;
+
+    protected string $type;
+
+    protected ?string $targetSubtype = null;
+
+    protected mixed $data = null;
+
+    protected ?string $config = null;
+
+    /**
+     * @TODO if required?
+     *
+     * @var string
+     */
+    protected string $ctype;
+
+    protected ?string $language = null;
+
+    protected ?string $group = null;
+
+    protected ?int $creationDate = null;
+
+    protected ?int $modificationDate = null;
+
+    public static function getById(string $id): ?Predefined
     {
         try {
             $metadata = new self();
@@ -120,7 +87,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByName($name, $language = '')
+    public static function getByName(string $name, string $language = ''): ?Predefined
     {
         try {
             $metadata = new self();
@@ -133,240 +100,156 @@ final class Predefined extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return self
-     */
-    public static function create()
+    public static function create(): Predefined
     {
         $type = new self();
-        $type->save();
 
         return $type;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
-    public function getData()
+    public function getData(): string
     {
         return $this->data;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = str_replace('~', '---', $name);
 
         return $this;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @param string $data
-     *
-     * @return $this
-     */
-    public function setData($data)
+    public function setData(string $data): static
     {
         $this->data = $data;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param string $language
-     */
-    public function setLanguage($language)
+    public function setLanguage(?string $language): void
     {
         $this->language = $language;
     }
 
-    /**
-     * @return string
-     */
-    public function getLanguage()
+    public function getLanguage(): ?string
     {
         return $this->language;
     }
 
-    /**
-     * @param string $group
-     */
-    public function setGroup($group)
+    public function setGroup(?string $group): void
     {
         $this->group = $group;
     }
 
-    /**
-     * @return string
-     */
-    public function getGroup()
+    public function getGroup(): ?string
     {
         return $this->group;
     }
 
-    /**
-     * @param string $targetSubtype
-     */
-    public function setTargetSubtype($targetSubtype)
+    public function setTargetSubtype(?string $targetSubtype): void
     {
         $this->targetSubtype = $targetSubtype;
     }
 
-    /**
-     * @return string
-     */
-    public function getTargetSubtype()
+    public function getTargetSubtype(): ?string
     {
         return $this->targetSubtype;
     }
 
-    /**
-     * @return string
-     */
-    public function getConfig()
+    public function getConfig(): ?string
     {
         return $this->config;
     }
 
-    /**
-     * @param string $config
-     */
-    public function setConfig($config)
+    public function setConfig(?string $config): void
     {
         $this->config = $config;
     }
 
-    public function minimize()
+    public function minimize(): void
     {
         try {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
             $instance = $loader->build($this->type);
-            $this->data = $instance->marshal($this->data);
+            $this->data = $instance->getDataFromEditMode($this->data);
         } catch (UnsupportedException $e) {
             Logger::error('could not resolve asset metadata implementation for ' . $this->type);
         }
     }
 
-    public function expand()
+    public function expand(): void
     {
         try {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
             $instance = $loader->build($this->type);
-            $this->data = $instance->unmarshal($this->data);
+            $this->data = $instance->getDataForEditmode($this->data);
         } catch (UnsupportedException $e) {
             Logger::error('could not resolve asset metadata implementation for ' . $this->type);
         }

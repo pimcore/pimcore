@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,7 +23,11 @@ trait HandlerHelperTrait
         $filteredJobs = [];
         foreach ($jobs as [$message, $ack]) {
             $key = $callback($message);
-            $filteredJobs[$key] = [$message, $ack];
+            if (isset($filteredJobs[$key])) {
+                $ack->ack($message);
+            } else {
+                $filteredJobs[$key] = [$message, $ack];
+            }
         }
 
         return $filteredJobs;

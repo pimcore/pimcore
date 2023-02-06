@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,9 +16,12 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
-use Pimcore\File;
+use Pimcore\Cache\RuntimeCache;
+use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
+use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 
 /**
@@ -35,15 +39,9 @@ class Definition extends Model\AbstractModel
     /**
      * {@inheritdoc}
      */
-    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
-            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
-            }
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['containerType'] = 'fieldcollection';
             $context['containerKey'] = $this->getKey();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
@@ -57,7 +55,7 @@ class Definition extends Model\AbstractModel
      *
      * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
-    protected function extractDataDefinitions($def)
+    protected function extractDataDefinitions(DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $def): void
     {
         if ($def instanceof DataObject\ClassDefinition\Layout) {
             if ($def->hasChildren()) {
@@ -83,18 +81,18 @@ class Definition extends Model\AbstractModel
     /**
      * @param string $key
      *
-     * @throws \Exception
-     *
      * @return self|null
+     *
+     * @throws \Exception
      */
-    public static function getByKey($key)
+    public static function getByKey(string $key): ?Definition
     {
         /** @var Definition $fc */
         $fc = null;
         $cacheKey = 'fieldcollection_' . $key;
 
         try {
-            $fc = \Pimcore\Cache\Runtime::get($cacheKey);
+            $fc = RuntimeCache::get($cacheKey);
             if (!$fc) {
                 throw new \Exception('FieldCollection in registry is not valid');
             }
@@ -105,7 +103,7 @@ class Definition extends Model\AbstractModel
 
             if (is_file($fieldFile)) {
                 $fc = include $fieldFile;
-                \Pimcore\Cache\Runtime::set($cacheKey, $fc);
+                RuntimeCache::set($cacheKey, $fc);
             }
         }
 
@@ -121,7 +119,7 @@ class Definition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function save($saveDefinitionFile = true)
+    public function save(bool $saveDefinitionFile = true): void
     {
         if (!$this->getKey()) {
             throw new \Exception('A field-collection needs a key to be saved!');
@@ -168,20 +166,18 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
+     *
+     * @internal
      */
-    protected function generateClassFiles($generateDefinitionFile = true)
+    protected function generateClassFiles(bool $generateDefinitionFile = true): void
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
             throw new DataObject\Exception\DefinitionWriteException();
         }
-
-        $infoDocBlock = $this->getInfoDocBlock();
 
         $definitionFile = $this->getDefinitionFile();
 
@@ -196,70 +192,15 @@ class Definition extends Model\AbstractModel
 
             $data = '<?php';
             $data .= "\n\n";
-            $data .= $infoDocBlock;
+            $data .=  $this->getInfoDocBlock();
             $data .= "\n\n";
 
-            $data .= "\nreturn " . $exportedClass . ";\n";
+            $data .= 'return ' . $exportedClass . ";\n";
 
             \Pimcore\File::put($definitionFile, $data);
         }
 
-        $extendClass = 'DataObject\\Fieldcollection\\Data\\AbstractData';
-        if ($this->getParentClass()) {
-            $extendClass = $this->getParentClass();
-            $extendClass = '\\' . ltrim($extendClass, '\\');
-        }
-
-        // create class file
-        $cd = '<?php';
-        $cd .= "\n\n";
-        $cd .= $infoDocBlock;
-        $cd .= "\n\n";
-        $cd .= 'namespace Pimcore\\Model\\DataObject\\Fieldcollection\\Data;';
-        $cd .= "\n\n";
-        $cd .= 'use Pimcore\\Model\\DataObject;';
-        $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
-        $cd .= "\n\n";
-
-        $implementsParts = [];
-
-        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
-
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements . "\n";
-        $cd .= '{' . "\n";
-
-        $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
-
-        if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
-            foreach ($this->getFieldDefinitions() as $key => $def) {
-                $cd .= 'protected $' . $key . ";\n";
-            }
-        }
-
-        $cd .= "\n\n";
-
-        $fdDefs = $this->getFieldDefinitions();
-        if (is_array($fdDefs) && count($fdDefs)) {
-            foreach ($fdDefs as $key => $def) {
-                $cd .= $def->getGetterCodeFieldcollection($this);
-
-                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    $cd .= $def->getGetterCode($this);
-                }
-
-                $cd .= $def->getSetterCodeFieldcollection($this);
-
-                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    $cd .= $def->getSetterCode($this);
-                }
-            }
-        }
-
-        $cd .= "}\n";
-        $cd .= "\n";
-
-        File::put($this->getPhpClassFile(), $cd);
+        \Pimcore::getContainer()->get(PHPFieldCollectionClassDumperInterface::class)->dumpPHPClass($this);
 
         $fieldDefinitions = $this->getFieldDefinitions();
         foreach ($fieldDefinitions as $fd) {
@@ -269,7 +210,7 @@ class Definition extends Model\AbstractModel
         }
     }
 
-    public function delete()
+    public function delete(): void
     {
         @unlink($this->getDefinitionFile());
         @unlink($this->getPhpClassFile());
@@ -294,26 +235,20 @@ class Definition extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @return bool
      */
     public function isWritable(): bool
     {
-        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
-            return true;
-        }
-
-        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return (bool) ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
     }
 
     /**
-     * @internal
-     *
      * @param string|null $key
      *
      * @return string
+     *
+     * @internal
      */
-    public function getDefinitionFile($key = null)
+    public function getDefinitionFile(string $key = null): string
     {
         return $this->locateDefinitionFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
     }
@@ -323,7 +258,7 @@ class Definition extends Model\AbstractModel
      *
      * @return string
      */
-    protected function getPhpClassFile()
+    public function getPhpClassFile(): string
     {
         return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Fieldcollection/Data/%s.php');
     }
@@ -333,38 +268,18 @@ class Definition extends Model\AbstractModel
      *
      * @return string
      */
-    protected function getInfoDocBlock()
+    protected function getInfoDocBlock(): string
     {
         $cd = '/**' . "\n";
-        $cd .= "Fields Summary:\n";
+        $cd .= " * Fields Summary:\n";
 
-        $cd = $this->getInfoDocBlockForFields($this, $cd, 1);
-
-        $cd .= '*/';
-
-        return $cd;
-    }
-
-    /**
-     * @internal
-     *
-     * @param Definition|DataObject\ClassDefinition\Data $definition
-     * @param string $text
-     * @param int $level
-     *
-     * @return string
-     */
-    protected function getInfoDocBlockForFields($definition, $text, $level)
-    {
-        if (is_array($definition->getFieldDefinitions())) {
-            foreach ($definition->getFieldDefinitions() as $fd) {
-                $text .= str_pad('', $level, '-') . ' ' . $fd->getName() . ' [' . $fd->getFieldtype() . "]\n";
-                if (method_exists($fd, 'getFieldDefinitions')) {
-                    $text = $this->getInfoDocBlockForFields($fd, $text, $level + 1);
-                }
-            }
+        $fieldDefinitionDocBlockBuilder = \Pimcore::getContainer()->get(FieldDefinitionDocBlockBuilderInterface::class);
+        foreach ($this->getFieldDefinitions() as $fieldDefinition) {
+            $cd .= ' * ' . str_replace("\n", "\n * ", trim($fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition))) . "\n";
         }
 
-        return $text;
+        $cd .= ' */';
+
+        return $cd;
     }
 }

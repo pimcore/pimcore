@@ -30,13 +30,13 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById($id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM website_settings WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchAssociative('SELECT * FROM website_settings WHERE id = ?', [$this->model->getId()]);
         $this->assignVariablesToModel($data);
 
         if (!empty($data['id'])) {
@@ -53,23 +53,23 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getByName($name = null, $siteId = null, $language = null)
+    public function getByName(string $name = null, int $siteId = null, string $language = null): void
     {
         if ($name != null) {
             $this->model->setName($name);
         }
-        $data = $this->db->fetchRow(
+        $data = $this->db->fetchAssociative(
             "SELECT *
-            FROM website_settings 
-            WHERE name = ? 
+            FROM website_settings
+            WHERE name = ?
                 AND (
-                    siteId IS NULL 
-                    OR siteId = 0 
+                    siteId IS NULL
+                    OR siteId = 0
                     OR siteId = ?
                 )
                 AND (
-                    language IS NULL 
-                    OR language = '' 
+                    language IS NULL
+                    OR language = ''
                     OR language = ?
                 )
             ORDER BY CONCAT(siteId, language) DESC, siteId DESC, language DESC",
@@ -83,7 +83,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function save()
+    public function save(): void
     {
         if ($this->model->getId()) {
             $this->update();
@@ -92,13 +92,13 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('website_settings', ['id' => $this->model->getId()]);
         $this->model->clearDependentCache();
     }
 
-    public function update()
+    public function update(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);
@@ -117,7 +117,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->clearDependentCache();
     }
 
-    public function create()
+    public function create(): void
     {
         $ts = time();
         $this->model->setModificationDate($ts);
@@ -125,7 +125,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->insert('website_settings', ['name' => $this->model->getName(), 'siteId' => $this->model->getSiteId()]);
 
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
 
         $this->update();
     }

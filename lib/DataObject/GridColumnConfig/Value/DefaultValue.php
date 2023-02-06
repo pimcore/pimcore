@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,22 +17,19 @@
 namespace Pimcore\DataObject\GridColumnConfig\Value;
 
 use Pimcore\Localization\LocaleServiceInterface;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\Service;
+use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @internal
  */
 final class DefaultValue extends AbstractValue
 {
-    /**
-     * @var LocaleServiceInterface
-     */
-    protected $localeService;
+    protected ?LocaleServiceInterface $localeService = null;
 
     /**
      * {@inheritdoc}
@@ -43,16 +41,9 @@ final class DefaultValue extends AbstractValue
     }
 
     /**
-     * @param Concrete $object
-     * @param string $key
-     * @param string|null $brickType
-     * @param string|null $brickKey
-     *
-     * @return \stdClass
-     *
      * @throws \Exception
      */
-    private function getValueForObject($object, $key, $brickType = null, $brickKey = null)
+    private function getValueForObject(Concrete $object, string $key, string $brickType = null, string $brickKey = null): \stdClass
     {
         if (!$key) {
             throw new \Exception('Empty key');
@@ -109,7 +100,7 @@ final class DefaultValue extends AbstractValue
         return $result;
     }
 
-    private function getClassificationStoreValueForObject($object, $key)
+    private function getClassificationStoreValueForObject(Concrete $object, string $key): ?\stdClass
     {
         $keyParts = explode('~', $key);
 
@@ -119,8 +110,8 @@ final class DefaultValue extends AbstractValue
                 $field = $keyParts[2];
                 $groupKeyId = explode('-', $keyParts[3]);
 
-                $groupId = $groupKeyId[0];
-                $keyid = $groupKeyId[1];
+                $groupId = (int) $groupKeyId[0];
+                $keyid = (int) $groupKeyId[1];
                 $getter = 'get' . ucfirst($field);
 
                 if (method_exists($object, $getter)) {
@@ -139,7 +130,7 @@ final class DefaultValue extends AbstractValue
 
                     $keyConfig = Classificationstore\KeyConfig::getById($keyid);
                     $type = $keyConfig->getType();
-                    $definition = json_decode($keyConfig->getDefinition());
+                    $definition = json_decode($keyConfig->getDefinition(), true);
                     $definition = Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
                     $result = new \stdClass();
@@ -157,12 +148,7 @@ final class DefaultValue extends AbstractValue
         return null;
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return \stdClass
-     */
-    private function getDefaultValue($value)
+    private function getDefaultValue(mixed $value): \stdClass
     {
         $result = new \stdClass();
         $result->value = $value;
@@ -181,7 +167,7 @@ final class DefaultValue extends AbstractValue
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $attributeParts = explode('~', $this->attribute);
 
@@ -189,20 +175,23 @@ final class DefaultValue extends AbstractValue
         $brickType = null;
         $brickKey = null;
 
-        if (str_starts_with($this->attribute, '~')) {
-            // key value, ignore for now
+        if ($element instanceof Concrete) {
+            if (str_starts_with($this->attribute, '~')) {
+                // key value, ignore for now
 
-            return $this->getClassificationStoreValueForObject($element, $this->attribute);
-        }
-        if ($element instanceof Concrete && count($attributeParts) > 1) {
-            $brickType = $attributeParts[0];
-            $brickKey = $attributeParts[1];
+                return $this->getClassificationStoreValueForObject($element, $this->attribute);
+            }
+            if (count($attributeParts) > 1) {
+                $json = json_decode(trim($attributeParts[0], '?'));
+                $brickType = $json ? $json->containerKey : $attributeParts[0];
+                $brickKey = $attributeParts[1];
 
-            $getter = 'get' . Service::getFieldForBrickType($element->getClass(), $brickType);
+                $getter = 'get' . Service::getFieldForBrickType($element->getClass(), $brickType);
+            }
         }
 
         if ($this->attribute && method_exists($element, $getter)) {
-            if ($element instanceof AbstractObject) {
+            if ($element instanceof Concrete) {
                 try {
                     $result = $this->getValueForObject($element, $this->attribute, $brickType, $brickKey);
                 } catch (\Exception $e) {

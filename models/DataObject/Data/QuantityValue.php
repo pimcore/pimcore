@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,34 +24,25 @@ class QuantityValue extends AbstractQuantityValue
 {
     use ObjectVarTrait;
 
-    /**
-     * @var float|null
-     */
-    protected $value;
+    protected int|string|null|float $value = null;
 
     /**
-     * @param float|null $value
-     * @param Unit|string|null $unit
+     * @param float|int|string|null $value
+     * @param string|Unit|null $unit
      */
-    public function __construct($value = null, $unit = null)
+    public function __construct(float|int|string|null $value = null, Unit|string $unit = null)
     {
         $this->value = $value;
         parent::__construct($unit);
     }
 
-    /**
-     * @param float $value
-     */
-    public function setValue($value)
+    public function setValue(float|int|string|null $value): void
     {
         $this->value = $value;
         $this->markMeDirty();
     }
 
-    /**
-     * @return float|null
-     */
-    public function getValue()
+    public function getValue(): float|int|string|null
     {
         return $this->value;
     }
@@ -73,7 +65,8 @@ class QuantityValue extends AbstractQuantityValue
         }
 
         if ($this->getUnit() instanceof Unit) {
-            $value .= ' ' . $this->getUnit()->getAbbreviation();
+            $translator = \Pimcore::getContainer()->get('translator');
+            $value .= ' ' . $translator->trans($this->getUnit()->getAbbreviation(), [], 'admin');
         }
 
         return $value ? (string)$value : '';

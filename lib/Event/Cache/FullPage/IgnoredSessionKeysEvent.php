@@ -26,24 +26,30 @@ class IgnoredSessionKeysEvent extends Event
      * if the full page cache should be disabled due to
      * existing session data.
      *
-     * @var array
+     * @var string[]
      */
-    private $keys = [];
+    private array $keys = [];
 
     /**
-     * @param array $keys
+     * @param string[] $keys
      */
     public function __construct(array $keys = [])
     {
         $this->keys = $keys;
     }
 
+    /**
+     * @return string[]
+     */
     public function getKeys(): array
     {
         return $this->keys;
     }
 
-    public function setKeys(array $keys)
+    /**
+     * @param string[] $keys
+     */
+    public function setKeys(array $keys): void
     {
         $this->keys = $keys;
     }

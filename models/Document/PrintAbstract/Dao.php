@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document\PrintAbstract;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Exception\NotFoundException;
 
@@ -30,12 +31,12 @@ class Dao extends Document\PageSnippet\Dao
      *
      * @var array
      */
-    protected $validColumnsPage = [];
+    protected array $validColumnsPage = [];
 
     /**
      * Get the valid columns from the database
      */
-    public function init()
+    public function init(): void
     {
         // page
         $this->validColumnsPage = $this->getValidTableColumns('documents_printpage');
@@ -44,20 +45,20 @@ class Dao extends Document\PageSnippet\Dao
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
-     * @param int $id
+     * @param int|null $id
      *
      * @throws \Exception
      */
-    public function getById($id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT documents.*, documents_printpage.*, tree_locks.locked FROM documents
+        $data = $this->db->fetchAssociative("SELECT documents.*, documents_printpage.*, tree_locks.locked FROM documents
             LEFT JOIN documents_printpage ON documents.id = documents_printpage.id
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                WHERE documents.id = ?", $this->model->getId());
+                WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -66,7 +67,7 @@ class Dao extends Document\PageSnippet\Dao
         }
     }
 
-    public function create()
+    public function create(): void
     {
         parent::create();
 
@@ -78,7 +79,7 @@ class Dao extends Document\PageSnippet\Dao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         $this->model->setModificationDate(time());
         $document = $this->model->getObjectVars();
@@ -110,8 +111,8 @@ class Dao extends Document\PageSnippet\Dao
             }
         }
 
-        $this->db->insertOrUpdate('documents', $dataDocument);
-        $this->db->insertOrUpdate('documents_printpage', $dataPage);
+        Helper::insertOrUpdate($this->db, 'documents', $dataDocument);
+        Helper::insertOrUpdate($this->db, 'documents_printpage', $dataPage);
 
         $this->updateLocks();
     }
@@ -119,7 +120,7 @@ class Dao extends Document\PageSnippet\Dao
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleteAllProperties();
 

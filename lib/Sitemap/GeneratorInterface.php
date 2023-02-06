@@ -23,9 +23,6 @@ interface GeneratorInterface
 {
     /**
      * Populates the sitemap
-     *
-     * @param UrlContainerInterface $urlContainer
-     * @param string $section
      */
-    public function populate(UrlContainerInterface $urlContainer, string $section = null);
+    public function populate(UrlContainerInterface $urlContainer, string $section = null): void;
 }

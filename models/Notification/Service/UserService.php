@@ -24,14 +24,8 @@ use Pimcore\Model\User;
  */
 class UserService
 {
-    /**
-     * @param User $loggedIn
-     *
-     * @return array
-     */
     public function findAll(User $loggedIn): array
     {
-
         // condition for users with groups having notifications permission
         $condition = [];
         $rolesList = new \Pimcore\Model\User\Role\Listing();
@@ -58,11 +52,6 @@ class UserService
         return array_merge($users, $roles);
     }
 
-    /**
-     * @param array $users
-     *
-     * @return array
-     */
     public function filterUsersWithPermission(array $users): array
     {
         $usersList = [];

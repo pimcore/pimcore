@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,94 +16,60 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
+use Pimcore\Event\Model\SiteEvent;
+use Pimcore\Event\SiteEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
- * @method \Pimcore\Model\Site\Dao getDao()
- * @method void delete()
- * @method void save()
+ * @method Site\Dao getDao()
  */
 final class Site extends AbstractModel
 {
-    /**
-     * @var Site|null
-     */
+    use RecursionBlockingEventDispatchHelperTrait;
+
     protected static ?Site $currentSite = null;
 
-    /**
-     * @var int
-     */
-    protected $id;
+    protected ?int $id = null;
 
-    /**
-     * @var array
-     */
-    protected $domains;
+    protected array $domains;
 
     /**
      * Contains the ID to the Root-Document
-     *
-     * @var int
      */
-    protected $rootId;
+    protected int $rootId;
 
-    /**
-     * @var Document\Page|null
-     */
     protected ?Document\Page $rootDocument = null;
 
-    /**
-     * @var string
-     */
-    protected $rootPath;
+    protected ?string $rootPath = null;
+
+    protected string $mainDomain = '';
+
+    protected string $errorDocument = '';
+
+    protected array $localizedErrorDocuments;
+
+    protected bool $redirectToMainDomain = false;
+
+    protected ?int $creationDate = null;
+
+    protected ?int $modificationDate = null;
 
     /**
-     * @var string
+     * @throws \Exception
      */
-    protected $mainDomain = '';
-
-    /**
-     * @var string
-     */
-    protected $errorDocument = '';
-
-    /**
-     * @var array
-     */
-    protected $localizedErrorDocuments;
-
-    /**
-     * @var bool
-     */
-    protected $redirectToMainDomain = false;
-
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
-
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
-
-    /**
-     * @param int $id
-     *
-     * @return Site|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): ?Site
     {
         $cacheKey = 'site_id_'. $id;
 
-        if (Runtime::isRegistered($cacheKey)) {
-            $site = Runtime::get($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $site = RuntimeCache::get($cacheKey);
         } elseif (!$site = \Pimcore\Cache::load($cacheKey)) {
             try {
                 $site = new self();
-                $site->getDao()->getById((int)$id);
+                $site->getDao()->getById($id);
             } catch (NotFoundException $e) {
                 $site = 'failed';
             }
@@ -114,21 +81,16 @@ final class Site extends AbstractModel
             $site = null;
         }
 
-        Runtime::set($cacheKey, $site);
+        RuntimeCache::set($cacheKey, $site);
 
         return $site;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Site|null
-     */
-    public static function getByRootId($id)
+    public static function getByRootId(int $id): ?Site
     {
         try {
             $site = new self();
-            $site->getDao()->getByRootId((int)$id);
+            $site->getDao()->getByRootId($id);
 
             return $site;
         } catch (NotFoundException $e) {
@@ -137,17 +99,15 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @param string $domain
-     *
-     * @return Site|null
+     * @throws \Exception
      */
-    public static function getByDomain($domain)
+    public static function getByDomain(string $domain): ?Site
     {
         // cached because this is called in the route
         $cacheKey = 'site_domain_'. md5($domain);
 
-        if (Runtime::isRegistered($cacheKey)) {
-            $site = Runtime::get($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $site = RuntimeCache::get($cacheKey);
         } elseif (!$site = \Pimcore\Cache::load($cacheKey)) {
             try {
                 $site = new self();
@@ -163,17 +123,15 @@ final class Site extends AbstractModel
             $site = null;
         }
 
-        Runtime::set($cacheKey, $site);
+        RuntimeCache::set($cacheKey, $site);
 
         return $site;
     }
 
     /**
-     * @param mixed $mixed
-     *
-     * @return Site|null
+     * @throws \Exception
      */
-    public static function getBy($mixed)
+    public static function getBy(mixed $mixed): ?Site
     {
         $site = null;
 
@@ -188,12 +146,7 @@ final class Site extends AbstractModel
         return $site;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return Site
-     */
-    public static function create($data)
+    public static function create(array $data): Site
     {
         $site = new self();
         self::checkCreateData($data);
@@ -204,10 +157,8 @@ final class Site extends AbstractModel
 
     /**
      * returns true if the current process/request is inside a site
-     *
-     * @return bool
      */
-    public static function isSiteRequest()
+    public static function isSiteRequest(): bool
     {
         if (null !== self::$currentSite) {
             return true;
@@ -217,11 +168,9 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @return Site
-     *
      * @throws \Exception
      */
-    public static function getCurrentSite()
+    public static function getCurrentSite(): Site
     {
         if (null !== self::$currentSite) {
             return self::$currentSite;
@@ -232,64 +181,46 @@ final class Site extends AbstractModel
 
     /**
      * Register the current site
-     *
-     * @param Site $site
      */
     public static function setCurrentSite(Site $site): void
     {
         self::$currentSite = $site;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return array
-     */
-    public function getDomains()
+    public function getDomains(): array
     {
         return $this->domains;
     }
 
-    /**
-     * @return int
-     */
-    public function getRootId()
+    public function getRootId(): int
     {
         return $this->rootId;
     }
 
-    /**
-     * @return Document\Page|null
-     */
     public function getRootDocument(): ?Document\Page
     {
         return $this->rootDocument;
     }
 
     /**
-     * @param int $id
-     *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
     /**
-     * @param mixed $domains
-     *
      * @return $this
      */
-    public function setDomains($domains)
+    public function setDomains(mixed $domains): static
     {
         if (is_string($domains)) {
             $domains = \Pimcore\Tool\Serialize::unserialize($domains);
@@ -300,13 +231,11 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @param int $rootId
-     *
      * @return $this
      */
-    public function setRootId($rootId)
+    public function setRootId(int $rootId): static
     {
-        $this->rootId = (int) $rootId;
+        $this->rootId = $rootId;
 
         $rd = Document\Page::getById($this->rootId);
         $this->setRootDocument($rd);
@@ -315,11 +244,9 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @param Document\Page|null $rootDocument
-     *
      * @return $this
      */
-    public function setRootDocument($rootDocument)
+    public function setRootDocument(?Document\Page $rootDocument): static
     {
         $this->rootDocument = $rootDocument;
 
@@ -327,21 +254,16 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @param string $path
-     *
      * @return $this
      */
-    public function setRootPath($path)
+    public function setRootPath(?string $path): static
     {
         $this->rootPath = $path;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRootPath()
+    public function getRootPath(): ?string
     {
         if (!$this->rootPath && $this->getRootDocument()) {
             return $this->getRootDocument()->getRealFullPath();
@@ -350,28 +272,20 @@ final class Site extends AbstractModel
         return $this->rootPath;
     }
 
-    /**
-     * @param string $errorDocument
-     */
-    public function setErrorDocument($errorDocument)
+    public function setErrorDocument(string $errorDocument): void
     {
         $this->errorDocument = $errorDocument;
     }
 
-    /**
-     * @return string
-     */
-    public function getErrorDocument()
+    public function getErrorDocument(): string
     {
         return $this->errorDocument;
     }
 
     /**
-     * @param mixed $localizedErrorDocuments
-     *
      * @return $this
      */
-    public function setLocalizedErrorDocuments($localizedErrorDocuments)
+    public function setLocalizedErrorDocuments(mixed $localizedErrorDocuments): static
     {
         if (is_string($localizedErrorDocuments)) {
             $localizedErrorDocuments = \Pimcore\Tool\Serialize::unserialize($localizedErrorDocuments);
@@ -381,42 +295,27 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getLocalizedErrorDocuments()
+    public function getLocalizedErrorDocuments(): array
     {
         return $this->localizedErrorDocuments;
     }
 
-    /**
-     * @param string $mainDomain
-     */
-    public function setMainDomain($mainDomain)
+    public function setMainDomain(string $mainDomain): void
     {
         $this->mainDomain = $mainDomain;
     }
 
-    /**
-     * @return string
-     */
-    public function getMainDomain()
+    public function getMainDomain(): string
     {
         return $this->mainDomain;
     }
 
-    /**
-     * @param bool $redirectToMainDomain
-     */
-    public function setRedirectToMainDomain($redirectToMainDomain)
+    public function setRedirectToMainDomain(bool $redirectToMainDomain): void
     {
-        $this->redirectToMainDomain = (bool) $redirectToMainDomain;
+        $this->redirectToMainDomain = $redirectToMainDomain;
     }
 
-    /**
-     * @return bool
-     */
-    public function getRedirectToMainDomain()
+    public function getRedirectToMainDomain(): bool
     {
         return $this->redirectToMainDomain;
     }
@@ -424,54 +323,65 @@ final class Site extends AbstractModel
     /**
      * @internal
      */
-    public function clearDependentCache()
+    public function clearDependentCache(): void
     {
-
         // this is mostly called in Site\Dao not here
         try {
             \Pimcore\Cache::clearTag('site');
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
     }
 
     /**
-     * @param int $modificationDate
-     *
      * @return $this
      */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
     /**
-     * @param int $creationDate
-     *
      * @return $this
      */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
+    }
+
+    public function save(): void
+    {
+        $preSaveEvent = new SiteEvent($this);
+        $this->dispatchEvent($preSaveEvent, SiteEvents::PRE_SAVE);
+
+        $this->getDao()->save();
+
+        $postSaveEvent = new SiteEvent($this);
+        $this->dispatchEvent($postSaveEvent, SiteEvents::POST_SAVE);
+    }
+
+    public function delete(): void
+    {
+        $preDeleteEvent = new SiteEvent($this);
+        $this->dispatchEvent($preDeleteEvent, SiteEvents::PRE_DELETE);
+
+        $this->getDao()->delete();
+
+        $postDeleteEvent = new SiteEvent($this);
+        $this->dispatchEvent($postDeleteEvent, SiteEvents::POST_DELETE);
     }
 }

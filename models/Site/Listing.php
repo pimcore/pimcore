@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Site[]
      */
-    public function getSites()
+    public function getSites(): array
     {
         return $this->getData();
     }
@@ -35,9 +36,9 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Site[]|null $sites
      *
-     * @return static
+     * @return $this
      */
-    public function setSites($sites)
+    public function setSites(?array $sites): static
     {
         return $this->setData($sites);
     }

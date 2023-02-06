@@ -19,20 +19,11 @@ namespace Pimcore\Targeting\Model;
 
 class GeoLocation
 {
-    /**
-     * @var float
-     */
-    private $latitude;
+    private float $latitude;
 
-    /**
-     * @var float
-     */
-    private $longitude;
+    private float $longitude;
 
-    /**
-     * @var float|null
-     */
-    private $altitude;
+    private ?float $altitude = null;
 
     public function __construct(float $latitude, float $longitude, float $altitude = null)
     {
@@ -49,7 +40,7 @@ class GeoLocation
         $this->altitude = $altitude;
     }
 
-    public static function build($latitude, $longitude, $altitude = null): self
+    public static function build(float $latitude, float $longitude, float $altitude = null): self
     {
         return new self(
             (float)$latitude,
@@ -58,26 +49,17 @@ class GeoLocation
         );
     }
 
-    /**
-     * @return float
-     */
     public function getLatitude(): float
     {
         return $this->latitude;
     }
 
-    /**
-     * @return float
-     */
     public function getLongitude(): float
     {
         return $this->longitude;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getAltitude()
+    public function getAltitude(): ?float
     {
         return $this->altitude;
     }

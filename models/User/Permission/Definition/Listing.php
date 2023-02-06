@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,9 +28,9 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\User\Permission\Definition[] $definitions
      *
-     * @return static
+     * @return $this
      */
-    public function setDefinitions($definitions)
+    public function setDefinitions(array $definitions): static
     {
         return $this->setData($definitions);
     }
@@ -37,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\User\Permission\Definition[]
      */
-    public function getDefinitions()
+    public function getDefinitions(): array
     {
         return $this->getData();
     }

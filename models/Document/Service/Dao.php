@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document\Service;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
@@ -26,30 +27,19 @@ use Pimcore\Model\Site;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @param Site $site
-     * @param string $path
-     *
-     * @return int
-     */
-    public function getDocumentIdByPrettyUrlInSite(Site $site, $path)
+    public function getDocumentIdByPrettyUrlInSite(Site $site, string $path): int
     {
         return (int) $this->db->fetchOne(
             'SELECT documents.id FROM documents
             LEFT JOIN documents_page ON documents.id = documents_page.id
             WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?',
-        [$this->db->escapeLike($site->getRootPath()) . '/%', rtrim($path, '/')]
+            [Helper::escapeLike($site->getRootPath()) . '/%', rtrim($path, '/')]
         );
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return int
-     */
-    public function getTranslationSourceId(Document $document)
+    public function getTranslationSourceId(Document $document): mixed
     {
-        $sourceId = $this->db->fetchOne('SELECT sourceId FROM documents_translations WHERE id = ?', $document->getId());
+        $sourceId = $this->db->fetchOne('SELECT sourceId FROM documents_translations WHERE id = ?', [$document->getId()]);
         if (!$sourceId) {
             $sourceId = $document->getId();
         }
@@ -61,17 +51,17 @@ class Dao extends Model\Dao\AbstractDao
      * @param Document $document
      * @param string $task
      *
-     * @return array
+     * @return int[]
      */
-    public function getTranslations(Document $document, $task = 'open')
+    public function getTranslations(Document $document, string $task = 'open'): array
     {
         $sourceId = $this->getTranslationSourceId($document);
-        $data = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$sourceId, $document->getId(), $document->getId()]);
+        $data = $this->db->fetchAllAssociative('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$sourceId, $document->getId(), $document->getId()]);
 
         if ($task == 'open') {
             $linkedData = [];
-            foreach ($data as $key => $value) {
-                $linkedData = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId = ? UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$value['id'], $value['id']]);
+            foreach ($data as $value) {
+                $linkedData = $this->db->fetchAllAssociative('SELECT id,language FROM documents_translations WHERE sourceId = ? UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$value['id'], $value['id']]);
             }
 
             if (count($linkedData) > 0) {
@@ -82,10 +72,10 @@ class Dao extends Model\Dao\AbstractDao
         $translations = [];
         foreach ($data as $translation) {
             if ($translation['language'] == 'source') {
-                $sourceDocument = Document::getById($translation['id']);
-                $translations[$sourceDocument->getProperty('language')] = $translation['id'];
+                $sourceDocument = Document::getById((int) $translation['id']);
+                $translations[$sourceDocument->getProperty('language')] = $sourceDocument->getId();
             } else {
-                $translations[$translation['language']] = $translation['id'];
+                $translations[$translation['language']] = (int) $translation['id'];
             }
         }
 
@@ -103,7 +93,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param Document $translation
      * @param string|null $language
      */
-    public function addTranslation(Document $document, Document $translation, $language = null)
+    public function addTranslation(Document $document, Document $translation, string $language = null): void
     {
         $sourceId = $this->getTranslationSourceId($document);
 
@@ -111,31 +101,24 @@ class Dao extends Model\Dao\AbstractDao
             $language = $translation->getProperty('language');
         }
 
-        $this->db->insertOrUpdate('documents_translations', [
+        Helper::insertOrUpdate($this->db, 'documents_translations', [
             'id' => $translation->getId(),
             'sourceId' => $sourceId,
             'language' => $language,
         ]);
     }
 
-    /**
-     * @param Document $document
-     */
-    public function removeTranslation(Document $document)
+    public function removeTranslation(Document $document): void
     {
         // if $document is a source-document, we need to move them over to a new document
-        $newSourceId = $this->db->fetchOne('SELECT id FROM documents_translations WHERE sourceId = ?', $document->getId());
+        $newSourceId = $this->db->fetchOne('SELECT id FROM documents_translations WHERE sourceId = ?', [$document->getId()]);
         if ($newSourceId) {
             $this->db->update('documents_translations', ['sourceId' => $newSourceId], ['sourceId' => $document->getId()]);
             $this->db->delete('documents_translations', ['id' => $newSourceId]);
         }
     }
 
-    /**
-     * @param Document $document
-     * @param Document $targetDocument
-     */
-    public function removeTranslationLink(Document $document, Document $targetDocument)
+    public function removeTranslationLink(Document $document, Document $targetDocument): void
     {
         $sourceId = $this->getTranslationSourceId($document);
 

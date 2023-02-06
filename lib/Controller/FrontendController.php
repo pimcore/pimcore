@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,16 +25,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @property Document|Document\PageSnippet $document
+ * @property Document\PageSnippet $document
  * @property bool $editmode
  */
 abstract class FrontendController extends Controller
 {
     /**
-     * {@inheritdoc}
-     *
+     * @return string[]
      */
-    public static function getSubscribedServices()// : array
+    public static function getSubscribedServices(): array
     {
         $services = parent::getSubscribedServices();
         $services[EditmodeResolver::class] = '?'.EditmodeResolver::class;
@@ -48,25 +48,24 @@ abstract class FrontendController extends Controller
      * document and editmode as properties and proxy them to request attributes through
      * their resolvers.
      *
-     * {@inheritdoc}
+     * @param string $name
+     *
+     * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         if ('document' === $name) {
-            return $this->get(DocumentResolver::class)->getDocument();
+            return $this->container->get(DocumentResolver::class)->getDocument();
         }
 
         if ('editmode' === $name) {
-            return $this->get(EditmodeResolver::class)->isEditmode();
+            return $this->container->get(EditmodeResolver::class)->isEditmode();
         }
 
         throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $requestAttributes = ['document', 'editmode'];
         if (in_array($name, $requestAttributes)) {
@@ -88,13 +87,13 @@ abstract class FrontendController extends Controller
      * @param bool $replace
      * @param Request|null $request
      */
-    protected function addResponseHeader(string $key, $values, bool $replace = false, Request $request = null)
+    protected function addResponseHeader(string $key, array|string $values, bool $replace = false, Request $request = null): void
     {
         if (null === $request) {
-            $request = $this->get('request_stack')->getCurrentRequest();
+            $request = $this->container->get('request_stack')->getCurrentRequest();
         }
 
-        $this->get(ResponseHeaderResolver::class)->addResponseHeader($request, $key, $values, $replace);
+        $this->container->get(ResponseHeaderResolver::class)->addResponseHeader($request, $key, $values, $replace);
     }
 
     /**
@@ -108,16 +107,16 @@ abstract class FrontendController extends Controller
      * @param Document\PageSnippet|null $document
      *
      * @return Document\Editable\EditableInterface
+     *
+     * @throws \Exception
      */
-    public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
+    public function getDocumentEditable(string $type, string $inputName, array $options = [], Document\PageSnippet $document = null): Document\Editable\EditableInterface
     {
         if (null === $document) {
             $document = $this->document;
         }
 
-        $editableRenderer = $this->container->get(EditableRenderer::class);
-
-        return $editableRenderer->getEditable($document, $type, $inputName, $options);
+        return $this->container->get(EditableRenderer::class)->getEditable($document, $type, $inputName, $options);
     }
 
     /**
@@ -125,9 +124,9 @@ abstract class FrontendController extends Controller
      * @param array $parameters
      * @param Response|null $response
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function renderTemplate($view, array $parameters = [], Response $response = null)
+    protected function renderTemplate(string $view, array $parameters = [], Response $response = null): Response
     {
         return $this->render($view, $parameters, $response);
     }

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\GridConfigFavourite;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -32,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId = null, $searchType = null)
+    public function getByOwnerAndClassAndObjectId(int $ownerId, string $classId, int $objectId = null, string $searchType = null): void
     {
         $query = 'SELECT * FROM gridconfig_favourites WHERE ownerId = ? AND classId = ? AND searchType = ?';
         $params = [$ownerId, $classId, $searchType];
@@ -41,7 +42,7 @@ class Dao extends Model\Dao\AbstractDao
             $params[] = $objectId;
         }
 
-        $data = $this->db->fetchRow($query, $params);
+        $data = $this->db->fetchAssociative($query, $params);
 
         if (!$data) {
             throw new Model\Exception\NotFoundException('gridconfig favourite with ownerId ' . $ownerId . ' and class id ' . $classId . ' not found');
@@ -55,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return Model\GridConfigFavourite
      */
-    public function save()
+    public function save(): Model\GridConfigFavourite
     {
         $gridConfigFavourite = $this->model->getObjectVars();
         $data = [];
@@ -70,7 +71,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('gridconfig_favourites', $data);
+        Helper::insertOrUpdate($this->db, 'gridconfig_favourites', $data);
 
         return $this->model;
     }
@@ -78,7 +79,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $params = ['ownerId' => $this->model->getOwnerId(), 'classId' => $this->model->getClassId()];
         if ($this->model->getSearchType()) {

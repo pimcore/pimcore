@@ -25,15 +25,9 @@ use Psr\Container\ContainerInterface;
 
 class DelegatingActionHandler implements ActionHandlerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $actionHandlers;
+    private ContainerInterface $actionHandlers;
 
-    /**
-     * @var DataLoaderInterface
-     */
-    private $dataLoader;
+    private DataLoaderInterface $dataLoader;
 
     public function __construct(
         ContainerInterface $actionHandlers,
@@ -46,7 +40,7 @@ class DelegatingActionHandler implements ActionHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
+    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null): void
     {
         /** @var string $type */
         $type = $action['type'] ?? null;

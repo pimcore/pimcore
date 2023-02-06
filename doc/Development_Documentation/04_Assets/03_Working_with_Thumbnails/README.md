@@ -12,6 +12,3 @@ This functionality allows true single source publishing with Pimcore.
 * [Asset Document Thumbnails](./05_Document_Thumbnails.md)
 
 
-##### For more information about configuring thumbnails in Pimcore backend have a look at [User Documentation]().
-[comment]: #(TODO add links)
-

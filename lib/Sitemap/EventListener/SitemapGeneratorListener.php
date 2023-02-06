@@ -26,26 +26,29 @@ class SitemapGeneratorListener implements EventSubscriberInterface
     /**
      * @var \Iterator|GeneratorInterface[]
      */
-    private $generators;
+    private array|\Iterator $generators;
 
     /**
      * @param \Iterator|GeneratorInterface[] $generators
      *
      * TODO type hint against iterable after dropping PHP 7.0 support
      */
-    public function __construct($generators)
+    public function __construct(array|\Iterator $generators)
     {
         $this->generators = $generators;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * @return string[]
+     */
+    public static function getSubscribedEvents(): array
     {
         return [
             SitemapPopulateEvent::ON_SITEMAP_POPULATE => 'onPopulateSitemap',
         ];
     }
 
-    public function onPopulateSitemap(SitemapPopulateEvent $event)
+    public function onPopulateSitemap(SitemapPopulateEvent $event): void
     {
         $container = $event->getUrlContainer();
         $section = $event->getSection();

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,12 +17,8 @@
 namespace Pimcore\Model\Listing\Dao;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model\DataObject;
 
-/**
- * @internal
- */
 trait QueryBuilderHelperTrait
 {
     /**
@@ -29,19 +26,12 @@ trait QueryBuilderHelperTrait
      */
     protected $onCreateQueryBuilderCallback;
 
-    /**
-     * @param callable|null $callback
-     */
     public function onCreateQueryBuilder(?callable $callback): void
     {
         $this->onCreateQueryBuilderCallback = $callback;
     }
 
-    /**
-     * @param DoctrineQueryBuilder $queryBuilder
-     * @param bool $join
-     */
-    protected function applyListingParametersToQueryBuilder(QueryBuilder $queryBuilder, bool $join = false): void
+    protected function applyListingParametersToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $this->applyConditionsToQueryBuilder($queryBuilder);
         $this->applyGroupByToQueryBuilder($queryBuilder);
@@ -54,6 +44,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyConditionsToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $condition = $this->model->getCondition();
@@ -67,15 +60,15 @@ trait QueryBuilderHelperTrait
                 if (!empty($condition)) {
                     $condition .= ' AND ';
                 }
-                $condition .= ' ' . $tableName . ".o_type IN ('" . implode("','", $objectTypes) . "')";
+                $condition .= ' ' . $tableName . ".type IN ('" . implode("','", $objectTypes) . "')";
             }
 
             if ($condition) {
                 if (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                    $condition = '(' . $condition . ') AND ' . $tableName . '.o_published = 1';
+                    $condition = '(' . $condition . ') AND ' . $tableName . '.published = 1';
                 }
             } elseif (DataObject\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                $condition = $tableName . '.o_published = 1';
+                $condition = $tableName . '.published = 1';
             }
         }
 
@@ -85,6 +78,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyGroupByToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $groupBy = $this->model->getGroupBy();
@@ -93,6 +89,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyOrderByToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $orderKey = $this->model->getOrderKey();
@@ -121,7 +120,7 @@ trait QueryBuilderHelperTrait
     }
 
     /**
-     * @param DoctrineQueryBuilder $queryBuilder
+     * @internal
      */
     private function applyLimitToQueryBuilder(QueryBuilder $queryBuilder): void
     {
@@ -129,7 +128,7 @@ trait QueryBuilderHelperTrait
         $queryBuilder->setMaxResults($this->model->getLimit());
     }
 
-    protected function prepareQueryBuilderForTotalCount(DoctrineQueryBuilder &$queryBuilder): void
+    protected function prepareQueryBuilderForTotalCount(QueryBuilder $queryBuilder, string $identifierColumn): void
     {
         $originalSelect = $queryBuilder->getQueryPart('select');
         $queryBuilder->select('COUNT(*)');
@@ -137,28 +136,27 @@ trait QueryBuilderHelperTrait
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
 
-        if ($this instanceof DataObject\Listing\Dao) {
-            if (method_exists($this->model, 'addDistinct') && $this->model->addDistinct()) {
-                $queryBuilder->distinct();
-            }
+        if (method_exists($this->model, 'addDistinct') && $this->model->addDistinct()) {
+            $queryBuilder->distinct();
+        }
 
-            if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
-                $queryBuilder->select(!empty($originalSelect) ? $originalSelect : '*');
-                $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
-            } elseif ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
-                $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
-                $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
-            }
+        if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
+            $queryBuilder->select(!empty($originalSelect) ? $originalSelect : $identifierColumn);
+
+            // Rewrite to 'SELECT COUNT(*) FROM (' . $queryBuilder . ') XYZ'
+            $innerQuery = (string)$queryBuilder;
+            $queryBuilder
+                ->resetQueryParts()
+                ->select('COUNT(*)')
+                ->from('(' . $innerQuery . ')', 'XYZ')
+            ;
+        } elseif ($this->isQueryBuilderPartInUse($queryBuilder, 'distinct')) {
+            $countIdentifier = 'DISTINCT ' . $identifierColumn;
+            $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
         }
     }
 
-    /**
-     * @param DoctrineQueryBuilder $query
-     * @param string $part
-     *
-     * @return bool
-     */
-    protected function isQueryBuilderPartinUse($query, $part)
+    protected function isQueryBuilderPartInUse(QueryBuilder $query, string $part): bool
     {
         try {
             if ($query->getQueryPart($part)) {

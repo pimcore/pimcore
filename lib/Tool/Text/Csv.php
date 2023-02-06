@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,13 +24,9 @@ namespace Pimcore\Tool\Text;
 class Csv
 {
     /**
-     * @param string $data
-     *
-     * @return \stdClass
-     *
      * @throws \Exception
      */
-    public function detect($data)
+    public function detect(string $data): \stdClass
     {
         $linefeed = $this->guessLinefeed($data);
         $data = rtrim($data, $linefeed);
@@ -37,7 +34,6 @@ class Csv
         // threshold is ten, so add one to account for extra linefeed that is supposed to be at the end
         if ($count < 10) {
             throw new \Exception('You must provide at least ten lines in your sample data');
-        } else {
         }
         list($quote, $delim) = $this->guessQuoteAndDelim($data);
         if (!$quote) {
@@ -60,11 +56,9 @@ class Csv
     }
 
     /**
-     * @param string $data
-     *
-     * @return string
+     * @phpstan-return non-empty-string
      */
-    protected function guessLinefeed($data)
+    protected function guessLinefeed(string $data): string
     {
         $charcount = count_chars($data);
         $cr = "\r";
@@ -77,22 +71,17 @@ class Csv
             return "$cr$lf";
         }
         if ($count_cr == 0 && $count_lf > 0) {
-            return (string)$lf;
+            return $lf;
         }
         if ($count_lf == 0 && $count_cr > 0) {
-            return (string)$cr;
+            return $cr;
         }
 
         // sane default: cr+lf
         return "$cr$lf";
     }
 
-    /**
-     * @param string $data
-     *
-     * @return array
-     */
-    protected function guessQuoteAndDelim($data)
+    protected function guessQuoteAndDelim(string $data): array
     {
         $patterns = [];
         $patterns[] = '/([^\w\n"\']) ?(["\']).*?(\2)(\1)/';
@@ -101,7 +90,7 @@ class Csv
         $patterns[] = '/(?:^|\n)(["\']).*?(\2)(?:$|\n)/';
 
         foreach ($patterns as $pattern) {
-            if ($nummatches = preg_match_all($pattern, $data, $matches)) {
+            if (preg_match_all($pattern, $data, $matches)) {
                 if ($matches) {
                     break;
                 }
@@ -129,13 +118,9 @@ class Csv
     }
 
     /**
-     * @param string $data
-     * @param string $linefeed
-     * @param string $quotechar
-     *
-     * @return bool|string
+     * @phpstan-param non-empty-string $linefeed
      */
-    protected function guessDelim($data, $linefeed, $quotechar)
+    protected function guessDelim(string $data, string $linefeed, string $quotechar): bool|string
     {
         $charcount = count_chars($data, 1);
 
@@ -229,12 +214,7 @@ class Csv
         return $delim;
     }
 
-    /**
-     * @param array $array
-     *
-     * @return float
-     */
-    protected function deviation($array)
+    protected function deviation(array $array): float
     {
         $avg = array_sum($array) / count($array);
         $variance = [];

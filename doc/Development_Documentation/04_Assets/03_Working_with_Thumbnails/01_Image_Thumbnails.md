@@ -17,15 +17,15 @@ To use the thumbnailing service of Pimcore, you have to create a transformation 
 The fields name, description, format and quality should be self-explanatory, the interesting part are now the transformations. 
 Click on *+* to add a new transformation, so that it look like that for example:
 
-![Thumbnails](../../img/thumbnails1.png)
+![Thumbnails](../../img/thumbnail_transformations.png)
 
 **Important**: The transformations are performed in the order from the top to the bottom. This is for example important 
 in the configuration above. If you first round the corners this would be performed on the original image, 
 and then the image will get resized, so the rounded corners are also resized which is not intended. 
 
 To retrieve a thumbnail from an asses simply call `$asset->getThumbnail("thumbnail-name")` on the asset object, which will return 
-an `\Pimcore\Model\Asset\Image\Thumbnail` object. The thumbnail object's `__toString()` method returns the path to the thumbnail file, for example: 
-`/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813.jpg`
+an `\Pimcore\Model\Asset\Image\Thumbnail` object. The thumbnail object's `__toString()` method returns the path to the thumbnail file, for example:
+`/Car%20Images/ac%20cars/68/image-thumb__68__content/automotive-car-classic-149813.jpg`
 
 **Important**: The function `getThumbnail()` does not generate the Thumbnail itself. It just returns the path were the thumbnail file will be stored.
 If you want to generate the Thumbnail directly have a look at [Deferred Rendering of Thumbnails](#deferred-rendering-of-thumbnails)
@@ -34,7 +34,7 @@ This path can then be directly used to display the image in a `<img />` or `<pic
 ```php
 $image = Asset::getById(1234);
 
-// get path to thumbnail, e.g. `/foo/bar/image-thumb__362__content/foo.webp 
+// get path to thumbnail, e.g. `/foo/bar/362/image-thumb__362__content/foo.webp 
 $pathToThumbnail = $image->getThumbnail("myThumbnailName");
 
 // preferred alternative - let Pimcore create the whole image tag
@@ -47,12 +47,12 @@ Same in Twig:
 ```twig 
 {% set image = pimcore_asset(1234) %}
 
-{# get path to thumbnail, e.g. `/foo/bar/image-thumb__362__content/foo.webp #}
+{# get path to thumbnail, e.g. `/foo/bar/362/image-thumb__362__content/foo.webp #}
 <img src="{{ image.thumbnail('myThumbnailName') }}">
 
 {# preferred alternative - let Pimcore create the whole image tag #}
 {# including high-res alternatives (srcset) or media queries, if configured #}
-{{ image.thumbnail('myThumbnailName').html }}
+{{ image.thumbnail('myThumbnailName').html|raw }}
 ```
 
 ## Explanation of the Transformations
@@ -80,26 +80,26 @@ Pimcore offers the method `getHTML(array $options)` to get a ready to use `<pict
 
 You can configure the generated markup with the following options: 
 
-| Name                           | Type     | Description                                                                                                                                                                                                                              |
-|--------------------------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `disableWidthHeightAttributes` | bool     | Width & height attributes are set automatically by Pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                                   |
-| `disableAutoTitle`             | bool     | Set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)                                                                                                               |
-| `disableAutoAlt`               | bool     | Set to true, to disable the automatically generated alt attribute                                                                                                                                                                        |
-| `disableAutoCopyright`         | bool     | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                                |
-| `disableAutoCopyright`         | bool     | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                                |
-| `pictureAttributes`            | array    | An key-value array of custom attributes which should be applied to the generated ´<picture>` tag |
-| `imgAttributes`                | array    | An key-value array of custom attributes which should be applied to the generated ´<img>` tag |
+| Name                           | Type     | Description                                                                                                                                                                                                                             |
+|--------------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `disableWidthHeightAttributes` | bool     | Width & height attributes are set automatically by Pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                                  |
+| `disableAutoTitle`             | bool     | Set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)                                                                                                              |
+| `disableAutoAlt`               | bool     | Set to true, to disable the automatically generated alt attribute                                                                                                                                                                       |
+| `disableAutoCopyright`         | bool     | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                               |
+| `disableAutoCopyright`         | bool     | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                               |
+| `pictureAttributes`            | array    | An key-value array of custom attributes which should be applied to the generated `<picture>` tag |
+| `imgAttributes`                | array    | An key-value array of custom attributes which should be applied to the generated `<img>` tag |
 | `lowQualityPlaceholder`        | bool     | Put's a small SVG/JPEG placeholder image into the `src` (data-uri), the real image path is placed in `data-src` and `data-srcset`.|
-| `pictureCallback`              | callable | A callable to modify the attributes for the generated `<picture>` tag. There 1 argument passed, the array of attributes.  |
-| `sourceCallback`               | callable | A callable to modify the attributes for any of the generated `<source>` tag. There 1 argument passed, the array of attributes.  |
-| `imgCallback`                  | callable | A callable to modify the attributes for the generated `<img>` tag. There 1 argument passed, the array of attributes.  |
+| `pictureCallback`              | callable | A callable to modify the attributes for the generated `<picture>` tag. There 1 argument passed, the array of attributes. |
+| `sourceCallback`               | callable | A callable to modify the attributes for any of the generated `<source>` tag. There 1 argument passed, the array of attributes. |
+| `imgCallback`                  | callable | A callable to modify the attributes for the generated `<img>` tag. There 1 argument passed, the array of attributes. |
 | `disableImgTag`                | bool     | Set to `true` to not include the `<img>` fallback tag in the generated `<picture>` tag.   |
 | `useDataSrc`                   | bool     | Set to `true` to use `data-src(set)` attributes instead of `src(set)`.   |
 
 ## Usage Examples
 ```twig
 /* Use directly on the asset object */
-{{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail('myThumbnail').html }}
+{{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail('myThumbnail').html|raw }}
 
 /* ... with some additional options */
 {{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail('myThumbnail').html({ 
@@ -107,7 +107,7 @@ You can configure the generated markup with the following options:
         data-test: "my value"
     },
     disableImgTag: true
-}) }}
+})|raw }}
 
 /* Use with the image tag in documents */
 <div>
@@ -130,7 +130,7 @@ You can configure the generated markup with the following options:
 /* Use from an object-field */
 /* where "myThumbnail" is the name of the thumbnail configuration in settings -> thumbnails */
 {% if myObject.myImage %}
-   {{ myObject.myImage.thumbnail('myThumbnail').html }}
+   {{ myObject.myImage.thumbnail('myThumbnail').html|raw }}
 {% endif %}
 
  
@@ -139,7 +139,7 @@ You can configure the generated markup with the following options:
  
 
 /* Use directly on the asset object using dynamic configuration */
-{{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail({'width': 500, 'format': 'png'}).html }}
+{{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail({'width': 500, 'format': 'png'}).html|raw}}
 ```
 
 ## Advanced Examples
@@ -189,6 +189,9 @@ $thumbnail->getHtml([
     'disableImgTag' => true,
     'lowQualityPlaceholder' => true,
 ]);
+// get thumbnail instance in a specific file format
+$webpThumbnail = $thumbnail->getAsFormat('webp');
+$webpThumbnail->getHtml();
 ```
 
 ## More Examples
@@ -208,7 +211,7 @@ $thumbnail->getHtml([
         'non-standard': 'HTML attributes',
         'another': 'one'
     }
-}) }}
+})|raw }}
   
 /* same with a thumbnail definition */
 {{ image.thumbnail('exampleScaleWidth').html({
@@ -216,15 +219,15 @@ $thumbnail->getHtml([
         'class': 'thumbnail-class',
     },
     'data-my-name': 'my value',
-}) }}
+})|raw }}
   
 /* disable the automatically added width & height attributes */
-{{ image.thumbnail('exampleScaleWidth').html({}, ['width', 'height']) }}
+{{ image.thumbnail('exampleScaleWidth').html({}, ['width', 'height'])|raw }}
 
 /* add alt text */
-{{ image.thumbnail('exampleScaleWidth').html({'alt': 'top priority alt text'}) }}
+{{ image.thumbnail('exampleScaleWidth').html({'alt': 'top priority alt text'})|raw }}
 /* OR */
-{{ image.thumbnail('exampleScaleWidth').html({'defaultalt': 'default alt, if not set in image'}) }}
+{{ image.thumbnail('exampleScaleWidth').html({'defaultalt': 'default alt, if not set in image'})|raw }}
     
 
 /* Output only <img> element wihout <picture> and <source> around it */
@@ -243,31 +246,39 @@ By default, the images are lazy loading. This can be changed by setting the valu
     'imgAttributes': {
         'loading': 'eager',
     }
-}) }}
+})|raw }}
     
 
-````
-    
-## Using ICC Color Profiles for CMYK -> RGB 
-Pimcore supports ICC color profiles to get better results when converting CMYK images (without embedded color profile) 
-to RGB. 
+````  
+ 
+## Using ICC Color Profiles for CMYK -> RGB
+Pimcore supports ICC color profiles to get better results when converting CMYK images (without embedded color profile)
+to RGB.
 
-Due licensing issues Pimcore doesn't include the color profiles (*.icc files) in the download package, but 
-you can download them for free here: [Adobe ICC Profiles](http://www.adobe.com/support/downloads/detail.jsp?ftpID=4075) 
-or here: [ICC (color.org)](http://www.color.org/profiles.xalter). 
+Due licensing issues Pimcore doesn't include the color profiles (*.icc files) in the download package, but
+you can download them for free here: [Adobe ICC Profiles](http://www.adobe.com/support/downloads/detail.jsp?ftpID=4075)
+or here: [ICC (color.org)](http://www.color.org/profiles.xalter).
 
-After downloading the profiles put them into your project folder or anywhere else on your sever 
-(eg. `/usr/share/color/icc`). Then go to the Pimcore system settings, open the assets section and configure the 
-path to your favorite color profile.
+After downloading the profiles put them into your project folder or anywhere else on your sever
+(eg. `/usr/share/color/icc`). Then configure the path in the pimcore config file:
 
-![Color Profiles](../../img/thumbnails2.png)
+```yaml
+pimcore:
 
+    assets:
+
+        # Absolute path to default ICC RGB profile (if no embedded profile is given)
+        icc_rgb_profile:      null
+
+        # Absolute path to default ICC CMYK profile (if no embedded profile is given)
+        icc_cmyk_profile:     null
+```
 
 ## Dynamic Generation on Request
 Pimcore auto-generates a thumbnail if requested but doesn't exist on the file system and is directly called via it's file path (not using any of 
-the `getThumbnail()` methods). 
-For example: Call `https://example.com/examples/panama/image-thumb__6644__contentimages/img_0037.jpeg` 
- (`/examples/panama/` is the path to the source asset, `6644` is the ID of the source asset, `contentimages` is the name of the thumbnail configuration, `img_0037.jpeg` the filename of the source asset) directly in your browser. Now pimcore checks 
+the `getThumbnail()` methods).
+For example: Call `https://example.com/examples/panama/6644/image-thumb__6644__contentimages/img_0037.jpeg`
+(`/examples/panama/` is the path to the source asset, `6644` is the ID of the source asset, `contentimages` is the name of the thumbnail configuration, `img_0037.jpeg` the filename of the source asset) directly in your browser. Now pimcore checks 
  if the asset with the ID 6644 and the thumbnail with the key "contentimages" exists, if yes the thumbnail is 
  generated on-the-fly and delivered to the client. When requesting the images again the image is directly served by 
  the webserver (Apache, Nginx), because the file already exists (just the same way it works with the getThumbnail() methods). 
@@ -307,7 +318,7 @@ The following is only necessary in special use-cases like Web-to-Print, in typic
 automatically adds the `srcset` attribute to `<img>` and `<picture>` tags automatically, so no manual work is necessary. 
 
 #### Use in the Thumbnail Configuration: 
-![High Resolution](../../img/thumbnails3.png)
+![High Resolution](../../img/thumbnail_high_resolution.png)
 The above configuration will generate a thumbnail with 500px width. 
 
 When using this configuration in combination with the [image editable](../../03_Documents/01_Editables/14_Image.md) 
@@ -317,7 +328,7 @@ using the following code
 ```
 this will create the following output: 
 ```php
-<img src="/Car%20Images/ac%20cars/image-thumb__68__contentimages/automotive-car-classic-149813@2x.png" width="250" height="190" />
+<img src="/Car%20Images/ac%20cars/68/image-thumb__68__contentimages/automotive-car-classic-149813@2x.png" width="250" height="190" />
 ```
 It's also possible to add the high-res dynamically: 
 ```twig
@@ -342,17 +353,17 @@ So again, this feature is only useful in some edge-cases.
 ```
 this generates the followinig ouput: 
 ```php
-/Car%20Images/ac%20cars/image-thumb__68__testThumbnailDefinitionName/automotive-car-classic-149813.jpg
+/Car%20Images/ac%20cars/68/image-thumb__68__testThumbnailDefinitionName/automotive-car-classic-149813.jpg
 ```
 
 To get an high-res version of the thumbnail, you can just add `@2x` before the file extension: 
 ```
-/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813@2x.png
-/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813@5x.png
+/Car%20Images/ac%20cars/68/image-thumb__68__content/automotive-car-classic-149813@2x.png
+/Car%20Images/ac%20cars/68/image-thumb__68__content/automotive-car-classic-149813@5x.png
 ``` 
 Using float is possible too:
 ```
-/Car%20Images/ac%20cars/image-thumb__68__content/automotive-car-classic-149813@3.2x.png
+/Car%20Images/ac%20cars/68/image-thumb__68__content/automotive-car-classic-149813@3.2x.png
 ```
 
 Pimcore will then dynamically generate the thumbnails accordingly. 

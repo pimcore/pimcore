@@ -29,10 +29,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $sites = [];
-        $sitesData = $this->db->fetchCol('SELECT id FROM sites' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $sitesData = $this->db->fetchFirstColumn('SELECT id FROM sites' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($sitesData as $siteData) {
             $sites[] = Model\Site::getById($siteData);
@@ -43,10 +43,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $sites;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM sites ' . $this->getCondition(), $this->model->getConditionVariables());

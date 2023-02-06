@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,19 +16,15 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 
 final class Frontend
 {
-    /**
-     * @param Site|null $site
-     * @param Document $document
-     *
-     * @return bool
-     */
-    public static function isDocumentInSite($site, $document)
+    public static function isDocumentInSite(?Site $site, Document $document): bool
     {
         $inSite = true;
 
@@ -40,12 +37,7 @@ final class Frontend
         return $inSite;
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return bool
-     */
-    public static function isDocumentInCurrentSite($document)
+    public static function isDocumentInCurrentSite(Document $document): bool
     {
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
@@ -57,21 +49,16 @@ final class Frontend
         return true;
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return Site|null
-     */
-    public static function getSiteForDocument($document)
+    public static function getSiteForDocument(Document $document): ?Site
     {
         $cacheKey = 'sites_full_list';
-        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $sites = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $sites = RuntimeCache::get($cacheKey);
         } else {
             $sites = new Site\Listing();
-            $sites->setOrderKey('(SELECT LENGTH(path) FROM documents WHERE documents.id = sites.rootId) DESC', false);
+            $sites->setOrderKey('(SELECT LENGTH(`path`) FROM documents WHERE documents.id = sites.rootId) DESC', false);
             $sites = $sites->load();
-            \Pimcore\Cache\Runtime::set($cacheKey, $sites);
+            RuntimeCache::set($cacheKey, $sites);
         }
 
         foreach ($sites as $site) {
@@ -83,12 +70,9 @@ final class Frontend
         return null;
     }
 
-    /**
-     * @return array|bool
-     */
-    public static function isOutputCacheEnabled()
+    public static function isOutputCacheEnabled(): bool|array
     {
-        $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
+        $cacheService = Pimcore::getContainer()->get(FullPageCacheListener::class);
 
         if ($cacheService->isEnabled()) {
             return [

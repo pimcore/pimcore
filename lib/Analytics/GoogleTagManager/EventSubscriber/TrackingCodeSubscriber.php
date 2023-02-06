@@ -36,11 +36,10 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
     use PreviewRequestTrait;
 
-    /** @var TrackingManager */
-    protected $trackingManager;
+    protected TrackingManager $trackingManager;
 
     /** @var Environment * */
-    protected $twig;
+    protected Environment $twig;
 
     public function __construct(TrackingManager $trackingManager, Environment $twig)
     {
@@ -48,14 +47,17 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
         $this->twig = $twig;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents(): array
     {
         return [
             GoogleTagManagerEvents::CODE_HEAD => ['onCodeHead'],
         ];
     }
 
-    public function onCodeHead(CodeEvent $event)
+    public function onCodeHead(CodeEvent $event): void
     {
         if (! $this->isEnabled()) {
             return;

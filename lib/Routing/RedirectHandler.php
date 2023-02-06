@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,9 @@ namespace Pimcore\Routing;
 
 use Pimcore\Cache;
 use Pimcore\Config;
+use Pimcore\Event\Model\RedirectEvent;
+use Pimcore\Event\RedirectEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
@@ -38,39 +42,23 @@ use Symfony\Component\Lock\LockInterface;
 final class RedirectHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     const RESPONSE_HEADER_NAME_ID = 'X-Pimcore-Redirect-ID';
 
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
+
+    private SiteResolver $siteResolver;
 
     /**
-     * @var SiteResolver
+     * @var Redirect[]|null
      */
-    private $siteResolver;
+    private ?array $redirects = null;
 
-    /**
-     * @var Redirect[]
-     */
-    private $redirects;
+    private Config $config;
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private ?LockInterface $lock = null;
 
-    /**
-     * @var null|LockInterface
-     */
-    private $lock = null;
-
-    /**
-     * @param RequestHelper $requestHelper
-     * @param SiteResolver $siteResolver
-     * @param Config $config
-     */
     public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config, LockFactory $lockFactory)
     {
         $this->requestHelper = $requestHelper;
@@ -88,7 +76,7 @@ final class RedirectHandler implements LoggerAwareInterface
      *
      * @throws \Exception
      */
-    public function checkForRedirect(Request $request, $override = false, $sourceSite = null)
+    public function checkForRedirect(Request $request, bool $override = false, Site $sourceSite = null): ?RedirectResponse
     {
         // not for admin requests
         if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
@@ -116,12 +104,15 @@ final class RedirectHandler implements LoggerAwareInterface
         return null;
     }
 
+    /**
+     * @throws \Exception
+     */
     private function matchRegexRedirect(
         Redirect $redirect,
         Request $request,
         RedirectUrlPartResolver $partResolver,
         Site $sourceSite = null
-    ) {
+    ): ?RedirectResponse {
         if (empty($redirect->getType())) {
             return null;
         }
@@ -160,11 +151,12 @@ final class RedirectHandler implements LoggerAwareInterface
      *
      * @throws \Exception
      */
-    protected function buildRedirectResponse(Redirect $redirect, Request $request, $matches = [])
+    protected function buildRedirectResponse(Redirect $redirect, Request $request, array $matches = []): ?RedirectResponse
     {
+        $this->dispatchEvent(new RedirectEvent($redirect), RedirectEvents::PRE_BUILD);
         $target = $redirect->getTarget();
         if (is_numeric($target)) {
-            $d = Document::getById($target);
+            $d = Document::getById((int) $target);
             if ($d instanceof Document\Page || $d instanceof Document\Link || $d instanceof Document\Hardlink) {
                 $target = $d->getFullPath();
             } else {
@@ -229,7 +221,7 @@ final class RedirectHandler implements LoggerAwareInterface
 
         $statusCode = $redirect->getStatusCode() ?: Response::HTTP_MOVED_PERMANENTLY;
         $response = new RedirectResponse($url, $statusCode);
-        $response->headers->set(self::RESPONSE_HEADER_NAME_ID, $redirect->getId());
+        $response->headers->set(self::RESPONSE_HEADER_NAME_ID, (string) $redirect->getId());
 
         // log all redirects to the redirect log
         \Pimcore\Log\Simple::log(
@@ -243,19 +235,23 @@ final class RedirectHandler implements LoggerAwareInterface
     /**
      * @return Redirect[]
      */
-    private function getRegexRedirects()
+    private function getRegexRedirects(): array
     {
-        if (null !== $this->redirects && is_array($this->redirects)) {
+        if (is_array($this->redirects)) {
             return $this->redirects;
         }
 
         $cacheKey = 'system_route_redirect';
-        if (($this->redirects = Cache::load($cacheKey)) === false) {
+        $valueFromCache = Cache::load($cacheKey);
+        $this->redirects = $valueFromCache === false ? null : $valueFromCache;
+        if (!isset($this->redirects)) {
             // acquire lock to avoid concurrent redirect cache warm-up
             $this->lock->acquire(true);
 
             //check again if redirects are cached to avoid re-warming cache
-            if (($this->redirects = Cache::load($cacheKey)) === false) {
+            $valueFromCache = Cache::load($cacheKey);
+            $this->redirects = $valueFromCache === false ? null : $valueFromCache;
+            if (!isset($this->redirects)) {
                 try {
                     $list = new Redirect\Listing();
                     $list->setCondition('active = 1 AND regex = 1');
@@ -285,11 +281,9 @@ final class RedirectHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param bool $override
-     *
      * @return Redirect[]
      */
-    private function getRegexFilteredRedirects($override = false)
+    private function getRegexFilteredRedirects(bool $override = false): array
     {
         $now = time();
 

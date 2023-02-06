@@ -6,7 +6,7 @@ The installation of some of the tools is covered in this guide and should work a
 For other Linux distributions you might have to adopt some commands to your platform-specific environment, but we try to use as many statically linked software as possible, that can be used on any x64 Linux platform.  
 
 > It's important that all tools (incl. `composer`) are added to the `$PATH` env. variable, so that Pimcore is able to find the executables. 
-If you're not able to control the `$PATH` variable, you can also [manually configure the paths for each application](https://github.com/pimcore/skeleton/blob/10.x/config/services.yaml).
+If you're not able to control the `$PATH` variable, you can also [manually configure the paths for each application](https://github.com/pimcore/skeleton/blob/11.x/config/services.yaml).
 
 
 ## Composer 
@@ -27,45 +27,28 @@ sudo apt-get install ffmpeg
 apt-get install libreoffice libreoffice-script-provider-python libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript
 ```
 
-## Wkhtmltoimage / Wkhtmltopdf
-Please visit: [http://wkhtmltopdf.org/downloads.html](http://wkhtmltopdf.org/downloads.html)
+## Chromium (Chrome Headless)
+Please visit: [https://www.chromium.org/getting-involved/download-chromium](https://www.chromium.org/getting-involved/download-chromium)
 
 ## Image Optimizers
 
-### ZopfliPNG
-```bash
-wget https://github.com/imagemin/zopflipng-bin/blob/main/vendor/linux/zopflipng -O /usr/local/bin/zopflipng
-chmod 0755 /usr/local/bin/zopflipng
-```
-
-### PngCrush 
-```bash
-wget https://github.com/imagemin/pngcrush-bin/blob/main/vendor/linux/pngcrush -O /usr/local/bin/pngcrush
-chmod 0755 /usr/local/bin/pngcrush
-```
-
 ### JPEGOptim
+
 ```bash
-wget https://github.com/imagemin/jpegoptim-bin/blob/main/vendor/linux/jpegoptim -O /usr/local/bin/jpegoptim
+wget https://github.com/imagemin/jpegoptim-bin/raw/main/vendor/linux/jpegoptim -O /usr/local/bin/jpegoptim
 chmod 0755 /usr/local/bin/jpegoptim
 ```
 
-### PNGOut
+## PngQuant
+
 ```bash
-wget https://github.com/imagemin/pngout-bin/blob/main/vendor/linux/x64/pngout -O /usr/local/bin/pngout
-chmod 0755 /usr/local/bin/pngout
+apt-get install pngquant
 ```
 
-### AdvPNG
-```bash
-wget https://github.com/imagemin/advpng-bin/blob/main/vendor/linux/advpng -O /usr/local/bin/advpng
-chmod 0755 /usr/local/bin/advpng
-```
+## OptiPng
 
-### MozJPEG
 ```bash
-wget https://github.com/imagemin/mozjpeg-bin/blob/main/vendor/linux/cjpeg -O /usr/local/bin/cjpeg
-chmod 0755 /usr/local/bin/cjpeg
+apt-get install optipng
 ```
 
 ## Exiftool
@@ -99,7 +82,7 @@ apt-get install facedetect
 ```
 
 
-# Check your installation
+# Check your installation (requires pimcore/system-info-bundle package)
 
 You can check system requirements via Admin UI `Tools` / `System Info & Tools` / `System-Requirements Check` menu.
 

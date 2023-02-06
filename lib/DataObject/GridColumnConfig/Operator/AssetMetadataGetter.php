@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,26 +18,18 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
+use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @internal
  */
 final class AssetMetadataGetter extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $metaField;
+    private string $metaField;
 
-    /**
-     * @var string|null
-     */
-    private $locale;
+    private ?string $locale = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -47,18 +40,18 @@ final class AssetMetadataGetter extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
         $result->value = null;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
-        if ($childs) {
-            $newChildsResult = [];
+        if ($children) {
+            $newChildrenResult = [];
 
-            foreach ($childs as $c) {
+            foreach ($children as $c) {
                 $childResult = $c->getLabeledValue($element);
                 $childValues = $childResult->value ?? null;
                 if ($childValues && !is_array($childValues)) {
@@ -82,25 +75,20 @@ final class AssetMetadataGetter extends AbstractOperator
                     }
                 }
 
-                $newChildsResult[] = $newValue;
+                $newChildrenResult[] = $newValue;
             }
 
-            if (count($childs) > 1) {
-                $result->value = $newChildsResult;
+            if (count($children) > 1) {
+                $result->value = $newChildrenResult;
             } else {
-                $result->value = $newChildsResult[0];
+                $result->value = $newChildrenResult[0];
             }
         }
 
         return $result;
     }
 
-    /**
-     * @param Hotspotimage|Asset $value
-     *
-     * @return mixed
-     */
-    public function getMetadata($value)
+    public function getMetadata(Hotspotimage|Asset $value): mixed
     {
         $asset = $value;
         if ($value instanceof Hotspotimage) {
@@ -112,36 +100,26 @@ final class AssetMetadataGetter extends AbstractOperator
 
             return $metaValue;
         }
+
+        return null;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getMetaField()
+    public function getMetaField(): mixed
     {
         return $this->metaField;
     }
 
-    /**
-     * @param mixed $metaField
-     */
-    public function setMetaField($metaField)
+    public function setMetaField(mixed $metaField): void
     {
         $this->metaField = $metaField;
     }
 
-    /**
-     * @param mixed $locale
-     */
-    public function setLocale($locale)
+    public function setLocale(mixed $locale): void
     {
         $this->locale = $locale;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLocale()
+    public function getLocale(): mixed
     {
         return $this->locale;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,7 +21,7 @@ namespace com\realobjects\pdfreactor\webservice\client;
  */
 class PDFreactor
 {
-    public $url;
+    public mixed $url = null;
 
     public function __construct($url = 'http://localhost:9423/service/rest')
     {
@@ -78,7 +79,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -123,7 +124,7 @@ class PDFreactor
         return $result;
     }
 
-    public function convertAsBinary($config, & $wh = null, & $connectionSettings = null)
+    public function convertAsBinary($config, & $wh = null, & $connectionSettings = null): bool|string|null
     {
         $url = $this->url .'/convert.bin';
         if (!is_null($this->apiKey)) {
@@ -172,7 +173,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -226,7 +227,7 @@ class PDFreactor
         return $result;
     }
 
-    public function convertAsync($config, & $connectionSettings = null)
+    public function convertAsync($config, & $connectionSettings = null): ?string
     {
         $documentId = null;
         $url = $this->url .'/convert/async.json';
@@ -271,7 +272,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -382,7 +383,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -465,7 +466,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -506,7 +507,7 @@ class PDFreactor
         return $result;
     }
 
-    public function getDocumentAsBinary($documentId, & $wh = null, & $connectionSettings = null)
+    public function getDocumentAsBinary($documentId, & $wh = null, & $connectionSettings = null): bool|string|null
     {
         if (is_null($documentId)) {
             throw new ClientException('No conversion was triggered.');
@@ -553,7 +554,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -645,7 +646,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -686,7 +687,7 @@ class PDFreactor
         return $result;
     }
 
-    public function deleteDocument($documentId, & $connectionSettings = null)
+    public function deleteDocument($documentId, & $connectionSettings = null): void
     {
         if (is_null($documentId)) {
             throw new ClientException('No conversion was triggered.');
@@ -728,7 +729,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -804,7 +805,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -841,7 +842,7 @@ class PDFreactor
         return $result;
     }
 
-    public function getStatus(& $connectionSettings = null)
+    public function getStatus(& $connectionSettings = null): void
     {
         $url = $this->url .'/status.json';
         if (!is_null($this->apiKey)) {
@@ -880,7 +881,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -915,7 +916,7 @@ class PDFreactor
         }
     }
 
-    public function getDocumentUrl($documentId)
+    public function getDocumentUrl($documentId): ?string
     {
         if (!is_null($documentId)) {
             return $this->url . '/document/' . $documentId;
@@ -924,7 +925,7 @@ class PDFreactor
         return null;
     }
 
-    public function getProgressUrl($documentId)
+    public function getProgressUrl($documentId): ?string
     {
         if (!is_null($documentId)) {
             return $this->url . '/progress/' . $documentId;
@@ -942,51 +943,51 @@ class PDFreactor
         }
     }
 
-    public function _createServerException($errorId = null, $message = null, $result = null)
+    public function _createServerException($errorId = null, $message = null, $result = null): ServerException|NotAcceptableException|CommandRejectedException|NoInputDocumentException|UnprocessableConfigurationException|ResourceNotFoundException|BadRequestException|NoConfigurationException|InvalidClientException|DocumentNotFoundException|RequestRejectedException|ConversionFailureException|AsyncUnavailableException|UnprocessableInputException|ConversionAbortedException|UnauthorizedException
     {
         switch ($errorId) {
-        case 'asyncUnavailable':
-            return new AsyncUnavailableException($errorId, $message, $result);
-        case 'badRequest':
-            return new BadRequestException($errorId, $message, $result);
-        case 'commandRejected':
-            return new CommandRejectedException($errorId, $message, $result);
-        case 'conversionAborted':
-            return new ConversionAbortedException($errorId, $message, $result);
-        case 'conversionFailure':
-            return new ConversionFailureException($errorId, $message, $result);
-        case 'documentNotFound':
-            return new DocumentNotFoundException($errorId, $message, $result);
-        case 'resourceNotFound':
-            return new ResourceNotFoundException($errorId, $message, $result);
-        case 'invalidClient':
-            return new InvalidClientException($errorId, $message, $result);
-        case 'invalidConfiguration':
-            return new InvalidConfigurationException($errorId, $message, $result);
-        case 'noConfiguration':
-            return new NoConfigurationException($errorId, $message, $result);
-        case 'noInputDocument':
-            return new NoInputDocumentException($errorId, $message, $result);
-        case 'requestRejected':
-            return new RequestRejectedException($errorId, $message, $result);
-        case 'serviceUnavailable':
-            return new ServiceUnavailableException($errorId, $message, $result);
-        case 'unauthorized':
-            return new UnauthorizedException($errorId, $message, $result);
-        case 'unprocessableConfiguration':
-            return new UnprocessableConfigurationException($errorId, $message, $result);
-        case 'unprocessableInput':
-            return new UnprocessableInputException($errorId, $message, $result);
-        case 'notAcceptable':
-            return new NotAcceptableException($errorId, $message, $result);
-        default:
-            return new ServerException($errorId, $message, $result);
-    }
+            case 'asyncUnavailable':
+                return new AsyncUnavailableException($errorId, $message, $result);
+            case 'badRequest':
+                return new BadRequestException($errorId, $message, $result);
+            case 'commandRejected':
+                return new CommandRejectedException($errorId, $message, $result);
+            case 'conversionAborted':
+                return new ConversionAbortedException($errorId, $message, $result);
+            case 'conversionFailure':
+                return new ConversionFailureException($errorId, $message, $result);
+            case 'documentNotFound':
+                return new DocumentNotFoundException($errorId, $message, $result);
+            case 'resourceNotFound':
+                return new ResourceNotFoundException($errorId, $message, $result);
+            case 'invalidClient':
+                return new InvalidClientException($errorId, $message, $result);
+            case 'invalidConfiguration':
+                return new InvalidConfigurationException($errorId, $message, $result);
+            case 'noConfiguration':
+                return new NoConfigurationException($errorId, $message, $result);
+            case 'noInputDocument':
+                return new NoInputDocumentException($errorId, $message, $result);
+            case 'requestRejected':
+                return new RequestRejectedException($errorId, $message, $result);
+            case 'serviceUnavailable':
+                return new ServiceUnavailableException($errorId, $message, $result);
+            case 'unauthorized':
+                return new UnauthorizedException($errorId, $message, $result);
+            case 'unprocessableConfiguration':
+                return new UnprocessableConfigurationException($errorId, $message, $result);
+            case 'unprocessableInput':
+                return new UnprocessableInputException($errorId, $message, $result);
+            case 'notAcceptable':
+                return new NotAcceptableException($errorId, $message, $result);
+            default:
+                return new ServerException($errorId, $message, $result);
+        }
     }
 }
 class PDFreactorWebserviceException extends \Exception
 {
-    public $result;
+    public mixed $result = null;
 
     public function __construct($message)
     {
@@ -1002,8 +1003,6 @@ class PDFreactorWebserviceException extends \Exception
 }
 class ServerException extends PDFreactorWebserviceException
 {
-    public $result;
-
     public function __construct($errorId = null, $message = null, $result = null)
     {
         $this->result = $result;
@@ -1018,8 +1017,6 @@ class ServerException extends PDFreactorWebserviceException
 }
 class ClientException extends PDFreactorWebserviceException
 {
-    public $result;
-
     public function __construct($message)
     {
         parent::__construct($message);

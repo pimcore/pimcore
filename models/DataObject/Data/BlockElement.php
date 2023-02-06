@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,8 +17,10 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use DeepCopy\DeepCopy;
+use DeepCopy\Filter\SetNullFilter;
+use DeepCopy\Matcher\PropertyNameMatcher;
 use Pimcore\Cache\Core\CacheMarshallerInterface;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
@@ -33,27 +36,18 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type;
 
-    /**
-     * @var mixed
-     */
-    protected $data;
+    protected mixed $data = null;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $needsRenewReferences = false;
+    protected bool $needsRenewReferences = false;
 
     /**
      * BlockElement constructor.
@@ -62,7 +56,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
      * @param string $type
      * @param mixed $data
      */
-    public function __construct($name, $type, $data)
+    public function __construct(string $name, string $type, mixed $data)
     {
         $this->name = $name;
         $this->type = $type;
@@ -70,18 +64,12 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         if ($name != $this->name) {
             $this->name = $name;
@@ -89,18 +77,12 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setType($type)
+    public function setType(string $type): void
     {
         if ($type != $this->type) {
             $this->type = $type;
@@ -108,10 +90,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         }
     }
 
-    /**
-     * @return mixed
-     */
-    public function getData()
+    public function getData(): mixed
     {
         if ($this->needsRenewReferences) {
             $this->needsRenewReferences = false;
@@ -121,16 +100,13 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         return $this->data;
     }
 
-    /**
-     * @param mixed $data
-     */
-    public function setData($data)
+    public function setData(mixed $data): void
     {
         $this->data = $data;
         $this->markMeDirty();
     }
 
-    protected function renewReferences()
+    protected function renewReferences(): void
     {
         $copier = new DeepCopy();
         $copier->skipUncloneable(true);
@@ -141,12 +117,12 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
                         $cacheKey = $currentValue->getCacheKey();
                         $cacheKeyRenewed = $cacheKey . '_blockElementRenewed';
 
-                        if (!Runtime::isRegistered($cacheKeyRenewed)) {
-                            if (Runtime::isRegistered($cacheKey)) {
+                        if (!RuntimeCache::isRegistered($cacheKeyRenewed)) {
+                            if (RuntimeCache::isRegistered($cacheKey)) {
                                 // we don't want the copy from the runtime but cache is fine
-                                Runtime::getInstance()->offsetUnset($cacheKey);
+                                RuntimeCache::getInstance()->offsetUnset($cacheKey);
                             }
-                            Runtime::save(true, $cacheKeyRenewed);
+                            RuntimeCache::save(true, $cacheKeyRenewed);
                         }
 
                         $renewedElement = Service::getElementById($currentValue->getType(), $currentValue->getId());
@@ -161,7 +137,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         );
 
         $copier->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
-            public function matches($object, $property)
+            public function matches($object, $property): bool
             {
                 return $object instanceof AbstractElement;
             }
@@ -178,7 +154,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         return $this->name . '; ' . $this->type;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->needsRenewReferences = true;
 
@@ -204,20 +180,17 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
      *
      * @param bool $needsRenewReferences
      */
-    public function setNeedsRenewReferences(bool $needsRenewReferences)
+    public function setNeedsRenewReferences(bool $needsRenewReferences): void
     {
         $this->needsRenewReferences = (bool) $needsRenewReferences;
     }
 
-    /**
-     * @param string $language
-     */
-    public function setLanguage(string $language)
+    public function setLanguage(string $language): void
     {
         $this->_language = $language;
     }
 
-    public function marshalForCache()
+    public function marshalForCache(): mixed
     {
         $this->needsRenewReferences = true;
 
@@ -243,6 +216,8 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
             ),
             new \Pimcore\Model\Element\DeepCopy\MarshalMatcher(null, null)
         );
+        $copier->addFilter(new SetNullFilter(), new PropertyNameMatcher('_owner'));
+
         $data = $copier->copy($this);
 
         return $data;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class AnnotatedRouteControllerLoader extends BaseAnnotatedRouteControllerLoader
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultRouteName(\ReflectionClass $class, \ReflectionMethod $method)
+    protected function getDefaultRouteName(\ReflectionClass $class, \ReflectionMethod $method): string
     {
         $routeName = parent::getDefaultRouteName($class, $method);
 

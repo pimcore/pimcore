@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,113 +19,74 @@ namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\ObjectAwareFieldInterface;
 
 /**
  * @method Dao getDao()
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface, ObjectAwareFieldInterface
 {
     use Model\Element\ElementDumpStateTrait;
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
     use Model\Element\Traits\DirtyIndicatorTrait;
 
-    /**
-     * @var int
-     */
-    protected $index;
+    protected int $index;
 
-    /**
-     * @var string
-     */
-    protected $fieldname;
+    protected ?string $fieldname = null;
 
-    /**
-     * @var Concrete|Model\Element\ElementDescriptor|null
-     */
-    protected $object;
+    protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
-    /**
-     * @var int|null
-     */
     protected ?int $objectId = null;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type = '';
 
-    /**
-     * @return int
-     */
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->index;
     }
 
-    /**
-     * @param int $index
-     *
-     * @return $this
-     */
-    public function setIndex($index)
+    public function setIndex(int $index): static
     {
         $this->index = (int) $index;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFieldname()
+    public function getFieldname(): ?string
     {
         return $this->fieldname;
     }
 
-    /**
-     * @param string $fieldname
-     *
-     * @return $this
-     */
-    public function setFieldname($fieldname)
+    public function setFieldname(?string $fieldname): static
     {
         $this->fieldname = $fieldname;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return Model\DataObject\Fieldcollection\Definition
-     */
-    public function getDefinition()
+    public function getDefinition(): Model\DataObject\Fieldcollection\Definition
     {
         return Model\DataObject\Fieldcollection\Definition::getByKey($this->getType());
     }
 
-    /**
-     * @param Concrete|null $object
-     *
-     * @return $this
-     */
-    public function setObject(?Concrete $object)
+    public function setObject(?Concrete $object): static
     {
-        $this->objectId = $object ? $object->getId() : null;
+        $this->objectId = $object?->getId();
         $this->object = $object;
+
+        if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
+            $this->localizedfields->setObject($object, false);
+        }
 
         return $this;
     }
 
-    /**
-     * @return Concrete|null
-     */
     public function getObject(): ?Concrete
     {
         if ($this->objectId && !$this->object) {
@@ -140,7 +102,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return mixed
      */
-    public function get($fieldName, $language = null)
+    public function get(string $fieldName, string $language = null): mixed
     {
         return $this->{'get'.ucfirst($fieldName)}($language);
     }
@@ -152,7 +114,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return mixed
      */
-    public function set($fieldName, $value, $language = null)
+    public function set(string $fieldName, mixed $value, string $language = null): mixed
     {
         return $this->{'set'.ucfirst($fieldName)}($value, $language);
     }
@@ -167,7 +129,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface
+                && $field instanceof  Model\DataObject\ClassDefinition\Data
+                && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -191,7 +155,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $parentVars = parent::__sleep();
         $blockedVars = ['loadedLazyKeys', 'object'];
@@ -211,7 +175,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $finalVars;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->object) {
             $this->objectId = $this->object->getId();

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,8 +18,8 @@ namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Tests\Test\AbstractPropertiesTest;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\AbstractPropertiesTest;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * @group properties
@@ -38,7 +39,7 @@ class PropertiesTest extends AbstractPropertiesTest
 
     public function reloadElement(): ElementInterface
     {
-        $this->testElement = Asset::getById($this->testElement->getId(), true);
+        $this->testElement = Asset::getById($this->testElement->getId(), ['force' => true]);
 
         return $this->testElement;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,65 +24,99 @@ use Pimcore\Model\Site;
 use Pimcore\Navigation\Iterator\PrefixRecursiveFilterIterator;
 use Pimcore\Navigation\Page\Document as DocumentPage;
 use Pimcore\Navigation\Page\Url;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * @internal
- */
 class Builder
 {
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
 
     /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected ?string $htmlMenuIdPrefix = null;
+
+    /**
+     * @internal
+     *
      * @var string
      */
-    protected $htmlMenuIdPrefix;
+    protected string $pageClass = DocumentPage::class;
 
-    /**
-     * @var string
-     */
-    protected $pageClass = DocumentPage::class;
+    private int $currentLevel = 0;
 
-    /**
-     * @var int
-     */
-    private $currentLevel = 0;
+    private array $navCacheTags = [];
 
-    /**
-     * @var array
-     */
-    private $navCacheTags = [];
+    private OptionsResolver $optionsResolver;
 
-    /**
-     * @param RequestHelper $requestHelper
-     * @param string|null $pageClass
-     */
-    public function __construct(RequestHelper $requestHelper, string $pageClass = null)
+    public function __construct(RequestHelper $requestHelper, ?string $pageClass = null)
     {
         $this->requestHelper = $requestHelper;
 
         if (null !== $pageClass) {
             $this->pageClass = $pageClass;
         }
+
+        $this->optionsResolver = new OptionsResolver();
+        $this->configureOptions($this->optionsResolver);
+    }
+
+    protected function configureOptions(OptionsResolver $options): void
+    {
+        $options->setDefaults([
+            'root' => null,
+            'htmlMenuPrefix' => null,
+            'pageCallback' => null,
+            'cache' => true,
+            'cacheLifetime' => null,
+            'maxDepth' => null,
+            'active' => null,
+            'markActiveTrail' => true,
+        ]);
+
+        $options->setAllowedTypes('root', [Document::class, 'null']);
+        $options->setAllowedTypes('htmlMenuPrefix', ['string', 'null']);
+        $options->setAllowedTypes('pageCallback', ['callable', 'null']);
+        $options->setAllowedTypes('cache', ['string', 'bool']);
+        $options->setAllowedTypes('cacheLifetime', ['int', 'null']);
+        $options->setAllowedTypes('maxDepth', ['int', 'null']);
+        $options->setAllowedTypes('active', [Document::class, 'null']);
+        $options->setAllowedTypes('markActiveTrail', ['bool']);
+    }
+
+    protected function resolveOptions(array $options): array
+    {
+        return $this->optionsResolver->resolve($options);
     }
 
     /**
-     * @param Document|null $activeDocument
-     * @param Document|null $navigationRootDocument
-     * @param string|null $htmlMenuIdPrefix
-     * @param \Closure|null $pageCallback
-     * @param bool|string $cache
-     * @param int|null $maxDepth
-     * @param int|null $cacheLifetime
-     *
-     * @return mixed|\Pimcore\Navigation\Container
+     * @param array{
+     *     root?: ?Document,
+     *     htmlMenuPrefix?: ?string,
+     *     pageCallback?: ?callable,
+     *     cache?: string|bool,
+     *     cacheLifetime?: ?int,
+     *     maxDepth?: ?int,
+     *     active?: ?Document,
+     *     markActiveTrail?: bool
+     * } $params
      *
      * @throws \Exception
      */
-    public function getNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null, ?int $cacheLifetime = null)
+    public function getNavigation(array $params): Container
     {
+        [
+            'root' => $navigationRootDocument,
+            'htmlMenuPrefix' => $htmlMenuIdPrefix,
+            'pageCallback' => $pageCallback,
+            'cache' => $cache,
+            'cacheLifetime' => $cacheLifetime,
+            'maxDepth' => $maxDepth,
+            'active' => $activeDocument,
+            'markActiveTrail' => $markActiveTrail,
+        ] = $this->resolveOptions($params);
+
         $cacheEnabled = $cache !== false;
 
         $this->htmlMenuIdPrefix = $htmlMenuIdPrefix;
@@ -90,31 +125,34 @@ class Builder
             $navigationRootDocument = Document::getById(1);
         }
 
-        // the cache key consists out of the ID and the class name (eg. for hardlinks) of the root document and the optional html prefix
-        $cacheKeys = ['root_id__' . $navigationRootDocument->getId(), $htmlMenuIdPrefix, get_class($navigationRootDocument)];
+        $navigation = null;
+        $cacheKey = null;
+        if ($cacheEnabled) {
+            // the cache key consists out of the ID and the class name (eg. for hardlinks) of the root document and the optional html prefix
+            $cacheKeys = ['root_id__' . $navigationRootDocument->getId(), $htmlMenuIdPrefix, get_class($navigationRootDocument)];
 
-        if (Site::isSiteRequest()) {
-            $site = Site::getCurrentSite();
-            $cacheKeys[] = 'site__' . $site->getId();
+            if (Site::isSiteRequest()) {
+                $site = Site::getCurrentSite();
+                $cacheKeys[] = 'site__' . $site->getId();
+            }
+
+            if (is_string($cache)) {
+                $cacheKeys[] = 'custom__' . $cache;
+            }
+
+            if ($pageCallback instanceof \Closure) {
+                $cacheKeys[] = 'pageCallback_' . closureHash($pageCallback);
+            }
+
+            if ($maxDepth) {
+                $cacheKeys[] = 'maxDepth_' . $maxDepth;
+            }
+
+            $cacheKey = 'nav_' . md5(serialize($cacheKeys));
+            $navigation = CacheManager::load($cacheKey);
         }
-
-        if (is_string($cache)) {
-            $cacheKeys[] = 'custom__' . $cache;
-        }
-
-        if ($pageCallback instanceof \Closure) {
-            $cacheKeys[] = 'pageCallback_' . closureHash($pageCallback);
-        }
-
-        if ($maxDepth) {
-            $cacheKeys[] = 'maxDepth_' . $maxDepth;
-        }
-
-        $cacheKey = 'nav_' . md5(serialize($cacheKeys));
-        $navigation = CacheManager::load($cacheKey);
-
-        if (!$navigation || !$cacheEnabled) {
-            $navigation = new \Pimcore\Navigation\Container();
+        if (!$navigation instanceof Container) {
+            $navigation = new Container();
 
             $this->navCacheTags = ['output', 'navigation'];
 
@@ -131,7 +169,23 @@ class Builder
             }
         }
 
-        // set active path
+        if ($markActiveTrail) {
+            $this->markActiveTrail($navigation, $activeDocument);
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * @internal
+     *
+     * @param Container $navigation
+     * @param Document|null $activeDocument
+     *
+     * @return void
+     */
+    protected function markActiveTrail(Container $navigation, ?Document $activeDocument): void
+    {
         $activePages = [];
 
         if ($this->requestHelper->hasMainRequest()) {
@@ -146,7 +200,7 @@ class Builder
             }
         }
 
-        if ($activeDocument instanceof Document) {
+        if ($activeDocument) {
             if (empty($activePages)) {
                 // use the provided pimcore document
                 $activePages = $this->findActivePages($navigation, 'realFullPath', $activeDocument->getRealFullPath());
@@ -158,53 +212,47 @@ class Builder
             }
         }
 
+        $isLink = static fn ($page): bool => $page instanceof DocumentPage && $page->getDocumentType() === 'link';
+
         // cleanup active pages from links
         // pages have priority, if we don't find any active page, we use all we found
-        $tmpPages = [];
-        foreach ($activePages as $page) {
-            if ($page instanceof DocumentPage && $page->getDocumentType() !== 'link') {
-                $tmpPages[] = $page;
-            }
-        }
-        if (count($tmpPages)) {
-            $activePages = $tmpPages;
+        if ($nonLinkPages = array_filter($activePages, static fn ($page): bool => !$isLink($page))) {
+            $activePages = $nonLinkPages;
         }
 
-        if (!empty($activePages)) {
+        if ($activePages) {
             // we found an active document, so we can build the active trail by getting respectively the parent
             foreach ($activePages as $activePage) {
                 $this->addActiveCssClasses($activePage, true);
             }
-        } elseif ($activeDocument instanceof Document) {
+
+            return;
+        }
+
+        if ($activeDocument) {
             // we didn't find the active document, so we try to build the trail on our own
             $allPages = new \RecursiveIteratorIterator($navigation, \RecursiveIteratorIterator::SELF_FIRST);
 
             foreach ($allPages as $page) {
-                $activeTrail = false;
-
-                if ($page instanceof Url && $page->getUri()) {
-                    if (str_starts_with($activeDocument->getRealFullPath(), $page->getUri() . '/')) {
-                        $activeTrail = true;
-                    } elseif (
-                        $page instanceof DocumentPage &&
-                        $page->getDocumentType() === 'link' &&
-                        str_starts_with($activeDocument->getFullPath(), $page->getUri() . '/')
-                    ) {
-                        $activeTrail = true;
-                    }
+                if (!$page instanceof Url || !$page->getUri()) {
+                    continue;
                 }
 
-                if ($activeTrail) {
+                $uri = $page->getUri() . '/';
+                $isActive = str_starts_with($activeDocument->getRealFullPath(), $uri)
+                    || ($isLink($page) && str_starts_with($activeDocument->getFullPath(), $uri));
+
+                if ($isActive) {
                     $page->setActive(true);
                     $page->setClass($page->getClass() . ' active active-trail');
                 }
             }
         }
-
-        return $navigation;
     }
 
     /**
+     * @internal
+     *
      * @param Container $navigation navigation container to iterate
      * @param string $property name of property to match against
      * @param string $value value to match property against
@@ -225,8 +273,10 @@ class Builder
      * @param bool $isActive
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    protected function addActiveCssClasses(Page $page, $isActive = false)
+    protected function addActiveCssClasses(Page $page, bool $isActive = false): void
     {
         $page->setActive(true);
 
@@ -253,12 +303,7 @@ class Builder
         $page->setClass($page->getClass() . $classes);
     }
 
-    /**
-     * @param string $pageClass
-     *
-     * @return $this
-     */
-    public function setPageClass(string $pageClass)
+    public function setPageClass(string $pageClass): static
     {
         $this->pageClass = $pageClass;
 
@@ -270,7 +315,7 @@ class Builder
      *
      * @return String
      */
-    public function getPageClass()
+    public function getPageClass(): string
     {
         return $this->pageClass;
     }
@@ -284,32 +329,34 @@ class Builder
     {
         // the intention of this function is mainly to be overridden in order to customize the behavior of the navigation
         // e.g. for custom filtering and other very specific use-cases
-        return $parentDocument->getChildren();
+        return $parentDocument->getChildren()->load();
     }
 
     /**
      * @param Document $parentDocument
      * @param bool $isRoot
-     * @param callable $pageCallback
+     * @param callable|null $pageCallback
      * @param array $parents
      * @param int|null $maxDepth
      *
-     * @return array
+     * @return Page[]
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null, $parents = [], $maxDepth = null)
+    protected function buildNextLevel(Document $parentDocument, bool $isRoot = false, callable $pageCallback = null, array $parents = [], int $maxDepth = null): array
     {
         $this->currentLevel++;
         $pages = [];
-        $childs = $this->getChildren($parentDocument);
+        $children = $this->getChildren($parentDocument);
         $parents[$parentDocument->getId()] = $parentDocument;
 
-        if (!is_array($childs)) {
+        if (!is_array($children)) {
             return $pages;
         }
 
-        foreach ($childs as $child) {
+        foreach ($children as $child) {
             $classes = '';
 
             if ($child instanceof Document\Hardlink) {
@@ -326,7 +373,7 @@ class Builder
                 continue;
             }
 
-            if (($child instanceof Document\Folder || $child instanceof Document\Page || $child instanceof Document\Link) && $child->getProperty('navigation_name')) {
+            if ($child instanceof Document\Folder || $child instanceof Document\Page || $child instanceof Document\Link) {
                 $path = $child->getFullPath();
                 if ($child instanceof Document\Link) {
                     $path = $child->getHref();
@@ -348,7 +395,7 @@ class Builder
                 $page->setRelation($child->getProperty('navigation_relation'));
                 $page->setDocument($child);
 
-                if ($child->getProperty('navigation_exclude') || !$child->getPublished()) {
+                if (trim((string)$child->getProperty('navigation_name')) === '' || $child->getProperty('navigation_exclude') || !$child->getPublished()) {
                     $page->setVisible(false);
                 }
 

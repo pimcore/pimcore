@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,17 +18,22 @@ namespace Pimcore\Localization;
 
 interface LocaleServiceInterface
 {
-    public function isLocale($locale);
+    public function isLocale(string $locale): bool;
 
-    public function findLocale();
+    public function findLocale(): string;
 
-    public function getLocaleList();
+    public function getLocaleList(): array;
 
-    public function getDisplayRegions($locale = null);
+    /**
+     * @param string|null $locale
+     *
+     * @return array
+     */
+    public function getDisplayRegions(string $locale = null): array;
 
-    public function getLocale();
+    public function getLocale(): ?string;
 
-    public function setLocale($locale);
+    public function setLocale(?string $locale): void;
 
-    public function hasLocale();
+    public function hasLocale(): bool;
 }

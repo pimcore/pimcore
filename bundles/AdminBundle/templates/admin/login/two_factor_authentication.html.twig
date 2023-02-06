@@ -1,0 +1,37 @@
+{% extends '@PimcoreAdmin/admin/login/layout.html.twig' %}
+
+{% block content %}
+    {% if error is defined %}
+        <div class="text error">
+            {{ error|trans([],'admin')|raw }}
+        </div>
+    {% else %}
+        <div class="text info">
+            {{ 'Enter your verification code'|trans([],'admin') }}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{{ path('pimcore_admin_2fa-verify') }}">
+        <input name="_auth_code" id="_auth_code" autocomplete="one-time-code" type="password" placeholder="{{ '2fa_code'|trans([],'admin') }}" required autofocus>
+        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken(app.request.session) }}">
+
+        <button type="submit">{{ 'Login'|trans([],'admin') }}</button>
+    </form>
+
+    <form id="pimcore_logout_form" method="post" action="{{ path('pimcore_admin_logout') }}">
+        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken(app.request.session) }}">
+        <a id="pimcore_logout" href="#">{{ 'Back to Login'|trans([],'admin') }}</a>
+    </form>
+
+
+
+    {{ pimcore_breach_attack_random_content() }}
+{% endblock %}
+
+{% block below_footer %}
+    <script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
+        document.getElementById('pimcore_logout').addEventListener('click', function () {
+            document.getElementById('pimcore_logout_form').submit();
+        });
+    </script>
+{% endblock %}

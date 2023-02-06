@@ -23,20 +23,14 @@ use Pimcore\Targeting\Storage\TargetingStorageInterface;
 
 class TargetingStorageTask implements TaskInterface
 {
-    /**
-     * @var TargetingStorageInterface
-     */
-    private $targetingStorage;
+    private TargetingStorageInterface $targetingStorage;
 
-    /**
-     * @param TargetingStorageInterface $targetingStorage
-     */
     public function __construct(TargetingStorageInterface $targetingStorage)
     {
         $this->targetingStorage = $targetingStorage;
     }
 
-    public function execute()
+    public function execute(): void
     {
         if (!$this->targetingStorage instanceof MaintenanceStorageInterface) {
             return;

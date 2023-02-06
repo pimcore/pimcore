@@ -42,40 +42,19 @@ class ToolbarListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    /**
-     * @var VisitorInfoStorageInterface
-     */
-    private $visitorInfoStorage;
+    private VisitorInfoStorageInterface $visitorInfoStorage;
 
-    /**
-     * @var DocumentResolver
-     */
-    private $documentResolver;
+    private DocumentResolver $documentResolver;
 
-    /**
-     * @var TargetingDataCollector
-     */
-    private $targetingDataCollector;
+    private TargetingDataCollector $targetingDataCollector;
 
-    /**
-     * @var OverrideHandler
-     */
-    private $overrideHandler;
+    private OverrideHandler $overrideHandler;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var EngineInterface
-     */
-    private $templatingEngine;
+    private EngineInterface $templatingEngine;
 
-    /**
-     * @var CodeInjector
-     */
-    private $codeInjector;
+    private CodeInjector $codeInjector;
 
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
@@ -95,7 +74,10 @@ class ToolbarListener implements EventSubscriberInterface
         $this->codeInjector = $codeInjector;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * @return array[]
+     */
+    public static function getSubscribedEvents(): array
     {
         return [
             TargetingEvents::PRE_RESOLVE => ['onPreResolve', -10],
@@ -103,7 +85,7 @@ class ToolbarListener implements EventSubscriberInterface
         ];
     }
 
-    public function onPreResolve(TargetingEvent $event)
+    public function onPreResolve(TargetingEvent $event): void
     {
         $request = $event->getRequest();
         if (!$this->requestCanDebug($request)) {
@@ -114,7 +96,7 @@ class ToolbarListener implements EventSubscriberInterface
         $this->overrideHandler->handleRequest($request);
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
@@ -159,7 +141,7 @@ class ToolbarListener implements EventSubscriberInterface
             return false;
         }
 
-        $cookieValue = (bool)$request->cookies->get('pimcore_targeting_debug', false);
+        $cookieValue = (bool)$request->cookies->get('pimcore_targeting_debug');
         if (!$cookieValue) {
             return false;
         }
@@ -169,7 +151,7 @@ class ToolbarListener implements EventSubscriberInterface
         return true;
     }
 
-    private function collectTemplateData(VisitorInfo $visitorInfo, Document $document = null)
+    private function collectTemplateData(VisitorInfo $visitorInfo, Document $document = null): array
     {
         $token = substr(hash('sha256', uniqid((string)mt_rand(), true)), 0, 6);
 
@@ -188,7 +170,7 @@ class ToolbarListener implements EventSubscriberInterface
         return $data;
     }
 
-    private function injectToolbar(Response $response, array $data)
+    private function injectToolbar(Response $response, array $data): void
     {
         $event = new RenderToolbarEvent('@PimcoreCore/Targeting/toolbar/toolbar.html.twig', $data);
 

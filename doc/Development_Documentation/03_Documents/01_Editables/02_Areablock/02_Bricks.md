@@ -72,35 +72,35 @@ The template location defines the base path which will be used to find your temp
 locations. `<bundlePath>` is the filesystem path of the bundle the brick resides in, `<brickId>` the ID of the brick 
 as registered on the areabrick manager (see below).
 
-| Location | Path                                           |
-|----------|------------------------------------------------|
-| global   | `templates/areas/<brickId>`          |
-| bundle   | `<bundlePath>/Resources/views/Areas/<brickId>` |
-
+| Location | Path                                                                                                                                                                                      |
+|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| global   | `templates/areas/<brickId>/`                                                                                                                                                              |
+| bundle   | `<bundlePath>/Resources/views/areas/<brickId>/` for legacy (Symfony <= 4) bundle strucure<br/>or<br/>`<bundlePath>/templates/areas/<brickId>/` for modern (Symfony >= 5) bundle structure |
 
 Depending on the template location, the following files will be used. You can always completely control locations by 
 implementing the methods for templates and icon yourself (see `AreabrickInterface`):
 
-| Type |  Location |
-|---------------------------|-------------------------------------------------------------------------------------------------|
+| Type          | Location                            |
+|---------------|-------------------------------------|
 | view template | `<templateLocation>/view.html.twig` |
-
 
 If the brick defines an icon in the `public` resources directory of the bundle, the icon will be automatically used 
 in editmode. If the icon is at another location, you can override the `getIcon()` method and specify an URL to be 
 included as icon. When rendering editmode, the following location will be searched for the brick icon and is expected
  to be a 16x16 pixel PNG: `<bundlePath>/Resources/public/areas/<brickId>/icon.png` which resolves to the URL  
  `/bundles/<bundleUrl>/areas/<brickId>/icon.png` when included in editmode.
- 
+
+You can optionally implement `Pimcore\Extension\Document\Areabrick\PreviewAwareInterface` to add a custom html tooltip
+for your brick that will be shown as a tooltip when hovering over the add-brick button.  
 Given our `iframe` brick defined before, the following paths will be used.
 
 ### `global` template location
 
-| Location      | Path                                                    |
-|---------------|---------------------------------------------------------|
-| view template | `templates/areas/iframe/view.html.twig` |
-| icon path     | `public/bundles/app/areas/iframe/icon.png`                 |
-| icon URL      | `/bundles/app/areas/iframe/icon.png`                    |
+| Location      | Path                                       |
+|---------------|--------------------------------------------|
+| view template | `templates/areas/iframe/view.html.twig`    |
+| icon path     | `public/bundles/app/areas/iframe/icon.png` |
+| icon URL      | `/bundles/app/areas/iframe/icon.png`       |
 
 ### `bundle` template location
 
@@ -108,7 +108,7 @@ The icon path and URL are the same as above, but the view scripts are expected i
 
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
-| view template | `templates/areas/iframe/view.html.twig` |
+| view template | `templates/areas/iframe/view.html.twig`                 |
 
 ## How to Create a Brick
  
@@ -135,11 +135,6 @@ class Iframe extends AbstractTemplateAreabrick
     public function getDescription()
     {
         return 'Embed contents from other URL (websites) via iframe';
-    }
-
-    public function getTemplateLocation()
-    {
-        return static::TEMPLATE_LOCATION_GLOBAL;
     }
     
     public function needsReload(): bool
@@ -278,6 +273,7 @@ class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxIn
                 'type' => 'checkbox',
                 'name' => 'myDialogCheckbox',
                 'label' => 'This is the checkbox label',
+                'description' => 'This is a description for myDialogCheckbox' // descriptions are optional
             ],
             [
                 'type' => 'date',
@@ -509,4 +505,4 @@ class Iframe extends AbstractTemplateAreabrick
 
 ## Examples
 
-You can find many examples in the [demo package](https://github.com/pimcore/demo/tree/10.x/src/Document/Areabrick).
+You can find many examples in the [demo package](https://github.com/pimcore/demo/tree/11.x/src/Document/Areabrick).

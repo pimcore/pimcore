@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,7 +17,9 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\Concrete;
 
 class User extends Model\DataObject\ClassDefinition\Data\Select
 {
@@ -27,21 +30,19 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @var string
      */
-    public $fieldtype = 'user';
+    public string $fieldtype = 'user';
+
+    /**
+     * @internal
+     */
+    public bool $unique = false;
 
     /**
      * @internal
      *
-     * @var bool
+     * @return $this
      */
-    public $unique;
-
-    /**
-     * @internal
-     *
-     * @return User
-     */
-    protected function init()
+    protected function init(): static
     {
         //loads select list options
         $options = $this->getOptions();
@@ -55,13 +56,13 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return string|null
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?string
     {
         if (!empty($data)) {
             try {
@@ -71,19 +72,19 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
             }
         }
 
-        return $data;
+        return $data ? (string) $data : null;
     }
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param mixed $data
      * @param Model\DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return null|string
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         $this->init();
         if (!empty($data)) {
@@ -100,7 +101,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @internal
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
         $list = new Model\User\Listing();
         $list->setOrder('asc');
@@ -130,42 +131,37 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (!empty($data)) {
-            $user = Model\User::getById($data);
+            $user = Model\User::getById((int)$data);
             if (!$user instanceof Model\User) {
                 throw new Model\Element\ValidationException('Invalid user reference');
             }
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
-        $obj->configureOptions();
+
+        if (\Pimcore::inAdmin()) {
+            $obj->configureOptions();
+        }
 
         return $obj;
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $vars = get_object_vars($this);
         unset($vars['options']);
@@ -173,17 +169,13 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return array_keys($vars);
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         //loads select list options
         $this->init();
     }
 
-    /**
-     * @return $this
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
@@ -203,19 +195,13 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return $blockedVars;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUnique()
+    public function getUnique(): bool
     {
         return $this->unique;
     }
 
-    /**
-     * @param bool $unique
-     */
-    public function setUnique($unique)
+    public function setUnique(bool $unique): void
     {
-        $this->unique = $unique;
+        $this->unique = (bool) $unique;
     }
 }

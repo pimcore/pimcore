@@ -3,8 +3,8 @@
 For production, we highly recommend a *nix based system.
 
 > Also have a look at our official [Docker images](https://hub.docker.com/r/pimcore/pimcore) and the
-> docker-compose files in our [skeleton](https://github.com/pimcore/skeleton/blob/10.x/docker-compose.yml) 
-> and [demo application](https://github.com/pimcore/demo/blob/10.x/docker-compose.yml).  
+> docker-compose files in our [skeleton](https://github.com/pimcore/skeleton/blob/11.x/docker-compose.yaml) 
+> and [demo application](https://github.com/pimcore/demo/blob/11.x/docker-compose.yaml).  
 
 
 ### Webserver 
@@ -14,7 +14,7 @@ For production, we highly recommend a *nix based system.
 - Nginx
 
 
-### PHP >= 8.0
+### PHP >= 8.1
 Both **mod_php** and **FCGI (FPM)** are supported.  
 
 #### Required Settings and Modules & Extensions
@@ -47,6 +47,7 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - MariaDB >= 10.3
 - MySQL >= 8.0
 - Percona Server (supported versions see MySQL)
+- [AWS Aurora](https://aws.amazon.com/de/about-aws/whats-new/2021/11/amazon-aurora-mysql-8-0/) (supported versions see MySQL)
 
 #### Features
 - InnoDB / XtraDB storage engine
@@ -98,17 +99,14 @@ On Debian based systems, you can use the following command to install all requir
 - FFMPEG (>= 3)
 - Ghostscript (>= 9.16)
 - LibreOffice (>= 4.3)
-- wkhtmltoimage / wkhtmltopdf (>= 0.12)
+- Chromium/Chrome
 - xvfb
 - timeout (GNU core utils)
 - pdftotext (poppler utils)
 - inkscape
-- zopflipng
-- pngcrush
+- pngquant
+- optipng
 - jpegoptim
-- pngout 
-- advpng
-- cjpeg ([MozJPEG](https://github.com/mozilla/mozjpeg))
 - exiftool
 - [facedetect](https://github.com/wavexx/facedetect) 
 - [Graphviz](https://www.graphviz.org/)

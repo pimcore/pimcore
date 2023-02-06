@@ -5,8 +5,9 @@ To fully automate the installation process, options can be passed in the CLI as 
 The `--no-interaction` flag will prevent any interactive prompts:
 
 ```
-./vendor/bin/pimcore-install --admin-username admin --admin-password admin \
-  --mysql-username username --mysql-password password --mysql-database pimcore \
+./vendor/bin/pimcore-install --admin-username=admin --admin-password=admin \
+  --mysql-username=username --mysql-password=password --mysql-database=pimcore \
+  --mysql-host-socket=127.0.0.1 --mysql-port=3306 \
   --no-interaction
 ```
 
@@ -15,8 +16,8 @@ variable. See `./vendor/bin/pimcore-install` for details. Example:
 
 ```
 $ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=password ./vendor/bin/pimcore-install \
-  --admin-username admin --admin-password admin \
-  --mysql-database pimcore \
+  --admin-username=admin --admin-password=admin \
+  --mysql-database=pimcore \
   --no-interaction
 ```
 
@@ -39,15 +40,16 @@ pimcore_install:
             
             # env variables can be directly read with the %env() syntax
             # see https://symfony.com/blog/new-in-symfony-3-2-runtime-environment-variables
-            host:                 %env(DB_HOST)%
-            port:                 %env(DB_PORT)%
+            host:                 "%env(DB_HOST)%"
+            port:                 "%env(DB_PORT)%"
 ```
 
+## Set a timezone
+Make sure to set the corresponding timezone in your configuration. 
+It will be used for displaying date/time values in the admin backend.
 
-## Add some randomness to the maintenance cron job
-```bash
-# We need bash since RANDOM is a bash builtin
-SHELL=/bin/bash
-
-*/5 * * * * sleep $[ ( $RANDOM \% 120 ) + 1 ]s ; /your/project/bin/console maintenance
+```yaml
+pimcore:
+    general:
+        timezone: Europe/Berlin
 ```

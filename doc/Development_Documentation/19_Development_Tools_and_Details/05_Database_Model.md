@@ -84,7 +84,7 @@ added to the database. The tables have a numerical suffix, denoting the number
  
 | Table / View | Description |
 |-------|-------------|
-| object_(id) View | Database view joining object_store_(id) and objects table |
+| object_(id) View | Database view joining object_query_(id) and objects table |
 | object_query_(id) Table | Use this table to retrieve data incl. inherited data. Data types with relations are usually stored in a serialized form here, too. Pimcore Object-Lists work with this table. |
 | object_relations_(id) Table | Contains data of fields with relations to objects, assets, etc. |
 | object_store_(id) Table | This is the main data storage table of an object class. It contains all "flat" data without any relations or external dependencies. |

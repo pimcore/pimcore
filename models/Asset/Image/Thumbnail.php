@@ -34,27 +34,21 @@ final class Thumbnail
      *
      * @var bool[]
      */
-    protected static $hasListenersCache = [];
+    protected static array $hasListenersCache = [];
 
     /**
      * @param Image $asset
      * @param string|array|Thumbnail\Config|null $config
      * @param bool $deferred
      */
-    public function __construct($asset, $config = null, $deferred = true)
+    public function __construct(Image $asset, array|string|Thumbnail\Config $config = null, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->deferred = $deferred;
-        $this->config = $this->createConfig($config);
+        $this->config = $this->createConfig($config ?? []);
     }
 
-    /**
-     * @param bool $deferredAllowed
-     * @param bool $cacheBuster
-     *
-     * @return string
-     */
-    public function getPath($deferredAllowed = true, $cacheBuster = false)
+    public function getPath(bool $deferredAllowed = true, bool $cacheBuster = false): string
     {
         $pathReference = null;
         if ($this->getConfig()) {
@@ -90,38 +84,6 @@ final class Thumbnail
         return $path;
     }
 
-    public function getFileSize(): ?int
-    {
-        $pathReference = $this->getPathReference(false);
-        if ($pathReference['type'] === 'asset') {
-            return $this->asset->getFileSize();
-        } elseif (isset($pathReference['storagePath'])) {
-            return Tool\Storage::get('thumbnail')->fileSize($pathReference['storagePath']);
-        }
-
-        return null;
-    }
-
-    /**
-     * @return null|resource
-     */
-    public function getStream()
-    {
-        $pathReference = $this->getPathReference(false);
-        if ($pathReference['type'] === 'asset') {
-            return $this->asset->getStream();
-        } elseif (isset($pathReference['storagePath'])) {
-            return Tool\Storage::get('thumbnail')->readStream($pathReference['storagePath']);
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $eventName
-     *
-     * @return bool
-     */
     protected function hasListeners(string $eventName): bool
     {
         if (!isset(self::$hasListenersCache[$eventName])) {
@@ -131,12 +93,7 @@ final class Thumbnail
         return self::$hasListenersCache[$eventName];
     }
 
-    /**
-     * @param string $filename
-     *
-     * @return bool
-     */
-    protected function useOriginalFile($filename)
+    protected function useOriginalFile(string $filename): bool
     {
         if ($this->getConfig()) {
             if (!$this->getConfig()->isRasterizeSVG() && preg_match("@\.svgz?$@", $filename)) {
@@ -148,11 +105,12 @@ final class Thumbnail
     }
 
     /**
+     * @param bool $deferredAllowed
+     *
      * @internal
      *
-     * @param bool $deferredAllowed
      */
-    public function generate($deferredAllowed = true)
+    public function generate(bool $deferredAllowed = true): void
     {
         $deferred = false;
         $generated = false;
@@ -199,13 +157,6 @@ final class Thumbnail
         return $this->getPath(true);
     }
 
-    /**
-     * @param string $path
-     * @param array $options
-     * @param Asset $asset
-     *
-     * @return string
-     */
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
@@ -219,24 +170,10 @@ final class Thumbnail
 
     private function getSourceTagHtml(Image\Thumbnail\Config $thumbConfig, string $mediaQuery, Image $image, array $options): string
     {
-        $srcSetValues = [];
         $sourceTagAttributes = [];
+        $sourceTagAttributes['srcset'] = $this->getSrcset($thumbConfig, $image, $options, $mediaQuery);
+        $thumb = $image->getThumbnail($thumbConfig, true);
 
-        foreach ([1, 2] as $highRes) {
-            $thumbConfigRes = clone $thumbConfig;
-            $thumbConfigRes->selectMedia($mediaQuery);
-            $thumbConfigRes->setHighResolution($highRes);
-            $thumb = $image->getThumbnail($thumbConfigRes, true);
-
-            $descriptor = $highRes . 'x';
-            $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image);
-
-            if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
-                break;
-            }
-        }
-
-        $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
         if ($mediaQuery) {
             $sourceTagAttributes['media'] = $mediaQuery;
             $thumb->reset();
@@ -245,6 +182,16 @@ final class Thumbnail
         if (isset($options['previewDataUri'])) {
             $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
             unset($sourceTagAttributes['srcset']);
+        }
+
+        if (!isset($options['disableWidthHeightAttributes'])) {
+            if ($thumb->getWidth()) {
+                $sourceTagAttributes['width'] = $thumb->getWidth();
+            }
+
+            if ($thumb->getHeight()) {
+                $sourceTagAttributes['height'] = $thumb->getHeight();
+            }
         }
 
         $sourceTagAttributes['type'] = $thumb->getMimeType();
@@ -264,7 +211,7 @@ final class Thumbnail
      *
      * @return string
      */
-    public function getHtml($options = [])
+    public function getHtml(array $options = []): string
     {
         /** @var Image $image */
         $image = $this->getAsset();
@@ -308,19 +255,10 @@ final class Thumbnail
                 $sourceHtml = $this->getSourceTagHtml($thumbConfig, $mediaQuery, $image, $options);
                 if (!empty($sourceHtml)) {
                     if ($isAutoFormat) {
-                        $autoFormats = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_formats'];
-                        foreach ($autoFormats as $autoFormat => $autoFormatConfig) {
-                            if (self::supportsFormat($autoFormat) && $autoFormatConfig['enabled']) {
-                                $thumbConfigAutoFormat = clone $thumbConfig;
-                                $thumbConfigAutoFormat->setFormat($autoFormat);
-                                if (!empty($autoFormatConfig['quality'])) {
-                                    $thumbConfigAutoFormat->setQuality($autoFormatConfig['quality']);
-                                }
-
-                                $sourceWebP = $this->getSourceTagHtml($thumbConfigAutoFormat, $mediaQuery, $image, $options);
-                                if (!empty($sourceWebP)) {
-                                    $html .= "\t" . $sourceWebP . "\n";
-                                }
+                        foreach ($thumbConfig->getAutoFormatThumbnailConfigs() as $autoFormatConfig) {
+                            $autoFormatThumbnailHtml = $this->getSourceTagHtml($autoFormatConfig, $mediaQuery, $image, $options);
+                            if (!empty($autoFormatThumbnailHtml)) {
+                                $html .= "\t" . $autoFormatThumbnailHtml . "\n";
                             }
                         }
                     }
@@ -343,12 +281,6 @@ final class Thumbnail
         return $html;
     }
 
-    /**
-     * @param array $options
-     * @param array $removeAttributes
-     *
-     * @return string
-     */
     public function getImageTag(array $options = [], array $removeAttributes = []): string
     {
         /** @var Image $image */
@@ -421,6 +353,13 @@ final class Thumbnail
             $attributes = $callback($attributes);
         }
 
+        $thumbConfig = $this->getConfig();
+        if ($thumbConfig) {
+            $srcsetAttribute = isset($options['previewDataUri']) ? 'data-srcset' : 'srcset';
+
+            $attributes[$srcsetAttribute] = $this->getSrcset($thumbConfig, $image, $options);
+        }
+
         $htmlImgTag = '';
         if (!empty($attributes)) {
             $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
@@ -437,7 +376,7 @@ final class Thumbnail
      *
      * @throws \Exception
      */
-    public function getMedia($name, $highRes = 1)
+    public function getMedia(string $name, int $highRes = 1): Thumbnail
     {
         $thumbConfig = $this->getConfig();
         $mediaConfigs = $thumbConfig->getMedias();
@@ -462,11 +401,9 @@ final class Thumbnail
      *
      * @param string|array|Thumbnail\Config $selector Name, array or object describing a thumbnail configuration.
      *
-     * @return Thumbnail\Config
-     *
      * @throws NotFoundException
      */
-    private function createConfig($selector)
+    private function createConfig(array|string|Thumbnail\Config $selector): Thumbnail\Config
     {
         $thumbnailConfig = Thumbnail\Config::getByAutoDetect($selector);
 
@@ -475,5 +412,35 @@ final class Thumbnail
         }
 
         return $thumbnailConfig;
+    }
+
+    /**
+     * Get value that can be directly used ina srcset HTML attribute for images.
+     *
+     * @param string|null $mediaQuery Can be empty string if no media queries are defined.
+     *
+     * @return string Relative paths to different thunbnail images with 1x and 2x resolution
+     */
+    private function getSrcset(Image\Thumbnail\Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
+    {
+        $srcSetValues = [];
+        foreach ([1, 2] as $highRes) {
+            $thumbConfigRes = clone $thumbConfig;
+            if ($mediaQuery) {
+                $thumbConfigRes->selectMedia($mediaQuery);
+            }
+            $thumbConfigRes->setHighResolution($highRes);
+            $thumb = $image->getThumbnail($thumbConfigRes, true);
+
+            $descriptor = $highRes . 'x';
+            // encode comma in thumbnail path as srcset is a comma separated list
+            $srcSetValues[] = str_replace(',', '%2C', $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image));
+
+            if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
+                break;
+            }
+        }
+
+        return implode(', ', $srcSetValues);
     }
 }

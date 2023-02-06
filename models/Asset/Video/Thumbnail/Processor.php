@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,6 +22,7 @@ use Pimcore\Messenger\VideoConvertMessage;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
+use Pimcore\Video\Adapter;
 use Symfony\Component\Lock\LockFactory;
 
 /**
@@ -28,44 +30,28 @@ use Symfony\Component\Lock\LockFactory;
  */
 class Processor
 {
-    /**
-     * @var array
-     */
-    protected static $argumentMapping = [
-        'resize' => ['width', 'height'],
-        'scaleByWidth' => ['width'],
-        'scaleByHeight' => ['height'],
+    protected static array $argumentMapping = [
+        'resize'            => ['width', 'height'],
+        'scaleByWidth'      => ['width'],
+        'scaleByHeight'     => ['height'],
+        'cut'               => ['start', 'duration'],
+        'setFramerate'      => ['fps'],
+        'colorChannelMixer' => ['effect'],
+        'mute'              => [],
     ];
 
     /**
      * @var \Pimcore\Video\Adapter[]
      */
-    protected $queue = [];
+    protected array $queue = [];
 
-    /**
-     * @var string
-     */
-    protected $processId;
+    protected string $processId;
 
-    /**
-     * @var int
-     */
-    protected $assetId;
+    protected int $assetId;
 
-    /**
-     * @var Config
-     */
-    protected $config;
+    protected Config $config;
 
-    /**
-     * @var int
-     */
-    protected $status;
-
-    /**
-     * @var null|string
-     */
-    protected $deleteSourceAfterFinished;
+    protected int $status;
 
     /**
      * @param Model\Asset\Video $asset
@@ -76,7 +62,7 @@ class Processor
      *
      * @throws \Exception
      */
-    public static function process(Model\Asset\Video $asset, $config, $onlyFormats = [])
+    public static function process(Model\Asset\Video $asset, Config $config, array $onlyFormats = []): ?Processor
     {
         if (!\Pimcore\Video::isAvailable()) {
             throw new \Exception('No ffmpeg executable found, please configure the correct path in the system settings');
@@ -126,40 +112,37 @@ class Processor
             }
         }
 
-        //generate tmp file only for new jobs
-        $sourceFile = $asset->getTemporaryFile(true);
-        $instance->setDeleteSourceAfterFinished($sourceFile);
-
         foreach ($formats as $format) {
-            $thumbDir = $asset->getRealPath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
+            $thumbDir = $asset->getRealPath().'/'.$asset->getId().'/video-thumb__'.$asset->getId().'__'.$config->getName();
             $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename()) . '.' . $format;
             $storagePath = $thumbDir . '/' . $filename;
             $tmpPath = File::getLocalTempFilePath($format);
 
-            $converter = \Pimcore\Video::getInstance();
-            $converter->load($sourceFile, ['asset' => $asset]);
-            $converter->setAudioBitrate($config->getAudioBitrate());
-            $converter->setVideoBitrate($config->getVideoBitrate());
-            $converter->setFormat($format);
-            $converter->setDestinationFile($tmpPath);
-            $converter->setStorageFile($storagePath);
+            if ($converter = \Pimcore\Video::getInstance()) {
+                $converter->setAudioBitrate($config->getAudioBitrate());
+                $converter->setVideoBitrate($config->getVideoBitrate());
+                $converter->setFormat($format);
+                $converter->setDestinationFile($tmpPath);
+                $converter->setStorageFile($storagePath);
 
-            //add media queries for mpd file generation
-            if ($format == 'mpd') {
-                $medias = $config->getMedias();
-                foreach ($medias as $media => $transformations) {
-                    //used just to generate arguments for medias
-                    $subConverter = \Pimcore\Video::getInstance();
-                    self::applyTransformations($subConverter, $transformations);
-                    $medias[$media]['converter'] = $subConverter;
+                //add media queries for mpd file generation
+                if ($format == 'mpd') {
+                    $medias = $config->getMedias();
+                    foreach ($medias as $media => $transformations) {
+                        //used just to generate arguments for medias
+                        if ($subConverter = \Pimcore\Video::getInstance()) {
+                            self::applyTransformations($subConverter, $transformations);
+                            $medias[$media]['converter'] = $subConverter;
+                        }
+                    }
+                    $converter->setMedias($medias);
                 }
-                $converter->setMedias($medias);
+
+                $transformations = $config->getItems();
+                self::applyTransformations($converter, $transformations);
+
+                $instance->queue[] = $converter;
             }
-
-            $transformations = $config->getItems();
-            self::applyTransformations($converter, $transformations);
-
-            $instance->queue[] = $converter;
         }
 
         $customSetting = $asset->getCustomSetting('thumbnails');
@@ -184,39 +167,34 @@ class Processor
         return $instance;
     }
 
-    private static function applyTransformations($converter, $transformations)
+    private static function applyTransformations(Adapter $converter, array $transformations): void
     {
-        if (is_array($transformations) && count($transformations) > 0) {
-            foreach ($transformations as $transformation) {
-                if (!empty($transformation)) {
-                    $arguments = [];
-                    $mapping = self::$argumentMapping[$transformation['method']];
+        foreach ($transformations as $transformation) {
+            if (!empty($transformation)) {
+                $arguments = [];
+                $mapping = self::$argumentMapping[$transformation['method']];
 
-                    if (is_array($transformation['arguments'])) {
-                        foreach ($transformation['arguments'] as $key => $value) {
-                            $position = array_search($key, $mapping);
-                            if ($position !== false) {
-                                $arguments[$position] = $value;
-                            }
+                if (is_array($transformation['arguments'])) {
+                    foreach ($transformation['arguments'] as $key => $value) {
+                        $position = array_search($key, $mapping);
+                        if ($position !== false) {
+                            $arguments[$position] = $value;
                         }
                     }
+                }
 
-                    ksort($arguments);
-                    if (count($mapping) == count($arguments)) {
-                        call_user_func_array([$converter, $transformation['method']], $arguments);
-                    } else {
-                        $message = 'Video Transform failed: cannot call method `' . $transformation['method'] . '´ with arguments `' . implode(',', $arguments) . '´ because there are too few arguments';
-                        Logger::error($message);
-                    }
+                ksort($arguments);
+                if (count($mapping) == count($arguments)) {
+                    call_user_func_array([$converter, $transformation['method']], $arguments);
+                } else {
+                    $message = 'Video Transform failed: cannot call method `' . $transformation['method'] . '´ with arguments `' . implode(',', $arguments) . '´ because there are too few arguments';
+                    Logger::error($message);
                 }
             }
         }
     }
 
-    /**
-     * @param string $processId
-     */
-    public static function execute($processId)
+    public static function execute(string $processId): void
     {
         $instance = new self();
         $instance->setProcessId($processId);
@@ -235,45 +213,59 @@ class Processor
         $lock->acquire(true);
 
         $asset = Model\Asset::getById($instance->getAssetId());
+        $workerSourceFile = $asset->getTemporaryFile();
 
         // start converting
         foreach ($instance->queue as $converter) {
             try {
+                $converter->load($workerSourceFile, ['asset' => $asset]);
+
                 Logger::info('start video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
                 $success = $converter->save();
                 Logger::info('finished video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
 
-                $source = fopen($converter->getDestinationFile(), 'rb');
-                Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
-                fclose($source);
-                unlink($converter->getDestinationFile());
-
-                if ($converter->getFormat() === 'mpd') {
-                    $streamFilesPath = str_replace('.mpd', '-stream*.mp4', $converter->getDestinationFile());
-                    $streams = glob($streamFilesPath);
-                    $parentPath = dirname($converter->getStorageFile());
-
-                    foreach ($streams as $steam) {
-                        $storagePath = $parentPath . '/' . basename($steam);
-                        $source = fopen($steam, 'rb');
-                        Storage::get('thumbnail')->writeStream($storagePath, $source);
-                        fclose($source);
-                        unlink($steam);
-
-                        // set proper permissions
-                        @chmod($storagePath, File::getDefaultMode());
-                    }
-                }
-
                 if ($success) {
-                    $formats[$converter->getFormat()] =  preg_replace('/' . preg_quote($asset->getRealPath(), '/') . '/', '', $converter->getStorageFile(), 1);
+                    $source = fopen($converter->getDestinationFile(), 'rb');
+                    if (false === $source) {
+                        $conversionStatus = 'error';
+                        Logger::info('could not open stream resource at path "' . $converter->getDestinationFile() . '" for Video conversion.');
+
+                        continue;
+                    }
+                    Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
+                    fclose($source);
+                    unlink($converter->getDestinationFile());
+
+                    if ($converter->getFormat() === 'mpd') {
+                        $streamFilesPath = str_replace('.mpd', '-stream*.mp4', $converter->getDestinationFile());
+                        $streams = glob($streamFilesPath);
+                        $parentPath = dirname($converter->getStorageFile());
+
+                        foreach ($streams as $steam) {
+                            $storagePath = $parentPath.'/'.basename($steam);
+                            $source = fopen($steam, 'rb');
+                            Storage::get('thumbnail')->writeStream($storagePath, $source);
+                            fclose($source);
+                            unlink($steam);
+
+                            // set proper permissions
+                            @chmod($storagePath, File::getDefaultMode());
+                        }
+                    }
+
+                    $formats[$converter->getFormat()] = preg_replace(
+                        '/'.preg_quote($asset->getRealPath(), '/').'/',
+                        '',
+                        $converter->getStorageFile(),
+                        1
+                    );
                 } else {
                     $conversionStatus = 'error';
                 }
 
                 $converter->destroy();
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
 
@@ -300,33 +292,12 @@ class Processor
             Model\Version::enable();
         }
 
-        if ($instance->getDeleteSourceAfterFinished()) {
-            @unlink($instance->getDeleteSourceAfterFinished());
-        }
+        @unlink($workerSourceFile);
 
         TmpStore::delete($instance->getJobStoreId());
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDeleteSourceAfterFinished(): ?string
-    {
-        return $this->deleteSourceAfterFinished;
-    }
-
-    /**
-     * @param string|null $deleteSourceAfterFinished
-     */
-    public function setDeleteSourceAfterFinished(?string $deleteSourceAfterFinished): void
-    {
-        $this->deleteSourceAfterFinished = $deleteSourceAfterFinished;
-    }
-
-    /**
-     * @return bool
-     */
-    public function save()
+    public function save(): bool
     {
         TmpStore::add($this->getJobStoreId(), $this, 'video-job');
 
@@ -334,11 +305,11 @@ class Processor
     }
 
     /**
-     * @param string $processId
+     * @param string|null $processId
      *
      * @return string
      */
-    protected function getJobStoreId($processId = null)
+    protected function getJobStoreId(string $processId = null): string
     {
         if (!$processId) {
             $processId = $this->getProcessId();
@@ -347,82 +318,50 @@ class Processor
         return 'video-job-' . $processId;
     }
 
-    /**
-     * @param string $processId
-     *
-     * @return $this
-     */
-    public function setProcessId($processId)
+    public function setProcessId(string $processId): static
     {
         $this->processId = $processId;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getProcessId()
+    public function getProcessId(): string
     {
         return $this->processId;
     }
 
-    /**
-     * @param int $assetId
-     *
-     * @return $this
-     */
-    public function setAssetId($assetId)
+    public function setAssetId(int $assetId): static
     {
         $this->assetId = $assetId;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getAssetId()
+    public function getAssetId(): int
     {
         return $this->assetId;
     }
 
-    /**
-     * @param Config $config
-     *
-     * @return $this
-     */
-    public function setConfig($config)
+    public function setConfig(Config $config): static
     {
         $this->config = $config;
 
         return $this;
     }
 
-    /**
-     * @return Config
-     */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
 
-    /**
-     * @param array $queue
-     *
-     * @return $this
-     */
-    public function setQueue($queue)
+    public function setQueue(array $queue): static
     {
         $this->queue = $queue;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getQueue()
+    public function getQueue(): array
     {
         return $this->queue;
     }

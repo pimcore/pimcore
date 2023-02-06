@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -105,6 +106,16 @@ final class DocumentEvents
     const POST_DELETE_FAILURE = 'pimcore.document.postDeleteFailure';
 
     /**
+     * Arguments:
+     *  - params | array | contains the values that were passed to getById() as the second parameter
+     *
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const POST_LOAD = 'pimcore.document.postLoad';
+
+    /**
      * Processor contains the processor object used to generate the PDF
      *
      * Arguments:
@@ -145,17 +156,15 @@ final class DocumentEvents
      * Modify the configuration for the processor (when the pdf gets created)
      *
      * Arguments:
-     * WkHtmlToPdfAdapter:
-     *  - wkhtmltopdfBin | path to wkhtmltopdf binary
-     *  - options | configuration options
-     *  - srcUrl | path tho source html file
-     *  - dstFile | path to the output pdf file
-     *  - config | configuration which is passed from the pimcore admin interface
      *
      * PDFReactor:
      *  - config | configuration which is passed from the pimcore admin interface
      *  - reactorConfig | configuration which is passed to PDFReactor
      *  - document | Pimcore document that is converted
+     *
+     * HeadlessChrome:
+     *  - params | puppeteer PDF options (see also https://pptr.dev/api/puppeteer.pdfoptions/)
+     *  - html | HTML passed to puppeteer
      *
      * @Event("Pimcore\Event\Model\PrintConfigEvent")
      *

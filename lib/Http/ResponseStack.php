@@ -34,19 +34,13 @@ class ResponseStack
     /**
      * @var Response[]
      */
-    private $responses = [];
+    private array $responses = [];
 
-    /**
-     * @param Response $response
-     */
-    public function push(Response $response)
+    public function push(Response $response): void
     {
         $this->responses[] = $response;
     }
 
-    /**
-     * @return bool
-     */
     public function hasResponses(): bool
     {
         return !empty($this->responses);
@@ -60,9 +54,6 @@ class ResponseStack
         return $this->responses;
     }
 
-    /**
-     * @return Response
-     */
     public function pop(): Response
     {
         if (empty($this->responses)) {
@@ -72,9 +63,6 @@ class ResponseStack
         return array_pop($this->responses);
     }
 
-    /**
-     * @return Response
-     */
     public function getLastResponse(): Response
     {
         if (empty($this->responses)) {

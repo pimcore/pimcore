@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,4 +45,11 @@ final class RedirectEvents
      * @var string
      */
     const POST_DELETE = 'pimcore.redirect.postDelete';
+
+    /**
+     * @Event("Pimcore\Event\Model\RedirectEvent")
+     *
+     * @var string
+     */
+    const PRE_BUILD = 'pimcore.redirect.preBuild';
 }

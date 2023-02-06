@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,20 +26,14 @@ use Pimcore\Config;
  */
 class ClientFactory
 {
-    /**
-     * @var Config
-     */
-    protected $config;
+    protected Config $config;
 
-    /**
-     * @param Config $config
-     */
     public function __construct(Config $config)
     {
         $this->config = $config;
     }
 
-    public function createClient(array $config = [])
+    public function createClient(array $config = []): Client
     {
         $guzzleConfig = [
             RequestOptions::TIMEOUT => 3600,

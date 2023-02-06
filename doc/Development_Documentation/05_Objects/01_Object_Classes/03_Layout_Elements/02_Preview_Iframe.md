@@ -33,6 +33,12 @@ class IFrameController extends \Pimcore\Controller\FrontendController
 
         // get the current editing data, not the saved one! 
         $object = Service::getElementFromSession('object', $objectId);
+        
+        // If the object is opened the first time it is not in the session yet,
+        // so we load the saved one
+        if ($object === null) {
+            $object = Service::getElementById('object', $objectId);
+        }
 
         $response =  '<h1>Title for language "' . $language . '": '  . $object->getTitle($language) . "</h1>";
 

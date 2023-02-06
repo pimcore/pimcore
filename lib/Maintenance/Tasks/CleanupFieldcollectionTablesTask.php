@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,14 +26,8 @@ use Psr\Log\LoggerInterface;
  */
 class CleanupFieldcollectionTablesTask implements TaskInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -41,7 +36,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $db = Db::get();
         $tasks = [
@@ -54,7 +49,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
         foreach ($tasks as $task) {
             $prefix = $task['prefix'];
             $pattern = $task['pattern'];
-            $tableNames = $db->fetchAll("SHOW TABLES LIKE '" . $pattern . "'");
+            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
@@ -80,7 +75,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
                     $classId = substr($classId, strlen('localized_'));
                 }
 
-                $classDefinition = ClassDefinition::getById($classId);
+                $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
                 if (!$classDefinition) {
                     $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
 
@@ -88,7 +83,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
                 }
 
                 $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-                $fieldNames = $db->fetchCol($fieldsQuery);
+                $fieldNames = $db->fetchFirstColumn($fieldsQuery);
 
                 foreach ($fieldNames as $fieldName) {
                     $fieldDef = $classDefinition->getFieldDefinition($fieldName);
@@ -101,7 +96,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
 
                     if (!$fieldDef) {
                         $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
-                        $db->deleteWhere($tableName, 'fieldname = ' . $db->quote($fieldName));
+                        $db->delete($tableName, ['fieldname' => $fieldName]);
                     }
                 }
             }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,65 +21,36 @@ use Pimcore\Model\Element\Service;
 
 class Document extends Data
 {
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return null|int
-     */
-    public function marshal($value, $params = [])
+    public function normalize(mixed $value, array $params = []): mixed
     {
         $element = Service::getElementByPath('document', $value);
         if ($element) {
             return $element->getId();
-        } else {
-            return null;
         }
+
+        return null;
     }
 
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return string
-     */
-    public function unmarshal($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): mixed
     {
         $element = null;
         if (is_numeric($value)) {
             $element = Service::getElementById('document', $value);
         }
-        if ($element) {
-            $value = $element->getRealFullPath();
-        } else {
-            $value = '';
-        }
 
-        return $value;
+        return $element;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function transformGetterData($data, $params = [])
+    public function transformGetterData(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
-            return \Pimcore\Model\Document\Service::getElementById('document', $data);
+            return \Pimcore\Model\Document\Service::getElementById('document', (int) $data);
         }
 
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function transformSetterData($data, $params = [])
+    public function transformSetterData(mixed $data, array $params = []): mixed
     {
         if ($data instanceof \Pimcore\Model\Document) {
             return $data->getId();
@@ -87,13 +59,7 @@ class Document extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataFromEditMode($data, $params = [])
+    public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
         $element = Service::getElementByPath('document', $data);
         if ($element) {
@@ -103,13 +69,7 @@ class Document extends Data
         return '';
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataForResource($data, $params = [])
+    public function getDataForResource(mixed $data, array $params = []): mixed
     {
         if ($data instanceof ElementInterface) {
             return $data->getId();
@@ -118,10 +78,7 @@ class Document extends Data
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForEditMode($data, $params = [])
+    public function getDataForEditMode(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
             $data = Service::getElementById('document', $data);
@@ -133,13 +90,7 @@ class Document extends Data
         }
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataForListfolderGrid($data, $params = [])
+    public function getDataForListfolderGrid(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
             $data = \Pimcore\Model\Document::getById($data);
@@ -152,13 +103,7 @@ class Document extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return array
-     */
-    public function resolveDependencies($data, $params = [])
+    public function resolveDependencies(mixed $data, array $params = []): array
     {
         if ($data instanceof \Pimcore\Model\Document && isset($params['type'])) {
             $elementId = $data->getId();
@@ -176,13 +121,7 @@ class Document extends Data
         return [];
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataFromListfolderGrid($data, $params = [])
+    public function getDataFromListfolderGrid(mixed $data, array $params = []): ?int
     {
         $data = \Pimcore\Model\Document::getByPath($data);
 

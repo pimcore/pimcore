@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,7 +16,9 @@
 
 namespace Pimcore\Model\Dao;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 
 abstract class AbstractDao implements DaoInterface
@@ -25,58 +28,52 @@ abstract class AbstractDao implements DaoInterface
     const CACHEKEY = 'system_resource_columns_';
 
     /**
-     * @var \Pimcore\Db\ConnectionInterface
+     * @var Connection
      */
     public $db;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configure()
+    public function configure(): void
     {
         $this->db = Db::get();
     }
 
-    public function beginTransaction()
+    public function beginTransaction(): void
     {
         $this->db->beginTransaction();
     }
 
-    public function commit()
+    public function commit(): void
     {
         $this->db->commit();
     }
 
-    public function rollBack()
+    public function rollBack(): void
     {
         $this->db->rollBack();
     }
 
     /**
-     * @param string $table
-     * @param bool $cache
-     *
-     * @return array|mixed
+     * @return string[]
      */
-    public function getValidTableColumns($table, $cache = true)
+    public function getValidTableColumns(string $table, bool $cache = true): array
     {
         $cacheKey = self::CACHEKEY . $table;
 
-        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $columns = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $columns = RuntimeCache::get($cacheKey);
         } else {
             $columns = Cache::load($cacheKey);
 
             if (!$columns || !$cache) {
                 $columns = [];
-                $data = $this->db->fetchAll('SHOW COLUMNS FROM ' . $table);
+                $data = $this->db->fetchAllAssociative('SHOW COLUMNS FROM ' . $table);
                 foreach ($data as $d) {
                     $columns[] = $d['Field'];
                 }
                 Cache::save($columns, $cacheKey, ['system', 'resource'], null, 997);
             }
 
-            \Pimcore\Cache\Runtime::set($cacheKey, $columns);
+            RuntimeCache::set($cacheKey, $columns);
         }
 
         return $columns;
@@ -87,16 +84,16 @@ abstract class AbstractDao implements DaoInterface
      *
      * @param string $table
      */
-    public function resetValidTableColumnsCache($table)
+    public function resetValidTableColumnsCache(string $table): void
     {
         $cacheKey = self::CACHEKEY . $table;
-        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            \Pimcore\Cache\Runtime::getInstance()->offsetUnset($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            RuntimeCache::getInstance()->offsetUnset($cacheKey);
         }
         Cache::clearTags(['system', 'resource']);
     }
 
-    public static function getForeignKeyName($table, $column)
+    public static function getForeignKeyName(string $table, string $column): string
     {
         $fkName = 'fk_'.$table.'__'.$column;
         if (strlen($fkName) > 64) {

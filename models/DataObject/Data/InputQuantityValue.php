@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,38 +18,29 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 
-class InputQuantityValue extends AbstractQuantityValue
+class InputQuantityValue extends QuantityValue
 {
-    /**
-     * @var string|null
-     */
-    protected $value;
+    protected float|int|string|null $value = null;
 
     /**
      * @param string|null $value
-     * @param Unit|string|null $unit
+     * @param string|Unit|null $unit
      */
-    public function __construct($value = null, $unit = null)
+    public function __construct(?string $value = null, Unit|string $unit = null)
     {
         $this->value = $value;
-        parent::__construct($unit);
+        parent::__construct($value, $unit);
     }
 
-    /**
-     * @param string $value
-     */
-    public function setValue($value)
+    public function setValue(float|int|string|null $value): void
     {
         $this->value = $value;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function getValue()
+    public function getValue(): float|int|string|null
     {
-        return (string)$this->value;
+        return $this->value;
     }
 
     /**
@@ -60,7 +52,8 @@ class InputQuantityValue extends AbstractQuantityValue
     {
         $value = $this->getValue();
         if ($this->getUnit() instanceof Unit) {
-            $value .= ' ' . $this->getUnit()->getAbbreviation();
+            $translator = \Pimcore::getContainer()->get('translator');
+            $value .= ' ' . $translator->trans($this->getUnit()->getAbbreviation(), [], 'admin');
         }
 
         return $value;

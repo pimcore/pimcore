@@ -19,5 +19,5 @@ namespace Pimcore\Sitemap;
 
 interface UrlGeneratorInterface
 {
-    public function generateUrl(string $path, array $options = []);
+    public function generateUrl(string $path, array $options = []): string;
 }

@@ -15,7 +15,7 @@ base methods"). A child template can extend the base layout and override any of 
 Layout scripts are just normal view scripts and are located together with normal view scripts in: `/templates`
 
 For more details about template inheritance and layouts, please have a look at the 
-[Symfony documentation](https://symfony.com/doc/5.2/templating.html#template-inheritance-and-layouts). 
+[Symfony documentation](https://symfony.com/doc/current/templating.html#template-inheritance-and-layouts). 
 
 ## Usage of Layouts
 
@@ -56,8 +56,10 @@ A complete example of a document page would look like the following:
 
 ```twig
 {% extends 'layout.html.twig' %}
-
+...
+{% block content %}
 <h1>
     {{ pimcore_input('headline', {'width': 540}) }}
 </h1>
+{% endblock %}
 ```

@@ -28,15 +28,9 @@ class SiteId
 {
     const CONFIG_KEY_MAIN_DOMAIN = 'default';
 
-    /**
-     * @var string
-     */
-    private $configKey;
+    private string $configKey;
 
-    /**
-     * @var Site|null
-     */
-    private $site;
+    private ?Site $site = null;
 
     private function __construct(string $configKey, Site $site = null)
     {
@@ -44,12 +38,12 @@ class SiteId
         $this->site = $site;
     }
 
-    public static function forMainDomain(): SiteId
+    public static function forMainDomain(): self
     {
         return new self(self::CONFIG_KEY_MAIN_DOMAIN);
     }
 
-    public static function forSite(Site $site): SiteId
+    public static function forSite(Site $site): self
     {
         $configKey = sprintf('site_%s', $site->getId());
 
@@ -61,10 +55,7 @@ class SiteId
         return $this->configKey;
     }
 
-    /**
-     * @return Site|null
-     */
-    public function getSite()
+    public function getSite(): ?Site
     {
         return $this->site;
     }

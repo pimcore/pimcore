@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,13 +20,14 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class FieldcollectionTest
  *
  * @package Pimcore\Tests\Model\Relations
+ *
  * @group model.relations.fieldcollection
  */
 class FieldcollectionTest extends ModelTestCase
@@ -42,13 +44,13 @@ class FieldcollectionTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_RelationTest();
         $this->tester->setupFieldcollection_Unittestfieldcollection();
     }
 
-    public function testRelationFieldInsideFieldCollection()
+    public function testRelationFieldInsideFieldCollection(): void
     {
         $target1 = new RelationTest();
         $target1->setParent(Service::createFolderByPath('__test/relationobjects'));
@@ -86,7 +88,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = DataObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
 
         /** @var Fieldcollection $fc */
         $fc = $object->getFieldcollection();
@@ -96,7 +98,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = DataObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
         $rel = $loadedFieldcollectionItem->getFieldRelation();
         $this->assertEquals($target1->getId(), $rel[0]->getId());
@@ -110,14 +112,14 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = DataObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
 
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
         $rel = $loadedFieldcollectionItem->getFieldRelation();
         $this->assertEquals([], $rel);
     }
 
-    public function testLocalizedFieldInsideFieldCollection()
+    public function testLocalizedFieldInsideFieldCollection(): void
     {
         $target1 = new RelationTest();
         $target1->setParent(Service::createFolderByPath('__test/relationobjects'));
@@ -157,7 +159,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = DataObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
 
         /** @var Fieldcollection $fc */
         $fc = $object->getFieldcollection();
@@ -167,7 +169,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = DataObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
         $rel = $loadedFieldcollectionItem->getLRelation('en');
         $this->assertEquals($target1->getId(), $rel->getId());
@@ -181,7 +183,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = DataObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
 
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
         $lrel = $loadedFieldcollectionItem->getLRelation('en');

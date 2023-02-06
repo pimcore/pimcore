@@ -29,9 +29,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
-        $redirectsData = $this->db->fetchCol('SELECT id FROM redirects' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $redirectsData = $this->db->fetchFirstColumn('SELECT id FROM redirects' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $redirects = [];
         foreach ($redirectsData as $redirectData) {
@@ -43,10 +43,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $redirects;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM redirects ' . $this->getCondition(), $this->model->getConditionVariables());

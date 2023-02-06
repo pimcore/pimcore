@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Tool\TmpStore;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -24,15 +25,7 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @param string $id
-     * @param mixed $data
-     * @param string $tag
-     * @param int $lifetime
-     *
-     * @return bool
-     */
-    public function add($id, $data, $tag, $lifetime)
+    public function add(string $id, mixed $data, ?string $tag = null, ?int $lifetime = null): bool
     {
         try {
             $serialized = false;
@@ -41,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
                 $data = serialize($data);
             }
 
-            $this->db->insertOrUpdate('tmp_store', [
+            Helper::insertOrUpdate($this->db, 'tmp_store', [
                 'id' => $id,
                 'data' => $data,
                 'tag' => $tag,
@@ -56,22 +49,14 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param string $id
-     */
-    public function delete($id)
+    public function delete(string $id): void
     {
         $this->db->delete('tmp_store', ['id' => $id]);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return bool
-     */
-    public function getById($id)
+    public function getById(string $id): bool
     {
-        $item = $this->db->fetchRow('SELECT * FROM tmp_store WHERE id = ?', $id);
+        $item = $this->db->fetchAssociative('SELECT * FROM tmp_store WHERE id = ?', [$id]);
 
         if (is_array($item) && array_key_exists('id', $item)) {
             if ($item['serialized']) {
@@ -86,14 +71,9 @@ class Dao extends Model\Dao\AbstractDao
         return false;
     }
 
-    /**
-     * @param string $tag
-     *
-     * @return array
-     */
-    public function getIdsByTag($tag)
+    public function getIdsByTag(string $tag): array
     {
-        $items = $this->db->fetchCol('SELECT id FROM tmp_store WHERE tag = ?', [$tag]);
+        $items = $this->db->fetchFirstColumn('SELECT id FROM tmp_store WHERE tag = ?', [$tag]);
 
         return $items;
     }

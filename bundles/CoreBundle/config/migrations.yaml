@@ -1,0 +1,18 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Migrations\FilteredMigrationsRepository:
+        public: true
+
+    Pimcore\Migrations\FilteredTableMetadataStorage:
+        public: true
+
+    Doctrine\Migrations\DependencyFactory:
+        alias: 'doctrine.migrations.dependency_factory'
+
+    Pimcore\Migrations\DirectoryAwareVersionComparator:
+        arguments:
+            $config: '@doctrine.migrations.configuration'

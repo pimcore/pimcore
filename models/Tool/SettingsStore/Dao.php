@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Tool\SettingsStore;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Tool\SettingsStore;
 
@@ -27,18 +28,10 @@ class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'settings_store';
 
-    /**
-     * @param string $id
-     * @param int|string|bool|float $data
-     * @param string $type
-     * @param string|null $scope
-     *
-     * @return bool
-     */
-    public function set(string $id, $data, string $type = 'string', ?string $scope = null): bool
+    public function set(string $id, float|bool|int|string $data, string $type = 'string', ?string $scope = null): bool
     {
         try {
-            $this->db->insertOrUpdate(self::TABLE_NAME, [
+            Helper::insertOrUpdate($this->db, self::TABLE_NAME, [
                 'id' => $id,
                 'data' => $data,
                 'scope' => (string) $scope,
@@ -51,13 +44,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param string $id
-     * @param string|null $scope
-     *
-     * @return mixed
-     */
-    public function delete(string $id, ?string $scope = null)
+    public function delete(string $id, ?string $scope = null): int|string
     {
         return $this->db->delete(self::TABLE_NAME, [
             'id' => $id,
@@ -65,15 +52,9 @@ class Dao extends Model\Dao\AbstractDao
         ]);
     }
 
-    /**
-     * @param string $id
-     * @param string|null $scope
-     *
-     * @return bool
-     */
     public function getById(string $id, ?string $scope = null): bool
     {
-        $item = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
+        $item = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
             'id' => $id,
             'scope' => (string) $scope,
         ]);
@@ -90,13 +71,8 @@ class Dao extends Model\Dao\AbstractDao
         return false;
     }
 
-    /**
-     * @param string $scope
-     *
-     * @return array
-     */
     public function getIdsByScope(string $scope): array
     {
-        return $this->db->fetchCol('SELECT id FROM ' . self::TABLE_NAME . ' WHERE scope = ?', [$scope]);
+        return $this->db->fetchFirstColumn('SELECT id FROM ' . self::TABLE_NAME . ' WHERE scope = ?', [$scope]);
     }
 }

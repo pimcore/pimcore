@@ -30,9 +30,9 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
-        $data = $this->db->fetchRow('SELECT * FROM recyclebin WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM recyclebin WHERE id = ?', [$id]);
 
         if (!$data) {
             throw new Model\Exception\NotFoundException('Recyclebin item with id ' . $id . ' not found');
@@ -48,7 +48,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @todo: not all save methods return a boolean, why this one?
      */
-    public function save()
+    public function save(): bool
     {
         $version = $this->model->getObjectVars();
         $data = [];
@@ -61,9 +61,9 @@ class Dao extends Model\Dao\AbstractDao
 
         try {
             $this->db->insert('recyclebin', $data);
-            $this->model->setId($this->db->lastInsertId());
+            $this->model->setId((int) $this->db->lastInsertId());
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
 
         return true;
@@ -72,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('recyclebin', ['id' => $this->model->getId()]);
     }

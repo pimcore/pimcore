@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\StoreConfigEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 
 /**
@@ -24,31 +26,25 @@ use Pimcore\Model;
  */
 final class StoreConfig extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
-    protected $id;
+    use RecursionBlockingEventDispatchHelperTrait;
+
+    protected ?int $id = null;
 
     /**
      * The store name.
      *
-     * @var string
+     * @var string|null
      */
-    protected $name;
+    protected ?string $name = null;
 
     /**
      * The store description.
      *
-     * @var string
+     * @var string|null
      */
-    protected $description;
+    protected ?string $description = null;
 
-    /**
-     * @param int $id
-     *
-     * @return self|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): ?StoreConfig
     {
         try {
             $config = new self();
@@ -60,12 +56,7 @@ final class StoreConfig extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $name
-     *
-     * @return self|null
-     */
-    public static function getByName($name)
+    public static function getByName(string $name): ?StoreConfig
     {
         try {
             $config = new self();
@@ -77,10 +68,7 @@ final class StoreConfig extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return Model\DataObject\Classificationstore\StoreConfig
-     */
-    public static function create()
+    public static function create(): StoreConfig
     {
         $config = new self();
         $config->save();
@@ -88,22 +76,14 @@ final class StoreConfig extends Model\AbstractModel
         return $config;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -111,9 +91,9 @@ final class StoreConfig extends Model\AbstractModel
     /**
      * Returns the description.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -125,7 +105,7 @@ final class StoreConfig extends Model\AbstractModel
      *
      * @return Model\DataObject\Classificationstore\StoreConfig
      */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
@@ -135,50 +115,42 @@ final class StoreConfig extends Model\AbstractModel
     /**
      * Deletes the key value group configuration
      */
-    public function delete()
+    public function delete(): void
     {
-        \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_DELETE);
+        $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_DELETE);
         $this->getDao()->delete();
-        \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_DELETE);
+        $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_DELETE);
     }
 
     /**
      * Saves the store config
      */
-    public function save()
+    public function save(): void
     {
         $isUpdate = false;
 
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_UPDATE);
+            $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_ADD);
+            $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_ADD);
         }
 
-        $model = $this->getDao()->save();
+        $this->getDao()->save();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_UPDATE);
+            $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_ADD);
+            $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_ADD);
         }
-
-        return $model;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }

@@ -27,10 +27,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @return \Pimcore\Model\WebsiteSetting[]
      */
-    public function load()
+    public function load(): array
     {
         $sql = 'SELECT id FROM website_settings' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
-        $settingsData = $this->db->fetchCol($sql, $this->model->getConditionVariables());
+        $settingsData = $this->db->fetchFirstColumn($sql, $this->model->getConditionVariables());
 
         $settings = [];
         foreach ($settingsData as $settingData) {
@@ -42,10 +42,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $settings;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         return (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM website_settings ' . $this->getCondition(), $this->model->getConditionVariables());
     }

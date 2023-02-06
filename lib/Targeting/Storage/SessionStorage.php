@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Storage;
 
+use Pimcore\Targeting\EventListener\TargetingSessionBagListener;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Pimcore\Targeting\Session\SessionConfigurator;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 
@@ -61,7 +61,7 @@ class SessionStorage implements TargetingStorageInterface
         return $bag->has($name);
     }
 
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value): void
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
         if (null === $bag) {
@@ -73,7 +73,10 @@ class SessionStorage implements TargetingStorageInterface
         $this->updateTimestamps($bag);
     }
 
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
+    /**
+     * {@inheritdoc }
+     */
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed
     {
         $bag = $this->getSessionBag($visitorInfo, $scope, true);
         if (null === $bag) {
@@ -83,7 +86,10 @@ class SessionStorage implements TargetingStorageInterface
         return $bag->get($name, $default);
     }
 
-    public function clear(VisitorInfo $visitorInfo, string $scope = null)
+    /**
+     * {@inheritdoc }
+     */
+    public function clear(VisitorInfo $visitorInfo, string $scope = null): void
     {
         if (null !== $scope) {
             $bag = $this->getSessionBag($visitorInfo, $scope, true);
@@ -100,7 +106,7 @@ class SessionStorage implements TargetingStorageInterface
         }
     }
 
-    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): void
     {
         // only allow migration if a session bag is available as otherwise the fallback
         // would clear the original storage although data was not stored
@@ -122,7 +128,7 @@ class SessionStorage implements TargetingStorageInterface
         );
     }
 
-    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
         if (null === $bag || !$bag->has(self::STORAGE_KEY_CREATED_AT)) {
@@ -132,7 +138,7 @@ class SessionStorage implements TargetingStorageInterface
         return \DateTimeImmutable::createFromFormat('U', (string)$bag->get(self::STORAGE_KEY_CREATED_AT));
     }
 
-    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
 
@@ -146,15 +152,9 @@ class SessionStorage implements TargetingStorageInterface
     /**
      * Loads a session bag
      *
-     * @param VisitorInfo $visitorInfo
-     * @param string $scope
-     * @param bool $checkPreviousSession
-     *
      * @throws \Exception
-     *
-     * @return null|AttributeBag
      */
-    private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false)
+    private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false): ?AttributeBag
     {
         $request = $visitorInfo->getRequest();
 
@@ -170,12 +170,12 @@ class SessionStorage implements TargetingStorageInterface
 
         switch ($scope) {
             case self::SCOPE_SESSION:
-                $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_SESSION);
+                $bag = $session->getBag(TargetingSessionBagListener::TARGETING_BAG_SESSION);
 
                 break;
 
             case self::SCOPE_VISITOR:
-                $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_VISITOR);
+                $bag = $session->getBag(TargetingSessionBagListener::TARGETING_BAG_VISITOR);
 
                 break;
 
@@ -197,7 +197,7 @@ class SessionStorage implements TargetingStorageInterface
         AttributeBag $bag,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    ) {
+    ): void {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (!$bag->has(self::STORAGE_KEY_CREATED_AT)) {

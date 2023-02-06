@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\Concrete;
 
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -34,14 +35,20 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     use Model\Element\Traits\ScheduledTasksDaoTrait;
     use Model\Element\Traits\VersionDaoTrait;
 
-    /**
-     * @var DataObject\Concrete\Dao\InheritanceHelper
-     */
-    protected $inheritanceHelper = null;
+    protected ?Dao\InheritanceHelper $inheritanceHelper = null;
 
-    public function init()
+    public function init(): void
     {
-        $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->model->getClassId());
+        return;
+    }
+
+    protected function getInheritanceHelper(): Dao\InheritanceHelper
+    {
+        if (!$this->inheritanceHelper) {
+            $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->model->getClassId());
+        }
+
+        return $this->inheritanceHelper;
     }
 
     /**
@@ -51,13 +58,13 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id): void
     {
-        $data = $this->db->fetchRow("SELECT objects.*, tree_locks.locked as o_locked FROM objects
-            LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
-                WHERE o_id = ?", $id);
+        $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as locked FROM objects
+            LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = 'object'
+                WHERE objects.id = ?", [$id]);
 
-        if (!empty($data['o_id'])) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
             $this->getData();
         } else {
@@ -65,15 +72,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
     }
 
-    /**
-     * @param  string $fieldName
-     *
-     * @return array
-     */
-    public function getRelationIds($fieldName)
+    public function getRelationIds(string $fieldName): array
     {
         $relations = [];
-        $allRelations = $this->db->fetchAll('SELECT * FROM object_relations_' . $this->model->getClassId() . " WHERE fieldname = ? AND src_id = ? AND ownertype = 'object' ORDER BY `index` ASC", [$fieldName, $this->model->getId()]);
+        $allRelations = $this->db->fetchAllAssociative('SELECT * FROM object_relations_' . $this->model->getClassId() . " WHERE fieldname = ? AND src_id = ? AND ownertype = 'object' ORDER BY `index` ASC", [$fieldName, $this->model->getId()]);
         foreach ($allRelations as $relation) {
             $relations[] = $relation['dest_id'];
         }
@@ -81,14 +83,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         return $relations;
     }
 
-    /**
-     * @param string $field
-     * @param bool $forOwner
-     * @param string $remoteClassId
-     *
-     * @return array
-     */
-    public function getRelationData($field, $forOwner, $remoteClassId)
+    public function getRelationData(string $field, bool $forOwner, ?string $remoteClassId = null): array
     {
         $id = $this->model->getId();
         if ($remoteClassId) {
@@ -106,15 +101,15 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAll('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.o_className as subtype, o.o_published as published, concat(o.o_path ,o.o_key) as path , r.index
+        $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, o.published as published, concat(o.path ,o.key) as `path` , r.index
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'object'
             AND r." . $src . ' = ?
-            AND o.o_id = r.' . $dest . "
+            AND o.id = r.' . $dest . "
             AND r.type='object'
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype, "null" as published, concat(a.path,a.filename) as path, r.index
+            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype, "null" as published, concat(a.path,a.filename) as `path`, r.index
             FROM assets a, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'object'
@@ -122,7 +117,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             AND a.id = r.' . $dest . "
             AND r.type='asset'
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, d.published as published, concat(d.path,d.key) as path, r.index
+            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, d.published as published, concat(d.path,d.key) as `path`, r.index
             FROM documents d, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'object'
@@ -142,13 +137,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Get all data-elements for all fields that are not lazy-loaded.
      */
-    public function getData()
+    public function getData(): void
     {
-        if (empty($this->model->getClass())) {
-            return;
-        }
-
-        if (!$data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId())) {
+        if (!$data = $this->db->fetchAssociative('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()])) {
             return;
         }
 
@@ -193,7 +184,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      *
      * @param bool|null $isUpdate
      */
-    public function update($isUpdate = null)
+    public function update(bool $isUpdate = null): void
     {
         parent::update($isUpdate);
 
@@ -222,7 +213,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         // empty relation table except the untouchable fields (eg. lazy loading fields)
         if (count($untouchable) > 0) {
             $untouchables = "'" . implode("','", $untouchable) . "'";
-            $condition = $this->db->quoteInto('src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId());
+            $condition = Helper::quoteInto($this->db, 'src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId());
         } else {
             $condition = 'src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object"';
         }
@@ -231,7 +222,11 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $condition = '(' . $condition . ' AND ownerType != "localizedfield" AND ownerType != "fieldcollection")';
         }
 
-        $this->db->deleteWhere('object_relations_' . $this->model->getClassId(), $condition);
+        $dataExists = $this->db->fetchOne('SELECT `src_id` FROM `object_relations_'. $this->model->getClassId().'`
+        WHERE '.$condition .' LIMIT 1');
+        if ($dataExists) {
+            $this->db->executeStatement('DELETE FROM object_relations_' . $this->model->getClassId() . ' WHERE ' . $condition);
+        }
 
         $inheritedValues = DataObject::doGetInheritedValues();
         DataObject::setGetInheritedValues(false);
@@ -241,7 +236,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         foreach ($fieldDefinitions as $fieldName => $fd) {
             $getter = 'get' . ucfirst($fieldName);
 
-            if ($fd instanceof CustomResourcePersistingInterface) {
+            if ($fd instanceof CustomResourcePersistingInterface
+                && $fd instanceof DataObject\ClassDefinition\Data) {
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, relational data-types, ...
                 $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
                     'isUpdate' => $isUpdate,
@@ -253,7 +249,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 ]
                 ;
                 if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
-                    $saveParams['newParent'] = $this->model->isFieldDirty('o_parentId');
+                    $saveParams['newParent'] = $this->model->isFieldDirty('parentId');
                 }
                 $fd->save($this->model, $saveParams);
             }
@@ -283,13 +279,16 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
         }
 
-        $method = $isUpdate ? 'insertOrUpdate' : 'insert';
-        $this->db->$method('object_store_' . $this->model->getClassId(), $data);
+        if ($isUpdate) {
+            Helper::insertOrUpdate($this->db, 'object_store_' . $this->model->getClassId(), $data);
+        } else {
+            $this->db->insert('object_store_' . $this->model->getClassId(), Helper::quoteDataIdentifiers($this->db, $data));
+        }
 
         // get data for query table
         $data = [];
-        $this->inheritanceHelper->resetFieldsToCheck();
-        $oldData = $this->db->fetchRow('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId());
+        $this->getInheritanceHelper()->resetFieldsToCheck();
+        $oldData = $this->db->fetchAssociative('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()]);
 
         $inheritanceEnabled = $this->model->getClass()->getAllowInherit();
         $parentData = null;
@@ -301,12 +300,13 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
-                $parentData = $this->db->fetchRow('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', $parentForInheritance->getId());
+                $parentData = $this->db->fetchAssociative('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', [$parentForInheritance->getId()]);
             }
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd instanceof QueryResourcePersistenceAwareInterface) {
+            if ($fd instanceof QueryResourcePersistenceAwareInterface
+                && $fd instanceof DataObject\ClassDefinition\Data) {
                 //exclude untouchables if value is not an array - this means data has not been loaded
                 if (!in_array($key, $untouchable)) {
                     $method = 'get' . $key;
@@ -359,7 +359,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                                 }
 
                                 if ($doInsert) {
-                                    $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
+                                    $this->getInheritanceHelper()->addRelationToCheck($key, $fd, array_keys($insertData));
                                 }
                             } else {
                                 $oldDataValue = $oldData[$key] ?? null;
@@ -367,7 +367,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                                 if ($isEmpty && $oldDataValue == $parentDataValue) {
                                     // do nothing, ... value is still empty and parent data is equal to current data in query table
                                 } elseif ($oldDataValue != $insertData) {
-                                    $this->inheritanceHelper->addRelationToCheck($key, $fd);
+                                    $this->getInheritanceHelper()->addRelationToCheck($key, $fd);
                                 }
                             }
                         } else {
@@ -378,7 +378,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                                     if ($isEmpty && $oldDataValue == $parentDataValue) {
                                         // do nothing, ... value is still empty and parent data is equal to current data in query table
                                     } elseif ($oldDataValue != $insertDataValue) {
-                                        $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
+                                        $this->getInheritanceHelper()->addFieldToCheck($insertDataKey, $fd);
                                     }
                                 }
                             } else {
@@ -388,7 +388,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                                     // do nothing, ... value is still empty and parent data is equal to current data in query table
                                 } elseif ($oldDataValue != $insertData) {
                                     // data changed, do check and update
-                                    $this->inheritanceHelper->addFieldToCheck($key, $fd);
+                                    $this->getInheritanceHelper()->addFieldToCheck($key, $fd);
                                 }
                             }
                         }
@@ -400,32 +400,30 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
         $data['oo_id'] = $this->model->getId();
 
-        $this->db->insertOrUpdate('object_query_' . $this->model->getClassId(), $data);
+        Helper::insertOrUpdate($this->db, 'object_query_' . $this->model->getClassId(), $data);
 
         DataObject::setGetInheritedValues($inheritedValues);
     }
 
-    public function saveChildData()
+    public function saveChildData(): void
     {
-        $this->inheritanceHelper->doUpdate($this->model->getId(), false, [
+        $this->getInheritanceHelper()->doUpdate($this->model->getId(), false, [
             'inheritanceRelationContext' => [
                 'ownerType' => 'object',
             ],
         ]);
-        $this->inheritanceHelper->resetFieldsToCheck();
+        $this->getInheritanceHelper()->resetFieldsToCheck();
     }
 
     /**
      * Save object to database
      */
-    public function delete()
+    public function delete(): void
     {
         // delete fields which have their own delete algorithm
-        if ($this->model->getClass()) {
-            foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
-                if ($fd instanceof CustomResourcePersistingInterface) {
-                    $fd->delete($this->model);
-                }
+        foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
+            if ($fd instanceof CustomResourcePersistingInterface) {
+                $fd->delete($this->model);
             }
         }
 

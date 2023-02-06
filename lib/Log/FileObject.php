@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,66 +16,56 @@
 
 namespace Pimcore\Log;
 
-use Pimcore\File;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToWriteFile;
+use Pimcore\Logger;
+use Pimcore\Tool\Storage;
 
 final class FileObject
 {
-    /**
-     * @var string
-     */
-    protected $filename;
+    protected ?string $filename = null;
 
-    /**
-     * @var string
-     */
-    protected $data;
+    protected string $data;
 
     /**
      * @param string $data
-     * @param string $filename
+     * @param string|null $filename
      */
-    public function __construct($data, $filename = null)
+    public function __construct(string $data, string $filename = null)
     {
-        if (!is_dir(PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {
-            File::mkdir(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
-        }
-
         $this->data = $data;
         $this->filename = $filename;
 
         if (empty($this->filename)) {
-            $folderpath = PIMCORE_LOG_FILEOBJECT_DIRECTORY . strftime('/%Y/%m/%d');
-
-            if (!is_dir($folderpath)) {
-                mkdir($folderpath, 0775, true);
-            }
+            $folderpath = strftime('/%Y/%m/%d');
             $this->filename = $folderpath.'/'.uniqid('fileobject_', true);
         }
+        $storage = Storage::get('application_log');
 
-        File::put($this->filename, $this->data);
+        try {
+            $storage->write($this->filename, $this->data);
+        } catch (FilesystemException | UnableToWriteFile $exception) {
+            Logger::warn('Application Logger could not write File Object:'.$this->filename);
+        }
     }
 
-    /**
-     * @return string
-     */
-    public function getSystemPath()
+    public function getSystemPath(): ?string
     {
         return $this->filename;
     }
 
-    /**
-     * @return string
-     */
-    public function getFilename()
+    public function getFilename(): string
     {
-        return str_replace(PIMCORE_PROJECT_ROOT.'/', '', $this->filename);
+        return preg_replace('/^'.preg_quote(\PIMCORE_PROJECT_ROOT, '/').'/', '', $this->filename);
     }
 
-    /**
-     * @return string
-     */
-    public function getData()
+    public function getData(): string
     {
         return $this->data;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getFilename();
     }
 }

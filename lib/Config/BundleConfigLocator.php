@@ -33,26 +33,18 @@ use Symfony\Component\HttpKernel\KernelInterface;
  *
  *  - Resources/config/pimcore/config_dev.php
  *  - Resources/config/pimcore/config_dev.yaml
- *  - Resources/config/pimcore/config_dev.yml
  *  - Resources/config/pimcore/config_dev.xml
  *
  * If the previous lookup didn't return any results, it will fall back to:
  *
  *  - Resources/config/pimcore/config.php
  *  - Resources/config/pimcore/config.yaml
- *  - Resources/config/pimcore/config.yml
  *  - Resources/config/pimcore/config.xml
  */
 class BundleConfigLocator
 {
-    /**
-     * @var KernelInterface
-     */
-    private $kernel;
+    private KernelInterface $kernel;
 
-    /**
-     * @param KernelInterface $kernel
-     */
     public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
@@ -65,19 +57,19 @@ class BundleConfigLocator
      *
      * @return array
      */
-    public function locate(string $name)
+    public function locate(string $name): array
     {
         $result = [];
         foreach ($this->kernel->getBundles() as $bundle) {
-            $directory = $bundle->getPath() . '/Resources/config/pimcore';
-            if (!(file_exists($directory) && is_dir($directory))) {
+            $bundlePath = $bundle->getPath();
+            if (!is_dir($dir = $bundlePath.'/Resources/config/pimcore') && !is_dir($dir = $bundlePath.'/config/pimcore')) {
                 continue;
             }
 
             // try to find environment specific file first, fall back to generic one if none found (e.g. config_dev.yaml > config.yaml)
-            $finder = $this->buildContainerConfigFinder($name, $directory, true);
-            if ($finder->count() === 0) {
-                $finder = $this->buildContainerConfigFinder($name, $directory, false);
+            $finder = $this->buildContainerConfigFinder($name, $dir, true);
+            if (!$finder->hasResults()) {
+                $finder = $this->buildContainerConfigFinder($name, $dir, false);
             }
 
             foreach ($finder as $file) {
@@ -88,13 +80,6 @@ class BundleConfigLocator
         return $result;
     }
 
-    /**
-     * @param string $name
-     * @param string $directory
-     * @param bool $includeEnvironment
-     *
-     * @return Finder
-     */
     private function buildContainerConfigFinder(string $name, string $directory, bool $includeEnvironment = false): Finder
     {
         if ($includeEnvironment) {

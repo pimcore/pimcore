@@ -33,12 +33,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $assets = [];
 
         $queryBuilder = $this->getQueryBuilder(['assets.id', 'assets.type']);
-        $assetsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $assetsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($assetsData as $assetData) {
             if ($assetData['type']) {
@@ -73,18 +73,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return int[]
      */
-    public function loadIdList()
+    public function loadIdList(): array
     {
         $queryBuilder = $this->getQueryBuilder(['assets.id']);
-        $assetIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $assetIds = $this->db->fetchFirstColumn((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $assetIds);
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         if ($this->model->isLoaded()) {
             return count($this->model->getAssets());
@@ -95,13 +92,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder();
-        $this->prepareQueryBuilderForTotalCount($queryBuilder);
+        $this->prepareQueryBuilderForTotalCount($queryBuilder, 'assets.id');
 
         $amount = (int) $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 

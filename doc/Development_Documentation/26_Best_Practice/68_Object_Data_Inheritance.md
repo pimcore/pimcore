@@ -16,7 +16,7 @@ In lots of domains, data maintenance effort can be reduced even more. Products f
 attributes, maybe even images etc. 
 
 To take advantage of data inheritance for these use cases too, we recommend the concept of virtual products. 
-Virutal products are objects of the same type as products, with a special flag set. 
+Virtual products are objects of the same type as products, with a special flag set. 
 
 ![Object Type](img/object-type.jpg)
 
@@ -27,11 +27,11 @@ Using virtual products, complex product hierarchies can be constructed and data 
 
 ![Virtual Product Hierarchy](img/hierarchy.jpg)
 
-With the [Custom Icons](../05_Objects/01_Object_Classes/05_Class_Settings/07_Custom_Icons.md) feature, 
+With the [Custom Icons](../05_Objects/01_Object_Classes/05_Class_Settings/10_Custom_Icons.md) feature, 
 icons can be modified for virtual products, like in this example grey icons for virtual products, colored icons for real
 products.
 
 With [Custom Layouts](../05_Objects/01_Object_Classes/05_Class_Settings/15_Custom_Layouts.md) and 
-the tips of [Showing Custom Layouts based on Object Data](/04_Showing_Custom_Layouts_based_on_Object_Data.md) it is even  
+the tips of [Showing Custom Layouts based on Object Data](83_Showing_Custom_Layouts_based_on_Object_Data.md) it is even  
 possible to deliver a different object editor mask for virtual products with additional explanation texts and showing
 only attributes that should be modified on the current level by the editor.

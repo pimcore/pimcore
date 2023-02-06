@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,26 +17,38 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreSetDataInterface
 {
+    use DataObject\Traits\DataWidthTrait;
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\Traits\SimpleNormalizerTrait;
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {
         getColumnType as public genericGetColumnType;
-
     }
     use Extension\QueryColumnType {
         getQueryColumnType as public genericGetQueryColumnType;
-
     }
 
     const DECIMAL_SIZE_DEFAULT = 64;
 
     const DECIMAL_PRECISION_DEFAULT = 0;
+
+    public static array $validFilterOperators = [
+        '=',
+        'IS',
+        'IS NOT',
+        '!=',
+        '<',
+        '>',
+        '>=',
+        '<=',
+    ];
 
     /**
      * Static type of this element
@@ -44,21 +57,14 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @var string
      */
-    public $fieldtype = 'numeric';
+    public string $fieldtype = 'numeric';
 
     /**
      * @internal
      *
-     * @var string|int
+     * @var float|int|string|null
      */
-    public $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var float
-     */
-    public $defaultValue;
+    public string|int|null|float $defaultValue = null;
 
     /**
      * Type for the column to query
@@ -80,38 +86,32 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $integer = false;
+    public bool $integer = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $unsigned = false;
-
-    /**
-     * @internal
-     *
-     * @var float|null
-     */
-    public $minValue;
+    public bool $unsigned = false;
 
     /**
      * @internal
      *
      * @var float|null
      */
-    public $maxValue;
+    public ?float $minValue = null;
 
     /**
      * @internal
      *
-     * @var bool
+     * @var float|null
      */
-    public $unique;
+    public ?float $maxValue = null;
+
+    /**
+     * @internal
+     */
+    public bool $unique = false;
 
     /**
      * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision
@@ -122,21 +122,18 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @var int|null
      */
-    public $decimalSize;
+    public ?int $decimalSize = null;
 
     /**
      * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
-     * commend on decimalSize.
+     * comment on decimalSize.
      *
      * @internal
      *
      * @var int|null
      */
-    public $decimalPrecision;
+    public ?int $decimalPrecision = null;
 
-    /**
-     * @return string
-     */
     private function getPhpdocType(): string
     {
         if ($this->getInteger()) {
@@ -150,33 +147,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return 'float';
     }
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getDefaultValue()
+    public function getDefaultValue(): float|int|string|null
     {
         if ($this->defaultValue !== null) {
             return $this->toNumeric($this->defaultValue);
@@ -185,12 +156,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return null;
     }
 
-    /**
-     * @param int $defaultValue
-     *
-     * @return $this
-     */
-    public function setDefaultValue($defaultValue)
+    public function setDefaultValue(float|int|string|null $defaultValue): static
     {
         if ((string)$defaultValue !== '') {
             $this->defaultValue = $defaultValue;
@@ -199,82 +165,52 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this;
     }
 
-    /**
-     * @param bool $integer
-     */
-    public function setInteger($integer)
+    public function setInteger(bool $integer): void
     {
         $this->integer = $integer;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInteger()
+    public function getInteger(): bool
     {
         return $this->integer;
     }
 
-    /**
-     * @param float|null $maxValue
-     */
-    public function setMaxValue($maxValue)
+    public function setMaxValue(?float $maxValue): void
     {
         $this->maxValue = $maxValue;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getMaxValue()
+    public function getMaxValue(): ?float
     {
         return $this->maxValue;
     }
 
-    /**
-     * @param float|null $minValue
-     */
-    public function setMinValue($minValue)
+    public function setMinValue(?float $minValue): void
     {
         $this->minValue = $minValue;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getMinValue()
+    public function getMinValue(): ?float
     {
         return $this->minValue;
     }
 
-    /**
-     * @param bool $unsigned
-     */
-    public function setUnsigned($unsigned)
+    public function setUnsigned(bool $unsigned): void
     {
         $this->unsigned = $unsigned;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUnsigned()
+    public function getUnsigned(): bool
     {
         return $this->unsigned;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getDecimalSize()
+    public function getDecimalSize(): ?int
     {
         return $this->decimalSize;
     }
 
-    /**
-     * @param int|null $decimalSize
-     */
-    public function setDecimalSize($decimalSize)
+    public function setDecimalSize(?int $decimalSize): void
     {
         if (!is_numeric($decimalSize)) {
             $decimalSize = null;
@@ -283,10 +219,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->decimalSize = $decimalSize;
     }
 
-    /**
-     * @param int|null $decimalPrecision
-     */
-    public function setDecimalPrecision($decimalPrecision)
+    public function setDecimalPrecision(?int $decimalPrecision): void
     {
         if (!is_numeric($decimalPrecision)) {
             $decimalPrecision = null;
@@ -295,34 +228,25 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->decimalPrecision = $decimalPrecision;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getDecimalPrecision()
+    public function getDecimalPrecision(): ?int
     {
         return $this->decimalPrecision;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUnique()
+    public function getUnique(): bool
     {
         return $this->unique;
     }
 
-    /**
-     * @param bool $unique
-     */
-    public function setUnique($unique)
+    public function setUnique(bool $unique): void
     {
-        $this->unique = $unique;
+        $this->unique = (bool) $unique;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getColumnType()
+    public function getColumnType(): array|string|null
     {
         if ($this->getInteger()) {
             return 'bigint(20)';
@@ -338,7 +262,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType()
+    public function getQueryColumnType(): array|string|null
     {
         if ($this->getInteger()) {
             return 'bigint(20)';
@@ -351,17 +275,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->genericGetQueryColumnType();
     }
 
-    /**
-     * @return bool
-     */
     private function isDecimalType(): bool
     {
         return null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision();
     }
 
-    /**
-     * @return string
-     */
     private function buildDecimalColumnType(): string
     {
         // decimalPrecision already existed in earlier versions to denote the amount of digits after the
@@ -403,15 +321,15 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param float|int|string $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return float|int|string|null
+     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -423,33 +341,35 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
+     * @param mixed $data
+     * @param null|Model\DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return float|int|string|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param float|int|string $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return float|int|string
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         if (is_numeric($data)) {
             return $this->toNumeric($data);
         }
 
-        return $data;
+        return null;
     }
 
     /**
+     * @param mixed $data
+     * @param null|Model\DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return float|int|string|null
+     *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param float|int|string $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return float|int|string
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): float|int|string|null
     {
         //TODO same fallback as above
 
@@ -457,51 +377,51 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param float|int|string $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return float|int|string
+     * @return float|int|string|null
+     *
+     * @see Data::getDataForEditmode
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
+     * @param mixed $data
+     * @param null|DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return float|int|string|null
+     *
      * @see Data::getDataFromEditmode
-     *
-     * @param float|int|string $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return float|int|string
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         return $this->getDataFromResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param float|int|string $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return float|int|string
+     * @return string
+     *
+     * @see Data::getVersionPreview
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        return $data;
+        return (string) $data;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -539,37 +459,60 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
-        $data = $this->getDataFromObjectParam($object, $params);
+        $data = $this->getDataFromObjectParam($object, $params) ?? '';
 
         return (string)$data;
     }
 
     /**
+     * returns sql query statement to filter according to this data types value(s)
+     *
+     * @param mixed $value
+     * @param string $operator
+     * @param array $params optional params used to change the behavior
+     *
+     * @return string
+     */
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
+    {
+        $db = \Pimcore\Db::get();
+        $name = $params['name'] ?: $this->name;
+        $key = $db->quoteIdentifier($name);
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
+
+        if ($value === 'NULL') {
+            if ($operator === '=') {
+                $operator = 'IS';
+            } elseif ($operator === '!=') {
+                $operator = 'IS NOT';
+            }
+        }
+
+        if ((is_numeric($value) || $value === 'NULL') && in_array($operator, self::$validFilterOperators)) {
+            return $key . ' ' . $operator . ' ' . $value . ' ';
+        }
+
+        return '';
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
-    /**
-     * @param string|null $data
-     *
-     * @return bool
-     */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data): bool
     {
-        return strlen($data) < 1;
+        return !is_numeric($data);
     }
 
-    /**
-     * @param string $value
-     *
-     * @return float|int|string
-     */
-    private function toNumeric($value)
+    private function toNumeric(mixed $value): float|int|string
     {
         $value = str_replace(',', '.', (string) $value);
 
@@ -587,10 +530,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if (!is_null($data) && $this->getDecimalPrecision()) {
-            $data = round($data, $this->getDecimalPrecision());
+            $data = round((int)$data, $this->getDecimalPrecision());
         }
 
         return $data;
@@ -604,52 +547,31 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function doGetDefaultValue($object, $context = [])
+    protected function doGetDefaultValue(Concrete $object, array $context = []): float|int|string|null
     {
         return $this->getDefaultValue() ?? null;
     }
 
-    /**
-     * @param float|int|string $oldValue
-     * @param float|int|string $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         return $this->toNumeric($oldValue) == $this->toNumeric($newValue);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?' . $this->getPhpdocType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?' . $this->getPhpdocType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return $this->getPhpdocType() . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return $this->getPhpdocType() . '|null';

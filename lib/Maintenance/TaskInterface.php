@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,5 +21,5 @@ interface TaskInterface
     /**
      * Execute the Task
      */
-    public function execute();
+    public function execute(): void;
 }

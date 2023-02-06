@@ -1,0 +1,65 @@
+{% if usage is iterable %}
+    <script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
+        var lineChartData = {
+            labels: [
+                {% for date, count in usage %}
+                     "{{ date }}",
+                {% endfor %}
+            ],
+            datasets: [
+                {
+                    label: "Usage Statistic",
+                    fillColor: "rgba(220,220,220,0.2)",
+                    strokeColor: "rgba(220,220,220,1)",
+                    pointColor: "rgba(220,220,220,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(220,220,220,1)",
+                    data: [
+                        {% for date, count in usage %}
+                        "{{ count }}",
+                        {% endfor %}
+                    ]
+                }
+            ]
+        };
+
+        /**
+         * Init Statistics canvas on tab click.
+         */
+        document.querySelector('#statistic-tab').onclick = function(e){
+            window.setTimeout(function () {
+
+                var usage = document.getElementById("canvas-usage").getContext("2d");
+
+                var usageChart = new Chart(usage, {
+                    type: 'line',
+                    data: lineChartData,
+                    options: {
+                        responsive: true,
+                        showTooltips: false
+                    }
+                });
+
+                var tokens = document.getElementById("canvas-token").getContext("2d");
+                var tokenChart = new Chart(tokens, {
+                    type: 'pie',
+                    data: {
+                        labels: ['{{ 'Used'|trans }}', '{{ 'Free'|trans }}', '{{ 'Reserved'|trans }}'],
+                        datasets: [{
+                            data: [{{ statistics['usageCount'] }}, {{ statistics['freeCount'] }}, {{ statistics['reservedCount'] }}],
+                            backgroundColor: [
+                                "{{ colors['used'] }}",
+                                "{{ colors['free'] }}",
+                                "{{ colors['reserved'] }}"
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            }, 50);
+        }
+    </script>
+{% endif %}

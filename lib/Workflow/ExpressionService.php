@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,7 +18,7 @@ namespace Pimcore\Workflow;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
@@ -27,35 +28,17 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class ExpressionService
 {
-    /**
-     * @var ExpressionLanguage
-     */
-    private $expressionLanguage;
+    private ExpressionLanguage $expressionLanguage;
 
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
+    private TokenStorageInterface $tokenStorage;
 
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authenticationChecker;
+    private AuthorizationCheckerInterface $authenticationChecker;
 
-    /**
-     * @var AuthenticationTrustResolverInterface
-     */
-    private $trustResolver;
+    private AuthenticationTrustResolverInterface $trustResolver;
 
-    /**
-     * @var RoleHierarchyInterface
-     */
-    private $roleHierarchy;
+    private ?RoleHierarchyInterface $roleHierarchy = null;
 
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
+    private ?ValidatorInterface $validator = null;
 
     public function __construct(ExpressionLanguage $expressionLanguage, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authenticationChecker, AuthenticationTrustResolverInterface $trustResolver, RoleHierarchyInterface $roleHierarchy = null, ValidatorInterface $validator = null)
     {
@@ -67,15 +50,15 @@ class ExpressionService
         $this->validator = $validator;
     }
 
-    public function evaluateExpression(WorkflowInterface $workflow, $subject, string $expression)
+    public function evaluateExpression(WorkflowInterface $workflow, object $subject, string $expression): mixed
     {
         return $this->expressionLanguage->evaluate($expression, $this->getVariables($subject));
     }
 
     // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
-    private function getVariables($subject)
+    private function getVariables(object $subject): array
     {
-        $token = $this->tokenStorage->getToken() ?: new AnonymousToken('', 'anonymous', []);
+        $token = $this->tokenStorage->getToken() ?: new NullToken;
 
         $roleNames = $token->getRoleNames();
         if (null !== $this->roleHierarchy) {
@@ -84,7 +67,7 @@ class ExpressionService
 
         $variables = [
             'token' => $token,
-            'user' => $token->getUser(),
+            'user' => $token->getUser() ?: 'anonymous',
             'object' => $subject,
             'subject' => $subject,
             'role_names' => $roleNames,

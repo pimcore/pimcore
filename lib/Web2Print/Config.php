@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,48 +28,22 @@ final class Config
 
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    private const LEGACY_FILE = 'web2print.php';
-
-    /**
-     * @return LocationAwareConfigRepository
-     */
-    private static function getRepository()
+    private static function getRepository(): LocationAwareConfigRepository
     {
         if (!self::$locationAwareConfigRepository) {
             $config = [];
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
-            if (isset($containerConfig['documents']['web_to_print']['generalTool'])) {
+            if ($containerConfig['documents']['web_to_print']['generalTool']) {
                 $config = [
                     self::CONFIG_ID => $containerConfig['documents']['web_to_print'],
                 ];
             }
 
-            // @deprecated legacy will be removed in Pimcore 11
-            $loadLegacyConfigCallback = function ($legacyRepo, &$dataSource) {
-                $file = \Pimcore\Config::locateConfigFile(self::LEGACY_FILE);
-                if (is_file($file)) {
-                    $content = include($file);
-                    if (is_array($content)) {
-                        $dataSource = LocationAwareConfigRepository::LOCATION_LEGACY;
-
-                        return $content;
-                    }
-                }
-
-                return null;
-            };
-
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_web_to_print',
                 $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/web-to-print',
-                'PIMCORE_WRITE_TARGET_WEB_TO_PRINT',
-                null,
-                self::LEGACY_FILE,
-                $loadLegacyConfigCallback
+                'PIMCORE_WRITE_TARGET_WEB_TO_PRINT'
             );
         }
 
@@ -77,23 +52,21 @@ final class Config
 
     /**
      * @return bool
+     *
+     * @throws \Exception
      */
     public static function isWriteable(): bool
     {
         return self::getRepository()->isWriteable();
     }
 
-    /**
-     * @return \Pimcore\Config\Config
-     */
-    public static function get(): \Pimcore\Config\Config
+    public static function get(): array
     {
         $repository = self::getRepository();
 
-        list($config, $dataSource) = $repository->loadConfigByKey(self::CONFIG_ID);
-        $config = new \Pimcore\Config\Config($config ?? []);
+        $config = $repository->loadConfigByKey(self::CONFIG_ID);
 
-        return $config;
+        return $config[0] ?? [];
     }
 
     /**
@@ -101,7 +74,7 @@ final class Config
      *
      * @throws \Exception
      */
-    public static function save(array $data)
+    public static function save(array $data): void
     {
         $repository = self::getRepository();
 

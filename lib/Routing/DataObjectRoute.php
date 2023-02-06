@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\Routing;
 
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\UrlSlug;
+use Pimcore\Model\Site;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Route;
 
@@ -25,52 +27,53 @@ use Symfony\Component\Routing\Route;
  */
 final class DataObjectRoute extends Route implements RouteObjectInterface
 {
-    /**
-     * @var Concrete|null
-     */
-    protected ?Concrete $object;
+    protected ?Concrete $object = null;
 
-    /**
-     * @var UrlSlug|null
-     */
-    protected ?UrlSlug $slug;
+    protected ?UrlSlug $slug = null;
 
-    /**
-     * @return Concrete|null
-     */
+    protected ?Site $site = null;
+
     public function getObject(): ?Concrete
     {
         return $this->object;
     }
 
     /**
-     * @param Concrete $object
-     *
      * @return $this
      */
-    public function setObject(Concrete $object): self
+    public function setObject(Concrete $object): static
     {
         $this->object = $object;
 
         return $this;
     }
 
-    /**
-     * @return UrlSlug|null
-     */
     public function getSlug(): ?UrlSlug
     {
         return $this->slug;
     }
 
     /**
-     * @param UrlSlug $slug
-     *
      * @return $this
      */
-    public function setSlug(UrlSlug $slug): self
+    public function setSlug(UrlSlug $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getSite(): ?Site
+    {
+        return $this->site;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setSite(?Site $site): static
+    {
+        $this->site = $site;
 
         return $this;
     }
@@ -89,7 +92,7 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     public function getRouteKey(): ?string
     {
         if ($this->object) {
-            return sprintf('data_object_%d_%s', $this->object->getId(), $this->getPath());
+            return sprintf('data_object_%d_%d_%s', $this->object->getId(), $this->site?->getId(), $this->getPath());
         }
 
         return null;

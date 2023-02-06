@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,50 +18,21 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 interface DataDefinitionInterface
 {
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function isEmpty($data, $params = []);
-
-    /**
-     * @param mixed $data
-     * @param array $params
-     * throws \Exception
-     */
-    public function checkValidity($data, $params = []);
+    public function isEmpty(mixed $data, array $params = []): bool;
 
     /**
      * @param mixed $data
      * @param array $params
      *
-     * @return mixed
+     * @throws \Exception
      */
-    public function getDataForListfolderGrid($data, $params = []);
+    public function checkValidity(mixed $data, array $params = []): void;
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataFromEditMode($data, $params = []);
+    public function getDataForListfolderGrid(mixed $data, array $params = []): mixed;
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataFromListfolderGrid($data, $params = []);
+    public function getDataFromEditMode(mixed $data, array $params = []): mixed;
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return array
-     */
-    public function resolveDependencies($data, $params = []);
+    public function getDataFromListfolderGrid(mixed $data, array $params = []): mixed;
+
+    public function resolveDependencies(mixed $data, array $params = []): array;
 }

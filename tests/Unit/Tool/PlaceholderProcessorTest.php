@@ -18,14 +18,11 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Tool;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 
 class PlaceholderProcessorTest extends TestCase
 {
-    /**
-     * @var PlaceholderProcessor
-     */
-    private $processor;
+    private PlaceholderProcessor $processor;
 
     /**
      * {@inheritdoc}
@@ -35,7 +32,7 @@ class PlaceholderProcessorTest extends TestCase
         $this->processor = new PlaceholderProcessor();
     }
 
-    public function testPlaceholdersAreMergedIntoArrayValues()
+    public function testPlaceholdersAreMergedIntoArrayValues(): void
     {
         $input = [
             'locale' => '%locale%',
@@ -52,7 +49,7 @@ class PlaceholderProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergePlaceholders($input, $placeholders));
     }
 
-    public function testMultiplePlaceholdersAreMergedIntoArrayValues()
+    public function testMultiplePlaceholdersAreMergedIntoArrayValues(): void
     {
         $input = [
             'locale1' => '%locale1%',
@@ -72,7 +69,7 @@ class PlaceholderProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergePlaceholders($input, $placeholders));
     }
 
-    public function testPlaceholdersAreMergedIntoCompositeArrayValues()
+    public function testPlaceholdersAreMergedIntoCompositeArrayValues(): void
     {
         $input = [
             'locale' => 'my locale is %locale%',
@@ -89,7 +86,7 @@ class PlaceholderProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergePlaceholders($input, $placeholders));
     }
 
-    public function testPlaceholdersAreMergedIntoDeepArrayValues()
+    public function testPlaceholdersAreMergedIntoDeepArrayValues(): void
     {
         $input = [
             'locales' => [
@@ -119,7 +116,7 @@ class PlaceholderProcessorTest extends TestCase
         $this->assertEquals($expected, $this->processor->mergePlaceholders($input, $placeholders));
     }
 
-    public function testPlaceholdersAreMergedIntoArrayKeys()
+    public function testPlaceholdersAreMergedIntoArrayKeys(): void
     {
         $input = [
             'locales' => [

@@ -68,7 +68,7 @@ class Car extends \App\Model\Product\AbstractProduct implements \App\Model\Produ
 
 use \App\Traits\TransmissionTrait;
 
-protected $o_classId = "CAR";
-protected $o_className = "Car";
+protected $classId = "CAR";
+protected $className = "Car";
 ...
 ```

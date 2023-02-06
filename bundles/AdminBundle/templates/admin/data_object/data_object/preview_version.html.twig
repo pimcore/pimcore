@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/bundles/pimcoreadmin/css/object_versions.css"/>
+</head>
+
+<body>
+
+
+{% set fields = object.getClass().getFieldDefinitions()  %}
+
+<table class="preview" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <th>Name</th>
+        <th>Key</th>
+        <th>Value</th>
+    </tr>
+    <tr class="system">
+        <td>Date</td>
+        <td>modificationDate</td>
+        <td>{{ object.getModificationDate()|date('Y-m-d H:i:s') }}</td>
+    </tr>
+    <tr class="system">
+        <td>Path</td>
+        <td>path</td>
+        <td>{{ object.getRealFullPath() }}</td>
+    </tr>
+    <tr class="system">
+        <td>Published</td>
+        <td>published</td>
+        <td>{{ object.getPublished() ? 'true' : 'false' }}</td>
+    </tr>
+    {% if versionNote %}
+        <tr class="system">
+            <td>Version Note</td>
+            <td>&nbsp;</td>
+            <td>{{ versionNote|nl2br }}</td>
+        </tr>
+    {% endif %}
+
+    <tr class="">
+        <td colspan="3">&nbsp;</td>
+    </tr>
+    {% for fieldName, definition in fields %}
+        {% if definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
+            {% for language in validLanguages %}
+                {% for lfd in definition.getFieldDefinitions() %}
+                    <tr {% if loop.index is odd %}class="odd"{% endif %}>
+                        <td>{{ lfd.getTitle()|trans([],'admin') }} ({{ language }})</td>
+                        <td>{{ lfd.getName() }}</td>
+                        <td>
+                                {% if object.getValueForFieldName(fieldName) %}
+                                    {{ lfd.getVersionPreview(object.getValueForFieldName(fieldName).getLocalizedValue(lfd.getName(), language)) | raw }}
+                                {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Objectbricks') %}
+            {% for asAllowedType in definition.getAllowedTypes() %}
+                {% set collectionDef = pimcore_object_brick_definition_key(asAllowedType) %}
+
+                {% for lfd in collectionDef.getFieldDefinitions() %}
+                    {% set value = null %}
+
+                    {% set fieldGetter = "get" ~ (fieldName|capitalize) %}
+                    {% set brick = attribute(object, fieldGetter) %}
+
+                    {% if brick is not empty %}
+                        {% set allowedMethod = "get" ~ asAllowedType %}
+                        {% set brickValue = attribute(brick,allowedMethod) %}
+
+                        {% if lfd is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Localizedfields') %}
+                            {% for language in validLanguages %}
+                                {% for localizedFieldDefinition in lfd.getFieldDefinitions() %}
+                                    <tr {% if loop.index is odd %}class="odd"{% endif %}>
+                                        <td>{{ localizedFieldDefinition.getTitle()|trans([],'admin') }} ({{ language }})</td>
+                                        <td>{{ localizedFieldDefinition.getName() }}</td>
+                                        <td>
+                                            {% if brickValue %}
+                                                {% set localizedBrickValues = brickValue.getLocalizedFields() %}
+                                                {% set localizedBrickValue = localizedBrickValues.getLocalizedValue(localizedFieldDefinition.getName(), language) %}
+                                                {{ localizedFieldDefinition.getVersionPreview(localizedBrickValue) | raw }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            {% if brickValue %}
+                                {% set value = lfd.getVersionPreview(brickValue.getValueForFieldName(lfd.getName())) %}
+                            {% endif %}
+                            <tr {% if loop.index is odd %}class="odd"{% endif %}>
+                                <td>{{ asAllowedType|capitalize ~ " - " ~ lfd.getTitle()|trans([],'admin')  }}</td>
+                                <td>{{ lfd.getName() }}</td>
+                                <td>{{ value | raw }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endif %}
+
+                {% endfor %}
+            {% endfor %}
+        {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Classificationstore') %}
+            {% set storedata = object.getValueForFieldName(fieldName) %}
+            {% set activeGroups = [] %}
+
+            {% if storedata %}
+                {% set activeGroups = storedata.getActiveGroups() %}
+            {% endif %}
+            {% if activeGroups is not empty %}
+                {% set languages = ['default'] %}
+                {% if definition.isLocalized() %}
+                    {% set languages = validLanguages|merge(languages) %}
+                {% endif %}
+
+                {% for activeGroupId, enabled in activeGroups|filter((enabled, activeGroupId) => activeGroups[activeGroupId] is not empty) %}
+                    {% set groupDefinition = pimcore_object_classificationstore_group(activeGroupId) %}
+                    {% if groupDefinition is not empty %}
+                        {% set keyGroupRelations = groupDefinition.getRelations() %}
+
+                        {% for keyGroupRelation in keyGroupRelations %}
+                            {% set keyDef = pimcore_object_classificationstore_get_field_definition_from_json(keyGroupRelation.getDefinition(), keyGroupRelation.getType())  %}
+
+                            {% if keyDef is not empty %}
+                                {% for language in languages %}
+                                    {% set keyData = storedata ? storedata.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
+
+                                    {% set preview = keyDef.getVersionPreview(keyData) %}
+                                    <tr {% if loop.index is odd %}class="odd"{% endif %}>
+                                        <td>{{ definition.getTitle()|trans([],'admin') }}</td>
+                                        <td>{{ groupDefinition.getName() ~ "-" ~ keyGroupRelation.getName() }} {{ definition.isLocalized() ? "/ " ~ language : ""  }}</td>
+                                        {% if isImportPreview is not defined or isNew is not defined %}
+                                            <td>{{ preview | raw }}</td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% elseif definition is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\Fieldcollections') %}
+            {% set fields = object.get(fieldName) %}
+            {% set fieldDefinitions = null %}
+            {% set fieldItems = null %}
+
+            {% if fields %}
+                {% set fieldDefinitions = fields.getItemDefinitions() %}
+                {% set fieldItems = fields.getItems() %}
+            {% endif %}
+
+            {% if fieldItems is iterable and fieldItems|length > 0 %}
+                {% for fkey,fieldItem  in fieldItems %}
+                    {% set fieldKeys = fieldDefinitions[fieldItem.getType()].getFieldDefinitions() %}
+                    {% for fieldKey in fieldKeys %}
+                        {% set value = fieldItem.get(fieldKey.getName()) %}
+                        <tr {% if loop.index is odd %}class="odd"{% endif %}>
+                            <td>{{ fieldItem.getType() ~ " - " ~ fieldKey.getTitle()|trans([],'admin') }}</td>
+                            <td>{{ fieldKey.getName() }}</td>
+                            <td>{{ fieldKey.getVersionPreview(value) | raw }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            <tr {% if loop.index is odd %}class="odd"{% endif %}>
+                <td>{{ definition.getTitle()|trans([],'admin') }}</td>
+                <td>{{ definition.getName() }}</td>
+                <td>{{ definition.getVersionPreview(object.getValueForFieldName(fieldName)) | raw }}</td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+</table>
+</body>
+</html>

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,16 +18,22 @@ namespace Pimcore\Helper;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ConnectionRegistry;
+use Exception;
+use LogicException;
 use Monolog\Handler\HandlerInterface;
+use Pimcore\Cache\RuntimeCache;
 use Psr\Log\LoggerAwareTrait;
 
 final class LongRunningHelper
 {
     use LoggerAwareTrait;
 
-    protected $connectionRegistry;
+    protected ConnectionRegistry $connectionRegistry;
 
-    protected $pimcoreRuntimeCacheProtectedItems = [
+    /**
+     * @var string[]
+     */
+    protected array $pimcoreRuntimeCacheProtectedItems = [
         'Config_system',
         'pimcore_admin_user',
         'Config_website',
@@ -35,7 +42,12 @@ final class LongRunningHelper
         'Pimcore_Db',
     ];
 
-    protected $monologHandlers = [];
+    protected array $monologHandlers = [];
+
+    /**
+     * @var string[]
+     */
+    protected array $tmpFilePaths = [];
 
     /**
      * LongRunningHelper constructor.
@@ -47,10 +59,7 @@ final class LongRunningHelper
         $this->connectionRegistry = $connectionRegistry;
     }
 
-    /**
-     * @param array $options
-     */
-    public function cleanUp($options = [])
+    public function cleanUp(array $options = []): void
     {
         $this->cleanupDoctrine();
         $this->cleanupMonolog();
@@ -58,23 +67,23 @@ final class LongRunningHelper
         $this->triggerPhpGarbageCollector();
     }
 
-    protected function cleanupDoctrine()
+    protected function cleanupDoctrine(): void
     {
         try {
             foreach ($this->connectionRegistry->getConnections() as $name => $connection) {
                 if (!($connection instanceof Connection)) {
-                    throw new \LogicException('Expected only instances of Connection');
+                    throw new LogicException('Expected only instances of Connection');
                 }
                 if ($connection->isTransactionActive() === false) {
                     $connection->close();
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // connection couldn't be established, this is e.g. the case when Pimcore isn't installed yet
         }
     }
 
-    protected function triggerPhpGarbageCollector()
+    protected function triggerPhpGarbageCollector(): void
     {
         gc_enable();
         $collectedCycles = gc_collect_cycles();
@@ -82,10 +91,7 @@ final class LongRunningHelper
         $this->logger->debug(sprintf('PHP garbage collector collected %d cycles', $collectedCycles));
     }
 
-    /**
-     * @param array $options
-     */
-    protected function cleanupPimcoreRuntimeCache($options = [])
+    protected function cleanupPimcoreRuntimeCache(array $options = []): void
     {
         $options = $this->resolveOptions(__METHOD__, $options);
 
@@ -95,22 +101,16 @@ final class LongRunningHelper
             $protectedItems = array_merge($protectedItems, $options['keepItems']);
         }
 
-        \Pimcore\Cache\Runtime::clear($protectedItems);
+        RuntimeCache::clear($protectedItems);
     }
 
-    /**
-     * @param array $items
-     */
-    public function addPimcoreRuntimeCacheProtectedItems(array $items)
+    public function addPimcoreRuntimeCacheProtectedItems(array $items): void
     {
         $this->pimcoreRuntimeCacheProtectedItems = array_merge($this->pimcoreRuntimeCacheProtectedItems, $items);
         $this->pimcoreRuntimeCacheProtectedItems = array_unique($this->pimcoreRuntimeCacheProtectedItems);
     }
 
-    /**
-     * @param array $items
-     */
-    public function removePimcoreRuntimeCacheProtectedItems(array $items)
+    public function removePimcoreRuntimeCacheProtectedItems(array $items): void
     {
         foreach ($this->pimcoreRuntimeCacheProtectedItems as $item) {
             $key = array_search($item, $this->pimcoreRuntimeCacheProtectedItems);
@@ -120,7 +120,7 @@ final class LongRunningHelper
         }
     }
 
-    protected function cleanupMonolog()
+    protected function cleanupMonolog(): void
     {
         foreach ($this->monologHandlers as $handler) {
             $handler->close();
@@ -132,18 +132,12 @@ final class LongRunningHelper
      *
      * @param HandlerInterface $handler
      */
-    public function addMonologHandler(HandlerInterface $handler)
+    public function addMonologHandler(HandlerInterface $handler): void
     {
         $this->monologHandlers[] = $handler;
     }
 
-    /**
-     * @param string $method
-     * @param array $options
-     *
-     * @return array
-     */
-    protected function resolveOptions(string $method, array $options)
+    protected function resolveOptions(string $method, array $options): array
     {
         $name = preg_replace('@[^\:]+\:\:cleanup@', '', $method);
         $name = lcfirst($name);
@@ -152,5 +146,22 @@ final class LongRunningHelper
         }
 
         return [];
+    }
+
+    /**
+     * @internal
+     * Register a temp file which will be deleted on next call of cleanUp()
+     */
+    public function addTmpFilePath(string $tmpFilePath): void
+    {
+        $this->tmpFilePaths[] = $tmpFilePath;
+    }
+
+    public function deleteTemporaryFiles(): void
+    {
+        foreach ($this->tmpFilePaths as $tmpFilePath) {
+            @unlink($tmpFilePath);
+        }
+        $this->tmpFilePaths = [];
     }
 }

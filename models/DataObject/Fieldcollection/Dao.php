@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -29,26 +30,20 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function save(DataObject\Concrete $object, $params = [])
+    public function save(DataObject\Concrete $object, array $params = []): array
     {
         return $this->delete($object, true);
     }
 
     /**
-     * @param DataObject\Concrete $object
-     *
-     * @return array
+     * @return DataObject\Fieldcollection\Data\AbstractData[]
      */
-    public function load(DataObject\Concrete $object)
+    public function load(DataObject\Concrete $object): array
     {
         /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
+        $object->__objectAwareFields[$this->model->getFieldname()] = true;
+
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
@@ -59,7 +54,7 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $results = $this->db->fetchAll('SELECT * FROM ' . $tableName . ' WHERE o_id = ? AND fieldname = ? ORDER BY `index` ASC', [$object->getId(), $this->model->getFieldname()]);
+                $results = $this->db->fetchAllAssociative('SELECT * FROM ' . $tableName . ' WHERE id = ? AND fieldname = ? ORDER BY `index` ASC', [$object->getId(), $this->model->getFieldname()]);
             } catch (\Exception $e) {
                 $results = [];
             }
@@ -142,12 +137,11 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param DataObject\Concrete $object
      * @param bool $saveMode true if called from save method
      *
-     * @return array
+     * @return array{saveLocalizedRelations?: true, saveFieldcollectionRelations?: true}
      */
-    public function delete(DataObject\Concrete $object, $saveMode = false)
+    public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {
         // empty or create all relevant tables
 
@@ -167,10 +161,14 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $this->db->delete($tableName, [
-                    'o_id' => $object->getId(),
-                    'fieldname' => $this->model->getFieldname(),
-                ]);
+                $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$tableName."` WHERE
+         `id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1");
+                if ($dataExists) {
+                    $this->db->delete($tableName, [
+                        'id' => $object->getId(),
+                        'fieldname' => $this->model->getFieldname(),
+                    ]);
+                }
             } catch (\Exception $e) {
                 // create definition if it does not exist
                 $definition->createUpdateTable($object->getClass());
@@ -180,12 +178,16 @@ class Dao extends Model\Dao\AbstractDao
                 $tableName = $definition->getLocalizedTableName($object->getClass());
 
                 try {
-                    $this->db->delete($tableName, [
-                        'ooo_id' => $object->getId(),
-                        'fieldname' => $this->model->getFieldname(),
-                    ]);
+                    $dataExists = $this->db->fetchOne('SELECT `ooo_id` FROM `'.$tableName."` WHERE
+         `ooo_id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1 ");
+                    if ($dataExists) {
+                        $this->db->delete($tableName, [
+                            'ooo_id' => $object->getId(),
+                            'fieldname' => $this->model->getFieldname(),
+                        ]);
+                    }
                 } catch (\Exception $e) {
-                    Logger::error($e);
+                    Logger::error((string) $e);
                 }
             }
 
@@ -195,8 +197,8 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($childDefinitions as $fd) {
                     if (!DataObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
                         if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
-                                '_self'
-                            )) {
+                            '_self'
+                        )) {
                             continue;
                         }
                     }
@@ -236,25 +238,25 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
-            . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~'
+            . Helper::quoteInto($this->db, 'ownername LIKE ?', '/fieldcollection~'
                 . $this->model->getFieldname() . '/%')
-            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')';
+            . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()). ')';
 
         if ($saveMode) {
             if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
                 // always empty localized fields
-                $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
+                $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
 
                 return ['saveLocalizedRelations' => true];
             }
         }
 
-        $where = "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname())
-            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')';
+        $where = "(ownertype = 'fieldcollection' AND " . Helper::quoteInto($this->db, 'ownername = ?', $this->model->getFieldname())
+            . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()) . ')';
 
         // empty relation table
-        $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
-        $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
+        $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
+        $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $whereLocalizedFields);
 
         return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,9 +30,9 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Element\Tag[]|null $tags
      *
-     * @return static
+     * @return $this
      */
-    public function setTags($tags)
+    public function setTags(?array $tags): static
     {
         return $this->setData($tags);
     }
@@ -39,7 +40,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Element\Tag[]
      */
-    public function getTags()
+    public function getTags(): array
     {
         return $this->getData();
     }

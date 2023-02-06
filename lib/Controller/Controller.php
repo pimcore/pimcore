@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -82,10 +83,9 @@ abstract class Controller extends AbstractController
     }
 
     /**
-     * {@inheritdoc}
-     *
+     * @return string[]
      */
-    public static function getSubscribedServices()// :array
+    public static function getSubscribedServices(): array
     {
         $services = parent::getSubscribedServices();
         $services['pimcore.templating'] = '?'.EngineInterface::class;

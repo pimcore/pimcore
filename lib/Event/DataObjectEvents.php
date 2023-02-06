@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -118,6 +119,16 @@ final class DataObjectEvents
 
     /**
      * Arguments:
+     *  - params | array | contains the values that were passed to getById() as the second parameter
+     *
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const POST_LOAD = 'pimcore.dataobject.postLoad';
+
+    /**
+     * Arguments:
      *  - target_element | Pimcore\Model\AbstractObject | contains the target object used in copying process
      *
      * @Event("Pimcore\Event\Model\DataObjectEvent")
@@ -128,7 +139,7 @@ final class DataObjectEvents
 
     /**
      * Arguments:
-     *  - base_element | Pimcore\Model\AbstractObject | contains the base document used in copying process
+     *  - base_element | Pimcore\Model\AbstractObject | contains the base object used in copying process
      *
      * @Event("Pimcore\Event\Model\DataObjectEvent")
      *

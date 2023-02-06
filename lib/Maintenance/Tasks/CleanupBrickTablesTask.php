@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,14 +27,8 @@ use Psr\Log\LoggerInterface;
  */
 class CleanupBrickTablesTask implements TaskInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -42,13 +37,13 @@ class CleanupBrickTablesTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $db = Db::get();
         $tableTypes = ['store', 'query', 'localized'];
         foreach ($tableTypes as $tableType) {
             $prefix = 'object_brick_' . $tableType . '_';
-            $tableNames = $db->fetchAll("SHOW TABLES LIKE '" . $prefix . "%'");
+            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $prefix . "%'");
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
@@ -70,7 +65,7 @@ class CleanupBrickTablesTask implements TaskInterface
 
                 $classId = substr($fieldDescriptor, $idx + 1);
 
-                $classDefinition = ClassDefinition::getById($classId);
+                $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
                 if (!$classDefinition) {
                     $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
 
@@ -78,7 +73,7 @@ class CleanupBrickTablesTask implements TaskInterface
                 }
 
                 $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-                $fieldNames = $db->fetchCol($fieldsQuery);
+                $fieldNames = $db->fetchFirstColumn($fieldsQuery);
 
                 foreach ($fieldNames as $fieldName) {
                     $fieldDef = $classDefinition->getFieldDefinition($fieldName);
@@ -91,7 +86,7 @@ class CleanupBrickTablesTask implements TaskInterface
 
                     if (!$fieldDef) {
                         $this->logger->info("Field '" . $fieldName . "' of class '" . $classId . "' does not exist anymore. Cleaning " . $tableName);
-                        $db->deleteWhere($tableName, 'fieldname = ' . $db->quote($fieldName));
+                        $db->delete($tableName, ['fieldname' => $fieldName]);
                     }
                 }
             }

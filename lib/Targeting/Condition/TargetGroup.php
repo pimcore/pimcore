@@ -21,23 +21,17 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class TargetGroup extends AbstractVariableCondition implements ConditionInterface
 {
-    /**
-     * @var int|null
-     */
-    private $targetGroupId;
+    private ?int $targetGroupId = null;
 
-    /**
-     * @param int|null $targetGroupId
-     */
-    public function __construct(int $targetGroupId = null)
+    public function __construct(?int $targetGroupId = null)
     {
         $this->targetGroupId = $targetGroupId;
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): self
     {
         return new self($config['targetGroup'] ?? null);
     }

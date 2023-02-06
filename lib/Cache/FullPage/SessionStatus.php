@@ -30,15 +30,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class SessionStatus
 {
-    /**
-     * @var string
-     */
-    private $symfonyMetadataStorageKey;
+    private string $symfonyMetadataStorageKey;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         string $symfonyMetadataStorageKey,
@@ -77,6 +71,9 @@ class SessionStatus
         return false;
     }
 
+    /**
+     * @return string[]
+     */
     private function getIgnoredSessionKeys(): array
     {
         $event = new IgnoredSessionKeysEvent([$this->symfonyMetadataStorageKey]);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,7 +35,7 @@ class Mail
      *
      * @throws \Exception
      */
-    public static function getDebugInformation($type, MailClient $mail)
+    public static function getDebugInformation(string $type, MailClient $mail): string
     {
         $type = strtolower($type);
 
@@ -93,7 +94,7 @@ class Mail
      *
      * @return string
      */
-    public static function getDebugInformationCssStyle()
+    public static function getDebugInformationCssStyle(): string
     {
         $style = <<<'CSS'
 <style type="text/css">
@@ -134,7 +135,7 @@ CSS;
      *
      * @return string
      */
-    public static function formatDebugReceivers(array $receivers)
+    public static function formatDebugReceivers(array $receivers): string
     {
         $formatedReceiversArray = [];
 
@@ -156,11 +157,11 @@ CSS;
     /**
      * @param MailClient $mail
      * @param array $recipients
-     * @param ?string $error
+     * @param string|null $error
      *
      * @return Model\Tool\Email\Log
      */
-    public static function logEmail(MailClient $mail, $recipients, $error = null)
+    public static function logEmail(MailClient $mail, array $recipients, string $error = null): Model\Tool\Email\Log
     {
         $emailLog = new Model\Tool\Email\Log();
 
@@ -218,19 +219,15 @@ CSS;
 
     /**
      * @param string $string
-     * @param Model\Document $document
+     * @param Model\Document|null $document
      * @param string|null $hostUrl
      *
      * @return string
      *
      * @throws \Exception
      */
-    public static function setAbsolutePaths($string, $document = null, $hostUrl = null)
+    public static function setAbsolutePaths(string $string, ?Model\Document $document = null, string $hostUrl = null): string
     {
-        if ($document && $document instanceof Model\Document == false) {
-            throw new \Exception('$document has to be an instance of Document');
-        }
-
         $replacePrefix = '';
 
         if (!$hostUrl && $document) {
@@ -300,18 +297,14 @@ CSS;
 
     /**
      * @param string $string
-     * @param Model\Document $document
+     * @param Model\Document|null $document
      *
      * @return string
      *
      * @throws \Exception
      */
-    public static function embedAndModifyCss($string, $document = null)
+    public static function embedAndModifyCss(string $string, ?Model\Document $document = null): string
     {
-        if ($document && $document instanceof Model\Document == false) {
-            throw new \Exception('$document has to be an instance of Document');
-        }
-
         $css = null;
 
         //matches all <link> Tags
@@ -367,7 +360,7 @@ CSS;
      *
      * @return string
      */
-    public static function normalizeCssContent($content, array $fileInfo)
+    public static function normalizeCssContent(string $content, array $fileInfo): string
     {
         preg_match_all("@url\s*\(\s*[\"']?(.*?)[\"']?\s*\)@is", $content, $matches);
         $hostUrl = Tool::getHostUrl();
@@ -394,18 +387,14 @@ CSS;
 
     /**
      * @param string $path
-     * @param Model\Document $document
+     * @param Model\Document|null $document
      *
      * @return array
      *
      * @throws \Exception
      */
-    public static function getNormalizedFileInfo($path, $document = null)
+    public static function getNormalizedFileInfo(string $path, ?Model\Document $document = null): array
     {
-        if ($document && $document instanceof Model\Document == false) {
-            throw new \Exception('$document has to be an instance of Document');
-        }
-
         $fileInfo = [];
         $hostUrl = Tool::getHostUrl();
         if ($path[0] != '/') {
@@ -429,10 +418,10 @@ CSS;
      *
      * @return array
      */
-    public static function parseEmailAddressField($emailString)
+    public static function parseEmailAddressField(?string $emailString): array
     {
         $cleanedEmails = [];
-        $emailArray = preg_split('/,|;/', $emailString);
+        $emailArray = preg_split('/,|;/', ($emailString ?? ''));
         if ($emailArray) {
             foreach ($emailArray as $emailStringEntry) {
                 $entryAddress = trim($emailStringEntry);

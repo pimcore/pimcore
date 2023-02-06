@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Event\Model\TagEvent;
 use Pimcore\Event\TagEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 
 /**
@@ -24,10 +26,10 @@ use Pimcore\Model;
  */
 final class Tag extends Model\AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $id = null;
 
@@ -36,12 +38,10 @@ final class Tag extends Model\AbstractModel
      *
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @internal
-     *
-     * @var int
      */
     protected int $parentId = 0;
 
@@ -50,21 +50,21 @@ final class Tag extends Model\AbstractModel
      *
      * @var string
      */
-    protected $idPath;
+    protected string $idPath = '';
 
     /**
      * @internal
      *
-     * @var Tag[]
+     * @var Tag[]|null
      */
-    protected $children;
+    protected ?array $children = null;
 
     /**
      * @internal
      *
      * @var Tag|null
      */
-    protected $parent;
+    protected ?Tag $parent = null;
 
     /**
      * @static
@@ -73,7 +73,7 @@ final class Tag extends Model\AbstractModel
      *
      * @return Tag|null
      */
-    public static function getById($id)
+    public static function getById(int $id): ?Tag
     {
         try {
             $tag = new self();
@@ -93,7 +93,7 @@ final class Tag extends Model\AbstractModel
      *
      * @return Tag[]
      */
-    public static function getTagsForElement($cType, $cId)
+    public static function getTagsForElement(string $cType, int $cId): array
     {
         $tag = new Tag();
 
@@ -107,17 +107,17 @@ final class Tag extends Model\AbstractModel
      * @param int $cId
      * @param Tag $tag
      */
-    public static function addTagToElement($cType, $cId, Tag $tag)
+    public static function addTagToElement(string $cType, int $cId, Tag $tag): void
     {
         $event = new TagEvent($tag, [
             'elementType' => $cType,
             'elementId' => $cId,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, TagEvents::PRE_ADD_TO_ELEMENT);
+        $tag->dispatchEvent($event, TagEvents::PRE_ADD_TO_ELEMENT);
 
         $tag->getDao()->addTagToElement($cType, $cId);
 
-        \Pimcore::getEventDispatcher()->dispatch($event, TagEvents::POST_ADD_TO_ELEMENT);
+        $tag->dispatchEvent($event, TagEvents::POST_ADD_TO_ELEMENT);
     }
 
     /**
@@ -127,17 +127,17 @@ final class Tag extends Model\AbstractModel
      * @param int $cId
      * @param Tag $tag
      */
-    public static function removeTagFromElement($cType, $cId, Tag $tag)
+    public static function removeTagFromElement(string $cType, int $cId, Tag $tag): void
     {
         $event = new TagEvent($tag, [
             'elementType' => $cType,
             'elementId' => $cId,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch($event, TagEvents::PRE_REMOVE_FROM_ELEMENT);
+        $tag->dispatchEvent($event, TagEvents::PRE_REMOVE_FROM_ELEMENT);
 
         $tag->getDao()->removeTagFromElement($cType, $cId);
 
-        \Pimcore::getEventDispatcher()->dispatch($event, TagEvents::POST_REMOVE_FROM_ELEMENT);
+        $tag->dispatchEvent($event, TagEvents::POST_REMOVE_FROM_ELEMENT);
     }
 
     /**
@@ -148,19 +148,13 @@ final class Tag extends Model\AbstractModel
      * @param int $cId
      * @param Tag[] $tags
      */
-    public static function setTagsForElement($cType, $cId, array $tags)
+    public static function setTagsForElement(string $cType, int $cId, array $tags): void
     {
         $tag = new Tag();
         $tag->getDao()->setTagsForElement($cType, $cId, $tags);
     }
 
-    /**
-     * @param string $cType
-     * @param array $cIds
-     * @param array $tagIds
-     * @param bool $replace
-     */
-    public static function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace = false)
+    public static function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace = false): void
     {
         $tag = new Tag();
         $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
@@ -172,18 +166,18 @@ final class Tag extends Model\AbstractModel
      * @param Tag    $tag               The tag to search for
      * @param string $type              The type of elements to search for: 'document', 'asset' or 'object'
      * @param array  $subtypes          Filter by subtypes, eg. page, object, email, folder etc.
-     * @param array  $classNames        For objects only: filter by classnames
-     * @param bool   $considerChildTags Look for elements having one of $tag's children assigned
+     * @param array $classNames        For objects only: filter by classnames
+     * @param bool $considerChildTags Look for elements having one of $tag's children assigned
      *
      * @return array
      */
     public static function getElementsForTag(
         Tag $tag,
-        $type,
+        string $type,
         array $subtypes = [],
-        $classNames = [],
-        $considerChildTags = false
-    ) {
+        array $classNames = [],
+        bool $considerChildTags = false
+    ): array {
         return $tag->getDao()->getElementsForTag($tag, $type, $subtypes, $classNames, $considerChildTags);
     }
 
@@ -192,7 +186,7 @@ final class Tag extends Model\AbstractModel
      *
      * @return Tag|null
      */
-    public static function getByPath($path)
+    public static function getByPath(string $path): ?Tag
     {
         try {
             return (new self)->getDao()->getByPath($path);
@@ -201,80 +195,56 @@ final class Tag extends Model\AbstractModel
         }
     }
 
-    public function save()
+    public function save(): void
     {
         $isUpdate = $this->exists();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::PRE_UPDATE);
+            $this->dispatchEvent(new TagEvent($this), TagEvents::PRE_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::PRE_ADD);
+            $this->dispatchEvent(new TagEvent($this), TagEvents::PRE_ADD);
         }
 
         $this->correctPath();
         $this->getDao()->save();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::POST_UPDATE);
+            $this->dispatchEvent(new TagEvent($this), TagEvents::POST_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::POST_ADD);
+            $this->dispatchEvent(new TagEvent($this), TagEvents::POST_ADD);
         }
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return Tag
-     */
-    public function setId(?int $id)
+    public function setId(?int $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return Tag
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getParentId(): int
     {
         return $this->parentId;
     }
 
-    /**
-     * @param int $parentId
-     *
-     * @return Tag
-     */
-    public function setParentId(int $parentId)
+    public function setParentId(int $parentId): static
     {
         $this->parentId = $parentId;
         $this->parent = null;
@@ -283,9 +253,6 @@ final class Tag extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return Tag|null
-     */
     public function getParent(): ?Tag
     {
         if ($this->parent === null && $parentId = $this->getParentId()) {
@@ -295,28 +262,17 @@ final class Tag extends Model\AbstractModel
         return $this->parent;
     }
 
-    /**
-     * @return string
-     */
-    public function getIdPath()
+    public function getIdPath(): string
     {
         return $this->idPath;
     }
 
-    /**
-     * @return string
-     */
-    public function getFullIdPath()
+    public function getFullIdPath(): string
     {
         return $this->getIdPath() . $this->getId() . '/';
     }
 
-    /**
-     * @param bool $includeOwnName
-     *
-     * @return string
-     */
-    public function getNamePath($includeOwnName = true)
+    public function getNamePath(bool $includeOwnName = true): string
     {
         //set id path to correct value
         $parentNames = [];
@@ -342,7 +298,7 @@ final class Tag extends Model\AbstractModel
     /**
      * @return Tag[]
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         if ($this->children == null) {
             if ($this->getId()) {
@@ -358,15 +314,12 @@ final class Tag extends Model\AbstractModel
         return $this->children;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return count($this->getChildren()) > 0;
     }
 
-    public function correctPath()
+    public function correctPath(): void
     {
         //set id path to correct value
         $parentIds = [];
@@ -389,19 +342,16 @@ final class Tag extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
-        \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::PRE_DELETE);
+        $this->dispatchEvent(new TagEvent($this), TagEvents::PRE_DELETE);
 
         $this->getDao()->delete();
 
-        \Pimcore::getEventDispatcher()->dispatch(new TagEvent($this), TagEvents::POST_DELETE);
+        $this->dispatchEvent(new TagEvent($this), TagEvents::POST_DELETE);
     }
 
-    /**
-     * @return bool
-     */
-    public function exists()
+    public function exists(): bool
     {
         return $this->getDao()->exists();
     }

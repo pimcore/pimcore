@@ -30,23 +30,25 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
-     * @param int $id
+     * @param int|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT documents.*, documents_page.*, tree_locks.locked FROM documents
+        $data = $this->db->fetchAssociative("SELECT documents.*, documents_page.*, tree_locks.locked FROM documents
             LEFT JOIN documents_page ON documents.id = documents_page.id
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                 WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
-            $data['metaData'] = @unserialize($data['metaData']);
+            if (is_string($data['metaData'])) {
+                $data['metaData'] = @unserialize($data['metaData']);
+            }
             if (!is_array($data['metaData'])) {
                 $data['metaData'] = [];
             }
@@ -56,7 +58,7 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
         }
     }
 
-    public function create()
+    public function create(): void
     {
         parent::create();
 
@@ -68,7 +70,7 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleteAllProperties();
 

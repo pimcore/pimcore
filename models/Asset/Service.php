@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,6 +23,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -40,19 +42,19 @@ class Service extends Model\Element\Service
      *
      * @var Model\User|null
      */
-    protected $_user;
+    protected ?Model\User $_user;
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $_copyRecursiveIds;
+    protected array $_copyRecursiveIds;
 
     /**
-     * @param Model\User $user
+     * @param Model\User|null $user
      */
-    public function __construct($user = null)
+    public function __construct(Model\User $user = null)
     {
         $this->_user = $user;
     }
@@ -61,13 +63,12 @@ class Service extends Model\Element\Service
      * @param Asset $target
      * @param Asset $source
      *
-     * @return Asset|null copied asset
+     * @return Asset|Folder|null copied asset
      *
      * @throws \Exception
      */
-    public function copyRecursive($target, $source)
+    public function copyRecursive(Asset $target, Asset $source): Asset|Folder|null
     {
-
         // avoid recursion
         if (!$this->_copyRecursiveIds) {
             $this->_copyRecursiveIds = [];
@@ -97,7 +98,7 @@ class Service extends Model\Element\Service
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
-        $new->setLocked(false);
+        $new->setLocked(null);
         $new->setCreationDate(time());
         $new->setStream($source->getStream());
         $new->save();
@@ -123,14 +124,14 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param  Asset $target
-     * @param  Asset $source
+     * @param Asset $target
+     * @param Asset $source
      *
-     * @return Asset copied asset
+     * @return Asset|Folder copied asset
      *
      * @throws \Exception
      */
-    public function copyAsChild($target, $source)
+    public function copyAsChild(Asset $target, Asset $source): Asset|Folder
     {
         $source->getProperties();
 
@@ -153,7 +154,7 @@ class Service extends Model\Element\Service
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
-        $new->setLocked(false);
+        $new->setLocked(null);
         $new->setCreationDate(time());
         $new->setStream($source->getStream());
         $new->save();
@@ -175,13 +176,12 @@ class Service extends Model\Element\Service
      * @param Asset $target
      * @param Asset $source
      *
-     * @return mixed
+     * @return Asset
      *
      * @throws \Exception
      */
-    public function copyContents($target, $source)
+    public function copyContents(Asset $target, Asset $source): Asset
     {
-
         // check if the type is the same
         if (get_class($source) != get_class($target)) {
             throw new \Exception('Source and target have to be the same type');
@@ -193,8 +193,7 @@ class Service extends Model\Element\Service
         }
 
         $target->setUserModification($this->_user ? $this->_user->getId() : 0);
-        $newProps = Element\Service::cloneMe($source->getProperties());
-        $target->setProperties($newProps);
+        $target->setProperties(self::cloneProperties($source->getProperties()));
         $target->save();
 
         return $target;
@@ -210,7 +209,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function gridAssetData($asset, $fields = null, $requestedLanguage = null, $params = [])
+    public static function gridAssetData(Asset $asset, array $fields = null, string $requestedLanguage = null, array $params = []): array
     {
         $data = Element\Service::gridElementData($asset);
         $loader = null;
@@ -281,7 +280,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function getPreviewThumbnail($asset, $params = [], $onlyMethod = false)
+    public static function getPreviewThumbnail(Asset $asset, array $params = [], bool $onlyMethod = false): ?string
     {
         $thumbnailMethod = '';
         $thumbnailUrl = null;
@@ -316,7 +315,7 @@ class Service extends Model\Element\Service
      *
      * @return bool
      */
-    public static function pathExists($path, $type = null)
+    public static function pathExists(string $path, string $type = null): bool
     {
         if (!$path) {
             return false;
@@ -363,14 +362,14 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     * @internal
-     *
      * @param Asset $asset
      * @param array $rewriteConfig
      *
      * @return Asset
+     *
+     * @internal
      */
-    public static function rewriteIds($asset, $rewriteConfig)
+    public static function rewriteIds(Asset $asset, array $rewriteConfig): Asset
     {
         // rewriting properties
         $properties = $asset->getProperties();
@@ -383,14 +382,14 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @internal
-     *
      * @param array $metadata
      * @param string $mode
      *
      * @return array
+     *
+     * @internal
      */
-    public static function minimizeMetadata($metadata, string $mode)
+    public static function minimizeMetadata(array $metadata, string $mode): array
     {
         if (!is_array($metadata)) {
             return $metadata;
@@ -427,7 +426,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function expandMetadataForEditmode($metadata)
+    public static function expandMetadataForEditmode(array $metadata): array
     {
         if (!is_array($metadata)) {
             return $metadata;
@@ -459,23 +458,15 @@ class Service extends Model\Element\Service
         return $result;
     }
 
-    /**
-     * @param Model\Asset $item
-     * @param int $nr
-     *
-     * @return string
-     *
-     * @throws \Exception
-     */
-    public static function getUniqueKey($item, $nr = 0)
+    public static function getUniqueKey(ElementInterface $element, int $nr = 0): string
     {
         $list = new Listing();
-        $key = Element\Service::getValidKey($item->getKey(), 'asset');
+        $key = Element\Service::getValidKey($element->getKey(), 'asset');
         if (!$key) {
             throw new \Exception('No item key set.');
         }
         if ($nr) {
-            if ($item->getType() == 'folder') {
+            if ($element->getType() == 'folder') {
                 $key = $key . '_' . $nr;
             } else {
                 $keypart = substr($key, 0, strrpos($key, '.'));
@@ -484,20 +475,20 @@ class Service extends Model\Element\Service
             }
         }
 
-        $parent = $item->getParent();
+        $parent = $element->getParent();
         if (!$parent) {
             throw new \Exception('You have to set a parent folder to determine a unique Key');
         }
 
-        if (!$item->getId()) {
+        if (!$element->getId()) {
             $list->setCondition('parentId = ? AND `filename` = ? ', [$parent->getId(), $key]);
         } else {
-            $list->setCondition('parentId = ? AND `filename` = ? AND id != ? ', [$parent->getId(), $key, $item->getId()]);
+            $list->setCondition('parentId = ? AND `filename` = ? AND id != ? ', [$parent->getId(), $key, $element->getId()]);
         }
         $check = $list->loadIdList();
         if (!empty($check)) {
             $nr++;
-            $key = self::getUniqueKey($item, $nr);
+            $key = self::getUniqueKey($element, $nr);
         }
 
         return $key;

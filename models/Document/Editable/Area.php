@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,6 +23,7 @@ use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Model;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool\HtmlUtils;
+use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -29,9 +31,23 @@ use Pimcore\Tool\HtmlUtils;
 class Area extends Model\Document\Editable
 {
     /**
+     * The Type configured for the area
+     *
+     * @internal
+     *
+     * @var string|null
+     */
+    protected ?string $type = null;
+
+    public function getBrickType(): ?string
+    {
+        return $this->type;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'area';
     }
@@ -39,9 +55,25 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
-        return null;
+        return [
+            'type' => $this->type,
+        ];
+    }
+
+    public function getDataForResource(): array
+    {
+        return [
+            'type' => $this->type,
+        ];
+    }
+
+    public function getDataEditmode(): array
+    {
+        return [
+            'type' => $this->type,
+        ];
     }
 
     /**
@@ -57,12 +89,7 @@ class Area extends Model\Document\Editable
         $this->outputEditmode('</div>');
     }
 
-    /**
-     * @param array $config
-     * @param EditableRenderer $editableRenderer
-     * @param string $dialogId
-     */
-    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId)
+    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId): void
     {
         if (isset($config['items']) && is_array($config['items'])) {
             // layout component
@@ -89,24 +116,18 @@ class Area extends Model\Document\Editable
     {
         $config = $this->getConfig();
         // create info object and assign it to the view
-        try {
-            $info = new Area\Info();
-            $info->setId($config['type']);
-            $info->setEditable($this);
-            $info->setIndex(0);
-        } catch (\Exception $e) {
-            $info = null;
-        }
+        $info = new Area\Info();
+        $info->setId($config['type']);
+        $info->setEditable($this);
+        $info->setIndex(0);
 
         $params = [];
-        if (isset($config['params']) && is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
-            if (is_array($config['params'][$config['type']])) {
-                $params = $config['params'][$config['type']];
-            }
+        if (is_array($config['params'][$config['type']] ?? null)) {
+            $params = $config['params'][$config['type']];
         }
 
-        if (isset($config['globalParams'])) {
-            $params = array_merge($config['globalParams'], (array)$params);
+        if (is_array($config['globalParams'] ?? null)) {
+            $params = array_merge($config['globalParams'], $params);
         }
 
         $info->setParams($params);
@@ -123,11 +144,6 @@ class Area extends Model\Document\Editable
 
         // TODO inject area handler via DI when editables are built by container
         $editableHandler = \Pimcore::getContainer()->get(EditableHandler::class);
-
-        // don't show disabled bricks
-        if (!$editableHandler->isBrickEnabled($this, $config['type'] && ($config['dontCheckEnabled'] ?? false) !== true)) {
-            return;
-        }
 
         // push current block name
         $blockState = $this->getBlockState();
@@ -188,23 +204,30 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
+        if (strlen($data) > 2) {
+            $data = Serialize::unserialize($data);
+        }
+
+        $this->type = $data['type'] ?? null;
+
         return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
+        if (is_array($data)) {
+            $this->type = $data['type'] ?? null;
+        }
+
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return false;
     }
@@ -218,7 +241,7 @@ class Area extends Model\Document\Editable
      *
      * @return Model\Document\Editable
      */
-    public function getElement(string $name)
+    public function getElement(string $name): Model\Document\Editable
     {
         $document = $this->getDocument();
         $parentBlockNames = $this->getParentBlockNames();

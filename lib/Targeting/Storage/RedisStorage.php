@@ -28,10 +28,7 @@ class RedisStorage implements TargetingStorageInterface
 
     const STORAGE_KEY_UPDATED_AT = '_u';
 
-    /**
-     * @var \Credis_Client
-     */
-    private $redis;
+    private \Credis_Client $redis;
 
     public function __construct(\Credis_Client $redis)
     {
@@ -78,10 +75,10 @@ class RedisStorage implements TargetingStorageInterface
         return (bool)$result;
     }
 
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value): void
     {
         if (!$visitorInfo->hasVisitorId()) {
-            return false;
+            return;
         }
 
         $json = json_encode($value);
@@ -99,7 +96,10 @@ class RedisStorage implements TargetingStorageInterface
         $multi->exec();
     }
 
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
+    /**
+     * {@inheritdoc }
+     */
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed
     {
         if (!$visitorInfo->hasVisitorId()) {
             return $default;
@@ -120,7 +120,10 @@ class RedisStorage implements TargetingStorageInterface
         return $decoded;
     }
 
-    public function clear(VisitorInfo $visitorInfo, string $scope = null)
+    /**
+     * {@inheritdoc }
+     */
+    public function clear(VisitorInfo $visitorInfo, string $scope = null): void
     {
         $scopes = [];
         if (null !== $scope) {
@@ -135,7 +138,7 @@ class RedisStorage implements TargetingStorageInterface
         }
     }
 
-    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): void
     {
         // only allow migration if a visitor ID is available as otherwise the fallback
         // would clear the original storage although data was not stored
@@ -181,17 +184,17 @@ class RedisStorage implements TargetingStorageInterface
         $multi->exec();
     }
 
-    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         return $this->loadDate($visitorInfo, $scope, self::STORAGE_KEY_CREATED_AT);
     }
 
-    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         return $this->loadDate($visitorInfo, $scope, self::STORAGE_KEY_UPDATED_AT);
     }
 
-    private function loadDate(VisitorInfo $visitorInfo, string $scope, string $storageKey)
+    private function loadDate(VisitorInfo $visitorInfo, string $scope, string $storageKey): ?\DateTimeImmutable
     {
         if (!$visitorInfo->hasVisitorId()) {
             return null;
@@ -204,7 +207,7 @@ class RedisStorage implements TargetingStorageInterface
             return null;
         }
 
-        return \DateTimeImmutable::createFromFormat('U', $timestamp);
+        return \DateTimeImmutable::createFromFormat('U', $timestamp) ?: null;
     }
 
     private function buildKey(VisitorInfo $visitorInfo, string $scope): string
@@ -223,7 +226,7 @@ class RedisStorage implements TargetingStorageInterface
         int $currentCreatedAt,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    ) {
+    ): void {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (0 === $currentCreatedAt) {
@@ -233,7 +236,7 @@ class RedisStorage implements TargetingStorageInterface
         $multi->hSet($key, self::STORAGE_KEY_UPDATED_AT, (string)($timestamps['updatedAt']->getTimestamp()));
     }
 
-    private function updateExpiry(\Credis_Client $multi, string $scope, string $key)
+    private function updateExpiry(\Credis_Client $multi, string $scope, string $key): void
     {
         $expiry = $this->expiryFor($scope);
         if ($expiry > 0) {

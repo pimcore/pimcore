@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * @return Model\Asset[]
      */
-    public function getAssets()
+    public function getAssets(): array
     {
         return $this->getData();
     }
@@ -40,9 +41,9 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * @param Model\Asset[] $assets
      *
-     * @return static
+     * @return $this
      */
-    public function setAssets($assets)
+    public function setAssets(array $assets): static
     {
         return $this->setData($assets);
     }
@@ -51,12 +52,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * Methods for AdapterInterface
      */
-
-    /**
-     * @return int
-     */
-    #[\ReturnTypeWillChange]
-    public function count()// : int
+    public function count(): int
     {
         return $this->getTotalCount();
     }
@@ -67,7 +63,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return Model\Asset[]
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
@@ -79,20 +75,25 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * @internal
      *
      * @param Model\User $user
+     * @param Model\Asset $asset
+
      *
-     * @return static
+     * @return $this
      */
-    public function filterAccessibleByUser(Model\User $user)
+    public function filterAccessibleByUser(Model\User $user, Model\Asset $asset): static
     {
         if (!$user->isAdmin()) {
             $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
+            $currentUserId = $user->getId();
+            $userIds[] = $currentUserId;
 
-            $condition = '(
-                (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
-                or
-                (SELECT list FROM users_workspaces_asset WHERE userId IN ('.implode(',', $userIds).') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '.$user->getId().') DESC, list DESC LIMIT 1)=1
-            )';
+            $inheritedPermission = $asset->getDao()->isInheritingPermission('list', $userIds);
+
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,filename),cpath)=1 AND
+            NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
+            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
+
+            $condition = 'IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
 
             $this->addConditionParam($condition);
         }

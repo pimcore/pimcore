@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,8 +20,5 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 interface KernelResponseEventInterface
 {
-    /**
-     * @param ResponseEvent $event
-     */
-    public function onKernelResponseEvent(ResponseEvent $event);
+    public function onKernelResponseEvent(ResponseEvent $event): void;
 }

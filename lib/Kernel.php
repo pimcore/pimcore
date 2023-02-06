@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,16 +19,14 @@ namespace Pimcore;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
+use Knp\Bundle\PaginatorBundle\KnpPaginatorBundle;
 use League\FlysystemBundle\FlysystemBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
-use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
-use Pimcore\HttpKernel\BundleCollection\ItemInterface;
-use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
@@ -40,15 +39,13 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\Config\Resource\FileExistenceResource;
-use Symfony\Component\Config\Resource\FileResource;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 abstract class Kernel extends SymfonyKernel
 {
@@ -58,42 +55,24 @@ abstract class Kernel extends SymfonyKernel
         registerBundles as microKernelRegisterBundles;
     }
 
-    /**
-     * @var Extension\Config
-     */
-    protected $extensionConfig;
-
-    /**
-     * @var BundleCollection
-     */
-    private $bundleCollection;
-
-    /**
-     * @deprecated
-     */
-    public function getRootDir()
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.3',
-            'Kernel::getRootDir() is deprecated and will be removed in Pimcore 11. Use Kernel::getProjectDir() instead.',
-        );
-
-        return PIMCORE_PROJECT_ROOT;
-    }
+    private BundleCollection $bundleCollection;
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
-    public function getProjectDir()
+    public function getProjectDir(): string
     {
         return PIMCORE_PROJECT_ROOT;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         if (isset($_SERVER['APP_CACHE_DIR'])) {
             return $_SERVER['APP_CACHE_DIR'].'/'.$this->environment;
@@ -104,15 +83,14 @@ abstract class Kernel extends SymfonyKernel
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return PIMCORE_LOG_DIRECTORY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureContainer(ContainerConfigurator $container): void
     {
         $projectDir = realpath($this->getProjectDir());
@@ -128,9 +106,6 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
         $projectDir = realpath($this->getProjectDir());
@@ -148,12 +123,8 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $loader->load(function (ContainerBuilder $container) {
-            $this->registerExtensionConfigFileResources($container);
-        });
-
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
             $loader->load($bundleConfig);
@@ -162,7 +133,7 @@ abstract class Kernel extends SymfonyKernel
         $this->microKernelRegisterContainerConfiguration($loader);
 
         //load system configuration
-        $systemConfigFile = Config::locateConfigFile('system.yml');
+        $systemConfigFile = Config::locateConfigFile('system.yaml');
         if (file_exists($systemConfigFile)) {
             $loader->load($systemConfigFile);
         }
@@ -208,6 +179,10 @@ abstract class Kernel extends SymfonyKernel
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS',
                 'defaultStorageDirectoryName' => 'custom-views',
             ],
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS',
+                'defaultStorageDirectoryName' => 'custom-layouts',
+            ],
         ];
 
         foreach ($configArray as $config) {
@@ -220,35 +195,10 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
-    private function registerExtensionConfigFileResources(ContainerBuilder $container)
-    {
-        $filenames = [
-            'extensions.php',
-            sprintf('extensions_%s.php', $this->getEnvironment()),
-        ];
-
-        $directories = [
-            PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY,
-            PIMCORE_CONFIGURATION_DIRECTORY,
-        ];
-
-        // add possible extensions.php files as file existence resources (only for the current env)
-        foreach ($directories as $directory) {
-            foreach ($filenames as $filename) {
-                $container->addResource(new FileExistenceResource($directory . '/' . $filename));
-            }
-        }
-
-        // add extensions.php as container resource
-        if ($this->extensionConfig->configFileExists()) {
-            $container->addResource(new FileResource($this->extensionConfig->locateConfigFile()));
-        }
-    }
-
     /**
      * {@inheritdoc}
      */
-    public function boot()
+    public function boot(): void
     {
         if (true === $this->booted) {
             // make sure container reset is handled properly
@@ -260,16 +210,13 @@ abstract class Kernel extends SymfonyKernel
         // handle system requirements
         $this->setSystemRequirements();
 
-        // initialize extension manager config
-        $this->extensionConfig = new Extension\Config();
-
         parent::boot();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function shutdown()
+    public function shutdown(): void
     {
         if (true === $this->booted) {
             // cleanup runtime cache, doctrine, monolog ... to free some memory and avoid locking issues
@@ -282,15 +229,12 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
-    protected function initializeContainer()
+    protected function initializeContainer(): void
     {
         parent::initializeContainer();
 
         // initialize runtime cache (defined as synthetic service)
-        Runtime::getInstance();
-
-        // set the extension config on the container
-        $this->getContainer()->set(Extension\Config::class, $this->extensionConfig);
+        RuntimeCache::getInstance();
 
         \Pimcore::initLogger();
         \Pimcore\Cache::init();
@@ -320,10 +264,10 @@ abstract class Kernel extends SymfonyKernel
     {
         $collection = $this->createBundleCollection();
 
-        if (is_file($this->getProjectDir().'/config/bundles.php')) {
-            $flexBundles = [];
-            array_push($flexBundles, ...$this->microKernelRegisterBundles());
-            $collection->addBundles($flexBundles);
+        if (is_file($this->getBundlesPath())) {
+            foreach ($this->microKernelRegisterBundles() as $flexBundle) {
+                $collection->addBundle($flexBundle);
+            }
         }
 
         // core bundles (Symfony, Pimcore)
@@ -331,9 +275,6 @@ abstract class Kernel extends SymfonyKernel
 
         // custom bundles
         $this->registerBundlesToCollection($collection);
-
-        // bundles registered in extensions.php
-        $this->registerExtensionManagerBundles($collection);
 
         $bundles = $collection->getBundles($this->getEnvironment());
 
@@ -368,13 +309,14 @@ abstract class Kernel extends SymfonyKernel
      *
      * @param BundleCollection $collection
      */
-    protected function registerCoreBundlesToCollection(BundleCollection $collection)
+    protected function registerCoreBundlesToCollection(BundleCollection $collection): void
     {
         $collection->addBundles([
             // symfony "core"/standard
             new FrameworkBundle(),
             new SecurityBundle(),
             new TwigBundle(),
+            new TwigExtraBundle(),
             new MonologBundle(),
             new DoctrineBundle(),
             new DoctrineMigrationsBundle(),
@@ -384,6 +326,7 @@ abstract class Kernel extends SymfonyKernel
             new SchebTwoFactorBundle(),
             new FOSJsRoutingBundle(),
             new FlysystemBundle(),
+            new KnpPaginatorBundle(),
         ], 100);
 
         // pimcore bundles
@@ -401,38 +344,12 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
+    /**
+     * @return string[]
+     */
     protected function getEnvironmentsForDevBundles(): array
     {
         return ['dev', 'test'];
-    }
-
-    /**
-     * Registers bundles enabled via extension manager
-     *
-     * @param BundleCollection $collection
-     */
-    protected function registerExtensionManagerBundles(BundleCollection $collection)
-    {
-        $stateConfig = new StateConfig($this->extensionConfig);
-
-        foreach ($stateConfig->getEnabledBundles() as $className => $options) {
-            if (!class_exists($className)) {
-                continue;
-            }
-
-            // do not register bundles twice - skip if it was already loaded manually
-            if ($collection->hasItem($className)) {
-                continue;
-            }
-
-            // use lazy loaded item to instantiate the bundle only if environment matches
-            $collection->add(new LazyLoadedItem(
-                $className,
-                $options['priority'],
-                $options['environments'],
-                ItemInterface::SOURCE_EXTENSION_MANAGER_CONFIG
-            ));
-        }
     }
 
     /**
@@ -443,14 +360,14 @@ abstract class Kernel extends SymfonyKernel
      *
      * @param BundleCollection $collection
      */
-    public function registerBundlesToCollection(BundleCollection $collection)
+    public function registerBundlesToCollection(BundleCollection $collection): void
     {
     }
 
     /**
      * Handle system settings and requirements
      */
-    protected function setSystemRequirements()
+    protected function setSystemRequirements(): void
     {
         // try to set system-internal variables
         $maxExecutionTime = 240;
@@ -459,7 +376,7 @@ abstract class Kernel extends SymfonyKernel
         }
 
         //@ini_set("memory_limit", "1024M");
-        @ini_set('max_execution_time', $maxExecutionTime);
+        @ini_set('max_execution_time', (string) $maxExecutionTime);
         @set_time_limit($maxExecutionTime);
         ini_set('default_charset', 'UTF-8');
 

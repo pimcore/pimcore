@@ -10,14 +10,10 @@ flysystem:
         pimcore.asset.storage:
             # Storage for asset source files, directory structure is equal to the asset tree structure
             adapter: 'local'
-            visibility: public
+            visibility: private
+            directory_visibility: public
             options:
                 directory: '%kernel.project_dir%/public/var/assets'
-                permissions:
-                    file:
-                        private: 0644
-                    dir:
-                        private: 0755
         pimcore.asset_cache.storage:
             # Storage for cached asset files, e.g. PDF and image files generated out of Office files or videos
             # which are then used by the thumbnail engine as source files
@@ -28,14 +24,10 @@ flysystem:
         pimcore.thumbnail.storage:
             # Storage for image and video thumbnails, directory structure is equal to the source asset tree
             adapter: 'local'
-            visibility: public
+            visibility: private
+            directory_visibility: public
             options:
                 directory: '%kernel.project_dir%/public/var/tmp/thumbnails'
-                permissions:
-                    file:
-                        private: 0644
-                    dir:
-                        private: 0755
         pimcore.version.storage:
             # Storage for serialized versioning data of documents/asset/data objects
             adapter: 'local'
@@ -77,14 +69,16 @@ pimcore:
             # Thumbnails are usually generated on demand (if not configured differently), this 
             # prefix is used for thumbnails which were not yet generated and therefore are not 
             # available on the thumbnail storage yet. Usually it's not necessary to change this config.
-            thumbnail_deferred: /deferred-thumbnail
+            # However, a possible use case would be to point to a specific host that handles generating 
+            # the thumbnails and takes the load from the main application server(s)
+            # thumbnail_deferred: https://thumbnail-generator-node.example.com
 ```
 This will add the configured prefix to the path of assets and thumbnails in the frontend context 
 (e.g. your templates). 
 So basically the path to `/Sample/Tavi.jpg` will change to
-`https://tavi-12345678990.cloudfront.net/asset/Sample/Tavi.jpg` 
-and `/Sample/image-thumb__362__galleryThumbnail/Tavi.jpg` changes to
-`https://tavi-12345678990.cloudfront.net/thumbnail/Sample/image-thumb__362__galleryThumbnail/Tavi.jpg`
+`https://tavi-12345678990.cloudfront.net/asset/Sample/Tavi.jpg`
+and `/Sample/362/image-thumb__362__galleryThumbnail/Tavi.jpg` changes to
+`https://tavi-12345678990.cloudfront.net/thumbnail/Sample/362/image-thumb__362__galleryThumbnail/Tavi.jpg`
 
 This is especially useful if using an object storage that is publicly accessible or if using a CDN 
 like CloudFront for your resources. 
@@ -118,31 +112,7 @@ services:
                    secret: '%env(S3_STORAGE_SECRET)%'
 ```
 
-Note: The required IAM permissions are:
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "Stmt1420044805001",
-            "Effect": "Allow",
-            "Action": [
-                "s3:ListBucket",
-                "s3:GetObject",
-                "s3:GetObjectAcl",
-                "s3:PutObject",
-                "s3:PutObjectAcl",
-                "s3:ReplicateObject",
-                "s3:DeleteObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::your-bucket-name",
-                "arn:aws:s3:::your-bucket-name/*"
-            ]
-        }
-    ]
-}
-```
+For more information on required IAM permissions, please have a look at the [Flysystem documentation](https://flysystem.thephpleague.com/v1/docs/adapter/aws-s3-v3/#streamed-reads).
 
 And then override core flysystem configuration to use remote storage instead of local. For that, change the adapter from 'local' to 'aws'.
 Also update following options:
@@ -195,14 +165,10 @@ flysystem:
 
         pimcore.thumbnail.storage.source:
             adapter: 'local'
-            visibility: public
+            visibility: private
+            directory_visibility: public
             options:
                 directory: '%kernel.project_dir%/public/var/tmp/thumbnails'
-                permissions:
-                    file:
-                        private: 0644
-                    dir:
-                        private: 0755
 
         pimcore.thumbnail.storage.target:
             adapter: 'aws'

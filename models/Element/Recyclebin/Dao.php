@@ -24,8 +24,8 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    public function flush()
+    public function flush(): void
     {
-        $this->db->deleteWhere('recyclebin');
+        $this->db->executeStatement('DELETE FROM recyclebin');
     }
 }

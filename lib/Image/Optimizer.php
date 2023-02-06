@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,12 +26,9 @@ class Optimizer implements ImageOptimizerInterface
     /**
      * @var OptimizerInterface[]
      */
-    private $optimizers = [];
+    private array $optimizers = [];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function optimizeImage($path)
+    public function optimizeImage(string $path): void
     {
         $extension = File::getFileExtension($path);
         $storage = Storage::get('thumbnail');
@@ -40,8 +38,10 @@ class Optimizer implements ImageOptimizerInterface
 
         foreach ($this->optimizers as $optimizer) {
             if ($optimizer->supports($storage->mimeType($path))) {
+                $tmpFilePath = File::getLocalTempFilePath($extension);
+
                 try {
-                    $optimizedFile = $optimizer->optimizeImage($workingPath, File::getLocalTempFilePath($extension));
+                    $optimizedFile = $optimizer->optimizeImage($workingPath, $tmpFilePath);
 
                     $optimizedImages[] = [
                         'filesize' => filesize($optimizedFile),
@@ -49,6 +49,9 @@ class Optimizer implements ImageOptimizerInterface
                         'optimizer' => $optimizer,
                     ];
                 } catch (ImageOptimizationFailedException $ex) {
+                    if (file_exists($tmpFilePath)) {
+                        unlink($tmpFilePath);
+                    }
                 }
             }
         }
@@ -77,10 +80,7 @@ class Optimizer implements ImageOptimizerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function registerOptimizer(OptimizerInterface $optimizer)
+    public function registerOptimizer(OptimizerInterface $optimizer): void
     {
         if (in_array($optimizer, $this->optimizers)) {
             throw new \InvalidArgumentException(sprintf('Optimizer of class %s has already been registered',

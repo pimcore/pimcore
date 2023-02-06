@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,20 +16,16 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
 final class PropertyGetter extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $propertyName;
+    private string $propertyName;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -38,7 +35,7 @@ final class PropertyGetter extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -47,18 +44,12 @@ final class PropertyGetter extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @return string
-     */
-    public function getPropertyName()
+    public function getPropertyName(): string
     {
         return $this->propertyName;
     }
 
-    /**
-     * @param string $propertyName
-     */
-    public function setPropertyName($propertyName)
+    public function setPropertyName(string $propertyName): void
     {
         $this->propertyName = $propertyName;
     }

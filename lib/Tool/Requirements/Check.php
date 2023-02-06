@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,90 +27,52 @@ final class Check implements \ArrayAccess
 
     const STATE_ERROR = 3;
 
-    /**
-     * @var string
-     */
-    public $name;
+    public string $name;
 
-    /**
-     * @var string
-     */
-    public $link;
+    public ?string $link = null;
 
-    /**
-     * @var string
-     */
-    public $state;
+    public int $state;
 
-    /**
-     * @var string
-     */
-    public $message;
+    public ?string $message = null;
 
-    /**
-     * Check constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(array $data = [])
+    public function __construct(array $data)
     {
         foreach ($data as $key => $value) {
             $this->$key = $value;
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getLink()
+    public function getLink(): ?string
     {
         return $this->link;
     }
 
-    /**
-     * @param string $link
-     */
-    public function setLink($link)
+    public function setLink(string $link): void
     {
         $this->link = $link;
     }
 
-    /**
-     * @return string
-     */
-    public function getState()
+    public function getState(): int
     {
         return $this->state;
     }
 
-    /**
-     * @param string $state
-     */
-    public function setState($state)
+    public function setState(int $state): void
     {
         $this->state = $state;
     }
 
-    /**
-     * @return string
-     */
-    public function getMessage()
+    public function getMessage(): string
     {
         if (empty($this->message)) {
             return $this->getName() . ' is required.';
@@ -118,10 +81,7 @@ final class Check implements \ArrayAccess
         return $this->message;
     }
 
-    /**
-     * @param string $message
-     */
-    public function setMessage($message)
+    public function setMessage(string $message): void
     {
         $this->message = $message;
     }
@@ -139,16 +99,16 @@ final class Check implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return string
+     * @return string|int|null
      */
-    public function offsetGet($offset): string
+    public function offsetGet($offset): string|int|null
     {
         return $this->{'get'.$offset}();
     }
 
     /**
      * @param string $offset
-     * @param string $value
+     * @param string|int $value
      */
     public function offsetSet($offset, $value): void
     {

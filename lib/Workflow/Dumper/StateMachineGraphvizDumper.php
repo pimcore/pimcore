@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -52,7 +53,7 @@ class StateMachineGraphvizDumper extends GraphvizDumper
     /**
      * @internal
      */
-    protected function findEdges(Definition $definition)
+    protected function findEdges(Definition $definition): array
     {
         $edges = [];
 
@@ -74,7 +75,7 @@ class StateMachineGraphvizDumper extends GraphvizDumper
     /**
      * @internal
      */
-    protected function addEdges(array $edges)
+    protected function addEdges(array $edges): string
     {
         $code = '';
 

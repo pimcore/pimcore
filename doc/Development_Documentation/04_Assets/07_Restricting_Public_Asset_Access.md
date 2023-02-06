@@ -153,7 +153,6 @@ class MyAssetController extends FrontendController
                 'Content-Type' => 'application/pdf',
             ]);
         } elseif (preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
-
             $storage = Storage::get('thumbnail');
             $storagePath = urldecode($pathInfo);
             if($storage->fileExists($storagePath)){
@@ -172,7 +171,7 @@ class MyAssetController extends FrontendController
 
                 try {
                     $parameters = $matcher->matchRequest($request);
-                    return $this->forward('PimcoreCoreBundle:PublicServices:thumbnail', $parameters);
+                    return $this->forward('Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::thumbnailAction', $parameters);
                 } catch (\Exception $e) {
                     // nothing to do
                 }

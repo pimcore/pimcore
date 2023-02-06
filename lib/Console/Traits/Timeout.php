@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,12 +29,11 @@ use Symfony\Component\Console\Input\InputOption;
  */
 trait Timeout
 {
-    /** @var int */
-    private $timeout = -1;
+    private int $timeout = -1;
 
-    private $startTimeCurrentStep = null;
+    private ?int $startTimeCurrentStep = null;
 
-    private $startTime = null;
+    private ?int $startTime = null;
 
     /**
      * Add timeout option to command.
@@ -50,7 +50,7 @@ trait Timeout
      *
      * @param InputInterface $input
      */
-    protected function initTimeout(InputInterface $input)
+    protected function initTimeout(InputInterface $input): void
     {
         $timeout = (int)$input->getOption('timeout');
         $timeout = $timeout > 0 ? $timeout : -1;
@@ -62,7 +62,7 @@ trait Timeout
      *
      * @param int $minutes the timeout in minutes.
      */
-    protected function initTimeoutInMinutes(int $minutes)
+    protected function initTimeoutInMinutes(int $minutes): void
     {
         $this->setTimeout($minutes);
         $this->startTime = time();
@@ -78,7 +78,7 @@ trait Timeout
      *
      * @throws \Exception is thrown in the default implementation when the timeout happens
      */
-    protected function handleTimeout(?\Closure $abortClosure = null)
+    protected function handleTimeout(?\Closure $abortClosure = null): void
     {
         $oldStartTime = $this->startTimeCurrentStep;
         $this->startTimeCurrentStep = time();
@@ -113,9 +113,9 @@ trait Timeout
      *
      * @param int $timeout
      *
-     * @return self
+     * @return $this
      */
-    public function setTimeout(int $timeout): self
+    public function setTimeout(int $timeout): static
     {
         $this->timeout = $timeout;
 
@@ -125,7 +125,7 @@ trait Timeout
     /**
      * Get the start time of the current step in seconds (unixtime).
      *
-     * @return null
+     * @return int|null
      */
     public function getStartTimeCurrentStep(): ?int
     {

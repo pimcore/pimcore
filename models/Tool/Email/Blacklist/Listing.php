@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,9 +32,9 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Tool\Email\Blacklist[]|null $items
      *
-     * @return static
+     * @return $this
      */
-    public function setItems($items)
+    public function setItems(?array $items): static
     {
         return $this->setData($items);
     }
@@ -41,7 +42,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Tool\Email\Blacklist[]
      */
-    public function getItems()
+    public function getItems(): array
     {
         return $this->getData();
     }

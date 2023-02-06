@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,115 +25,85 @@ class Info
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $id;
+    protected ?string $id = null;
 
     /**
      * @internal
      *
-     * @var Editable|Editable\Area|Editable\Areablock
+     * @var Editable|null
      */
-    protected $editable;
+    protected ?Editable $editable = null;
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $params = [];
+    protected array $params = [];
 
     /**
      * @internal
      *
-     * @var Request
+     * @var Request|null
      */
-    protected $request;
+    protected ?Request $request = null;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $type;
+    protected ?string $type = null;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $index;
+    protected ?int $index = null;
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(?string $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return Editable|Editable\Area|Editable\Areablock
-     */
-    public function getEditable()
+    public function getEditable(): ?Editable
     {
         return $this->editable;
     }
 
-    /**
-     * @param Editable $editable
-     */
-    public function setEditable(Editable $editable)
+    public function setEditable(Editable $editable): void
     {
         $this->editable = $editable;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(?string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return mixed|null
-     */
-    public function getParam(string $name)
+    public function getParam(string $name): mixed
     {
         if (isset($this->params[$name])) {
             return $this->params[$name];
@@ -141,75 +112,45 @@ class Info
         return null;
     }
 
-    /**
-     * @param string $name
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function setParam(string $name, $value)
+    public function setParam(string $name, mixed $value): static
     {
         $this->params[$name] = $value;
 
         return $this;
     }
 
-    /**
-     * @param array $params
-     *
-     * @return $this
-     */
-    public function setParams(array $params)
+    public function setParams(array $params): static
     {
         $this->params = $params;
 
         return $this;
     }
 
-    /**
-     * @return Request
-     */
-    public function getRequest()
+    public function getRequest(): ?Request
     {
         return $this->request;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return $this
-     */
-    public function setRequest(Request $request)
+    public function setRequest(Request $request): static
     {
         $this->request = $request;
 
         return $this;
     }
 
-    /**
-     * @param int $index
-     *
-     * @return $this
-     */
-    public function setIndex($index)
+    public function setIndex(?int $index): static
     {
         $this->index = $index;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getIndex()
+    public function getIndex(): ?int
     {
         return $this->index;
     }
 
-    /**
-     * @return Document|Document\PageSnippet
-     */
-    public function getDocument()
+    public function getDocument(): Document\PageSnippet
     {
         return $this->editable->getDocument();
     }
@@ -222,7 +163,7 @@ class Info
      *
      * @throws \Exception
      */
-    public function getDocumentElement($name, $type = '')
+    public function getDocumentElement(string $name, string $type = ''): ?Editable
     {
         $editable = null;
         $document = $this->getDocument();

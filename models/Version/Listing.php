@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,7 +20,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Version\Listing\Dao getDao()
- * @method array loadIdList()
+ * @method int[] loadIdList()
  * @method Model\Version[] load()
  * @method Model\Version|false current()
  * @method int getTotalCount()
@@ -28,23 +29,18 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $loadAutoSave = false;
 
-    /**
-     * @return bool
-     */
     public function isLoadAutoSave(): bool
     {
         return $this->loadAutoSave;
     }
 
     /**
-     * @param bool $loadAutoSave
+     * @return $this
      */
-    public function setLoadAutoSave(bool $loadAutoSave): self
+    public function setLoadAutoSave(bool $loadAutoSave): static
     {
         $this->loadAutoSave = $loadAutoSave;
 
@@ -54,7 +50,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Version[]
      */
-    public function getVersions()
+    public function getVersions(): array
     {
         return $this->getData();
     }
@@ -62,9 +58,9 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Version[]|null $versions
      *
-     * @return static
+     * @return $this
      */
-    public function setVersions($versions)
+    public function setVersions(?array $versions): static
     {
         return $this->setData($versions);
     }

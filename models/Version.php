@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,11 +16,9 @@
 
 namespace Pimcore\Model;
 
-use League\Flysystem\UnableToReadFile;
-use Pimcore\Cache\Runtime;
 use Pimcore\Event\Model\VersionEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\VersionEvents;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
@@ -30,106 +29,61 @@ use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Tool\Serialize;
-use Pimcore\Tool\Storage;
 
 /**
  * @method \Pimcore\Model\Version\Dao getDao()
  */
 final class Version extends AbstractModel
 {
-    /**
-     * @var int
-     */
-    protected $id;
+    use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var int
-     */
-    protected $cid;
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     */
-    protected $ctype;
+    protected int $cid;
 
-    /**
-     * @var int
-     */
-    protected $userId;
+    protected string $ctype;
 
-    /**
-     * @var User|null
-     */
+    protected int $userId;
+
     protected ?User $user = null;
 
-    /**
-     * @var string
-     */
-    protected $note;
+    protected string $note = '';
 
-    /**
-     * @var int
-     */
-    protected $date;
+    protected int $date;
 
-    /**
-     * @var mixed
-     */
-    protected $data;
+    protected mixed $data = null;
 
-    /**
-     * @var bool
-     */
-    protected $public = false;
+    protected bool $public = false;
 
-    /**
-     * @var bool
-     */
-    protected $serialized = false;
+    protected bool $serialized = false;
 
-    /**
-     * @var string|null
-     */
-    protected $stackTrace = '';
+    protected ?string $stackTrace = '';
 
-    /**
-     * @var bool
-     */
-    protected $generateStackTrace = true;
+    protected bool $generateStackTrace = true;
 
-    /**
-     * @var int
-     */
-    protected $versionCount = 0;
+    protected int $versionCount = 0;
 
-    /**
-     * @var string|null
-     */
-    protected $binaryFileHash;
+    protected ?string $binaryFileHash = null;
 
-    /**
-     * @var int|null
-     */
-    protected $binaryFileId;
+    protected ?int $binaryFileId = null;
 
-    /**
-     * @var bool
-     */
-    public static $disabled = false;
+    public static bool $disabled = false;
 
-    /**
-     * @var bool
-     */
     protected bool $autoSave = false;
 
-    /**
-     * @param int $id
-     *
-     * @return Version|null
-     */
-    public static function getById($id)
+    protected ?string $storageType = null;
+
+    protected VersionStorageAdapterInterface $storageAdapter;
+
+    public function __construct()
+    {
+        $this->storageAdapter = \Pimcore::getContainer()->get(VersionStorageAdapterInterface::class);
+    }
+
+    public static function getById(int $id): ?Version
     {
         try {
             /**
@@ -150,7 +104,7 @@ final class Version extends AbstractModel
      *
      * @static
      */
-    public static function disable()
+    public static function disable(): void
     {
         self::$disabled = true;
     }
@@ -161,14 +115,11 @@ final class Version extends AbstractModel
      *
      * @static
      */
-    public static function enable()
+    public static function enable(): void
     {
         self::$disabled = false;
     }
 
-    /**
-     * @return bool
-     */
     public static function isEnabled(): bool
     {
         return !self::$disabled;
@@ -177,17 +128,16 @@ final class Version extends AbstractModel
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
-        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::PRE_SAVE);
+        $this->dispatchEvent(new VersionEvent($this), VersionEvents::PRE_SAVE);
 
         // check if versioning is disabled for this process
         if (self::$disabled) {
             return;
         }
 
-        $storage = Storage::get('version');
-
+        $isAsset = false;
         if (!$this->date) {
             $this->setDate(time());
         }
@@ -202,9 +152,9 @@ final class Version extends AbstractModel
         }
 
         $data = $this->getData();
+
         // if necessary convert the data to save it to filesystem
         if (is_object($data) || is_array($data)) {
-
             // this is because of lazy loaded element inside documents and objects (eg: relational data-types, fieldcollections, ...)
             $fromRuntime = null;
             $cacheKey = null;
@@ -226,51 +176,30 @@ final class Version extends AbstractModel
             $dataString = $data;
         }
 
-        $isAssetFile = false;
         if ($data instanceof Asset && $data->getType() != 'folder') {
-            $isAssetFile = true;
-
+            $isAsset = true;
+            $dataStream = $data->getStream();
             $ctx = hash_init('sha3-512');
-            hash_update_stream($ctx, $data->getStream());
-            $this->binaryFileHash = hash_final($ctx);
+            hash_update_stream($ctx, $dataStream);
+            $this->setBinaryFileHash(hash_final($ctx));
+        }
 
-            $this->binaryFileId = $this->getDao()->getBinaryFileIdForHash($this->binaryFileHash);
+        $this->setStorageType($this->storageAdapter->getStorageType(strlen($dataString),
+            $isAsset ? $data->getfileSize() : null));
+
+        if ($isAsset) {
+            $this->setBinaryFileId($this->getDao()->getBinaryFileIdForHash($this->getBinaryFileHash()));
         }
 
         $id = $this->getDao()->save();
         $this->setId($id);
 
-        $storage->write($this->getStorageFilename(), $dataString);
+        $this->storageAdapter->save($this, $dataString, $isAsset ? $data->getStream() : null);
 
-        // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
-        if ($isAssetFile && !$storage->fileExists($this->getBinaryStoragePath())) {
-            $linked = false;
-
-            // we always try to create a hardlink onto the original file, the asset ensures that not the actual
-            // inodes get overwritten but creates new inodes if the content changes. This is done by deleting the
-            // old file first before opening a new stream -> see Asset::update()
-            $useHardlinks = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['use_hardlinks'];
-            $storage->write($this->getBinaryStoragePath(), '1'); // temp file to determine if stream is local or not
-            if ($useHardlinks && stream_is_local($this->getBinaryFileStream()) && stream_is_local($data->getStream())) {
-                $linkPath = stream_get_meta_data($this->getBinaryFileStream())['uri'];
-                $storage->delete($this->getBinaryStoragePath());
-                $linked = @link(stream_get_meta_data($data->getStream())['uri'], $linkPath);
-            }
-
-            if (!$linked) {
-                $storage->writeStream($this->getBinaryStoragePath(), $data->getStream());
-            }
-        }
-
-        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::POST_SAVE);
+        $this->dispatchEvent(new VersionEvent($this), VersionEvents::POST_SAVE);
     }
 
-    /**
-     * @param ElementInterface $data
-     *
-     * @return mixed
-     */
-    private function marshalData($data)
+    private function marshalData(ElementInterface $data): mixed
     {
         $context = [
             'source' => __METHOD__,
@@ -301,12 +230,7 @@ final class Version extends AbstractModel
         return $newData;
     }
 
-    /**
-     * @param ElementInterface $data
-     *
-     * @return mixed
-     */
-    private function unmarshalData($data)
+    private function unmarshalData(ElementInterface $data): mixed
     {
         $context = [
             'source' => __METHOD__,
@@ -336,47 +260,31 @@ final class Version extends AbstractModel
     /**
      * Delete this Version
      */
-    public function delete()
+    public function delete(): void
     {
-        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::PRE_DELETE);
+        $this->dispatchEvent(new VersionEvent($this), VersionEvents::PRE_DELETE);
 
-        $storage = Storage::get('version');
-
-        $storageFile = $this->getStorageFilename();
-        $storagePath = dirname($storageFile);
-        if ($storage->fileExists($storageFile)) {
-            $storage->delete($this->getStorageFilename());
-            File::recursiveDeleteEmptyDirs($storage, $storagePath);
-        }
-
-        if ($storage->fileExists($this->getBinaryStoragePath()) && !$this->getDao()->isBinaryHashInUse($this->getBinaryFileHash())) {
-            $storage->delete($this->getBinaryStoragePath());
-        }
+        $this->storageAdapter->delete($this,
+            $this->getDao()->isBinaryHashInUse($this->getBinaryFileHash()));
 
         $this->getDao()->delete();
-        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::POST_DELETE);
+        $this->dispatchEvent(new VersionEvent($this), VersionEvents::POST_DELETE);
     }
 
     /**
-     * @internal
-     *
      * @param bool $renewReferences
      *
      * @return mixed
+     *
+     * @internal
      */
-    public function loadData($renewReferences = true)
+    public function loadData(bool $renewReferences = true): mixed
     {
-        $storage = Storage::get('version');
-
-        try {
-            $data = $storage->read($this->getStorageFilename());
-        } catch (UnableToReadFile $e) {
-            $data = null;
-        }
+        $data = $this->storageAdapter->loadMetaData($this);
 
         if (!$data) {
-            Logger::err('Version: cannot read version data from file system.');
-            $this->delete();
+            $msg = 'Version: cannot read version data with storage type: ' . $this->getStorageType();
+            Logger::err($msg);
 
             return null;
         }
@@ -387,7 +295,7 @@ final class Version extends AbstractModel
 
             $data = Serialize::unserialize($data);
             //clear runtime cache to avoid dealing with marshalled data
-            Runtime::clear();
+            \Pimcore::collectGarbage();
             if ($data instanceof \__PHP_Incomplete_Class) {
                 Logger::err('Version: cannot read version data from file system because of incompatible class.');
 
@@ -401,8 +309,11 @@ final class Version extends AbstractModel
             $data->markAllLazyLoadedKeysAsLoaded();
         }
 
-        if ($data instanceof Asset && $storage->fileExists($this->getBinaryStoragePath())) {
-            $data->setStream($this->getBinaryFileStream());
+        if ($data instanceof Asset) {
+            $binaryStream = $this->storageAdapter->loadBinaryData($this);
+            if ($binaryStream) {
+                $data->setStream($binaryStream);
+            }
         }
 
         if ($renewReferences) {
@@ -414,144 +325,70 @@ final class Version extends AbstractModel
         return $data;
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return string
-     */
-    private function getStorageFilename(?int $id = null): string
+    public function getFileStream(): mixed
     {
-        if (!$id) {
-            $id = $this->getId();
-        }
-
-        $group = floor($this->getCid() / 10000) * 10000;
-
-        return $this->getCtype() . '/g' . $group . '/' . $this->getCid() . '/' . $id;
+        return $this->storageAdapter->getFileStream($this);
     }
 
-    /**
-     * @return resource
-     *
-     * @throws \League\Flysystem\FilesystemException
-     */
-    public function getFileStream()
+    public function getBinaryFileStream(): mixed
     {
-        return Storage::get('version')->readStream($this->getStorageFilename());
+        return $this->storageAdapter->getBinaryFileStream($this);
     }
 
-    /**
-     * @return string
-     */
-    private function getBinaryStoragePath(): string
-    {
-        return $this->getStorageFilename($this->getBinaryFileId()) . '.bin';
-    }
-
-    /**
-     * @return resource
-     *
-     * @throws \League\Flysystem\FilesystemException
-     */
-    public function getBinaryFileStream()
-    {
-        return Storage::get('version')->readStream($this->getBinaryStoragePath());
-    }
-
-    /**
-     * @return int
-     */
-    public function getCid()
+    public function getCid(): int
     {
         return $this->cid;
     }
 
-    /**
-     * @return int
-     */
-    public function getDate()
+    public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getNote()
+    public function getNote(): string
     {
         return $this->note;
     }
 
-    /**
-     * @return int
-     */
-    public function getUserId()
+    public function getUserId(): int
     {
         return $this->userId;
     }
 
-    /**
-     * @param int $cid
-     *
-     * @return $this
-     */
-    public function setCid($cid)
+    public function setCid(int $cid): static
     {
         $this->cid = (int) $cid;
 
         return $this;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
-    public function setDate($date)
+    public function setDate(int $date): static
     {
         $this->date = (int) $date;
 
         return $this;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
         return $this;
     }
 
-    /**
-     * @param string $note
-     *
-     * @return $this
-     */
-    public function setNote($note)
+    public function setNote(string $note): static
     {
         $this->note = (string) $note;
 
         return $this;
     }
 
-    /**
-     * @param int $userId
-     *
-     * @return $this
-     */
-    public function setUserId($userId)
+    public function setUserId(int $userId): static
     {
         if (is_numeric($userId)) {
             if ($user = User::getById($userId)) {
@@ -563,10 +400,7 @@ final class Version extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getData()
+    public function getData(): mixed
     {
         if (!$this->data) {
             $this->loadData();
@@ -575,201 +409,138 @@ final class Version extends AbstractModel
         return $this->data;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function setData($data)
+    public function setData(mixed $data): static
     {
         $this->data = $data;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getSerialized()
+    public function getSerialized(): bool
     {
         return $this->serialized;
     }
 
-    /**
-     * @param bool $serialized
-     *
-     * @return $this
-     */
-    public function setSerialized($serialized)
+    public function setSerialized(bool $serialized): static
     {
         $this->serialized = (bool) $serialized;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCtype()
+    public function getCtype(): string
     {
         return $this->ctype;
     }
 
-    /**
-     * @param string $ctype
-     *
-     * @return $this
-     */
-    public function setCtype($ctype)
+    public function setCtype(string $ctype): static
     {
         $this->ctype = (string) $ctype;
 
         return $this;
     }
 
-    /**
-     * @return User|null
-     */
     public function getUser(): ?User
     {
         return $this->user;
     }
 
-    /**
-     * @param User|null $user
-     *
-     * @return $this
-     */
-    public function setUser(?User $user)
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getPublic()
+    public function getPublic(): bool
     {
         return $this->public;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPublic()
+    public function isPublic(): bool
     {
         return $this->public;
     }
 
-    /**
-     * @param bool $public
-     *
-     * @return $this
-     */
-    public function setPublic($public)
+    public function setPublic(bool $public): static
     {
         $this->public = (bool) $public;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getVersionCount(): int
     {
         return $this->versionCount ? $this->versionCount : 0;
     }
 
-    /**
-     * @param int $versionCount
-     */
-    public function setVersionCount($versionCount): void
+    public function setVersionCount(int $versionCount): void
     {
         $this->versionCount = (int) $versionCount;
     }
 
-    /**
-     * @return string|null
-     */
     public function getBinaryFileHash(): ?string
     {
         return $this->binaryFileHash;
     }
 
-    /**
-     * @param string|null $binaryFileHash
-     */
     public function setBinaryFileHash(?string $binaryFileHash): void
     {
         $this->binaryFileHash = $binaryFileHash;
     }
 
-    /**
-     * @return int|null
-     */
     public function getBinaryFileId(): ?int
     {
         return $this->binaryFileId;
     }
 
-    /**
-     * @param int|null $binaryFileId
-     */
     public function setBinaryFileId(?int $binaryFileId): void
     {
         $this->binaryFileId = $binaryFileId;
     }
 
-    /**
-     * @return bool
-     */
-    public function getGenerateStackTrace()
+    public function getGenerateStackTrace(): bool
     {
         return (bool) $this->generateStackTrace;
     }
 
-    /**
-     * @param bool $generateStackTrace
-     */
     public function setGenerateStackTrace(bool $generateStackTrace): void
     {
         $this->generateStackTrace = $generateStackTrace;
     }
 
-    /**
-     * @param string|null $stackTrace
-     */
     public function setStackTrace(?string $stackTrace): void
     {
         $this->stackTrace = $stackTrace;
     }
 
-    /**
-     * @return string
-     */
     public function getStackTrace(): ?string
     {
         return $this->stackTrace;
     }
 
-    /**
-     * @return bool
-     */
     public function isAutoSave(): bool
     {
         return $this->autoSave;
     }
 
     /**
-     * @param bool $autoSave
+     * @return $this
      */
-    public function setAutoSave(bool $autoSave): self
+    public function setAutoSave(bool $autoSave): static
     {
         $this->autoSave = $autoSave;
 
         return $this;
+    }
+
+    public function getStorageType(): ?string
+    {
+        return $this->storageType;
+    }
+
+    public function setStorageType(string $storageType): void
+    {
+        $this->storageType = $storageType;
     }
 }

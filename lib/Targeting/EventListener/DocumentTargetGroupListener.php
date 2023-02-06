@@ -17,12 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\EventListener;
 
+use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Event\Targeting\AssignDocumentTargetGroupEvent;
 use Pimcore\Event\Targeting\TargetingEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Model\Document;
-use Pimcore\Model\Staticroute;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -36,20 +36,11 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class DocumentTargetGroupListener implements EventSubscriberInterface
 {
-    /**
-     * @var DocumentResolver
-     */
-    private $documentResolver;
+    private DocumentResolver $documentResolver;
 
-    /**
-     * @var ActionHandlerInterface|DelegatingActionHandler
-     */
-    private $actionHandler;
+    private ActionHandlerInterface|DelegatingActionHandler $actionHandler;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         DocumentResolver $documentResolver,
@@ -61,14 +52,17 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * @return string[]
+     */
+    public static function getSubscribedEvents(): array
     {
         return [
             TargetingEvents::PRE_RESOLVE => 'onVisitorInfoResolve',
         ];
     }
 
-    public function onVisitorInfoResolve(TargetingEvent $event)
+    public function onVisitorInfoResolve(TargetingEvent $event): void
     {
         $request = $event->getRequest();
         $document = $this->documentResolver->getDocument($request);
@@ -78,9 +72,13 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         }
     }
 
-    private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo)
+    private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo): void
     {
-        if (!$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
+        if (!$document instanceof Document\Page) {
+            return;
+        }
+
+        if (class_exists(Staticroute::class) && null !== Staticroute::getCurrentRoute()) {
             return;
         }
 

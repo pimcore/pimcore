@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,13 +22,14 @@ use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\MultipleAssignments;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class MultipleAssigmentTest
  *
  * @package Pimcore\Tests\Model\Relations
+ *
  * @group model.relations.multipleassignment
  */
 class MultipleAssigmentTest extends ModelTestCase
@@ -40,7 +42,7 @@ class MultipleAssigmentTest extends ModelTestCase
         $this->createRelationObjects();
     }
 
-    protected function createRelationObjects()
+    protected function createRelationObjects(): void
     {
         for ($i = 0; $i < 20; $i++) {
             $object = new RelationTest();
@@ -58,13 +60,13 @@ class MultipleAssigmentTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_RelationTest();
         $this->tester->setupPimcoreClass_MultipleAssignments();
     }
 
-    public function testMultipleAssignmentsOnSingleManyToMany()
+    public function testMultipleAssignmentsOnSingleManyToMany(): void
     {
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
@@ -95,7 +97,7 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    protected function checkMultipleAssignmentsOnSingleManyToMany(array $metaDataList, $positionMessage = '')
+    protected function checkMultipleAssignmentsOnSingleManyToMany(array $metaDataList, string $positionMessage = ''): void
     {
         $this->assertEquals(5, count($metaDataList), "Relation count $positionMessage.");
         foreach ($metaDataList as $i => $metadata) {
@@ -103,7 +105,7 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    public function testMultipleAssignmentsOnSingleManyToManyObject()
+    public function testMultipleAssignmentsOnSingleManyToManyObject(): void
     {
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
@@ -134,7 +136,7 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    protected function checkMultipleAssignmentsOnMultipleManyToMany(array $metaDataList, $positionMessage = '')
+    protected function checkMultipleAssignmentsOnMultipleManyToMany(array $metaDataList, string $positionMessage = ''): void
     {
         $this->assertEquals(10, count($metaDataList), "Relation count $positionMessage.");
         $number = 0;
@@ -148,7 +150,7 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    public function testMultipleAssignmentsMultipleManyToMany()
+    public function testMultipleAssignmentsMultipleManyToMany(): void
     {
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
@@ -184,7 +186,7 @@ class MultipleAssigmentTest extends ModelTestCase
         \Pimcore::collectGarbage();
 
         //reload data object from database
-        $object = MultipleAssignments::getById($id, true);
+        $object = MultipleAssignments::getById($id, ['force' => true]);
 
         $metaDataList = $object->getMultipleManyToMany();
         $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after loading');
@@ -195,7 +197,7 @@ class MultipleAssigmentTest extends ModelTestCase
         $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after serialize/unserialize');
     }
 
-    public function testMultipleAssignmentsMultipleManyToManyObject()
+    public function testMultipleAssignmentsMultipleManyToManyObject(): void
     {
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
@@ -231,7 +233,7 @@ class MultipleAssigmentTest extends ModelTestCase
         \Pimcore::collectGarbage();
 
         //reload data object from database
-        $object = MultipleAssignments::getById($id, true);
+        $object = MultipleAssignments::getById($id, ['force' => true]);
 
         $metaDataList = $object->getMultipleManyToManyObject();
         $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after loading');

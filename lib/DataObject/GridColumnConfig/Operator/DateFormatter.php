@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,21 +17,16 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Carbon\Carbon;
+use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @internal
  */
 final class DateFormatter extends AbstractOperator
 {
-    /**
-     * @var string|null
-     */
-    private $format;
+    private ?string $format = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -40,19 +36,19 @@ final class DateFormatter extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
         $result->value = null;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
-        if ($childs) {
-            $newChildsResult = [];
+        if ($children) {
+            $newChildrenResult = [];
             $isArrayType = null;
 
-            foreach ($childs as $c) {
+            foreach ($children as $c) {
                 $childResult = $c->getLabeledValue($element);
                 $isArrayType = $childResult->isArrayType ?? false;
 
@@ -78,26 +74,21 @@ final class DateFormatter extends AbstractOperator
                     }
                 }
 
-                $newChildsResult[] = $newValue;
+                $newChildrenResult[] = $newValue;
             }
 
             $result->isArrayType = $isArrayType;
             if ($isArrayType) {
-                $result->value = $newChildsResult;
+                $result->value = $newChildrenResult;
             } else {
-                $result->value = $newChildsResult[0];
+                $result->value = $newChildrenResult[0];
             }
         }
 
         return $result;
     }
 
-    /**
-     * @param mixed $theValue
-     *
-     * @return string
-     */
-    public function format($theValue)
+    public function format(mixed $theValue): string
     {
         $timestamp = null;
         if (is_int($theValue)) {

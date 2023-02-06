@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,12 +26,7 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         return in_array($key, ['abbreviation', 'group', 'id', 'longname', 'baseunit', 'factor'], true);
     }
@@ -38,7 +34,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\DataObject\QuantityValue\Unit[]
      */
-    public function getUnits()
+    public function getUnits(): array
     {
         return $this->getData();
     }
@@ -46,9 +42,9 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\DataObject\QuantityValue\Unit[]|null $units
      *
-     * @return static
+     * @return $this
      */
-    public function setUnits($units)
+    public function setUnits(?array $units): static
     {
         return $this->setData($units);
     }

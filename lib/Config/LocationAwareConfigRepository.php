@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,7 +17,6 @@
 namespace Pimcore\Config;
 
 use Pimcore\Config;
-use Pimcore\Db\PhpArrayFileTable;
 use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
@@ -25,11 +25,6 @@ use Symfony\Component\Yaml\Yaml;
 class LocationAwareConfigRepository
 {
     use StopMessengerWorkersTrait;
-
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    public const LOCATION_LEGACY = 'legacy';
 
     public const LOCATION_SYMFONY_CONFIG = 'symfony-config';
 
@@ -47,51 +42,21 @@ class LocationAwareConfigRepository
 
     protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
 
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    protected mixed $loadLegacyConfigCallback;
-
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     *
-     * @var string|null
-     */
-    protected ?string $legacyConfigFile = null;
-
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    private ?PhpArrayFileTable $legacyStore = null;
-
-    /**
-     * @param array $containerConfig
-     * @param string|null $settingsStoreScope
-     * @param string|null $storageDirectory
-     * @param string|null $writeTargetEnvVariableName
-     * @param string|null $defaultWriteLocation
-     * @param string|null $legacyConfigFile
-     * @param mixed $loadLegacyConfigCallback
-     */
     public function __construct(
         array $containerConfig,
         ?string $settingsStoreScope,
         ?string $storageDirectory,
         ?string $writeTargetEnvVariableName,
-        ?string $defaultWriteLocation = null,
-        ?string $legacyConfigFile = null,
-        mixed $loadLegacyConfigCallback = null
+        ?string $defaultWriteLocation = null
     ) {
         $this->containerConfig = $containerConfig;
         $this->settingsStoreScope = $settingsStoreScope;
         $this->storageDirectory = rtrim($storageDirectory, '/\\');
         $this->writeTargetEnvVariableName = $writeTargetEnvVariableName;
         $this->defaultWriteLocation = $defaultWriteLocation ?: self::LOCATION_SYMFONY_CONFIG;
-        $this->legacyConfigFile = $legacyConfigFile;
-        $this->loadLegacyConfigCallback = $loadLegacyConfigCallback;
     }
 
-    public function loadConfigByKey(string $key)
+    public function loadConfigByKey(string $key): array
     {
         $dataSource = null;
 
@@ -103,23 +68,13 @@ class LocationAwareConfigRepository
             $data = $this->getDataFromSettingsStore($key, $dataSource);
         }
 
-        // try to load from legacy config
-        if (!$data) {
-            $data = $this->getDataFromLegacyConfig($key, $dataSource);
-        }
-
         return [
             $data,
             $dataSource,
         ];
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed|null
-     */
-    private function getDataFromContainerConfig(string $key, ?string &$dataSource)
+    private function getDataFromContainerConfig(string $key, ?string &$dataSource): mixed
     {
         if (isset($this->containerConfig[$key])) {
             $dataSource = self::LOCATION_SYMFONY_CONFIG;
@@ -128,12 +83,7 @@ class LocationAwareConfigRepository
         return $this->containerConfig[$key] ?? null;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed|null
-     */
-    private function getDataFromSettingsStore(string $key, ?string &$dataSource)
+    private function getDataFromSettingsStore(string $key, ?string &$dataSource): mixed
     {
         $settingsStoreEntryData = null;
         $settingsStoreEntry = SettingsStore::get($key, $this->settingsStoreScope);
@@ -146,34 +96,12 @@ class LocationAwareConfigRepository
     }
 
     /**
-     * @deprecated Will be removed in Pimcore 11
+     * @param string|null $key
+     * @param string|null $dataSource
      *
-     * @param string $key
-     *
-     * @return mixed|null
-     */
-    private function getDataFromLegacyConfig(string $key, ?string &$dataSource)
-    {
-        $callback = $this->loadLegacyConfigCallback;
-        if (is_callable($callback)) {
-            return $callback($this, $dataSource);
-        }
-
-        if (!$this->legacyConfigFile) {
-            return null;
-        }
-
-        $data = $this->getLegacyStore()->fetchAll();
-
-        if (isset($data[$key])) {
-            $dataSource = self::LOCATION_LEGACY;
-        }
-
-        return $data[$key] ?? null;
-    }
-
-    /**
      * @return bool
+     *
+     * @throws \Exception
      */
     public function isWriteable(?string $key = null, ?string $dataSource = null): bool
     {
@@ -185,8 +113,6 @@ class LocationAwareConfigRepository
         } elseif ($writeTarget === self::LOCATION_DISABLED) {
             return false;
         } elseif ($dataSource === self::LOCATION_SYMFONY_CONFIG && !file_exists($this->getVarConfigFile($key))) {
-            return false;
-        } elseif ($dataSource && $dataSource !== self::LOCATION_LEGACY && $dataSource !== $writeTarget) {
             return false;
         }
 
@@ -200,7 +126,7 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $env = $this->writeTargetEnvVariableName ? $_ENV[$this->writeTargetEnvVariableName] ?? null : null;
+        $env = $this->writeTargetEnvVariableName ? $_SERVER[$this->writeTargetEnvVariableName] ?? null : null;
         if ($env) {
             $writeLocation = $env;
         } else {
@@ -217,11 +143,11 @@ class LocationAwareConfigRepository
     /**
      * @param string $key
      * @param mixed $data
-     * @param null|callable $yamlStructureCallback
+     * @param callable|null $yamlStructureCallback
      *
      * @throws \Exception
      */
-    public function saveConfig(string $key, $data, $yamlStructureCallback = null)
+    public function saveConfig(string $key, mixed $data, callable $yamlStructureCallback = null): void
     {
         $writeLocation = $this->getWriteTarget();
 
@@ -239,26 +165,9 @@ class LocationAwareConfigRepository
         $this->stopMessengerWorkers();
     }
 
-    /**
-     * @param string $key
-     * @param array $data
-     *
-     * @throws \Exception
-     */
-    private function writeYaml(string $key, $data): void
+    private function writeYaml(string $key, array $data): void
     {
         $yamlFilename = $this->getVarConfigFile($key);
-
-        if (!file_exists($yamlFilename)) {
-            list($existingData, $dataSource) = $this->loadConfigByKey($key);
-            if ($dataSource && $dataSource !== self::LOCATION_LEGACY) {
-                // this configuration already exists so check if it is writeable
-                // this is only the case if it comes from var/config or from the legacy file, or the settings-store
-                // however, we never want to write it back to the legacy file
-
-                throw new \Exception(sprintf('Configuration can only be written to %s, however the config comes from a different source', $yamlFilename));
-            }
-        }
 
         $this->searchAndReplaceMissingParameters($data);
 
@@ -282,7 +191,7 @@ class LocationAwareConfigRepository
                 continue;
             }
 
-            if (preg_match('/%([^%\s]+)%/', $value, $match)) {
+            if (preg_match('/%([^%\s]+)%/', (string) $value, $match)) {
                 $key = $match[1];
 
                 if (str_starts_with($key, 'env(') && str_ends_with($key, ')')  && 'env()' !== $key) {
@@ -296,33 +205,14 @@ class LocationAwareConfigRepository
         }
     }
 
-    /**
-     * @param string $key
-     *
-     * @return string
-     */
     private function getVarConfigFile(string $key): string
     {
         return $this->storageDirectory . '/' . $key . '.yaml';
     }
 
     /**
-     * @deprecated Will be removed in Pimcore 11
-     *
-     * @return PhpArrayFileTable
-     */
-    private function getLegacyStore(): PhpArrayFileTable
-    {
-        if ($this->legacyStore === null) {
-            $file = Config::locateConfigFile($this->legacyConfigFile);
-            $this->legacyStore = PhpArrayFileTable::get($file);
-        }
-
-        return $this->legacyStore;
-    }
-
-    /**
      * @param string $key
+     * @param string|null $dataSource
      *
      * @throws \Exception
      */
@@ -337,29 +227,23 @@ class LocationAwareConfigRepository
             $this->invalidateConfigCache();
         } elseif ($dataSource === self::LOCATION_SETTINGS_STORE) {
             SettingsStore::delete($key, $this->settingsStoreScope);
-        } elseif ($dataSource === self::LOCATION_LEGACY) {
-            $this->getLegacyStore()->delete($key);
         }
 
         $this->stopMessengerWorkers();
     }
 
-    /**
-     * @return array
-     */
     public function fetchAllKeys(): array
     {
         return array_unique(array_merge(
             SettingsStore::getIdsByScope($this->settingsStoreScope),
-            array_keys($this->containerConfig),
-            $this->legacyConfigFile ? array_keys($this->getLegacyStore()->fetchAll()) : [],
+            array_keys($this->containerConfig)
         ));
     }
 
     private function invalidateConfigCache(): void
     {
         // invalidate container config cache if debug flag on kernel is set
-        $systemConfigFile = Config::locateConfigFile('system.yml');
+        $systemConfigFile = Config::locateConfigFile('system.yaml');
         if ($systemConfigFile) {
             touch($systemConfigFile);
         }

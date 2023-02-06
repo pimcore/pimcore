@@ -28,9 +28,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @return TargetGroup[]
      */
-    public function load()
+    public function load(): array
     {
-        $ids = $this->db->fetchCol('SELECT id FROM targeting_target_groups' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $ids = $this->db->fetchFirstColumn('SELECT id FROM targeting_target_groups' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $targetGroups = [];
         foreach ($ids as $id) {
@@ -42,10 +42,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $targetGroups;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM targeting_target_groups ' . $this->getCondition(), $this->model->getConditionVariables());

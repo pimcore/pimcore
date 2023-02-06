@@ -29,14 +29,17 @@ use Symfony\Component\HttpFoundation\Cookie;
  */
 class FullPageCacheCookieCleanupListener implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    /**
+     * @return string[]
+     */
+    public static function getSubscribedEvents(): array
     {
         return [
             FullPageCacheEvents::PREPARE_RESPONSE => 'onPrepareFullPageCacheResponse',
         ];
     }
 
-    public function onPrepareFullPageCacheResponse(PrepareResponseEvent $event)
+    public function onPrepareFullPageCacheResponse(PrepareResponseEvent $event): void
     {
         $response = $event->getResponse();
         $cookies = $response->headers->getCookies();

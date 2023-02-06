@@ -22,25 +22,13 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class BuildConditionEvent extends Event
 {
-    /**
-     * @var string
-     */
-    private $type;
+    private string $type;
 
-    /**
-     * @var string
-     */
-    private $class;
+    private string $class;
 
-    /**
-     * @var array
-     */
-    private $config;
+    private array $config;
 
-    /**
-     * @var ConditionInterface
-     */
-    private $condition;
+    private ?ConditionInterface $condition = null;
 
     public function __construct(string $type, string $class, array $config)
     {
@@ -69,15 +57,12 @@ class BuildConditionEvent extends Event
         return null !== $this->condition;
     }
 
-    /**
-     * @return ConditionInterface|null
-     */
-    public function getCondition()
+    public function getCondition(): ?ConditionInterface
     {
         return $this->condition;
     }
 
-    public function setCondition(ConditionInterface $condition)
+    public function setCondition(ConditionInterface $condition): void
     {
         $this->condition = $condition;
 

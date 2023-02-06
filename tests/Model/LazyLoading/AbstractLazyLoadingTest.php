@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,12 +16,14 @@
 
 namespace Pimcore\Tests\Model\LazyLoading;
 
+use Pimcore\Cache;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class AbstractLazyLoadingTest extends ModelTestCase
 {
@@ -40,7 +43,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_RelationTest();
         $this->tester->setupFieldcollection_LazyLoadingTest();
@@ -53,7 +56,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
         $this->tester->setupObjectbrick_LazyLoadingLocalizedTest();
     }
 
-    protected function createRelationObjects()
+    protected function createRelationObjects(): void
     {
         for ($i = 0; $i < 20; $i++) {
             $object = new RelationTest();
@@ -65,9 +68,6 @@ class AbstractLazyLoadingTest extends ModelTestCase
         }
     }
 
-    /**
-     * @return LazyLoading
-     */
     protected function createDataObject(): LazyLoading
     {
         $object = new LazyLoading();
@@ -85,7 +85,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    protected function createChildDataObject($parent): LazyLoading
+    protected function createChildDataObject(AbstractObject $parent): LazyLoading
     {
         $object = new LazyLoading();
         $object->setParent($parent);
@@ -117,14 +117,17 @@ class AbstractLazyLoadingTest extends ModelTestCase
         return $listing->load()[0];
     }
 
-    protected function checkSerialization(LazyLoading $object, string $messagePrefix, bool $contentShouldBeIncluded = false)
+    protected function checkSerialization(LazyLoading $object, string $messagePrefix, bool $contentShouldBeIncluded = false): void
     {
         $serializedString = serialize($object);
         $this->checkSerializedStringForNeedle($serializedString, ['lazyLoadedFields', 'lazyKeys', 'loadedLazyKeys'], false, $messagePrefix);
         $this->checkSerializedStringForNeedle($serializedString, 'someAttribute";s:14:"Some content', $contentShouldBeIncluded, $messagePrefix);
     }
 
-    protected function checkSerializedStringForNeedle(string $string, $needle, bool $expected, string $messagePrefix = null)
+    /**
+     * @param string[]|string $needle
+     */
+    protected function checkSerializedStringForNeedle(string $string, array|string $needle, bool $expected, string $messagePrefix = null): void
     {
         if (!is_array($needle)) {
             $needle = [$needle];
@@ -132,6 +135,35 @@ class AbstractLazyLoadingTest extends ModelTestCase
 
         foreach ($needle as $item) {
             $this->assertEquals($expected, strpos($string, $item) !== false, $messagePrefix . "Check if '$item' is occuring in serialized data.");
+        }
+    }
+
+    protected function forceSavingAndLoadingFromCache(Concrete $object, callable $callback): void
+    {
+        //enable cache
+        $cacheEnabled = Cache::isEnabled();
+        if (!$cacheEnabled) {
+            Cache::enable();
+            Cache::getHandler()->setHandleCli(true);
+        }
+
+        //save object to cache
+        Cache::getHandler()->removeClearedTags($object->getCacheTags());
+        Cache::save($object, \Pimcore\Model\Element\Service::getElementCacheTag('object', $object->getId()), [], null, 9999, true);
+
+        Cache\RuntimeCache::clear();
+        //reload from cache and check again
+        $objectCache = Concrete::getById($object->getId());
+
+        //once more reload object from database to check consistency of
+        //data object loaded from cache - see also https://github.com/pimcore/pimcore/issues/12290
+        Concrete::getById($object->getId(), ['force' => true]);
+
+        $callback($objectCache);
+
+        if (!$cacheEnabled) {
+            Cache::disable();
+            Cache::getHandler()->setHandleCli(false);
         }
     }
 }

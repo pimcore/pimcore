@@ -29,10 +29,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $tasks = [];
-        $tasksData = $this->db->fetchCol('SELECT id FROM schedule_tasks' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $tasksData = $this->db->fetchFirstColumn('SELECT id FROM schedule_tasks' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($tasksData as $taskData) {
             $tasks[] = Model\Schedule\Task::getById($taskData);
@@ -43,7 +43,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $tasks;
     }
 
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM schedule_tasks ' . $this->getCondition(), $this->model->getConditionVariables());

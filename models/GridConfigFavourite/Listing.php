@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,17 +30,17 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\GridConfigFavourite[]
      */
-    public function getGridconfigFavourites()
+    public function getGridconfigFavourites(): array
     {
         return $this->getData();
     }
 
     /**
-     * @param array $gridconfigFavourites
+     * @param Model\GridConfigFavourite[]|null $gridconfigFavourites
      *
-     * @return static
+     * @return $this
      */
-    public function setGridconfigFavourites($gridconfigFavourites)
+    public function setGridconfigFavourites(?array $gridconfigFavourites): static
     {
         return $this->setData($gridconfigFavourites);
     }

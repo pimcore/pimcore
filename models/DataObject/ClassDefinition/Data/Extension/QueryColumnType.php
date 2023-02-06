@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,12 +16,15 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
+/**
+ * @deprecated please implement getQueryColumnType() on your data-type
+ */
 trait QueryColumnType
 {
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType()
+    public function getQueryColumnType(): array|string|null
     {
         if (property_exists($this, 'queryColumnType')) {
             return $this->queryColumnType;
@@ -34,7 +38,7 @@ trait QueryColumnType
      *
      * @return $this
      */
-    public function setQueryColumnType($queryColumnType)
+    public function setQueryColumnType($queryColumnType): static
     {
         if (property_exists($this, 'queryColumnType')) {
             $this->queryColumnType = $queryColumnType;

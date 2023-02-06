@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,13 +20,7 @@ use Pimcore\Image\Optimizer\OptimizerInterface;
 
 interface ImageOptimizerInterface
 {
-    /**
-     * @param string $path
-     */
-    public function optimizeImage($path);
+    public function optimizeImage(string $path): void;
 
-    /**
-     * @param OptimizerInterface $optimizer
-     */
-    public function registerOptimizer(OptimizerInterface $optimizer);
+    public function registerOptimizer(OptimizerInterface $optimizer): void;
 }

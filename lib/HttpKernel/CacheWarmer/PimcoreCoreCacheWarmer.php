@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,7 +16,6 @@
 
 namespace Pimcore\HttpKernel\CacheWarmer;
 
-use Doctrine\DBAL\Exception\DriverException;
 use Pimcore\Bootstrap;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -37,24 +37,13 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir): array
+    public function warmUp(string $cacheDir): array
     {
         $classes = [];
 
         $this->libraryClasses($classes);
         $this->modelClasses($classes);
-
-        if (\Pimcore::isInstalled()) {
-            try {
-                $this->dataObjectClasses($classes);
-            } catch (\Exception $exception) {
-                if (!$exception instanceof DriverException) {
-                    throw $exception;
-                }
-
-                //Ignore. Database might not be setup yet
-            }
-        }
+        $this->dataObjectClasses($classes);
 
         return $classes;
     }
@@ -99,33 +88,29 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 
     private function dataObjectClasses(array &$classes): void
     {
+        $objectClassesFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY;
+        $files = glob($objectClassesFolder.'/*.php');
 
-        // load all data object classes
-        $list = new DataObject\ClassDefinition\Listing();
-        $list = $list->load();
-
-        foreach ($list as $classDefinition) {
-            $className = DataObject::class . '\\' . ucfirst($classDefinition->getName());
+        foreach ($files as $file) {
+            $className = DataObject::class . '\\' . \preg_replace('/^definition_(.*)\.php$/', '$1', basename($file));
             $listingClass = $className . '\\Listing';
 
             $classes[] = $className;
             $classes[] = $listingClass;
         }
 
-        $list = new DataObject\Objectbrick\Definition\Listing();
-        $list = $list->load();
-
-        foreach ($list as $brickDefinition) {
-            $className = 'Pimcore\\Model\\DataObject\\Objectbrick\\Data' . ucfirst($brickDefinition->getKey());
+        $objectBricksFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/objectbricks';
+        $files = glob($objectBricksFolder . '/*.php');
+        foreach ($files as $file) {
+            $className = 'Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . basename($file, '.php');
 
             $classes[] = $className;
         }
 
-        $list = new DataObject\Fieldcollection\Definition\Listing();
-        $list = $list->load();
-
-        foreach ($list as $fcDefinition) {
-            $className = 'Pimcore\\Model\\DataObject\\Fieldcollection\\Data' . ucfirst($fcDefinition->getKey());
+        $fieldCollectionFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections';
+        $files = glob($fieldCollectionFolder . '/*.php');
+        foreach ($files as $file) {
+            $className = 'Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . basename($file, '.php');
 
             $classes[] = $className;
         }

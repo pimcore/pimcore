@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,7 @@
 namespace Pimcore\Tool;
 
 use Onnov\DetectEncoding\EncodingDetector;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
@@ -23,12 +25,7 @@ use Pimcore\Model\Element;
 
 class Text
 {
-    /**
-     * @param string $text
-     *
-     * @return mixed|string
-     */
-    public static function removeLineBreaks($text = '')
+    public static function removeLineBreaks(string $text = ''): string
     {
         $text = str_replace(["\r\n", "\n", "\r", "\t"], ' ', $text);
         $text = preg_replace('#[ ]+#', ' ', $text);
@@ -36,13 +33,7 @@ class Text
         return $text;
     }
 
-    /**
-     * @param string $text
-     * @param array $params
-     *
-     * @return string
-     */
-    public static function wysiwygText($text, $params = [])
+    public static function wysiwygText(?string $text, array $params = []): ?string
     {
         if (empty($text)) {
             return $text;
@@ -58,7 +49,7 @@ class Text
                 $linkAttr = null;
                 $path = null;
                 $additionalAttributes = [];
-                $id = $idMatches[0];
+                $id = (int) $idMatches[0];
                 $type = $typeMatches[0];
                 $element = Element\Service::getElementById($type, $id);
                 $oldTag = $matches[0][$i];
@@ -184,40 +175,30 @@ class Text
         return $text;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return array
-     */
-    private static function getElementsTagsInWysiwyg($text)
+    private static function getElementsTagsInWysiwyg(string $text): array
     {
         if (!is_string($text) || strlen($text) < 1) {
             return [];
         }
 
         $hash = 'elements_raw_wysiwyg_text_' . md5($text);
-        if (\Pimcore\Cache\Runtime::isRegistered($hash)) {
-            return \Pimcore\Cache\Runtime::get($hash);
+        if (RuntimeCache::isRegistered($hash)) {
+            return RuntimeCache::get($hash);
         }
 
         //$text = Pimcore_Tool_Text::removeLineBreaks($text);
         preg_match_all("@\<(a|img)[^>]*(pimcore_id=\"[0-9]+\")[^>]*(pimcore_type=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
 
-        \Pimcore\Cache\Runtime::set($hash, $matches);
+        RuntimeCache::set($hash, $matches);
 
         return $matches;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return array
-     */
-    private static function getElementsInWysiwyg($text)
+    private static function getElementsInWysiwyg(string $text): array
     {
         $hash = 'elements_wysiwyg_text_' . md5($text);
-        if (\Pimcore\Cache\Runtime::isRegistered($hash)) {
-            return \Pimcore\Cache\Runtime::get($hash);
+        if (RuntimeCache::isRegistered($hash)) {
+            return RuntimeCache::get($hash);
         }
 
         $elements = [];
@@ -240,7 +221,7 @@ class Text
             }
         }
 
-        \Pimcore\Cache\Runtime::set($hash, $elements);
+        RuntimeCache::set($hash, $elements);
 
         return $elements;
     }
@@ -248,11 +229,11 @@ class Text
     /**
      * extracts all dependencies to other elements from wysiwyg text
      *
-     * @param  string $text
+     * @param string|null $text
      *
      * @return array
      */
-    public static function getDependenciesOfWysiwygText($text)
+    public static function getDependenciesOfWysiwygText(?string $text): array
     {
         $dependencies = [];
 
@@ -270,13 +251,7 @@ class Text
         return $dependencies;
     }
 
-    /**
-     * @param string $text
-     * @param array $tags
-     *
-     * @return array
-     */
-    public static function getCacheTagsOfWysiwygText($text, array $tags = []): array
+    public static function getCacheTagsOfWysiwygText(?string $text, array $tags = []): array
     {
         if (!empty($text)) {
             $elements = self::getElementsInWysiwyg($text);
@@ -289,12 +264,7 @@ class Text
         return $tags;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return string
-     */
-    public static function convertToUTF8($text)
+    public static function convertToUTF8(string $text): string
     {
         $encoding = self::detectEncoding($text);
         if ($encoding) {
@@ -304,12 +274,7 @@ class Text
         return $text;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return string
-     */
-    public static function detectEncoding($text)
+    public static function detectEncoding(string $text): string
     {
         // Detect UTF-8, UTF-16 and UTF-32 by BOM
         $utf32_big_endian_bom = chr(0x00) . chr(0x00) . chr(0xFE) . chr(0xFF);
@@ -344,12 +309,7 @@ class Text
         return $encoding;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
-    public static function getStringAsOneLine($string)
+    public static function getStringAsOneLine(string $string): string
     {
         $string = str_replace("\r\n", ' ', $string);
         $string = str_replace("\n", ' ', $string);
@@ -360,13 +320,7 @@ class Text
         return $string;
     }
 
-    /**
-     * @param string $string
-     * @param int $length
-     *
-     * @return string
-     */
-    public static function cutStringRespectingWhitespace($string, $length)
+    public static function cutStringRespectingWhitespace(string $string, int $length): string
     {
         if ($length < strlen($string)) {
             $text = substr($string, 0, $length);

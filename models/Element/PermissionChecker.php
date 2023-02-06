@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,7 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -27,7 +29,10 @@ use Pimcore\Model\User;
  */
 class PermissionChecker
 {
-    public static function check(ElementInterface $element, $users)
+    /**
+     * @param User[] $users
+     */
+    public static function check(ElementInterface $element, array $users): array
     {
         $protectedColumns = ['cid', 'cpath', 'userId', 'lEdit', 'lView', 'layouts'];
 
@@ -46,7 +51,7 @@ class PermissionChecker
         }
         $db = Db::get();
         $tableName = 'users_workspaces_'.$type;
-        $tableDesc = $db->fetchAll('describe '.$tableName);
+        $tableDesc = $db->fetchAllAssociative('describe '.$tableName);
 
         $result = [
             'columns' => [],
@@ -64,7 +69,6 @@ class PermissionChecker
         $permissions = [];
         $details = [];
 
-        /** @var User $user */
         foreach ($users as $user) {
             if (!$user instanceof User) {
                 continue;
@@ -90,7 +94,7 @@ class PermissionChecker
                 $userPermission[$columnName] = false;
 
                 try {
-                    $permissionsParent = $db->fetchRow(
+                    $permissionsParent = $db->fetchAssociative(
                         'SELECT * FROM users_workspaces_'.$type.' , users u WHERE userId = u.id AND cid IN ('.implode(
                             ',',
                             $parentIds
@@ -109,23 +113,23 @@ class PermissionChecker
                     }
 
                     // exception for list permission
-                    if (empty($permissionsParent) && $columnName == 'list') {
-                        // check for childs with permissions
+                    if (false === $permissionsParent && $columnName === 'list') {
+                        // check for children with permissions
                         $path = $element->getRealFullPath().'/';
                         if ($element->getId() == 1) {
                             $path = '/';
                         }
 
-                        $permissionsChilds = $db->fetchRow(
+                        $permissionsChildren = $db->fetchAssociative(
                             'SELECT list FROM users_workspaces_'.$type.', users u WHERE userId = u.id AND cpath LIKE ? AND userId IN ('.implode(
                                 ',',
                                 $userIds
                             ).') AND list = 1 LIMIT 1',
-                            $db->escapeLike($path) .'%'
+                            [Helper::escapeLike($path) .'%']
                         );
-                        if ($permissionsChilds) {
-                            $result[$columnName] = $permissionsChilds[$columnName] ? true : false;
-                            $details[] = self::createDetail($user, $columnName, $result[$columnName], $permissionsChilds['type'], $permissionsChilds['name'], $permissionsChilds['cpath']);
+                        if ($permissionsChildren) {
+                            $result[$columnName] = $permissionsChildren[$columnName] ? true : false;
+                            $details[] = self::createDetail($user, $columnName, $result[$columnName], $permissionsChildren['type'], $permissionsChildren['name'], $permissionsChildren['cpath']);
 
                             continue;
                         }
@@ -146,10 +150,7 @@ class PermissionChecker
         return $result;
     }
 
-    /**
-     * @return array
-     */
-    protected static function collectParentIds($element)
+    protected static function collectParentIds(ElementInterface $element): array
     {
         // collect properties via parent - ids
         $parentIds = [1];
@@ -166,7 +167,7 @@ class PermissionChecker
         return $parentIds;
     }
 
-    protected static function createDetail($user, $a = null, $b = null, $c = null, $d = null, $e = null, $f = null)
+    protected static function createDetail(User $user, ?string $a = null, ?bool $b = null, ?string $c = null, ?string $d = null, ?string $e = null, ?string $f = null): array
     {
         $detailEntry = [
             'userId' => $user->getId(),
@@ -176,13 +177,12 @@ class PermissionChecker
             'd' => $d,
             'e' => $e,
             'f' => $f,
-
         ];
 
         return $detailEntry;
     }
 
-    protected static function getUserPermissions($user, &$details)
+    protected static function getUserPermissions(User $user, array &$details): void
     {
         if ($user->isAdmin()) {
             $details[] = self::createDetail($user, 'ADMIN', true, null, null);
@@ -192,7 +192,7 @@ class PermissionChecker
         $details[] = self::createDetail($user, '<b>User Permissions</b>', null, null, null);
 
         $db = Db::get();
-        $permissions = $db->fetchCol('select `key` from users_permission_definitions');
+        $permissions = $db->fetchFirstColumn('select `key` from users_permission_definitions');
         foreach ($permissions as $permissionKey) {
             $entry = null;
 
@@ -218,12 +218,7 @@ class PermissionChecker
         }
     }
 
-    /**
-     * @param User $user
-     * @param ElementInterface $element
-     * @param array $details
-     */
-    protected static function getLanguagePermissions($user, $element, &$details)
+    protected static function getLanguagePermissions(User $user, ElementInterface $element, array &$details): void
     {
         if ($user->isAdmin()) {
             return;

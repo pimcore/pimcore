@@ -1,0 +1,11 @@
+framework:
+    test: ~
+    profiler: false
+    mailer:
+        transports:
+            main: 'null://null'
+            pimcore_newsletter: 'null://null'
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false

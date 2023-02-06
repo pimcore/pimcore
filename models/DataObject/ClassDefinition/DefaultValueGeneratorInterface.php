@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,5 +20,5 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface DefaultValueGeneratorInterface
 {
-    public function getValue(Concrete $object, Data $fieldDefinition, array $context);
+    public function getValue(Concrete $object, Data $fieldDefinition, array $context): mixed;
 }

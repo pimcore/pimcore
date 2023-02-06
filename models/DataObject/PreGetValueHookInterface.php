@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,5 +18,5 @@ namespace Pimcore\Model\DataObject;
 
 interface PreGetValueHookInterface
 {
-    public function preGetValue(string $key);
+    public function preGetValue(string $key): mixed;
 }

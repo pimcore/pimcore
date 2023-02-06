@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,7 +16,6 @@
 
 namespace Pimcore\Messenger\Handler;
 
-use Pimcore\Logger;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
@@ -30,51 +30,64 @@ class AssetUpdateTasksHandler
     {
     }
 
-    public function __invoke(AssetUpdateTasksMessage $message)
+    public function __invoke(AssetUpdateTasksMessage $message): void
     {
         $asset = Asset::getById($message->getId());
+        if (!$asset) {
+            $this->logger->debug(sprintf('Asset with ID %s not found', $message->getId()));
+
+            return;
+        }
+        $this->logger->debug(sprintf('Processing asset with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
 
         if ($asset instanceof Asset\Image) {
             $this->processImage($asset);
-        } elseif ($asset instanceof Asset\Document && !$asset->getCustomSetting('document_page_count')) {
-            $this->logger->debug(sprintf('Processing document with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
-            $asset->processPageCount();
-            $this->saveAsset($asset);
+        } elseif ($asset instanceof Asset\Document) {
+            $this->processDocument($asset);
         } elseif ($asset instanceof Asset\Video) {
             $this->processVideo($asset);
         }
     }
 
-    private function saveAsset(Asset $asset)
+    private function saveAsset(Asset $asset): void
     {
         Version::disable();
         $asset->save();
         Version::enable();
     }
 
-    private function processVideo(Asset\Video $asset): void
+    private function processDocument(Asset\Document $asset): void
     {
-        try {
-            $asset->setCustomSetting('duration', $asset->getDurationFromBackend());
-        } catch (\Exception $e) {
-            Logger::err('Unable to get duration of video: ' . $asset->getId());
+        if (!$asset->getCustomSetting('document_page_count')) {
+            $asset->processPageCount();
+            $this->saveAsset($asset);
         }
 
-        try {
-            $dimensions = $asset->getDimensionsFromBackend();
-            if ($dimensions) {
-                $asset->setCustomSetting('videoWidth', $dimensions['width']);
-                $asset->setCustomSetting('videoHeight', $dimensions['height']);
-            } else {
-                $asset->removeCustomSetting('videoWidth');
-                $asset->removeCustomSetting('videoHeight');
-            }
-        } catch (\Exception $e) {
-            Logger::err('Unable to get dimensions of video: ' . $asset->getId());
+        $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+    }
+
+    private function processVideo(Asset\Video $asset): void
+    {
+        if ($duration = $asset->getDurationFromBackend()) {
+            $asset->setCustomSetting('duration', $duration);
+        } else {
+            $asset->removeCustomSetting('duration');
+        }
+
+        if ($dimensions = $asset->getDimensionsFromBackend()) {
+            $asset->setCustomSetting('videoWidth', $dimensions['width']);
+            $asset->setCustomSetting('videoHeight', $dimensions['height']);
+        } else {
+            $asset->removeCustomSetting('videoWidth');
+            $asset->removeCustomSetting('videoHeight');
         }
 
         $asset->handleEmbeddedMetaData(true);
         $this->saveAsset($asset);
+
+        if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
+            $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+        }
     }
 
     private function processImage(Asset\Image $image): void

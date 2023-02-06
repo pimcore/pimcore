@@ -28,7 +28,10 @@ use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
  */
 class ModificationDateProcessor implements ProcessorInterface
 {
-    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context)
+    /**
+     * {@inheritdoc}
+     */
+    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context): Url|UrlConcrete|null
     {
         if (!$url instanceof UrlConcrete) {
             return $url;

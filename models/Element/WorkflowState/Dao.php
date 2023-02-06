@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element\WorkflowState;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -31,9 +32,9 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPrimary(int $cid, string $ctype, string $workflow)
+    public function getByPrimary(int $cid, string $ctype, string $workflow): void
     {
-        $data = $this->db->fetchRow('SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflow = ?', [$cid, $ctype, $workflow]);
+        $data = $this->db->fetchAssociative('SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflow = ?', [$cid, $ctype, $workflow]);
 
         if (empty($data['cid'])) {
             throw new Model\Exception\NotFoundException('WorkflowStatus item for workflow ' . $workflow . ' with cid ' . $cid . ' and ctype ' . $ctype . ' not found');
@@ -48,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @todo: not all save methods return a boolean, why this one?
      */
-    public function save()
+    public function save(): bool
     {
         $dataAttributes = $this->model->getObjectVars();
 
@@ -59,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('element_workflow_state', $data);
+        Helper::insertOrUpdate($this->db, 'element_workflow_state', $data);
 
         return true;
     }
@@ -67,7 +68,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('element_workflow_state', [
             'cid' => $this->model->getCid(),

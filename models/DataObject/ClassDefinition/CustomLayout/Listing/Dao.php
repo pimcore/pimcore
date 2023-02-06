@@ -22,38 +22,50 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Listing $model
  */
-class Dao extends Model\Listing\Dao\AbstractDao
+class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
 {
     /**
      * Loads a list of custom layouts for the specified parameters, returns an array of DataObject\ClassDefinition\CustomLayout elements
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $layouts = [];
 
-        $layoutsRaw = $this->db->fetchCol('SELECT id FROM custom_layouts' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-
-        foreach ($layoutsRaw as $classRaw) {
-            $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($classRaw);
+        foreach ($this->loadIdList() as $id) {
+            $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $layouts[] = $customLayout;
             }
         }
-
+        if ($this->model->getFilter()) {
+            $layouts = array_filter($layouts, $this->model->getFilter());
+        }
+        if (is_callable($this->model->getOrder())) {
+            usort($layouts, $this->model->getOrder());
+        }
         $this->model->setLayoutDefinitions($layouts);
 
         return $layouts;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM custom_layouts ' . $this->getCondition(), $this->model->getConditionVariables());
+            $layouts = [];
+            foreach ($this->loadIdList() as $id) {
+                $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($id);
+                if ($customLayout) {
+                    $layouts[] = $customLayout;
+                }
+            }
+
+            if ($this->model->getFilter()) {
+                $layouts = array_filter($layouts, $this->model->getFilter());
+            }
+
+            return count($layouts);
         } catch (\Exception $e) {
             return 0;
         }

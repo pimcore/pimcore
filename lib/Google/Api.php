@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,30 +25,17 @@ class Api
 {
     const ANALYTICS_API_URL = 'https://www.googleapis.com/analytics/v3/';
 
-    /**
-     * @return string
-     */
-    public static function getPrivateKeyPath()
+    public static function getPrivateKeyPath(): string
     {
-        $path = \Pimcore\Config::locateConfigFile('google-api-private-key.json');
-
-        return $path;
+        return \Pimcore\Config::locateConfigFile('google-api-private-key.json');
     }
 
-    /**
-     * @return mixed
-     */
-    public static function getConfig()
+    public static function getConfig(): array
     {
         return Config::getSystemConfiguration('services')['google'] ?? [];
     }
 
-    /**
-     * @param string $type
-     *
-     * @return bool
-     */
-    public static function isConfigured($type = 'service')
+    public static function isConfigured(string $type = 'service'): bool
     {
         if ($type == 'simple') {
             return self::isSimpleConfigured();
@@ -56,10 +44,7 @@ class Api
         return self::isServiceConfigured();
     }
 
-    /**
-     * @return bool
-     */
-    public static function isServiceConfigured()
+    public static function isServiceConfigured(): bool
     {
         $config = self::getConfig();
 
@@ -70,10 +55,7 @@ class Api
         return false;
     }
 
-    /**
-     * @return bool
-     */
-    public static function isSimpleConfigured()
+    public static function isSimpleConfigured(): bool
     {
         $config = self::getConfig();
 
@@ -87,9 +69,9 @@ class Api
     /**
      * @param string $type
      *
-     * @return Client
+     * @return Client|false returns false, if client not configured
      */
-    public static function getClient($type = 'service')
+    public static function getClient(string $type = 'service'): Client|bool
     {
         if ($type == 'simple') {
             return self::getSimpleClient();
@@ -101,9 +83,9 @@ class Api
     /**
      * @param array|null $scope
      *
-     * @return bool|Client
+     * @return Client|false
      */
-    public static function getServiceClient($scope = null)
+    public static function getServiceClient(array $scope = null): Client|bool
     {
         if (!self::isServiceConfigured()) {
             return false;
@@ -157,7 +139,7 @@ class Api
     /**
      * @return Client|false
      */
-    public static function getSimpleClient()
+    public static function getSimpleClient(): Client|bool
     {
         if (!self::isSimpleConfigured()) {
             return false;
@@ -177,16 +159,20 @@ class Api
 
     /**
      * @return array
+     *
+     * @throws \Exception
      */
-    public static function getAnalyticsDimensions()
+    public static function getAnalyticsDimensions(): array
     {
         return self::getAnalyticsMetadataByType('DIMENSION');
     }
 
     /**
      * @return array
+     *
+     * @throws \Exception
      */
-    public static function getAnalyticsMetrics()
+    public static function getAnalyticsMetrics(): array
     {
         return self::getAnalyticsMetadataByType('METRIC');
     }
@@ -197,12 +183,12 @@ class Api
      * @throws \Exception
      * @throws \Exception
      */
-    public static function getAnalyticsMetadata()
+    public static function getAnalyticsMetadata(): mixed
     {
         $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $result = $client->get(self::ANALYTICS_API_URL.'metadata/ga/columns');
 
-        return json_decode($result->getBody(), true);
+        return json_decode((string)$result->getBody(), true);
     }
 
     /**
@@ -212,7 +198,7 @@ class Api
      *
      * @throws \Exception
      */
-    protected static function getAnalyticsMetadataByType($type)
+    protected static function getAnalyticsMetadataByType(string $type): array
     {
         $data = self::getAnalyticsMetadata();
         $translator = \Pimcore::getContainer()->get('translator');
@@ -222,13 +208,14 @@ class Api
             if ($item['attributes']['type'] == $type) {
                 if (strpos($item['id'], 'XX') !== false) {
                     for ($i = 1; $i <= 5; $i++) {
-                        $name = str_replace('1', $i, str_replace('01', $i, $translator->trans($item['attributes']['uiName'], [], 'admin')));
+                        $replace = (string) $i;
+                        $name = str_replace('1', $replace, str_replace('01', $replace, $translator->trans($item['attributes']['uiName'], [], 'admin')));
 
                         if (in_array($item['id'], ['ga:dimensionXX', 'ga:metricXX'])) {
-                            $name .= ' '.$i;
+                            $name .= ' '.$replace;
                         }
                         $result[] = [
-                            'id' => str_replace('XX', $i, $item['id']),
+                            'id' => str_replace('XX', $replace, $item['id']),
                             'name' => $name,
                         ];
                     }

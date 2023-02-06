@@ -25,15 +25,14 @@ use Symfony\Component\Uid\Uuid as Uid;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    public function configure()
+    public function configure(): void
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
-            'containerConfig' => $config['documents']['doc_types']['definitions'] ?? [],
+            'containerConfig' => $config['documents']['doc_types']['definitions'],
             'settingsStoreScope' => 'pimcore_document_types',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_DOCUMENT_TYPES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/document-types',
-            'legacyConfigFile' => 'document-types.php',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_DOCUMENT_TYPES',
         ]);
     }
@@ -45,36 +44,31 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function getById($id = null)
+    public function getById(?string $id = null): void
     {
-        if (empty($id)) {
-            return null;
+        $data = null;
+        if ($id !== null) {
+            $data = $this->getDataByName($id);
         }
 
-        $this->model->setId($id);
-        $data = $this->getDataByName($this->model->getId());
-
-        if ($data && $id != null) {
-            $data['id'] = $id;
-        }
-
-        if ($data) {
-            $this->assignVariablesToModel($data);
-        } else {
+        if (empty($data)) {
             throw new Model\Exception\NotFoundException(sprintf(
                 'Document Type with ID "%s" does not exist.',
                 $this->model->getId()
             ));
         }
+
+        $data['id'] = $id;
+        $this->assignVariablesToModel($data);
     }
 
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
-            $this->model->setId(Uid::v4());
+            $this->model->setId((string)Uid::v4());
         }
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -84,8 +78,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $dataRaw = $this->model->getObjectVars();
         $data = [];
-        $allowedProperties = ['name', 'group', 'module', 'controller',
-            'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', 'staticGeneratorEnabled', ];
+        $allowedProperties = ['name', 'group', 'controller',
+            'template', 'type', 'priority', 'creationDate', 'modificationDate', 'staticGeneratorEnabled', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {
@@ -98,7 +92,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleteData($this->model->getId());
     }
@@ -106,7 +100,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [

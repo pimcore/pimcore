@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,25 +27,13 @@ class WriteLock implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var bool
-     */
-    protected $enabled = true;
+    protected bool $enabled = true;
 
-    /**
-     * @var TagAwareAdapterInterface
-     */
-    protected $itemPool;
+    protected TagAwareAdapterInterface $itemPool;
 
-    /**
-     * @var string
-     */
-    protected $cacheKey = 'system_cache_write_lock';
+    protected string $cacheKey = 'system_cache_write_lock';
 
-    /**
-     * @var int
-     */
-    protected $lifetime = 30;
+    protected int $lifetime = 30;
 
     /**
      * Contains the timestamp of the write lock time from the current process
@@ -54,41 +43,26 @@ class WriteLock implements LoggerAwareInterface
      *
      * @var int|null
      */
-    protected $timestamp;
+    protected ?int $timestamp = null;
 
-    /**
-     * @var bool
-     */
-    protected $lockInitialized = false;
+    protected bool $lockInitialized = false;
 
-    /**
-     * @param TagAwareAdapterInterface $itemPool
-     */
     public function __construct(TagAwareAdapterInterface $itemPool)
     {
         $this->itemPool = $itemPool;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function enable()
+    public function enable(): void
     {
         $this->enabled = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function disable()
+    public function disable(): void
     {
         $this->enabled = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
@@ -96,7 +70,7 @@ class WriteLock implements LoggerAwareInterface
     /**
      * Initialize lock value once from storage
      */
-    protected function initializeLock()
+    protected function initializeLock(): void
     {
         if ($this->lockInitialized) {
             return;
@@ -121,7 +95,7 @@ class WriteLock implements LoggerAwareInterface
      *
      * @return bool
      */
-    public function lock($force = false)
+    public function lock(bool $force = false): bool
     {
         if (!$this->enabled) {
             return true;
@@ -152,13 +126,11 @@ class WriteLock implements LoggerAwareInterface
      *
      * @return bool
      */
-    public function hasLock()
+    public function hasLock(): bool
     {
-        if (!$this->enabled) {
+        if (!$this->enabled || !$this->lockInitialized) {
             return false;
         }
-
-        $this->initializeLock();
 
         if ($this->timestamp && $this->timestamp > 0) {
             return true;
@@ -181,12 +153,7 @@ class WriteLock implements LoggerAwareInterface
         return false;
     }
 
-    /**
-     * @param int $lockTime
-     *
-     * @return bool
-     */
-    protected function isLockValid($lockTime)
+    protected function isLockValid(int $lockTime): bool
     {
         return $lockTime > (time() - $this->lifetime);
     }
@@ -196,13 +163,11 @@ class WriteLock implements LoggerAwareInterface
      *
      * @return bool
      */
-    public function removeLock()
+    public function removeLock(): bool
     {
-        if (!$this->enabled) {
+        if (!$this->enabled || !$this->lockInitialized) {
             return true;
         }
-
-        $this->initializeLock();
 
         if ($this->timestamp) {
             $item = $this->itemPool->getItem($this->cacheKey);

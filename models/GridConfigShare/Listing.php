@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,17 +30,17 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\GridConfigShare[]
      */
-    public function getGridconfigShares()
+    public function getGridconfigShares(): array
     {
         return $this->getData();
     }
 
     /**
-     * @param array $gridconfigShares
+     * @param Model\GridConfigShare[]|null $gridconfigShares
      *
-     * @return static
+     * @return $this
      */
-    public function setGridconfigShares($gridconfigShares)
+    public function setGridconfigShares(?array $gridconfigShares): static
     {
         return $this->setData($gridconfigShares);
     }

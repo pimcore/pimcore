@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,7 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Db;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
 /**
@@ -23,20 +25,11 @@ use Pimcore\Model\Element\Service;
  */
 final class RequiredBy extends AbstractOperator
 {
-    /**
-     * @var string|null
-     */
-    private $elementType;
+    private ?string $elementType = null;
 
-    /**
-     * @var bool
-     */
-    private $onlyCount;
+    private bool $onlyCount;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -47,7 +40,7 @@ final class RequiredBy extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -73,8 +66,8 @@ final class RequiredBy extends AbstractOperator
             $result->value = $count;
         } else {
             $resultList = [];
-            $query = 'select * from dependencies where targettype = ? AND targetid = ' . $element->getId() . $typeCondition;
-            $dependencies = $db->fetchAll($query, [Service::getElementType($element), $element->getId()]);
+            $query = 'select * from dependencies where targettype = ? AND targetid = ?'. $typeCondition;
+            $dependencies = $db->fetchAllAssociative($query, [Service::getElementType($element), $element->getId()]);
             foreach ($dependencies as $dependency) {
                 $sourceType = $dependency['sourcetype'];
                 $sourceId = $dependency['sourceid'];
@@ -87,34 +80,22 @@ final class RequiredBy extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getElementType()
+    public function getElementType(): ?string
     {
         return $this->elementType;
     }
 
-    /**
-     * @param string|null $elementType
-     */
-    public function setElementType($elementType)
+    public function setElementType(?string $elementType): void
     {
         $this->elementType = $elementType;
     }
 
-    /**
-     * @return bool
-     */
-    public function getOnlyCount()
+    public function getOnlyCount(): bool
     {
         return $this->onlyCount;
     }
 
-    /**
-     * @param bool $onlyCount
-     */
-    public function setOnlyCount($onlyCount)
+    public function setOnlyCount(bool $onlyCount): void
     {
         $this->onlyCount = $onlyCount;
     }

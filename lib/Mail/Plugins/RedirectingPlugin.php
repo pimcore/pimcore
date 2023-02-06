@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ final class RedirectingPlugin
      *
      * @var array
      */
-    private $recipient;
+    private array $recipient;
 
     /**
      * Create a new RedirectingPlugin.
@@ -49,9 +50,9 @@ final class RedirectingPlugin
     /**
      * Set the recipient of all messages.
      *
-     * @param mixed $recipient
+     * @param array $recipient
      */
-    public function setRecipient($recipient)
+    public function setRecipient(array $recipient): void
     {
         $this->recipient = $recipient;
     }
@@ -59,9 +60,9 @@ final class RedirectingPlugin
     /**
      * Get the recipient of all messages.
      *
-     * @return mixed
+     * @return array
      */
-    public function getRecipient()
+    public function getRecipient(): array
     {
         return $this->recipient;
     }
@@ -72,12 +73,12 @@ final class RedirectingPlugin
      * @param Mail $message
      *
      */
-    public function beforeSendPerformed(Mail $message)
+    public function beforeSendPerformed(Mail $message): void
     {
         // additional checks if message is Pimcore\Mail
         if ($message->doRedirectMailsToDebugMailAddresses()) {
             if (empty($this->getRecipient())) {
-                throw new \Exception('No valid debug email address given in "Settings" -> "System" -> "Email Settings"');
+                throw new \Exception('No valid debug email address given in "Settings" -> "System Settings" -> "Debug"');
             }
 
             $this->appendDebugInformation($message);
@@ -101,10 +102,8 @@ final class RedirectingPlugin
 
     /**
      * Invoked immediately after the Message is sent.
-     *
-     * @param Mail $message
      */
-    public function sendPerformed(Mail $message)
+    public function sendPerformed(Mail $message): void
     {
         if ($message instanceof Mail && $message->doRedirectMailsToDebugMailAddresses()) {
             $this->setSenderAndReceiversParams($message);
@@ -114,10 +113,8 @@ final class RedirectingPlugin
 
     /**
      * Appends debug information to message
-     *
-     * @param Mail $message
      */
-    private function appendDebugInformation(Mail $message)
+    private function appendDebugInformation(Mail $message): void
     {
         if ($message->isPreventingDebugInformationAppending() != true) {
             $originalData = [];
@@ -148,7 +145,7 @@ final class RedirectingPlugin
             $subject = $message->getSubject();
 
             $originalData['subject'] = $subject;
-            $message->setSubject('Debug email: ' . $subject);
+            $message->subject('Debug email: ' . $subject);
 
             // Set receiver & sender data.
             $originalData['From'] = $message->getFrom();
@@ -163,10 +160,8 @@ final class RedirectingPlugin
 
     /**
      * Sets the sender and receiver information of the mail to keep the log searchable for the original data.
-     *
-     * @param Mail $message
      */
-    private function setSenderAndReceiversParams($message)
+    private function setSenderAndReceiversParams(Mail $message): void
     {
         $originalData = $message->getOriginalData();
 
@@ -179,10 +174,8 @@ final class RedirectingPlugin
 
     /**
      * removes debug information from message and resets it
-     *
-     * @param Mail $message
      */
-    private function removeDebugInformation(Mail $message)
+    private function removeDebugInformation(Mail $message): void
     {
         $originalData = $message->getOriginalData();
 
@@ -193,7 +186,7 @@ final class RedirectingPlugin
             $message->text($originalData['text']);
         }
         if (isset($originalData['subject']) && $originalData['subject']) {
-            $message->setSubject($originalData['subject']);
+            $message->subject($originalData['subject']);
         }
 
         $message->setOriginalData(null);

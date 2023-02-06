@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,7 +19,6 @@ namespace Pimcore\Workflow\EventSubscriber;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Pimcore\Workflow\Transition;
@@ -41,43 +41,18 @@ class NotificationSubscriber implements EventSubscriberInterface
 
     const DEFAULT_MAIL_TEMPLATE_PATH = '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig';
 
-    /**
-     * @var NotificationEmailService
-     */
-    protected $mailService;
+    protected NotificationEmailService $mailService;
 
-    /**
-     * @var Workflow\Notification\PimcoreNotificationService
-     */
-    protected $pimcoreNotificationService;
+    protected Workflow\Notification\PimcoreNotificationService $pimcoreNotificationService;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
-    /**
-     * @var bool
-     */
-    protected $enabled = true;
+    protected bool $enabled = true;
 
-    /**
-     * @var Workflow\ExpressionService
-     */
-    protected $expressionService;
+    protected Workflow\ExpressionService $expressionService;
 
-    /**
-     * @var Workflow\Manager
-     */
-    protected $workflowManager;
+    protected Workflow\Manager $workflowManager;
 
-    /**
-     * @param NotificationEmailService $mailService
-     * @param Workflow\Notification\PimcoreNotificationService $pimcoreNotificationService
-     * @param TranslatorInterface $translator
-     * @param Workflow\ExpressionService $expressionService
-     * @param Workflow\Manager $workflowManager
-     */
     public function __construct(NotificationEmailService $mailService, Workflow\Notification\PimcoreNotificationService $pimcoreNotificationService, TranslatorInterface $translator, Workflow\ExpressionService $expressionService, Workflow\Manager $workflowManager)
     {
         $this->mailService = $mailService;
@@ -87,12 +62,7 @@ class NotificationSubscriber implements EventSubscriberInterface
         $this->workflowManager = $workflowManager;
     }
 
-    /**
-     * @param Event $event
-     *
-     * @throws ValidationException
-     */
-    public function onWorkflowCompleted(Event $event)
+    public function onWorkflowCompleted(Event $event): void
     {
         if (!$this->checkEvent($event)) {
             return;
@@ -123,16 +93,7 @@ class NotificationSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param Transition $transition
-     * @param \Symfony\Component\Workflow\Workflow $workflow
-     * @param ElementInterface $subject
-     * @param string $mailType
-     * @param string $mailPath
-     * @param array $notifyUsers
-     * @param array $notifyRoles
-     */
-    private function handleNotifyPostWorkflowEmail(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles)
+    private function handleNotifyPostWorkflowEmail(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles): void
     {
         //notify users
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
@@ -149,14 +110,7 @@ class NotificationSubscriber implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param Transition $transition
-     * @param \Symfony\Component\Workflow\Workflow $workflow
-     * @param ElementInterface $subject
-     * @param array $notifyUsers
-     * @param array $notifyRoles
-     */
-    private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, array $notifyUsers, array $notifyRoles)
+    private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, array $notifyUsers, array $notifyRoles): void
     {
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
         $this->pimcoreNotificationService->sendPimcoreNotification(
@@ -171,10 +125,6 @@ class NotificationSubscriber implements EventSubscriberInterface
 
     /**
      * check's if the event subscriber should be executed
-     *
-     * @param Event $event
-     *
-     * @return bool
      */
     private function checkEvent(Event $event): bool
     {
@@ -183,23 +133,17 @@ class NotificationSubscriber implements EventSubscriberInterface
             && $event->getSubject() instanceof ElementInterface;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * @param bool $enabled
-     */
     public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'workflow.completed' => ['onWorkflowCompleted', 0],

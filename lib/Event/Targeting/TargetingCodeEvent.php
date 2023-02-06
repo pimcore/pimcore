@@ -25,17 +25,11 @@ class TargetingCodeEvent extends Event
     /**
      * @var CodeBlock[]
      */
-    private $blocks;
+    private array $blocks;
 
-    /**
-     * @var string
-     */
-    private $template;
+    private string $template;
 
-    /**
-     * @var array
-     */
-    private $data;
+    private array $data;
 
     /**
      * @param string $template
@@ -57,7 +51,7 @@ class TargetingCodeEvent extends Event
         return $this->template;
     }
 
-    public function setTemplate(string $template)
+    public function setTemplate(string $template): void
     {
         $this->template = $template;
     }
@@ -84,7 +78,7 @@ class TargetingCodeEvent extends Event
         return $this->data;
     }
 
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }

@@ -24,10 +24,7 @@ class TargetingStorage implements DataProviderInterface
 {
     const PROVIDER_KEY = 'targeting_storage';
 
-    /**
-     * @var TargetingStorageInterface
-     */
-    private $storage;
+    private TargetingStorageInterface $storage;
 
     public function __construct(TargetingStorageInterface $storage)
     {
@@ -37,7 +34,7 @@ class TargetingStorage implements DataProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function load(VisitorInfo $visitorInfo)
+    public function load(VisitorInfo $visitorInfo): void
     {
         $visitorInfo->set(self::PROVIDER_KEY, $this->storage);
     }

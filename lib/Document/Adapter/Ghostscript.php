@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,15 +32,9 @@ class Ghostscript extends Adapter
 {
     use TemporaryFileHelperTrait;
 
-    /**
-     * @var string|null
-     */
-    private $version;
+    private ?string $version = null;
 
-    /**
-     * @return bool
-     */
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         try {
             $ghostscript = self::getGhostscriptCli();
@@ -54,10 +49,7 @@ class Ghostscript extends Adapter
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isFileTypeSupported($fileType)
+    public function isFileTypeSupported(string $fileType): bool
     {
         // it's also possible to pass a path or filename
         if (preg_match("/\.?pdf$/i", $fileType)) {
@@ -72,7 +64,7 @@ class Ghostscript extends Adapter
      *
      * @throws \Exception
      */
-    public static function getGhostscriptCli()
+    public static function getGhostscriptCli(): string
     {
         return Console::getExecutable('gs', true);
     }
@@ -82,15 +74,12 @@ class Ghostscript extends Adapter
      *
      * @throws \Exception
      */
-    public static function getPdftotextCli()
+    public static function getPdftotextCli(): string
     {
         return Console::getExecutable('pdftotext', true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(Asset\Document $asset)
+    public function load(Asset\Document $asset): static
     {
         // avoid timeouts
         $maxExecTime = (int) ini_get('max_execution_time');
@@ -132,7 +121,7 @@ class Ghostscript extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function getPageCount()
+    public function getPageCount(): int
     {
         $process = Process::fromShellCommandline($this->buildPageCountCommand());
         $process->setTimeout(120);
@@ -151,17 +140,17 @@ class Ghostscript extends Adapter
      *
      * @throws \Exception
      */
-    protected function buildPageCountCommand()
+    protected function buildPageCountCommand(): string
     {
         $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
         $localFile = self::getLocalFileFromStream($this->getPdf());
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
         if (version_compare($this->getVersion(), '9.50', '>=')) {
-            $command .= " --permit-file-read='" . escapeshellcmd($localFile) . "'";
+            $command .= ' --permit-file-read=' . escapeshellarg($localFile);
         }
 
-        $command .= " -c '(" . escapeshellcmd($localFile) . ") (r) file runpdfbegin pdfpagecount = quit'";
+        $command .= ' -c ' . escapeshellarg('(' . $localFile . ') (r) file runpdfbegin pdfpagecount = quit');
 
         Console::addLowProcessPriority($command);
 
@@ -175,7 +164,7 @@ class Ghostscript extends Adapter
      *
      * @throws \Exception
      */
-    protected function getVersion()
+    protected function getVersion(): string
     {
         if (is_null($this->version)) {
             $process = new Process([self::getGhostscriptCli(), '--version']);
@@ -186,10 +175,7 @@ class Ghostscript extends Adapter
         return $this->version;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function saveImage(string $imageTargetPath, $page = 1, $resolution = 200)
+    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed
     {
         try {
             $localFile = self::getLocalFileFromStream($this->getPdf());
@@ -201,16 +187,13 @@ class Ghostscript extends Adapter
 
             return $this;
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
 
             return false;
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getText(?int $page = null, ?Asset\Document $asset = null)
+    public function getText(?int $page = null, ?Asset\Document $asset = null): mixed
     {
         try {
             if (!$asset && $this->asset) {
@@ -270,7 +253,7 @@ class Ghostscript extends Adapter
 
             return $text;
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
 
             return false;
         }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,27 +27,13 @@ use Symfony\Component\Finder\SplFileInfo;
  */
 class PimcoreBundleLocator
 {
-    /**
-     * @var Composer\PackageInfo
-     */
-    private $composerPackageInfo;
+    private Composer\PackageInfo $composerPackageInfo;
 
-    /**
-     * @var array
-     */
-    private $paths = [];
+    private array $paths = [];
 
-    /**
-     * @var bool
-     */
-    private $handleComposer = true;
+    private bool $handleComposer = true;
 
-    /**
-     * @param Composer\PackageInfo $composerPackageInfo
-     * @param array $paths
-     * @param bool $handleComposer
-     */
-    public function __construct(Composer\PackageInfo $composerPackageInfo, array $paths = [], $handleComposer = true)
+    public function __construct(Composer\PackageInfo $composerPackageInfo, array $paths = [], bool $handleComposer = true)
     {
         $this->setPaths($paths);
 
@@ -54,10 +41,7 @@ class PimcoreBundleLocator
         $this->handleComposer = $handleComposer;
     }
 
-    /**
-     * @param array $paths
-     */
-    private function setPaths(array $paths)
+    private function setPaths(array $paths): void
     {
         $fs = new Filesystem();
 
@@ -77,7 +61,7 @@ class PimcoreBundleLocator
      *
      * @return array A list of found bundle class names
      */
-    public function findBundles()
+    public function findBundles(): array
     {
         $result = $this->findBundlesInPaths($this->paths);
         if ($this->handleComposer) {
@@ -90,25 +74,13 @@ class PimcoreBundleLocator
         return $result;
     }
 
-    /**
-     * @param array $paths
-     *
-     * @return array
-     */
-    private function findBundlesInPaths(array $paths)
+    private function findBundlesInPaths(array $paths): array
     {
-        $filteredPaths = [];
-        foreach ($paths as $path) {
-            if (file_exists($path) && is_dir($path)) {
-                $filteredPaths[] = $path;
-            }
-        }
-
         $result = [];
 
         $finder = new Finder();
         $finder
-            ->in(array_unique($filteredPaths))
+            ->in(array_unique(array_filter($paths, 'is_dir')))
             ->name('*Bundle.php');
 
         /** @var SplFileInfo $file */
@@ -130,18 +102,16 @@ class PimcoreBundleLocator
      *    as list of available bundle names
      *  * If the config entry above is not available, it will scan the package directory with the same logic as for
      *    the other paths
-     *
-     * @return array
      */
-    private function findComposerBundles()
+    private function findComposerBundles(): array
     {
         $pimcoreBundles = $this->composerPackageInfo->getInstalledPackages('pimcore-bundle');
         $composerPaths = [];
 
         $result = [];
         foreach ($pimcoreBundles as $packageInfo) {
-            // if bundle explicitely defines bundles, use the config
-            if (isset($packageInfo['extra']) && isset($packageInfo['extra']['pimcore'])) {
+            // if bundle explicitly defines bundles, use the config
+            if (isset($packageInfo['extra']['pimcore'])) {
                 $cfg = $packageInfo['extra']['pimcore'];
                 if (isset($cfg['bundles']) && is_array($cfg['bundles'])) {
                     foreach ($cfg['bundles'] as $bundle) {
@@ -162,11 +132,7 @@ class PimcoreBundleLocator
         return $result;
     }
 
-    /**
-     * @param string $bundle
-     * @param array $result
-     */
-    private function processBundleClass($bundle, array &$result)
+    private function processBundleClass(string $bundle, array &$result): void
     {
         if (empty($bundle) || !is_string($bundle)) {
             return;

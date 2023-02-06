@@ -1,0 +1,16 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\SystemInfoBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: [ 'controller.service_arguments' ]
+
+    # auto-register all commands as services
+    Pimcore\Bundle\SystemInfoBundle\Command\:
+        resource: '../src/Command'
+        tags: [ 'console.command' ]

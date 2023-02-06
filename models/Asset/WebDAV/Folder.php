@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,15 +27,9 @@ use Sabre\DAV;
  */
 class Folder extends DAV\Collection
 {
-    /**
-     * @var Asset
-     */
-    private $asset;
+    private Asset $asset;
 
-    /**
-     * @param Asset $asset
-     */
-    public function __construct($asset)
+    public function __construct(Asset $asset)
     {
         $this->asset = $asset;
     }
@@ -44,23 +39,21 @@ class Folder extends DAV\Collection
      *
      * @return array
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         $children = [];
 
-        $childsList = new Asset\Listing();
+        $childrenList = new Asset\Listing();
 
-        $childsList->addConditionParam('parentId = ?', [$this->asset->getId()]);
+        $childrenList->addConditionParam('parentId = ?', [$this->asset->getId()]);
         $user = \Pimcore\Tool\Admin::getCurrentUser();
-        $childsList->filterAccessibleByUser($user);
+        $childrenList->filterAccessibleByUser($user, $this->asset);
 
-        foreach ($childsList as $child) {
+        foreach ($childrenList as $child) {
             try {
-                if ($child = $this->getChild($child)) {
-                    $children[] = $child;
-                }
+                $children[] = $this->getChild($child);
             } catch (\Exception $e) {
-                Logger::warning($e);
+                Logger::warning((string) $e);
             }
         }
 
@@ -70,11 +63,9 @@ class Folder extends DAV\Collection
     /**
      * @param Asset|string $name
      *
-     * @return DAV\INode|void
-     *
      * @throws DAV\Exception\NotFound
      */
-    public function getChild($name)
+    public function getChild($name): File|Folder
     {
         $asset = null;
 
@@ -86,9 +77,7 @@ class Folder extends DAV\Collection
                 $parentPath = '';
             }
 
-            if (!$asset = Asset::getByPath($parentPath . '/' . $name)) {
-                throw new DAV\Exception\NotFound('File not found: ' . $name);
-            }
+            $asset = Asset::getByPath($parentPath . '/' . $name);
         } elseif ($name instanceof Asset) {
             $asset = $name;
         }
@@ -104,10 +93,7 @@ class Folder extends DAV\Collection
         throw new DAV\Exception\NotFound('File not found: ' . $name);
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->asset->getFilename();
     }
@@ -153,7 +139,7 @@ class Folder extends DAV\Collection
      *
      * @throws DAV\Exception\Forbidden
      */
-    public function createDirectory($name)
+    public function createDirectory($name): void
     {
         $user = AdminTool::getCurrentUser();
 
@@ -173,7 +159,7 @@ class Folder extends DAV\Collection
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->asset->isAllowed('delete')) {
             $this->asset->delete();
@@ -185,12 +171,12 @@ class Folder extends DAV\Collection
     /**
      * @param string $name
      *
-     * @return $this|void
+     * @return $this
      *
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    public function setName($name)
+    public function setName($name): static
     {
         if ($this->asset->isAllowed('rename')) {
             $this->asset->setFilename(Element\Service::getValidKey($name, 'asset'));
@@ -202,10 +188,7 @@ class Folder extends DAV\Collection
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getLastModified()
+    public function getLastModified(): int
     {
         return $this->asset->getModificationDate();
     }

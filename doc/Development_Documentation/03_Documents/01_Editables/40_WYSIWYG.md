@@ -97,7 +97,7 @@ CKEDITOR.editorConfig = function (config) {
 
 You can add a Global Configuration for all WYSIWYG Editors for all documents by setting `pimcore.document.editables.wysiwyg.defaultEditorConfig`.
 
-For this purpose, you can create a [Pimcore Bundle](../../20_Extending_Pimcore/13_Bundle_Developers_Guide) and add the
+For this purpose, you can create a [Pimcore Bundle](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/README.md) and add the
 configuration in a file in the `Resources/public` directory  of your bundle (e.g. `Resources/public/js/editmode.js`).
 
 ```
@@ -106,7 +106,7 @@ pimcore.document.editables.wysiwyg.defaultEditorConfig.uiColor = '#AADC6E';
 ```
 
 To load that file in editmode, you need to implement `getEditmodeJsPaths` in your bundle class. Given your bundle is named
-`AppAdminBundle` and your `editmode.js` created before was saved to `src/AppAdminBundle/Resources/public/js/editmode.js`:
+`AppAdminBundle` and your `editmode.js` created before was saved to `src/AppAdminBundle/public/js/editmode.js`:
  
 ```php
 <?php
@@ -146,7 +146,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class EditmodeListener implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             BundleManagerEvents::EDITMODE_JS_PATHS => 'onEditmodeJsPaths'

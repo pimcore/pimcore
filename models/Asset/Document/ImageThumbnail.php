@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,6 +28,9 @@ use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Lock\LockFactory;
 
+/**
+ * @property Model\Asset\Document|null $asset
+ */
 final class ImageThumbnail
 {
     use Model\Asset\Thumbnail\ImageThumbnailTrait;
@@ -37,28 +41,23 @@ final class ImageThumbnail
      *
      * @var int
      */
-    protected $page = 1;
+    protected int $page = 1;
 
     /**
-     * @param Model\Asset\Document $asset
-     * @param string|array|Image\Thumbnail\Config $config
+     * @param Model\Asset\Document|null $asset
+     * @param string|array|Image\Thumbnail\Config|null $config
      * @param int $page
      * @param bool $deferred
      */
-    public function __construct($asset, $config = null, $page = 1, $deferred = true)
+    public function __construct(?Model\Asset\Document $asset, array|string|Image\Thumbnail\Config $config = null, int $page = 1, bool $deferred = true)
     {
         $this->asset = $asset;
-        $this->config = $this->createConfig($config);
+        $this->config = $this->createConfig($config ?? []);
         $this->page = $page;
         $this->deferred = $deferred;
     }
 
-    /**
-     * @param bool $deferredAllowed
-     *
-     * @return string
-     */
-    public function getPath($deferredAllowed = true)
+    public function getPath(bool $deferredAllowed = true): string
     {
         $pathReference = $this->getPathReference($deferredAllowed);
         $path = $this->convertToWebPath($pathReference);
@@ -73,66 +72,84 @@ final class ImageThumbnail
         return $path;
     }
 
-    /**
-     * @param bool $deferredAllowed
-     */
-    public function generate($deferredAllowed = true)
+    public function generate(bool $deferredAllowed = true): void
     {
+        $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
         if ($this->asset && empty($this->pathReference)) {
             $config = $this->getConfig();
             $cacheFileStream = null;
             $config->setFilenameSuffix('page-' . $this->page);
-            $deferred = $deferredAllowed && $this->deferred;
 
             try {
                 if (!$deferred) {
-                    $storage = Storage::get('asset_cache');
-                    $cacheFilePath = sprintf('%s/image-thumb__%s__document_original_image/page_%s.png',
-                        rtrim($this->asset->getRealPath(), '/'),
-                        $this->asset->getId(),
-                        $this->page
-                    );
-
-                    if (!$storage->fileExists($cacheFilePath)) {
-                        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
-                        $converter = \Pimcore\Document::getInstance();
-                        $converter->load($this->asset);
-                        if ($lock->acquire()) {
-                            $tempFile = File::getLocalTempFilePath('png');
-                            $converter->saveImage($tempFile, $this->page);
-                            $generated = true;
-                            $lock->release();
-                            $storage->write($cacheFilePath, file_get_contents($tempFile));
-                            unlink($tempFile);
-                        }
+                    if ($cacheFileStream = $this->getCacheFileStream()) {
+                        $generated = true;
                     }
-
-                    $cacheFileStream = $storage->readStream($cacheFilePath);
                 }
 
                 if ($config) {
-                    $this->pathReference = Image\Thumbnail\Processor::process($this->asset, $config, $cacheFileStream, $deferred, $generated);
+                    if ($deferred || $cacheFileStream) {
+                        $this->pathReference = Image\Thumbnail\Processor::process($this->asset, $config, $cacheFileStream, $deferred, $generated);
+                    }
                 }
             } catch (\Exception $e) {
                 Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
                 Logger::error($e->getMessage());
             }
-
-            if (empty($this->pathReference)) {
-                $this->pathReference = [
-                    'type' => 'error',
-                    'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
-                ];
-            }
-
-            $event = new GenericEvent($this, [
-                'deferred' => $deferred,
-                'generated' => $generated,
-            ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::DOCUMENT_IMAGE_THUMBNAIL);
         }
+
+        if (empty($this->pathReference)) {
+            $this->pathReference = [
+                'type' => 'error',
+                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+            ];
+        }
+
+        $event = new GenericEvent($this, [
+            'deferred' => $deferred,
+            'generated' => $generated,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::DOCUMENT_IMAGE_THUMBNAIL);
+    }
+
+    /**
+     * @return resource|null
+     */
+    private function getCacheFileStream()
+    {
+        $storage = Storage::get('asset_cache');
+        $cacheFilePath = sprintf(
+            '%s/%s/image-thumb__%s__document_original_image/page_%s.png',
+            rtrim($this->asset->getRealPath(), '/'),
+            $this->asset->getId(),
+            $this->asset->getId(),
+            $this->page
+        );
+
+        if (!$storage->fileExists($cacheFilePath)) {
+            $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
+            if ($lock->acquire()) {
+                $tempFile = File::getLocalTempFilePath('png');
+
+                try {
+                    $converter = \Pimcore\Document::getInstance();
+                    $converter->load($this->asset);
+                    $converter->saveImage($tempFile, $this->page);
+                    $storage->write($cacheFilePath, file_get_contents($tempFile));
+                } finally {
+                    unlink($tempFile);
+                    $lock->release();
+                }
+            } else {
+                Logger::info('Creation of cache file stream of document ' . $this->asset->getRealFullPath() . ' is locked');
+
+                return null;
+            }
+        }
+
+        return $storage->readStream($cacheFilePath);
     }
 
     /**
@@ -147,12 +164,7 @@ final class ImageThumbnail
         return $this->getPath();
     }
 
-    /**
-     * @param string|array|Image\Thumbnail\Config $selector
-     *
-     * @return Image\Thumbnail\Config
-     */
-    protected function createConfig($selector)
+    protected function createConfig(array|string|Image\Thumbnail\Config $selector): Image\Thumbnail\Config
     {
         $config = Image\Thumbnail\Config::getByAutoDetect($selector);
 

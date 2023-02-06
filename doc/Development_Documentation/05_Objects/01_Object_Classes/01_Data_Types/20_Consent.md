@@ -6,7 +6,7 @@ Consent itself is stored as checkbox in data object, additional meta information
 are stored as a note on the corresponding object. This note is created for both actions - when a consent is given and 
 when a consent is revoked. 
 
-![Data Type Consent](../../../img/classes-datatypes-consent.jpg)
+![Data Type Consent](../../../img/classes-datatypes-consent.png)
 
 
 ### Usage in Pimcore Admin Backend

@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Editable;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document;
@@ -29,14 +28,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class EditableUsageResolver
 {
-    /**
-     * @var UsageRecorderSubscriber|null
-     */
-    protected $subscriber;
+    protected ?UsageRecorderSubscriber $subscriber = null;
 
-    protected $dispatcher;
+    protected EventDispatcherInterface $dispatcher;
 
-    protected $renderer;
+    protected DocumentRenderer $renderer;
 
     public function __construct(EventDispatcherInterface $eventDispatcher, DocumentRenderer $documentRenderer)
     {
@@ -44,12 +40,7 @@ class EditableUsageResolver
         $this->renderer = $documentRenderer;
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     *
-     * @return array
-     */
-    public function getUsedEditableNames(Document\PageSnippet $document)
+    public function getUsedEditableNames(Document\PageSnippet $document): array
     {
         $this->registerEventSubscriber();
 
@@ -57,7 +48,6 @@ class EditableUsageResolver
         // this is especially necessary when lazy loading certain elements on a page (eg. using ajax-include and similar solutions)
         $this->renderer->render($document, [
             EditmodeResolver::ATTRIBUTE_EDITMODE => true,
-            ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS => true,
             Block::ATTRIBUTE_IGNORE_EDITMODE_INDICES => true,
             ]);
         $names = $this->subscriber->getRecordedEditableNames();
@@ -68,7 +58,7 @@ class EditableUsageResolver
         return $names;
     }
 
-    protected function registerEventSubscriber()
+    protected function registerEventSubscriber(): void
     {
         if (!$this->subscriber) {
             $this->subscriber = new UsageRecorderSubscriber();
@@ -76,7 +66,7 @@ class EditableUsageResolver
         }
     }
 
-    protected function unregisterEventSubscriber()
+    protected function unregisterEventSubscriber(): void
     {
         if ($this->subscriber) {
             $this->dispatcher->removeSubscriber($this->subscriber);

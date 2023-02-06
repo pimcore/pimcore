@@ -15,7 +15,10 @@
 
 namespace Pimcore\Model\Translation;
 
+use Pimcore\Db\Helper;
+use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\User;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
@@ -30,9 +33,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     const TABLE_PREFIX = 'translations_';
 
-    /**
-     * @return string
-     */
     public function getDatabaseTableName(): string
     {
         return self::TABLE_PREFIX . $this->model->getDomain();
@@ -40,18 +40,24 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $key
+     * @param array|null $languages
      *
      * @throws NotFoundResourceException
+     * @throws \Doctrine\DBAL\Exception
      */
-    public function getByKey($key)
+    public function getByKey(string $key, array $languages = null): void
     {
-        $caseInsensitive = \Pimcore::getContainer()->getParameter('pimcore.config')['translations']['case_insensitive'] ?? false;
-
-        $condition = '`key` = ?';
-        if ($caseInsensitive) {
-            $condition = 'LOWER(`key`) = LOWER(?)';
+        if (is_array($languages)) {
+            $sql = 'SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key
+            AND `language` IN (:languages) ORDER BY `creationDate` ';
+        } else {
+            $sql ='SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key ORDER BY `creationDate` ';
         }
-        $data = $this->db->fetchAll('SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE ' . $condition . ' ORDER BY `creationDate` ', [$key]);
+
+        $data = $this->db->fetchAllAssociative($sql,
+            ['key' => $key, 'languages' => $languages],
+            ['languages' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY]
+        );
 
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -60,6 +66,8 @@ class Dao extends Model\Dao\AbstractDao
                 $this->model->setCreationDate($d['creationDate']);
                 $this->model->setModificationDate($d['modificationDate']);
                 $this->model->setType($d['type']);
+                $this->model->setUserOwner($d['userOwner']);
+                $this->model->setUserModification($d['userModification']);
             }
         } else {
             throw new NotFoundResourceException("Translation-Key -->'" . $key . "'<-- not found");
@@ -69,14 +77,29 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      */
-    public function save()
+    public function save(): void
     {
         //Create Domain table if doesn't exist
         $this->createOrUpdateTable();
 
+        $this->updateModificationInfos();
+
+        $editableLanguages = [];
+        if ($this->model->getDomain() != Model\Translation::DOMAIN_ADMIN) {
+            if ($user = User::getById($this->model->getUserModification())) {
+                $editableLanguages = $user->getAllowedLanguagesForEditingWebsiteTranslations();
+            }
+        }
+
         if ($this->model->getKey() !== '') {
             if (is_array($this->model->getTranslations())) {
                 foreach ($this->model->getTranslations() as $language => $text) {
+                    if (count($editableLanguages) && !in_array($language, $editableLanguages)) {
+                        Logger::warning(sprintf('User %s not allowed to edit %s translation', $user->getUsername(), $language)); // @phpstan-ignore-line
+
+                        continue;
+                    }
+
                     $data = [
                         'key' => $this->model->getKey(),
                         'type' => $this->model->getType(),
@@ -84,8 +107,10 @@ class Dao extends Model\Dao\AbstractDao
                         'text' => $text,
                         'modificationDate' => $this->model->getModificationDate(),
                         'creationDate' => $this->model->getCreationDate(),
+                        'userOwner' => $this->model->getUserOwner(),
+                        'userModification' => $this->model->getUserModification(),
                     ];
-                    $this->db->insertOrUpdate($this->getDatabaseTableName(), $data);
+                    Helper::insertOrUpdate($this->db, $this->getDatabaseTableName(), $data);
                 }
             }
         }
@@ -94,7 +119,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete($this->getDatabaseTableName(), [$this->db->quoteIdentifier('key') => $this->model->getKey()]);
     }
@@ -104,9 +129,9 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getAvailableLanguages()
+    public function getAvailableLanguages(): array
     {
-        $l = $this->db->fetchAll('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
+        $l = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
         $languages = [];
 
         foreach ($l as $values) {
@@ -121,9 +146,9 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getAvailableDomains()
+    public function getAvailableDomains(): array
     {
-        $domainTables = $this->db->fetchAll("SHOW TABLES LIKE 'translations_%'");
+        $domainTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'translations_%'");
         $domains = [];
 
         foreach ($domainTables as $domainTable) {
@@ -151,7 +176,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function createOrUpdateTable()
+    public function createOrUpdateTable(): void
     {
         $table = $this->getDatabaseTableName();
 
@@ -159,15 +184,35 @@ class Dao extends Model\Dao\AbstractDao
             throw new \Exception('Domain is missing to create new translation domain');
         }
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (
                           `key` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
                           `type` varchar(10) DEFAULT NULL,
                           `language` varchar(10) NOT NULL DEFAULT '',
                           `text` text DEFAULT NULL,
                           `creationDate` int(11) unsigned DEFAULT NULL,
                           `modificationDate` int(11) unsigned DEFAULT NULL,
+                          `userOwner` int(11) unsigned DEFAULT NULL,
+                          `userModification` int(11) unsigned DEFAULT NULL,
                           PRIMARY KEY (`key`,`language`),
                           KEY `language` (`language`)
                         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+    }
+
+    protected function updateModificationInfos(): void
+    {
+        $updateTime = time();
+        $this->model->setModificationDate($updateTime);
+
+        if (!$this->model->getCreationDate()) {
+            $this->model->setCreationDate($updateTime);
+        }
+
+        // auto assign user if possible, if no user present, use ID=0 which represents the "system" user
+        $userId = \Pimcore\Tool\Admin::getCurrentUser()?->getId() ?? 0;
+        $this->model->setUserModification($userId);
+
+        if ($this->model->getUserOwner() === null) {
+            $this->model->setUserOwner($userId);
+        }
     }
 }

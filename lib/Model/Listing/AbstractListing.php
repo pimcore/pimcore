@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,6 +19,7 @@ namespace Pimcore\Model\Listing;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\Dao\AbstractDao;
 
@@ -27,72 +29,33 @@ use Pimcore\Model\Listing\Dao\AbstractDao;
  */
 abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable
 {
-    /**
-     * @var array
-     */
-    protected $order = [];
+    protected array $order = [];
 
-    /**
-     * @var array
-     */
-    protected $orderKey = [];
+    protected array $orderKey = [];
 
-    /**
-     * @var int
-     */
-    protected $limit;
+    protected ?int $limit = null;
 
-    /**
-     * @var int
-     */
-    protected $offset;
+    protected int $offset = 0;
 
-    /**
-     * @var string
-     */
-    protected $condition;
+    protected ?string $condition = null;
 
-    /**
-     * @var array
-     */
-    protected $conditionVariables = [];
+    protected array $conditionVariables = [];
 
-    /**
-     * @var array
-     */
-    protected $conditionVariablesFromSetCondition;
+    protected ?array $conditionVariablesFromSetCondition = null;
 
-    /**
-     * @var string
-     */
-    protected $groupBy;
+    protected ?string $groupBy = null;
 
-    /**
-     * @var array
-     */
-    protected $validOrders = [
+    protected array $validOrders = [
         'ASC',
         'DESC',
     ];
 
-    /**
-     * @var array
-     */
-    protected $conditionParams = [];
+    protected array $conditionParams = [];
 
-    /**
-     * @var array
-     */
-    protected $conditionVariableTypes = [];
+    protected array $conditionVariableTypes = [];
 
-    /**
-     * @var array|null
-     */
-    protected $data;
+    protected ?array $data = null;
 
-    /**
-     * @return array
-     */
     public function getConditionVariableTypes(): array
     {
         if (!$this->conditionVariables) {
@@ -102,86 +65,63 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this->conditionVariableTypes;
     }
 
-    /**
-     * @param array $conditionVariableTypes
-     */
     public function setConditionVariableTypes(array $conditionVariableTypes): void
     {
         $this->conditionVariableTypes = $conditionVariableTypes;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         return true;
     }
 
-    /**
-     * @return int
-     */
-    public function getLimit()
+    public function getLimit(): ?int
     {
         return $this->limit;
     }
 
-    /**
-     * @return int
-     */
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
 
-    /**
-     * @return array
-     */
-    public function getOrder()
+    public function getOrder(): array
     {
         return $this->order;
     }
 
     /**
-     * @param int $limit
-     *
      * @return $this
      */
-    public function setLimit($limit)
+    public function setLimit(?int $limit): static
     {
         $this->setData(null);
 
-        if ((int)$limit > 0) {
+        if (is_numeric($limit)) {
             $this->limit = (int)$limit;
+        } else {
+            $this->limit = null;
         }
 
         return $this;
     }
 
     /**
-     * @param int $offset
-     *
      * @return $this
      */
-    public function setOffset($offset)
+    public function setOffset(int $offset): static
     {
         $this->setData(null);
 
-        if ((int)$offset >= 0) {
-            $this->offset = (int)$offset;
-        }
+        $this->offset = (int)$offset;
 
         return $this;
     }
 
     /**
-     * @param array|string $order
-     *
      * @return $this
      */
-    public function setOrder($order)
+    public function setOrder(array|string $order): static
     {
         $this->setData(null);
 
@@ -206,21 +146,15 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getOrderKey()
+    public function getOrderKey(): array
     {
         return $this->orderKey;
     }
 
     /**
-     * @param string|array $orderKey
-     * @param bool $quote
-     *
      * @return $this
      */
-    public function setOrderKey($orderKey, $quote = true)
+    public function setOrderKey(array|string $orderKey, bool $quote = true): static
     {
         $this->setData(null);
 
@@ -235,7 +169,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
                 if ($quote === false) {
                     $this->orderKey[] = $o;
                 } elseif ($this->isValidOrderKey($o)) {
-                    $this->orderKey[] = '`' . $o . '`';
+                    $this->orderKey[] = $this->quoteIdentifier($o);
                 }
             }
         }
@@ -244,34 +178,33 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param string $key
+     * @param string $condition
      * @param mixed $value
      * @param string $concatenator
      *
      * @return $this
      */
-    public function addConditionParam($key, $value = null, $concatenator = 'AND')
+    public function addConditionParam(string $condition, mixed $value = null, string $concatenator = 'AND'): static
     {
         $this->setData(null);
 
-        $key = '('.$key.')';
-        $ignore = true;
-        if (strpos($key, '?') !== false || strpos($key, ':') !== false) {
-            $ignore = false;
+        $condition = '('.$condition.')';
+        $ignoreParameter = true;
+
+        $conditionWithoutQuotedStrings = preg_replace('/["\'][^"\']*?["\']/', '', $condition);
+        if (str_contains($conditionWithoutQuotedStrings, '?') || str_contains($conditionWithoutQuotedStrings, ':')) {
+            $ignoreParameter = false;
         }
-        $this->conditionParams[$key] = [
+        $this->conditionParams[$condition] = [
             'value' => $value,
             'concatenator' => $concatenator,
-            'ignore-value' => $ignore, // If there is not a placeholder, ignore value!
+            'ignore-value' => $ignoreParameter, // If there is not a placeholder, ignore value!
         ];
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getConditionParams()
+    public function getConditionParams(): array
     {
         return $this->conditionParams;
     }
@@ -279,7 +212,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     /**
      * @return $this
      */
-    public function resetConditionParams()
+    public function resetConditionParams(): static
     {
         $this->setData(null);
 
@@ -288,15 +221,11 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCondition()
+    public function getCondition(): string
     {
         $conditionString = '';
         $conditionVariableTypes = [];
         $conditionParams = $this->getConditionParams();
-        $db = \Pimcore\Db::get();
 
         $params = [];
         if (!empty($conditionParams)) {
@@ -353,18 +282,16 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
         $this->setConditionVariableTypes($conditionVariableTypes);
 
-        $condition = $this->condition . $conditionString;
-
-        return $condition;
+        return $this->condition . $conditionString;
     }
 
     /**
      * @param string $condition
-     * @param array|scalar $conditionVariables
+     * @param array|scalar|null $conditionVariables
      *
      * @return $this
      */
-    public function setCondition($condition, $conditionVariables = null)
+    public function setCondition(string $condition, float|array|bool|int|string $conditionVariables = null): static
     {
         $this->setData(null);
 
@@ -380,37 +307,34 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getGroupBy()
+    public function getGroupBy(): ?string
     {
         return $this->groupBy;
     }
 
-    /**
-     * @return array
-     */
-    public function getValidOrders()
+    public function getValidOrders(): array
     {
         return $this->validOrders;
     }
 
     /**
-     * @param string $groupBy
-     * @param bool $qoute
-     *
      * @return $this
      */
-    public function setGroupBy($groupBy, $qoute = true)
+    public function setGroupBy(string $groupBy, bool $qoute = true): static
     {
         $this->setData(null);
 
         if ($groupBy) {
             $this->groupBy = $groupBy;
 
-            if ($qoute && strpos($groupBy, '`') !== 0) {
-                $this->groupBy = '`' . $this->groupBy . '`';
+            if ($qoute) {
+                $quotedParts = [];
+                $parts = explode(',', trim($groupBy, '`'));
+                foreach ($parts as $part) {
+                    $quotedParts[] = $this->quoteIdentifier(trim($part));
+                }
+
+                $this->groupBy = implode(', ', $quotedParts);
             }
         }
 
@@ -418,15 +342,20 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param array $validOrders
-     *
      * @return $this
      */
-    public function setValidOrders($validOrders)
+    public function setValidOrders(array $validOrders): static
     {
         $this->validOrders = $validOrders;
 
         return $this;
+    }
+
+    public function quoteIdentifier(string $value): string
+    {
+        $db = Db::get();
+
+        return $db->quoteIdentifier($value);
     }
 
     /**
@@ -435,53 +364,41 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
      *
      * @return string
      */
-    public function quote($value, $type = null)
+    public function quote(mixed $value, int $type = null): string
     {
         $db = Db::get();
 
         return $db->quote($value, $type);
     }
 
-    /**
-     * @param string $value
-     *
-     * @return string
-     */
     public function escapeLike(string $value): string
     {
-        $db = Db::get();
-
-        return $db->escapeLike($value);
+        return Helper::escapeLike($value);
     }
 
     /**
-     * @param array $conditionVariables
-     *
      * @return $this
      */
-    public function setConditionVariables($conditionVariables)
+    public function setConditionVariables(array $conditionVariables): static
     {
         $this->conditionVariables = $conditionVariables;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getConditionVariables()
+    public function getConditionVariables(): array
     {
-        $this->getCondition();          // this will merge conditionVariablesFromSetCondition and additional params into conditionVariables
+        if (!$this->conditionVariables) {
+            $this->getCondition();
+        }
 
         return $this->conditionVariables;
     }
 
     /**
-     * @param array $conditionVariables
-     *
      * @return $this
      */
-    public function setConditionVariablesFromSetCondition($conditionVariables)
+    public function setConditionVariablesFromSetCondition(array $conditionVariables): static
     {
         $this->setData(null);
 
@@ -490,26 +407,17 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getConditionVariablesFromSetCondition()
+    public function getConditionVariablesFromSetCondition(): ?array
     {
         return $this->conditionVariablesFromSetCondition;
     }
 
-    /**
-     * @return bool
-     */
-    public function isLoaded()
+    public function isLoaded(): bool
     {
         return $this->data !== null;
     }
 
-    /**
-     * @return array
-     */
-    public function getData()
+    public function getData(): ?array
     {
         if ($this->data === null) {
             $this->getDao()->load();
@@ -519,75 +427,49 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param array|null $data
-     *
-     * @return static
+     * @return $this
      */
-    public function setData(?array $data): self
+    public function setData(?array $data): static
     {
         $this->data = $data;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    #[\ReturnTypeWillChange]
-    public function current()// : mixed
+    public function current(): mixed
     {
         $this->getData();
 
         return current($this->data);
     }
 
-    /**
-     * @return mixed
-     */
-    #[\ReturnTypeWillChange]
-    public function key()// : mixed
+    public function key(): int|string|null
     {
         $this->getData();
 
         return key($this->data);
     }
 
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function next()// : void
+    public function next(): void
     {
         $this->getData();
         next($this->data);
     }
 
-    /**
-     * @return bool
-     */
-    #[\ReturnTypeWillChange]
-    public function valid()// : bool
+    public function valid(): bool
     {
         $this->getData();
 
         return $this->current() !== false;
     }
 
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function rewind()// : void
+    public function rewind(): void
     {
         $this->getData();
         reset($this->data);
     }
 
-    /**
-     * @return int
-     */
-    #[\ReturnTypeWillChange]
-    public function count()// : int
+    public function count(): int
     {
         return $this->getDao()->getTotalCount();
     }

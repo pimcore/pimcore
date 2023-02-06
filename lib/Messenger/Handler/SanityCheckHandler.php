@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,7 +34,7 @@ class SanityCheckHandler implements BatchHandlerInterface
     use BatchHandlerTrait;
     use HandlerHelperTrait;
 
-    public function __invoke(SanityCheckMessage $message, Acknowledger $ack = null)
+    public function __invoke(SanityCheckMessage $message, Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }
@@ -46,7 +47,7 @@ class SanityCheckHandler implements BatchHandlerInterface
 
         foreach ($jobs as [$message, $ack]) {
             try {
-                $element = Service::getElementById($message->getType(), $message->getId(), true);
+                $element = Service::getElementById($message->getType(), $message->getId(), ['force' => true]);
                 if ($element) {
                     $this->performSanityCheck($element);
                 }
@@ -59,12 +60,13 @@ class SanityCheckHandler implements BatchHandlerInterface
     }
 
     /**
-     * @param PageSnippet|Asset|Concrete $element
-     *
      * @throws \Exception
      */
-    private function performSanityCheck(ElementInterface $element)
+    private function performSanityCheck(ElementInterface $element): void
     {
+        if (!$element instanceof PageSnippet && !$element instanceof Concrete && !$element instanceof Asset) {
+            return;
+        }
         $latestNotPublishedVersion = null;
 
         if ($latestVersion = $element->getLatestVersion()) {

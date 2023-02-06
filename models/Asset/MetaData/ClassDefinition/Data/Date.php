@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,13 +18,12 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 class Date extends Data
 {
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return null|string
-     */
-    public function marshal($value, $params = [])
+    public function getDataFromEditMode(mixed $data, array $params = []): mixed
+    {
+        return $this->normalize($data, $params);
+    }
+
+    public function normalize(mixed $value, array $params = []): mixed
     {
         if ($value && !is_numeric($value)) {
             $value = strtotime($value);
@@ -32,14 +32,8 @@ class Date extends Data
         return $value;
     }
 
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return string
-     */
-    public function getVersionPreview($value, $params = [])
+    public function getVersionPreview(mixed $value, array $params = []): string
     {
-        return (string)date('m/d/Y', $value);
+        return (string)date('m/d/Y', (int) $value);
     }
 }

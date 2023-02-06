@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,8 +33,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
      * Contains the ID of the linked snippet
      *
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $id = null;
 
@@ -41,15 +40,13 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
      * Contains the object for the snippet
      *
      * @internal
-     *
-     * @var Document\Snippet|null
      */
-    protected $snippet = null;
+    protected Document\Snippet|Model\Element\ElementDescriptor|null $snippet = null;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'snippet';
     }
@@ -57,23 +54,17 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return (int) $this->id;
     }
@@ -81,7 +72,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?array
     {
         if ($this->snippet instanceof Document\Snippet) {
             return [
@@ -122,7 +113,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         $cacheKey = null;
         $cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled();
         if ((isset($params['cache']) && $params['cache'] === true) || $cacheConfig) {
-
             // cleanup params to avoid serializing Element\ElementInterface objects
             $cacheParams = $params;
             array_walk($cacheParams, function (&$value, $key) {
@@ -163,9 +153,10 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
-        if ((int)$data > 0) {
+        $data = (int) $data;
+        if ($data > 0) {
             $this->id = $data;
             $this->snippet = Document\Snippet::getById($this->id);
         }
@@ -176,7 +167,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         if ((int)$data > 0) {
             $this->id = $data;
@@ -186,10 +177,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         $this->load();
 
@@ -203,7 +191,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $dependencies = [];
 
@@ -222,7 +210,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
@@ -239,7 +227,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function load() /** : void */
+    public function load(): void
     {
         if (!$this->snippet && $this->id) {
             $this->snippet = Document\Snippet::getById($this->id);
@@ -249,7 +237,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         $id = $this->getId();
         if (array_key_exists('document', $idMapping) && array_key_exists($id, $idMapping['document'])) {
@@ -257,10 +245,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         }
     }
 
-    /**
-     * @param Document\Snippet $snippet
-     */
-    public function setSnippet($snippet)
+    public function setSnippet(Document\Snippet $snippet): void
     {
         if ($snippet instanceof Document\Snippet) {
             $this->id = $snippet->getId();
@@ -268,10 +253,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         }
     }
 
-    /**
-     * @return Document\Snippet
-     */
-    public function getSnippet()
+    public function getSnippet(): ?Document\Snippet
     {
         $this->load();
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,47 +16,31 @@
 
 namespace Pimcore\Model\Tool\Targeting;
 
+use Pimcore\Event\Model\TargetGroupEvent;
+use Pimcore\Event\TargetGroupEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 
 /**
  * @internal
  *
  * @method TargetGroup\Dao getDao()
- * @method void delete()
  */
 class TargetGroup extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
-    protected $id;
+    use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     */
-    protected $description = '';
+    protected string $name;
 
-    /**
-     * @var int
-     */
-    protected $threshold = 1;
+    protected string $description = '';
 
-    /**
-     * @var bool
-     */
-    protected $active = true;
+    protected int $threshold = 1;
 
-    /**
-     * @param int $id
-     *
-     * @return null|TargetGroup
-     */
-    public static function getById($id)
+    protected bool $active = true;
+
+    public static function getById(int $id): ?TargetGroup
     {
         try {
             $targetGroup = new self();
@@ -67,12 +52,7 @@ class TargetGroup extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $name
-     *
-     * @return TargetGroup|null
-     */
-    public static function getByName($name)
+    public static function getByName(string $name): ?TargetGroup
     {
         try {
             $target = new self();
@@ -84,12 +64,7 @@ class TargetGroup extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param int $id
-     *
-     * @return bool
-     */
-    public static function isIdActive($id)
+    public static function isIdActive(int $id): bool
     {
         $targetGroup = Model\Tool\Targeting\TargetGroup::getById($id);
 
@@ -100,95 +75,81 @@ class TargetGroup extends Model\AbstractModel
         return false;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = (int)$id;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param int $threshold
-     */
-    public function setThreshold($threshold)
+    public function setThreshold(int $threshold): void
     {
         $this->threshold = $threshold;
     }
 
-    /**
-     * @return int
-     */
-    public function getThreshold()
+    public function getThreshold(): int
     {
         return $this->threshold;
     }
 
-    /**
-     * @param bool $active
-     */
-    public function setActive($active)
+    public function setActive(bool $active): void
     {
-        $this->active = (bool) $active;
+        $this->active = (bool)$active;
     }
 
-    /**
-     * @return bool
-     */
-    public function getActive()
+    public function getActive(): bool
     {
         return $this->active;
+    }
+
+    public function delete(): void
+    {
+        $this->getDao()->delete();
+        $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_DELETE);
+    }
+
+    public function save(): void
+    {
+        $isUpdate = false;
+        if ($this->getId()) {
+            $isUpdate = true;
+        }
+
+        $this->getDao()->save();
+
+        if ($isUpdate) {
+            $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_UPDATE);
+        } else {
+            $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_ADD);
+        }
     }
 }

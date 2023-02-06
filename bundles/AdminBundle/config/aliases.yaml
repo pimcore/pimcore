@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        public: true
+
+    pimcore_admin.security.user_provider: '@Pimcore\Bundle\AdminBundle\Security\User\UserProvider'
+    pimcore_admin.security.token_storage_user_resolver: '@Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver'
+    pimcore_admin.security.user_loader: '@Pimcore\Bundle\AdminBundle\Security\User\UserLoader'
+    pimcore_admin.security.user_checker: '@Pimcore\Bundle\AdminBundle\Security\User\UserChecker'

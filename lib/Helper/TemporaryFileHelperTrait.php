@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,7 @@
 
 namespace Pimcore\Helper;
 
+use Pimcore;
 use Pimcore\File;
 
 /**
@@ -31,9 +33,9 @@ trait TemporaryFileHelperTrait
      *
      * @throws \Exception
      */
-    protected static function getLocalFileFromStream($stream): string
+    protected static function getLocalFileFromStream(mixed $stream): string
     {
-        if (!stream_is_local($stream) || stream_get_meta_data($stream)['uri'] === 'php://temp') {
+        if (!stream_is_local($stream) || (is_resource($stream) && stream_get_meta_data($stream)['uri'] === 'php://temp')) {
             $stream = self::getTemporaryFileFromStream($stream);
         }
 
@@ -53,7 +55,7 @@ trait TemporaryFileHelperTrait
      *
      * @throws \Exception
      */
-    protected static function getTemporaryFileFromStream($stream, bool $keep = false): string
+    protected static function getTemporaryFileFromStream(mixed $stream, bool $keep = false): string
     {
         if (is_string($stream)) {
             $src = fopen($stream, 'rb');
@@ -75,6 +77,9 @@ trait TemporaryFileHelperTrait
         fclose($dest);
 
         if (!$keep) {
+            /** @var LongRunningHelper $longRunningHelper */
+            $longRunningHelper = Pimcore::getContainer()->get(LongRunningHelper::class);
+            $longRunningHelper->addTmpFilePath($tmpFilePath);
             register_shutdown_function(static function () use ($tmpFilePath) {
                 @unlink($tmpFilePath);
             });

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,6 +20,9 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
@@ -32,94 +36,75 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @var string
      */
-    public $fieldtype = 'fieldcollections';
+    public string $fieldtype = 'fieldcollections';
 
     /**
      * @internal
      *
      * @var array
      */
-    public $allowedTypes = [];
+    public array $allowedTypes = [];
+
+    /**
+     * @internal
+     */
+    public bool $lazyLoading = false;
 
     /**
      * @internal
      *
-     * @var bool
+     * @var int|null
      */
-    public $lazyLoading;
+    public ?int $maxItems = null;
 
     /**
      * @internal
-     *
-     * @var int
      */
-    public $maxItems;
+    public bool $disallowAddRemove = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $disallowAddRemove = false;
+    public bool $disallowReorder = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $disallowReorder = false;
+    public bool $collapsed = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $collapsed;
+    public bool $collapsible = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $collapsible;
+    public bool $border = false;
 
-    /**
-     * @internal
-     *
-     * @var bool
-     */
-    public $border = false;
-
-    /**
-     * @return bool
-     */
-    public function getLazyLoading()
+    public function getLazyLoading(): bool
     {
         return $this->lazyLoading;
     }
 
-    /**
-     * @param  int|bool|null $lazyLoading
-     *
-     * @return $this
-     */
-    public function setLazyLoading($lazyLoading)
+    public function setLazyLoading(bool $lazyLoading): static
     {
-        $this->lazyLoading = $lazyLoading;
+        $this->lazyLoading = (bool) $lazyLoading;
 
         return $this;
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param DataObject\Fieldcollection|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $editmodeData = [];
         $idx = -1;
@@ -134,15 +119,18 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         if (!$fd instanceof CalculatedValue) {
                             $value = $item->{'get' . $fd->getName()}();
+                            if (isset($params['context']['containerKey']) === false) {
+                                $params['context']['containerKey'] = $idx;
+                            }
                             $collectionData[$fd->getName()] = $fd->getDataForEditmode($value, $object, $params);
                         }
                     }
 
-                    $calculatedChilds = [];
-                    self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
+                    $calculatedChildren = [];
+                    self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChildren);
 
-                    if ($calculatedChilds) {
-                        foreach ($calculatedChilds as $fd) {
+                    if ($calculatedChildren) {
+                        foreach ($calculatedChildren as $fd) {
                             $data = new DataObject\Data\CalculatedValue($fd->getName());
                             $data->setContextualData('fieldcollection', $this->getName(), $idx, null, null, null, $fd);
                             $data = $fd->getDataForEditmode($data, $object, $params);
@@ -164,15 +152,15 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Fieldcollection
+     *
+     * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Fieldcollection
     {
         $values = [];
         $count = 0;
@@ -242,31 +230,29 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param string $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     *
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        return 'FIELDCOLLECTIONS';
+        return $this->getDiffVersionPreview($data, $object, $params)['html'];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return 'NOT SUPPORTED';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $dataString = '';
         $fcData = $this->getDataFromObjectParam($object);
@@ -287,10 +273,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $dataString;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($object, $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $container = $this->getDataFromObjectParam($object);
 
@@ -313,12 +296,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load($object, $params = [])
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): ?DataObject\Fieldcollection
     {
-        $container = new DataObject\Fieldcollection(null, $this->getName());
+        $container = new DataObject\Fieldcollection([], $this->getName());
         $container->load($object);
 
         if ($container->isEmpty()) {
@@ -328,29 +308,18 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($object, $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
-        $container = new DataObject\Fieldcollection(null, $this->getName());
+        $container = new DataObject\Fieldcollection([], $this->getName());
         $container->delete($object);
     }
 
-    /**
-     * @return array
-     */
-    public function getAllowedTypes()
+    public function getAllowedTypes(): array
     {
         return $this->allowedTypes;
     }
 
-    /**
-     * @param string|array|null $allowedTypes
-     *
-     * @return $this
-     */
-    public function setAllowedTypes($allowedTypes)
+    public function setAllowedTypes(array|string|null $allowedTypes): static
     {
         if (is_string($allowedTypes)) {
             $allowedTypes = explode(',', $allowedTypes);
@@ -371,12 +340,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this;
     }
 
-    /**
-     * @param DataObject\Fieldcollection|null $data
-     *
-     * @return array
-     */
-    public function resolveDependencies($data)
+    public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
 
@@ -398,10 +362,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheTags($data, array $tags = [])
+    public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($data instanceof DataObject\Fieldcollection) {
             foreach ($data as $item) {
@@ -424,7 +385,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data instanceof DataObject\Fieldcollection) {
             $validationExceptions = [];
@@ -474,7 +435,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * { @inheritdoc }
      */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []): mixed
     {
         if (!$container instanceof DataObject\Concrete) {
             throw new \Exception('Field Collections are only valid in Objects');
@@ -500,7 +461,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
 
@@ -513,12 +474,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param DataObject\Fieldcollection|null $data
-     * @param DataObject\Concrete $object
-     * @param mixed $params
+     * @param DataObject\Concrete|null $object
+     * @param array $params
      *
      * @return string
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): string
     {
         return 'NOT SUPPORTED';
     }
@@ -526,22 +487,27 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * {@inheritdoc}
      */
-    public function getGetterCode($class)
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         // getter, no inheritance here, that's the only difference
         $key = $this->getName();
 
+        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
         $code = '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '()' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
 
         $code .= $this->getPreGetValueHookCode($key);
 
-        // TODO Pimcore 11: remove method_exists BC layer
         // TODO else part should not be needed at all as preGetData is always there
-        // if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
+        // if ($this instanceof PreGetDataInterface) {
         $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
 //        } else {
 //            $code .= "\t" . '$data = $this->' . $key . ";\n";
@@ -553,22 +519,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $code;
     }
 
-    /**
-     * @param int|string|null $maxItems
-     *
-     * @return $this
-     */
-    public function setMaxItems($maxItems)
+    public function setMaxItems(?int $maxItems): static
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getMaxItems()
+    public function getMaxItems(): ?int
     {
         return $this->maxItems;
     }
@@ -576,7 +534,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
@@ -586,11 +544,11 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @param DataObject\Fieldcollection|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return array|string
+     * @return array
      */
-    public function getDiffVersionPreview($data, $object = null, $params = [])
+    public function getDiffVersionPreview(?DataObject\Fieldcollection $data, Concrete $object = null, array $params = []): array
     {
         $html = '';
         if ($data instanceof DataObject\Fieldcollection) {
@@ -626,7 +584,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 
@@ -638,8 +596,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        //TODO Pimcore 11: remove method_exists BC layer
-                        if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
+                        if ($fd instanceof IdRewriterInterface
+                            && $fd instanceof DataObject\ClassDefinition\Data) {
                             $d = $fd->rewriteIds($item, $idMapping, $params);
                             $setter = 'set' . ucfirst($fd->getName());
                             $item->$setter($d);
@@ -655,7 +613,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @param DataObject\ClassDefinition\Data\Fieldcollections $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->allowedTypes = $masterDefinition->allowedTypes;
         $this->lazyLoading = $masterDefinition->lazyLoading;
@@ -668,7 +626,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved($class, $params = [])
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $i => $allowedType) {
@@ -677,10 +635,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        //TODO Pimcore 11 remove method_exists call
-                        if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
+                        if ($fd instanceof ClassSavedInterface) {
                             // defer creation
-                            $fd->classSaved($class);
+                            $fd->classSaved($class, $params);
                         }
                     }
 
@@ -693,91 +650,61 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
     }
 
-    /**
-     * @param bool $disallowAddRemove
-     */
-    public function setDisallowAddRemove($disallowAddRemove)
+    public function setDisallowAddRemove(bool $disallowAddRemove): void
     {
-        $this->disallowAddRemove = $disallowAddRemove;
+        $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
 
-    /**
-     * @return bool
-     */
-    public function getDisallowAddRemove()
+    public function getDisallowAddRemove(): bool
     {
         return $this->disallowAddRemove;
     }
 
-    /**
-     * @param bool $disallowReorder
-     */
-    public function setDisallowReorder($disallowReorder)
+    public function setDisallowReorder(bool $disallowReorder): void
     {
-        $this->disallowReorder = $disallowReorder;
+        $this->disallowReorder = (bool) $disallowReorder;
     }
 
-    /**
-     * @return bool
-     */
-    public function getDisallowReorder()
+    public function getDisallowReorder(): bool
     {
         return $this->disallowReorder;
     }
 
-    /**
-     * @return bool
-     */
     public function getBorder(): bool
     {
         return $this->border;
     }
 
-    /**
-     * @param bool $border
-     */
     public function setBorder(bool $border): void
     {
         $this->border = $border;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCollapsed()
+    public function isCollapsed(): bool
     {
         return $this->collapsed;
     }
 
-    /**
-     * @param bool $collapsed
-     */
-    public function setCollapsed($collapsed)
+    public function setCollapsed(bool $collapsed): void
     {
-        $this->collapsed = $collapsed;
+        $this->collapsed = (bool) $collapsed;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCollapsible()
+    public function isCollapsible(): bool
     {
         return $this->collapsible;
     }
 
-    /**
-     * @param bool $collapsible
-     */
-    public function setCollapsible($collapsible)
+    public function setCollapsible(bool $collapsible): void
     {
-        $this->collapsible = $collapsible;
+        $this->collapsible = (bool) $collapsible;
     }
 
     /**
      * @param DataObject\ClassDefinition\Data[] $container
      * @param DataObject\ClassDefinition\Data[] $list
      */
-    public static function collectCalculatedValueItems($container, &$list = [])
+    public static function collectCalculatedValueItems(array $container, array &$list = []): void
     {
         if (is_array($container)) {
             foreach ($container as $childDef) {
@@ -795,47 +722,32 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsInheritance()
+    public function supportsInheritance(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Fieldcollection::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Fieldcollection::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Fieldcollection::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Fieldcollection::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Fieldcollection) {
             $resultItems = [];
@@ -868,10 +780,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?DataObject\Fieldcollection
     {
         if (is_array($value)) {
             $resultItems = [];

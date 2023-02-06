@@ -27,10 +27,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class VisitedPagesBefore extends AbstractVariableCondition implements DataProviderDependentInterface, EventDispatchingConditionInterface
 {
-    /**
-     * @var int
-     */
-    private $count;
+    private int $count;
 
     public function __construct(int $count)
     {
@@ -40,7 +37,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): static
     {
         return new static($config['number'] ?? 0);
     }
@@ -82,7 +79,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     /**
      * {@inheritdoc}
      */
-    public function postMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher)
+    public function postMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher): void
     {
         // emit event which instructs VisitedPagesCountListener to increment the count after matching
         $eventDispatcher->dispatch(new GenericEvent(), TargetingEvents::VISITED_PAGES_COUNT_MATCH);
@@ -91,7 +88,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     /**
      * {@inheritdoc}
      */
-    public function preMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher)
+    public function preMatch(VisitorInfo $visitorInfo, EventDispatcherInterface $eventDispatcher): void
     {
         // noop
     }

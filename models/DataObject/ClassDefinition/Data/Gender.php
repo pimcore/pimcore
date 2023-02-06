@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,9 +28,9 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @var string
      */
-    public $fieldtype = 'gender';
+    public string $fieldtype = 'gender';
 
-    public function configureOptions()
+    public function configureOptions(): void
     {
         $options = [
             ['key' => 'male', 'value' => 'male'],
@@ -41,12 +42,7 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
         $obj->configureOptions();
@@ -54,11 +50,7 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,7 +22,7 @@ use Pimcore\Routing\Dynamic\DynamicRouteHandlerInterface;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
-use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -29,15 +30,12 @@ use Symfony\Component\Routing\RouteCollection;
  */
 final class DynamicRouteProvider implements RouteProviderInterface
 {
-    /**
-     * @var SiteResolver
-     */
-    protected $siteResolver;
+    protected SiteResolver $siteResolver;
 
     /**
      * @var DynamicRouteHandlerInterface[]
      */
-    protected $handlers = [];
+    protected array $handlers = [];
 
     /**
      * @param SiteResolver $siteResolver
@@ -52,10 +50,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
         }
     }
 
-    /**
-     * @param DynamicRouteHandlerInterface $handler
-     */
-    public function addHandler(DynamicRouteHandlerInterface $handler)
+    public function addHandler(DynamicRouteHandlerInterface $handler): void
     {
         if (!in_array($handler, $this->handlers, true)) {
             $this->handlers[] = $handler;
@@ -68,6 +63,11 @@ final class DynamicRouteProvider implements RouteProviderInterface
     public function getRouteCollectionForRequest(Request $request): RouteCollection
     {
         $collection = new RouteCollection();
+
+        if ($request->attributes->has('_controller')) {
+            return $collection;
+        }
+
         $path = $originalPath = urldecode($request->getPathInfo());
 
         // site path handled by FrontendRoutingListener which runs before routing is started
@@ -85,7 +85,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteByName($name): Route
+    public function getRouteByName(string $name): SymfonyRoute
     {
         foreach ($this->handlers as $handler) {
             try {
@@ -101,7 +101,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRoutesByNames($names): array
+    public function getRoutesByNames(array $names = null): array
     {
         // TODO needs performance optimizations
         // TODO really return all routes here as documentation states? where is this used?
