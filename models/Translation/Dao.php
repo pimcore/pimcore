@@ -169,7 +169,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         try {
             $translationDomains = $this->model->getRegisteredDomains();
-            if (!in_arrayi($domain, $translationDomains)) {
+            if (!in_array($domain, $translationDomains)) {
                 return false;
             }
 
