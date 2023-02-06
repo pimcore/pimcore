@@ -209,10 +209,7 @@ class DeviceDetector
 
                 // we don't set a cookie if we're in preview mode, or if a cookie is set already
                 if (!isset($_COOKIE['forceDeviceType']) && !isset($_REQUEST['pimcore_preview'])) {
-                    /**
-                     * @psalm-suppress all
-                     */
-                    setcookie('forceDeviceType', $type);
+                    setcookie('forceDeviceType', $typeForced);
                 }
             }
         }
