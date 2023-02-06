@@ -224,7 +224,7 @@ class Bootstrap
     {
         $environment = Config::getEnvironment();
 
-        $debug = (bool) ($_SERVER['APP_DEBUG'] ?? false);
+        $debug = (bool) ($_SERVER['APP_DEBUG'] ?? $environment !== 'prod');
         if ($debug) {
             umask(0000);
             Debug::enable();
