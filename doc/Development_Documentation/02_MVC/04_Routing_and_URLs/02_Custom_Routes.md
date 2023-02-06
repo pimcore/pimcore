@@ -70,11 +70,12 @@ for converting data object IDs in the request parameters to actual objects.
 To use the param converter, simply type hint the argument (Symfony routing example): 
 
 ```php
-    /**
-     * @Template
-     * @Route("/news/{news}")
-     */
-    public function testAction(DataObject\News $news) {
+    use Symfony\Component\HttpFoundation\Request;
+    use Symfony\Component\Routing\Annotation\Route;
+    ....
+     #[Template('/news/test')]
+     #[Route('/news/{news}')]
+    public function detailAction(DataObject\News $news) {
         return [
             'news' => $news
         ];
