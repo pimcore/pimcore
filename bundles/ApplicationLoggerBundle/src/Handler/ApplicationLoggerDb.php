@@ -94,4 +94,4 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     }
 }
 
-@class_alias(ApplicationLoggerDb::class, 'Pimcore\Maintenance\Handler\ApplicationLoggerDb');
+@class_alias(ApplicationLoggerDb::class, 'Pimcore\Log\Handler\ApplicationLoggerDb');
