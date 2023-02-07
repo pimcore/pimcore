@@ -88,7 +88,6 @@
     "symfony/dependency-injection": "^6.1",
     "symfony/debug-bundle": "^6.1",
     "symfony/dom-crawler": "^6.1",
-    "symfony/dotenv": "^6.1",
     "symfony/error-handler": "^6.1",
     "symfony/event-dispatcher": "^6.1",
     "symfony/expression-language": "^6.1",
@@ -158,7 +157,8 @@
     "spiritix/php-chrome-html2pdf": "^1.6",
     "composer/composer": "*",
     "chrome-php/chrome": "^1.4.0",
-    "webmozarts/console-parallelization": "^2.1"
+    "webmozarts/console-parallelization": "^2.1",
+    "symfony/dotenv": "^6.1"
   },
   "suggest": {
     "ext-sockets": "*",
@@ -167,7 +167,8 @@
     "spiritix/php-chrome-html2pdf": "Required for the Headless Chrome Web2Print Extension",
     "elasticsearch/elasticsearch": "Required for Elastic Search service",
     "chrome-php/chrome": "Required for Documents Page Previews",
-    "webmozarts/console-parallelization": "Required for parallelization of console commands"
+    "webmozarts/console-parallelization": "Required for parallelization of console commands",
+    "symfony/dotenv": "Required for loading environment vars from .env files"
   },
   "autoload": {
     "files": [

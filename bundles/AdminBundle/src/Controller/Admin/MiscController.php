@@ -259,7 +259,7 @@ class MiscController extends AdminController
         $this->checkPermission('maintenance_mode');
 
         if ($request->get('activate')) {
-            Tool\Admin::activateMaintenanceMode(Tool\Session::getSessionId());
+            Tool\Admin::activateMaintenanceMode($request->getSession()->getId());
         }
 
         if ($request->get('deactivate')) {
