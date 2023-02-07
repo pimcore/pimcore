@@ -11,7 +11,12 @@
         </div>
     {% endif %}
 
-    <form method="post" action="{{ path('pimcore_admin_2fa-verify') }}">
+    <div>
+        <img src="{{ image }}"/>
+        <p>{{ '2fa_alert_text'|trans([], 'admin')|raw }}</p>
+    </div>
+
+    <form method="post" action="{{ path('pimcore_admin_2fa_setup') }}">
         <input name="_auth_code" id="_auth_code" autocomplete="one-time-code" type="password" placeholder="{{ '2fa_code'|trans([],'admin') }}" required autofocus>
         <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken(app.request.session) }}">
 

@@ -20,6 +20,7 @@ use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\VarExporterInterface;
 use Pimcore\Tool;
 
 class Service
@@ -63,7 +64,7 @@ class Service
 
     private static function removeDynamicOptionsFromLayoutDefinition(mixed &$layout): void
     {
-        if (method_exists($layout, 'resolveBlockedVars')) {
+        if ($layout instanceof VarExporterInterface) {
             $blockedVars = $layout->resolveBlockedVars();
             foreach ($blockedVars as $blockedVar) {
                 if (isset($layout->{$blockedVar})) {
@@ -345,7 +346,7 @@ class Service
                 } else {
                     //for BC reasons
                     $blockedVars = [];
-                    if (method_exists($item, 'resolveBlockedVars')) {
+                    if ($item instanceof VarExporterInterface) {
                         $blockedVars = $item->resolveBlockedVars();
                     }
                     self::removeDynamicOptionsFromArray($array, $blockedVars);

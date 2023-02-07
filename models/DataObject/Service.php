@@ -564,13 +564,18 @@ class Service extends Model\Element\Service
         return null;
     }
 
-    public static function getHelperDefinitions(): mixed
+    public static function getHelperDefinitions(): array
     {
-        return Session::useSession(function (AttributeBagInterface $session) {
-            $existingColumns = $session->get('helpercolumns', []);
+        $stack = \Pimcore::getContainer()->get('request_stack');
+        if ($stack->getMainRequest()?->hasSession()) {
+            $session = $stack->getSession();
 
-            return $existingColumns;
-        }, 'pimcore_gridconfig');
+            return Session::useBag($session, function (AttributeBagInterface $session) {
+                return $session->get('helpercolumns', []);
+            }, 'pimcore_gridconfig');
+        }
+
+        return [];
     }
 
     public static function getLanguagePermissions(Fieldcollection\Data\AbstractData|Objectbrick\Data\AbstractData|AbstractObject $object, Model\User $user, string $type): ?array
@@ -926,7 +931,7 @@ class Service extends Model\Element\Service
     /**
      * @param Concrete $object
      *
-     * @return DataObject\ClassDefinition\CustomLayout[]
+     * @return array<string, DataObject\ClassDefinition\CustomLayout>
      */
     public static function getValidLayouts(Concrete $object): array
     {

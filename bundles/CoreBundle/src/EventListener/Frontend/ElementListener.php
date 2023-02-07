@@ -32,6 +32,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -159,7 +160,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
         // editmode document
         if ($this->editmodeResolver->isEditmode($request)) {
-            $document = $this->handleEditmode($document, $user);
+            $document = $this->handleEditmode($document, $user, $request->getSession());
         }
 
         // document preview
@@ -170,7 +171,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             // why was it an object?
             // $docKey = "document_" . $this->getParam("document")->getId();
 
-            if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId())) {
+            if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $request->getSession()->getId())) {
                 // if there is a document in the session use it
                 $this->logger->debug('Loading preview document {document} from session', [
                     'document' => $document->getFullPath(),
@@ -204,10 +205,10 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function handleEditmode(Document $document, User $user): Document
+    protected function handleEditmode(Document $document, User $user, SessionInterface $session): Document
     {
         // check if there is the document in the session
-        if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId())) {
+        if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $session->getId())) {
             // if there is a document in the session use it
             $this->logger->debug('Loading editmode document {document} from session', [
                 'document' => $document->getFullPath(),
@@ -238,7 +239,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     {
         // object preview
         if ($objectId = $request->get('pimcore_object_preview')) {
-            if ($object = Service::getElementFromSession('object', $objectId)) {
+            if ($object = Service::getElementFromSession('object', $objectId, $request->getSession()->getId())) {
                 $this->logger->debug('Loading object {object} ({objectId}) from session', [
                     'object' => $object->getFullPath(),
                     'objectId' => $object->getId(),

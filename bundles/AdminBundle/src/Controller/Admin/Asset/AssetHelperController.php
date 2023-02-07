@@ -391,7 +391,7 @@ class AssetHelperController extends AdminController
             }
         }
 
-        Tool\Session::useSession(function (AttributeBagInterface $session) use ($helperColumns) {
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($helperColumns) {
             $existingColumns = $session->get('helpercolumns', []);
             $helperColumns = array_merge($helperColumns, $existingColumns);
             $session->set('helpercolumns', $helperColumns);
