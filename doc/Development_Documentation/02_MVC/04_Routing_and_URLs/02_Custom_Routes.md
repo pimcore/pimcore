@@ -70,28 +70,26 @@ for converting data object IDs in the request parameters to actual objects.
 To use the param converter, simply type hint the argument (Symfony routing example): 
 
 ```php
-    /**
-     * @Template
-     * @Route("/news/{news}")
-     */
-    public function testAction(DataObject\News $news) {
+    use Symfony\Component\HttpFoundation\Request;
+    use Symfony\Component\Routing\Annotation\Route;
+    ....
+     #[Template('/news/test')]
+     #[Route('/news/{news}')]
+    public function detailAction(DataObject\News $news) {
         return [
             'news' => $news
         ];
     }
 ```
 
-Param converters work with Pimcore Custom Routes as well as with Symfony Routes. 
-Of course, you can also configure the param converter using the `@ParamConverter`, for details please have a look at
-the official documentation for [param converters](https://symfony.com/doc/5.2/bundles/SensioFrameworkExtraBundle/annotations/converters.html).
+Param resolvers work with Pimcore Custom Routes as well as with Symfony Routes.
 
-By taking advantage of the options that we can pass further on to the object, we can also work with unpublished objects.
+By taking advantage of `#[DataObjectParam]` attribute, we can pass further options on to the object, e.g. working with unpublished objects.
 ````php
-/**
-
-@route("/blog/{post}")
-@ParamConverter( "post", options={ "unpublished" = true } )
-*/
+public function detailAction(
+    #[DataObjectParam(unpublished: true)] DataObject\News $news) {
+    ...
+}
 ````
 
 ## Building URLs based on Custom Routes
