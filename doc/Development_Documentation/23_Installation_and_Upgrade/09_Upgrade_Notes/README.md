@@ -169,8 +169,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Environment] - Removed `symfony/dotenv` dependency to make loading of `.env` files optional. please add the requirement to your composer.json, if you still want to use `.env` files.
 - Removed deprecated `SensioFrameworkExtraBundle` which affects the following:
   - `@Template` annotation must be replaced with `#[Template]` attribute. Template guessing based on controller::action is not supported anymore.
-  - `@ResponseHeader` annotation must be replaced with `#[ResponseHeader]` attribute
-  - `@ParamConverter` annotation must be replaced with `#[DataObjectParam]` attribute
+  - `@ResponseHeader` annotation must be replaced with `#[ResponseHeader]` attribute. Removed deprecated `Pimcore\Controller\Configuration\ResponseHeader`.
+  - `@ParamConverter` annotation must be replaced with `#[DataObjectParam]` attribute.
   Replace other annotations provided by [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers)
 
 ## 10.6.0
