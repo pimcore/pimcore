@@ -571,7 +571,7 @@ class Document extends Element\AbstractElement
     /**
      * Returns true if the document has at least one child
      */
-    public function hasChildren(bool $includingUnpublished = null): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
         return $this->getDao()->hasChildren($includingUnpublished);
     }

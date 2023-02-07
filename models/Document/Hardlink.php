@@ -194,7 +194,7 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    public function hasChildren(bool $includingUnpublished = null): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
         return count($this->getChildren($includingUnpublished)) > 0;
     }
