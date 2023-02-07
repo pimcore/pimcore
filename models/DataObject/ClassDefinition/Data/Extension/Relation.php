@@ -51,7 +51,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\Asset' . $strArray;
             } elseif (is_array($assetTypes)) {
                 foreach ($assetTypes as $item) {
-                    $class[] = $this->getMappedClassName('\Pimcore\Model\Asset\\' . ucfirst($item['assetTypes']), $strArray);
+                    $class[] = $this->getMappedClassName('\Pimcore\Model\Asset\\' . ucfirst($item['assetTypes'])) . $strArray;
                 }
             }
         }
