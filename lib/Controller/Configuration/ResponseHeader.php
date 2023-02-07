@@ -52,7 +52,8 @@ class ResponseHeader extends ConfigurationAnnotation
      * @param string|array $values
      * @param bool $replace
      */
-    public function __construct($key = null, $values = '', $replace = false) {
+    public function __construct($key = null, $values = '', $replace = false)
+    {
         if (is_array($key)) {
             // value is the default key if attribute was called without assignment
             // e.g. #[ResponseHeader("X-Foo")] instead of #[ResponseHeader(key="X-Foo")]
