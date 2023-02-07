@@ -88,7 +88,7 @@ class DataObjectParamResolver implements ArgumentValueResolverInterface
         return [$object];
     }
 
-    public function supports(Request $request, ArgumentMetadata $argument)
+    public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         if (null === $argument->getType()) {
             return false;
