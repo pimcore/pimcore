@@ -28,6 +28,7 @@ class Installer extends SettingsStoreAwareInstaller
 
     public function install(): void
     {
+        $this->installDatabaseTable();
         $this->addUserPermission();
         parent::install();
     }
@@ -58,6 +59,18 @@ class Installer extends SettingsStoreAwareInstaller
             $db->delete('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
             ]);
+        }
+    }
+
+    private function installDatabaseTable(): void
+    {
+        $sqlPath = __DIR__ . '/Resources/install/';
+        $sqlFileNames = ['install.sql'];
+        $db = \Pimcore\Db::get();
+
+        foreach ($sqlFileNames as $fileName) {
+            $statement = file_get_contents($sqlPath.$fileName);
+            $db->executeQuery($statement);
         }
     }
 }

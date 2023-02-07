@@ -5,11 +5,18 @@ You can use the PimcoreWebToPrintBundle functionality to accomplish this.
 
 Please make sure that you have set up and installed the PimcoreWebToPrintBundle correctly ("Settings" -> "Web2Print Settings").
 
-You need to enable and install the Web2PrintBundle via the bundles.php, and then you 
+You need to enable and install the PimcoreWebToPrintBundle via the bundles.php, and then you 
 just have to provide the correct settings (Tool -> HeadlessChrome / PDFreactor) and the corresponding settings.
 
 In your controller you just have to return the PDF instead of the HTML. 
 
+## Uninstalling PimcoreWebToPrintBundle
+Uninstalling the bundle does not clean up `printpages` or `printcontainers`. Before uninstalling make sure to remove or archive all dependent documents.
+You can also use the following statements to clean up you database. Create a backup before executing these statements. All data will be lost.
+```sql
+DELETE FROM documents WHERE type IN ('printcontainer', 'printpage');
+DROP TABLE documents_printpage;
+```
 ## Simple example
 
 ```php
