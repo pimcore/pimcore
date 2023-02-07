@@ -48,8 +48,6 @@ final class ResponseHeader
                 $key['key'] = $key['value'];
                 unset($key['value']);
             }
-
-            parent::__construct($key);
         } else {
             $this->key = $key;
             $this->values = $values;
@@ -57,24 +55,8 @@ final class ResponseHeader
         }
 
         if (empty($this->key)) {
-            throw new \InvalidArgumentException('The ResponseHeader Annotation/Attribute needs at least a key to be set');
+            throw new \InvalidArgumentException('The ResponseHeader Attribute needs at least a key to be set');
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAliasName(): string
-    {
-        return 'response_header';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function allowArray(): bool
-    {
-        return true;
     }
 
     public function getKey(): string
