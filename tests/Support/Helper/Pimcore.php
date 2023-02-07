@@ -326,5 +326,3 @@ class Pimcore extends Module\Symfony
         return $this->groups;
     }
 }
-
-@class_alias(Pimcore::class, 'Pimcore\Tests\Support\Helper\Pimcore');
