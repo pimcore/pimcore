@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Controller\Attribute\ResponseHeader;
 use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -51,6 +52,13 @@ class ResponseHeaderListener implements EventSubscriberInterface
 
         $response = $event->getResponse();
         foreach ($headers as $header) {
+            if (!$header instanceof ResponseHeader) {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.6',
+                    'Usage of @ResponseHeader annotation is deprecated. please use #[ResponseHeader] attribute instead.'
+                );
+            }
             $response->headers->set($header->getKey(), $header->getValues(), $header->getReplace());
         }
     }

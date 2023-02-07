@@ -20,13 +20,15 @@ namespace Pimcore\Controller\Configuration;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ConfigurationAnnotation;
 
 /**
- * Allows to set HTTP headers on the response via annotation. The annotation will
+ * Allows to set HTTP headers on the response via annotation/attributes. The annotation/attribute will
  * be processed by ResponseHeaderListener which will set the HTTP headers on the
  * response.
  *
  * See ResponseHeaderBag for documentation on the fields.
  *
  * @Annotation
+ *
+ * @deprecated use Pimcore\Controller\Attribute\ResponseHeader instead.
  */
 class ResponseHeader extends ConfigurationAnnotation
 {
@@ -36,19 +38,29 @@ class ResponseHeader extends ConfigurationAnnotation
 
     protected bool $replace = false;
 
-    public function __construct(array $data)
-    {
-        // value is the default key if annotation was called without assignment
-        // e.g. @ResponseHeader("X-Foo") instead of @ResponseHeader(key="X-Foo")
-        if (isset($data['value'])) {
-            $data['key'] = $data['value'];
-            unset($data['value']);
+    /**
+     * @param string|array|null $key
+     * @param string|array $values
+     * @param bool $replace
+     */
+    public function __construct($key = null, $values = '', $replace = false) {
+        if (is_array($key)) {
+            // value is the default key if attribute was called without assignment
+            // e.g. #[ResponseHeader("X-Foo")] instead of #[ResponseHeader(key="X-Foo")]
+            if (isset($key['value'])) {
+                $key['key'] = $key['value'];
+                unset($key['value']);
+            }
+
+            parent::__construct($key);
+        } else {
+            $this->key = $key;
+            $this->values = $values;
+            $this->replace = $replace;
         }
 
-        parent::__construct($data);
-
         if (empty($this->key)) {
-            throw new \InvalidArgumentException('The @ResponseHeaderAnnotation needs at least a key to be set');
+            throw new \InvalidArgumentException('The ResponseHeader Annotation/Attribute needs at least a key to be set');
         }
     }
 
