@@ -63,11 +63,11 @@ class NewsController extends FrontendController
 
 The default variables can be accessed the same way.
 
-## Using Param Converter to convert request ID to Data Object
-Pimcore has a built-in [param converter](https://symfony.com/doc/5.2/bundles/SensioFrameworkExtraBundle/annotations/converters.html)
-for converting data object IDs in the request parameters to actual objects. 
+## Using Param Resolver to convert request ID to Data Object
+Pimcore has a built-in [param resolver](https://symfony.com/doc/current/controller/value_resolver.html#built-in-value-resolvers)
+for converting data object IDs in the request parameters to actual objects.
 
-To use the param converter, simply type hint the argument (Symfony routing example): 
+To use the param resolver, simply type hint the argument (Symfony routing example):
 
 ```php
     use Symfony\Component\HttpFoundation\Request;
