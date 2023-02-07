@@ -195,6 +195,7 @@ $oldId = $object->getId(); //returns 0
 //after:
 $newId = $object->getId(); //returns null
 ```
+- [Asset] Deprectaed the `marshal()/unmarshal()` methods for metadata, use `normalize()/denormalize()` methods instead.
 
 ## 10.3.0
 - **Important**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
