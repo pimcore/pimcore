@@ -607,7 +607,7 @@ class Document extends Element\AbstractElement
     /**
      * Returns true if the document has at least one sibling
      */
-    public function hasSiblings(bool $includingUnpublished = null): bool
+    public function hasSiblings(?bool $includingUnpublished = null): bool
     {
         return $this->getDao()->hasSiblings($includingUnpublished);
     }

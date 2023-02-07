@@ -382,8 +382,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      */
     public function hasChildren(
-        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
-        bool $includingUnpublished = null
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER
+        ],
+        ?bool $includingUnpublished = null
     ): bool {
         return $this->getDao()->hasChildren($objectTypes, $includingUnpublished);
     }
@@ -424,7 +428,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function hasSiblings(
         array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
-        bool $includingUnpublished = null
+        ?bool $includingUnpublished = null
     ): bool {
         return $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
     }
