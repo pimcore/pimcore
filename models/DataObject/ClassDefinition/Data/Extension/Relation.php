@@ -71,19 +71,17 @@ trait Relation
         return $class;
     }
 
-    /**
-     * @return string
-     */
-    protected function getMappedClassName(string $className,string $strArray)
+    protected function getMappedClassName(string $className): string
     {
-        try{
+        try {
             $className = \Pimcore::getContainer()->get('pimcore.model.factory')->getClassNameFor($className);
-            if($className[0] != '\\'){
-                $className = '\\'.$className;
+            if ($className[0] !== '\\') {
+                $className = '\\' . $className;
             }
-        }catch (\Exception $e){ //no class override
+        } catch (\Exception) {
+            //no class override
         }
-        return $className . $strArray;
+        return $className;
     }
 
     /**
