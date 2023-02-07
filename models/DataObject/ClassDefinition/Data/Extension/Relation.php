@@ -63,7 +63,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\DataObject\AbstractObject' . $strArray;
             } elseif (is_array($classes)) {
                 foreach ($classes as $item) {
-                    $class[] = $this->getMappedClassName('\Pimcore\Model\DataObject\\' . ucfirst($item['classes']), $strArray);
+                    $class[] = $this->getMappedClassName('\Pimcore\Model\DataObject\\' . ucfirst($item['classes'])) . $strArray;
                 }
             }
         }
