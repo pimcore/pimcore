@@ -1,3 +1,5 @@
+add_printpage: Add PrintPage
+add_printcontainer: Add PrintContainer
 web2print_preview_pdf: Generate & Preview PDF
 web2print_cancel_pdf_creation: Cancel PDF Creation
 web2print_generate_pdf: Generate PDF

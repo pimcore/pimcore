@@ -17,7 +17,6 @@ pimcore.registerNS("pimcore.document.document");
  */
 pimcore.document.document = Class.create(pimcore.element.abstract, {
     willClose: false,
-    saveRoute:  "pimcore_admin_document_" + this.type + '_save',
 
     getData: function () {
         var options = this.options || {};
@@ -88,6 +87,9 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             return;
         }
 
+        if(typeof task !== 'string') {
+            task = '';
+        }
 
         if(task != 'autoSave'){
             this.tab.mask();
@@ -558,7 +560,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                                     }
 
                                     Ext.Ajax.request({
-                                        url: Routing.generate('pimcore_admin_document_document_add'),
+                                        url: Routing.generate(this.getAddRoute()),
                                         method: 'POST',
                                         params: params,
                                         success: function (response) {
@@ -692,11 +694,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         return "pimcore_admin_document_" + this.type + '_getdatabyid';
     },
 
-    getSaveRoute: function(params) {
+    getSaveRoute: function() {
         return "pimcore_admin_document_" + this.type + '_save';
     },
 
-    addTaskAsParam: function(task) {
-        return '?task=' + task;
+    getAddRoute: function() {
+        return "pimcore_admin_document_document_add";
     }
 });

@@ -567,8 +567,6 @@ reset_config_tooltip: >-
 error_resetting_config: Error resetting configuration
 marketing_settings: Marketing Settings
 cross_tree_moves_not_supported: Cross tree moves not yet supported
-add_printpage: Add PrintPage
-add_printcontainer: Add PrintContainer
 web2print_preview_pdf: Generate & Preview PDF
 web2print_cancel_pdf_creation: Cancel PDF Creation
 web2print_generate_pdf: Generate PDF

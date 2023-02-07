@@ -164,6 +164,10 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
         return "pimcore_bundle_web2print_document_" + this.type + '_save';
     },
 
+    getAddRoute: function() {
+        return "pimcore_bundle_web2print_document_" + this.type + '_add';
+    },
+
     getSaveToSessionRoute: function() {
         return "pimcore_bundle_web2print_document_" + this.type + '_savetosession';
     },
@@ -171,5 +175,6 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
     getRemoveFromSessionRoute: function() {
         return "pimcore_bundle_web2print_document_" + this.type + '_removefromsession';
     },
+
 });
 

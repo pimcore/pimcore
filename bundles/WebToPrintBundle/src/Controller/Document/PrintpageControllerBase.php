@@ -16,14 +16,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WebToPrintBundle\Controller\Document;
 
+use Exception;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\Document\DocumentControllerBase;
 use Pimcore\Bundle\WebToPrintBundle\Config;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
+use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Service;
+use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Schedule\Task;
+use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -139,6 +143,96 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
 
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
         }
+    }
+
+
+    /**
+     * @Route("/add", name="add", methods={"POST"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function addAction(Request $request): JsonResponse
+    {
+        $success = false;
+        $errorMessage = '';
+
+        // check for permission
+        $parentDocument = Document::getById((int)$request->get('parentId'));
+        $document = null;
+        if ($parentDocument->isAllowed('create')) {
+            $intendedPath = $parentDocument->getRealFullPath() . '/' . $request->get('key');
+
+            if (!Document\Service::pathExists($intendedPath)) {
+                $createValues = [
+                    'userOwner' => $this->getAdminUser()->getId(),
+                    'userModification' => $this->getAdminUser()->getId(),
+                    'published' => false,
+                ];
+
+                $createValues['key'] = \Pimcore\Model\Element\Service::getValidKey($request->get('key'), 'document');
+
+                // check for a docType
+                $docType = Document\DocType::getById($request->get('docTypeId', ''));
+
+                $config = $this->getParameter('pimcore_web_to_print');
+                if ($request->get('type') === 'printpage') {
+                    $createValues['controller'] = $config['default_controller_print_page'];
+                } elseif ($request->get('type') === 'printcontainer') {
+                    $createValues['controller'] = $config['default_controller_print_container'];
+                }
+
+                if ($request->get('inheritanceSource')) {
+                    $createValues['contentMasterDocumentId'] = $request->get('inheritanceSource');
+                }
+
+                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
+                $document = $loader->build($request->get('type'));
+
+                $document = $document::create($parentDocument->getId(), $createValues);
+
+                try {
+                    $document->save();
+                    $success = true;
+                } catch (Exception $e) {
+                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                }
+
+            } else {
+                $errorMessage = "prevented adding a document because document with same path+key [ $intendedPath ] already exists";
+                Logger::debug($errorMessage);
+            }
+        } else {
+            $errorMessage = 'prevented adding a document because of missing permissions';
+            Logger::debug($errorMessage);
+        }
+
+        if ($success && $document instanceof Document) {
+            if ($translationsBaseDocumentId = $request->get('translationsBaseDocument')) {
+                $translationsBaseDocument = Document::getById((int) $translationsBaseDocumentId);
+
+                $properties = $translationsBaseDocument->getProperties();
+                $properties = array_merge($properties, $document->getProperties());
+                $document->setProperties($properties);
+                $document->setProperty('language', 'text', $request->get('language'), false, true);
+                $document->save();
+
+                $service = new Document\Service();
+                $service->addTranslation($translationsBaseDocument, $document);
+            }
+
+            return $this->adminJson([
+                'success' => $success,
+                'id' => $document->getId(),
+                'type' => $document->getType(),
+            ]);
+        }
+
+        return $this->adminJson([
+            'success' => $success,
+            'message' => $errorMessage,
+        ]);
     }
 
     protected function setValuesToDocument(Request $request, Document $document): void
