@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.google_marketing.report.tag_manager.settings");
+pimcore.registerNS("pimcore.bundle.googlemarketing.report.tagmanager.settings");
 /**
  * @private
  */
-pimcore.google_marketing.report.tag_manager.settings = Class.create({
+pimcore.bundle.googlemarketing.report.tagmanager.settings = Class.create({
 
     initialize: function (parent) {
         this.parent = parent;
@@ -113,4 +113,4 @@ pimcore.google_marketing.report.tag_manager.settings = Class.create({
 });
 
 
-pimcore.report.settings.broker.push("pimcore.google_marketing.report.tag_manager.settings");
+pimcore.bundle.googlemarketing.settings.broker.push("pimcore.bundle.googlemarketing.report.tagmanager.settings");

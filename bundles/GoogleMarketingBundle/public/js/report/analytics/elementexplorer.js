@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.google_marketing.report.analytics.element_explorer");
+pimcore.registerNS("pimcore.bundle.googlemarketing.report.analytics.elementexplorer");
 /**
  * @private
  */
-pimcore.google_marketing.report.analytics.element_explorer = Class.create(pimcore.report.abstract, {
+pimcore.bundle.googlemarketing.report.analytics.elementexplorer = Class.create(pimcore.bundle.googlemarketing.report.abstract, {
 
     matchType: function (type) {
         var types = ["document_page","global"];
@@ -260,7 +260,7 @@ pimcore.google_marketing.report.analytics.element_explorer = Class.create(pimcor
 });
 
 // add to report broker
-if(pimcore.bundle && pimcore.bundle.customreports) {
-    pimcore.bundle.customreports.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
-    pimcore.bundle.customreports.broker.addReport(pimcore.google_marketing.report.analytics.element_explorer, "analytics");
-}
+
+pimcore.bundle.googlemarketing.report.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
+pimcore.bundle.googlemarketing.report.broker.addReport(pimcore.bundle.googlemarketing.report.analytics.elementexplorer, "analytics");
+

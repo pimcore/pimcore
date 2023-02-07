@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.layout.portlets.analytics");
+pimcore.registerNS("pimcore.bundle.googlemarketing.layout.portlets.analytics");
 /**
  * @private
  */
-pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstract, {
+pimcore.bundle.googlemarketing.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstract, {
 
     getType: function () {
         return "pimcore.layout.portlets.analytics";

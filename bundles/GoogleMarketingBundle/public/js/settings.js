@@ -58,7 +58,7 @@ pimcore.bundle.googlemarketing.settings = Class.create({
 
         if (!this.panel) {
             this.panel = new Ext.Panel({
-                id: "pimcore_reports_settings",
+                id: "pimcore_marketing_settings",
                 title: t("marketing_settings"),
                 iconCls: "pimcore_icon_system",
                 border: false,
@@ -70,15 +70,15 @@ pimcore.bundle.googlemarketing.settings = Class.create({
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
-            tabPanel.setActiveItem("pimcore_reports_settings");
+            tabPanel.setActiveItem("pimcore_marketing_settings");
 
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("reports_settings");
+                pimcore.globalmanager.remove("bundle_marketing_settings");
             }.bind(this));
 
             try {
-                var broker = pimcore.report.settings.broker;
+                var broker = pimcore.bundle.googlemarketing.settings.broker;
                 var settingsContainerItems = [];
                 var moduleSetting,moduleClass;
 
@@ -137,7 +137,7 @@ pimcore.bundle.googlemarketing.settings = Class.create({
         }
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_reports_settings_save'),
+            url: Routing.generate('pimcore_bundle_googlemarketing_settings_save'),
             method: "PUT",
             params: {
                 data: Ext.encode(values)
@@ -165,4 +165,4 @@ pimcore.bundle.googlemarketing.settings = Class.create({
 
 });
 
-pimcore.report.settings.broker = [];
+pimcore.bundle.googlemarketing.settings.broker = [];
