@@ -916,5 +916,3 @@ class TestHelper
         return $method->invokeArgs($obj, $args);
     }
 }
-
-@class_alias(TestHelper::class, 'Pimcore\Tests\Support\Util\TestHelper');

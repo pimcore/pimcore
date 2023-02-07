@@ -55,26 +55,6 @@ final class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->arrayNode('error_handling')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->booleanNode('render_error_document')
-                            ->info('Render error document in case of an error instead of showing Symfony\'s error page')
-                            ->defaultTrue()
-                            ->beforeNormalization()
-                                ->ifString()
-                                ->then(function ($v) {
-                                    return (bool)$v;
-                                })
-                            ->end()
-                        ->end()
-                    ->end()
-                    ->setDeprecated(
-                        'pimcore/pimcore',
-                        '10.1',
-                        'The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.'
-                    )
-                ->end()
                 ->arrayNode('bundles')
                     ->addDefaultsIfNotSet()
                     ->children()

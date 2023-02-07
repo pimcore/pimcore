@@ -94,6 +94,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Video] It's now possible to drop a video asset directly into an video editable in class
 - [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
 - [Config] The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
+- [Config] The deprecated config node `pimcore.error_handling` and the related parameter `pimcore.response_exception_listener.render_error_document` was removed.
 - [DataObjects] Removed deprecated preview url in class editor.
 - [DataObjects] Removed sql filter functionality for data object grid
 - [DataObjects] Loading non-Concrete objects with the Concrete class is no longer possible
@@ -103,8 +104,14 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - Removed BruteforceProtection
 - Removed PreAuthenticatedAdminToken
 - [Logger] Bumped `monolog/monolog` to [^3.2](https://github.com/Seldaek/monolog/blob/main/UPGRADE.md#300) and `symfony/monolog-bundle` to [^3.8](https://github.com/symfony/monolog-bundle/blob/master/CHANGELOG.md#380-2022-05-10) (which adds support for monolog v3). Please adapt your custom implementation accordingly eg. log records are now `LogRecord` Objects instead of array.
-- [Ecommerce] The constructor of the indexing services (eg. `DefaultMysql`, `AbstractElasticSearch`) and related workers were changed to support the injection of monolog logger, please adapt your custom implementation.
-- [Bundles] 
+- [Ecommerce] 
+  - Ecommerce bundle has been moved into a package `pimcore/ecommerce-bundle`. If you wish to continue using the ecommerce framework, then please require the package in your composer.json and install it after enabling in `config/bundles.php`.
+  - The constructor of the following services has been changed, please adapt your custom implementation accordingly:
+    - `IndexService\ProductList\DefaultMysql`, `IndexService\ProductList\DefaultFindologic`
+    - `IndexService\Worker\AbstractElasticSearch`, `IndexService\Worker\DefaultFindologic`, `IndexService\Worker\DefaultMysql`, `IndexService\Worker\OptimizedMysql`
+    - `IndexService\Config\AbstractConfig` and it's sub-classes.
+    - `Tracking\Tracker\Analytics\AbstractAnalyticsTracker` and it's sub-classes.
+- [Bundles]
   - Removed support for loading bundles through `extensions.php`.
   - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.
   - Removed commands: `pimcore:bundle:enable`, `pimcore:bundle:disable`.
@@ -154,6 +161,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Ecommerce][Product Interfaces] Changed return type-hints of `CheckoutableInterface` methods `getOSPrice`, `getOSPriceInfo`, `getOSAvailabilityInfo`, `getPriceSystemName`, `getAvailabilitySystemName`, `getPriceSystemImplementation`, `getAvailabilitySystemImplementation` to be non-nullable.
 - [Elements] Removed the deprecated `Pimcore\Model\Element\Service::getType()`, use `Pimcore\Model\Element\Service::getElementType()` instead.
 - [DataObjects] Method `Concrete::getClass()` throws NotFoundException if class is not found for an object.
+- [Asset] Removed the deprecated `marshal()/unmarshal()` methods for metadata, use `normalize()/denormalize()` methods instead.
 - [Asset] Asset/Asset Thumbnail Update messages are now routed to different queue
   instead of `pimcore_core`. please add option `pimcore_asset_update` to command `bin/console messenger:consume pimcore_core... pimcore_asset_update` to post process assets on update.
   Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
@@ -167,6 +175,7 @@ pimcore:
       - site_1
       - site_2
 ```
+- [Environment] - Removed `symfony/dotenv` dependency to make loading of `.env` files optional. please add the requirement to your composer.json, if you still want to use `.env` files.
 
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
