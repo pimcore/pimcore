@@ -49,7 +49,7 @@ class DataObjectParamResolver implements ArgumentValueResolverInterface
                     '10.6',
                     'Usage of @ParamConverter annotation is deprecated. please use #[DataObjectParam] argument attribute instead.'
                 );
-                $options[0] = new DataObjectParam($converter->getClass(),$converter->getOptions()['unpublished'] ?? null, $converter->getOptions());
+                $options[0] = new DataObjectParam($converter->getClass(), $converter->getOptions()['unpublished'] ?? null, $converter->getOptions());
             }
         }
 
@@ -67,6 +67,7 @@ class DataObjectParamResolver implements ArgumentValueResolverInterface
 
         if (!$value && $argument->isNullable()) {
             $request->attributes->set($param, null);
+
             return [];
         }
 
