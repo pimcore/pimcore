@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.report.settings");
+pimcore.registerNS("pimcore.bundle.googlemarketing.settings");
 /**
  * @private
  */
-pimcore.report.settings = Class.create({
+pimcore.bundle.googlemarketing.settings = Class.create({
 
     initialize: function () {
 
@@ -24,7 +24,7 @@ pimcore.report.settings = Class.create({
 
     getData: function () {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_reports_settings_get'),
+            url: Routing.generate('pimcore_bundle_googlemarketing_settings_get'),
             success: function (response) {
 
                 this.data = Ext.decode(response.responseText);

@@ -18,8 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GoogleMarketingBundle\Controller\Reports;
 
 use Google\Service\Analytics;
-use Pimcore\Bundle\AdminBundle\Controller\Reports\ReportsControllerBase;
 use Pimcore\Bundle\GoogleMarketingBundle\Config\SiteConfigProvider;
+use Pimcore\Bundle\GoogleMarketingBundle\Controller\ReportsControllerBase;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Google;
 use Pimcore\Model\Document;

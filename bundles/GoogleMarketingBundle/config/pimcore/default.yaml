@@ -4,6 +4,10 @@ services:
         autoconfigure: true
         public: false
 
+    #
+    # EVENT LISTENERS
+    #
+
     Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend\GoogleAnalyticsCodeListener:
         public: true
         tags:

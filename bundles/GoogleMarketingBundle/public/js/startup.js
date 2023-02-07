@@ -1,6 +1,6 @@
-pimcore.registerNS('pimcore.bundle.google_marketing.startup');
+pimcore.registerNS('pimcore.bundle.googlemarketing.startup');
 
-pimcore.bundle.google_marketing.startup = Class.create({
+pimcore.bundle.googlemarketing.startup = Class.create({
     initialize: function () {
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
     },
@@ -16,19 +16,20 @@ pimcore.bundle.google_marketing.startup = Class.create({
                 text: t("marketing_settings"),
                 iconCls: "pimcore_nav_icon_marketing_settings",
                 itemId: 'pimcore_menu_marketing_settings',
-                handler: this.reportSettings,
+                handler: this.marketingSettings,
                 priority: 30
             });
         }
     },
-    reportSettings: function () {
+
+    marketingSettings: function () {
         try {
-            pimcore.globalmanager.get("reports_settings").activate();
+            pimcore.globalmanager.get("bundle_marketing_settings").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("reports_settings", new pimcore.report.settings());
+            pimcore.globalmanager.add("bundle_marketing_settings", new pimcore.bundle.googlemarketing.settings());
         }
     }
 });
 
-var google_marketing_bundle = new pimcore.bundle.google_marketing.startup();
+var pimcoreBundleGoogleMarketing = new pimcore.bundle.googlemarketing.startup();

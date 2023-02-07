@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\GoogleMarketingBundle\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,7 +49,7 @@ class GoogleSearchConsoleVerificationListener implements EventSubscriberInterfac
             return;
         }
 
-        $conf = \Pimcore\Config::getReportConfig();
+        $conf = Config::getReportConfig();
 
         if (isset($conf['webmastertools']) && isset($conf['webmastertools']['sites'])) {
             $sites = $conf['webmastertools']['sites'];

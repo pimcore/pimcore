@@ -1,2 +1,2 @@
 imports:
-    - { resource: ../event_listeners.yaml }
+    - { resource: default.yaml }

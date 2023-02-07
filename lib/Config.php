@@ -322,47 +322,6 @@ final class Config implements ArrayAccess
     /**
      * @return array<string, mixed>
      *
-     * @throws Exception
-     *
-     * @internal
-     */
-    public static function getReportConfig(): array
-    {
-        $config = [];
-        if (RuntimeCache::isRegistered('pimcore_config_report')) {
-            $config = RuntimeCache::get('pimcore_config_report');
-        } else {
-            try {
-                $configJson = SettingsStore::get(
-                    ReportConfigWriter::REPORT_SETTING_ID, ReportConfigWriter::REPORT_SETTING_SCOPE
-                );
-
-                if ($configJson) {
-                    $config = json_decode($configJson->getData(), true);
-                }
-            } catch (Exception $e) {
-                // nothing to do
-            }
-        }
-
-        self::setReportConfig($config);
-
-        return $config;
-    }
-
-    /**
-     * @param array<string, mixed> $config
-     *
-     * @internal
-     */
-    public static function setReportConfig(array $config): void
-    {
-        RuntimeCache::set('pimcore_config_report', $config);
-    }
-
-    /**
-     * @return array<string, mixed>
-     *
      * @internal
      */
     public static function getWeb2PrintConfig(): array
