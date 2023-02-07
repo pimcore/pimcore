@@ -14,22 +14,21 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\Request\ParamConverter;
+namespace Pimcore\Bundle\CoreBundle\Request\ParamResolver;
 
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Request\Attribute\DataObjectParam;
 use Pimcore\Tool;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @internal
  */
-class DataObjectParamResolver implements ArgumentValueResolverInterface
+class DataObjectParamResolver implements ValueResolverInterface
 {
     /**
      * {@inheritdoc}
@@ -39,19 +38,6 @@ class DataObjectParamResolver implements ArgumentValueResolverInterface
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         $options = $argument->getAttributes(DataObjectParam::class, ArgumentMetadata::IS_INSTANCEOF);
-
-        if (!isset($options[0])) {
-            $converters = $request->attributes->get('_converters');
-            $converter = $converters[0] ?? false;
-            if ($converter instanceof ParamConverter) {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '10.6',
-                    'Usage of @ParamConverter annotation is deprecated. please use #[DataObjectParam] argument attribute instead.'
-                );
-                $options[0] = new DataObjectParam($converter->getClass(), $converter->getOptions()['unpublished'] ?? null, $converter->getOptions());
-            }
-        }
 
         $class = $options[0]->class ?? $argument->getType();
         if (null === $class || !is_subclass_of($class, AbstractObject::class)) {
@@ -67,7 +53,6 @@ class DataObjectParamResolver implements ArgumentValueResolverInterface
 
         if (!$value && $argument->isNullable()) {
             $request->attributes->set($param, null);
-
             return [];
         }
 
@@ -86,14 +71,5 @@ class DataObjectParamResolver implements ArgumentValueResolverInterface
         $request->attributes->set($param, $object);
 
         return [$object];
-    }
-
-    public function supports(Request $request, ArgumentMetadata $argument)
-    {
-        if (null === $argument->getType()) {
-            return false;
-        }
-
-        return is_subclass_of($argument->getType(), AbstractObject::class);
     }
 }

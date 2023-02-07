@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Controller\Attribute;
 
-use Pimcore\Controller\Configuration\ResponseHeader as BaseResponseHeader;
-
 /**
  * Allows to set HTTP headers on the response via attributes. The attribute will
  * be processed by ResponseHeaderListener which will set the HTTP headers on the
@@ -28,6 +26,42 @@ use Pimcore\Controller\Configuration\ResponseHeader as BaseResponseHeader;
  *
  */
 #[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_METHOD | \Attribute::TARGET_FUNCTION)]
-final class ResponseHeader extends BaseResponseHeader
+final class ResponseHeader
 {
+    public function __construct(
+        protected string $key,
+        protected string|array $values = '',
+        protected bool $replace = false
+    )
+    {}
+
+    public function getKey(): string
+    {
+        return $this->key;
+    }
+
+    public function setKey(string $key): void
+    {
+        $this->key = $key;
+    }
+
+    public function getValues(): array|string
+    {
+        return $this->values;
+    }
+
+    public function setValues(array|string $values): void
+    {
+        $this->values = $values;
+    }
+
+    public function getReplace(): bool
+    {
+        return $this->replace;
+    }
+
+    public function setReplace(bool $replace): void
+    {
+        $this->replace = $replace;
+    }
 }

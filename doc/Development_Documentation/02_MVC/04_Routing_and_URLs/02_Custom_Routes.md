@@ -11,7 +11,7 @@ All things where Documents are not practical. Here Custom Routes come into actio
 Custom Routes come fourth in the route processing priority.
 
 Custom routes are an alternative to Symfony's routing functionalities and give you a bit more flexibility, but you can 
-still use [Symfony's routing capabilities](https://symfony.com/doc/current/routing.html) (eg. @Route() annotation,
+still use [Symfony's routing capabilities](https://symfony.com/doc/current/routing.html) (eg. #[Route] attribute,
  `routing.yaml`, ...) in parallel to Pimcore Custom Routes.
  
 ## Configuring Custom Routes
@@ -63,16 +63,17 @@ class NewsController extends FrontendController
 
 The default variables can be accessed the same way.
 
-## Using Param Converter to convert request ID to Data Object
-Pimcore has a built-in [param converter](https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html)
+## Using Param Resolver to convert request ID to Data Object
+Pimcore has a built-in [param resolver](https://symfony.com/doc/current/controller/value_resolver.html#built-in-value-resolvers)
 for converting data object IDs in the request parameters to actual objects. 
 
-To use the param converter, simply type hint the argument (Symfony routing example): 
+To use the param resolver, simply type hint the argument (Symfony routing example): 
 
 ```php
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\Routing\Annotation\Route;
     ....
+
      #[Template('/news/test')]
      #[Route('/news/{news}')]
     public function detailAction(DataObject\News $news) {

@@ -23,10 +23,8 @@ In controllers, for every action there exists a separate method ending with the 
 The `DefaultController` comes with Pimcore. When you create an empty page in Pimcore it will call 
 the `defaultAction` in the `DefaultController` which uses the view `/templates/default/default.html.twig`. 
 
-You can render templates just the [standard Symfony way](https://symfony.com/doc/current/templates.html#rendering-a-template-in-emails), either by using:
-- the render helper eg. `$this->render('foo.html.twig')`
-- the `@Template()` [annotation](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/annotations/view.html), altough this is deprecated and will not be supported in Pimcore 11.
-- the `#Template[]` [attribute](https://symfony.com/doc/current/templates.html#rendering-a-template-in-controllers).
+You can render templates just the [standard Symfony way](https://symfony.com/doc/current/templates.html#rendering-a-template-in-emails), by either using `$this->render('foo.html.twig')` or using the `#Template[]` [attribute](https://symfony.com/doc/current/templates.html#rendering-a-template-in-controllers). 
+
 
 ### Examples
 
@@ -55,8 +53,6 @@ class DefaultController extends FrontendController
      * The frontend controller also provides methods to add response headers or via attributes without having
      * access to the final response object (as it is automatically created when rendering the view).
      *
-     * @Template
-     * @ResponseHeader("X-Foo", values={"123456", "98765"})
      */
      #[Template('/default/header.html.twig')]
      #[ResponseHeader(key: "X-Foo", values: ["123456", "98765"])]
