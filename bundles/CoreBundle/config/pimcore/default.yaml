@@ -203,7 +203,6 @@ pimcore:
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-        types: ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer']
         valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
 
     routing:

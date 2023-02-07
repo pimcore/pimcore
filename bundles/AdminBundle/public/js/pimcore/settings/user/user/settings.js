@@ -180,6 +180,9 @@ pimcore.settings.user.user.settings = Class.create({
                                 Ext.getCmp("pimcore_user_delete_image_" + this.currentUser.id).setVisible(true);
                                 pimcore.helpers.reloadUserImage(this.currentUser.id);
                                 this.currentUser.hasImage = true;
+                            }.bind(this),
+                            function () {
+                                Ext.MessageBox.alert(t('error'), t("unsupported_filetype"));
                             }.bind(this)
                         );
                     }.bind(this)

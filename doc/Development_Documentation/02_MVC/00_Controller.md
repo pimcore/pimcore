@@ -36,7 +36,7 @@ namespace App\Controller;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Pimcore\Controller\Configuration\ResponseHeader;
+use Pimcore\Controller\Attribute\ResponseHeader;
 
 class DefaultController extends FrontendController
 {   

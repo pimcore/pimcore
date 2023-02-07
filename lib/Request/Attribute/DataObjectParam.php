@@ -24,8 +24,8 @@ class DataObjectParam
 {
     public function __construct(
         public ?string $class = null,
-        public ?string $unpublished = null,
-        public ?string $options = null
+        public ?bool $unpublished = null,
+        public ?array $options = null
     ) {
     }
 }

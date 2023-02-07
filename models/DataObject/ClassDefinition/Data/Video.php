@@ -320,7 +320,7 @@ class Video extends Data implements
             $result['id'] = $id;
         }
 
-        return $result;
+        return $result ?? [];
     }
 
     /**
