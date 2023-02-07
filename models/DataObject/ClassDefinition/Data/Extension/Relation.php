@@ -39,7 +39,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\Document' . $strArray;
             } elseif (is_array($documentTypes)) {
                 foreach ($documentTypes as $item) {
-                    $class[] = $this->getMappedClassName('\Pimcore\Model\Document\\' . ucfirst($item['documentTypes']), $strArray);
+                    $class[] = $this->getMappedClassName('\Pimcore\Model\Document\\' . ucfirst($item['documentTypes'])) . $strArray;
                 }
             }
         }
