@@ -35,7 +35,7 @@ class PimcoreApplicationLoggerBundle extends AbstractPimcoreBundle
         return [
             '/bundles/pimcoreapplicationlogger/js/startup.js',
             '/bundles/pimcoreapplicationlogger/js/log/admin.js',
-            '/bundles/pimcoreapplicationlogger/js/log/detailwindows.js'
+            '/bundles/pimcoreapplicationlogger/js/log/detailwindow.js'
         ];
     }
 
