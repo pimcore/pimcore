@@ -32,8 +32,8 @@ final class ResponseHeader
         protected string $key,
         protected string|array $values = '',
         protected bool $replace = false
-    )
-    {}
+    ) {
+    }
 
     public function getKey(): string
     {
