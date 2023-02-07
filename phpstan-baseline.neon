@@ -6,9 +6,9 @@ parameters:
 			path: bundles/CoreBundle/src/DependencyInjection/PimcoreCoreExtension.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
+			message: "#^If condition is always true\\.$#"
 			count: 1
-			path: bundles/CoreBundle/src/Request/ParamConverter/DataObjectParamConverter.php
+			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php
 
 		-
 			message: "#^If condition is always true\\.$#"

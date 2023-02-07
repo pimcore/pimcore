@@ -1,21 +1,5 @@
-services:
-    _defaults:
-        autowire: true
-        autoconfigure: true
-        public: false
-
-    Pimcore\Bundle\AdminBundle\EventListener\TwoFactorListener:
-        arguments:
-            $providerRegistry: '@scheb_two_factor.provider_registry'
-            $preparationRecorder: '@scheb_two_factor.provider_preparation_recorder'
-        calls:
-            - [ setLogger, [ '@logger' ] ]
-        tags:
-          - { name: kernel.event_listener, event: scheb_two_factor.authentication.complete, method: onAuthenticationComplete }
-          - { name: kernel.event_listener, event: scheb_two_factor.authentication.attempt, method: onAuthenticationAttempt }
-
-
 scheb_two_factor:
+    two_factor_condition: Pimcore\Bundle\AdminBundle\Security\PimcoreUserTwoFactorCondition
     google:
         enabled: true                                       # If Google Authenticator should be enabled, default false
         server_name: Pimcore                                # Server name used in QR code
@@ -23,3 +7,13 @@ scheb_two_factor:
 
     security_tokens:
         - Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken
+        - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+        - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Bundle\AdminBundle\Security\PimcoreUserTwoFactorCondition: ~

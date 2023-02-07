@@ -130,7 +130,7 @@
     </div>
 
     <form id="pimcore_logout_form" method="post" action="{{ path('pimcore_admin_logout') }}">
-        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken(app.request.session) }}">
 
         <a id="pimcore_logout" data-menu-tooltip="{{ "logout"|trans([],'admin') }}" href="#" style="display: none">
             <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">

@@ -833,5 +833,3 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertWysiwyg($this->testObject, 'wysiwyg', $this->seed);
     }
 }
-
-@class_alias(AbstractDataTypeTestCase::class, 'Pimcore\Tests\Support\Test\DataType\AbstractDataTypeTestCase');
