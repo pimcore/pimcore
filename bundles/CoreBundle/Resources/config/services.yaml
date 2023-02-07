@@ -215,9 +215,9 @@ services:
         public: true
         class: Pimcore\Model\DataObject\QuantityValue\DefaultConverter
 
-    Pimcore\Bundle\CoreBundle\Request\ParamConverter\DataObjectParamConverter:
+    Pimcore\Bundle\CoreBundle\Request\ParamConverter\DataObjectParamResolver:
         tags:
-            - { name: request.param_converter, priority: -2, converter: data_object_converter }
+            - { name: controller.argument_value_resolver, priority: 101}
 
     Symfony\Component\Lock\PersistingStoreInterface:
         class: Symfony\Component\Lock\Store\DoctrineDbalStore
