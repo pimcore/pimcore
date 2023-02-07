@@ -131,7 +131,7 @@ services:
         public: true
         class: Pimcore\Model\DataObject\QuantityValue\DefaultConverter
 
-    Pimcore\Bundle\CoreBundle\Request\ParamConverter\DataObjectParamResolver:
+    Pimcore\Bundle\CoreBundle\Request\ParamResolver\DataObjectParamResolver:
         tags:
             - { name: controller.argument_value_resolver, priority: 101}
 
