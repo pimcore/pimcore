@@ -115,6 +115,18 @@ pimcore:
                         object: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataObject
                         select: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Select
                         textarea: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Textarea
+        type_definitions:
+            map:
+                archive: \Pimcore\Model\Asset\Archive
+                audio: \Pimcore\Model\Asset\Audio
+                documents: \Pimcore\Model\Asset\Documents
+                folder: \Pimcore\Model\Asset\Folder
+                image: \Pimcore\Model\Asset\Image
+                text: \Pimcore\Model\Asset\Text
+                unknown: \Pimcore\Model\Asset\Unknown
+                video: \Pimcore\Model\Asset\Video
+            prefixes:
+                - \Pimcore\Model\Asset\
 
     objects:
         class_definitions:

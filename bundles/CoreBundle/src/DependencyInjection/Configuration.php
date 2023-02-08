@@ -650,6 +650,7 @@ final class Configuration implements ConfigurationInterface
 
                             ->end()
                         ->end();
+        $this->addImplementationLoaderNode($assetsNode, "type_definitions");
     }
 
     /**

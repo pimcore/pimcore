@@ -23,6 +23,8 @@ use Pimcore\DependencyInjection\ServiceCollection;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
+use Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader;
+use Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypePrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Document\TypeDefinition\Loader\PrefixLoader as DocumentTypePrefixLoader;
@@ -184,6 +186,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             TypeLoader::class => [
                 'config' => $config['documents']['type_definitions'],
                 'prefixLoader' => DocumentTypePrefixLoader::class,
+            ],
+            AssetTypeLoader::class => [
+                'config' => $config['assets']['type_definitions'],
+                'prefixLoader' => AssetTypePrefixLoader::class,
             ],
         ];
 

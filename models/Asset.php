@@ -242,9 +242,9 @@ class Asset extends Element\AbstractElement
 
             try {
                 $asset->getDao()->getById($id);
-                $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
-                /** @var Asset $newAsset */
-                $newAsset = self::getModelFactory()->build($className);
+
+                $loader = \Pimcore::getContainer()->get(Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader::class);
+                $newAsset = $loader->build($asset->getType());
 
                 if (get_class($asset) !== get_class($newAsset)) {
                     $asset = $newAsset;
@@ -257,7 +257,7 @@ class Asset extends Element\AbstractElement
                 $asset->resetDirtyMap();
 
                 Cache::save($asset, $cacheKey);
-            } catch (NotFoundException $e) {
+            } catch (NotFoundException|UnsupportedException $e) {
                 return null;
             }
         } else {
@@ -326,14 +326,15 @@ class Asset extends Element\AbstractElement
             }
 
             $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
-            $class = '\\Pimcore\\Model\\Asset\\' . ucfirst($type);
+
             if (array_key_exists('type', $data)) {
                 unset($data['type']);
             }
         }
 
+        $loader = \Pimcore::getContainer()->get(Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader::class);
         /** @var Asset $asset */
-        $asset = self::getModelFactory()->build($class);
+        $asset = $loader->build($type);
         $asset->setParentId($parentId);
         self::checkCreateData($data);
         $asset->setValues($data);
@@ -706,8 +707,8 @@ class Asset extends Element\AbstractElement
                 }
 
                 // not only check if the type is set but also if the implementation can be found
-                $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
-                if (!self::getModelFactory()->supports($className)) {
+                $loader = \Pimcore::getContainer()->get(Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader::class);
+                if (!$loader->supports($this->getType())) {
                     throw new Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
             }
