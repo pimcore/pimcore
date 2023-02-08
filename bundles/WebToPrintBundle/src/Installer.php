@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\WebToPrintBundle;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Connection;
 use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 
@@ -110,7 +111,11 @@ class Installer extends SettingsStoreAwareInstaller
 
     private function modifyEnumTypes(array $enums): void
     {
+        $type = Connection::PARAM_STR_ARRAY;
+        if(class_exists('Doctrine\\DBAL\\ArrayParameterType')) {
+            $type = ArrayParameterType::STRING;
+        }
         $db = Db::get();
-        $db->executeQuery('ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums);', ['enums' => $enums], ['enums' => ArrayParameterType::STRING]);
+        $db->executeQuery('ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums);', ['enums' => $enums], ['enums' => $type]);
     }
 }
