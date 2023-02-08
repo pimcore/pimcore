@@ -23,7 +23,6 @@ use Pimcore\Model\Document;
 use Pimcore\Tool\Console;
 use Pimcore\Web2Print\Processor;
 use Spiritix\Html2Pdf\Converter;
-use Spiritix\Html2Pdf\ConverterException;
 use Spiritix\Html2Pdf\Input\StringInput;
 use Spiritix\Html2Pdf\Output\FileOutput;
 use Spiritix\Html2Pdf\Output\StringOutput;
