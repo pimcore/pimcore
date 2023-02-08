@@ -427,7 +427,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * Returns true if the object has at least one sibling
      */
     public function hasSiblings(
-        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER
+        ],
         ?bool $includingUnpublished = null
     ): bool {
         return $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
