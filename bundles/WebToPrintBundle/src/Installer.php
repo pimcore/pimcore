@@ -101,10 +101,7 @@ class Installer extends SettingsStoreAwareInstaller
         try {
             $result = $db->executeQuery("SHOW COLUMNS FROM `documents` LIKE 'type'");
             $typeColumn = $result->fetchAllAssociative();
-            $enumOptions = explode("','",preg_replace("/(enum)\('(.+?)'\)/","\\2", $typeColumn[0]['Type']));
-            if(count($enumOptions) > 0) {
-                return $enumOptions;
-            }
+            return explode("','",preg_replace("/(enum)\('(.+?)'\)/","\\2", $typeColumn[0]['Type']));
         } catch (\Exception $ex) {
             // nothing to do here if it does not work we return the standard types
         }
