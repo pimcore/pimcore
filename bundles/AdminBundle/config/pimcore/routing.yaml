@@ -5,13 +5,6 @@ _pimcore_admin:
     options:
         expose: true
 
-_pimcore_reports:
-    resource: "../../src/Controller/Reports/"
-    type:     annotation
-    prefix:   /admin/reports
-    options:
-        expose: true
-
 _pimcore_gdpr:
     resource: "../../src/Controller/GDPR/"
     type:     annotation

@@ -353,7 +353,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * Returns a list of the children objects
      */
     public function getChildren(
-        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER
+        ],
         bool $includingUnpublished = false
     ): Listing {
         $cacheKey = $this->getListingCacheKey(func_get_args());
@@ -396,7 +400,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * Get a list of the sibling objects
      */
     public function getSiblings(
-        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER
+        ],
         bool $includingUnpublished = false
     ): Listing {
         $cacheKey = $this->getListingCacheKey(func_get_args());
@@ -879,7 +887,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function setChildren(
         ?Listing $children,
-        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER
+        ],
         bool $includingUnpublished = false
     ): static {
         if ($children === null) {
