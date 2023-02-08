@@ -311,6 +311,11 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return false;
     }
 
+    public function isEmpty(mixed $data): bool
+    {
+        return !is_numeric($data);
+    }
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?float';
