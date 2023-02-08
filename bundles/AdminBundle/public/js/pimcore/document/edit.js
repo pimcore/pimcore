@@ -31,8 +31,10 @@ pimcore.document.edit = Class.create({
             link += "&unminified_js";
         }
 
-        if(this.targetGroup && this.targetGroup.getValue()) {
-            link += "&_ptg=" + this.targetGroup.getValue();
+        if (pimcore.bundle.personalization) {
+            if(areatoolbar.targetGroup && areatoolbar.targetGroup.getValue()) {
+                link += "&_ptg=" + areatoolbar.targetGroup.getValue();
+            }
         }
 
         return link;
