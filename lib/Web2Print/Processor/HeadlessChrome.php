@@ -102,6 +102,10 @@ class HeadlessChrome extends Processor
 
         ['html' => $html, 'params' => $params] = $event->getArguments();
 
+        if(!class_exists(StringInput::class)) {
+            throw new \UnexpectedValueException('Please install spiritix/php-chrome-html2pdf via Composer to use Headless Chrome PDF conversion');
+        }
+
         $input = new StringInput();
         $input->setHtml($html);
 
