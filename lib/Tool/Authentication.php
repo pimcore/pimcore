@@ -18,10 +18,15 @@ namespace Pimcore\Tool;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\CryptoException;
+use Pimcore\Bundle\AdminBundle\Security\User\UserProvider;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class Authentication
 {
@@ -57,24 +62,89 @@ class Authentication
             }
         }
 
-        if (!Session::requestHasSessionId($request, true)) {
-            // if no session cookie / ID no authentication possible, we don't need to start a session
+        $session = $request->hasPreviousSession() ? $request->getSession() : null;
+
+        if (null === $session) {
             return null;
         }
 
-        $session = Session::getReadOnly();
-        $user = $session->get('user');
+        $token = $session->get('_security_pimcore_admin');
+        $token = $token ? static::safelyUnserialize($token) : null;
 
-        if ($user instanceof User) {
-            // renew user
-            $user = User::getById($user->getId());
+        if ($token instanceof TokenInterface) {
+            $token = static::refreshUser($token, \Pimcore::getContainer()->get(UserProvider::class));
+            $user = $token->getUser();
 
-            if (self::isValidUser($user)) {
-                return $user;
+            if ($user instanceof \Pimcore\Bundle\AdminBundle\Security\User\User && self::isValidUser($user->getUser())) {
+                return $user->getUser();
             }
         }
 
         return null;
+    }
+
+    protected static function safelyUnserialize(string $serializedToken): mixed
+    {
+        $token = null;
+        $prevUnserializeHandler = ini_set('unserialize_callback_func', __CLASS__.'::handleUnserializeCallback');
+        $prevErrorHandler = set_error_handler(function ($type, $msg, $file, $line, $context = []) use (&$prevErrorHandler) {
+            if (__FILE__ === $file) {
+                throw new \ErrorException($msg, 0x37313BC, $type, $file, $line);
+            }
+
+            return $prevErrorHandler ? $prevErrorHandler($type, $msg, $file, $line, $context) : false;
+        });
+
+        try {
+            $token = unserialize($serializedToken);
+        } catch (\ErrorException $e) {
+            if (0x37313BC !== $e->getCode()) {
+                throw $e;
+            }
+            Logger::warning('Failed to unserialize the security token from the session.', ['key' => 'pimcore_admin', 'received' => $serializedToken, 'exception' => $e]);
+        } finally {
+            restore_error_handler();
+            ini_set('unserialize_callback_func', $prevUnserializeHandler);
+        }
+
+        return $token;
+    }
+
+    protected static function refreshUser(TokenInterface $token, UserProvider $provider): ?TokenInterface
+    {
+        $user = $token->getUser();
+
+        $userNotFoundByProvider = false;
+        $userClass = $user::class;
+
+        if (!$provider instanceof UserProviderInterface) {
+            throw new \InvalidArgumentException(sprintf('User provider "%s" must implement "%s".', get_debug_type($provider), UserProviderInterface::class));
+        }
+
+        if (!$provider->supportsClass($userClass)) {
+            return null;
+        }
+
+        try {
+            $refreshedUser = $provider->refreshUser($user);
+            $newToken = clone $token;
+            $newToken->setUser($refreshedUser);
+            $token->setUser($refreshedUser);
+
+            return $token;
+        } catch (UnsupportedUserException) {
+            // let's try the next user provider
+        } catch (UserNotFoundException $e) {
+            Logger::warning('Username could not be found in the selected user provider.', ['username' => $e->getUserIdentifier(), 'provider' => $provider::class]);
+
+            $userNotFoundByProvider = true;
+        }
+
+        if ($userNotFoundByProvider) {
+            return null;
+        }
+
+        throw new \RuntimeException(sprintf('There is no user provider for user "%s". Shouldn\'t the "supportsClass()" method of your user provider return true for this classname?', $userClass));
     }
 
     /**
@@ -157,11 +227,7 @@ class Authentication
 
     public static function isValidUser(?User $user): bool
     {
-        if ($user instanceof User && $user->isActive() && $user->getId() && $user->getPassword()) {
-            return true;
-        }
-
-        return false;
+        return $user instanceof User && $user->isActive() && $user->getId() && $user->getPassword();
     }
 
     /**

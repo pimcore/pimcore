@@ -30,6 +30,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Templating\Renderer\EditableRenderer;
+use Pimcore\Tool\Frontend;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,7 +64,7 @@ class PageController extends DocumentControllerBase
             throw $this->createNotFoundException('Page not found');
         }
 
-        if (($lock = $this->checkForLock($page)) instanceof JsonResponse) {
+        if (($lock = $this->checkForLock($page, $request->getSession()->getId())) instanceof JsonResponse) {
             return $lock;
         }
 
@@ -123,7 +124,7 @@ class PageController extends DocumentControllerBase
         }
 
         /** @var Document\Page|null $pageSession */
-        $pageSession = $this->getFromSession($oldPage);
+        $pageSession = $this->getFromSession($oldPage, $request->getSession());
 
         if ($pageSession) {
             $page = $pageSession;
@@ -188,7 +189,7 @@ class PageController extends DocumentControllerBase
                 'data' => $data,
             ]);
         } else {
-            $this->saveToSession($page);
+            $this->saveToSession($page, $request->getSession());
 
             $draftData = [];
             if ($version) {
@@ -294,8 +295,25 @@ class PageController extends DocumentControllerBase
         ]);
 
         if ($list->getTotalCount() > 0) {
-            $success = false;
-            $message[] = 'URL path already exists.';
+            $checkDocument = Document::getById($docId);
+            $checkSite     = Frontend::getSiteForDocument($checkDocument);
+            $checkSiteId   = empty($checkSite) ? 0 : $checkSite->getId();
+
+            foreach ($list as $document) {
+                if (empty($document)) {
+                    continue;
+                }
+
+                $site   = Frontend::getSiteForDocument($document);
+                $siteId = empty($site) ? 0 : $site->getId();
+
+                if ($siteId === $checkSiteId) {
+                    $success   = false;
+                    $message[] = 'URL path already exists.';
+
+                    break;
+                }
+            }
         }
 
         return $this->adminJson([
@@ -328,7 +346,7 @@ class PageController extends DocumentControllerBase
             }
         }
 
-        $this->saveToSession($doc, true);
+        $this->saveToSession($doc, $request->getSession(), true);
 
         return $this->adminJson([
             'success' => true,

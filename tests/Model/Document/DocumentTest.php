@@ -361,9 +361,9 @@ class DocumentTest extends ModelTestCase
 
         $document->setEditable($input);
 
-        $this->buildSession();
-        ElementService::saveElementToSession($document);
-        $loadedDocument = Service::getElementFromSession('document', $document->getId());
+        $session = $this->buildSession();
+        ElementService::saveElementToSession($document, $session->getId());
+        $loadedDocument = Service::getElementFromSession('document', $document->getId(), $session->getId());
 
         $this->assertEquals(count($document->getEditables()), count($loadedDocument->getEditables()));
     }

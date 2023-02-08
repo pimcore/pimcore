@@ -70,6 +70,7 @@ class Model extends AbstractDefinitionHelper
             $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
             $rootPanel->addChild($panel);
 
+            $panel->addChild($this->createDataChild('input'));
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses(['RelationTest'])
             );
@@ -1023,5 +1024,3 @@ class Model extends AbstractDefinitionHelper
         $this->setupUnit('km');
     }
 }
-
-@class_alias(Model::class, 'Pimcore\Tests\Support\Helper\Model');
