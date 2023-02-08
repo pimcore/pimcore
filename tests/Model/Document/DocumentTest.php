@@ -367,16 +367,4 @@ class DocumentTest extends ModelTestCase
 
         $this->assertEquals(count($document->getEditables()), count($loadedDocument->getEditables()));
     }
-
-    public function testDocumentPrint(): void
-    {
-        $printpage = TestHelper::createEmptyDocument('print-', true, true, '\\Pimcore\\Bundle\\WebToPrintBundle\\Model\\Document\\Printpage');
-        $this->assertInstanceOf(Printpage::class, $printpage);
-
-        //Load via abstract class
-        $printpage = PrintAbstract::getById($printpage->getId());
-        $this->assertInstanceOf(Printpage::class, $printpage);
-        $printpage = PrintAbstract::getByPath($printpage->getRealFullPath());
-        $this->assertInstanceOf(Printpage::class, $printpage);
-    }
 }

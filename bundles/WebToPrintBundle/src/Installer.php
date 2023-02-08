@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\WebToPrintBundle;
 
 use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\DBAL\Connection;
 use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 
