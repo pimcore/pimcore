@@ -411,7 +411,7 @@ final class Config implements ArrayAccess
 
     public static function getEnvironment(): string
     {
-        return $_SERVER['APP_ENV'];
+        return $_SERVER['APP_ENV'] ?? 'dev';
     }
 
     /**
