@@ -526,13 +526,18 @@ class SettingsController extends AdminController
             $settings['pimcore']['email']['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
         }
 
+        if ($existingValues) {
+            $saveSettingsEvent = new GenericEvent(null, [
+                'settings' => $settings,
+                'existingValues' => $existingValues,
+                'values' => $values
+            ]);
+            $eventDispatcher->dispatch($saveSettingsEvent, AdminEvents::SAVE_ACTION_SYSTEM_SETTINGS);
+        }
+
         $settingsYaml = Yaml::dump($settings, 5);
         $configFile = Config::locateConfigFile('system.yaml');
         File::put($configFile, $settingsYaml);
-        if ($existingValues) {
-            $saveSettingsEvent = new GenericEvent(null, [$existingValues, $values]);
-            $eventDispatcher->dispatch($saveSettingsEvent, AdminEvents::SAVE_ACTION_SYSTEM_SETTINGS);
-        }
 
         // clear all caches
         $this->clearSymfonyCache($request, $kernel, $eventDispatcher, $symfonyCacheClearer);
