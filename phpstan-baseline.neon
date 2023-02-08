@@ -8,11 +8,6 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/CartManager/CartPriceModificator/Discount.php
 
 		-
