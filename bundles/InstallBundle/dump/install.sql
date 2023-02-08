@@ -688,15 +688,6 @@ CREATE TABLE `users_workspaces_object` (
   CONSTRAINT `fk_users_workspaces_object_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `uuids`;
-CREATE TABLE `uuids` (
-  `uuid` CHAR(36) NOT NULL,
-  `itemId` int(11) unsigned NOT NULL,
-  `type` VARCHAR(25) NOT NULL,
-  `instanceIdentifier` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`uuid`, `itemId`, `type`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `versions`;
 CREATE TABLE `versions` (
   `id` bigint(20) unsigned NOT NULL auto_increment,
