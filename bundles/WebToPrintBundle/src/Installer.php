@@ -96,7 +96,8 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
-    private function getCurrentEnumTypes() {
+    private function getCurrentEnumTypes(): array
+    {
         $db = Db::get();
         try {
             $result = $db->executeQuery("SHOW COLUMNS FROM `documents` LIKE 'type'");
@@ -111,7 +112,8 @@ class Installer extends SettingsStoreAwareInstaller
         return self::STANDARD_DOCUMENT_ENUM_TYPES;
     }
 
-    private function modifyEnumTypes(array $enums) {
+    private function modifyEnumTypes(array $enums): void
+    {
         $db = Db::get();
         $db->executeQuery('ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums);', ['enums' => $enums], ['enums' => ArrayParameterType::STRING]);
     }
