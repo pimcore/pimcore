@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\WebToPrintBundle;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 
 class Installer extends SettingsStoreAwareInstaller
@@ -46,7 +47,7 @@ class Installer extends SettingsStoreAwareInstaller
     public function install(): void
     {
         $this->installDatabaseTable();
-        $enums = array_merge(self::STANDARD_DOCUMENT_ENUM_TYPES, self::BUNDLE_EXTRA_DOCUMENT_ENUM_TYPES);
+        $enums = array_merge($this->getCurrentEnumTypes(), self::BUNDLE_EXTRA_DOCUMENT_ENUM_TYPES);
         $this->modifyEnumTypes($enums);
         $this->addUserPermission();
         parent::install();
@@ -55,7 +56,8 @@ class Installer extends SettingsStoreAwareInstaller
     public function uninstall(): void
     {
         $this->removeUserPermission();
-        $this->modifyEnumTypes(self::STANDARD_DOCUMENT_ENUM_TYPES);
+        $enums = array_diff($this->getCurrentEnumTypes(), self::BUNDLE_EXTRA_DOCUMENT_ENUM_TYPES);
+        $this->modifyEnumTypes($enums);
         parent::uninstall();
     }
 
@@ -94,8 +96,30 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
+    private function getCurrentEnumTypes() {
+        $db = Db::get();
+        try {
+            $result = $db->executeQuery("SHOW COLUMNS FROM `documents` LIKE 'type'");
+            $typeColumn = $result->fetchAllAssociative();
+            $enumOptions = explode("','",preg_replace("/(enum)\('(.+?)'\)/","\\2", $typeColumn[0]['Type']));
+            if(!empty($enumOptions)) {
+                return $enumOptions;
+            }
+        } catch (\Exception $ex) {
+            // nothing to do here if it does not work we return the standard types
+        }
+        return self::STANDARD_DOCUMENT_ENUM_TYPES;
+    }
+
     private function modifyEnumTypes(array $enums) {
-        $db = \Pimcore\Db::get();
+        $db = Db::get();
+        $result = $db->executeQuery("SHOW COLUMNS FROM `documents` LIKE 'type'");
+
+        if ($result) {
+            $typeColumn = $result->fetchAllAssociative();
+            $enumOptions = explode("','",preg_replace("/(enum|set)\('(.+?)'\)/","\\2", $typeColumn[0]['Type']));
+        }
+
         $db->executeQuery('ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums);', ['enums' => $enums], ['enums' => ArrayParameterType::STRING]);
     }
 }
