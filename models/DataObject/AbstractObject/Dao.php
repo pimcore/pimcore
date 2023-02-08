@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\AbstractObject;
 
+use Doctrine\DBAL\Exception;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
@@ -289,13 +290,16 @@ class Dao extends Model\Element\Dao
     /**
      * Quick test if there are children
      *
-     * @param array $objectTypes
-     * @param bool|null $includingUnpublished
-     * @param Model\User|null $user
-     *
-     * @return bool
+     * @throws Exception
      */
-    public function hasChildren(array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null, User $user = null): bool
+    public function hasChildren(
+        array $objectTypes = [
+            DataObject::OBJECT_TYPE_OBJECT,
+            DataObject::OBJECT_TYPE_VARIANT,
+            DataObject::OBJECT_TYPE_FOLDER],
+        ?bool $includingUnpublished = null,
+        ?User $user = null
+    ): bool
     {
         if (!$this->model->getId()) {
             return false;
@@ -342,12 +346,16 @@ class Dao extends Model\Element\Dao
     /**
      * Quick test if there are siblings
      *
-     * @param array $objectTypes
-     * @param bool|null $includingUnpublished
-     *
-     * @return bool
+     * @throws Exception
      */
-    public function hasSiblings(array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null): bool
+    public function hasSiblings(
+        array $objectTypes = [
+            DataObject::OBJECT_TYPE_OBJECT,
+            DataObject::OBJECT_TYPE_VARIANT,
+            DataObject::OBJECT_TYPE_FOLDER
+        ],
+        ?bool $includingUnpublished = null
+    ): bool
     {
         if (!$this->model->getParentId()) {
             return false;
