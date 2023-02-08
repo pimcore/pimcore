@@ -54,6 +54,7 @@ class LocationAwareConfigRepository
 
     /**
      * @var string|null
+     * @deprecated Will be removed in Pimcore 11
      */
     protected ?string $writeTargetEnvVariableName = null;
 
@@ -73,6 +74,11 @@ class LocationAwareConfigRepository
      * @var string|null
      */
     protected ?string $legacyConfigFile = null;
+
+    /**
+     * @var string|null
+     */
+    protected ?string $writeTarget = null;
 
     /**
      * @deprecated Will be removed in Pimcore 11
@@ -95,7 +101,8 @@ class LocationAwareConfigRepository
         ?string $writeTargetEnvVariableName,
         ?string $defaultWriteLocation = null,
         ?string $legacyConfigFile = null,
-        mixed $loadLegacyConfigCallback = null
+        mixed $loadLegacyConfigCallback = null,
+        ?string $writeTarget = null
     ) {
         $this->containerConfig = $containerConfig;
         $this->settingsStoreScope = $settingsStoreScope;
@@ -104,6 +111,7 @@ class LocationAwareConfigRepository
         $this->defaultWriteLocation = $defaultWriteLocation ?: self::LOCATION_SYMFONY_CONFIG;
         $this->legacyConfigFile = $legacyConfigFile;
         $this->loadLegacyConfigCallback = $loadLegacyConfigCallback;
+        $this->writeTarget = $writeTarget;
     }
 
     /**
@@ -227,7 +235,8 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $env = $this->writeTargetEnvVariableName ? $_SERVER[$this->writeTargetEnvVariableName] ?? null : null;
+        $env = $this->writeTarget;
+
         if ($env) {
             $writeLocation = $env;
         } else {

@@ -22,6 +22,7 @@ use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -181,6 +182,7 @@ final class Configuration implements ConfigurationInterface
         $this->addGlossaryNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
+        $this->addWriteTargetNodes($rootNode);
 
         return $treeBuilder;
     }
@@ -2314,4 +2316,42 @@ final class Configuration implements ConfigurationInterface
             ->end()
         ->end();
     }
+
+    private function addWriteTargetNodes(ArrayNodeDefinition $rootNode): void
+    {
+        $storageNode = $rootNode
+            ->children()
+            ->arrayNode('storage')
+            ->addDefaultsIfNotSet()
+            ->children();
+
+        $this->addStorageNode($storageNode, 'image_thumbnails');
+        $this->addStorageNode($storageNode, 'custom_reports');
+        $this->addStorageNode($storageNode, 'video_thumbnails');
+        $this->addStorageNode($storageNode, 'document_types');
+        $this->addStorageNode($storageNode, 'web_to_print');
+        $this->addStorageNode($storageNode, 'predefined_properties');
+        $this->addStorageNode($storageNode, 'predefined_asset_metadata');
+        $this->addStorageNode($storageNode, 'staticroutes');
+        $this->addStorageNode($storageNode, 'perspectives');
+        $this->addStorageNode($storageNode, 'custom_views');
+        $this->addStorageNode($storageNode, 'data_hub');
+        $this->addStorageNode($storageNode, 'object_custom_layouts');
+
+    }
+
+    private function addStorageNode(NodeBuilder $node, string $name): void
+    {
+        $node->
+            arrayNode($name)
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->variableNode('target')
+                    ->end()
+                    ->scalarNode('directory')
+                    ->end()
+                ->end()
+            ->end();
+    }
+
 }

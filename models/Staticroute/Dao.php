@@ -26,16 +26,49 @@ use Symfony\Component\Uid\Uuid as Uid;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
+    /**
+     * @deprecated Will be removed in Pimcore 11
+     */
+    private const STORAGE_DIR = 'PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES';
+
+    /**
+     * @deprecated Will be removed in Pimcore 11
+     */
+    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_STATICROUTES';
+
+    private const CONFIG_KEY = 'staticroutes';
+
     public function configure()
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
+        $storageDirectory = null;
+        if(array_key_exists('directory', $config['storage'][self::CONFIG_KEY])) {
+            $storageDirectory = $config['storage'][self::CONFIG_KEY]['directory'];
+        } elseif (array_key_exists(self::STORAGE_DIR, $_SERVER)) {
+            $storageDirectory = $_SERVER[self::STORAGE_DIR];
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.',  self::STORAGE_DIR));
+        } else {
+            $storageDirectory = PIMCORE_CONFIGURATION_DIRECTORY . '/' . self::CONFIG_KEY;
+        }
+
+        $writeTarget = null;
+        if(array_key_exists('target', $config['storage'][self::CONFIG_KEY])) {
+            $writeTarget = $config['storage'][self::CONFIG_KEY]['target'];
+        } elseif (array_key_exists(self::WRITE_TARGET, $_SERVER)) {
+            $writeTarget = $_SERVER[self::WRITE_TARGET];
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                sprintf('Setting write targets (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.',  self::WRITE_TARGET));
+        }
+
         parent::configure([
             'containerConfig' => $config['staticroutes']['definitions'],
             'settingsStoreScope' => 'pimcore_staticroutes',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/staticroutes',
+            'storageDirectory' => $storageDirectory,
             'legacyConfigFile' => 'staticroutes.php',
-            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_STATICROUTES',
+            'writeTargetEnvVariableName' => self::WRITE_TARGET,
+            'writeTarget' => $writeTarget
         ]);
     }
 

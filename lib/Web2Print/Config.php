@@ -23,6 +23,16 @@ use Pimcore\Model\Exception\ConfigWriteException;
  */
 final class Config
 {
+    /**
+     * @deprecated Will be removed in Pimcore 11
+     */
+    private const STORAGE_DIR = 'PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT';
+
+    /**
+     * @deprecated Will be removed in Pimcore 11
+     */
+    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_WEB_TO_PRINT';
+
     private const CONFIG_ID = 'web_to_print';
 
     /**
@@ -64,14 +74,35 @@ final class Config
                 return null;
             };
 
+            $storageDirectory = null;
+            if(array_key_exists('directory', $containerConfig['storage'][self::CONFIG_ID])) {
+                $storageDirectory = $containerConfig['storage'][self::CONFIG_ID]['directory'];
+            } elseif (array_key_exists(self::STORAGE_DIR, $_SERVER)) {
+                $storageDirectory = $_SERVER[self::STORAGE_DIR];
+                trigger_deprecation('pimcore/pimcore', '10.6',
+                    sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.',  self::STORAGE_DIR));
+            } else {
+                $storageDirectory = PIMCORE_CONFIGURATION_DIRECTORY . '/' . self::CONFIG_ID;
+            }
+
+            $writeTarget = null;
+            if(array_key_exists('target', $containerConfig['storage'][self::CONFIG_ID])) {
+                $writeTarget = $containerConfig['storage'][self::CONFIG_ID]['target'];
+            } elseif (array_key_exists(self::WRITE_TARGET, $_SERVER)) {
+                $writeTarget = $_SERVER[self::WRITE_TARGET];
+                trigger_deprecation('pimcore/pimcore', '10.6',
+                    sprintf('Setting write targets (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.',  self::WRITE_TARGET));
+            }
+
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_web_to_print',
-                $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/web-to-print',
-                'PIMCORE_WRITE_TARGET_WEB_TO_PRINT',
+                $storageDirectory,
+                $writeTarget,
                 null,
                 self::LEGACY_FILE,
-                $loadLegacyConfigCallback
+                $loadLegacyConfigCallback,
+                $writeTarget
             );
         }
 

@@ -29,6 +29,16 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 final class Config
 {
+    /**
+     * @deprecated Will be removed in Pimcore 11
+     */
+    private const STORAGE_DIR = 'PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES';
+
+    /**
+     * @deprecated Will be removed in Pimcore 11
+     */
+    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_PERSPECTIVES';
+
     private const CONFIG_ID = 'perspectives';
 
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
@@ -47,13 +57,34 @@ final class Config
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
             $config = $containerConfig[self::CONFIG_ID]['definitions'];
 
+            $storageDirectory = null;
+            if(array_key_exists('directory', $containerConfig['storage'][self::CONFIG_ID])) {
+                $storageDirectory = $containerConfig['storage'][self::CONFIG_ID]['directory'];
+            } elseif (array_key_exists(self::STORAGE_DIR, $_SERVER)) {
+                $storageDirectory = $_SERVER[self::STORAGE_DIR];
+                trigger_deprecation('pimcore/pimcore', '10.6',
+                    sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.',  self::STORAGE_DIR));
+            } else {
+                $storageDirectory = PIMCORE_CONFIGURATION_DIRECTORY . '/' . self::CONFIG_ID;
+            }
+
+            $writeTarget = null;
+            if(array_key_exists('target', $containerConfig['storage'][self::CONFIG_ID])) {
+                $writeTarget = $containerConfig['storage'][self::CONFIG_ID]['target'];
+            } elseif (array_key_exists(self::WRITE_TARGET, $_SERVER)) {
+                $writeTarget = $_SERVER[self::WRITE_TARGET];
+                trigger_deprecation('pimcore/pimcore', '10.6',
+                    sprintf('Setting write targets (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.',  self::WRITE_TARGET));
+            }
+
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_perspectives',
-                $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
-                'PIMCORE_WRITE_TARGET_PERSPECTIVES',
+                $storageDirectory,
+                self::WRITE_TARGET,
                 null,
                 self::LEGACY_FILE,
+                writeTarget: $writeTarget
             );
         }
 
