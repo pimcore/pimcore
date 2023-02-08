@@ -299,8 +299,7 @@ class Dao extends Model\Element\Dao
             DataObject::OBJECT_TYPE_FOLDER],
         ?bool $includingUnpublished = null,
         ?User $user = null
-    ): bool
-    {
+    ): bool {
         if (!$this->model->getId()) {
             return false;
         }
@@ -352,11 +351,10 @@ class Dao extends Model\Element\Dao
         array $objectTypes = [
             DataObject::OBJECT_TYPE_OBJECT,
             DataObject::OBJECT_TYPE_VARIANT,
-            DataObject::OBJECT_TYPE_FOLDER
+            DataObject::OBJECT_TYPE_FOLDER,
         ],
         ?bool $includingUnpublished = null
-    ): bool
-    {
+    ): bool {
         if (!$this->model->getParentId()) {
             return false;
         }

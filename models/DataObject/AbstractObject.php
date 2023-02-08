@@ -356,7 +356,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         array $objectTypes = [
             self::OBJECT_TYPE_OBJECT,
             self::OBJECT_TYPE_VARIANT,
-            self::OBJECT_TYPE_FOLDER
+            self::OBJECT_TYPE_FOLDER,
         ],
         bool $includingUnpublished = false
     ): Listing {
@@ -389,7 +389,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         array $objectTypes = [
             self::OBJECT_TYPE_OBJECT,
             self::OBJECT_TYPE_VARIANT,
-            self::OBJECT_TYPE_FOLDER
+            self::OBJECT_TYPE_FOLDER,
         ],
         ?bool $includingUnpublished = null
     ): bool {
@@ -403,7 +403,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         array $objectTypes = [
             self::OBJECT_TYPE_OBJECT,
             self::OBJECT_TYPE_VARIANT,
-            self::OBJECT_TYPE_FOLDER
+            self::OBJECT_TYPE_FOLDER,
         ],
         bool $includingUnpublished = false
     ): Listing {
@@ -438,7 +438,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         array $objectTypes = [
             self::OBJECT_TYPE_OBJECT,
             self::OBJECT_TYPE_VARIANT,
-            self::OBJECT_TYPE_FOLDER
+            self::OBJECT_TYPE_FOLDER,
         ],
         ?bool $includingUnpublished = null
     ): bool {
@@ -890,7 +890,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         array $objectTypes = [
             self::OBJECT_TYPE_OBJECT,
             self::OBJECT_TYPE_VARIANT,
-            self::OBJECT_TYPE_FOLDER
+            self::OBJECT_TYPE_FOLDER,
         ],
         bool $includingUnpublished = false
     ): static {
