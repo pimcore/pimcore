@@ -113,13 +113,6 @@ class Installer extends SettingsStoreAwareInstaller
 
     private function modifyEnumTypes(array $enums) {
         $db = Db::get();
-        $result = $db->executeQuery("SHOW COLUMNS FROM `documents` LIKE 'type'");
-
-        if ($result) {
-            $typeColumn = $result->fetchAllAssociative();
-            $enumOptions = explode("','",preg_replace("/(enum|set)\('(.+?)'\)/","\\2", $typeColumn[0]['Type']));
-        }
-
         $db->executeQuery('ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums);', ['enums' => $enums], ['enums' => ArrayParameterType::STRING]);
     }
 }
