@@ -96,7 +96,7 @@ DROP TABLE IF EXISTS `documents` ;
 CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
-  `type` enum('page','link','snippet','folder','hardlink','email','newsletter','printpage','printcontainer') DEFAULT NULL,
+  `type` enum('page','link','snippet','folder','hardlink','email','newsletter') DEFAULT NULL,
   `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '',
   `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `index` int(11) unsigned DEFAULT '0',

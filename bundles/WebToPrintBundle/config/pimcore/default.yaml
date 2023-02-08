@@ -8,5 +8,6 @@ pimcore:
             map:
                 printpage: Pimcore\Bundle\WebToPrintBundle\Model\Document\Printpage
                 printcontainer: Pimcore\Bundle\WebToPrintBundle\Model\Document\Printcontainer
-        routing:
-            direct_route_document_types: ['printpage', 'printcontainer']
+
+    routing:
+        direct_route_document_types: ['printpage', 'printcontainer']

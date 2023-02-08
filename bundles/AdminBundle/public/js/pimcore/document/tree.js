@@ -400,7 +400,6 @@ pimcore.document.tree = Class.create({
                         snippet: [],
                         email: [],
                         newsletter: [],
-                        printPage: [],
                         ref: this
                     };
 

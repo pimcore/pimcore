@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WebToPrintBundle;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Connection;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 
 class Installer extends SettingsStoreAwareInstaller
@@ -26,9 +28,26 @@ class Installer extends SettingsStoreAwareInstaller
         'web2print_settings',
     ];
 
+    protected const STANDARD_DOCUMENT_ENUM_TYPES = [
+        'page',
+        'link',
+        'snippet',
+        'folder',
+        'hardlink',
+        'email',
+        'newsletter'
+    ];
+
+    protected const BUNDLE_EXTRA_DOCUMENT_ENUM_TYPES = [
+        'printpage',
+        'printcontainer'
+    ];
+
     public function install(): void
     {
         $this->installDatabaseTable();
+        $enums = array_merge(self::STANDARD_DOCUMENT_ENUM_TYPES, self::BUNDLE_EXTRA_DOCUMENT_ENUM_TYPES);
+        $this->modifyEnumTypes($enums);
         $this->addUserPermission();
         parent::install();
     }
@@ -36,6 +55,7 @@ class Installer extends SettingsStoreAwareInstaller
     public function uninstall(): void
     {
         $this->removeUserPermission();
+        $this->modifyEnumTypes(self::STANDARD_DOCUMENT_ENUM_TYPES);
         parent::uninstall();
     }
 
@@ -72,5 +92,10 @@ class Installer extends SettingsStoreAwareInstaller
             $statement = file_get_contents($sqlPath.$fileName);
             $db->executeQuery($statement);
         }
+    }
+
+    private function modifyEnumTypes(array $enums) {
+        $db = \Pimcore\Db::get();
+        $db->executeQuery('ALTER TABLE documents MODIFY COLUMN `type` ENUM(:enums);', ['enums' => $enums], ['enums' => ArrayParameterType::STRING]);
     }
 }

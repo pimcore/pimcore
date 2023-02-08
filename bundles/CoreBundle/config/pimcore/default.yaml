@@ -203,7 +203,7 @@ pimcore:
         valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
 
     routing:
-        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer']
+        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter']
 
     newsletter:
         source_adapters:
