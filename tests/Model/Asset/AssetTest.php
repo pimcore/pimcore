@@ -15,6 +15,7 @@
 
 namespace Pimcore\Tests\Model\Asset;
 
+use Pimcore\Image\Adapter\Imagick;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -256,5 +257,24 @@ class AssetTest extends ModelTestCase
 
         $this->assertMatchesRegularExpression('@^(https?|data):@', $thumbnailFullUrl);
         $this->assertStringContainsString($thumbnail->getPath(), $thumbnailFullUrl);
+    }
+
+    public function testAssetThumbnailWithClosureItem()
+    {
+        $asset = TestHelper::createImageAsset();
+
+        $thumbnailConfig = TestHelper::createThumbnailConfigurationScaleByWidth();
+        $thumbnailConfig->addItem(function (Imagick $imagick) {
+            /**
+             * @var \Imagick $i
+             */
+            $i = $imagick->getResource();
+            $i->sepiaToneImage(80);
+        }, []);
+        $thumbnailConfig->generateAutoName(); //test serialization of Closure
+
+        $thumbnail = $asset->getThumbnail($thumbnailConfig, false);
+
+        $this->assertInstanceOf(Asset\Image\Thumbnail::class, $thumbnail);
     }
 }
