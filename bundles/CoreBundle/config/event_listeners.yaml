@@ -123,9 +123,6 @@ services:
         calls:
             - [loadTemplateFromResource, ['@@PimcoreCoreBundle/public/misc/maintenance.html']]
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleSearchConsoleVerificationListener: ~
-
-
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\OutputTimestampListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\WebDebugToolbarListener:

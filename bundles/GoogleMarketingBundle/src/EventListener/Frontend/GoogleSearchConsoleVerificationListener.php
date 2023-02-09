@@ -14,10 +14,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
+namespace Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\GoogleMarketingBundle\Config;
+use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;

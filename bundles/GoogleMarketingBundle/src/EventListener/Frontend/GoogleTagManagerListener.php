@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\GoogleMarketingBundle\Code\CodeBlock;
-use Pimcore\Bundle\GoogleMarketingBundle\Config;
 use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteIdProvider;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
@@ -26,6 +25,7 @@ use Pimcore\Bundle\CoreBundle\EventListener\Traits\PreviewRequestTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Bundle\GoogleMarketingBundle\Model\Event\TagManager\CodeEvent;
 use Pimcore\Bundle\GoogleMarketingBundle\Event\GoogleTagManagerEvents;
+use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;

@@ -15,6 +15,9 @@ services:
     # EVENT LISTENERS
     #
 
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleSearchConsoleVerificationListener: ~
+
     Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend\GoogleAnalyticsCodeListener:
         public: true
         tags:
