@@ -182,6 +182,7 @@
       "Pimcore\\Bundle\\InstallBundle\\": "bundles/InstallBundle/src/",
       "Pimcore\\Bundle\\CoreBundle\\": "bundles/CoreBundle/src/",
       "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/",
+      "Pimcore\\Bundle\\ApplicationLoggerBundle\\": "bundles/ApplicationLoggerBundle/src/",
       "Pimcore\\Bundle\\UuidBundle\\": "bundles/UuidBundle/src/",
       "Pimcore\\Bundle\\GlossaryBundle\\": "bundles/GlossaryBundle/src/",
       "Pimcore\\Bundle\\SimpleBackendSearchBundle\\": "bundles/SimpleBackendSearchBundle/src/",

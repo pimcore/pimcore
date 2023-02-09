@@ -2837,13 +2837,6 @@ pimcore.helpers.notesEvents = function() {
     }
 };
 
-pimcore.helpers.applicationLogger = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("application_logging")) {
-        pimcore.layout.toolbar.prototype.logAdmin();
-    }
-};
-
 pimcore.helpers.tagConfiguration = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("tags_configuration")) {
@@ -2902,7 +2895,6 @@ pimcore.helpers.keyBindingMapping = {
     "sharedTranslations": pimcore.helpers.sharedTranslations,
     "recycleBin": pimcore.helpers.recycleBin,
     "notesEvents": pimcore.helpers.notesEvents,
-    "applicationLogger": pimcore.helpers.applicationLogger,
     "tagManager": pimcore.helpers.tagManager,
     "tagConfiguration": pimcore.helpers.tagConfiguration,
     "users": pimcore.helpers.users,
