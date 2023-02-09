@@ -17,9 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\ApplicationLoggerBundle\Maintenance;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Bundle\ApplicationLoggerBundle\Maintenance\LogArchiveTask;
-use Pimcore\Config;
 use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
+use Pimcore\Config;
 use Pimcore\Maintenance\TaskInterface;
 use Symfony\Component\Mime\Address;
 

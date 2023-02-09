@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -20,7 +21,7 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const USER_PERMISSIONS = [
-        'application_logging'
+        'application_logging',
     ];
 
     public function install(): void
@@ -69,7 +70,7 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db =  \Pimcore\Db::get();
 
-        $db->executeQuery("DROP TABLE IF EXISTS `application_logs`;");
+        $db->executeQuery('DROP TABLE IF EXISTS `application_logs`;');
     }
 
     private function addUserPermission(): void

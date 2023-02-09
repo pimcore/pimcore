@@ -145,7 +145,8 @@ class Installer extends AbstractInstaller
         parent::__construct();
     }
 
-    public function installDependentBundles(): void {
+    public function installDependentBundles(): void
+    {
         if (\Pimcore\Version::getMajorVersion() >= 11) {
             $appLoggerInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\ApplicationLoggerBundle\Installer::class);
 

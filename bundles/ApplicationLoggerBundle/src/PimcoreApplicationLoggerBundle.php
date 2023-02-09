@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -17,7 +18,6 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
-use Pimcore\Bundle\ApplicationLoggerBundle\Installer;
 
 class PimcoreApplicationLoggerBundle extends AbstractPimcoreBundle
 {
@@ -26,7 +26,7 @@ class PimcoreApplicationLoggerBundle extends AbstractPimcoreBundle
     public function getCssPaths(): array
     {
         return [
-            '/bundles/pimcoreapplicationlogger/css/icons.css'
+            '/bundles/pimcoreapplicationlogger/css/icons.css',
         ];
     }
 
@@ -35,7 +35,7 @@ class PimcoreApplicationLoggerBundle extends AbstractPimcoreBundle
         return [
             '/bundles/pimcoreapplicationlogger/js/startup.js',
             '/bundles/pimcoreapplicationlogger/js/log/admin.js',
-            '/bundles/pimcoreapplicationlogger/js/log/detailwindow.js'
+            '/bundles/pimcoreapplicationlogger/js/log/detailwindow.js',
         ];
     }
 

@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7;
 
+use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
+use Pimcore\Bundle\ApplicationLoggerBundle\FileObject;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Event\CommitOrderProcessorEvents;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotSuccessfulException;
@@ -28,8 +30,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
 use Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent;
 use Pimcore\Event\Model\Ecommerce\SendConfirmationMailEvent;
-use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
-use Pimcore\Bundle\ApplicationLoggerBundle\FileObject;
 use Pimcore\Logger;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

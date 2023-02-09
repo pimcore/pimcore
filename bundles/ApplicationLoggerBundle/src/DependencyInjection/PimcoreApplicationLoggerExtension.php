@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -17,7 +18,6 @@ namespace Pimcore\Bundle\ApplicationLoggerBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class PimcoreApplicationLoggerExtension extends Extension
