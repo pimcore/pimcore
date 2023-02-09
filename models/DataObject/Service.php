@@ -1790,6 +1790,10 @@ class Service extends Model\Element\Service
 
     protected static function mapFieldname(array $field, array $helperDefinitions, string $header): string
     {
+        if ($header === 'no_header') {
+            return '';
+        }
+
         $key = $field['key'];
         $title = $field['label'];
         if (strpos($key, '#') === 0) {
@@ -1819,8 +1823,6 @@ class Service extends Model\Element\Service
 
         if ($header === 'name') {
             return $key;
-        } elseif ($header === 'no_header') {
-            return '';
         }
 
         return $title;
