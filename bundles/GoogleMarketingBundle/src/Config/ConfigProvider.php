@@ -60,7 +60,7 @@ class ConfigProvider
      */
     protected function loadDefaultConfigObject(): array
     {
-        $reportConfig = \Pimcore\Bundle\GoogleMarketingBundle\Config::getReportConfig();
+        $reportConfig = \Pimcore\Config::getReportConfig();
 
         return $reportConfig['analytics'] ?? [];
     }
