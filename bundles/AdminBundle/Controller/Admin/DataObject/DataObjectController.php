@@ -32,6 +32,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Version;
@@ -43,8 +44,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * @Route("/object", name="pimcore_admin_dataobject_dataobject_")
@@ -57,6 +60,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
     use DataObjectActionsTrait;
+
+    /**
+     * @var PreviewGeneratorInterface
+     */
+    protected PreviewGeneratorInterface $previewGenerator;
 
     /**
      * @var DataObject\Service
@@ -403,8 +411,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
              *  ------------------------------------------------------------- */
             $objectData['idPath'] = Element\Service::getIdPath($objectFromDatabase);
 
-            $previewGenerator = $objectFromDatabase->getClass()->getPreviewGenerator();
             $linkGeneratorReference = $objectFromDatabase->getClass()->getLinkGeneratorReference();
+            $previewGenerator = $objectFromDatabase->getClass()->getPreviewGenerator();
+            if (empty($previewGenerator) && !empty($linkGeneratorReference)) {
+                $previewGenerator = $this->previewGenerator;
+            }
 
             $objectData['hasPreview'] = false;
             if ($objectFromDatabase->getClass()->getPreviewUrl() || $linkGeneratorReference || $previewGenerator) {
@@ -1976,22 +1987,35 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $url = str_replace('%_locale', $this->getAdminUser()->getLanguage(), $url);
             } elseif ($previewService = $object->getClass()->getPreviewGenerator()) {
                 $url = $previewService->generatePreviewUrl($object, array_merge(['preview' => true, 'context' => $this], $request->query->all()));
-            } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
-                $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
+            } elseif ($object->getClass()->getLinkGenerator()) {
+                $parameters = [
+                    'preview' => true,
+                    'context' => $this
+                ];
+
+                $url = $this->previewGenerator->generatePreviewUrl($object, array_merge($parameters, $request->query->all()));
             }
 
             if (!$url) {
-                return new Response("Preview not available, it seems that there's a problem with this object.");
+                throw new NotFoundHttpException("Cannot render preview due to empty URL");
             }
 
-            // replace all remainaing % signs
+            // replace all remaining % signs
             $url = str_replace('%', '%25', $url);
 
             $urlParts = parse_url($url);
 
-            return $this->redirect($urlParts['path'] . '?pimcore_object_preview=' . $id . '&_dc=' . time() . (isset($urlParts['query']) ? '&' . $urlParts['query'] : ''));
+            $redirectParameters = array_filter([
+                'pimcore_object_preview' => $id,
+                'site' => $request->query->getInt(PreviewGeneratorInterface::PARAMETER_SITE),
+                'dc' => time(),
+            ]);
+
+            $redirectUrl = $urlParts['path'] . '?' . http_build_query($redirectParameters) . (isset($urlParts['query']) ? '&' . $urlParts['query'] : '');
+
+            return $this->redirect($redirectUrl);
         } else {
-            return new Response("Preview not available, it seems that there's a problem with this object.");
+            throw new NotFoundHttpException(sprintf('Expected an object of type "%s", got "%s"', DataObject\Concrete::class, get_debug_type($object)));
         }
     }
 
@@ -2131,5 +2155,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->checkPermission('objects');
 
         $this->_objectService = new DataObject\Service($this->getAdminUser());
+    }
+
+    /**
+     * @internal
+     */
+    #[Required]
+    public function setPreviewGenerator(PreviewGeneratorInterface $previewGenerator): void
+    {
+        $this->previewGenerator = $previewGenerator;
     }
 }
