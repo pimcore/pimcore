@@ -188,7 +188,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
                 'prefixLoader' => DocumentTypePrefixLoader::class,
             ],
             AssetTypeLoader::class => [
-                'config' => $config['assets']['type_definitions'],
+                'config' => $this->flattenConfigurationForTypeLoader($config['assets']['type_definitions']),
                 'prefixLoader' => AssetTypePrefixLoader::class,
             ],
         ];
@@ -418,5 +418,26 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
 
         $serviceLocator->setArgument(0, $arguments);
+    }
+
+    /**
+     * Extract class definitions and prefixes if configuration has more than just a class definition
+     */
+    private function flattenConfigurationForTypeLoader(array $configuration) : array
+    {
+        $newConfiguration = [];
+        foreach ($configuration['map'] as $type => $config) {
+            if (array_key_exists('class', $config)) {
+                $newConfiguration['map'][$type] = $config['class'];
+            }
+        }
+
+        if (array_key_exists('prefixes', $configuration)) {
+            $newConfiguration['prefixes'] = $configuration['prefixes'];
+        } else {
+            $newConfiguration['prefixes'] = [];
+        }
+
+        return $newConfiguration;
     }
 }

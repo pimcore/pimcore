@@ -650,7 +650,7 @@ final class Configuration implements ConfigurationInterface
 
                             ->end()
                         ->end();
-        $this->addImplementationLoaderNode($assetsNode, "type_definitions");
+        $this->addImplementationLoaderNodeFromArrayDefinition($assetsNode, "type_definitions");
     }
 
     /**
@@ -955,6 +955,34 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
+
+    /**
+     * Add implementation node config with array (map[class,mapping], prefixes)
+     */
+    private function addImplementationLoaderNodeFromArrayDefinition(ArrayNodeDefinition $node, string $name): void
+    {
+        $node
+            ->children()
+                ->arrayNode($name)
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('map')
+                            ->arrayPrototype()
+                            ->children()
+                                ->scalarNode('class')->end()
+                                ->arrayNode('mapping')
+                                    ->prototype('scalar')->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                    ->arrayNode('prefixes')
+                        ->prototype('scalar')->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
     }
 
     private function addRoutingNode(ArrayNodeDefinition $rootNode): void
