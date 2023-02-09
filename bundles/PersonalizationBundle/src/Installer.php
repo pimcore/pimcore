@@ -25,39 +25,39 @@ class Installer extends SettingsStoreAwareInstaller
         'targeting'
     ];
 
-    public function install (): void
+    public function install(): void
     {
-        $this->installDatabaseTable ();
-        $this->addUserPermission ();
-        parent::install ();
+        $this->installDatabaseTable();
+        $this->addUserPermission();
+        parent::install();
     }
 
     public function uninstall (): void
     {
-        $this->uninstallDatabaseTable ();
-        $this->removeUserPermission ();
-        parent::uninstall ();
+        $this->uninstallDatabaseTable();
+        $this->removeUserPermission();
+        parent::uninstall();
     }
 
-    private function addUserPermission (): void
+    private function addUserPermission(): void
     {
-        $db = \Pimcore\Db::get ();
+        $db = \Pimcore\Db::get();
 
         foreach (self::USER_PERMISSIONS as $permission) {
-            $db->insert ('users_permission_definitions', [
-                $db->quoteIdentifier ('key') => $permission,
-                $db->quoteIdentifier ('category') => self::USER_PERMISSIONS_CATEGORY,
+            $db->insert('users_permission_definitions', [
+                $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('category') => self::USER_PERMISSIONS_CATEGORY,
             ]);
         }
     }
 
-    private function removeUserPermission (): void
+    private function removeUserPermission(): void
     {
-        $db = \Pimcore\Db::get ();
+        $db = \Pimcore\Db::get();
 
         foreach (self::USER_PERMISSIONS as $permission) {
-            $db->delete ('users_permission_definitions', [
-                $db->quoteIdentifier ('key') => $permission,
+            $db->delete('users_permission_definitions', [
+                $db->quoteIdentifier('key') => $permission,
             ]);
         }
     }
@@ -66,19 +66,19 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $sqlPath = __DIR__ . '/Resources/install/';
         $sqlFileNames = ['install.sql'];
-        $db = \Pimcore\Db::get ();
+        $db = \Pimcore\Db::get();
 
         foreach ($sqlFileNames as $fileName) {
             $statement = file_get_contents ($sqlPath . $fileName);
-            $db->executeQuery ($statement);
+            $db->executeQuery($statement);
         }
     }
 
-    private function uninstallDatabaseTable (): void
+    private function uninstallDatabaseTable(): void
     {
         $sqlPath = __DIR__ . '/Resources/uninstall/';
         $sqlFileNames = ['uninstall.sql'];
-        $db = \Pimcore\Db::get ();
+        $db = \Pimcore\Db::get();
 
         foreach ($sqlFileNames as $fileName) {
             $statement = file_get_contents ($sqlPath . $fileName);

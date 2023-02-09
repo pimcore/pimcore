@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\PersonalizationBundle\Event;
+namespace Pimcore\Bundle\PersonalizationBundle\EventListener;
 
 use Pimcore\Event\Admin\IndexActionSettingsEvent;
 

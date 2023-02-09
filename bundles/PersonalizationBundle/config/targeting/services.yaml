@@ -31,6 +31,6 @@ services:
     # Event Listeners
     #
 
-    Pimcore\Bundle\PersonalizationBundle\Event\IndexSettingsListener:
+    Pimcore\Bundle\PersonalizationBundle\EventListener\IndexSettingsListener:
         tags:
             - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }
