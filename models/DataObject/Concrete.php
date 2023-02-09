@@ -700,7 +700,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $lazyLoadedFieldNames = [];
         $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface
+                && $field->getLazyLoading()
+                && $field instanceof DataObject\ClassDefinition\Data) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

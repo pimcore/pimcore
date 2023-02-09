@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Helper\DataType;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset;
@@ -96,12 +95,6 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $cd = $object->getClass();
         $fd = $cd->getFieldDefinition($field);
-        if (!$fd) {
-            $localizedFields = $cd->getFieldDefinition('localizedfields');
-            if ($localizedFields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                $fd = $localizedFields->getFieldDefinition($field);
-            }
-        }
 
         return $fd;
     }
@@ -768,33 +761,6 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    public function assertIndexFieldSelectionCombo(Concrete $object, string $field, int $seed = 1): void
-    {
-        $getter = 'get' . ucfirst($field);
-        $value = $object->$getter();
-
-        $this->assertIsEqual($object, $field, 'carClass', $value);
-    }
-
-    public function assertIndexFieldSelection(Concrete $object, string $field, int $seed = 1): void
-    {
-        $getter = 'get' . ucfirst($field);
-        /** @var IndexFieldSelection $value */
-        $value = $object->$getter();
-
-        $this->assertInstanceOf(IndexFieldSelection::class, $value);
-
-        $this->assertIsEqual($object, $field, 'carClass', $value->getField());
-    }
-
-    public function assertIndexFieldSelectionField(Concrete $object, string $field, int $seed = 1): void
-    {
-        $getter = 'get' . ucfirst($field);
-        $value = $object->$getter();
-
-        $this->assertIsEqual($object, $field, 'carClass,color', $value);
-    }
-
     public function assertSlider(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
@@ -1373,25 +1339,6 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter((string)(1 + ($seed % 2)));
     }
 
-    public function fillIndexFieldSelectionCombo(Concrete $object, string $field, int $seed = 1): void
-    {
-        $setter = 'set' . ucfirst($field);
-        $object->$setter('carClass');
-    }
-
-    public function fillIndexFieldSelectionField(Concrete $object, string $field, int $seed = 1): void
-    {
-        $setter = 'set' . ucfirst($field);
-        $object->$setter('carClass,color');
-    }
-
-    public function fillIndexFieldSelection(Concrete $object, string $field, int $seed = 1): void
-    {
-        $setter = 'set' . ucfirst($field);
-        $value = new IndexFieldSelection('', 'carClass', '');
-        $object->$setter($value);
-    }
-
     public function fillSlider(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
@@ -1484,5 +1431,3 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter('sometext<br>' . $seed);
     }
 }
-
-@class_alias(TestDataHelper::class, 'Pimcore\Tests\Support\Helper\DataType\TestDataHelper');

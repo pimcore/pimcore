@@ -596,7 +596,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        if ($fd instanceof IdRewriterInterface) {
+                        if ($fd instanceof IdRewriterInterface
+                            && $fd instanceof DataObject\ClassDefinition\Data) {
                             $d = $fd->rewriteIds($item, $idMapping, $params);
                             $setter = 'set' . ucfirst($fd->getName());
                             $item->$setter($d);

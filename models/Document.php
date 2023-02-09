@@ -21,7 +21,6 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
@@ -29,7 +28,6 @@ use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
-use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -46,8 +44,6 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $fullPathCache = null;
 
@@ -58,17 +54,8 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $key = null;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    protected ?string $path = null;
 
     /**
      * @internal
@@ -88,37 +75,23 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $children = [];
 
     /**
      * @internal
      *
-     * @var bool[]
-     */
-    protected array $hasChildren = [];
-
-    /**
-     * @internal
-     *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $siblings = [];
-
-    /**
-     * @internal
-     *
-     * @var bool[]
-     */
-    protected array $hasSiblings = [];
 
     /**
      * {@inheritdoc}
      */
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['versions', 'scheduledTasks', 'parent', 'fullPathCache'];
 
         if (!$this->isInDumpState()) {
             // this is if we want to cache the object
@@ -128,16 +101,11 @@ class Document extends Element\AbstractElement
         return $blockedVars;
     }
 
-    /**
-     * get possible types
-     *
-     * @return array
-     */
     public static function getTypes(): array
     {
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
 
-        return $documentsConfig['types'];
+        return  array_keys($documentsConfig['type_definitions']['map']);
     }
 
     /**
@@ -239,32 +207,9 @@ class Document extends Element\AbstractElement
                 return null;
             }
 
-            try {
-                // Getting Typeloader from container
-                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
-                $newDocument = $loader->build($document->getType());
-            } catch(UnsupportedException $ex) {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '10.6.0',
-                    sprintf('%s - Loading documents via fixed namespace is deprecated and will be removed in Pimcore 11. Use pimcore:type_definitions instead', $ex->getMessage())
-                );
-                /**
-                 * @deprecated since Pimcore 10.6 and will be removed in Pimcore 11. Use type_definitions instead
-                 */
-                $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
-
-                // this is the fallback for custom document types using prefixes
-                // so we need to check if the class exists first
-                if (!Tool::classExists($className)) {
-                    $oldStyleClass = 'Document_' . ucfirst($document->getType());
-                    if (Tool::classExists($oldStyleClass)) {
-                        $className = $oldStyleClass;
-                    }
-                }
-                /** @var Document $newDocument */
-                $newDocument = self::getModelFactory()->build($className);
-            }
+            // Getting Typeloader from container
+            $loader = \Pimcore::getContainer()->get(TypeLoader::class);
+            $newDocument = $loader->build($document->getType());
 
             if (get_class($document) !== get_class($newDocument)) {
                 $document = $newDocument;
@@ -580,21 +525,19 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
-     * @param listing|null $children
+     * @param Listing|null $children
      * @param bool $includingUnpublished
      *
      * @return $this
      */
-    public function setChildren(?listing $children, bool $includingUnpublished = false): static
+    public function setChildren(?Listing $children, bool $includingUnpublished = false): static
     {
         if ($children === null) {
             // unset all cached children
-            $this->hasChildren = [];
             $this->children = [];
         } else {
             $cacheKey = $this->getListingCacheKey([$includingUnpublished]);
             $this->children[$cacheKey] = $children;
-            $this->hasChildren[$cacheKey] = (bool) count($children);
         }
 
         return $this;
@@ -602,7 +545,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Get a list of the children (not recursivly)
-     *
      */
     public function getChildren(bool $includingUnpublished = false): Listing
     {
@@ -617,7 +559,9 @@ class Document extends Element\AbstractElement
                 $list->setOrder('asc');
                 $this->children[$cacheKey] = $list;
             } else {
-                $this->children[$cacheKey] = [];
+                $list = new Document\Listing();
+                $list->setDocuments([]);
+                $this->children[$cacheKey] = $list;
             }
         }
 
@@ -626,30 +570,16 @@ class Document extends Element\AbstractElement
 
     /**
      * Returns true if the document has at least one child
-     *
-     * @param bool $includingUnpublished
-     *
-     * @return bool
      */
-    public function hasChildren(bool $includingUnpublished = false): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasChildren[$cacheKey])) {
-            return $this->hasChildren[$cacheKey];
-        }
-
-        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($includingUnpublished);
+        return $this->getDao()->hasChildren($includingUnpublished);
     }
 
     /**
      * Get a list of the sibling documents
-     *
-     * @param bool $includingUnpublished
-     *
-     * @return array
      */
-    public function getSiblings(bool $includingUnpublished = false): array
+    public function getSiblings(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -663,11 +593,11 @@ class Document extends Element\AbstractElement
                 }
                 $list->setOrderKey('index');
                 $list->setOrder('asc');
-                $this->siblings[$cacheKey] = $list->load();
-                $this->hasSiblings[$cacheKey] = (bool) count($this->siblings[$cacheKey]);
+                $this->siblings[$cacheKey] = $list;
             } else {
-                $this->siblings[$cacheKey] = [];
-                $this->hasSiblings[$cacheKey] = false;
+                $list = new Listing();
+                $list->setDocuments([]);
+                $this->siblings[$cacheKey] = $list;
             }
         }
 
@@ -676,20 +606,10 @@ class Document extends Element\AbstractElement
 
     /**
      * Returns true if the document has at least one sibling
-     *
-     * @param bool|null $includingUnpublished
-     *
-     * @return bool
      */
-    public function hasSiblings(bool $includingUnpublished = null): bool
+    public function hasSiblings(?bool $includingUnpublished = null): bool
     {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasSiblings[$cacheKey])) {
-            return $this->hasSiblings[$cacheKey];
-        }
-
-        return $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($includingUnpublished);
+        return $this->getDao()->hasSiblings($includingUnpublished);
     }
 
     /**
@@ -936,7 +856,6 @@ class Document extends Element\AbstractElement
         parent::setParentId($id);
 
         $this->siblings = [];
-        $this->hasSiblings = [];
 
         return $this;
     }
@@ -1064,7 +983,6 @@ class Document extends Element\AbstractElement
     {
         parent::__clone();
         $this->parent = null;
-        $this->hasSiblings = [];
         $this->siblings = [];
         $this->fullPathCache = null;
     }

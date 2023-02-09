@@ -173,9 +173,9 @@ class DocumentTest extends ModelTestCase
         $secondChildDoc->setPublished(false);
         $secondChildDoc->save();
 
-        $this->assertEquals(0, count($firstChildDoc->getSiblings()), 'Expected no sibling');
+        $this->assertEquals(0, $firstChildDoc->getSiblings()->count(), 'Expected no sibling');
 
-        $this->assertEquals(1, count($firstChildDoc->getSiblings(true)), 'Expected 1 sibling');
+        $this->assertEquals(1, $firstChildDoc->getSiblings(true)->count(), 'Expected 1 sibling');
     }
 
     /**
@@ -361,9 +361,9 @@ class DocumentTest extends ModelTestCase
 
         $document->setEditable($input);
 
-        $this->buildSession();
-        ElementService::saveElementToSession($document);
-        $loadedDocument = Service::getElementFromSession('document', $document->getId());
+        $session = $this->buildSession();
+        ElementService::saveElementToSession($document, $session->getId());
+        $loadedDocument = Service::getElementFromSession('document', $document->getId(), $session->getId());
 
         $this->assertEquals(count($document->getEditables()), count($loadedDocument->getEditables()));
     }

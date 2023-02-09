@@ -128,7 +128,7 @@ trait Wrapper
     /**
      * @param bool $includingUnpublished
      *
-     * @return listing
+     * @return Listing
      */
     public function getChildren(bool $includingUnpublished = false): Listing
     {
@@ -156,7 +156,7 @@ trait Wrapper
         return $this->children[$cacheKey];
     }
 
-    public function hasChildren(bool $includingUnpublished = false): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
         $hardLink = $this->getHardLinkSource();
 

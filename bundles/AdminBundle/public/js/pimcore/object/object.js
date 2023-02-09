@@ -56,12 +56,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.reports = pimcore.globalmanager.get('customReportsPanelImplementationFactory').getNewReportInstance("object_concrete");
         }
         this.variants = new pimcore.object.variantsTab(this);
-        this.appLogger = new pimcore.log.admin({
-            localMode: true,
-            searchParams: {
-                relatedobject: this.id
-            }
-        });
+        if(pimcore.globalmanager.get('applicationLoggerPanelImplementationFactory').hasImplementation()) {
+            this.appLogger = pimcore.globalmanager.get('applicationLoggerPanelImplementationFactory').getNewLoggerInstance({localMode: true,
+                searchParams: {
+                    relatedobject: this.id
+                }
+            });
+        }
         this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
 
         this.getData();
@@ -355,7 +356,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
         }
 
-        if (user.isAllowed("application_logging") && this.data.general.showAppLoggerTab) {
+        if (this.appLogger && user.isAllowed("application_logging") && this.data.general.showAppLoggerTab) {
             try {
                 var appLoggerTab = this.appLogger.getTabPanel();
                 items.push(appLoggerTab);
@@ -919,13 +920,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             parentid: this.data.general.parentId,
             classid: this.data.general.classId,
             "class": this.data.general.className,
+            type: this.data.general.type,
             modificationdate: this.data.general.modificationDate,
             creationdate: this.data.general.creationDate,
             usermodification: this.data.general.userModification,
             usermodification_name: this.data.general.userModificationFullname,
             userowner: this.data.general.userOwner,
             userowner_name: this.data.general.userOwnerFullname,
-            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, "object")
+            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, this.data.general.type)
         };
     },
 
@@ -949,6 +951,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }, {
                 name: "class",
                 value: metainfo.class
+            }, {
+                name: "type",
+                value: metainfo.type
             }, {
                 name: "modificationdate",
                 type: "date",
