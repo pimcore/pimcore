@@ -84,5 +84,66 @@ class TargetingPageController extends PageController
         }
     }
 
+    /**
+     * @Route("/clear-editable-data", name="cleareditabledata", methods={"PUT"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function clearEditableDataAction(Request $request): JsonResponse
+    {
+        $targetGroupId = $request->request->get('targetGroup');
+        $docId = $request->request->getInt('id');
 
+        $doc = Document\PageSnippet::getById($docId);
+
+        if (!$doc) {
+            throw $this->createNotFoundException('Document not found');
+        }
+
+        foreach ($doc->getEditables() as $editable) {
+            if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
+                // remove target group specific elements
+                if (preg_match('/^' . preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
+                    $doc->removeEditable($editable->getName());
+                }
+            } else {
+                // remove all but target group data
+                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_EDITABLE_PREFIX, '/') . '/', $editable->getName())) {
+                    $doc->removeEditable($editable->getName());
+                }
+            }
+        }
+
+        $this->saveToSession($doc, $request->getSession(), true);
+
+        return $this->adminJson([
+            'success' => true,
+        ]);
+    }
+
+    protected function addDataToDocument(Request $request, Document $document): void
+    {
+        if ($document instanceof Document\PageSnippet) {
+            // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
+
+            if ($request->get('appendEditables')
+                || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) { // ensure editable are loaded
+                $document->getEditables();
+            } else {
+                // ensure no editables (e.g. from session, version, ...) are still referenced
+                $document->setEditables(null);
+            }
+
+            if ($request->get('data')) {
+                $data = $this->decodeJson($request->get('data'));
+                foreach ($data as $name => $value) {
+                    $data = $value['data'] ?? null;
+                    $type = $value['type'];
+                    $document->setRawEditable($name, $type, $data);
+                }
+            }
+        }
+    }
 }
