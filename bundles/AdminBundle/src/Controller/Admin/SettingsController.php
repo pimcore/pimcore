@@ -22,6 +22,7 @@ use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
 use Pimcore\Db;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
@@ -437,10 +438,10 @@ class SettingsController extends AdminController
         $this->checkPermission('system_settings');
 
         $values = $this->decodeJson($request->get('data'));
-
+        $existingValues = [];
         try {
             $file = Config::locateConfigFile('system.yaml');
-            Config::getConfigInstance($file);
+            $existingValues = Config::getConfigInstance($file);
         } catch (\Exception $e) {
             // nothing to do
         }
@@ -523,6 +524,16 @@ class SettingsController extends AdminController
 
         if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
             $settings['pimcore']['email']['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
+        }
+
+        if ($existingValues) {
+            $saveSettingsEvent = new GenericEvent(null, [
+                'settings' => $settings,
+                'existingValues' => $existingValues,
+                'values' => $values
+            ]);
+            $eventDispatcher->dispatch($saveSettingsEvent, AdminEvents::SAVE_ACTION_SYSTEM_SETTINGS);
+            $settings = $saveSettingsEvent->getArgument("settings");
         }
 
         $settingsYaml = Yaml::dump($settings, 5);
