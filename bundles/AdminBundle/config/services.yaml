@@ -4,13 +4,6 @@ services:
         autoconfigure: true
         public: false
 
-    Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler:
-        public: true
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: pimcore_admin.session }
-
     #
     # Notification Services
     #

@@ -26,11 +26,15 @@ class Listing
     public function load(): array
     {
         $fields = [];
-        $fieldCollectionFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections';
-        $files = glob($fieldCollectionFolder . '/*.php');
 
-        foreach ($files as $file) {
-            $fields[] = include $file;
+        $fieldCollectionFolders = array_unique([PIMCORE_CLASS_DEFINITION_DIRECTORY . '/fieldcollections', PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY . '/fieldcollections']);
+
+        foreach ($fieldCollectionFolders as $fieldCollectionFolder) {
+            $files = glob($fieldCollectionFolder . '/*.php');
+
+            foreach ($files as $file) {
+                $fields[] = include $file;
+            }
         }
 
         return $fields;

@@ -495,7 +495,7 @@ CREATE TABLE `targeting_storage` (
   `visitorId` varchar(100) NOT NULL,
   `scope` varchar(50) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `value` text,
+  `value` json,
   `creationDate` datetime DEFAULT NULL,
   `modificationDate` datetime DEFAULT NULL,
   PRIMARY KEY (`visitorId`,`scope`,`name`),
@@ -603,7 +603,7 @@ CREATE TABLE `users` (
 	`websiteTranslationLanguagesEdit` LONGTEXT NULL DEFAULT NULL,
   `websiteTranslationLanguagesView` LONGTEXT NULL DEFAULT NULL,
   `lastLogin` int(11) unsigned DEFAULT NULL,
-  `keyBindings` TEXT NULL,
+  `keyBindings` json NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),
@@ -688,15 +688,6 @@ CREATE TABLE `users_workspaces_object` (
   CONSTRAINT `fk_users_workspaces_object_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `uuids`;
-CREATE TABLE `uuids` (
-  `uuid` CHAR(36) NOT NULL,
-  `itemId` int(11) unsigned NOT NULL,
-  `type` VARCHAR(25) NOT NULL,
-  `instanceIdentifier` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`uuid`, `itemId`, `type`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `versions`;
 CREATE TABLE `versions` (
   `id` bigint(20) unsigned NOT NULL auto_increment,
@@ -773,7 +764,7 @@ CREATE TABLE `classificationstore_keys` (
 	`type` VARCHAR(190) NULL DEFAULT NULL,
 	`creationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
-	`definition` LONGTEXT NULL,
+	`definition` json NULL,
 	`enabled` TINYINT(1) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`),
@@ -848,7 +839,7 @@ CREATE TABLE `gridconfigs` (
 	`name` VARCHAR(50) NULL,
 	`searchType` VARCHAR(50) NULL,
 	`type` enum('asset','object') NOT NULL DEFAULT 'object',
-	`config` LONGTEXT NULL,
+	`config` json NULL,
 	`description` LONGTEXT NULL,
 	`creationDate` INT(11) NULL,
 	`modificationDate` INT(11) NULL,
@@ -897,7 +888,7 @@ CREATE TABLE `importconfigs` (
 	`ownerId` INT(11) NULL,
 	`classId` VARCHAR(50) NULL DEFAULT NULL,
 	`name` VARCHAR(50) NULL,
-	`config` LONGTEXT NULL,
+	`config` json NULL,
   `description` LONGTEXT NULL,
 	`creationDate` INT(11) NULL,
 	`modificationDate` INT(11) NULL,

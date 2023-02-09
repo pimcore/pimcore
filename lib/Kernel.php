@@ -29,7 +29,6 @@ use Pimcore\Event\SystemEvents;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
-use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -320,7 +319,6 @@ abstract class Kernel extends SymfonyKernel
             new MonologBundle(),
             new DoctrineBundle(),
             new DoctrineMigrationsBundle(),
-            new SensioFrameworkExtraBundle(),
             new CmfRoutingBundle(),
             new PrestaSitemapBundle(),
             new SchebTwoFactorBundle(),

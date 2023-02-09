@@ -70,6 +70,7 @@ class Model extends AbstractDefinitionHelper
             $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
             $rootPanel->addChild($panel);
 
+            $panel->addChild($this->createDataChild('input'));
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses(['RelationTest'])
             );
@@ -443,10 +444,6 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('geobounds', 'bounds', false));
             $panel->addChild($this->createDataChild('geopolygon', 'polygon', false));
             $panel->addChild($this->createDataChild('geopolyline', 'polyline', false));
-
-            $panel->addChild($this->createDataChild('indexFieldSelection', 'indexFieldSelection', false));
-            $panel->addChild($this->createDataChild('indexFieldSelectionCombo', 'indexFieldSelectionCombo', false));
-            $panel->addChild($this->createDataChild('indexFieldSelectionField', 'indexFieldSelectionField', false));
 
             $panel->addChild($this->createDataChild('imageGallery'));
             $panel->addChild($this->createDataChild('input'));
@@ -1027,5 +1024,3 @@ class Model extends AbstractDefinitionHelper
         $this->setupUnit('km');
     }
 }
-
-@class_alias(Model::class, 'Pimcore\Tests\Support\Helper\Model');
