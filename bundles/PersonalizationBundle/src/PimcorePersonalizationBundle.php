@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle;
 
+use Pimcore\Bundle\PersonalizationBundle\DependencyInjection\Compiler\DebugStopwatchPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -75,6 +76,7 @@ class PimcorePersonalizationBundle extends AbstractPimcoreBundle
     public function build (ContainerBuilder $container): void
     {
         $container->addCompilerPass (new TargetingOverrideHandlersPass());
+        $container->addCompilerPass(new DebugStopwatchPass());
     }
 
     public function getPath (): string

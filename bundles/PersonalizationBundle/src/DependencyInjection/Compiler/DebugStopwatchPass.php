@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
+namespace Pimcore\Bundle\PersonalizationBundle\DependencyInjection\Compiler;
 
 use Pimcore\Bundle\PersonalizationBundle\Targeting\DataLoader;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\TargetingDataCollector;

@@ -72,7 +72,6 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new ServiceControllersPass());
         $container->addCompilerPass(new MonologPublicLoggerPass());
         $container->addCompilerPass(new MonologPsrLogMessageProcessorPass());
-        $container->addCompilerPass(new DebugStopwatchPass());
         $container->addCompilerPass(new LongRunningHelperPass());
         $container->addCompilerPass(new WorkflowPass());
         $container->addCompilerPass(new RegisterImageOptimizersPass());
