@@ -15,6 +15,7 @@
 
 namespace Pimcore\Http;
 
+use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -171,6 +172,20 @@ class RequestHelper
         }
 
         return true;
+    }
+
+    /**
+     * Can be used to check if a user is trying to access the object preview and is allowed to do so.
+     *
+     * @param Request|null $request
+     * @return bool
+     */
+    public function isObjectPreviewRequestByAdmin(Request $request = null): bool
+    {
+        $request = $this->getRequest($request);
+
+        return $request->query->has('pimcore_object_preview')
+            && Authentication::isValidUser(Authentication::authenticateSession($request));
     }
 
     /**
