@@ -23,7 +23,7 @@ class TargetGroup implements ConditionInterface
 {
     protected ?int $targetGroupId = null;
 
-    protected ?\Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup = null;
+    protected ?\Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup $targetGroup = null;
 
     protected int $threshold = 0;
 
@@ -58,7 +58,7 @@ class TargetGroup implements ConditionInterface
     public function __wakeup(): void
     {
         if ($this->targetGroupId) {
-            $this->targetGroup = \Pimcore\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
+            $this->targetGroup = \Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
         }
     }
 
@@ -95,7 +95,7 @@ class TargetGroup implements ConditionInterface
     {
         $this->targetGroupId = $targetGroupId;
         if ($this->targetGroupId) {
-            $this->targetGroup = \Pimcore\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
+            $this->targetGroup = \Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
         } else {
             $this->targetGroup = null;
         }

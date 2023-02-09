@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Dis
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
-use Pimcore\Targeting\VisitorInfoStorageInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PricingManager implements PricingManagerInterface
