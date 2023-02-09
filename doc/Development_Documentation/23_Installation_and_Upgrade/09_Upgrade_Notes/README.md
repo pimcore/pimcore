@@ -1,5 +1,6 @@
 # Upgrade Notes
 ## 11.0.0
+- [Logging] Removed constant `PIMCORE_PHP_ERROR_LOG`
 - [General] **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. 
  This results in **various bc breaks**. Please make sure to add the corresponding types to your implementation.
 - [UrlSlug] Removed `index` column and `index` index from `object_url_slugs` table as it was not being used anywhere.
@@ -131,6 +132,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
     - UUID has been moved into PimcoreUuidBundle
       - Config `pimcore:general:instance_identifier` has been removed, please use `pimcore_uuid:instance_identifier` in the PimcoreUuidBundle instead. Please run `bin/console config:dump pimcore_uuid` to see more about the instance identifier config after installing the bundle.
+    - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
@@ -194,6 +196,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 rest from [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers) is deprecated and will not be supported on Pimcore 11. 
 Use `#[ResponseHeader]`,`#[DataObjectParam]` argument, `#[Template]` and other attributes instead.
 - [Navigation] Changed the navigation building process. It is easier to add main and submenus. For details please see [Adding Custom Main Navigation Items](https://pimcore.com/docs/pimcore/11.0/Development_Documentation/Extending_Pimcore/Bundle_Developers_Guide/Event_Listener_UI.html#page_Adding-Custom-Main-Navigation-Items)
+- [Sites] Default Site Id has been updated from `default` to `0`. Please update configs using default site id accordingly.
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
