@@ -14,13 +14,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Log\Handler;
+namespace Pimcore\Bundle\ApplicationLoggerBundle\Handler;
 
 use Doctrine\DBAL\Connection;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
 use Pimcore\Db;
+use Pimcore\Maintenance\Tasks\LogMailMaintenanceTask;
 
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
@@ -60,7 +61,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     {
         $db = Db::get();
 
-        $components = $db->fetchFirstColumn('SELECT component FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(component) GROUP BY component;');
+        $components = $db->fetchFirstColumn('SELECT component FROM ' . self::TABLE_NAME . ' WHERE NOT ISNULL(component) GROUP BY component;');
 
         return $components;
     }
@@ -84,7 +85,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
         $db = Db::get();
 
-        $priorityNumbers = $db->fetchFirstColumn('SELECT priority FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(priority) GROUP BY priority;');
+        $priorityNumbers = $db->fetchFirstColumn('SELECT priority FROM ' . self::TABLE_NAME . ' WHERE NOT ISNULL(priority) GROUP BY priority;');
         foreach ($priorityNumbers as $priorityNumber) {
             $priorities[$priorityNumber] = $priorityNames[$priorityNumber];
         }
@@ -92,3 +93,5 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
         return $priorities;
     }
 }
+
+@class_alias(ApplicationLoggerDb::class, 'Pimcore\Log\Handler\ApplicationLoggerDb');

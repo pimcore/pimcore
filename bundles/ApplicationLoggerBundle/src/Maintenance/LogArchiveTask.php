@@ -14,13 +14,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Maintenance\Tasks;
+namespace Pimcore\Bundle\ApplicationLoggerBundle\Maintenance;
 
 use DateInterval;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Pimcore\Bundle\ApplicationLoggerBundle\Processor\ApplicationLoggerProcessor;
 use Pimcore\Config;
-use Pimcore\Log\Handler\ApplicationLoggerDb;
+use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
@@ -134,3 +135,5 @@ class LogArchiveTask implements TaskInterface
         } while ($archiveTableExists);
     }
 }
+
+@class_alias(LogArchiveTask::class, 'Pimcore\Maintenance\Tasks\LogArchiveTask');

@@ -14,14 +14,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Controller\KernelControllerEventInterface;
-use Pimcore\Log\Handler\ApplicationLoggerDb;
+use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,18 +44,20 @@ class LogController extends AdminController implements KernelControllerEventInte
     }
 
     /**
-     * @Route("/log/show", name="pimcore_admin_log_show", methods={"GET", "POST"})
+     * @Route("/log/show", name="pimcore_admin_bundle_applicationlogger_log_show", methods={"GET", "POST"})
      *
      *
      */
     public function showAction(Request $request, Connection $db): JsonResponse
     {
+        $this->checkPermission('application_logging');
+
         $qb = $db->createQueryBuilder();
         $qb
             ->select('*')
             ->from(ApplicationLoggerDb::TABLE_NAME)
-            ->setFirstResult((int) $request->get('start', 0))
-            ->setMaxResults((int) $request->get('limit', 50));
+            ->setFirstResult($request->get('start', 0))
+            ->setMaxResults($request->get('limit', 50));
 
         $sortingSettings = QueryParams::extractSortingSettings(array_merge(
             $request->request->all(),
@@ -171,7 +173,7 @@ class LogController extends AdminController implements KernelControllerEventInte
     }
 
     /**
-     * @Route("/log/priority-json", name="pimcore_admin_log_priorityjson", methods={"GET"})
+     * @Route("/log/priority-json", name="pimcore_admin_bundle_applicationlogger_log_priorityjson", methods={"GET"})
      *
      * @param Request $request
      *
@@ -179,6 +181,8 @@ class LogController extends AdminController implements KernelControllerEventInte
      */
     public function priorityJsonAction(Request $request): JsonResponse
     {
+        $this->checkPermission('application_logging');
+
         $priorities[] = ['key' => '-1', 'value' => '-'];
         foreach (ApplicationLoggerDb::getPriorities() as $key => $p) {
             $priorities[] = ['key' => $key, 'value' => $p];
@@ -188,7 +192,7 @@ class LogController extends AdminController implements KernelControllerEventInte
     }
 
     /**
-     * @Route("/log/component-json", name="pimcore_admin_log_componentjson", methods={"GET"})
+     * @Route("/log/component-json", name="pimcore_admin_bundle_applicationlogger_log_componentjson", methods={"GET"})
      *
      * @param Request $request
      *
@@ -196,6 +200,8 @@ class LogController extends AdminController implements KernelControllerEventInte
      */
     public function componentJsonAction(Request $request): JsonResponse
     {
+        $this->checkPermission('application_logging');
+
         $components[] = ['key' => '', 'value' => '-'];
         foreach (ApplicationLoggerDb::getComponents() as $p) {
             $components[] = ['key' => $p, 'value' => $p];
@@ -205,7 +211,7 @@ class LogController extends AdminController implements KernelControllerEventInte
     }
 
     /**
-     * @Route("/log/show-file-object", name="pimcore_admin_log_showfileobject", methods={"GET"})
+     * @Route("/log/show-file-object", name="pimcore_admin_bundle_applicationlogger_log_showfileobject", methods={"GET"})
      *
      * @param Request $request
      *
@@ -215,12 +221,18 @@ class LogController extends AdminController implements KernelControllerEventInte
      */
     public function showFileObjectAction(Request $request): StreamedResponse|Response
     {
+        $this->checkPermission('application_logging');
+
         $filePath = $request->get('filePath');
         $storage = Storage::get('application_log');
 
         if ($storage->fileExists($filePath)) {
-            $fileHandle = $storage->readStream($filePath);
-            $response = $this->getResponseForFileHandle($fileHandle);
+            $fileData = $storage->readStream($filePath);
+            $response = new StreamedResponse(
+                static function () use ($fileData) {
+                    echo stream_get_contents($fileData);
+                }
+            );
             $response->headers->set('Content-Type', 'text/plain');
         } else {
             // Fallback to local path when file is not found in flysystem that might still be using the constant
@@ -240,8 +252,13 @@ class LogController extends AdminController implements KernelControllerEventInte
             }
 
             if (file_exists($filePath)) {
-                $fileHandle = fopen($filePath, 'rb');
-                $response = $this->getResponseForFileHandle($fileHandle);
+                $response = new StreamedResponse(
+                    static function () use ($filePath) {
+                        $handle = fopen($filePath, 'rb');
+                        fpassthru($handle);
+                        fclose($handle);
+                    }
+                );
                 $response->headers->set('Content-Type', 'text/plain');
             } else {
                 $response = new Response();
@@ -253,19 +270,6 @@ class LogController extends AdminController implements KernelControllerEventInte
 
         return $response;
     }
-
-    /**
-     * @param resource $fileHandle
-     */
-    private function getResponseForFileHandle($fileHandle): StreamedResponse
-    {
-        return new StreamedResponse(
-            static function () use ($fileHandle) {
-                while (!feof($fileHandle)) {
-                    echo fread($fileHandle, 8192);
-                }
-                fclose($fileHandle);
-            }
-        );
-    }
 }
+
+@class_alias(LogController::class, 'Pimcore\Bundle\AdminBundle\Controller\Admin\ApplicationLoggerDb');

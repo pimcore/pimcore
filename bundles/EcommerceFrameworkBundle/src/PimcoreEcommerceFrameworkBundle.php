@@ -20,10 +20,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Compiler\Registe
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\Version;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 
-class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
+class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle implements DependentBundleInterface
 {
     /**
      * {@inheritdoc}
@@ -78,5 +80,12 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);
+    }
+
+    public static function registerDependentBundles(BundleCollection $collection): void
+    {
+        if (\Pimcore\Version::getMajorVersion() >= 11) {
+            $collection->addBundle(\Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle::class);
+        }
     }
 }
