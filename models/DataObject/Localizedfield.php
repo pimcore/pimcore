@@ -214,7 +214,6 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @param Concrete|Model\Element\ElementDescriptor|null $object
-     * @param bool $markAsDirty
      *
      * @return $this
      *
