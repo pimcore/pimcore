@@ -27,3 +27,10 @@ services:
                 id: 'pimcore_targeting'
                 priority: 312
 
+    #
+    # Event Listeners
+    #
+
+    Pimcore\Bundle\PersonalizationBundle\Event\IndexSettingsListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }
