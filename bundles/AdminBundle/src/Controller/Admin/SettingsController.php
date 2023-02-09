@@ -439,6 +439,7 @@ class SettingsController extends AdminController
 
         $values = $this->decodeJson($request->get('data'));
         $existingValues = [];
+
         try {
             $file = Config::locateConfigFile('system.yaml');
             $existingValues = Config::getConfigInstance($file);
@@ -530,10 +531,10 @@ class SettingsController extends AdminController
             $saveSettingsEvent = new GenericEvent(null, [
                 'settings' => $settings,
                 'existingValues' => $existingValues,
-                'values' => $values
+                'values' => $values,
             ]);
             $eventDispatcher->dispatch($saveSettingsEvent, AdminEvents::SAVE_ACTION_SYSTEM_SETTINGS);
-            $settings = $saveSettingsEvent->getArgument("settings");
+            $settings = $saveSettingsEvent->getArgument('settings');
         }
 
         $settingsYaml = Yaml::dump($settings, 5);
