@@ -756,9 +756,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         // renew object reference to other object aware fields
         foreach ($this->__objectAwareFields as $objectAwareField => $exists) {
             if (isset($this->$objectAwareField)) {
-                if($this->$objectAwareField instanceof ObjectAwareFieldWithMarkAsDirtyInterface){
-                    $this->$objectAwareField->setObject($this, false);
-                }
                 if($this->$objectAwareField instanceof ObjectAwareFieldInterface) {
                     $this->$objectAwareField->setObject($this);
                 }

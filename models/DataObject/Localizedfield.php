@@ -37,7 +37,7 @@ final class Localizedfield extends Model\AbstractModel implements
     LazyLoadedFieldsInterface,
     Model\Element\ElementDumpStateInterface,
     OwnerAwareFieldInterface,
-    ObjectAwareFieldWithMarkAsDirtyInterface
+    ObjectAwareFieldInterface
 {
     use Model\DataObject\Traits\OwnerAwareFieldTrait;
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
@@ -220,7 +220,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @throws \Exception
      */
-    public function setObject(Model\Element\ElementDescriptor|Concrete|null $object, bool $markAsDirty = true): static
+    public function setObject(Model\Element\ElementDescriptor|Concrete|null $object): static
     {
         if ($object instanceof Model\Element\ElementDescriptor) {
             $object = Service::getElementById($object->getType(), $object->getId());
@@ -230,9 +230,7 @@ final class Localizedfield extends Model\AbstractModel implements
             throw new \Exception('must be instance of object concrete');
         }
 
-        if ($markAsDirty) {
-            $this->markAllLanguagesAsDirty();
-        }
+        $this->markAllLanguagesAsDirty();
         $this->object = $object;
         $this->objectId = $object ? $object->getId() : null;
         $this->setClass($object ? $object->getClass() : null);
