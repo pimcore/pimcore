@@ -127,11 +127,8 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
             });
 
             // TODO is this enough for cache or should we disable caching completely?
-            if(method_exists (\Pimcore\Bundle\PersonalizationBundle\Model\Document\Traits\TargetDocumentTrait::class, 'getUseTargetGroup')) {
-                if ($this->snippet->getUseTargetGroup ()) {
-
-                    $cacheParams['target_group'] = $this->snippet->getUseTargetGroup ();
-                }
+            if (method_exists($this->snippet, 'getUseTargetGroup') && $this->snippet->getUseTargetGroup()) {
+                $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
             }
 
             if (Site::isSiteRequest()) {

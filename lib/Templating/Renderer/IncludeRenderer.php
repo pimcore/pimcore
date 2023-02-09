@@ -105,7 +105,7 @@ class IncludeRenderer
             });
 
             // TODO is this enough for cache or should we disable caching completely?
-            if (class_exists (TargetingDocumentInterface::class) && $include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
+            if (method_exists($include, 'getUseTargetGroup') && $include->getUseTargetGroup()) {
                 $cacheParams['target_group'] = $include->getUseTargetGroup();
             }
 
