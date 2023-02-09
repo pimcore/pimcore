@@ -32,11 +32,7 @@ class Api
 
     public static function getConfig(): array
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore_google_marketing');
-        if(is_array($config)) {
-            return $config;
-        }
-        return [];
+        return \Pimcore::getContainer()->getParameter('pimcore_google_marketing');
     }
 
     public static function isConfigured(string $type = 'service'): bool
