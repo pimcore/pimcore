@@ -133,12 +133,12 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
                 }
             }
 
+            //Personalization & Targeting Specific
             // apply best matching target group (if any)
-            if(class_exists (TargetingDocumentInterface::class)) {
-                if ($this->o instanceof TargetingDocumentInterface) {
-                    $targetingConfigurator = $container->get (DocumentTargetingConfigurator::class);
+            if ($container->has(DocumentTargetingConfigurator::class)
+                && $this->o instanceof TargetingDocumentInterface) {
+                    $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
                     $targetingConfigurator->configureTargetGroup ($this->o);
-                }
             }
 
             $blockparams = ['controller', 'template'];

@@ -51,7 +51,7 @@ class IncludeRenderer
      *
      * @return string
      */
-    public function render(mixed $include, array $params = [], bool $editmode = false, bool $cacheEnabled = true, ?DocumentTargetingConfigurator $targetingConfigurator = null): string
+    public function render(mixed $include, array $params = [], bool $editmode = false, bool $cacheEnabled = true): string
     {
         if (!is_array($params)) {
             $params = [];
@@ -78,11 +78,13 @@ class IncludeRenderer
             }
         }
 
-        if ($include instanceof PageSnippet && $include->isPublished()) {
+        //Personalization & Targeting Specific
+        $container = \Pimcore::getContainer();
+        if ($container->has(DocumentTargetingConfigurator::class)
+            && $include instanceof PageSnippet && $include->isPublished()) {
             // apply best matching target group (if any)
-            if (class_exists (DocumentTargetingConfigurator::class)) {
-                $targetingConfigurator->configureTargetGroup($include);
-            }
+            $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
+            $targetingConfigurator->configureTargetGroup($include);
         }
 
         // check if output-cache is enabled, if so, we're also using the cache here

@@ -103,8 +103,10 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         if (!$this->snippet->isPublished()) {
             return '';
         }
-        if(class_exists (DocumentTargetingConfigurator::class)) {
-            $targetingConfigurator = $container->get (DocumentTargetingConfigurator::class);
+
+        //Personalization & Targeting Specific
+        if ($container->has(DocumentTargetingConfigurator::class)) {
+            $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
             // apply best matching target group (if any)
             $targetingConfigurator->configureTargetGroup($this->snippet);
         }
