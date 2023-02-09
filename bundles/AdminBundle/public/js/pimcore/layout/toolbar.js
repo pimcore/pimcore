@@ -342,16 +342,7 @@ pimcore.layout.toolbar = Class.create({
                      handler: this.notes
                  });
              }
- 
-             if (user.isAllowed("application_logging")&& perspectiveCfg.inToolbar("extras.applicationlog")) {
-                 extrasItems.push({
-                     text: t("log_applicationlog"),
-                     iconCls: "pimcore_nav_icon_log_admin",
-                     itemId: 'pimcore_menu_extras_application_log',
-                     handler: this.logAdmin
-                 });
-             }
- 
+
              if(user.isAllowed("gdpr_data_extractor")&& perspectiveCfg.inToolbar("extras.gdpr_data_extractor")) {
                  extrasItems.push({
                      text: t("gdpr_data_extractor"),
@@ -1343,15 +1334,6 @@ pimcore.layout.toolbar = Class.create({
 
      showMaintenance: function () {
          new pimcore.settings.maintenance();
-     },
- 
-     logAdmin: function () {
-         try {
-             pimcore.globalmanager.get("pimcore_applicationlog_admin").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("pimcore_applicationlog_admin", new pimcore.log.admin());
-         }
      },
 
      showElementHistory: function() {

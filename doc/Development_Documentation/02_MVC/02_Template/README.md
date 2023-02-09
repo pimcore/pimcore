@@ -28,7 +28,7 @@ class MyController extends FrontendController
      */
     #[Template('content/default.html.twig', vars: ['param1' => 'value1'])]
     public function attributeAction()
-    {
+    {   
     }
     
     public function directRenderAction()

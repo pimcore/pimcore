@@ -56,12 +56,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.reports = pimcore.globalmanager.get('customReportsPanelImplementationFactory').getNewReportInstance("object_concrete");
         }
         this.variants = new pimcore.object.variantsTab(this);
-        this.appLogger = new pimcore.log.admin({
-            localMode: true,
-            searchParams: {
-                relatedobject: this.id
-            }
-        });
+        if(pimcore.globalmanager.get('applicationLoggerPanelImplementationFactory').hasImplementation()) {
+            this.appLogger = pimcore.globalmanager.get('applicationLoggerPanelImplementationFactory').getNewLoggerInstance({localMode: true,
+                searchParams: {
+                    relatedobject: this.id
+                }
+            });
+        }
         this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
 
         this.getData();
@@ -355,7 +356,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
         }
 
-        if (user.isAllowed("application_logging") && this.data.general.showAppLoggerTab) {
+        if (this.appLogger && user.isAllowed("application_logging") && this.data.general.showAppLoggerTab) {
             try {
                 var appLoggerTab = this.appLogger.getTabPanel();
                 items.push(appLoggerTab);

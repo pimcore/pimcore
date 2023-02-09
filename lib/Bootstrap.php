@@ -204,7 +204,6 @@ class Bootstrap
         $resolveConstant('PIMCORE_SYSTEM_TEMP_DIRECTORY', PIMCORE_PRIVATE_VAR . '/tmp');
 
         // configure PHP's error logging
-        $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
     }
 
@@ -225,7 +224,7 @@ class Bootstrap
     {
         $environment = Config::getEnvironment();
 
-        $debug = (bool) ($_SERVER['APP_DEBUG'] ?? $environment !== 'prod');
+        $debug = (bool) ($_SERVER['APP_DEBUG'] ?? false);
         if ($debug) {
             umask(0000);
             Debug::enable();
