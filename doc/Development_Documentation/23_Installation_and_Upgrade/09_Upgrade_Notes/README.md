@@ -1,5 +1,6 @@
 # Upgrade Notes
 ## 11.0.0
+- [Logging] Removed constant `PIMCORE_PHP_ERROR_LOG`
 - [General] **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. 
  This results in **various bc breaks**. Please make sure to add the corresponding types to your implementation.
 - [UrlSlug] Removed `index` column and `index` index from `object_url_slugs` table as it was not being used anywhere.
