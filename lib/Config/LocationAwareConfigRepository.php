@@ -235,10 +235,8 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $env = $this->writeTarget;
-
-        if ($env) {
-            $writeLocation = $env;
+        if ($this->writeTarget) {
+            $writeLocation = $this->writeTarget;
         } else {
             $writeLocation = $this->defaultWriteLocation;
         }
