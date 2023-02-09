@@ -757,7 +757,19 @@ pimcore.element.helpers.gridColumnConfig = {
                 var rdata = Ext.decode(response.responseText);
 
                 if (rdata.success && rdata.jobs) {
-                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings, exportType);
+                    const exportSize = rdata.jobs.reduce((a, b) => a + b.length, 0)
+                    if (exportSize > 25) {
+                        Ext.Msg.confirm("Confirmation", sprintf(t('batch_export_confirmation'), `<b>${new Intl.NumberFormat(navigator.language).format(exportSize)}</b>`),
+                            (btn) => {
+                                if (btn === "yes") {
+                                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings, exportType);
+                                } else {
+                                    return;
+                                }
+                            });
+                    } else {
+                        this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings, exportType);
+                    }
                 }
             }.bind(this)
         });
@@ -775,15 +787,37 @@ pimcore.element.helpers.gridColumnConfig = {
             };
             this.exportProgressBar = new Ext.ProgressBar({
                 text: t('initializing'),
-                style: "margin: 10px;",
+                style: "margin-top: 0px;",
                 width: 500
+            });
+            
+            this.cancelBtn = Ext.create('Ext.Button', {
+                scale: 'small',
+                text: t('cancel'),
+                tooltip: t('cancel'),
+                icon: '/bundles/pimcoreadmin/img/flat-color-icons/cancel.svg',
+                style: 'margin-left:5px;height:30px',
+                handler: () => {
+                    // Stop the batch processing
+                    this.exportJobCurrent = Infinity;
+                }
+            });
+
+            this.progressPanel = Ext.create('Ext.panel.Panel', {
+                layout: {
+                    type: 'hbox',
+                },
+                items: [
+                    this.exportProgressBar,
+                    this.cancelBtn
+                ],
             });
 
             this.exportProgressWin = new Ext.Window({
                 title: t("export"),
-                items: [this.exportProgressBar],
+                items: [this.progressPanel],
                 layout: 'fit',
-                width: 200,
+                width: 650,
                 bodyStyle: "padding: 10px;",
                 closable: false,
                 plain: true,

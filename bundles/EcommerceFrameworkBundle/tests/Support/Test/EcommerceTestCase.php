@@ -64,5 +64,3 @@ abstract class EcommerceTestCase extends TestCase
         return $this->session;
     }
 }
-
-@class_alias(EcommerceTestCase::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tests\Support\Test\EcommerceTestCase');
