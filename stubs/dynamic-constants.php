@@ -21,6 +21,9 @@ define('PIMCORE_CUSTOMLAYOUT_DIRECTORY', '');
 define('PIMCORE_SYSTEM_TEMP_DIRECTORY', '');
 define('PIMCORE_PROJECT_ROOT', '');
 define('PIMCORE_SYMFONY_CACHE_DIRECTORY', '');
+/**
+ * @deprecated
+ */
 define('PIMCORE_PHP_ERROR_LOG', '');
 define('PIMCORE_KERNEL_CLASS', '');
 define('PIMCORE_APP_BUNDLE_CLASS_FILE', '');
