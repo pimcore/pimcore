@@ -270,7 +270,3 @@ presta_sitemap:
         lastmod: ~
         priority: ~
         changefreq: ~
-
-sensio_framework_extra:
-    router:
-        annotations: false

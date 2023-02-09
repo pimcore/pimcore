@@ -15,10 +15,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Log\Processor;
+namespace Pimcore\Bundle\ApplicationLoggerBundle\Processor;
 
 use Monolog\LogRecord;
-use Pimcore\Log\FileObject;
+use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
+use Pimcore\Bundle\ApplicationLoggerBundle\FileObject;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
@@ -144,3 +145,5 @@ class ApplicationLoggerProcessor
         return str_replace(PIMCORE_PROJECT_ROOT . '/', '', $filename);
     }
 }
+
+@class_alias(ApplicationLoggerProcessor::class, 'Pimcore\Log\Processor\ApplicationLoggerProcessor');
