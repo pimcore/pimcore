@@ -6,14 +6,14 @@ use Pimcore\Bundle\GoogleMarketingBundle\Config\SiteConfigProvider;
 use Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker as AnalyticsGoogleTracker;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class PimcoreGoogleMarketingExtension extends Extension
+class PimcoreGoogleMarketingExtension extends ConfigurableExtension
 {
 
-    public function load(array $configs, ContainerBuilder $container): void
+    public function loadInternal(array $config, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(
             $container,
@@ -22,6 +22,8 @@ class PimcoreGoogleMarketingExtension extends Extension
         $loader->load('services.yaml');
         $loader->load('analytics.yaml');
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
+
+        $container->setParameter('pimcore_google_marketing', $config);
     }
 
     /**

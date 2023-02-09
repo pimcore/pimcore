@@ -32,6 +32,25 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
 
+        $rootNode
+            ->children()
+                ->scalarNode('client_id')
+                    ->info('This is required for the Google API integrations. Only use a `Service Account´ from the Google Cloud Console.')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('email')
+                    ->info('Email address of the Google service account')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('simple_api_key')
+                    ->info('Server API key')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('browser_api_key')
+                    ->info('Browser API key')
+                    ->defaultNull()
+                ->end()
+            ->end();
         return $treeBuilder;
     }
 }

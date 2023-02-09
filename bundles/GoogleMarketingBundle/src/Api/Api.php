@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Google;
+namespace Pimcore\Bundle\GoogleMarketingBundle\Api;
 
 use Google\Client;
 use Pimcore\Config;
@@ -32,7 +32,7 @@ class Api
 
     public static function getConfig(): array
     {
-        return Config::getSystemConfiguration('services')['google'] ?? [];
+        return \Pimcore::getContainer()->getParameter('pimcore_google_marketing') ?? [];
     }
 
     public static function isConfigured(string $type = 'service'): bool

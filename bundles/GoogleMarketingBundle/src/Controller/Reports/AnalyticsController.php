@@ -18,10 +18,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GoogleMarketingBundle\Controller\Reports;
 
 use Google\Service\Analytics;
+use Pimcore\Bundle\GoogleMarketingBundle\Api\Api;
 use Pimcore\Bundle\GoogleMarketingBundle\Config\SiteConfigProvider;
 use Pimcore\Bundle\GoogleMarketingBundle\Controller\ReportsControllerBase;
 use Pimcore\Controller\KernelControllerEventInterface;
-use Pimcore\Google;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -438,7 +438,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
      */
     public function getDimensionsAction(Request $request): JsonResponse
     {
-        return $this->adminJson(['data' => Google\Api::getAnalyticsDimensions()]);
+        return $this->adminJson(['data' => Api::getAnalyticsDimensions()]);
     }
 
     /**
@@ -450,7 +450,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
      */
     public function getMetricsAction(Request $request): JsonResponse
     {
-        return $this->adminJson(['data' => Google\Api::getAnalyticsMetrics()]);
+        return $this->adminJson(['data' => Api::getAnalyticsMetrics()]);
     }
 
     /**
@@ -494,7 +494,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
             return;
         }
 
-        $client = Google\Api::getServiceClient();
+        $client = Api::getServiceClient();
         if (!$client) {
             die('Google Analytics is not configured');
         }

@@ -14,9 +14,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\CustomReport\Adapter;
+namespace Pimcore\Bundle\GoogleMarketingBundle\CustomReport\Adapter;
 
 use Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\AbstractAdapter;
+use Pimcore\Bundle\GoogleMarketingBundle\Api\Api;
 
 /**
  * @internal
@@ -125,7 +126,7 @@ class Analytics extends AbstractAdapter
             $configuration = $this->handleDimensions($configuration);
         }
 
-        $client = \Pimcore\Google\Api::getServiceClient();
+        $client = Api::getServiceClient();
         if (!$client) {
             throw new \Exception('Google Analytics is not configured');
         }
