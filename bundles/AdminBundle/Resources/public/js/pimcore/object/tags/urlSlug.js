@@ -137,8 +137,6 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
             value: siteData['slug'],
             componentCls: this.getWrapperClassNames(),
             validator: function(value) {
-
-
                 if (value) {
                     if (!value.startsWith('/') || value.length < 2) {
                         return false;
@@ -153,8 +151,11 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
                         if  (part.length == 0) {
                             return false;
                         }
+
                         sanitizedPart = part.replace(/[#\?\*\:\\\\<\>\|"%&@=;]/g, '-');
                         if (sanitizedPart != part) {
+                            this.setValue(sanitizedPart);
+
                             return false;
                         }
                     }
