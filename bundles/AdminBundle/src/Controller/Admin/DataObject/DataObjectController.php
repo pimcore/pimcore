@@ -887,14 +887,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         /** @var DataObject\Concrete $object */
         $object = $modelFactory->build($className);
         $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
-        $object->setClassId($request->get('classId'));
-
+        $classId = $request->request->get('classId');
         if ($request->get('variantViaTree')) {
             $parentId = $request->request->getInt('parentId');
             $parent = DataObject\Concrete::getById($parentId);
-            $object->setClassId($parent->getClass()->getId());
+            $classId = $parent->getClass()->getId();
         }
 
+        $object->setClassId($classId);
         $object->setClassName($request->request->get('className'));
         $object->setParentId($request->request->getInt('parentId'));
         $object->setKey($request->request->get('key'));
