@@ -20,7 +20,6 @@ use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
-use Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface;
 use Pimcore\Model\Site;
 use Pimcore\Routing\RedirectHandler;
 use Pimcore\Tool;
@@ -137,27 +136,20 @@ class RoutingListener implements EventSubscriberInterface
      */
     protected function resolveSite(Request $request, $path)
     {
-        $site = null;
-
         // check for a registered site
         // do not initialize a site if it is a "special" admin request
         if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
             // host name without port incl. X-Forwarded-For handling for trusted proxies
             $host = $request->getHost();
-            $site = Site::getByDomain($host);
-        } elseif ($this->requestHelper->isObjectPreviewRequestByAdmin($request)) {
-            // When rendering an object's preview tab, resolve the site via a parameter
-            $siteId = $request->query->getInt(PreviewGeneratorInterface::PARAMETER_SITE);
-            $site = Site::getById($siteId);
-        }
 
-        if ($site) {
-            $path = $site->getRootPath() . $path;
+            if ($site = Site::getByDomain($host)) {
+                $path = $site->getRootPath() . $path;
 
-            Site::setCurrentSite($site);
+                Site::setCurrentSite($site);
 
-            $this->siteResolver->setSite($request, $site);
-            $this->siteResolver->setSitePath($request, $path);
+                $this->siteResolver->setSite($request, $site);
+                $this->siteResolver->setSitePath($request, $path);
+            }
         }
 
         return $path;

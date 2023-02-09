@@ -999,7 +999,5 @@
     "no_further_classes_allowed": "No further classes allowed",
     "address_not_found": "The entered address was not found",
     "possible_causes": "Possible causes",
-    "postal_code_format_error": "Postal code format, e.g. use \"5020 Salzburg, Söllheimer Straße 16\" instead of \"A-5020 Salzburg, Söllheimer Straße 16\"",
-    "preview_generator_site": "Site",
-    "preview_generator_locale": "Locale"
+    "postal_code_format_error": "Postal code format, e.g. use \"5020 Salzburg, Söllheimer Straße 16\" instead of \"A-5020 Salzburg, Söllheimer Straße 16\""
 }
