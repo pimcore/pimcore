@@ -513,7 +513,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             if ($currentLayoutId === null && count($validLayouts) > 0) {
-                $currentLayout = $validLayouts[0] ?? reset($validLayouts);
+                $currentLayout = $validLayouts['0'] ?? reset($validLayouts);
                 if($currentLayout) {
                     $currentLayoutId = $currentLayout->getId();
                 }
