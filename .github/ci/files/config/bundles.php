@@ -29,4 +29,7 @@ return [
     "Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle" => [
+        "all" => TRUE
+    ],
 ];
