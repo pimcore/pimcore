@@ -148,3 +148,4 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         return $blockedVars;
     }
 }
+@class_alias(TargetGroup::class,'Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup');

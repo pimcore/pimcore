@@ -85,3 +85,5 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
         return $blockedVars;
     }
 }
+
+@class_alias (TargetGroupMultiselect::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect');
