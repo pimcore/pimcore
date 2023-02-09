@@ -533,6 +533,7 @@ class SettingsController extends AdminController
                 'values' => $values
             ]);
             $eventDispatcher->dispatch($saveSettingsEvent, AdminEvents::SAVE_ACTION_SYSTEM_SETTINGS);
+            $settings = $saveSettingsEvent->getArgument("settings");
         }
 
         $settingsYaml = Yaml::dump($settings, 5);
