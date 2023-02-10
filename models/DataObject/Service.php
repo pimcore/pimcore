@@ -1004,16 +1004,16 @@ class Service extends Model\Element\Service
 
         if ($user->getAdmin()) {
             $superLayout = new ClassDefinition\CustomLayout();
-            $superLayout->setId('-1');
+            $superLayout->setId('masterAdmin');
             $superLayout->setName('Master (Admin Mode)');
-            $resultList['-1'] = $superLayout;
+            $resultList['masterAdmin'] = $superLayout;
         }
 
         if ($isMasterAllowed) {
             $master = new ClassDefinition\CustomLayout();
-            $master->setId('0');
+            $master->setId('master');
             $master->setName('Master');
-            $resultList['0'] = $master;
+            $resultList['master'] = $master;
         }
 
         $classId = $object->getClassId();
