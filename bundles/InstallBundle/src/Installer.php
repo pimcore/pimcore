@@ -718,7 +718,6 @@ class Installer
             'userModification' => 1,
         ]));
         $userPermissions = [
-            'application_logging',
             'assets',
             'classes',
             'clear_cache',
