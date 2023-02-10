@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Log;
+namespace Pimcore\Bundle\ApplicationLoggerBundle;
 
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToWriteFile;
@@ -69,3 +69,5 @@ final class FileObject
         return $this->getFilename();
     }
 }
+
+@class_alias(FileObject::class, 'Pimcore\Log\FileObject');

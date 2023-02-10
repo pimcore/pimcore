@@ -14,68 +14,63 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\Request\ParamConverter;
+namespace Pimcore\Bundle\CoreBundle\Request\ParamResolver;
 
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Request\Attribute\DataObjectParam;
 use Pimcore\Tool;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @internal
  */
-class DataObjectParamConverter implements ParamConverterInterface
+class DataObjectParamResolver implements ValueResolverInterface
 {
     /**
      * {@inheritdoc}
      *
      * @throws NotFoundHttpException When invalid data object ID given
      */
-    public function apply(Request $request, ParamConverter $configuration): bool
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        $param = $configuration->getName();
+        $options = $argument->getAttributes(DataObjectParam::class, ArgumentMetadata::IS_INSTANCEOF);
 
+        $class = $options[0]->class ?? $argument->getType();
+        if (null === $class || !is_subclass_of($class, AbstractObject::class)) {
+            return [];
+        }
+
+        $param = $argument->getName();
         if (!$request->attributes->has($param)) {
-            return false;
+            return [];
         }
 
         $value = $request->attributes->get($param);
 
-        if (!$value && $configuration->isOptional()) {
+        if (!$value && $argument->isNullable()) {
             $request->attributes->set($param, null);
 
-            return true;
+            return [];
         }
-
-        $class = $configuration->getClass();
-        $options = $configuration->getOptions();
 
         /** @var Concrete|null $object */
         $object = $class::getById($value);
         if (!$object) {
             throw new NotFoundHttpException(sprintf('Invalid data object ID given for parameter "%s".', $param));
-        } elseif (!$object->isPublished() && !Tool::isElementRequestByAdmin($request, $object) && (!array_key_exists('unpublished', $options) || !$options['unpublished'])) {
+        } elseif (
+            !$object->isPublished()
+            && !Tool::isElementRequestByAdmin($request, $object)
+            && (!isset($options[0]) || !$options[0]->unpublished)
+        ) {
             throw new NotFoundHttpException(sprintf('Data object for parameter "%s" is not published.', $param));
         }
 
         $request->attributes->set($param, $object);
 
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     */
-    public function supports(ParamConverter $configuration): bool
-    {
-        if (null === $configuration->getClass()) {
-            return false;
-        }
-
-        return is_subclass_of($configuration->getClass(), AbstractObject::class);
+        return [$object];
     }
 }
