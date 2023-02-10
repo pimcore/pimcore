@@ -130,6 +130,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         foreach ($fieldDefinitions as $fd) {
             try {
+                if($fd instanceof DataObject\ClassDefinition\Data\Localizedfields){
+                    $this->__objectAwareFields['localizedfields'] = true;
+                }
+
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
