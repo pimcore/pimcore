@@ -735,8 +735,6 @@ class Installer
             'asset_metadata',
             'recyclebin',
             'redirects',
-            'reports',
-            'reports_config',
             'seemode',
             'share_configurations',
             'system_settings',
