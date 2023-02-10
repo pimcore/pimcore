@@ -84,9 +84,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
             $dirtyLanguages = $this->localizedfields->getDirtyLanguages();
             $this->localizedfields->setObject($object);
             if(is_array($dirtyLanguages)) {
-                foreach ($dirtyLanguages as $language) {
-                    $this->localizedfields->markLanguageAsDirty($language);
-                }
+                $this->localizedfields->markLanguagesAsDirty($dirtyLanguages);
             }
             else {
                 $this->localizedfields->resetLanguageDirtyMap();

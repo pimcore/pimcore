@@ -751,6 +751,13 @@ final class Localizedfield extends Model\AbstractModel implements
         }
     }
 
+    public function markLanguagesAsDirty(array $languages): void
+    {
+        foreach ($languages as $language => $key) {
+            $this->markLanguageAsDirty($language);
+        }
+    }
+
     /**
      * @internal
      *
