@@ -1,4 +1,6 @@
 # Google Analytics
+In order to use Google Analytics you have to install the PimcoreGoogleMarketingBundle.
+Make sure to enable it in the bundles.php
 
 ## Disabling the Google Analytics Code
  
@@ -10,7 +12,7 @@ action in an autowired controller:
 
 namespace App\Controller;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener;
+use Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend\GoogleAnalyticsCodeListener;
 
 class TestController
 {
@@ -36,7 +38,7 @@ into multiple code blocks which can be expanded and altered individually. As ref
 
 ### Adding code to a block
 
-The central part of the Google tracking is the `Pimcore\Analytics\Google\Tracker` class which is defined as service and
+The central part of the Google tracking is the `Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker` class which is defined as service and
 which provides a `addCodePart()` method which allows you to add custom code snippets to a specific block:
 
 ```php
@@ -44,8 +46,8 @@ which provides a `addCodePart()` method which allows you to add custom code snip
 
 namespace App\Controller;
 
-use Pimcore\Analytics\Google\Tracker;
-use Pimcore\Analytics\SiteId\SiteId;
+use Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker;
+use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteId;
 
 class ContentController
 {
@@ -78,9 +80,9 @@ you full control over the generated code:
 
 namespace App\EventListener;
 
-use Pimcore\Analytics\Google\Event\TrackingDataEvent;
+use Pimcore\Bundle\GoogleMarketingBundle\Model\Event\TrackingDataEvent;
 use Pimcore\Analytics\Google\Tracker;
-use Pimcore\Event\Analytics\GoogleAnalyticsEvents;
+use Pimcore\Bundle\GoogleMarketingBundle\Event\GoogleAnalyticsEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class GoogleTrackingCodeListener implements EventSubscriberInterface
@@ -121,7 +123,7 @@ If you set a custom template, you can extend the core one and just override the 
 
 ```twig
 {# templates/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig #}
-{% extends "@PimcoreCore/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig" %}
+{% extends "@PimcoreGoogleMarketing/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig" %}
 
 {% block track %}
     {{ parent() }}
