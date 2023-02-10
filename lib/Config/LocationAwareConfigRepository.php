@@ -243,13 +243,7 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $env = $this->writeTarget;
-
-        if ($env) {
-            $writeLocation = $env;
-        } else {
-            $writeLocation = $this->defaultWriteLocation;
-        }
+        $writeLocation = $this->writeTarget ?? $this->defaultWriteLocation;
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
             throw new \Exception(sprintf('Invalid write location: %s', $writeLocation));
