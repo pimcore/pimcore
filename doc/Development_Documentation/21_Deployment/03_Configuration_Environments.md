@@ -61,41 +61,53 @@ Available environment variables for write targets and directory for Symfony Conf
 pimcore:
     storage:
         image_thumbnails:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/image-thumbnails'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/image-thumbnails'
         custom_reports:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/custom_reports'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/custom_reports'
         video_thumbnails:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/video-thumbnails'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/video-thumbnails'
         document_types:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/document_types'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/document_types'
         web_to_print:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/web_to_print'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/web_to_print'
         predefined_properties:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/predefined_properties'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/predefined_properties'
         predefined_asset_metadata:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/predefined_asset_metadata'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/predefined_asset_metadata'
         staticroutes:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/staticroutes'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/staticroutes'
         perspectives:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/perspectives'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/perspectives'
         custom_views:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/custom_views'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/custom_views'
         data_hub:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/data_hub'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/data_hub'
         object_custom_layouts:
-            target: 'settings-store'
-            directory: '/var/www/html/var/config/object_custom_layouts'
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/object_custom_layouts'
 ```
 
 #### Production environment with `symfony-config`

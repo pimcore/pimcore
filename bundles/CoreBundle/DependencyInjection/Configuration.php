@@ -2348,7 +2348,10 @@ final class Configuration implements ConfigurationInterface
                 ->children()
                     ->variableNode('target')
                     ->end()
-                    ->scalarNode('directory')
+                    ->arrayNode('options')
+                    ->defaultValue([])
+                        ->variablePrototype()
+                        ->end()
                     ->end()
                 ->end()
             ->end();

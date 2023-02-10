@@ -75,3 +75,24 @@
   - Use `Pimcore\Db\Helper::queryIgnoreError()` instead of `queryIgnoreError()`
   - Use `Pimcore\Db\Helper::selectAndDeleteWhere()` instead of `selectAndDeleteWhere()`
   - Use `Pimcore\Db\Helper::escapeLike()` instead of `escapeLike()`
+
+- [Config Environment] Replace deprecated setting write targets and storage directory in the .env file with symfony config
+    ```bash
+    PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS=symfony-config
+    PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=symfony-config
+  
+    PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS=/var/www/html/var/config/image-thumbnails
+    PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS=/var/www/html/var/config/custom-reports
+    ```
+    ```yaml
+    pimcore:
+      storage:
+        image_thumbnails:
+          target: 'symfony-config'
+          options:
+            directory: '/var/www/html/var/config/image-thumbnails'
+        custom_reports:
+          target: 'symfony-config'
+          options:
+            directory: '/var/www/html/var/config/custom_reports'
+    ```
