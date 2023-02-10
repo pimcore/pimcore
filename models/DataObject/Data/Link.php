@@ -414,10 +414,7 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getHtml();
     }
