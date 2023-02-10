@@ -26,7 +26,6 @@ use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
-use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoResolver;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,8 +53,8 @@ class FullPageCacheListener
     protected string $defaultCacheKey;
 
     public function __construct(
-        private SessionStatus $sessionStatus,
-        private EventDispatcherInterface $eventDispatcher,
+        protected SessionStatus $sessionStatus,
+        protected EventDispatcherInterface $eventDispatcher,
         protected Config $config
     ) {
     }
@@ -308,9 +307,6 @@ class FullPageCacheListener
         if (!$this->responseCanBeCached($response)) {
             $this->disable('Response can\'t be cached');
         }
-        if (class_exists(VisitorInfoResolver::class) && $this->enabled && $this->disableReason == 'Targeting matched rules/target groups') {
-            return;
-        }
 
         if ($this->enabled && $this->sessionStatus->isDisabledBySession($request)) {
             $this->disable('Session in use');
@@ -364,7 +360,7 @@ class FullPageCacheListener
         }
     }
 
-    public function responseCanBeCached(Response $response): bool
+    private function responseCanBeCached(Response $response): bool
     {
         $cache = true;
 

@@ -29,7 +29,6 @@ use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Pimcore\Bundle\PersonalizationBundle\Controller\Admin\TargetingPageController;
 
 /**
  * @internal
@@ -52,8 +51,7 @@ class RenderletController extends AdminController
         Request $request,
         ActionRenderer $actionRenderer,
         EditableHandler $editableHandler,
-        LocaleServiceInterface $localeService,
-        ?TargetingPageController $targetingPageController = null
+        LocaleServiceInterface $localeService
     ): Response {
         $query = $request->query->all();
         $attributes = [];
@@ -62,8 +60,10 @@ class RenderletController extends AdminController
         $element = $this->loadElement($request);
 
         // apply targeting to element
-        if(class_exists (TargetingPageController::class)) {
-            $targetingPageController->configureElementTargeting ($request, $element);
+        $container = \Pimcore::getContainer();
+        if ($container->has('\Pimcore\Bundle\PersonalizationBundle\Controller\Admin\TargetingPageController')) {
+            $targetingPageController = $container->get('\Pimcore\Bundle\PersonalizationBundle\Controller\Admin\TargetingPageController');
+            $targetingPageController->configureElementTargeting($request, $element);
         }
 
         $controller = $request->get('controller');

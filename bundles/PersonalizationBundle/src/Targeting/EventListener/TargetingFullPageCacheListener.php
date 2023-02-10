@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
-use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Cache\FullPage\SessionStatus;
 use Pimcore\Config;
@@ -26,67 +24,58 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class TargetingFullPageCacheListener
+class TargetingFullPageCacheListener extends FullPageCacheListener
 {
-    use PimcoreContextAwareTrait;
-    use StaticPageContextAwareTrait;
-
-    public function __construct (
+    public function __construct(
         private VisitorInfoStorageInterface $visitorInfoStorage,
-        private FullPageCacheListener $fullPageCacheListener
-    )
-    {
+        SessionStatus $sessionStatus,
+        EventDispatcherInterface $eventDispatcher,
+        Config $config
+    ) {
+        parent::__construct($sessionStatus, $eventDispatcher, $config);
     }
 
-    public function onKernelResponse (ResponseEvent $event, ): void
+    public function onKernelResponse(ResponseEvent $event): void
     {
-        if (!$event->isMainRequest ()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
-        $request = $event->getRequest ();
-        if (!\Pimcore\Tool::isFrontend () || \Pimcore\Tool::isFrontendRequestByAdmin ($request)) {
+        $request = $event->getRequest();
+        if (!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontendRequestByAdmin($request)) {
             return;
         }
 
-        if (!$this->matchesPimcoreContext ($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
-        }
-
-        if ($this->matchesStaticPageContext ($request)) {
-            $this->fullPageCacheListener->disable ('Response can\'t be cached for static pages');
-        }
-
-        $response = $event->getResponse ();
-
-        if (!$this->fullPageCacheListener->responseCanBeCached ($response)) {
-            $this->fullPageCacheListener->disable ('Response can\'t be cached');
         }
 
         // check if targeting matched anything and disable cache
-        if ($this->disabledByTargeting ()) {
-            $this->fullPageCacheListener->disable ('Targeting matched rules/target groups');
+        if ($this->disabledByTargeting()) {
+            $this->disable('Targeting matched rules/target groups');
+
+            return;
         }
+
+        parent::onKernelResponse($event);
     }
 
-    public function disabledByTargeting (): bool
+    public function disabledByTargeting(): bool
     {
-
-        if (!$this->visitorInfoStorage->hasVisitorInfo ()) {
+        if (!$this->visitorInfoStorage->hasVisitorInfo()) {
             return false;
         }
 
-        $visitorInfo = $this->visitorInfoStorage->getVisitorInfo ();
+        $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
 
-        if (!empty($visitorInfo->getMatchingTargetingRules ())) {
+        if (!empty($visitorInfo->getMatchingTargetingRules())) {
             return true;
         }
 
-        if (!empty($visitorInfo->getTargetGroupAssignments ())) {
+        if (!empty($visitorInfo->getTargetGroupAssignments())) {
             return true;
         }
 
         return false;
-
     }
 }

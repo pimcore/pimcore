@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
+use Pimcore\Bundle\PersonalizationBundle\Model\Document\Page;
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\AssignDocumentTargetGroupEvent;
 use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingEvent;
@@ -74,7 +75,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
 
     private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo): void
     {
-        if (!$document instanceof Document\Page) {
+        if (!$document instanceof Page) {
             return;
         }
 
