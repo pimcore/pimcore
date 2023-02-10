@@ -235,10 +235,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/survey.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_log_admin {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/text.svg) center center no-repeat !important;
-}
-
 .pimcore_nav_icon_gdpr {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/export.svg) left center no-repeat !important;
 }

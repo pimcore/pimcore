@@ -37,11 +37,11 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return string|null
+     * @return  null|string|int
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, Dataobject\Concrete $object = null, array $params = []): ?string
+    public function getDataFromResource(mixed $data, Dataobject\Concrete $object = null, array $params = []): null|string|int
     {
         if (!empty($data)) {
             try {
@@ -59,11 +59,11 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return null|string
+     * @return  null|string|int
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         if (!empty($data)) {
             try {

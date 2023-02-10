@@ -1,28 +1,6 @@
 
 SET NAMES utf8mb4;
 
-DROP TABLE IF EXISTS `application_logs`;
-CREATE TABLE `application_logs` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `pid` INT(11) NULL DEFAULT NULL,
-  `timestamp` datetime NOT NULL,
-  `message` TEXT NULL,
-  `priority` ENUM('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
-  `fileobject` varchar(1024) DEFAULT NULL,
-  `info` varchar(1024) DEFAULT NULL,
-  `component` varchar(190) DEFAULT NULL,
-  `source` varchar(190) DEFAULT NULL,
-  `relatedobject` int(11) unsigned DEFAULT NULL,
-  `relatedobjecttype` enum('object','document','asset') DEFAULT NULL,
-  `maintenanceChecked` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `component` (`component`),
-  KEY `timestamp` (`timestamp`),
-  KEY `relatedobject` (`relatedobject`),
-  KEY `priority` (`priority`),
-  KEY `maintenanceChecked` (`maintenanceChecked`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `assets`;
 CREATE TABLE `assets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
