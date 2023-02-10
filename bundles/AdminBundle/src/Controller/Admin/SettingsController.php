@@ -1562,8 +1562,7 @@ class SettingsController extends AdminController
             ];
         } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\HeadlessChrome) {
             $params = Config::getWeb2PrintConfig();
-            $params = $params['headlessChromeSettings'];
-            $params = json_decode($params, true);
+            $params = json_decode($params['headlessChromeSettings'], true) ?: [];
         }
 
         $responseOptions = [
