@@ -1004,7 +1004,7 @@ class Service extends Model\Element\Service
 
         if ($isMasterAllowed) {
             $master = new ClassDefinition\CustomLayout();
-            $master->setId(-1);
+            $master->setId(0);
             $master->setName('Master');
             $resultList[0] = $master;
         }
