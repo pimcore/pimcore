@@ -47,10 +47,11 @@ namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class NewsController extends FrontendController
 {
-    public function detailAction(Request $request)
+    public function detailAction(Request $request): Response
     {
         $id = $request->get('id');
         $text = $request->get('text');
@@ -76,7 +77,8 @@ To use the param resolver, simply type hint the argument (Symfony routing exampl
 
      #[Template('/news/test')]
      #[Route('/news/{news}')]
-    public function detailAction(DataObject\News $news) {
+    public function detailAction(DataObject\News $news): array
+    {
         return [
             'news' => $news
         ];
@@ -88,7 +90,8 @@ Param resolvers work with Pimcore Custom Routes as well as with Symfony Routes.
 By taking advantage of `#[DataObjectParam]` attribute, we can pass further options on to the object, e.g. working with unpublished objects.
 ````php
 public function detailAction(
-    #[DataObjectParam(unpublished: true)] DataObject\News $news) {
+    #[DataObjectParam(unpublished: true)] DataObject\News $news
+): Response {
     ...
 }
 ````
@@ -269,10 +272,13 @@ use \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 // ...
 
-public function testAction(Request $request) {
+public function testAction(Request $request): Response
+{
     $object = DataObject::getById((int) $request->get('id')); 
     if( !$object || ( !$object->isPublished() && !$this->editmode) ) {
         throw new NotFoundHttpException('Not found');
     }
+    
+    // ...
 }
 ```

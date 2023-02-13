@@ -23,11 +23,8 @@ class SessionBagListener implements EventSubscriberInterface
             KernelEvents::REQUEST => ['onKernelRequest', 127],
         ];
     }
-    
-    /**
-     * @param RequestEvent $event
-     */
-    public function onKernelRequest(RequestEvent $event)
+
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

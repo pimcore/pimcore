@@ -77,20 +77,17 @@ Create a controller to find your DataObject
 ```php
 namespace App\Controller\Admin;
 
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class BackendController
 {
     /**
-     * @param Request $request
      * @Route("/admin/find-by-external-id")
-     * 
-     * @return JsonResponse
      */
-    public function findByWordpressId(Request $request) {
-        if($id = (int)$request->get('external-id')) {
+    public function findByWordpressId(Request $request): JsonResponse
+    {
+        if ($id = (int)$request->get('external-id')) {
             if($object = MyObject::getByExternalId($id)) {
                 return new JsonResponse($object->getId());
             }

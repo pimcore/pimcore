@@ -208,10 +208,11 @@ namespace App\Controller;
 use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
 use Pimcore\Bundle\ApplicationLoggerBundle\FileObject;
 use Pimcore\Model\DataObject\AbstractObject;
+use Symfony\Component\HttpFoundation\Response;
 
 class TestController
 {
-    public function testAction(ApplicationLogger $logger)
+    public function testAction(ApplicationLogger $logger): Response
     {
         $fileObject = new FileObject('some interesting data');
         $myObject   = DataObject::getById(73);
@@ -222,6 +223,8 @@ class TestController
             'component'     => 'different component',
             'source'        => 'Stack trace or context-relevant information' // optional, if empty, gets automatically filled with class:method:line from where the log got executed
         ]);
+        
+        // ...
     }
 }
 ```

@@ -464,12 +464,13 @@ namespace App\Document\Areabrick;
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 use Pimcore\Model\Document\Editable\Area\Info;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class Iframe extends AbstractTemplateAreabrick
 {
     // other methods defined above
     // 
-    public function action(Info $info)
+    public function action(Info $info): ?RedirectResponse
     {
         $myVar = $info->getRequest()->get('myParam');
 
@@ -486,17 +487,17 @@ class Iframe extends AbstractTemplateAreabrick
     // OPTIONAL METHODS
 
     // executed after a brick is rendered
-    public function postRenderAction(Info $info)
+    public function postRenderAction(Info $info): ?Response
     {
     }
 
     // returns a custom html wrapper element (return an empty string if you don't want a wrapper element)
-    public function getHtmlTagOpen(Info $info)
+    public function getHtmlTagOpen(Info $info): string
     {
         return '<span class="customWrapperDiv">';
     }
 
-    public function getHtmlTagClose(Info $info)
+    public function getHtmlTagClose(Info $info): string
     {
         return '</span>';
     }

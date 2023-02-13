@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class AppExtension extends Extension
 {
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         // create a YamlFileLoader - this could also be a XmlFileLoader if you want to load XML 
         $loader = new YamlFileLoader(

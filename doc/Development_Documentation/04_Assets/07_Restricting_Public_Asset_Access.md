@@ -127,6 +127,7 @@ use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
@@ -135,7 +136,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class MyAssetController extends FrontendController
 {
-    public function protectedAssetAction(Request $request, RouterInterface $router)
+    public function protectedAssetAction(Request $request, RouterInterface $router): Response
     {
         // IMPORTANT!
         // Add your code here to check permission!

@@ -43,16 +43,14 @@ services:
 
 ```php
 <?php
+
 namespace App\EventListener;
 
 use ... 
 
-class MyEventListener {
-
-    /**
-     * @var UserLoader
-     */
-    protected $userLoader;
+class MyEventListener
+{
+    protected UserLoader $userLoader;
 
     public function __construct(UserLoader $userLoader)
     {
@@ -60,8 +58,8 @@ class MyEventListener {
     }
 
 
-    public function checkPermissions(GenericEvent $event) {
-
+    public function checkPermissions(GenericEvent $event): void
+    {
         $object = $event->getArgument("object");
         if($object instanceof Product) {
 
@@ -88,10 +86,7 @@ class MyEventListener {
 
             $event->setArgument("data", $data);
         }
-
     }
-
 }
-
 
 ```

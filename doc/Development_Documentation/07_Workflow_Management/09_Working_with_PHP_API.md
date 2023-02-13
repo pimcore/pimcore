@@ -122,7 +122,7 @@ use Symfony\Component\Workflow\Event\TransitionEvent;
 
 class WorkflowsEventListener
 {
-    public function onCloseProduct(TransitionEvent $event)
+    public function onCloseProduct(TransitionEvent $event): void
     {
         $context = $event->getContext();
         $additionalData = $context["additional"];

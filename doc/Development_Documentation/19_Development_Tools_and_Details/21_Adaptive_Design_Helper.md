@@ -5,15 +5,21 @@ The DeviceDetector helper makes it easy to implement the adaptive design approac
 ### Using it anywhere in your Code
 
 ```php
-class TestController extends Action {
- 
-    public function testAction () {
-        $device = \Pimcore\Tool\DeviceDetector::getInstance();
+use Pimcore\Tool\DeviceDetector;
+use Symfony\Component\HttpFoundation\Response;
+
+class TestController extends Action
+{
+    public function testAction(): Response
+    {
+        $device = DeviceDetector::getInstance();
         $device->getDevice(); // returns "phone", "tablet" or "desktop"
  
         if($device->isDesktop() || $device->isTablet()) {
             // do something
         }
+        
+        // ...
     }
 }
 ```

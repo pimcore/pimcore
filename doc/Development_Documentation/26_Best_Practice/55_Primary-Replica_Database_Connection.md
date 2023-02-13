@@ -17,7 +17,10 @@ use Doctrine\DBAL\Connections\PrimaryReadReplicaConnection;
 
 class Connection extends PrimaryReadReplicaConnection
 {
-    public function connect($connectionName = null)
+    /**
+     * @param string|null $connectionName
+     */
+    public function connect($connectionName = null): bool
     {
         $returnValue = parent::connect($connectionName);
 

@@ -153,7 +153,7 @@ class EditmodeListener implements EventSubscriberInterface
         ];
     }
 
-    public function onEditmodeJsPaths(PathsEvent $event)
+    public function onEditmodeJsPaths(PathsEvent $event): void
     {
         $event->setPaths(array_merge($event->getPaths(), [
             '/bundles/app/js/pimcore/editmode.js'

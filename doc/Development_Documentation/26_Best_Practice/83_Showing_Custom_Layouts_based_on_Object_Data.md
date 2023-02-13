@@ -46,7 +46,7 @@ use ...
 
 class MyEventListener
 {
-    public function selectCustomLayout(GenericEvent $event)
+    public function selectCustomLayout(GenericEvent $event): void
     {
         $object = $event->getArgument('object');
         if ($object instanceof Product) {

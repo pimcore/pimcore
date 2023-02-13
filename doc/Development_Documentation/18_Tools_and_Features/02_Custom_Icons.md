@@ -34,7 +34,7 @@ namespace App\EventListener;
 
 class AdminStyleListener
 {
-    public function onResolveElementAdminStyle(\Pimcore\Event\Admin\ElementAdminStyleEvent $event)
+    public function onResolveElementAdminStyle(\Pimcore\Event\Admin\ElementAdminStyleEvent $event): void
     {
         $element = $event->getElement();
         // decide which default styles you want to override
@@ -59,10 +59,9 @@ use Pimcore\Model\Element\AdminStyle;
 
 class Car extends AdminStyle
 {
-    /** @var ElementInterface */
-    protected $element;
+    protected ElementInterface $element;
 
-    public function __construct($element)
+    public function __construct(ElementInterface $element)
     {
         parent::__construct($element);
 
@@ -138,7 +137,7 @@ use Pimcore\Model\Element\AdminStyle;
 
 class AssetEventStyle extends AdminStyle
 {
-    public function __construct($element)
+    public function __construct(ElementInterface $element)
     {
         parent::__construct($element);
 

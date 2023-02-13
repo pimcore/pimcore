@@ -370,7 +370,7 @@ The object listing of this example only delivers objects of the type Collectiont
 
 ##### Action
 ```php
-public function testAction( Request $request, \Knp\Component\Pager\PaginatorInterface $paginator)
+public function testAction(Request $request, \Knp\Component\Pager\PaginatorInterface $paginator): Response
 {
     $list = new DataObject\Simple\Listing();
     $list->setOrderKey("name");

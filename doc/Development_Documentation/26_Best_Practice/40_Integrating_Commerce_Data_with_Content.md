@@ -54,7 +54,7 @@ class MyProductTeaser extends AbstractAreabrick
 
 **Controller Action** 
 ```php
-    public function productCellAction(Request $request)
+    public function productCellAction(Request $request): Response
     {
         $id = $request->attribute->getInt('id');
         $type = $request->attribute->get('type');

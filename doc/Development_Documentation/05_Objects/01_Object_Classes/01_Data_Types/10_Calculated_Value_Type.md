@@ -84,7 +84,8 @@ use Pimcore\Model\DataObject\Data\CalculatedValue;
  
 class Calculator implements CalculatorClassInterface
 {
-    public function compute(Concrete $object, CalculatedValue $context):string {
+    public function compute(Concrete $object, CalculatedValue $context): string
+    {
         if ($context->getFieldname() == "sum") {
             $language = $context->getPosition();
             return $object->getXValue($language) +  $object->getYValue($language);

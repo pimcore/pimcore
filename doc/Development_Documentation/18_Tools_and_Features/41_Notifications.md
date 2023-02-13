@@ -71,11 +71,13 @@ If you want to send some notifications to user:
 <?php
 
 use Pimcore\Model\Notification\Service\NotificationService;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 public function defaultAction(
     Request $request,
     NotificationService $notificationService
-) {
+): Response {
     $element = Asset::getById(1); // Optional
     
     $notificationService->sendToUser(
@@ -85,6 +87,8 @@ public function defaultAction(
         'Example message', 
         $element // Optional linked element
     );
+    
+    // ...
 }
 ```
 
@@ -93,11 +97,13 @@ If you want to send some notifications to users from group:
 <?php
 
 use Pimcore\Model\Notification\Service\NotificationService;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 public function defaultAction(
     Request $request,
     NotificationService $notificationService
-) {
+): Response {
     $element = Asset::getById(1); // Optional
     
     $notificationService->sendToGroup(
@@ -107,6 +113,8 @@ public function defaultAction(
         'Example message', 
         $element // Optional linked element
     );
+    
+    // ...
 }
 ```
 

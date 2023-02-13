@@ -40,7 +40,7 @@ class DateTime implements DataProviderInterface
 {
     const PROVIDER_KEY = 'datetime';
 
-    public function load(VisitorInfo $visitorInfo)
+    public function load(VisitorInfo $visitorInfo): void
     {
         if ($visitorInfo->has(self::PROVIDER_KEY)) {
             // abort if there already is data for this provider 

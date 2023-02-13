@@ -403,7 +403,7 @@ class ExampleTest extends Unit
     /**
      * @dataProvider addDataProvider
      */
-    public function testPhpCanAddWithProvider(int $a, int $b, int $expected)
+    public function testPhpCanAddWithProvider(int $a, int $b, int $expected): void
     {
         $this->assertEquals($expected, $a + $b, sprintf('%d + %d = %d', $a, $b, $expected));
     }
@@ -464,7 +464,7 @@ use Tests\FunctionalTester;
 
 class IndexPageCest
 {
-    public function testFrontpage(FunctionalTester $I)
+    public function testFrontpage(FunctionalTester $I): void
     {
         $I->amOnPage('/');
         $I->canSeeResponseCodeIs(200);

@@ -43,18 +43,20 @@ namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Pimcore\Config;
 
 class DefaultController extends FrontendController
 {
-    public function defaultAction(Request $request, Config $config)
+    public function defaultAction(Request $request, Config $config): Response
     {
         // option 1 - use type-hinting to inject the config service
         $bar = $config['general']['valid_languages'];
         
         // option 2 - use the container parameter 
-        $foo = $this->getParameter('pimcore.config')['general']['valid_languages'];    
+        $foo = $this->getParameter('pimcore.config')['general']['valid_languages'];
+        
+        // ...
     }
-
 }
 ```

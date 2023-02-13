@@ -107,7 +107,7 @@ class VisitorInfoController
     /**
      * @Route("/visitor-info")
      */
-    public function visitorInfoAction(VisitorInfoStorageInterface $visitorInfoStorage)
+    public function visitorInfoAction(VisitorInfoStorageInterface $visitorInfoStorage): JsonResponse
     {
         $data = [
             'visitorId' => null

@@ -276,81 +276,68 @@ In the following example we're adding news items (objects) to the navigation usi
 
 ```php
 <?php
-namespace App\Twig\Extension;
 
+namespace App\Twig\Extension;
 
 use App\Website\LinkGenerator\NewsLinkGenerator;
 use Pimcore\Model\Document;
+use Pimcore\Navigation\Container;
 use Pimcore\Twig\Extension\Templating\Navigation;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class NavigationExtension extends AbstractExtension
 {
-        /**
-         * @var Navigation
-         */
-        protected $navigationHelper;
+    protected Navigation $navigationHelper;
+
+    protected NewsLinkGenerator $newsLinkGenerator;
+
+    public function __construct(Navigation $navigationHelper, NewsLinkGenerator $newsLinkGenerator)
+    {
+        $this->navigationHelper = $navigationHelper;
+        $this->$newsLinkGenerator = $newsLinkGenerator;
+    }
+    /**
+     * @return TwigFunction[]
+     */
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('app_navigation_news_links', [$this, 'getDataLinks'])
+        ];
+    }
     
-        /**
-         * @var NewsLinkGenerator
-         */
-        protected $newsLinkGenerator;
-    
-        /**
-         * @param Navigation $navigationHelper
-         */
-        public function __construct(Navigation $navigationHelper, NewsLinkGenerator $newsLinkGenerator)
-        {
-            $this->navigationHelper = $navigationHelper;
-            $this->$newsLinkGenerator = $newsLinkGenerator;
-        }
-        /**
-         * @return array|TwigFunction[]
-         */
-        public function getFunctions()
-        {
-            return [
-                new TwigFunction('app_navigation_news_links', [$this, 'getDataLinks'])
-            ];
-        }
-        
-            /**
-             * @param Document $document
-             * @param Document $startNode
-             *
-             * @return \Pimcore\Navigation\Container
-             * @throws \Exception
-             */
-            public function getNewsLinks(Document $document, Document $startNode)
-            {
-                $navigation = $this->navigationHelper->build([
-                    'active' => $document,
-                    'root' => $startNode,
-                    'pageCallback' => function($page, $document) {
-                        /** @var \Pimcore\Model\Document $document */
-                        /** @var \Pimcore\Navigation\Page\Document $page */
-                        if($document->getProperty("templateType") == "news") {
-                            $list = new \Pimcore\Model\DataObject\News\Listing;
-                            $list->load();
-                            foreach($list as $news) {
-                                $detailLink = $this->newsLinkGenerator->generate($news, ['document' => $document]);
-                                $uri = new \Pimcore\Navigation\Page\Document([
-                                    "label" => $news->getTitle(),
-                                    "id" => "object-" . $news->getId(),
-                                    "uri" => $detailLink,
-                                ]);
-                                $page->addPage($uri);
-                            }
-                        }
+    /**
+     * @throws \Exception
+     */
+    public function getNewsLinks(Document $document, Document $startNode): Container
+    {
+        $navigation = $this->navigationHelper->build([
+            'active' => $document,
+            'root' => $startNode,
+            'pageCallback' => function($page, $document) {
+                /** @var \Pimcore\Model\Document $document */
+                /** @var \Pimcore\Navigation\Page\Document $page */
+                if($document->getProperty("templateType") == "news") {
+                    $list = new \Pimcore\Model\DataObject\News\Listing;
+                    $list->load();
+                    foreach($list as $news) {
+                        $detailLink = $this->newsLinkGenerator->generate($news, ['document' => $document]);
+                        $uri = new \Pimcore\Navigation\Page\Document([
+                            "label" => $news->getTitle(),
+                            "id" => "object-" . $news->getId(),
+                            "uri" => $detailLink,
+                        ]);
+                        $page->addPage($uri);
                     }
-                ]);
-        
-                return $navigation;
+                }
             }
+        ]);
+
+        return $navigation;
+    }
 }
 
-?>
 ```
 
 ```twig
@@ -383,63 +370,54 @@ But sometimes it's necessary to get some properties or other data out of the doc
 For that we've introduced a new parameter for the navigation extension, which acts as a callback and allows to map custom data onto the navigation page item.
 ```php
 <?php
+
 namespace App\Twig\Extension;
 
 use Pimcore\Model\Document;
+use Pimcore\Navigation\Container;
 use Pimcore\Twig\Extension\Templating\Navigation;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class NavigationExtension extends AbstractExtension
 {
-        /**
-         * @var Navigation
-         */
-        protected $navigationHelper;
+    protected Navigation $navigationHelper;
+
+    public function __construct(Navigation $navigationHelper)
+    {
+        $this->navigationHelper = $navigationHelper;
+    }
     
-        /**
-         * @param Navigation $navigationHelper
-         */
-        public function __construct(Navigation $navigationHelper)
-        {
-            $this->navigationHelper = $navigationHelper;
-        }
-        
-        /**
-         * @return array|TwigFunction[]
-         */
-        public function getFunctions()
-        {
-            return [
-                new TwigFunction('app_navigation_custom', [$this, 'getCustomNavigation'])
-            ];
-        }
-        
-        /**
-         * @param Document $document
-         * @param Document $startNode
-         *
-         * @return \Pimcore\Navigation\Container
-         * @throws \Exception
-         */
-        public function getCustomNavigation(Document $document, Document $startNode)
-        {
-            $navigation = $this->navigationHelper->build([
-                'active' => $document,
-                'root' => $startNode, 
-                'pageCallback' => function ($page, $document) {
-                    $page->setCustomSetting("myCustomProperty", $document->getProperty("myCustomProperty"));
-                    $page->setCustomSetting("subListClass", $document->getProperty("subListClass"));
-                    $page->setCustomSetting("title", $document->getTitle());
-                    $page->setCustomSetting("headline", $document->getEditable("headline")->getData());
-                }]
-            );
+    /**
+     * @return TwigFunction[]
+     */
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('app_navigation_custom', [$this, 'getCustomNavigation'])
+        ];
+    }
     
-            return $navigation;
-        }
+    /**
+     * @throws \Exception
+     */
+    public function getCustomNavigation(Document $document, Document $startNode): Container
+    {
+        $navigation = $this->navigationHelper->build([
+            'active' => $document,
+            'root' => $startNode, 
+            'pageCallback' => function ($page, $document) {
+                $page->setCustomSetting("myCustomProperty", $document->getProperty("myCustomProperty"));
+                $page->setCustomSetting("subListClass", $document->getProperty("subListClass"));
+                $page->setCustomSetting("title", $document->getTitle());
+                $page->setCustomSetting("headline", $document->getEditable("headline")->getData());
+            }]
+        );
+
+        return $navigation;
+    }
 }
 
-?>
 ```
 
 ```twig

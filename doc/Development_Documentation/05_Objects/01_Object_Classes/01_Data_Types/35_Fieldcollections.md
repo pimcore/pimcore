@@ -75,7 +75,8 @@ Field collections do not support inheritance out of the box because currently fi
 Nevertheless you can use inheritance for field collections for data maintenance by [overriding the class](../../../20_Extending_Pimcore/03_Overriding_Models.md) which contains the field collection field and adding a custom getter method to this overriding class:
 ```php
 // custom getter for field collection field named 'fieldCollection'
-public function getFieldCollection () {
+public function getFieldCollection(): mixed
+{
 	$data = parent::getFieldCollection();
 
     $inheritanceEnabled = DataObject::getGetInheritedValues();

@@ -52,11 +52,12 @@ Your `App\Model\DataObject\News`:
 
 namespace App\Model\DataObject; 
 
-class News extends \Pimcore\Model\DataObject\News {
-
+class News extends \Pimcore\Model\DataObject\News
+{
     // start overriding stuff 
-    public function getMyCustomAttribute() {
-        
+    public function getMyCustomAttribute(): mixed
+    {
+        ...
     }
 }
 ```

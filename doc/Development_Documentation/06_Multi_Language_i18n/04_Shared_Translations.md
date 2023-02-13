@@ -46,17 +46,20 @@ Parameters in translations can be wrapped in double curly braces (`{{` and `}}`)
 
 namespace App\Controller;
 
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Pimcore\Controller\FrontendController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContentController extends FrontendController
 {
-    public function defaultAction(TranslatorInterface $translator)
+    public function defaultAction(TranslatorInterface $translator): Response
     {
         $translatedLegalNotice = $translator->trans("legal_notice");
         $siteName = "Demo"; // or get dynamically
         // variable interpolation, 'about' translates to 'About {{siteName}}'
         $translatedAbout = $translator->trans("about", ['siteName' => $siteName]);
+        
+        // ...
     }
 }
 ```
