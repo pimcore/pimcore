@@ -197,11 +197,11 @@ class Select extends Data implements
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return  null|string|int
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -213,11 +213,11 @@ class Select extends Data implements
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return  null|string|int
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?string
+    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): null|string|int
     {
         return $data;
     }
@@ -241,12 +241,12 @@ class Select extends Data implements
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return  null|string|int
      *
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -256,12 +256,12 @@ class Select extends Data implements
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return  null|string|int
      *
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         return $this->getDataFromResource($data, $object, $params);
     }
