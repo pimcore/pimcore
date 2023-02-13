@@ -183,6 +183,7 @@ pimcore:
   - `@ResponseHeader` annotation must be replaced with `#[ResponseHeader]` attribute. Removed deprecated `Pimcore\Controller\Configuration\ResponseHeader`.
   - `@ParamConverter` annotation must be replaced with `#[DataObjectParam]` attribute.
   Replace other annotations provided by [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers)
+- [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
 
 
 ## 10.6.0
