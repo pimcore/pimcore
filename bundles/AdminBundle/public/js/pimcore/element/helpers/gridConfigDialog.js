@@ -281,20 +281,20 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
                     value: this.settings.setAsFavourite
                 }
             )
-
-            this.saveFilters = new Ext.form.field.Checkbox(
-                {
-                    fieldLabel: "Save filters",
-                    inputValue: true,
-                    name: "saveFilters",
-                    value: this.settings.saveFilters
-                }
-            );
-
-            items.push(this.shareGlobally);
-            items.push(this.setAsFavourite);
-            items.push(this.saveFilters);
         }
+
+        this.saveFilters = new Ext.form.field.Checkbox(
+            {
+                fieldLabel: "Save filters",
+                inputValue: true,
+                name: "saveFilters",
+                value: this.settings.saveFilters
+            }
+        );
+
+        items.push(this.shareGlobally);
+        items.push(this.setAsFavourite);
+        items.push(this.saveFilters);
 
         if (user.isAllowed("share_configurations")) {
             items.push(this.userSharingField);
