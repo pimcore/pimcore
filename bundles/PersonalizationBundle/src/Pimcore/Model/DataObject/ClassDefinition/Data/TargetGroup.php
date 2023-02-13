@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\PersonalizationBundle\Model\DataObject\ClassDefinition\Data;
+namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -148,4 +148,3 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         return $blockedVars;
     }
 }
-@class_alias(TargetGroup::class,'Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup');
