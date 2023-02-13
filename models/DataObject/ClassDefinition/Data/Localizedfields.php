@@ -444,7 +444,15 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $object = $object->getObject();
             }
 
-            $localizedFields->setObject($object, false);
+            $dirtyLanguages = $localizedFields->getDirtyLanguages();
+            $localizedFields->setObject($object);
+            if(is_array($dirtyLanguages)) {
+                $localizedFields->markLanguagesAsDirty($dirtyLanguages);
+            }
+            else {
+                $localizedFields->resetLanguageDirtyMap();
+            }
+
             $context = isset($params['context']) ? $params['context'] : null;
             $localizedFields->setContext($context);
             $localizedFields->loadLazyData();
