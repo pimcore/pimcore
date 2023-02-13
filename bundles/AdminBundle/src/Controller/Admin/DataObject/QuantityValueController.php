@@ -43,6 +43,8 @@ class QuantityValueController extends AdminController
      */
     public function unitProxyGetAction(Request $request): JsonResponse
     {
+        $this->checkPermission('quantityValueUnits');
+
         $list = new Unit\Listing();
 
         $order = ['ASC', 'ASC', 'ASC'];
@@ -100,6 +102,8 @@ class QuantityValueController extends AdminController
      */
     public function unitProxyAction(Request $request): JsonResponse
     {
+        $this->checkPermission('quantityValueUnits');
+
         if ($request->get('data')) {
             if ($request->get('xaction') == 'destroy') {
                 $data = json_decode($request->get('data'), true);
@@ -172,6 +176,8 @@ class QuantityValueController extends AdminController
      */
     public function unitListAction(Request $request): JsonResponse
     {
+        $this->checkPermission('quantityValueUnits');
+
         $list = new Unit\Listing();
         $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
         $list->setOrder(['ASC', 'ASC', 'ASC']);
@@ -217,6 +223,8 @@ class QuantityValueController extends AdminController
      */
     public function convertAction(Request $request, UnitConversionService $conversionService): JsonResponse
     {
+        $this->checkPermission('quantityValueUnits');
+
         $fromUnitId = $request->get('fromUnit');
         $toUnitId = $request->get('toUnit');
 
@@ -245,6 +253,8 @@ class QuantityValueController extends AdminController
      */
     public function convertAllAction(Request $request, UnitConversionService $conversionService): JsonResponse
     {
+        $this->checkPermission('quantityValueUnits');
+
         $unitId = $request->get('unit');
 
         $fromUnit = Unit::getById($unitId);
