@@ -46,7 +46,7 @@ class Chromium
     /**
      * @throws \Exception
      */
-    public static function convert(string $url, string $outputFile, ?string $sessionId = null, ?string $sessionName = null, string $windowSize = '1280,1024'): bool
+    public static function convert(string $url, string $outputFile, ?string $sessionName = null,  ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
         $binary = self::getChromiumBinary();
         if (!$binary) {
