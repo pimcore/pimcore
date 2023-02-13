@@ -559,7 +559,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         );
 
         $viewParamsBag['paginator'] = $paginator;
-        $viewParamsBag['count'] = count($tokens);
+        $viewParamsBag['count'] = $total;
 
         $viewParamsBag['msg']['error'] = $params['error'] ?? null;
         $viewParamsBag['msg']['success'] = $params['success'] ?? null;
