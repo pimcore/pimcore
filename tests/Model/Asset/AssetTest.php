@@ -15,7 +15,6 @@
 
 namespace Pimcore\Tests\Model\Asset;
 
-use Pimcore\Image\Adapter\Imagick;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
