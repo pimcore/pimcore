@@ -409,7 +409,7 @@ class Processor
                                 trigger_deprecation(
                                     'pimcore/pimcore',
                                     '10.6',
-                                    'Using Callable in thumbnail transformations is deprecated will not work on Pimcore 11.'
+                                    'Using Callable in thumbnail transformations is deprecated and will not work on Pimcore 11.'
                                 );
 
                                 $transformation['method']($image);
