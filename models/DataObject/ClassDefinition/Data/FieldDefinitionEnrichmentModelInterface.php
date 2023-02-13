@@ -43,14 +43,14 @@ interface FieldDefinitionEnrichmentModelInterface
     /**
      * Get all available fieldDefinitions
      *
-     * @return Data[]|null
+     * @return array<string, Data>
      */
-    public function getFieldDefinitions(array $context = []): ?array;
+    public function getFieldDefinitions(array $context = []): array;
 
     /**
      * Set fieldDefinition collection
      *
-     * @param Data[] $fieldDefinitions
+     * @param array<string, Data>|null $fieldDefinitions
      *
      * @return $this
      */
