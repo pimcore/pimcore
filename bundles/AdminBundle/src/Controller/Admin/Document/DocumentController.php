@@ -1158,8 +1158,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $viewParams = [];
 
-        Gotenberg::convert($fromUrl, $fromFile);
-        Gotenberg::convert($toUrl, $toFile);
+        $session = $request->getSession();
+
+        Gotenberg::convert($fromUrl, $fromFile, $session->getName(), $session->getId());
+        Gotenberg::convert($toUrl, $toFile, $session->getName(), $session->getId());
 
         $image1 = new Imagick(str_replace('.png','.pdf[0]',$fromFile));
         $image2 = new Imagick(str_replace('.png','.pdf[0]',$toFile));

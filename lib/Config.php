@@ -194,7 +194,7 @@ final class Config implements ArrayAccess
                 $cacheKey .= '_' . $language;
             }
 
-            $siteId = null;
+            $siteId = 0;
             if (Model\Site::isSiteRequest()) {
                 $siteId = Model\Site::getCurrentSite()->getId();
             } elseif (Tool::isFrontendRequestByAdmin()) {
@@ -438,7 +438,7 @@ final class Config implements ArrayAccess
 
     public static function getEnvironment(): string
     {
-        return $_SERVER['APP_ENV'];
+        return $_SERVER['APP_ENV'] ?? 'dev';
     }
 
     /**
