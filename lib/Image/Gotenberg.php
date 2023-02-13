@@ -18,8 +18,6 @@ namespace Pimcore\Image;
 
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Pimcore\Logger;
-use Pimcore\Tool\Session;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 /**
  * @internal
@@ -34,24 +32,31 @@ class Gotenberg
     /**
      * @throws \Exception
      */
-    public static function convert(string $url, string $outputFile): bool
+    public static function convert(string $url, string $outputFile, ?string $sessionId = null, ?string $sessionName = null, string $windowSize = '1280,1024'): bool
     {
         $outputPath = dirname($outputFile);
         $filename = basename($outputFile, '.png');
 
         try {
             $headers = [];
-            if (php_sapi_name() !== 'cli') {
-                $headers['Cookie'] = Session::useSession(function (AttributeBagInterface $session) {
-                    return Session::getSessionName() . '=' . Session::getSessionId();
-                });
+            if (null !== $sessionId && null !== $sessionName) {
+                $headers['Cookie'] = $sessionName . '=' . $sessionId;
             }
 
             $chromium = GotenbergAPI::chromium('gotenberg:3000');
 
-            if ($headers){
+            if (!empty($headers)) {
                 $chromium->extraHttpHeaders($headers);
             }
+
+            list($paperWidth, $paperHeight) = explode(',', $windowSize);
+
+            // the PDF paper size works in inches, 96 is to convert pixels to inches
+            $chromium->paperSize((int)$paperWidth / 96, (int)$paperHeight / 96);
+            $chromium->printBackground();
+            $chromium->emulateScreenMediaType();
+            $chromium->nativePageRanges('1');
+
             $url = str_replace('localhost', 'nginx:80', $url);
             $request = $chromium->outputFilename($filename)->url($url);
             GotenbergAPI::save($request, $outputPath);
