@@ -122,7 +122,7 @@ pimcore.element.dependencies = Class.create({
                             + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1,
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1, filter: 'string',
                     renderer:
                         function (value, metaData, record, rowIndex, colIndex, store) {
                             if(record.data.published === false) {
@@ -230,7 +230,7 @@ pimcore.element.dependencies = Class.create({
                             + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1,
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1, filter: 'string',
                     renderer:
                         function (value, metaData, record, rowIndex, colIndex, store) {
                             if(record.data.published === false) {
