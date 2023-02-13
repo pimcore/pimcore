@@ -40,7 +40,6 @@ pimcore.object.gridexport.xlsx = Class.create(pimcore.element.gridexport.abstrac
         });
     },
     getExportSettingsContainer: function () {
-        console.log('test')
         return new Ext.form.FieldSet({
             title: t('export_xlsx'),
             items: [
