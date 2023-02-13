@@ -1104,7 +1104,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     /**
      * @return $this
      */
-    public function setCompositeIndices(?array $compositeIndices): static
+    public function setCompositeIndices(array $compositeIndices): static
     {
         $class = $this->getFieldDefinitions([]);
         foreach ($compositeIndices as $indexInd => $compositeIndex) {
@@ -1116,7 +1116,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
                 }
             }
         }
-        $this->compositeIndices = $compositeIndices ?? [];
+        $this->compositeIndices = $compositeIndices;
 
         return $this;
     }
