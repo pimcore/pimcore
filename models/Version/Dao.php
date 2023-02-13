@@ -146,7 +146,6 @@ class Dao extends Model\Dao\AbstractDao
                         // call the garbage collector if memory consumption is > 100MB
                         if (memory_get_usage() > 100000000 && ($count % 100 == 0)) {
                             \Pimcore::collectGarbage();
-                            sleep(1);
                         }
 
                         if (count($versionIds) > 1000) {
