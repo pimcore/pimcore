@@ -1002,7 +1002,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $transactionId = $request->get('transactionId');
 
-        $idStore = useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId) {
+        $idStore = Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId) {
             return $session->get($transactionId);
         }, 'pimcore_copy');
 
