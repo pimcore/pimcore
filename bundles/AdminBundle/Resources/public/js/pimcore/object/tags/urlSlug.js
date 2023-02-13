@@ -154,9 +154,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
                         sanitizedPart = part.replace(/[#\?\*\:\\\\<\>\|"%&@=;]/g, '-');
                         if (sanitizedPart != part) {
-                            this.setValue(sanitizedPart);
-
-                            return false;
+                            return t('url-slug-invalid-chars');
                         }
                     }
                 }
