@@ -376,7 +376,14 @@ Ext.onReady(function () {
 
     //search element types
     pimcore.globalmanager.add("document_search_types", ["page", "snippet", "folder", "link", "hardlink", "email", "newsletter"]);
-    pimcore.globalmanager.add("asset_search_types", ["folder", "image", "text", "audio", "video", "document", "archive", "unknown"]);
+    pimcore.globalmanager.appendToArray("asset_search_types", "folder");
+    pimcore.globalmanager.appendToArray("asset_search_types", "image");
+    pimcore.globalmanager.appendToArray("asset_search_types", "text");
+    pimcore.globalmanager.appendToArray("asset_search_types", "audio");
+    pimcore.globalmanager.appendToArray("asset_search_types", "video");
+    pimcore.globalmanager.appendToArray("asset_search_types", "document");
+    pimcore.globalmanager.appendToArray("asset_search_types", "archive");
+    pimcore.globalmanager.appendToArray("asset_search_types", "unknown");
     pimcore.globalmanager.add("object_search_types", ["object", "folder", "variant"]);
 
     //translation admin keys
