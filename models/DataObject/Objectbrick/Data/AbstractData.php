@@ -21,13 +21,15 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\ObjectAwareFieldInterface;
 
 /**
  * @method Dao getDao()
  * @method void save(Concrete $object, $params = [])
  * @method array getRelationData($field, $forOwner, $remoteClassId)
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface, ObjectAwareFieldInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
     use Model\Element\ElementDumpStateTrait;
@@ -95,7 +97,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $this->getObject();
     }
 
-    public function delete(Concrete $object)
+    public function delete(Concrete $object): void
     {
         $this->doDelete = true;
         $this->getDao()->delete($object);
@@ -106,7 +108,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      * @internal
      * Flushes the already collected items of the container object
      */
-    protected function flushContainer()
+    protected function flushContainer(): void
     {
         $object = $this->getObject();
         if ($object) {
@@ -150,6 +152,16 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
+
+        if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
+            $dirtyLanguages = $this->localizedfields->getDirtyLanguages();
+            $this->localizedfields->setObject($object);
+            if (is_array($dirtyLanguages)) {
+                $this->localizedfields->markLanguagesAsDirty($dirtyLanguages);
+            } else {
+                $this->localizedfields->resetLanguageDirtyMap();
+            }
+        }
 
         return $this;
     }
@@ -205,7 +217,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface
+                && $field instanceof DataObject\ClassDefinition\Data
+                && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -229,7 +243,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $parentVars = parent::__sleep();
         $blockedVars = ['loadedLazyKeys', 'object'];
@@ -249,7 +263,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $finalVars;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->object) {
             $this->objectId = $this->object->getId();

@@ -46,7 +46,7 @@ class EmailController extends DocumentControllerBase
             throw $this->createNotFoundException('Email not found');
         }
 
-        if (($lock = $this->checkForLock($email)) instanceof JsonResponse) {
+        if (($lock = $this->checkForLock($email, $request->getSession()->getId())) instanceof JsonResponse) {
             return $lock;
         }
 
@@ -91,7 +91,7 @@ class EmailController extends DocumentControllerBase
         }
 
         list($task, $page, $version) = $this->saveDocument($page, $request);
-        $this->saveToSession($page);
+        $this->saveToSession($page, $request->getSession());
 
         if ($task === self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);
@@ -118,11 +118,11 @@ class EmailController extends DocumentControllerBase
         }
     }
 
-    protected function setValuesToDocument(Request $request, Document $page): void
+    protected function setValuesToDocument(Request $request, Document $document): void
     {
-        $this->addSettingsToDocument($request, $page);
-        $this->addDataToDocument($request, $page);
-        $this->addPropertiesToDocument($request, $page);
-        $this->applySchedulerDataToElement($request, $page);
+        $this->addSettingsToDocument($request, $document);
+        $this->addDataToDocument($request, $document);
+        $this->addPropertiesToDocument($request, $document);
+        $this->applySchedulerDataToElement($request, $document);
     }
 }

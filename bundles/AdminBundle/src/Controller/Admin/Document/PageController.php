@@ -23,6 +23,7 @@ use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
+use Pimcore\Localization\LocaleService;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
@@ -30,6 +31,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Templating\Renderer\EditableRenderer;
+use Pimcore\Tool\Frontend;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,7 +65,7 @@ class PageController extends DocumentControllerBase
             throw $this->createNotFoundException('Page not found');
         }
 
-        if (($lock = $this->checkForLock($page)) instanceof JsonResponse) {
+        if (($lock = $this->checkForLock($page, $request->getSession()->getId())) instanceof JsonResponse) {
             return $lock;
         }
 
@@ -123,7 +125,7 @@ class PageController extends DocumentControllerBase
         }
 
         /** @var Document\Page|null $pageSession */
-        $pageSession = $this->getFromSession($oldPage);
+        $pageSession = $this->getFromSession($oldPage, $request->getSession());
 
         if ($pageSession) {
             $page = $pageSession;
@@ -188,7 +190,7 @@ class PageController extends DocumentControllerBase
                 'data' => $data,
             ]);
         } else {
-            $this->saveToSession($page);
+            $this->saveToSession($page, $request->getSession());
 
             $draftData = [];
             if ($version) {
@@ -216,7 +218,7 @@ class PageController extends DocumentControllerBase
     public function generatePreviewsAction(Request $request, MessageBusInterface $messengerBusPimcoreCore): JsonResponse
     {
         $list = new Document\Listing();
-        $list->setCondition('type = ?', ['page']);
+        $list->setCondition('`type` = ?', ['page']);
 
         foreach ($list->loadIdList() as $docId) {
             $messengerBusPimcoreCore->dispatch(
@@ -257,8 +259,8 @@ class PageController extends DocumentControllerBase
      */
     public function checkPrettyUrlAction(Request $request): JsonResponse
     {
-        $docId = $request->get('id');
-        $path = (string) trim($request->get('path'));
+        $docId = $request->request->getInt('id');
+        $path = trim($request->request->get('path', ''));
 
         $success = true;
 
@@ -288,14 +290,31 @@ class PageController extends DocumentControllerBase
         }
 
         $list = new Document\Listing();
-        $list->setCondition('(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
+        $list->setCondition('(CONCAT(`path`, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
             AND id != ?', [
             $path, $path, $docId,
         ]);
 
         if ($list->getTotalCount() > 0) {
-            $success = false;
-            $message[] = 'URL path already exists.';
+            $checkDocument = Document::getById($docId);
+            $checkSite     = Frontend::getSiteForDocument($checkDocument);
+            $checkSiteId   = empty($checkSite) ? 0 : $checkSite->getId();
+
+            foreach ($list as $document) {
+                if (empty($document)) {
+                    continue;
+                }
+
+                $site   = Frontend::getSiteForDocument($document);
+                $siteId = empty($site) ? 0 : $site->getId();
+
+                if ($siteId === $checkSiteId) {
+                    $success   = false;
+                    $message[] = 'URL path already exists.';
+
+                    break;
+                }
+            }
         }
 
         return $this->adminJson([
@@ -313,8 +332,8 @@ class PageController extends DocumentControllerBase
      */
     public function clearEditableDataAction(Request $request): JsonResponse
     {
-        $targetGroupId = $request->get('targetGroup');
-        $docId = $request->get('id');
+        $targetGroupId = $request->request->get('targetGroup');
+        $docId = $request->request->getInt('id');
 
         $doc = Document\PageSnippet::getById($docId);
 
@@ -336,7 +355,7 @@ class PageController extends DocumentControllerBase
             }
         }
 
-        $this->saveToSession($doc, true);
+        $this->saveToSession($doc, $request->getSession(), true);
 
         return $this->adminJson([
             'success' => true,
@@ -392,6 +411,7 @@ class PageController extends DocumentControllerBase
      * @param Environment $twig
      * @param EditableRenderer $editableRenderer
      * @param DocumentResolver $documentResolver
+     * @param LocaleService $localeService
      *
      * @return JsonResponse
      *
@@ -404,7 +424,8 @@ class PageController extends DocumentControllerBase
         EditmodeEditableDefinitionCollector $definitionCollector,
         Environment $twig,
         EditableRenderer $editableRenderer,
-        DocumentResolver $documentResolver
+        DocumentResolver $documentResolver,
+        LocaleService $localeService
     ): JsonResponse {
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
         $blockStateStack->loadArray($blockStateStackData);
@@ -425,6 +446,9 @@ class PageController extends DocumentControllerBase
         // so we use the attribute as a workaround
         $request->attributes->set(EditmodeResolver::ATTRIBUTE_EDITMODE, true);
 
+        // setting locale manually here before rendering, to make sure editables use the right locale from document
+        $localeService->setLocale($document->getProperty('language'));
+
         $areaBlockConfig = json_decode($request->get('areablockConfig'), true);
         /** @var Document\Editable\Areablock $areablock */
         $areablock = $editableRenderer->getEditable($document, 'areablock', $request->get('realName'), $areaBlockConfig, true);
@@ -432,7 +456,7 @@ class PageController extends DocumentControllerBase
         $areablock->setEditmode(true);
         $areaBrickData = json_decode($request->get('areablockData'), true);
         $areablock->setDataFromEditmode($areaBrickData);
-        $htmlCode = trim($areablock->renderIndex($request->get('index'), true));
+        $htmlCode = trim($areablock->renderIndex((int) $request->get('index'), true));
 
         return new JsonResponse([
             'editableDefinitions' => $definitionCollector->getDefinitions(),
@@ -440,11 +464,11 @@ class PageController extends DocumentControllerBase
         ]);
     }
 
-    protected function setValuesToDocument(Request $request, Document $page)
+    protected function setValuesToDocument(Request $request, Document $document): void
     {
-        $this->addSettingsToDocument($request, $page);
-        $this->addDataToDocument($request, $page);
-        $this->addPropertiesToDocument($request, $page);
-        $this->applySchedulerDataToElement($request, $page);
+        $this->addSettingsToDocument($request, $document);
+        $this->addDataToDocument($request, $document);
+        $this->addPropertiesToDocument($request, $document);
+        $this->applySchedulerDataToElement($request, $document);
     }
 }

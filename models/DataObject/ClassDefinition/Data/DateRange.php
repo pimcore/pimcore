@@ -33,6 +33,7 @@ class DateRange extends Data implements
     VarExporterInterface,
     NormalizerInterface
 {
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -70,29 +71,9 @@ class DateRange extends Data implements
     ];
 
     /**
-     * @internal
-     */
-    public string|int $width = 0;
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): void
-    {
-        if (\is_numeric($width)) {
-            $width = (int) $width;
-        }
-
-        $this->width = $width;
-    }
-
-    /**
      * @param DataObject\Concrete|null $object
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -127,8 +108,7 @@ class DateRange extends Data implements
     /**
      * @param null|DataObject\Concrete $object
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
@@ -161,8 +141,7 @@ class DateRange extends Data implements
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -200,8 +179,7 @@ class DateRange extends Data implements
      *
      * @return CarbonPeriod|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {

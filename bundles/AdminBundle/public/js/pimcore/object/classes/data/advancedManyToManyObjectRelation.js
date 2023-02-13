@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.advancedManyToManyObjectRelation");
+/**
+ * @private
+ */
 pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimcore.object.classes.data.data, {
 
     type: "advancedManyToManyObjectRelation",
@@ -110,6 +113,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             name: 'allowedClassId',
             value: this.datax.allowedClassId,
             forceSelection:true,
+            allowBlank: false,
             listeners: {
                 change: function(field, classNamevalue, oldValue) {
                     this.datax.allowedClassId = classNamevalue;
@@ -118,33 +122,16 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                     }
                 }.bind(this)
             }
-
         });
 
         this.specificPanel.add(this.classCombo);
-
-        this.specificPanel.add(
-            {
-                xtype: "combo",
-                fieldLabel: t("display_mode"),
-                name: "displayMode",
-                value: this.datax.displayMode ?? 'grid',
-                labelWidth: 140,
-                forceSelection: true,
-                width: 400,
-                store: [
-                    ['grid', t('display_mode_grid')],
-                    ['combo', t('display_mode_combo')],
-                ]
-            }
-        );
 
         this.fieldStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
                 url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                 extraParams: {
-                    no_brick_columns: "true",
+                    no_brick_columns: true,
                     gridtype: 'all',
                     name: this.datax.allowedClassId
                 },
@@ -407,6 +394,22 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             this.datax.columns = cols;
         }
         return this.datax;
+    },
+
+    isValid: function ($super) {
+        if(!$super()) {
+            return false;
+        }
+
+        const data = this.getData();
+        const allowedClassId = trim(data.allowedClassId);
+
+        if (!allowedClassId || allowedClassId === "null" || allowedClassId.length < 1) {
+            this.datax.invalidFieldError = t("mandatory_field_empty") + " - " + t('objectsMetadata_allowed_class');
+            return false;
+        }
+
+        return true;
     },
 
     applyData: function ($super){

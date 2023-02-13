@@ -29,10 +29,16 @@ abstract class AbstractOfferItem extends Concrete
      */
     abstract public function getProduct(): ?\Pimcore\Model\Element\AbstractElement;
 
-    abstract public function setProduct(?\Pimcore\Model\Element\AbstractElement $product);
+    /**
+     * @return $this
+     */
+    abstract public function setProduct(?\Pimcore\Model\Element\AbstractElement $product): static;
 
     abstract public function getProductNumber(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setProductNumber(?string $productNumber): static;
 
     abstract public function getProductName(): ?string;
@@ -40,9 +46,11 @@ abstract class AbstractOfferItem extends Concrete
     /**
      * @param string|null $productName
      *
+     * @return $this
+     *
      * @throws UnsupportedException
      */
-    abstract public function setProductName(?string $productName);
+    abstract public function setProductName(?string $productName): static;
 
     /**
      * @return float|null
@@ -51,33 +59,57 @@ abstract class AbstractOfferItem extends Concrete
      */
     abstract public function getAmount(): ?float;
 
+    /**
+     * @return $this
+     */
     abstract public function setAmount(?float $amount): static;
 
     abstract public function getOriginalTotalPrice(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setOriginalTotalPrice(?string $originalTotalPrice): static;
 
     abstract public function getFinalTotalPrice(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setFinalTotalPrice(?string $finalTotalPrice): static;
 
     abstract public function getDiscount(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setDiscount(?string $discount): static;
 
     abstract public function getDiscountType(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setDiscountType(?string $discountType): static;
 
     abstract public function getSubItems(): array;
 
+    /**
+     * @return $this
+     */
     abstract public function setSubItems(?array $subItems): static;
 
     abstract public function getComment(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setComment(?string $comment): static;
 
     abstract public function getCartItemKey(): ?string;
 
+    /**
+     * @return $this
+     */
     abstract public function setCartItemKey(?string $cartItemKey): static;
 }

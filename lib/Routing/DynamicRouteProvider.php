@@ -50,7 +50,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
         }
     }
 
-    public function addHandler(DynamicRouteHandlerInterface $handler)
+    public function addHandler(DynamicRouteHandlerInterface $handler): void
     {
         if (!in_array($handler, $this->handlers, true)) {
             $this->handlers[] = $handler;
@@ -63,6 +63,11 @@ final class DynamicRouteProvider implements RouteProviderInterface
     public function getRouteCollectionForRequest(Request $request): RouteCollection
     {
         $collection = new RouteCollection();
+
+        if ($request->attributes->has('_controller')) {
+            return $collection;
+        }
+
         $path = $originalPath = urldecode($request->getPathInfo());
 
         // site path handled by FrontendRoutingListener which runs before routing is started
@@ -80,7 +85,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteByName($name): SymfonyRoute
+    public function getRouteByName(string $name): SymfonyRoute
     {
         foreach ($this->handlers as $handler) {
             try {

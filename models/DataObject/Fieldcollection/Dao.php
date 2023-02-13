@@ -35,6 +35,9 @@ class Dao extends Model\Dao\AbstractDao
         return $this->delete($object, true);
     }
 
+    /**
+     * @return DataObject\Fieldcollection\Data\AbstractData[]
+     */
     public function load(DataObject\Concrete $object): array
     {
         /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
@@ -51,7 +54,7 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $results = $this->db->fetchAllAssociative('SELECT * FROM ' . $tableName . ' WHERE o_id = ? AND fieldname = ? ORDER BY `index` ASC', [$object->getId(), $this->model->getFieldname()]);
+                $results = $this->db->fetchAllAssociative('SELECT * FROM ' . $tableName . ' WHERE id = ? AND fieldname = ? ORDER BY `index` ASC', [$object->getId(), $this->model->getFieldname()]);
             } catch (\Exception $e) {
                 $results = [];
             }
@@ -134,10 +137,9 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param DataObject\Concrete $object
      * @param bool $saveMode true if called from save method
      *
-     * @return array
+     * @return array{saveLocalizedRelations?: true, saveFieldcollectionRelations?: true}
      */
     public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {
@@ -159,11 +161,11 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = $definition->getTableName($object->getClass());
 
             try {
-                $dataExists = $this->db->fetchOne('SELECT `o_id` FROM `'.$tableName."` WHERE
-         `o_id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1");
+                $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$tableName."` WHERE
+         `id` = '".$object->getId()."' AND `fieldname` = '".$this->model->getFieldname()."' LIMIT 1");
                 if ($dataExists) {
                     $this->db->delete($tableName, [
-                        'o_id' => $object->getId(),
+                        'id' => $object->getId(),
                         'fieldname' => $this->model->getFieldname(),
                     ]);
                 }

@@ -19,11 +19,13 @@ namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\ObjectAwareFieldInterface;
 
 /**
  * @method Dao getDao()
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface, ObjectAwareFieldInterface
 {
     use Model\Element\ElementDumpStateTrait;
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
@@ -78,6 +80,16 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $this->objectId = $object?->getId();
         $this->object = $object;
 
+        if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
+            $dirtyLanguages = $this->localizedfields->getDirtyLanguages();
+            $this->localizedfields->setObject($object);
+            if (is_array($dirtyLanguages)) {
+                $this->localizedfields->markLanguagesAsDirty($dirtyLanguages);
+            } else {
+                $this->localizedfields->resetLanguageDirtyMap();
+            }
+        }
+
         return $this;
     }
 
@@ -123,7 +135,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface
+                && $field instanceof  Model\DataObject\ClassDefinition\Data
+                && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -147,7 +161,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $parentVars = parent::__sleep();
         $blockedVars = ['loadedLazyKeys', 'object'];
@@ -167,7 +181,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $finalVars;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->object) {
             $this->objectId = $this->object->getId();

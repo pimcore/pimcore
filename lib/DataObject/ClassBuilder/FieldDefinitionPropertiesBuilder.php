@@ -24,8 +24,8 @@ class FieldDefinitionPropertiesBuilder implements FieldDefinitionPropertiesBuild
     {
         $cd = '';
 
-        $cd .= 'protected $o_classId = "' . $classDefinition->getId(). "\";\n";
-        $cd .= 'protected $o_className = "'.$classDefinition->getName().'"'.";\n";
+        $cd .= 'protected $classId = "' . $classDefinition->getId(). "\";\n";
+        $cd .= 'protected $className = "'.$classDefinition->getName().'"'.";\n";
 
         if (is_array($classDefinition->getFieldDefinitions()) && count($classDefinition->getFieldDefinitions())) {
             foreach ($classDefinition->getFieldDefinitions() as $key => $def) {

@@ -51,8 +51,8 @@ class RecyclebinController extends AdminController implements KernelControllerEv
             $db = \Pimcore\Db::get();
 
             $list = new Recyclebin\Item\Listing();
-            $list->setLimit($request->get('limit'));
-            $list->setOffset($request->get('start'));
+            $list->setLimit((int) $request->get('limit', 50));
+            $list->setOffset((int) $request->get('start', 0));
 
             $list->setOrderKey('date');
             $list->setOrder('DESC');
@@ -66,7 +66,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
             $conditionFilters = [];
 
             if ($request->get('filterFullText')) {
-                $conditionFilters[] = 'path LIKE ' . $list->quote('%'. $list->escapeLike($request->get('filterFullText')) .'%');
+                $conditionFilters[] = '`path` LIKE ' . $list->quote('%'. $list->escapeLike($request->get('filterFullText')) .'%');
             }
 
             $filters = $request->get('filter');
@@ -112,7 +112,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
 
                     $field = $db->quoteIdentifier($filterField);
                     if (($filter['field'] ?? false) == 'fullpath') {
-                        $field = 'CONCAT(path,filename)';
+                        $field = 'CONCAT(`path`,filename)';
                     }
 
                     if ($filter['type'] == 'date' && $operator == '=') {
@@ -183,11 +183,11 @@ class RecyclebinController extends AdminController implements KernelControllerEv
     public function addAction(Request $request): JsonResponse
     {
         try {
-            $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
+            $element = Element\Service::getElementById($request->request->get('type'), $request->request->getInt('id'));
 
             if ($element) {
                 $list = $element::getList(['unpublished' => true]);
-                $list->setCondition((($request->get('type') === 'object') ? 'o_' : '') . 'path LIKE ' . $list->quote($list->escapeLike($element->getRealFullPath()) . '/%'));
+                $list->setCondition('`path` LIKE ' . $list->quote($list->escapeLike($element->getRealFullPath()) . '/%'));
                 $children = $list->getTotalCount();
 
                 if ($children <= 100) {
@@ -201,7 +201,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
         return $this->adminJson(['success' => true]);
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

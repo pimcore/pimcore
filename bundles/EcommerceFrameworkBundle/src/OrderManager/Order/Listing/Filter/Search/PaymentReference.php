@@ -39,7 +39,7 @@ class PaymentReference extends AbstractSearch
      *
      * @param OrderListInterface $orderList
      */
-    protected function prepareApply(OrderListInterface $orderList)
+    protected function prepareApply(OrderListInterface $orderList): void
     {
         $orderList->joinPaymentInfo();
     }

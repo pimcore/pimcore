@@ -55,7 +55,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * possible types of a document
      *
-     * @var array
+     * @var string[]
      */
     public static array $types = [self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT];
 
@@ -65,8 +65,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected static bool $disableDirtyDetection = false;
 
@@ -75,196 +73,62 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var string[]
      */
-    protected static array $objectColumns = ['o_id', 'o_parentid', 'o_type', 'o_key', 'o_classid', 'o_classname', 'o_path'];
+    protected static array $objectColumns = ['id', 'parentid', 'type', 'key', 'classid', 'classname', 'path'];
 
     /**
      * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
      */
-    protected ?int $o_id = null;
+    protected string $type = 'object';
 
     /**
      * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
      */
-    protected ?int $o_parentId = null;
+    protected ?string $key = null;
 
     /**
      * @internal
-     *
-     * @deprecated
      */
-    protected ?Element\AbstractElement $o_parent = null;
-
-    /**
-     * @internal
-     *
-     * @var string
-     */
-    protected string $o_type = 'object';
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    protected ?string $o_key = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var string|null
-     */
-    protected ?string $o_path = null;
-
-    /**
-     * @internal
-     *
-     * @var int
-     */
-    protected int $o_index = 0;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
-     */
-    protected ?int $o_creationDate = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
-     */
-    protected ?int $o_modificationDate = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     */
-    protected ?int $o_userOwner = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     */
-    protected ?int $o_userModification = null;
-
-    /**
-     * @internal
-     *
-     * @var bool[]
-     */
-    protected array $o_hasChildren = [];
+    protected int $index = 0;
 
     /**
      * Contains a list of sibling documents
      *
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
-    protected array $o_siblings = [];
-
-    /**
-     * Indicator if object has siblings or not
-     *
-     * @internal
-     *
-     * @var bool[]
-     */
-    protected array $o_hasSiblings = [];
+    protected array $siblings = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
-    protected array $o_children = [];
+    protected array $children = [];
 
     /**
      * @internal
-     *
-     * @deprecated
-     *
-     * @var string
      */
-    protected ?string $o_locked = null;
+    protected ?string $childrenSortBy = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected ?string $o_childrenSortBy = null;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    protected ?string $o_childrenSortOrder = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var int
-     */
-    protected int $o_versionCount = 0;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var array|null
-     */
-    protected ?array $o_properties = null;
-
-    public function __construct()
-    {
-        $this->o_id = & $this->id;
-        $this->o_path = & $this->path;
-        $this->o_creationDate = & $this->creationDate;
-        $this->o_userOwner = & $this->userOwner;
-        $this->o_versionCount = & $this->versionCount;
-        $this->o_modificationDate = & $this->modificationDate;
-        $this->o_locked = & $this->locked;
-        $this->o_parent = & $this->parent;
-        $this->o_properties = & $this->properties;
-        $this->o_userModification = & $this->userModification;
-        $this->o_parentId = & $this->parentId;
-    }
+    protected ?string $childrenSortOrder = null;
 
     /**
      * {@inheritdoc}
      */
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'parent', 'omitMandatoryCheck'];
+        $blockedVars = ['versions', 'class', 'scheduledTasks', 'parent', 'parent', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
-            $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
+            $blockedVars = array_merge($blockedVars, ['dirtyFields']);
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['o_children', 'properties', 'o_properties']);
+            $blockedVars = array_merge($blockedVars, ['children', 'properties', 'properties']);
         }
 
         return $blockedVars;
@@ -285,7 +149,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param bool $hideUnpublished
      */
-    public static function setHideUnpublished(bool $hideUnpublished)
+    public static function setHideUnpublished(bool $hideUnpublished): void
     {
         self::$hideUnpublished = $hideUnpublished;
     }
@@ -305,7 +169,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param bool $getInheritedValues
      */
-    public static function setGetInheritedValues(bool $getInheritedValues)
+    public static function setGetInheritedValues(bool $getInheritedValues): void
     {
         self::$getInheritedValues = $getInheritedValues;
     }
@@ -338,11 +202,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return self::$getInheritedValues;
     }
 
-    /**
-     * get possible types
-     *
-     * @return array
-     */
     public static function getTypes(): array
     {
         return self::$types;
@@ -350,15 +209,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * Static helper to get an object by the passed ID
-     *
      */
     public static function getById(int|string $id, array $params = []): ?static
     {
-        if (!is_numeric($id) || $id < 1) {
+        if (is_string($id)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0',
+                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
+            );
+            $id = is_numeric($id) ? (int) $id : 0;
+        }
+        if ($id < 1) {
             return null;
         }
 
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         $params = Model\Element\Service::prepareGetByIdParams($params);
@@ -376,11 +241,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             try {
                 $typeInfo = $object->getDao()->getTypeById($id);
 
-                if (!empty($typeInfo['o_type']) && in_array($typeInfo['o_type'], DataObject::$types)) {
-                    if ($typeInfo['o_type'] == DataObject::OBJECT_TYPE_FOLDER) {
+                if (!empty($typeInfo['type']) && in_array($typeInfo['type'], DataObject::$types)) {
+                    if ($typeInfo['type'] == DataObject::OBJECT_TYPE_FOLDER) {
                         $className = Folder::class;
                     } else {
-                        $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['o_className']);
+                        $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['className']);
                     }
 
                     /** @var AbstractObject $object */
@@ -401,6 +266,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     throw new Model\Exception\NotFoundException('No entry for object id ' . $id);
                 }
             } catch (Model\Exception\NotFoundException $e) {
+                Logger::error($e->getMessage());
+
                 return null;
             }
         } else {
@@ -483,104 +350,99 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array $objectTypes
-     * @param bool $includingUnpublished
-     *
-     * @return DataObject[]
+     * Returns a list of the children objects
      */
-    public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = false): array
-    {
+    public function getChildren(
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER,
+        ],
+        bool $includingUnpublished = false
+    ): Listing {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
-        if (!isset($this->o_children[$cacheKey])) {
+        if (!isset($this->children[$cacheKey])) {
             if ($this->getId()) {
                 $list = new Listing();
                 $list->setUnpublished($includingUnpublished);
-                $list->setCondition('o_parentId = ?', $this->getId());
-                $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
+                $list->setCondition('parentId = ?', $this->getId());
+                $list->setOrderKey($this->getChildrenSortBy());
                 $list->setOrder($this->getChildrenSortOrder());
                 $list->setObjectTypes($objectTypes);
-                $this->o_children[$cacheKey] = $list->load();
-                $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
+                $this->children[$cacheKey] = $list;
             } else {
-                $this->o_children[$cacheKey] = [];
-                $this->o_hasChildren[$cacheKey] = false;
+                $list = new Listing();
+                $list->setObjects([]);
+                $this->children[$cacheKey] = $list;
             }
         }
 
-        return $this->o_children[$cacheKey];
+        return $this->children[$cacheKey];
     }
 
     /**
      * Quick test if there are children
      *
-     * @param array $objectTypes
-     * @param bool|null $includingUnpublished
-     *
-     * @return bool
      */
-    public function hasChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null): bool
-    {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->o_hasChildren[$cacheKey])) {
-            return $this->o_hasChildren[$cacheKey];
-        }
-
-        return $this->o_hasChildren[$cacheKey] = $this->getDao()->hasChildren($objectTypes, $includingUnpublished);
+    public function hasChildren(
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER,
+        ],
+        ?bool $includingUnpublished = null
+    ): bool {
+        return $this->getDao()->hasChildren($objectTypes, $includingUnpublished);
     }
 
     /**
-     * Get a list of the sibling documents
-     *
-     * @param array $objectTypes
-     * @param bool $includingUnpublished
-     *
-     * @return array
+     * Get a list of the sibling objects
      */
-    public function getSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = false): array
-    {
+    public function getSiblings(
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER,
+        ],
+        bool $includingUnpublished = false
+    ): Listing {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
-        if (!isset($this->o_siblings[$cacheKey])) {
+        if (!isset($this->siblings[$cacheKey])) {
             if ($this->getParentId()) {
                 $list = new Listing();
                 $list->setUnpublished($includingUnpublished);
-                $list->addConditionParam('o_parentId = ?', $this->getParentId());
+                $list->addConditionParam('parentId = ?', $this->getParentId());
                 if ($this->getId()) {
-                    $list->addConditionParam('o_id != ?', $this->getId());
+                    $list->addConditionParam('id != ?', $this->getId());
                 }
-                $list->setOrderKey('o_key');
+                $list->setOrderKey('key');
                 $list->setObjectTypes($objectTypes);
                 $list->setOrder('asc');
-                $this->o_siblings[$cacheKey] = $list->load();
-                $this->o_hasSiblings[$cacheKey] = (bool) count($this->o_siblings[$cacheKey]);
+                $this->siblings[$cacheKey] = $list;
             } else {
-                $this->o_siblings[$cacheKey] = [];
-                $this->o_hasSiblings[$cacheKey] = false;
+                $list = new Listing();
+                $list->setObjects([]);
+                $this->siblings[$cacheKey] = $list;
             }
         }
 
-        return $this->o_siblings[$cacheKey];
+        return $this->siblings[$cacheKey];
     }
 
     /**
      * Returns true if the object has at least one sibling
-     *
-     * @param array $objectTypes
-     * @param bool|null $includingUnpublished
-     *
-     * @return bool
      */
-    public function hasSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null): bool
-    {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->o_hasSiblings[$cacheKey])) {
-            return $this->o_hasSiblings[$cacheKey];
-        }
-
-        return $this->o_hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
+    public function hasSiblings(
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER,
+        ],
+        ?bool $includingUnpublished = null
+    ): bool {
+        return $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
     }
 
     /**
@@ -588,14 +450,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @throws \Exception
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // delete children
         $children = $this->getChildren(self::$types, true);
-        if (count($children) > 0) {
-            foreach ($children as $child) {
-                $child->delete();
-            }
+        foreach ($children as $child) {
+            $child->delete();
         }
 
         // remove dependencies
@@ -609,7 +469,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::PRE_DELETE);
 
@@ -799,7 +659,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @throws \Exception|DuplicateFullPathException
      */
-    protected function correctPath()
+    protected function correctPath(): void
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
@@ -855,10 +715,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
-    protected function update(bool $isUpdate = null, array $params = [])
+    protected function update(bool $isUpdate = null, array $params = []): void
     {
         $this->updateModificationInfos();
 
@@ -898,7 +757,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
     }
 
-    public function clearDependentCache(array $additionalTags = [])
+    public function clearDependentCache(array $additionalTags = []): void
     {
         self::clearDependentCacheByObjectId($this->getId(), $additionalTags);
     }
@@ -907,10 +766,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param int $objectId
      * @param array $additionalTags
      *
-     *@internal
-     *
+     * @internal
      */
-    public static function clearDependentCacheByObjectId(int $objectId, array $additionalTags = [])
+    public static function clearDependentCacheByObjectId(int $objectId, array $additionalTags = []): void
     {
         if (!$objectId) {
             throw new \Exception('object ID missing');
@@ -929,10 +787,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param int $index
      *
-     *@internal
-     *
+     * @internal
      */
-    public function saveIndex(int $index)
+    public function saveIndex(int $index): void
     {
         $this->getDao()->saveIndex($index);
         $this->clearDependentCache();
@@ -969,17 +826,17 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     public function getType(): string
     {
-        return $this->o_type;
+        return $this->type;
     }
 
     public function getKey(): ?string
     {
-        return $this->o_key;
+        return $this->key;
     }
 
     public function getIndex(): int
     {
-        return $this->o_index;
+        return $this->index;
     }
 
     public function setParentId(?int $parentId): static
@@ -991,60 +848,59 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         parent::setParentId($parentId);
 
-        $this->o_siblings = [];
-        $this->o_hasSiblings = [];
+        $this->siblings = [];
 
         return $this;
     }
 
-    public function setType(string $o_type): static
+    public function setType(string $type): static
     {
-        $this->o_type = $o_type;
+        $this->type = $type;
 
         return $this;
     }
 
-    public function setKey(string $o_key): static
+    public function setKey(string $key): static
     {
-        $this->o_key = (string)$o_key;
+        $this->key = (string)$key;
 
         return $this;
     }
 
-    public function setIndex(int $o_index): static
+    public function setIndex(int $index): static
     {
-        $this->o_index = (int) $o_index;
+        $this->index = (int) $index;
 
         return $this;
     }
 
-    public function setChildrenSortBy(?string $childrenSortBy)
+    public function setChildrenSortBy(?string $childrenSortBy): void
     {
-        if ($this->o_childrenSortBy !== $childrenSortBy) {
-            $this->o_children = [];
-            $this->o_hasChildren = [];
+        if ($this->childrenSortBy !== $childrenSortBy) {
+            $this->children = [];
         }
-        $this->o_childrenSortBy = $childrenSortBy;
+        $this->childrenSortBy = $childrenSortBy;
     }
 
     /**
-     * @param DataObject[]|null $children
-     * @param array $objectTypes
-     * @param bool $includingUnpublished
-     *
      * @return $this
      */
-    public function setChildren(?array $children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = false): static
-    {
+    public function setChildren(
+        ?Listing $children,
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER,
+        ],
+        bool $includingUnpublished = false
+    ): static {
         if ($children === null) {
             // unset all cached children
-            $this->o_children = [];
-            $this->o_hasChildren = [];
-        } elseif (is_array($children)) {
+            $this->children = [];
+        } else {
             //default cache key
             $cacheKey = $this->getListingCacheKey([$objectTypes, $includingUnpublished]);
-            $this->o_children[$cacheKey] = $children;
-            $this->o_hasChildren[$cacheKey] = (bool) count($children);
+            $this->children[$cacheKey] = $children;
         }
 
         return $this;
@@ -1069,30 +925,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     public function getChildrenSortBy(): string
     {
-        return $this->o_childrenSortBy ?? self::OBJECT_CHILDREN_SORT_BY_DEFAULT;
-    }
-
-    /**
-     * @param string $method
-     * @param array $args
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public function __call(string $method, array $args)
-    {
-        // compatibility mode (they do not have any set_oXyz() methods anymore)
-        if (preg_match('/^(get|set)o_/i', $method)) {
-            $newMethod = preg_replace('/^(get|set)o_/i', '$1', $method);
-            if (method_exists($this, $newMethod)) {
-                $r = call_user_func_array([$this, $newMethod], $args);
-
-                return $r;
-            }
-        }
-
-        return parent::__call($method, $args);
+        return $this->childrenSortBy ?? self::OBJECT_CHILDREN_SORT_BY_DEFAULT;
     }
 
     public static function doNotRestoreKeyAndPath(): bool
@@ -1100,7 +933,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return self::$doNotRestoreKeyAndPath;
     }
 
-    public static function setDoNotRestoreKeyAndPath(bool $doNotRestoreKeyAndPath)
+    public static function setDoNotRestoreKeyAndPath(bool $doNotRestoreKeyAndPath): void
     {
         self::$doNotRestoreKeyAndPath = (bool) $doNotRestoreKeyAndPath;
     }
@@ -1111,8 +944,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return mixed
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     public function get(string $fieldName, string $language = null): mixed
     {
@@ -1130,8 +962,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return mixed
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     public function set(string $fieldName, mixed $value, string $language = null): mixed
     {
@@ -1157,7 +988,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param bool $disableDirtyDetection
      */
-    public static function setDisableDirtyDetection(bool $disableDirtyDetection)
+    public static function setDisableDirtyDetection(bool $disableDirtyDetection): void
     {
         self::$disableDirtyDetection = $disableDirtyDetection;
     }
@@ -1165,7 +996,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      */
-    public static function disableDirtyDetection()
+    public static function disableDirtyDetection(): void
     {
         self::setDisableDirtyDetection(true);
     }
@@ -1173,7 +1004,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      */
-    public static function enableDirtyDetection()
+    public static function enableDirtyDetection(): void
     {
         self::setDisableDirtyDetection(false);
     }
@@ -1200,20 +1031,20 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param string | null $o_reverseSort
+     * @param string | null $reverseSort
      *
      * @return AbstractObject
      */
-    public function setChildrenSortOrder(?string $o_reverseSort): Element\ElementInterface
+    public function setChildrenSortOrder(?string $reverseSort): Element\ElementInterface
     {
-        $this->o_childrenSortOrder = $o_reverseSort;
+        $this->childrenSortOrder = $reverseSort;
 
         return $this;
     }
 
     public function getChildrenSortOrder(): string
     {
-        return $this->o_childrenSortOrder ?? self::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;
+        return $this->childrenSortOrder ?? self::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;
     }
 
     /**
@@ -1223,18 +1054,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         parent::__clone();
 
-        // renew references when cloning
-        foreach (['id', 'path', 'creationDate', 'userOwner', 'versionCount', 'modificationDate', 'locked', 'parent', 'properties', 'userModification', 'parentId'] as $referenceField) {
-            $oldValue = $this->$referenceField;
-            unset($this->$referenceField);
-            $this->$referenceField = $oldValue;
-            $this->{'o_'.$referenceField} = &$this->$referenceField;
-        }
-
-        $this->o_parent = null;
-        // note that o_children is currently needed for the recycle bin
-        $this->o_hasSiblings = [];
-        $this->o_siblings = [];
+        $this->parent = null;
+        // note that children is currently needed for the recycle bin
+        $this->siblings = [];
     }
 
     /**
@@ -1249,17 +1071,15 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
 
-        $realPropertyName = 'o_'.$propertyName;
-
         $db = \Pimcore\Db::get();
 
-        if (in_array(strtolower($realPropertyName), self::$objectColumns)) {
+        if (in_array(strtolower($propertyName), self::$objectColumns)) {
             $value = array_key_exists(0, $arguments) ? $arguments[0] : throw new \InvalidArgumentException('Mandatory argument $value not set.');
             $limit = $arguments[1] ?? null;
             $offset = $arguments[2] ?? 0;
             $objectTypes = $arguments[3] ?? null;
 
-            $defaultCondition = $realPropertyName.' = '.Db::get()->quote($value).' ';
+            $defaultCondition = $propertyName.' = '.Db::get()->quote($value).' ';
 
             $listConfig = [
                 'condition' => $defaultCondition,
@@ -1315,31 +1135,5 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $list->setObjectTypes($objectTypes);
 
         return $list;
-    }
-
-    public function __wakeup()
-    {
-        $propertyMappings = [
-            'o_id' => 'id',
-            'o_path' => 'path',
-            'o_creationDate' => 'creationDate',
-            'o_userOwner' => 'userOwner',
-            'o_versionCount' => 'versionCount',
-            'o_locked' => 'locked',
-            'o_parent' => 'parent',
-            'o_properties' => 'properties',
-            'o_userModification' => 'userModification',
-            'o_modificationDate' => 'modificationDate',
-            'o_parentId' => 'parentId',
-        ];
-
-        foreach ($propertyMappings as $oldProperty => $newProperty) {
-            if ($this->$newProperty === null) {
-                $this->$newProperty = $this->$oldProperty;
-                $this->$oldProperty = & $this->$newProperty;
-            }
-        }
-
-        parent::__wakeup();
     }
 }

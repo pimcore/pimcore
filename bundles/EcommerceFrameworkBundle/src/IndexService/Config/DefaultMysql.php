@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 /**
  * Tenant configuration for a simple mysql product index implementation. It is used by the default tenant.
  *
- * @method DefaultMysqlWorker getTenantWorker()
+ * @method WorkerInterface DefaultMysqlWorker getTenantWorker()
  */
 class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
 {
@@ -87,7 +87,7 @@ class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setTenantWorker(WorkerInterface $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker): void
     {
         if (!$tenantWorker instanceof DefaultMysqlWorker) {
             throw new \InvalidArgumentException(sprintf(

@@ -1003,8 +1003,6 @@ class PDFreactorWebserviceException extends \Exception
 }
 class ServerException extends PDFreactorWebserviceException
 {
-    public $result;
-
     public function __construct($errorId = null, $message = null, $result = null)
     {
         $this->result = $result;
@@ -1019,8 +1017,6 @@ class ServerException extends PDFreactorWebserviceException
 }
 class ClientException extends PDFreactorWebserviceException
 {
-    public $result;
-
     public function __construct($message)
     {
         parent::__construct($message);

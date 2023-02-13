@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @private
+ */
 pimcore.helpers.grid = {};
 
 pimcore.helpers.grid.buildDefaultStore = function (url, fields, itemsPerPage, customConfig) {
@@ -92,7 +95,8 @@ pimcore.helpers.grid.buildDefaultPagingToolbar = function (store, options) {
         store: store,
         displayInfo: true,
         displayMsg: '{0} - {1} / {2}',
-        emptyMsg: t("no_items_found")
+        emptyMsg: t("no_items_found"),
+        scrollable: true
     };
     if (typeof options !== "undefined") {
         config = Ext.applyIf(options, config);

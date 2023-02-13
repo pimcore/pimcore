@@ -31,19 +31,20 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\TooManyLoginAttemptsAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
-use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @internal
  */
-abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implements AuthenticatorInterface, LoggerAwareInterface
+abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implements LoggerAwareInterface
 {
     public const PIMCORE_ADMIN_LOGIN = 'pimcore_admin_login';
 
@@ -69,7 +70,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
             return new Response(strtr($exception->getMessageKey(), $exception->getMessageData()));
         }
 
-        $url = $this->router->generate(AdminLoginAuthenticator::PIMCORE_ADMIN_LOGIN, [
+        $url = $this->router->generate(AdminAbstractAuthenticator::PIMCORE_ADMIN_LOGIN, [
             'auth_failed' => 'true',
         ]);
 
@@ -79,21 +80,28 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
     /**
      * {@inheritdoc}
      */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $securityUser = $token->getUser();
+        if (!$securityUser instanceof User) {
+            throw new \Exception('Invalid user object. User has to be instance of ' . User::class);
+        }
+
         /** @var UserModel $user */
-        $user = $token->getUser()->getUser();
+        $user = $securityUser->getUser();
 
         // set user language
         $request->setLocale($user->getLanguage());
-        $this->translator->setLocale($user->getLanguage());
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($user->getLanguage());
+        }
 
         // set user on runtime cache for legacy compatibility
         RuntimeCache::set('pimcore_admin_user', $user);
 
         if ($user->isAdmin()) {
             if (Admin::isMaintenanceModeScheduledForLogin()) {
-                Admin::activateMaintenanceMode(Session::getSessionId());
+                Admin::activateMaintenanceMode($request->getSession()->getId());
                 Admin::unscheduleMaintenanceModeOnLogin();
             }
         }
@@ -101,8 +109,8 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         // as we authenticate statelessly (short lived sessions) the authentication is called for
         // every request. therefore we only redirect if we're on the login page
         if (!in_array($request->attributes->get('_route'), [
-            AdminLoginAuthenticator::PIMCORE_ADMIN_LOGIN,
-            AdminLoginAuthenticator::PIMCORE_ADMIN_LOGIN_CHECK,
+            AdminAbstractAuthenticator::PIMCORE_ADMIN_LOGIN,
+            AdminAbstractAuthenticator::PIMCORE_ADMIN_LOGIN_CHECK,
         ])) {
             return null;
         }
@@ -113,7 +121,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         } else {
             $url = $this->router->generate('pimcore_admin_index', [
                 '_dc' => time(),
-                'perspective' => strip_tags($request->get('perspective')),
+                'perspective' => strip_tags($request->get('perspective', '')),
             ]);
         }
 
@@ -127,19 +135,14 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         return null;
     }
 
-    protected function saveUserToSession(User $user): void
+    protected function saveUserToSession(User $user, SessionInterface $session): void
     {
-        if ($user && Authentication::isValidUser($user->getUser())) {
+        if (Authentication::isValidUser($user->getUser())) {
             $pimcoreUser = $user->getUser();
 
-            Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser) {
-                Session::regenerateId();
+            Session::useBag($session, function (AttributeBagInterface $adminSession, SessionInterface $session) use ($pimcoreUser) {
+                $session->migrate();
                 $adminSession->set('user', $pimcoreUser);
-
-                // this flag gets removed after successful authentication in \Pimcore\Bundle\AdminBundle\EventListener\TwoFactorListener
-                if ($pimcoreUser->getTwoFactorAuthentication('required') && $pimcoreUser->getTwoFactorAuthentication('enabled')) {
-                    $adminSession->set('2fa_required', true);
-                }
             });
         }
     }

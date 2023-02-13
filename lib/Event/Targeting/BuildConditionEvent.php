@@ -28,7 +28,7 @@ class BuildConditionEvent extends Event
 
     private array $config;
 
-    private ConditionInterface $condition;
+    private ?ConditionInterface $condition = null;
 
     public function __construct(string $type, string $class, array $config)
     {
@@ -62,7 +62,7 @@ class BuildConditionEvent extends Event
         return $this->condition;
     }
 
-    public function setCondition(ConditionInterface $condition)
+    public function setCondition(ConditionInterface $condition): void
     {
         $this->condition = $condition;
 

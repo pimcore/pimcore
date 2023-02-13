@@ -54,12 +54,12 @@ class Device implements DataProviderInterface
         $this->logger = $logger;
     }
 
-    public function setCache(CoreCacheHandler $cache)
+    public function setCache(CoreCacheHandler $cache): void
     {
         $this->cache = $cache;
     }
 
-    public function setCachePool(TagAwareAdapterInterface $cachePool)
+    public function setCachePool(TagAwareAdapterInterface $cachePool): void
     {
         $this->cachePool = $cachePool;
     }
@@ -67,13 +67,13 @@ class Device implements DataProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function load(VisitorInfo $visitorInfo)
+    public function load(VisitorInfo $visitorInfo): void
     {
         if ($visitorInfo->has(self::PROVIDER_KEY)) {
             return;
         }
 
-        $userAgent = $visitorInfo->getRequest()->headers->get('User-Agent');
+        $userAgent = $visitorInfo->getRequest()->headers->get('User-Agent', '');
 
         $result = $this->loadData($userAgent);
         $result = $this->handleOverrides($visitorInfo->getRequest(), $result);

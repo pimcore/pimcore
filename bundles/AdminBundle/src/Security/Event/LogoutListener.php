@@ -60,11 +60,14 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
     ) {
     }
 
-    public function onLogout(LogoutEvent $event): RedirectResponse|Response
+    /**
+     * @param LogoutEvent $event
+     */
+    public function onLogout(LogoutEvent $event): void
     {
         $request = $event->getRequest();
 
-        return $this->onLogoutSuccess($request);
+        $event->setResponse($this->onLogoutSuccess($request));
     }
 
     public function onLogoutSuccess(Request $request): RedirectResponse|Response
@@ -74,10 +77,10 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
         $this->tokenStorage->setToken(null);
 
         // clear open edit locks for this session
-        Editlock::clearSession(Session::getSessionId());
+        Editlock::clearSession($request->getSession()->getId());
 
         /** @var PimcoreLogoutEvent|null $event */
-        $event = Session::useSession(function (AttributeBagInterface $adminSession) use ($request) {
+        $event = Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession) use ($request) {
             $event = null;
 
             $user = $adminSession->get('user');
@@ -88,7 +91,7 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
                 $adminSession->remove('user');
             }
 
-            Session::invalidate();
+            $adminSession->clear();
 
             return $event;
         });

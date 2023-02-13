@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM notes WHERE id = ?', [$id]);
 
@@ -148,7 +148,7 @@ class Dao extends Model\Dao\AbstractDao
     /** Deletes note from database.
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('notes', ['id' => $this->model->getId()]);
         $this->deleteData();
@@ -157,7 +157,7 @@ class Dao extends Model\Dao\AbstractDao
     /** Deletes note data from database.
      * @throws \Exception
      */
-    protected function deleteData()
+    protected function deleteData(): void
     {
         $this->db->delete('notes_data', ['id' => $this->model->getId()]);
     }

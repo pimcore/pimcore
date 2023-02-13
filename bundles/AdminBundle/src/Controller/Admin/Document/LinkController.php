@@ -51,7 +51,7 @@ class LinkController extends DocumentControllerBase
             throw $this->createNotFoundException('Link not found');
         }
 
-        if (($lock = $this->checkForLock($link)) instanceof JsonResponse) {
+        if (($lock = $this->checkForLock($link, $request->getSession()->getId())) instanceof JsonResponse) {
             return $lock;
         }
 
@@ -111,9 +111,9 @@ class LinkController extends DocumentControllerBase
 
     /**
      * @param Request $request
-     * @param Document\Link $link
+     * @param Document\Link $document
      */
-    protected function setValuesToDocument(Request $request, Document $link)
+    protected function setValuesToDocument(Request $request, Document $document): void
     {
         // data
         if ($request->get('data')) {
@@ -163,10 +163,10 @@ class LinkController extends DocumentControllerBase
 
             unset($data['path']);
 
-            $link->setValues($data);
+            $document->setValues($data);
         }
 
-        $this->addPropertiesToDocument($request, $link);
-        $this->applySchedulerDataToElement($request, $link);
+        $this->addPropertiesToDocument($request, $document);
+        $this->applySchedulerDataToElement($request, $document);
     }
 }

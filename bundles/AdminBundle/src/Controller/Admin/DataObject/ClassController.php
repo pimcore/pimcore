@@ -628,7 +628,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $result[] = [
                 'id' => $item->getId(),
                 'name' => $item->getName(),
-                'default' => $item->getDefault() ?: 0,
+                'default' => $item->getDefault(),
             ];
         }
 
@@ -1308,7 +1308,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         $forObjectEditor = $request->get('forObjectEditor');
 
-        $context = null;
+        $context = [];
         $layoutDefinitions = [];
         $groups = [];
         $definitions = [];
@@ -1532,7 +1532,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/bulk-import-' . uniqid() . '.tmp';
         file_put_contents($tmpName, $json);
 
-        Session::useSession(function (AttributeBagInterface $session) use ($tmpName) {
+        Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($tmpName) {
             $session->set('class_bulk_import_file', $tmpName);
         }, 'pimcore_objects');
 
@@ -1593,7 +1593,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     {
         $data = json_decode($request->get('data'), true);
 
-        $session = Session::get('pimcore_objects');
+        $session = Session::getSessionBag($request->getSession(), 'pimcore_objects');
         $filename = $session->get('class_bulk_import_file');
         $json = @file_get_contents($filename);
         $json = json_decode($json, true);
@@ -1702,7 +1702,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     {
         $data = $request->get('data');
 
-        Session::useSession(function (AttributeBagInterface $session) use ($data) {
+        Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($data) {
             $session->set('class_bulk_export_settings', $data);
         }, 'pimcore_objects');
 
@@ -1794,7 +1794,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function doBulkExportAction(Request $request): Response
     {
-        $session = Session::get('pimcore_objects');
+        $session = Session::getSessionBag($request->getSession(), 'pimcore_objects');
         $list = $session->get('class_bulk_export_settings');
         $list = json_decode($list, true);
         $result = [];
@@ -1838,7 +1838,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         return $response;
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

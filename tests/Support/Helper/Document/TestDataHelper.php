@@ -257,7 +257,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($this->createTableData($seed), $value);
     }
 
-    public function createTableData($seed = 1): array
+    public function createTableData(int $seed = 1): array
     {
         return [
             ['a' . $seed, 'b' . $seed, 'c' . $seed],

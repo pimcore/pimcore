@@ -51,7 +51,7 @@ class Item extends AbstractItem
         return $this->bundle instanceof PimcoreBundleInterface;
     }
 
-    public function registerDependencies(BundleCollection $collection)
+    public function registerDependencies(BundleCollection $collection): void
     {
         if ($this->bundle instanceof DependentBundleInterface) {
             $this->bundle::registerDependentBundles($collection);

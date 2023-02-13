@@ -203,8 +203,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return UrlSlug|null
      *
-     *@internal
-     *
+     * @internal
      */
     public static function resolveSlug(string $path, int $siteId = 0): ?UrlSlug
     {
@@ -363,7 +362,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $db = Db::get();
         $db->delete(self::TABLE_NAME, ['slug' => $this->getSlug(), 'siteId' => $this->getSiteId()]);
@@ -376,7 +375,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @throws \Exception
      */
-    public static function handleSiteDeleted(int $siteId)
+    public static function handleSiteDeleted(int $siteId): void
     {
         $db = Db::get();
         $db->delete(self::TABLE_NAME, ['siteId' => $siteId]);
@@ -387,7 +386,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @throws \Exception
      */
-    public static function handleClassDeleted(string $classId)
+    public static function handleClassDeleted(string $classId): void
     {
         $db = Db::get();
         $db->delete(self::TABLE_NAME, ['classId' => $classId]);
@@ -399,8 +398,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     protected static function getCacheKey(string $path, int $siteId): string
     {

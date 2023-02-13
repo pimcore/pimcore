@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document\Hardlink;
 
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Listing;
 
 /**
  * @internal
@@ -44,7 +45,7 @@ trait Wrapper
      *
      * @throws \Exception
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         throw $this->getHardlinkError();
     }
@@ -52,7 +53,7 @@ trait Wrapper
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         throw $this->getHardlinkError();
     }
@@ -127,9 +128,9 @@ trait Wrapper
     /**
      * @param bool $includingUnpublished
      *
-     * @return Document[]
+     * @return Listing
      */
-    public function getChildren(bool $includingUnpublished = false): array
+    public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
         if (!isset($this->children[$cacheKey])) {
@@ -147,13 +148,15 @@ trait Wrapper
                 }
             }
 
-            $this->setChildren($children, $includingUnpublished);
+            $listing = new Listing;
+            $listing->setData($children);
+            $this->setChildren($listing, $includingUnpublished);
         }
 
         return $this->children[$cacheKey];
     }
 
-    public function hasChildren(bool $includingUnpublished = false): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
         $hardLink = $this->getHardLinkSource();
 
@@ -186,8 +189,10 @@ trait Wrapper
         return $this->sourceDocument;
     }
 
-    public function setSourceDocument(Document $sourceDocument): void
+    public function setSourceDocument(Document $sourceDocument): static
     {
         $this->sourceDocument = $sourceDocument;
+
+        return $this;
     }
 }

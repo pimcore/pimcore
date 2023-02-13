@@ -19,8 +19,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
 use Pimcore\Controller\Config\ControllerDataProvider;
-use Pimcore\Db;
-use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
@@ -99,13 +97,27 @@ class MiscController extends AdminController
         /** @var Translator $translator */
         $translator->lazyInitialize('admin', $language);
 
-        $translations = $translator->getCatalogue($language)->all('admin');
+        $translations = [];
+
+        $fallbackLanguages = [];
+        if (null !== \Locale::getRegion($language)) {
+            // if language is region specific, add the primary language as fallback
+            $fallbackLanguages[] = \Locale::getPrimaryLanguage($language);
+        }
         if ($language != 'en') {
             // add en as a fallback
-            $translator->lazyInitialize('admin', 'en');
-            foreach ($translator->getCatalogue('en')->all('admin') as $key => $value) {
-                if (!isset($translations[$key]) || empty($translations[$key])) {
-                    $translations[$key] = $value;
+            $fallbackLanguages[] = 'en';
+        }
+
+        foreach (['admin', 'admin_ext'] as $domain) {
+            $translations = array_merge($translations, $translator->getCatalogue($language)->all($domain));
+
+            foreach ($fallbackLanguages as $fallbackLanguage) {
+                $translator->lazyInitialize($domain, $fallbackLanguage);
+                foreach ($translator->getCatalogue($fallbackLanguage)->all($domain) as $key => $value) {
+                    if (empty($translations[$key])) {
+                        $translations[$key] = $value;
+                    }
                 }
             }
         }
@@ -245,252 +257,6 @@ class MiscController extends AdminController
         ]);
     }
 
-    // FILEEXPLORER
-
-    /**
-     * @Route("/fileexplorer-tree", name="pimcore_admin_misc_fileexplorertree", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function fileexplorerTreeAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('fileexplorer');
-        $referencePath = $this->getFileexplorerPath($request, 'node');
-
-        $items = scandir($referencePath);
-        $contents = [];
-
-        foreach ($items as $item) {
-            if ($item == '.' || $item == '..') {
-                continue;
-            }
-
-            $file = $referencePath . '/' . $item;
-            $file = str_replace('//', '/', $file);
-
-            if (is_dir($file) || is_file($file)) {
-                $itemConfig = [
-                    'id' => '/fileexplorer' . str_replace(PIMCORE_PROJECT_ROOT, '', $file),
-                    'text' => $item,
-                    'leaf' => true,
-                    'writeable' => is_writable($file),
-                ];
-
-                if (is_dir($file)) {
-                    $itemConfig['leaf'] = false;
-                    $itemConfig['type'] = 'folder';
-                    if (is_dir_empty($file)) {
-                        $itemConfig['loaded'] = true;
-                    }
-                    $itemConfig['expandable'] = true;
-                } elseif (is_file($file)) {
-                    $itemConfig['type'] = 'file';
-                }
-
-                $contents[] = $itemConfig;
-            }
-        }
-
-        return $this->adminJson($contents);
-    }
-
-    /**
-     * @Route("/fileexplorer-content", name="pimcore_admin_misc_fileexplorercontent", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function fileexplorerContentAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('fileexplorer');
-
-        $success = false;
-        $writeable = false;
-        $file = $this->getFileexplorerPath($request, 'path');
-        $content = null;
-        if (is_file($file)) {
-            if (is_readable($file)) {
-                $content = file_get_contents($file);
-                $success = true;
-                $writeable = is_writable($file);
-            }
-        }
-
-        return $this->adminJson([
-            'success' => $success,
-            'content' => $content,
-            'writeable' => $writeable,
-            'filename' => basename($file),
-            'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $file),
-        ]);
-    }
-
-    /**
-     * @Route("/fileexplorer-content-save", name="pimcore_admin_misc_fileexplorercontentsave", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function fileexplorerContentSaveAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('fileexplorer');
-
-        $success = false;
-
-        if ($request->get('content') && $request->get('path')) {
-            $file = $this->getFileexplorerPath($request, 'path');
-            if (is_file($file) && is_writable($file)) {
-                File::put($file, $request->get('content'));
-
-                $success = true;
-            }
-        }
-
-        return $this->adminJson([
-            'success' => $success,
-        ]);
-    }
-
-    /**
-     * @Route("/fileexplorer-add", name="pimcore_admin_misc_fileexploreradd", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function fileexplorerAddAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('fileexplorer');
-
-        $success = false;
-
-        if ($request->get('filename') && $request->get('path')) {
-            $path = $this->getFileexplorerPath($request, 'path');
-            $file = $path . '/' . $request->get('filename');
-
-            $file = resolvePath($file);
-            if (strpos($file, PIMCORE_PROJECT_ROOT) !== 0) {
-                throw new \Exception('not allowed');
-            }
-
-            if (is_writable(dirname($file))) {
-                File::put($file, '');
-
-                $success = true;
-            }
-        }
-
-        return $this->adminJson([
-            'success' => $success,
-        ]);
-    }
-
-    /**
-     * @Route("/fileexplorer-add-folder", name="pimcore_admin_misc_fileexploreraddfolder", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function fileexplorerAddFolderAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('fileexplorer');
-
-        $success = false;
-
-        if ($request->get('filename') && $request->get('path')) {
-            $path = $this->getFileexplorerPath($request, 'path');
-            $file = $path . '/' . $request->get('filename');
-
-            $file = resolvePath($file);
-            if (strpos($file, PIMCORE_PROJECT_ROOT) !== 0) {
-                throw new \Exception('not allowed');
-            }
-
-            if (is_writable(dirname($file))) {
-                File::mkdir($file);
-
-                $success = true;
-            }
-        }
-
-        return $this->adminJson([
-            'success' => $success,
-        ]);
-    }
-
-    /**
-     * @Route("/fileexplorer-delete", name="pimcore_admin_misc_fileexplorerdelete", methods={"DELETE"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function fileexplorerDeleteAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('fileexplorer');
-        $success = false;
-
-        if ($request->get('path')) {
-            $file = $this->getFileexplorerPath($request, 'path');
-            if (is_writable($file)) {
-                unlink($file);
-                $success = true;
-            }
-        }
-
-        return $this->adminJson([
-            'success' => $success,
-        ]);
-    }
-
-    /**
-     * @Route("/fileexplorer-rename", name="pimcore_admin_misc_fileexplorerrename", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function fileexplorerRenameAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('fileexplorer');
-        $success = false;
-
-        if ($request->get('path') && $request->get('newPath')) {
-            $file = $this->getFileexplorerPath($request, 'path');
-            $newFile = $this->getFileexplorerPath($request, 'newPath');
-
-            $success = rename($file, $newFile);
-        }
-
-        return $this->adminJson([
-            'success' => $success,
-        ]);
-    }
-
-    /**
-     * @throws \Exception
-     */
-    private function getFileexplorerPath(Request $request, string $paramName = 'node'): string
-    {
-        $path = preg_replace("/^\/fileexplorer/", '', $request->get($paramName));
-        $path = resolvePath(PIMCORE_PROJECT_ROOT . $path);
-
-        if (strpos($path, PIMCORE_PROJECT_ROOT) !== 0) {
-            throw new \Exception('operation permitted, permission denied');
-        }
-
-        return $path;
-    }
-
     /**
      * @Route("/maintenance", name="pimcore_admin_misc_maintenance", methods={"POST"})
      *
@@ -503,7 +269,7 @@ class MiscController extends AdminController
         $this->checkPermission('maintenance_mode');
 
         if ($request->get('activate')) {
-            Tool\Admin::activateMaintenanceMode(Tool\Session::getSessionId());
+            Tool\Admin::activateMaintenanceMode($request->getSession()->getId());
         }
 
         if ($request->get('deactivate')) {
@@ -513,108 +279,6 @@ class MiscController extends AdminController
         return $this->adminJson([
             'success' => true,
         ]);
-    }
-
-    /**
-     * @Route("/http-error-log", name="pimcore_admin_misc_httperrorlog", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function httpErrorLogAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('http_errors');
-
-        $db = Db::get();
-
-        $limit = (int)$request->get('limit');
-        $offset = (int)$request->get('start');
-        $sortInfo = ($request->get('sort') ? json_decode($request->get('sort'), true)[0] : []);
-        $sort = $sortInfo['property'] ?? null;
-        $dir = $sortInfo['direction'] ?? null;
-        $filter = $request->get('filter');
-        if (!$limit) {
-            $limit = 20;
-        }
-        if (!$offset) {
-            $offset = 0;
-        }
-        if (!$sort || !in_array($sort, ['code', 'uri', 'date', 'count'])) {
-            $sort = 'count';
-        }
-        if (!$dir || !in_array($dir, ['DESC', 'ASC'])) {
-            $dir = 'DESC';
-        }
-
-        $condition = '';
-        if ($filter) {
-            $filter = $db->quote('%' . $filter . '%');
-
-            $conditionParts = [];
-            foreach (['uri', 'code', 'parametersGet', 'parametersPost', 'serverVars', 'cookies'] as $field) {
-                $conditionParts[] = $field . ' LIKE ' . $filter;
-            }
-            $condition = ' WHERE ' . implode(' OR ', $conditionParts);
-        }
-
-        $logs = $db->fetchAllAssociative('SELECT code,uri,`count`,date FROM http_error_log ' . $condition . ' ORDER BY ' . $sort . ' ' . $dir . ' LIMIT ' . $offset . ',' . $limit);
-        $total = $db->fetchOne('SELECT count(*) FROM http_error_log ' . $condition);
-
-        return $this->adminJson([
-            'items' => $logs,
-            'total' => $total,
-            'success' => true,
-        ]);
-    }
-
-    /**
-     * @Route("/http-error-log-flush", name="pimcore_admin_misc_httperrorlogflush", methods={"DELETE"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function httpErrorLogFlushAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('http_errors');
-
-        $db = Db::get();
-        $db->executeQuery('TRUNCATE TABLE http_error_log');
-
-        return $this->adminJson([
-            'success' => true,
-        ]);
-    }
-
-    /**
-     * @Route("/http-error-log-detail", name="pimcore_admin_misc_httperrorlogdetail", methods={"GET"})
-     *
-     * @param Request $request
-     * @param Profiler|null $profiler
-     *
-     * @return Response
-     */
-    public function httpErrorLogDetailAction(Request $request, ?Profiler $profiler): Response
-    {
-        $this->checkPermission('http_errors');
-
-        if ($profiler) {
-            $profiler->disable();
-        }
-
-        $db = Db::get();
-        $data = $db->fetchAssociative('SELECT * FROM http_error_log WHERE uri = ?', [$request->get('uri')]);
-
-        foreach ($data as $key => &$value) {
-            if (in_array($key, ['parametersGet', 'parametersPost', 'serverVars', 'cookies'])) {
-                $value = unserialize($value);
-            }
-        }
-
-        $response = $this->render('@PimcoreAdmin/admin/misc/http_error_log_detail.html.twig', ['data' => $data]);
-
-        return $response;
     }
 
     /**
@@ -662,33 +326,6 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson(['data' => $options]);
-    }
-
-    /**
-     * @Route("/phpinfo", name="pimcore_admin_misc_phpinfo", methods={"GET"})
-     *
-     * @param Request $request
-     * @param Profiler|null $profiler
-     *
-     * @throws \Exception
-     *
-     * @return Response
-     */
-    public function phpinfoAction(Request $request, ?Profiler $profiler): Response
-    {
-        if ($profiler) {
-            $profiler->disable();
-        }
-
-        if (!$this->getAdminUser()->isAdmin()) {
-            throw new \Exception('Permission denied');
-        }
-
-        ob_start();
-        phpinfo();
-        $content = ob_get_clean();
-
-        return new Response($content);
     }
 
     /**

@@ -68,7 +68,7 @@ class ProxyVersionStorageAdapter implements VersionStorageAdapterInterface
         $this->storageAdapter->delete($version, $isBinaryHashInUse);
     }
 
-    public function setStorageAdapter(VersionStorageAdapterInterface $adapter)
+    public function setStorageAdapter(VersionStorageAdapterInterface $adapter): void
     {
         $this->storageAdapter = $adapter;
     }

@@ -29,7 +29,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class LowQualityImagePreviewCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:image:low-quality-preview')
@@ -87,7 +87,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
         }
 
         if ($regex = $input->getOption('pathPattern')) {
-            $conditions[] = 'CONCAT(path, filename) REGEXP ?';
+            $conditions[] = 'CONCAT(`path`, filename) REGEXP ?';
             $conditionVariables[] = $regex;
         }
 

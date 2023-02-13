@@ -36,7 +36,8 @@ final class Localizedfield extends Model\AbstractModel implements
     DirtyIndicatorInterface,
     LazyLoadedFieldsInterface,
     Model\Element\ElementDumpStateInterface,
-    OwnerAwareFieldInterface
+    OwnerAwareFieldInterface,
+    ObjectAwareFieldInterface
 {
     use Model\DataObject\Traits\OwnerAwareFieldTrait;
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
@@ -89,7 +90,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @internal
      */
-    protected ?array $o_dirtyLanguages = null;
+    protected ?array $dirtyLanguages = null;
 
     /**
      * @internal
@@ -133,7 +134,7 @@ final class Localizedfield extends Model\AbstractModel implements
         $this->markAllLanguagesAsDirty();
     }
 
-    public function addItem(mixed $item)
+    public function addItem(mixed $item): void
     {
         $this->items[] = $item;
         $this->markFieldDirty('_self');
@@ -165,10 +166,9 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @param bool $mark
      *
-     *@internal
-     *
+     * @internal
      */
-    public function setLoadedAllLazyData(bool $mark = true)
+    public function setLoadedAllLazyData(bool $mark = true): void
     {
         $this->_loadedAllLazyData = $mark;
     }
@@ -214,13 +214,12 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @param Concrete|Model\Element\ElementDescriptor|null $object
-     * @param bool $markAsDirty
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setObject(Model\Element\ElementDescriptor|Concrete|null $object, bool $markAsDirty = true): static
+    public function setObject(Model\Element\ElementDescriptor|Concrete|null $object): static
     {
         if ($object instanceof Model\Element\ElementDescriptor) {
             $object = Service::getElementById($object->getType(), $object->getId());
@@ -230,9 +229,7 @@ final class Localizedfield extends Model\AbstractModel implements
             throw new \Exception('must be instance of object concrete');
         }
 
-        if ($markAsDirty) {
-            $this->markAllLanguagesAsDirty();
-        }
+        $this->markAllLanguagesAsDirty();
         $this->object = $object;
         $this->objectId = $object ? $object->getId() : null;
         $this->setClass($object ? $object->getClass() : null);
@@ -661,7 +658,7 @@ final class Localizedfield extends Model\AbstractModel implements
             return true;
         }
 
-        return is_array($this->o_dirtyLanguages) && count($this->o_dirtyLanguages) > 0;
+        return is_array($this->dirtyLanguages) && count($this->dirtyLanguages) > 0;
     }
 
     /**
@@ -677,12 +674,12 @@ final class Localizedfield extends Model\AbstractModel implements
             return true;
         }
 
-        if (is_array($this->o_dirtyLanguages)) {
-            if (count($this->o_dirtyLanguages) == 0) {
+        if (is_array($this->dirtyLanguages)) {
+            if (count($this->dirtyLanguages) == 0) {
                 return true;
             }
-            if (isset($this->o_dirtyLanguages[$language])) {
-                return $this->o_dirtyLanguages[$language];
+            if (isset($this->dirtyLanguages[$language])) {
+                return $this->dirtyLanguages[$language];
             }
         }
 
@@ -694,7 +691,7 @@ final class Localizedfield extends Model\AbstractModel implements
      */
     public function resetLanguageDirtyMap(): void
     {
-        $this->o_dirtyLanguages = null;
+        $this->dirtyLanguages = null;
     }
 
     /**
@@ -704,7 +701,7 @@ final class Localizedfield extends Model\AbstractModel implements
      */
     public function getDirtyLanguages(): ?array
     {
-        return $this->o_dirtyLanguages;
+        return $this->dirtyLanguages;
     }
 
     /**
@@ -712,7 +709,7 @@ final class Localizedfield extends Model\AbstractModel implements
      */
     public function markAllLanguagesAsDirty(): void
     {
-        $this->o_dirtyLanguages = [];
+        $this->dirtyLanguages = [];
     }
 
     /**
@@ -726,7 +723,7 @@ final class Localizedfield extends Model\AbstractModel implements
             return true;
         }
 
-        return is_array($this->o_dirtyLanguages) && count($this->o_dirtyLanguages) === 0;
+        return is_array($this->dirtyLanguages) && count($this->dirtyLanguages) === 0;
     }
 
     /**
@@ -741,16 +738,23 @@ final class Localizedfield extends Model\AbstractModel implements
             return;
         }
 
-        if (!is_array($this->o_dirtyLanguages) && $dirty) {
-            $this->o_dirtyLanguages = [];
+        if (!is_array($this->dirtyLanguages) && $dirty) {
+            $this->dirtyLanguages = [];
         }
 
         if ($dirty) {
-            $this->o_dirtyLanguages[$language] = true;
+            $this->dirtyLanguages[$language] = true;
         }
 
-        if (!$this->o_dirtyLanguages) {
-            $this->o_dirtyLanguages = null;
+        if (!$this->dirtyLanguages) {
+            $this->dirtyLanguages = null;
+        }
+    }
+
+    public function markLanguagesAsDirty(array $languages): void
+    {
+        foreach ($languages as $language => $key) {
+            $this->markLanguageAsDirty($language);
         }
     }
 

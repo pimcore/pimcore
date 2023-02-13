@@ -28,7 +28,7 @@ class VisitorInfoStorage implements VisitorInfoStorageInterface
         return $this->visitorInfo;
     }
 
-    public function setVisitorInfo(VisitorInfo $visitorInfo)
+    public function setVisitorInfo(VisitorInfo $visitorInfo): void
     {
         $this->visitorInfo = $visitorInfo;
     }

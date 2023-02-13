@@ -31,7 +31,7 @@ class UserChecker extends InMemoryUserChecker
     /**
      * {@inheritdoc}
      */
-    public function checkPreAuth(UserInterface $user)
+    public function checkPreAuth(UserInterface $user): void
     {
         $this->checkValidUser($user);
 
@@ -41,7 +41,7 @@ class UserChecker extends InMemoryUserChecker
     /**
      * {@inheritdoc}
      */
-    public function checkPostAuth(UserInterface $user)
+    public function checkPostAuth(UserInterface $user): void
     {
         $this->checkValidUser($user);
 

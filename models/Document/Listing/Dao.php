@@ -32,7 +32,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of objects (all are an instance of Document) for the given parameters an return them
      *
-     * @return array
+     * @return Document[]
      */
     public function load(): array
     {
@@ -82,9 +82,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return array_map('intval', $documentIds);
     }
 
+    /**
+     * @return list<array<string,mixed>>
+     */
     public function loadIdPathList(): array
     {
-        $queryBuilder = $this->getQueryBuilder(['documents.id', 'CONCAT(documents.path, documents.key) as path']);
+        $queryBuilder = $this->getQueryBuilder(['documents.id', 'CONCAT(documents.path, documents.key) as `path`']);
         $documentIds = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $documentIds;

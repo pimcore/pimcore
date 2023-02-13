@@ -23,8 +23,6 @@ services:
 
     Pimcore\Twig\Extension\NavigationExtension: ~
 
-    Pimcore\Twig\Extension\GlossaryExtension: ~
-
     Pimcore\Twig\Extension\HeaderExtension: ~
 
     Pimcore\Twig\Extension\AssetCompressExtension: ~
@@ -81,8 +79,6 @@ services:
     # as otherwise the placeholder block would be rendered before any
     # content was added (e.g. headTitle)
     Twig\DeferredExtension\DeferredExtension: ~
-
-    Twig\Extra\String\StringExtension: ~
 
     Pimcore\Twig\Sandbox\SecurityPolicy:
         arguments:

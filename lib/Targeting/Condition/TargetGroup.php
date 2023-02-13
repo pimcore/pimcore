@@ -29,9 +29,9 @@ class TargetGroup extends AbstractVariableCondition implements ConditionInterfac
     }
 
     /**
-     * {@inheritdoc}
+     * @return self
      */
-    public static function fromConfig(array $config): ConditionInterface|TargetGroup
+    public static function fromConfig(array $config): self
     {
         return new self($config['targetGroup'] ?? null);
     }

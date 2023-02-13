@@ -167,7 +167,7 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    public function getChildren(bool $includingUnpublished = false): array
+    public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
         if (!isset($this->children[$cacheKey])) {
@@ -183,25 +183,23 @@ class Hardlink extends Document
                 }
             }
 
-            $children = array_merge($sourceChildren, $children);
+            $children->setData(array_merge($sourceChildren, $children->load()));
+
             $this->setChildren($children, $includingUnpublished);
         }
 
-        return $this->children[$cacheKey] ?? [];
+        return $this->children[$cacheKey];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasChildren(bool $includingUnpublished = false): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
-        return count($this->getChildren($includingUnpublished)) > 0;
+        return count($this->getChildren((bool)$includingUnpublished)) > 0;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
@@ -218,7 +216,7 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         parent::update($params);
         $this->saveScheduledTasks();

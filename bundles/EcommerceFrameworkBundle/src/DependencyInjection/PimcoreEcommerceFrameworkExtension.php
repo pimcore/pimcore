@@ -31,6 +31,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInte
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocatorInterface;
+use Pimcore\Bundle\ElasticsearchClientBundle\DependencyInjection\PimcoreElasticsearchClientExtension;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -68,11 +69,11 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
      *
      * {@inheritdoc}
      */
-    protected function loadInternal(array $config, ContainerBuilder $container)
+    protected function loadInternal(array $config, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__ . '/../../config')
+            new FileLocator(__DIR__ . '/../Resources/config')
         );
 
         $container->setParameter('pimcore_ecommerce.pimcore.config', $config['pimcore']);
@@ -465,6 +466,13 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $worker = new ChildDefinition($tenantConfig['worker_id']);
             $worker->setArgument('$tenantConfig', new Reference($configId));
             $worker->addTag('pimcore_ecommerce.index_service.worker', ['tenant' => $tenant]);
+
+            if (!empty($tenantConfig['config_options']['es_client_name'])) {
+                $worker->addMethodCall(
+                    'setElasticSearchClient',
+                    [new Reference(PimcoreElasticsearchClientExtension::CLIENT_SERVICE_PREFIX . $tenantConfig['config_options']['es_client_name'])]
+                );
+            }
 
             $container->setDefinition($configId, $config);
             $container->setDefinition($workerId, $worker);

@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\CancelPaymentOrRecreateOrderStrategy;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\HandlePendingPaymentsStrategyInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
@@ -54,7 +55,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
 
     protected string $className = CheckoutManager::class;
 
-    protected ?ServiceLocator $handlePendingPaymentStrategy = null;
+    protected ?HandlePendingPaymentsStrategyInterface $handlePendingPaymentStrategy = null;
 
     protected ?EventDispatcherInterface $eventDispatcher = null;
 
@@ -79,7 +80,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
         $this->processCheckoutStepDefinitions($checkoutStepDefinitions);
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -95,7 +96,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
         }
     }
 
-    protected function processCheckoutStepDefinitions(array $checkoutStepDefinitions)
+    protected function processCheckoutStepDefinitions(array $checkoutStepDefinitions): void
     {
         $stepResolver = new OptionsResolver();
         $this->configureStepOptions($stepResolver);
@@ -105,12 +106,12 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
         }
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $this->configureClassOptions($resolver);
     }
 
-    protected function configureStepOptions(OptionsResolver $resolver)
+    protected function configureStepOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefined('class');
         $resolver->setAllowedTypes('class', 'string');
@@ -120,7 +121,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
         $resolver->setAllowedTypes('options', ['array', 'null']);
     }
 
-    protected function configureClassOptions(OptionsResolver $resolver)
+    protected function configureClassOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefined('class');
         $resolver->setAllowedTypes('class', 'string');

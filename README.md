@@ -20,7 +20,7 @@ Pimcore - Open Source Data & Experience Management Platform: PIM, MDM, CDP, DAM,
 ## Contribute  
 **Bug fixes:** please create a pull request including a step by step description to reproduce the problem  
 **Contribute features:** contact the core-team on our [Gitter channel](https://gitter.im/pimcore/pimcore) before you start developing   
-**Security vulnerabilities:** please use [this form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/)
+**Security vulnerabilities:** please see our [security policy](https://github.com/pimcore/pimcore/security/policy)
   
 For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
@@ -28,10 +28,11 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
 | Version  | Supported | LTS** | CE End of life*** |
 |----------|:---------:|:-----:|:-----------------:|
-| `<= 4.x` |     ❌     |   ❌   |  `2017-09-28`    |
+| `<= 4.x` |     ❌     |   ❌   |   `2017-09-28`    |
 | `5.x`    |     ❌     |   ✅   |   `2019-12-09`    |
 | `6.x`    |     ❌     |   ✅   |   `2021-06-23`    |
-| `10.5`   |     ✅     |   ☑   |                   |
+| `10.5`   |     ✅     |   ❌   |                   |
+| `10.6`   |     ✅     |   ☑   |                   |
 | `11.x`   |     ✅     |   ☑   |                   |
 
 ** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   

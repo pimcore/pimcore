@@ -42,7 +42,7 @@ class Image extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
             foreach (['imageWidth', 'imageHeight', 'imageDimensionsCalculated'] as $key) {
@@ -166,8 +166,7 @@ class Image extends Model\Asset
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public function generateLowQualityPreview(string $generator = null): bool|string
     {
@@ -270,11 +269,9 @@ EOT;
      *
      * @internal
      *
-     * @param string|array|Image\Thumbnail\Config $config
-     *
      * @return Image\Thumbnail\Config|null
      */
-    public function getThumbnailConfig(array|string|Image\Thumbnail\Config $config): ?Image\Thumbnail\Config
+    public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config
     {
         $thumbnail = $this->getThumbnail($config);
 
@@ -282,14 +279,14 @@ EOT;
     }
 
     /**
-     * Returns a path to a given thumbnail or an thumbnail configuration.
+     * Returns a path to a given thumbnail or a thumbnail configuration.
      *
-     * @param null|string|array|Image\Thumbnail\Config $config
+     * @param null|string|array|Image\Thumbnail\Config|null $config
      * @param bool $deferred
      *
      * @return Image\Thumbnail
      */
-    public function getThumbnail(array|string|Image\Thumbnail\Config $config = null, bool $deferred = true): Image\Thumbnail
+    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\Thumbnail
     {
         return new Image\Thumbnail($this, $config, $deferred);
     }

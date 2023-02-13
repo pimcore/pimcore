@@ -30,7 +30,7 @@ abstract class AbstractPropertiesTest extends ModelTestCase
 
     protected ElementInterface $testElement;
 
-    public function _inject(PropertiesTestHelper $testHelper)
+    public function _inject(PropertiesTestHelper $testHelper): void
     {
         $this->propertiesTestHelper = $testHelper;
     }
@@ -47,7 +47,7 @@ abstract class AbstractPropertiesTest extends ModelTestCase
         return true;
     }
 
-    public function testCRUD()
+    public function testCRUD(): void
     {
         // create and read
         $this->createElement();
@@ -87,7 +87,7 @@ abstract class AbstractPropertiesTest extends ModelTestCase
         $this->assertEquals($expectedData2 . '_2', $actual);
     }
 
-    public function testInheritance()
+    public function testInheritance(): void
     {
         // create and read
         $parentElement = $this->createElement();
@@ -104,7 +104,7 @@ abstract class AbstractPropertiesTest extends ModelTestCase
         $this->assertEquals($expectedData . '_3', $childElement->getProperty('textproperty3'));
     }
 
-    public function testRelation()
+    public function testRelation(): void
     {
         $asset = TestHelper::createImageAsset();
 

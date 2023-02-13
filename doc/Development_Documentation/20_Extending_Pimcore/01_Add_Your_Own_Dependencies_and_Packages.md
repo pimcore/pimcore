@@ -57,7 +57,7 @@ You can read more about the bundle collection and handling of dependencies in [B
 
 ### Pimcore Bundles
 
-For more information see [Pimcore Bundles](./13_Bundle_Developers_Guide/05_Pimcore_Bundles).
+For more information see [Pimcore Bundles](./13_Bundle_Developers_Guide/05_Pimcore_Bundles/README.md).
 
 Just like third party bundles, Pimcore bundles can be registered on the kernel by enabling them in the `config/bundles.php`
 or manually by adding them via code as shown above. You can use `pimcore:bundle:*` commands

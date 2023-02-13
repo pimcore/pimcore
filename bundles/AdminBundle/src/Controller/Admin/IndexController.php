@@ -31,7 +31,6 @@ use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Staticroute;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Admin;
@@ -39,12 +38,12 @@ use Pimcore\Tool\Session;
 use Pimcore\Version;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 /**
  * @internal
@@ -88,22 +87,14 @@ class IndexController extends AdminController implements KernelResponseEventInte
         ];
 
         $this
+            ->setAdminLanguage($request, $user)
             ->addRuntimePerspective($templateParams, $user)
             ->addPluginAssets($templateParams);
 
         $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtection, $siteConfigProvider);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
-            // only one login is allowed to setup 2FA by the user himself
-            $user->setTwoFactorAuthentication('enabled', true);
-            // disable the 2FA prompt for the current session
-            Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
-                $adminSession->set('2fa_required', false);
-            });
-
-            $user->save();
-
-            $templateParams['settings']['twoFactorSetupRequired'] = true;
+            return $this->redirectToRoute('pimcore_admin_2fa_setup');
         }
 
         // allow to alter settings via an event
@@ -144,7 +135,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         try {
             $data = [
                 'instanceId' => $this->getInstanceId(),
-                'pimcore_major_version' => 11,
+                'pimcore_major_version' => Version::getMajorVersion(),
                 'pimcore_version' => Version::getVersion(),
                 'pimcore_hash' => Version::getRevision(),
                 'php_version' => PHP_VERSION,
@@ -169,8 +160,19 @@ class IndexController extends AdminController implements KernelResponseEventInte
 
     protected function addPluginAssets(array &$templateParams): static
     {
-        $templateParams['pluginJsPaths'] = $this->getBundleManager()->getJsPaths();
-        $templateParams['pluginCssPaths'] = $this->getBundleManager()->getCssPaths();
+        $templateParams['pluginJsPaths'] = $this->bundleManager->getJsPaths();
+        $templateParams['pluginCssPaths'] = $this->bundleManager->getCssPaths();
+
+        return $this;
+    }
+
+    protected function setAdminLanguage(Request $request, User $user): static
+    {
+        // set user language
+        $request->setLocale($user->getLanguage());
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($user->getLanguage());
+        }
 
         return $this;
     }
@@ -197,7 +199,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'disableMinifyJs'     => \Pimcore::disableMinifyJs(),
             'environment'         => $kernel->getEnvironment(),
             'cached_environments' => Tool::getCachedSymfonyEnvironments(),
-            'sessionId'           => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
+            'sessionId'           => htmlentities($request->getSession()->getId(), ENT_QUOTES, 'UTF-8'),
 
             // languages
             'language'         => $request->getLocale(),
@@ -241,12 +243,10 @@ class IndexController extends AdminController implements KernelResponseEventInte
             // this stuff is used to decide whether the "add" button should be grayed out or not
             'image-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable(),
             'video-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Video\Thumbnail\Config())->isWriteable(),
-            'custom-reports-writeable'            => (new \Pimcore\Model\Tool\CustomReport\Config())->isWriteable(),
             'document-types-writeable'            => (new DocType())->isWriteable(),
             'web2print-writeable'                 => \Pimcore\Web2Print\Config::isWriteable(),
             'predefined-properties-writeable'     => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
             'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
-            'staticroutes-writeable'              => (new Staticroute())->isWriteable(),
             'perspectives-writeable'              => \Pimcore\Perspective\Config::isWriteable(),
             'custom-views-writeable'              => \Pimcore\CustomView\Config::isWriteable(),
             'class-definition-writeable'          => isset($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE']) ? (bool)$_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] : true,
@@ -260,7 +260,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             ->addCustomViewSettings($settings)
             ->addNotificationSettings($settings, $config);
 
-        $settings['csrfToken'] = $csrfProtection->getCsrfToken();
+        $settings['csrfToken'] = $csrfProtection->getCsrfToken($request->getSession());
 
         $templateParams['settings'] = $settings;
 
@@ -384,7 +384,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    public function onKernelResponseEvent(ResponseEvent $event)
+    public function onKernelResponseEvent(ResponseEvent $event): void
     {
         $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);
     }

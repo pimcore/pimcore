@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.layout.panel");
+/**
+ * @private
+ */
 pimcore.object.classes.layout.panel = Class.create(pimcore.object.classes.layout.layout, {
 
     type: "panel",

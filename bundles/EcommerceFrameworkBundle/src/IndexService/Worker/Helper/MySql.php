@@ -25,6 +25,9 @@ use Pimcore\Logger;
 
 class MySql
 {
+    /**
+     * @var string[]
+     */
     protected array $_sqlChangeLog = [];
 
     protected MysqlConfigInterface $tenantConfig;
@@ -37,7 +40,10 @@ class MySql
         $this->db = $db;
     }
 
-    public function getValidTableColumns($table)
+    /**
+     * @return string[]
+     */
+    public function getValidTableColumns(string $table): array
     {
         $cacheKey = 'plugin_ecommerce_productindex_columns_' . $table;
 
@@ -54,7 +60,7 @@ class MySql
         return Cache\RuntimeCache::load($cacheKey);
     }
 
-    public function doInsertData($data): void
+    public function doInsertData(array $data): void
     {
         $validColumns = $this->getValidTableColumns($this->tenantConfig->getTablename());
         foreach ($data as $column => $value) {
@@ -66,9 +72,12 @@ class MySql
         Helper::insertOrUpdate($this->db, $this->tenantConfig->getTablename(), $data);
     }
 
+    /**
+     * @return string[]
+     */
     public function getSystemAttributes(): array
     {
-        return ['o_id', 'o_classId', 'o_parentId', 'o_virtualProductId', 'o_virtualProductActive', 'o_type', 'categoryIds', 'parentCategoryIds', 'priceSystemName', 'active', 'inProductList'];
+        return ['id', 'classId', 'parentId', 'virtualProductId', 'virtualProductActive', 'type', 'categoryIds', 'parentCategoryIds', 'priceSystemName', 'active', 'inProductList'];
     }
 
     public function createOrUpdateIndexStructures(): void
@@ -77,18 +86,18 @@ class MySql
         $idColumnType = $this->tenantConfig->getIdColumnType(false);
 
         $this->dbexec('CREATE TABLE IF NOT EXISTS `' . $this->tenantConfig->getTablename() . "` (
-          `o_id` $primaryIdColumnType,
-          `o_virtualProductId` $idColumnType,
-          `o_virtualProductActive` TINYINT(1) NOT NULL,
-          `o_classId` varchar(50) NOT NULL,
-          `o_parentId` $idColumnType,
-          `o_type` varchar(20) NOT NULL,
+          `id` $primaryIdColumnType,
+          `virtualProductId` $idColumnType,
+          `virtualProductActive` TINYINT(1) NOT NULL,
+          `classId` varchar(50) NOT NULL,
+          `parentId` $idColumnType,
+          `type` varchar(20) NOT NULL,
           `categoryIds` varchar(255) NOT NULL,
           `parentCategoryIds` varchar(255) NOT NULL,
           `priceSystemName` varchar(50) NOT NULL,
           `active` TINYINT(1) NOT NULL,
           `inProductList` TINYINT(1) NOT NULL,
-          PRIMARY KEY  (`o_id`)
+          PRIMARY KEY  (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
         $data = $this->db->fetchAllAssociative('SHOW COLUMNS FROM ' . $this->tenantConfig->getTablename());
@@ -161,20 +170,20 @@ class MySql
 
         if ($this->tenantConfig->getTenantRelationTablename()) {
             $this->dbexec('CREATE TABLE IF NOT EXISTS `' . $this->tenantConfig->getTenantRelationTablename() . "` (
-              `o_id` $idColumnType,
+              `id` $idColumnType,
               `subtenant_id` int(11) NOT NULL,
-              PRIMARY KEY (`o_id`,`subtenant_id`)
+              PRIMARY KEY (`id`,`subtenant_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;");
         }
     }
 
-    protected function dbexec($sql): void
+    protected function dbexec(string $sql): void
     {
         $this->logSql($sql);
         $this->db->executeQuery($sql);
     }
 
-    protected function logSql($sql): void
+    protected function logSql(string $sql): void
     {
         Logger::info($sql);
 

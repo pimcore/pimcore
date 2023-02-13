@@ -251,7 +251,7 @@ class Text
         return $dependencies;
     }
 
-    public static function getCacheTagsOfWysiwygText(string $text, array $tags = []): array
+    public static function getCacheTagsOfWysiwygText(?string $text, array $tags = []): array
     {
         if (!empty($text)) {
             $elements = self::getElementsInWysiwyg($text);

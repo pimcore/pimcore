@@ -26,17 +26,16 @@ trait OwnerAwareFieldTrait
 {
     protected mixed $_owner = null;
 
-    protected string $_fieldname;
+    protected ?string $_fieldname = null;
 
     protected ?string $_language = null;
 
     /**
      * @param mixed $owner
      *
-     * @return $this;
+     * @return $this
      *
-     *@internal
-     *
+     * @internal
      */
     public function _setOwner(mixed $owner): static
     {
@@ -91,7 +90,7 @@ trait OwnerAwareFieldTrait
     /**
      * @internal
      */
-    protected function markMeDirty($dirty = true): void
+    protected function markMeDirty(bool $dirty = true): void
     {
         if ($this->_owner && $this->_owner instanceof DirtyIndicatorInterface) {
             $this->_owner->markFieldDirty($this->_fieldname, $dirty);

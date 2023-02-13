@@ -59,7 +59,7 @@ class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function setLocale($locale)
+    public function setLocale(string $locale): void
     {
         if ($this->translator instanceof LocaleAwareInterface) {
             $this->translator->setLocale($locale);

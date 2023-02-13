@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.newsletterConfirmed");
+/**
+ * @private
+ */
 pimcore.object.classes.data.newsletterConfirmed = Class.create(pimcore.object.classes.data.data, {
 
     type: "newsletterConfirmed",

@@ -30,7 +30,10 @@ It allows ...
 
 The search is a word based search. This means only complete words are found, no parts of words. For example if you search
 for `Chris`, records with `Christian` will NOT be found. All search terms (`ID`, `Firstname`, `Lastname` and `E-Mail`) 
-are connected with AND, so they all need to occur for a data record to be shown in the result list.   
+are connected with AND, so they all need to occur for a data record to be shown in the result list.
+
+To use the full potential of the GDPR search the simpleBackendSearchBundle has to be installed!
+If that`s not the case you only can use the very limited version of the GDPR search.
 
 Supported data sources by Pimcore core are: 
 * Data Objects

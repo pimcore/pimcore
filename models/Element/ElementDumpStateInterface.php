@@ -25,7 +25,7 @@ interface ElementDumpStateInterface
      *
      * @param bool $dumpState
      */
-    public function setInDumpState(bool $dumpState);
+    public function setInDumpState(bool $dumpState): void;
 
     public function isInDumpState(): bool;
 }

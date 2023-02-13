@@ -18,6 +18,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.helpers.grid");
+/**
+ * @private
+ */
 pimcore.asset.helpers.grid = Class.create({
 
     baseParams: {},
@@ -233,6 +236,11 @@ pimcore.asset.helpers.grid = Class.create({
                     gridColumns.push({
                         text: t(field.label), sortable: false, dataIndex: field.key, editable: false,
                         width: this.getColumnWidth(field, 130), locked: this.getColumnLock(field)
+                    });
+                } else if (key == "type") {
+                    gridColumns.push({
+                        text: t(field.label), width: this.getColumnWidth(field, 130), locked: this.getColumnLock(field), sortable: true,
+                        dataIndex: field.key, filter: {type: 'list', options: ['image', 'text', 'audio', 'video', 'document', 'archive', 'unknown']}
                     });
                 } else {
                     gridColumns.push({

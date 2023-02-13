@@ -33,6 +33,7 @@ class NumericRange extends Data implements
     VarExporterInterface,
     NormalizerInterface
 {
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType {
         ColumnType::getColumnType as public genericGetColumnType;
     }
@@ -80,11 +81,6 @@ class NumericRange extends Data implements
     /**
      * @internal
      */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     */
     public bool $integer = false;
 
     /**
@@ -119,20 +115,6 @@ class NumericRange extends Data implements
      */
     public ?int $decimalPrecision = null;
 
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): void
-    {
-        if (\is_numeric($width)) {
-            $width = (int) $width;
-        }
-
-        $this->width = $width;
-    }
-
     public function getInteger(): bool
     {
         return $this->integer;
@@ -158,7 +140,7 @@ class NumericRange extends Data implements
         return $this->minValue;
     }
 
-    public function setMinValue(?float $minValue)
+    public function setMinValue(?float $minValue): void
     {
         $this->minValue = $minValue;
     }
@@ -345,8 +327,7 @@ class NumericRange extends Data implements
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
     {
@@ -382,8 +363,7 @@ class NumericRange extends Data implements
      *
      * @return DataObject\Data\NumericRange|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\NumericRange
     {

@@ -61,14 +61,14 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
     protected PaymentManagerInterface $paymentManager;
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         // set language
-        $user = $this->getTokenResolver()->getUser();
+        $user = $this->tokenResolver->getUser();
 
         if ($user) {
-            if ($this->getTranslator() instanceof LocaleAwareInterface) {
-                $this->getTranslator()->setLocale($user->getLanguage());
+            if ($this->translator instanceof LocaleAwareInterface) {
+                $this->translator->setLocale($user->getLanguage());
             }
             $event->getRequest()->setLocale($user->getLanguage());
         }
@@ -110,7 +110,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         } elseif ($list->getListType() == $list::LIST_TYPE_ORDER_ITEM) {
             $list->addSelectField('orderItem.totalPrice AS TotalPrice');
         }
-        $list->addSelectField('count(orderItem.o_id) AS Items');
+        $list->addSelectField('count(orderItem.id) AS Items');
 
         // Search
         if ($request->get('q')) {
@@ -300,7 +300,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
                         $orderList = $this->orderManager->createOrderList();
                         $orderList->joinCustomer($class::classId());
 
-                        $orderList->getQueryBuilder()->andWhere('customer.o_id = :customer_oid')->setParameter('customer_oid', $customer->getId());
+                        $orderList->getQueryBuilder()->andWhere('customer.id = :customer_oid')->setParameter('customer_oid', $customer->getId());
 
                         $arrCustomerAccount['orderCount'] = $orderList->count();
                     }

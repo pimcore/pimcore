@@ -49,7 +49,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @var int|string|null
      */
-    protected string|int|null $id;
+    protected string|int|null $id = null;
 
     /**
      * one of self::ALLOWED_TYPES
@@ -90,6 +90,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     protected ?array $allowedTypes = null;
 
+    /**
+     * @return $this
+     */
     public function setId(int|string|null $id): static
     {
         $this->id = $id;
@@ -185,7 +188,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     public function getData(): mixed
     {
         $path = $this->id;
-        if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
+        if ($this->id && $this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
             $path = $video->getFullPath();
         }
 
@@ -203,7 +206,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $path       = '';
         }
 
-        $poster = Asset::getById($this->poster);
+        $poster = $this->poster ? Asset::getById($this->poster) : null;
 
         return [
             'id'           => $this->id,
@@ -217,9 +220,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
-    protected function getDataEditmode()
+    protected function getDataEditmode(): mixed
     {
         $data = $this->getData();
 
@@ -300,7 +303,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             }
         }
 
-        if ($poster = Asset::getById($this->poster)) {
+        if ($this->poster && $poster = Asset::getById($this->poster)) {
             $key = 'asset_' . $poster->getId();
             $dependencies[$key] = [
                 'id' => $poster->getId(),

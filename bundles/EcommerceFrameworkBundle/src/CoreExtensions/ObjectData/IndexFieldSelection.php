@@ -18,21 +18,21 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData;
 
 class IndexFieldSelection
 {
-    public string $tenant;
+    public ?string $tenant = null;
 
     public string $field;
 
     /**
-     * @var string|string[]
+     * @var string|string[]|null
      */
-    public string|array $preSelect;
+    public string|array|null $preSelect;
 
     /**
-     * @param string $tenant
+     * @param string|null $tenant
      * @param string $field
      * @param string|string[] $preSelect
      */
-    public function __construct(string $tenant, string $field, array|string $preSelect)
+    public function __construct(?string $tenant, string $field, array|string|null $preSelect)
     {
         $this->field = $field;
         $this->preSelect = $preSelect;
@@ -58,9 +58,9 @@ class IndexFieldSelection
     }
 
     /**
-     * @return string|string[]
+     * @return string|string[]|null
      */
-    public function getPreSelect(): array|string
+    public function getPreSelect(): array|string|null
     {
         return $this->preSelect;
     }
@@ -70,7 +70,7 @@ class IndexFieldSelection
         $this->tenant = $tenant;
     }
 
-    public function getTenant(): string
+    public function getTenant(): ?string
     {
         return $this->tenant;
     }

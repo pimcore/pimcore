@@ -22,7 +22,7 @@ use Pimcore\Model\Exception\NotFoundException;
 /**
  * @method \Pimcore\Model\Translation\Listing\Dao getDao()
  * @method Model\Translation[] load()
- * @method array loadRaw()
+ * @method list<array<string,mixed>> loadRaw()
  * @method Model\Translation|false current()
  * @method int getTotalCount()
  * @method void onCreateQueryBuilder(?callable $callback)
@@ -100,7 +100,7 @@ class Listing extends Model\Listing\AbstractListing
         return self::$cacheLimit;
     }
 
-    public static function setCacheLimit(int $cacheLimit)
+    public static function setCacheLimit(int $cacheLimit): void
     {
         self::$cacheLimit = $cacheLimit;
     }

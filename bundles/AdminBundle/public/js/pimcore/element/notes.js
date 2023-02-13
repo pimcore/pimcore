@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.notes");
+/**
+ * @private
+ */
 pimcore.element.notes = Class.create({
 
     initialize: function(element, type) {

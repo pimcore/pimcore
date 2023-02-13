@@ -41,7 +41,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function get(string $code, CartInterface $cart = null)
+    public function get(string $code, CartInterface $cart = null): void
     {
         $query = 'SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?';
         $params[] = $code;
@@ -59,7 +59,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->model->setCartId($result['cart_id']);
     }
 
-    public function create(string $code, CartInterface $cart)
+    public function create(string $code, CartInterface $cart): void
     {
         if (!Reservation::reservationExists($code, $cart)) {
             // Single Type Token --> only one token per Cart! --> Update on duplicate key!

@@ -29,6 +29,8 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @internal
+ *
+ * @deprecated
  */
 class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerInterface
 {
@@ -240,7 +242,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     /**
      * {@inheritdoc}
      */
-    public function writeClose()
+    public function writeClose(): void
     {
         if (!$this->shouldWriteAndClose()) {
             return;

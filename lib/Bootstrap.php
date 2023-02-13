@@ -73,10 +73,6 @@ class Bootstrap
         @ini_set('max_execution_time', '-1');
         @ini_set('max_input_time', '-1');
 
-        // Error reporting is enabled in CLI
-        @ini_set('display_errors', 'On');
-        @ini_set('display_startup_errors', 'On');
-
         // Pimcore\Console handles maintenance mode through the AbstractCommand
         $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
         if (!$pimcoreConsole) {
@@ -121,7 +117,6 @@ class Bootstrap
         \Pimcore::setAutoloader($loader);
         self::autoload();
 
-        ini_set('error_log', PIMCORE_PHP_ERROR_LOG);
         ini_set('log_errors', '1');
 
         // load a startup file if it exists - this is a good place to preconfigure the system
@@ -198,6 +193,7 @@ class Bootstrap
 
         // paths relying on basic paths above
         $resolveConstant('PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY', PIMCORE_PROJECT_ROOT . '/config/pimcore');
+        $resolveConstant('PIMCORE_CUSTOM_CONFIGURATION_CLASS_DEFINITION_DIRECTORY', PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes');
         $resolveConstant('PIMCORE_CONFIGURATION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/config');
         $resolveConstant('PIMCORE_LOG_DIRECTORY', PIMCORE_PRIVATE_VAR . '/log');
         $resolveConstant('PIMCORE_CACHE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/cache/pimcore');
@@ -208,7 +204,6 @@ class Bootstrap
         $resolveConstant('PIMCORE_SYSTEM_TEMP_DIRECTORY', PIMCORE_PRIVATE_VAR . '/tmp');
 
         // configure PHP's error logging
-        $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
     }
 

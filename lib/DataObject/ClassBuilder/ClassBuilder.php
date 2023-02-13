@@ -110,6 +110,7 @@ class ClassBuilder implements ClassBuilderInterface
         $useParts = [];
 
         $cd .= ClassDefinition\Service::buildUseTraitsCode($useParts, $classDefinition->getUseTraits());
+        $cd .= ClassDefinition\Service::buildFieldConstantsCode(...$classDefinition->getFieldDefinitions());
 
         $cd .= $this->propertiesBuilder->buildProperties($classDefinition);
         $cd .= "\n\n";
@@ -127,10 +128,8 @@ class ClassBuilder implements ClassBuilderInterface
 
         $cd .= "\n\n";
 
-        if (is_array($classDefinition->getFieldDefinitions()) && count($classDefinition->getFieldDefinitions())) {
-            foreach ($classDefinition->getFieldDefinitions() as $def) {
-                $cd .= $this->fieldDefinitionBuilder->buildFieldDefinition($classDefinition, $def);
-            }
+        foreach ($classDefinition->getFieldDefinitions() as $def) {
+            $cd .= $this->fieldDefinitionBuilder->buildFieldDefinition($classDefinition, $def);
         }
 
         $cd .= "}\n";

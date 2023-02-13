@@ -61,12 +61,12 @@ class FieldCollectionClassBuilder implements FieldCollectionClassBuilderInterfac
         $cd .= 'class ' . ucfirst($definition->getKey()) . ' extends ' . $extendClass . $implements . "\n";
         $cd .= '{' . "\n";
 
+        $cd .= ClassDefinition\Service::buildFieldConstantsCode(...$definition->getFieldDefinitions());
+
         $cd .= 'protected string $type = "' . $definition->getKey() . "\";\n";
 
-        if (is_array($definition->getFieldDefinitions()) && count($definition->getFieldDefinitions())) {
-            foreach ($definition->getFieldDefinitions() as $key => $def) {
-                $cd .= 'protected $' . $key . ";\n";
-            }
+        foreach ($definition->getFieldDefinitions() as $key => $def) {
+            $cd .= 'protected $' . $key . ";\n";
         }
 
         $cd .= "\n\n";

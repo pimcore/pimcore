@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.asset.asset");
+/**
+ * @private
+ */
 pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     willClose: false,
     getData: function () {

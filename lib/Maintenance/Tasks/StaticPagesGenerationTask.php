@@ -39,10 +39,10 @@ class StaticPagesGenerationTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $listing = new Document\Listing();
-        $listing->setCondition("type = 'page'");
+        $listing->setCondition("`type` = 'page'");
         $listing->setOrderKey('id');
         $listing->setOrder('DESC');
 

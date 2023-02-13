@@ -48,7 +48,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
             throw $this->createNotFoundException('Document not found');
         }
 
-        if (($lock = $this->checkForLock($page)) instanceof JsonResponse) {
+        if (($lock = $this->checkForLock($page, $request->getSession()->getId())) instanceof JsonResponse) {
             return $lock;
         }
 
@@ -101,7 +101,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
 
         $page = $this->getLatestVersion($page);
 
-        Document\Service::saveElementToSession($page);
+        Document\Service::saveElementToSession($page, $request->getSession()->getId());
 
         if ($request->get('task') !== self::TASK_SAVE) {
             //check, if to cleanup existing elements of document
@@ -138,11 +138,11 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         }
     }
 
-    protected function setValuesToDocument(Request $request, Document $page): void
+    protected function setValuesToDocument(Request $request, Document $document): void
     {
-        $this->addSettingsToDocument($request, $page);
-        $this->addDataToDocument($request, $page);
-        $this->addPropertiesToDocument($request, $page);
+        $this->addSettingsToDocument($request, $document);
+        $this->addDataToDocument($request, $document);
+        $this->addPropertiesToDocument($request, $document);
     }
 
     /**

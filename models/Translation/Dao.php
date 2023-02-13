@@ -45,7 +45,7 @@ class Dao extends Model\Dao\AbstractDao
      * @throws NotFoundResourceException
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getByKey(string $key, array $languages = null)
+    public function getByKey(string $key, array $languages = null): void
     {
         if (is_array($languages)) {
             $sql = 'SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key
@@ -77,7 +77,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      */
-    public function save()
+    public function save(): void
     {
         //Create Domain table if doesn't exist
         $this->createOrUpdateTable();
@@ -119,7 +119,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete($this->getDatabaseTableName(), [$this->db->quoteIdentifier('key') => $this->model->getKey()]);
     }
@@ -159,7 +159,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Returns boolean, if the domain table exists
+     * Returns boolean, if the domain table exists & domain registered in config
      *
      * @param string $domain
      *
@@ -168,6 +168,11 @@ class Dao extends Model\Dao\AbstractDao
     public function isAValidDomain(string $domain): bool
     {
         try {
+            $translationDomains = $this->model->getRegisteredDomains();
+            if (!in_array($domain, $translationDomains)) {
+                return false;
+            }
+
             $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
 
             return true;
@@ -176,7 +181,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function createOrUpdateTable()
+    public function createOrUpdateTable(): void
     {
         $table = $this->getDatabaseTableName();
 

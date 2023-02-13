@@ -44,7 +44,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      *
      * @var string
      */
-    public string $renderingClass;
+    public string $renderingClass = '';
 
     /**
      * @internal
@@ -77,7 +77,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         return $this->renderingClass;
     }
 
-    public function setRenderingClass(string $renderingClass)
+    public function setRenderingClass(string $renderingClass): void
     {
         $this->renderingClass = $renderingClass;
     }
@@ -87,7 +87,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         return $this->renderingData;
     }
 
-    public function setRenderingData(string $renderingData)
+    public function setRenderingData(string $renderingData): void
     {
         $this->renderingData = $renderingData;
     }
@@ -107,9 +107,13 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      */
     public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
-        $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
-            $this->getRenderingClass()
-        );
+        $renderer = null;
+        $class = $this->getRenderingClass();
+        if (!empty($class)) {
+            $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
+                $class
+            );
+        }
 
         $context['fieldname'] = $this->getName();
         $context['layout'] = $this;

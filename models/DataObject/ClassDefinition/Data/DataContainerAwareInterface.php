@@ -18,7 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface DataContainerAwareInterface
 {
-    public function preSave(mixed $containerDefinition, array $params = []);
+    public function preSave(mixed $containerDefinition, array $params = []): void;
 
-    public function postSave(mixed $containerDefinition, array $params = []);
+    public function postSave(mixed $containerDefinition, array $params = []): void;
 }

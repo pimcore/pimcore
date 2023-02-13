@@ -32,7 +32,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface, In
      */
     protected static array $linkGenerators = [];
 
-    public function __construct($id, $params, $relations)
+    public function __construct(int $id, array $params, array $relations)
     {
         $this->id = $id;
         $this->params = $params;
@@ -47,7 +47,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface, In
 
     public function getLinkGenerator(): ?DataObject\ClassDefinition\LinkGeneratorInterface
     {
-        if ($classId = $this->params['o_classId'] ?? null) {
+        if ($classId = $this->params['classId'] ?? null) {
             return static::$linkGenerators[$classId] ??= DataObject\ClassDefinition::getById($classId)->getLinkGenerator();
         }
 
@@ -88,7 +88,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface, In
         return $this->id;
     }
 
-    public function getRelationAttribute($attributeName)
+    public function getRelationAttribute(string $attributeName): mixed
     {
         $relationObjectArray = [];
         if ($this->relations[$attributeName]) {
@@ -109,7 +109,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface, In
         }
     }
 
-    public function __call($method, $args)
+    public function __call(string $method, array $args): mixed
     {
         $attributeName = $method;
         if (substr($method, 0, 3) == 'get') {

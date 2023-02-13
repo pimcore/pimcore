@@ -40,10 +40,8 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
      * Contains the object for the snippet
      *
      * @internal
-     *
-     * @var Document\Snippet|null
      */
-    protected ?Document\Snippet $snippet = null;
+    protected Document\Snippet|Model\Element\ElementDescriptor|null $snippet = null;
 
     /**
      * {@inheritdoc}
@@ -61,7 +59,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $this->id;
     }
 
-    public function setId(int $id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -212,7 +210,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
@@ -247,7 +245,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         }
     }
 
-    public function setSnippet(Document\Snippet $snippet)
+    public function setSnippet(Document\Snippet $snippet): void
     {
         if ($snippet instanceof Document\Snippet) {
             $this->id = $snippet->getId();

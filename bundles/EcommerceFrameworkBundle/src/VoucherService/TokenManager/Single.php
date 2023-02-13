@@ -35,7 +35,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
 {
     protected string $template;
 
-    public function __construct(AbstractVoucherTokenType $configuration)
+    public function __construct(AbstractVoucherTokenType $configuration, protected PaginatorInterface $paginator)
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypeSingle) {
@@ -56,7 +56,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return true;
     }
 
-    public function cleanupReservations(int $duration = 0, ?string $seriesId = null): bool
+    public function cleanupReservations(int $duration = 0, ?int $seriesId = null): bool
     {
         return Reservation::cleanUpReservations($duration, $seriesId);
     }
@@ -70,12 +70,10 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         }
 
         if ($codes) {
-            /** @var PaginatorInterface $paginator */
-            $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
-            $paginator = $paginator->paginate(
+            $paginator = $this->paginator->paginate(
                 (array)$codes,
-                $params['page'] ?? 1,
-                isset($params['tokensPerPage']) ? (int)$params['tokensPerPage'] : 25
+                (int)($params['page'] ?? 1),
+                (int)($params['tokensPerPage'] ?? 25)
             );
             $viewParamsBag['paginator'] = $paginator;
             $viewParamsBag['count'] = count($codes);
@@ -156,7 +154,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return Token\Listing::getCodes($this->seriesId, $filter);
     }
 
-    protected function prepareUsageStatisticData(&$data, $usagePeriod)
+    protected function prepareUsageStatisticData(array &$data, ?int $usagePeriod): void
     {
         $now = new \DateTime();
         $periodData = [];
@@ -250,7 +248,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     {
         parent::checkToken($code, $cart);
         if ($token = Token::getByCode($code)) {
-            if ($token->check($this->configuration->getUsages())) {
+            if ($token->check((int)$this->configuration->getUsages())) {
                 return true;
             }
         }
@@ -263,22 +261,22 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return $this->configuration;
     }
 
-    public function setConfiguration(VoucherTokenTypeSingle $configuration)
+    public function setConfiguration(VoucherTokenTypeSingle $configuration): void
     {
         $this->configuration = $configuration;
     }
 
-    public function getSeriesId(): int|string|null
+    public function getSeriesId(): int|null
     {
         return $this->seriesId;
     }
 
-    public function setSeriesId(int|string|null $seriesId)
+    public function setSeriesId(int|null $seriesId): void
     {
         $this->seriesId = $seriesId;
     }
 
-    public function setTemplate(string $template)
+    public function setTemplate(string $template): void
     {
         $this->template = $template;
     }

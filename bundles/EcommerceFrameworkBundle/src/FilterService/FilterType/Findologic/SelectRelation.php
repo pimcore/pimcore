@@ -55,7 +55,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         }
 
         foreach ($values as $v) {
-            if (empty($availableRelations) || $availableRelations[$v['label']] === true) {
+            if (empty($availableRelations) || ($availableRelations[$v['label']] ?? false)) {
                 $objects[$v['label']] = DataObject::getById($v['label']);
             }
         }
