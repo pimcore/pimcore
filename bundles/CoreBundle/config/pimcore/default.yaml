@@ -243,7 +243,10 @@ pimcore:
         profiler:
             routes:
                 - { path: ^/_(profiler|wdt)(/.*)?$ }
-
+    translations:
+        domains:
+            - messages
+            - admin
     sitemaps:
         generators:
             pimcore_documents:

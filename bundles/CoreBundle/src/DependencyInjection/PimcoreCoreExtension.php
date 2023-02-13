@@ -110,7 +110,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('services_routing.yaml');
         $loader->load('services_workflow.yaml');
         $loader->load('extensions.yaml');
-        $loader->load('logging.yaml');
         $loader->load('request_response.yaml');
         $loader->load('l10n.yaml');
         $loader->load('argument_resolvers.yaml');
