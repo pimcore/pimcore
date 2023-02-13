@@ -237,15 +237,12 @@ abstract class AbstractModel implements ModelInterface
         }
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         $this->dao = null;
     }
 
-    /**
-     * @return array
-     */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $result = get_object_vars($this);
         unset($result['dao']);

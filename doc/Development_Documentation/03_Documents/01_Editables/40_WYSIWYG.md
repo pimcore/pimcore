@@ -117,7 +117,7 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 
 class AppAdminBundle extends AbstractPimcoreBundle
 {
-    public function getEditmodeJsPaths()
+    public function getEditmodeJsPaths(): array
     {
         return [
             '/bundles/appadmin/js/pimcore/editmode.js'

@@ -45,7 +45,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AwesomeCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('awesome:command')

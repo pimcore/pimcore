@@ -20,6 +20,7 @@ namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Bridge\Twig\Attribute\Template;
+use Symfony\Component\HttpFoundation\Response;
 
 class MyController extends FrontendController
 {
@@ -27,11 +28,11 @@ class MyController extends FrontendController
      * The attribute will resolve the defined view
      */
     #[Template('content/default.html.twig', vars: ['param1' => 'value1'])]
-    public function attributeAction()
+    public function attributeAction(): void
     {   
     }
     
-    public function directRenderAction()
+    public function directRenderAction(): Response
     {
         return $this->render('my/custom/action.html.twig', ['param1' => 'value1']);
     }

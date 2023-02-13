@@ -1050,7 +1050,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * load lazy loaded fields before cloning
      */
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
 

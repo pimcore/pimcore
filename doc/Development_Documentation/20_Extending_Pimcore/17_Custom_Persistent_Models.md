@@ -256,20 +256,13 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 {
     /**
      * List of Votes.
-     *
-     * @var array
      */
-    public $data = null;
+    public ?array $data = null;
 
-    /**
-     * @var string
-     */
-    public $locale;
+    public ?string $locale = null;
 
     /**
      * get total count.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -278,13 +271,8 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * get all items.
-     *
-     * @param int $offset
-     * @param int $itemCountPerPage
-     *
-     * @return mixed
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
@@ -297,27 +285,23 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return $this
      */
-    public function getPaginatorAdapter()
+    public function getPaginatorAdapter(): static
     {
         return $this;
     }
 
     /**
      * Set Locale.
-     *
-     * @param string $locale
      */
-    public function setLocale($locale): void
+    public function setLocale(?string $locale): void
     {
         $this->locale = $locale;
     }
 
     /**
      * Get Locale.
-     *
-     * @return string
      */
-    public function getLocale(): string
+    public function getLocale(): ?string
     {
         return $this->locale;
     }
@@ -337,8 +321,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * current.
-     *
-     * @return mixed
      */
     public function current(): mixed
     {
@@ -349,8 +331,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * key.
-     *
-     * @return mixed
      */
     public function key(): mixed
     {
@@ -361,8 +341,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * next.
-     *
-     * @return void
      */
     public function next(): void
     {
@@ -372,8 +350,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * valid.
-     *
-     * @return bool
      */
     public function valid(): bool
     {
@@ -403,15 +379,10 @@ class Dao extends Listing\Dao\AbstractDao
 {
     use QueryBuilderHelperTrait;
 
-    /**
-     * @var string
-     */
-    protected $tableName = 'votes';
+    protected string $tableName = 'votes';
 
     /**
      * Get tableName, either for localized or non-localized data.
-     *
-     * @return string
      *
      * @throws \Exception
      */
@@ -420,10 +391,7 @@ class Dao extends Listing\Dao\AbstractDao
         return $this->tableName;
     }
 
-    /**
-     * @return DoctrineQueryBuilder
-     */
-    public function getQueryBuilder()
+    public function getQueryBuilder(): DoctrineQueryBuilder
     {
         $queryBuilder = $this->db->createQueryBuilder();
         $field = $this->getTableName().'.id';
@@ -440,7 +408,7 @@ class Dao extends Listing\Dao\AbstractDao
      *
      * @return Model\Vote[]
      */
-    public function load()
+    public function load(): array
     {
         // load id's
         $list = $this->loadIdList();
@@ -463,7 +431,7 @@ class Dao extends Listing\Dao\AbstractDao
      * @return int[]
      * @throws \Exception
      */
-    public function loadIdList()
+    public function loadIdList(): array
     {
         $query = $this->getQueryBuilder();
         $objectIds = $this->db->fetchFirstColumn((string) $query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
@@ -475,11 +443,9 @@ class Dao extends Listing\Dao\AbstractDao
     /**
      * Get Count.
      *
-     * @return int
-     *
      * @throws \Exception
      */
-    public function getCount()
+    public function getCount(): int
     {
         if ($this->model->isLoaded()) {
             return count($this->model->getData());
@@ -493,11 +459,9 @@ class Dao extends Listing\Dao\AbstractDao
     /**
      * Get Total Count.
      *
-     * @return int
-     *
      * @throws \Exception
      */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.id');

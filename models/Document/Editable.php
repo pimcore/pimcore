@@ -374,7 +374,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $finalVars;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->document = null;

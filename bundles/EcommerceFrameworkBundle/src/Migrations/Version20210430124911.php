@@ -29,7 +29,7 @@ final class Version20210430124911 extends AbstractMigration
         return 'Changes addedDateTimestamp of Cart Items to mirco seconds';
     }
 
-    public function getColumnType()
+    public function getColumnType(): string
     {
         $db = Db::get();
 

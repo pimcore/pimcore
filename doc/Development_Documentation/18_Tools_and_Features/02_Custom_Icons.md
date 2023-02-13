@@ -94,7 +94,7 @@ The example outlines how to provide a custom tooltip for `Car` objects.
     /**
      * {@inheritdoc}
      */
-    public function getElementQtipConfig()
+    public function getElementQtipConfig(): ?array
     {
         if ($this->element instanceof \App\Model\Product\Car) {
             $element = $this->element;

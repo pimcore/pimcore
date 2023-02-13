@@ -41,7 +41,7 @@ class DataTypeTest extends TestCase
 
     protected Unittest $testObject;
 
-    public function testIndexFieldSelectionField()
+    public function testIndexFieldSelectionField(): void
     {
         $this->createTestObject('indexFieldSelectionField');
 
@@ -49,7 +49,7 @@ class DataTypeTest extends TestCase
         $this->testDataHelper->assertIndexFieldSelectionField($this->testObject, 'indexFieldSelectionField', $this->seed);
     }
 
-    public function testIndexFieldSelection()
+    public function testIndexFieldSelection(): void
     {
         $this->createTestObject('indexFieldSelection');
 
@@ -57,7 +57,7 @@ class DataTypeTest extends TestCase
         $this->testDataHelper->assertIndexFieldSelection($this->testObject, 'indexFieldSelection', $this->seed);
     }
 
-    public function testIndexFieldSelectionCombo()
+    public function testIndexFieldSelectionCombo(): void
     {
         $this->createTestObject('indexFieldSelectionCombo');
 
@@ -134,7 +134,7 @@ class DataTypeTest extends TestCase
         return $this->testObject;
     }
 
-    public function refreshObject()
+    public function refreshObject(): void
     {
         $this->testObject = AbstractObject::getById($this->testObject->getId(), ['force' => true]);
     }

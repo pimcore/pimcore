@@ -34,7 +34,7 @@ class User extends BaseUser implements UserInterface
      *
      * {@inheritdoc}
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         /** @var Password $field */
         $field = $this->getClass()->getFieldDefinition('password');

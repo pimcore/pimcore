@@ -52,9 +52,10 @@ If you want to change the value of a website setting from your PHP script, for e
 
 ```php
 <?php
+
 class TestController
 {
-    public function testAction()
+    public function testAction(): void
     {
         // get the "somenumber" setting for "de"
         // if the property does not exist you will get the setting with not language provided

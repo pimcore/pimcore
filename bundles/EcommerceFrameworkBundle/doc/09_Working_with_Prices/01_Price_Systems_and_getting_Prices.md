@@ -31,7 +31,7 @@ The product class returns the name of a price system:
 
 class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface
 {
-    public function getPriceSystemName()
+    public function getPriceSystemName(): string
     {
         return 'foo';
     }

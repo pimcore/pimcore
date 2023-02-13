@@ -783,7 +783,7 @@ final class Config extends Model\AbstractModel
         $this->downloadable = $downloadable;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;

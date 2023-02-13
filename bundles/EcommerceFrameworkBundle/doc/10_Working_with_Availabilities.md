@@ -30,7 +30,7 @@ The product class returns the name of an Availability System:
 
 class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface
 {
-    public function getAvailabilitySystemName()
+    public function getAvailabilitySystemName(): string
     {
         return 'myAvailabilitySystem';
     }

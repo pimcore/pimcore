@@ -302,10 +302,8 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
 
     /**
      * Calculates the max possible amount of tokens for the specified character pool.
-     *
-     * @return number
      */
-    protected function getMaxCount()
+    protected function getMaxCount(): int|float
     {
         $count = strlen($this->getCharacterPool());
 

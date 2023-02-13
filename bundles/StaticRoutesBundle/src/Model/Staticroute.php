@@ -525,7 +525,7 @@ final class Staticroute extends AbstractModel
         return $this->creationDate;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;

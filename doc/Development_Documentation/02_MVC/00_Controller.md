@@ -34,6 +34,7 @@ You can render templates just the [standard Symfony way](https://symfony.com/doc
 namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Pimcore\Controller\Attribute\ResponseHeader;
@@ -43,7 +44,7 @@ class DefaultController extends FrontendController
     /**
     * Very simple example using $this->>render() and passing the parameter 'foo'
     */
-    public function myAction()
+    public function myAction(): Response
     {
         return $this->render('content/default.html.twig', ["foo" => "bar"]);
     }
@@ -56,7 +57,7 @@ class DefaultController extends FrontendController
      */
      #[Template('/default/header.html.twig')]
      #[ResponseHeader(key: "X-Foo", values: ["123456", "98765"])]
-    public function headerAction(Request $request)
+    public function headerAction(Request $request): array
     {
         // schedule a response header via code
         $this->addResponseHeader('X-Foo', 'bar', false, $request);
@@ -67,7 +68,7 @@ class DefaultController extends FrontendController
     /**
      * This action returns a JSON response. 
     */
-    public function jsonAction(Request $request)
+    public function jsonAction(Request $request): JsonResponse
     {
         return $this->json(array('key' => 'value'));
     }
@@ -75,7 +76,7 @@ class DefaultController extends FrontendController
     /**
      * This returns a standard symfony Response object 
     */
-    public function customAction(Request $request)
+    public function customAction(Request $request): Response
     {
         return new Response("Just some text");
     }

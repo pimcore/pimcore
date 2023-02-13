@@ -17,6 +17,7 @@ Follow the steps to create a Product teaser similar to the one in our [demo](htt
 **MyProductTeaser Implementation** 
 ```php
 <?php
+
 namespace App\Document\Areabrick;
 
 class MyProductTeaser extends AbstractAreabrick
@@ -24,7 +25,7 @@ class MyProductTeaser extends AbstractAreabrick
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'My Product Teaser';
     }

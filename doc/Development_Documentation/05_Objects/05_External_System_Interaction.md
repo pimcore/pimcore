@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject;
 
 class AwesomeCommand extends AbstractCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('app:awesome')

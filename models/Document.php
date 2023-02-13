@@ -979,7 +979,7 @@ class Document extends Element\AbstractElement
         return 'document_list_' . ($includingUnpublished ? '1' : '0');
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->parent = null;

@@ -127,12 +127,12 @@ use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 
 class Iframe extends AbstractTemplateAreabrick
 {
-    public function getName()
+    public function getName(): string
     {
         return 'IFrame';
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return 'Embed contents from other URL (websites) via iframe';
     }
@@ -253,7 +253,7 @@ class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxIn
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'WYSIWYG w. Images';
     }
@@ -304,7 +304,7 @@ class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxIn
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'WYSIWYG w. Images';
     }
