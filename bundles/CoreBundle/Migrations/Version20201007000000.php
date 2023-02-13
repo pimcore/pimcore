@@ -15,8 +15,10 @@
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
+use Doctrine\DBAL\Exception\TableExistsException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore\Db;
 use Symfony\Component\Cache\Adapter\DoctrineDbalAdapter;
 
 /**
@@ -24,22 +26,17 @@ use Symfony\Component\Cache\Adapter\DoctrineDbalAdapter;
  */
 final class Version20201007000000 extends AbstractMigration
 {
-    /**
-     * @param Schema $schema
-     */
     public function up(Schema $schema): void
     {
-        if (!$schema->hasTable('cache_items')) {
-            /** @var \Doctrine\DBAL\Connection $db */
-            $db = \Pimcore\Db::get();
-            $cacheAdapter = new DoctrineDbalAdapter($db);
+        /** @var \Doctrine\DBAL\Connection $db */
+        $db = Db::get();
+        $cacheAdapter = new DoctrineDbalAdapter($db);
+        try {
             $cacheAdapter->createTable();
+        } catch (TableExistsException) {
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function down(Schema $schema): void
     {
         $this->addSql('DROP TABLE IF EXISTS cache_items');
