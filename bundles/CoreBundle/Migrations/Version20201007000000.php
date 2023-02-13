@@ -31,6 +31,7 @@ final class Version20201007000000 extends AbstractMigration
         /** @var \Doctrine\DBAL\Connection $db */
         $db = Db::get();
         $cacheAdapter = new DoctrineDbalAdapter($db);
+
         try {
             $cacheAdapter->createTable();
         } catch (TableExistsException) {
