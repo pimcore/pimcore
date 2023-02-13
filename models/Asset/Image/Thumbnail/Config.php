@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
-use Opis\Closure\SerializableClosure;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -970,21 +969,7 @@ final class Config extends Model\AbstractModel
      */
     public function generateAutoName(): void
     {
-        try {
-            $serialized = Serialize::serialize($this->getItems());
-        } catch (\Exception $e) {
-            // When closure is used in config items,
-            // PHP throws exception: Serialization of 'Closure' is not allowed
-            // please see https://github.com/pimcore/pimcore/issues/14054
-            $wrappedItems = $this->getItems();
-            foreach ($wrappedItems as &$item) {
-                if ($item['method'] instanceof \Closure) {
-                    $item['method'] = new SerializableClosure($item['method']);
-                }
-            }
-
-            $serialized = Serialize::serialize($wrappedItems);
-        }
+        $serialized = Serialize::serialize($this->getItems());
 
         $this->setName($this->getName() . '_auto_' . md5($serialized));
     }
