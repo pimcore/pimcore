@@ -130,7 +130,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         foreach ($fieldDefinitions as $fd) {
             try {
-                if($fd instanceof DataObject\ClassDefinition\Data\Localizedfields){
+                if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     $this->__objectAwareFields['localizedfields'] = true;
                 }
 
@@ -762,7 +762,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         // renew object reference to other object aware fields
         foreach ($this->__objectAwareFields as $objectAwareField => $exists) {
             if (isset($this->$objectAwareField)) {
-                if($this->$objectAwareField instanceof ObjectAwareFieldInterface) {
+                if ($this->$objectAwareField instanceof ObjectAwareFieldInterface) {
                     $this->$objectAwareField->setObject($this);
                 }
             }

@@ -156,10 +156,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
             $dirtyLanguages = $this->localizedfields->getDirtyLanguages();
             $this->localizedfields->setObject($object);
-            if(is_array($dirtyLanguages)) {
+            if (is_array($dirtyLanguages)) {
                 $this->localizedfields->markLanguagesAsDirty($dirtyLanguages);
-            }
-            else {
+            } else {
                 $this->localizedfields->resetLanguageDirtyMap();
             }
         }
