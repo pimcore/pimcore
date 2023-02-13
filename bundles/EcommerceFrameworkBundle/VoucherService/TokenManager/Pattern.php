@@ -542,24 +542,19 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         /** @var PaginatorInterface $paginator */
         $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
 
-        $page = $params['page'] ?? 1;
+        $page = isset($params['page']) ? (int)$params['page'] : 1;
         $perPage = isset($params['tokensPerPage']) ? (int)$params['tokensPerPage'] : 25;
-
+        
         $total = count($tokens);
-
-        $availablePages = ceil($total / $perPage);
-
+        
+        $availablePages = (int) ceil($total / $perPage);
         if ($page > $availablePages) {
             $page = $availablePages;
         }
 
-        if ((int) $availablePages === 0) {
-            $page = 1;
-        }
-
         $paginator = $paginator->paginate(
             $tokens,
-            $page,
+            $page ?: 1,
             $perPage
         );
 
