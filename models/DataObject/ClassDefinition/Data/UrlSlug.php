@@ -177,7 +177,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         if (is_array($data)) {
             /** @var Model\DataObject\Data\UrlSlug $item */
             foreach ($data as $item) {
-                $slug = $item->getSlug();
+                $slug = htmlspecialchars($item->getSlug());
                 $foundSlug = true;
 
                 if (strlen($slug) > 0) {
