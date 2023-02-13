@@ -113,6 +113,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             name: 'allowedClassId',
             value: this.datax.allowedClassId,
             forceSelection:true,
+            allowBlank: false,
             listeners: {
                 change: function(field, classNamevalue, oldValue) {
                     this.datax.allowedClassId = classNamevalue;
@@ -121,7 +122,6 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                     }
                 }.bind(this)
             }
-
         });
 
         this.specificPanel.add(this.classCombo);
@@ -394,6 +394,22 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             this.datax.columns = cols;
         }
         return this.datax;
+    },
+
+    isValid: function ($super) {
+        if(!$super()) {
+            return false;
+        }
+
+        const data = this.getData();
+        const allowedClassId = trim(data.allowedClassId);
+
+        if (!allowedClassId || allowedClassId === "null" || allowedClassId.length < 1) {
+            this.datax.invalidFieldError = t("mandatory_field_empty") + " - " + t('objectsMetadata_allowed_class');
+            return false;
+        }
+
+        return true;
     },
 
     applyData: function ($super){

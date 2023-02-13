@@ -24,44 +24,6 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
     use SimpleNormalizerTrait;
 
     /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return mixed
-     *
-     * @deprecated use normalize() instead, will be removed in Pimcore 11
-     */
-    public function marshal(mixed $value, array $params = []): mixed
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.4',
-            sprintf('%s is deprecated, please use normalize() instead. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        return $this->normalize($value, $params);
-    }
-
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return mixed
-     *
-     * @deprecated use denormalize() instead, will be removed in Pimcore 11
-     */
-    public function unmarshal(mixed $value, array $params = []): mixed
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.4',
-            sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        return $this->denormalize($value, $params);
-    }
-
-    /**
      * @return string
      */
     public function __toString()

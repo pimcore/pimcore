@@ -47,7 +47,7 @@ class SnippetController extends DocumentControllerBase
             throw $this->createNotFoundException('Snippet not found');
         }
 
-        if (($lock = $this->checkForLock($snippet)) instanceof JsonResponse) {
+        if (($lock = $this->checkForLock($snippet, $request->getSession()->getId())) instanceof JsonResponse) {
             return $lock;
         }
 
@@ -101,7 +101,7 @@ class SnippetController extends DocumentControllerBase
         }
 
         /** @var Document\Snippet|null $snippetSession */
-        $snippetSession = $this->getFromSession($snippet);
+        $snippetSession = $this->getFromSession($snippet, $request->getSession());
 
         if ($snippetSession) {
             $snippet = $snippetSession;
@@ -116,7 +116,7 @@ class SnippetController extends DocumentControllerBase
         list($task, $snippet, $version) = $this->saveDocument($snippet, $request);
 
         if ($task == self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
-            $this->saveToSession($snippet);
+            $this->saveToSession($snippet, $request->getSession());
 
             $treeData = $this->getTreeNodeConfig($snippet);
 
@@ -129,7 +129,7 @@ class SnippetController extends DocumentControllerBase
                 'treeData' => $treeData,
             ]);
         } else {
-            $this->saveToSession($snippet);
+            $this->saveToSession($snippet, $request->getSession());
 
             $draftData = [];
             if ($version) {

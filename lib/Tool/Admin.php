@@ -162,7 +162,7 @@ class Admin
     public static function activateMaintenanceMode(?string $sessionId): void
     {
         if (empty($sessionId)) {
-            $sessionId = Session::getSessionId();
+            $sessionId = \Pimcore::getContainer()->get('request_stack')->getSession()->getId();
         }
 
         if (empty($sessionId)) {

@@ -41,35 +41,6 @@ class Asset extends Data
         return $element;
     }
 
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return string
-     *
-     * @deprecated use denormalize() instead, will be removed in Pimcore 11
-     */
-    public function unmarshal(mixed $value, array $params = []): mixed
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.4',
-            sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        $element = null;
-        if (is_numeric($value)) {
-            $element = Service::getElementById('asset', $value);
-        }
-        if ($element) {
-            $value = $element->getRealFullPath();
-        } else {
-            $value = '';
-        }
-
-        return $value;
-    }
-
     public function transformGetterData(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {

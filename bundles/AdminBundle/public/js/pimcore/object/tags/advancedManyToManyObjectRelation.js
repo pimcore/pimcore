@@ -48,19 +48,29 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         var visibleFields = Ext.isString(this.fieldConfig.visibleFields) ? this.fieldConfig.visibleFields.split(",") : [];
         this.visibleFields = visibleFields;
 
-        fields.push("id");
-        fields.push("index");
-        fields.push("inheritedFields");
-        fields.push("metadata");
+        fields.push({name: "id"});
+        fields.push({name: "index"});
+        fields.push({name: "inheritedFields"});
+        fields.push({name: "metadata"});
 
         var i;
 
         for (i = 0; i < visibleFields.length; i++) {
-            fields.push(visibleFields[i]);
+            fields.push({name: visibleFields[i]});
         }
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
-            fields.push(this.fieldConfig.columns[i].key);
+            let defaultValue = null;
+            switch(this.fieldConfig.columns[i].type.toLowerCase()){
+                case "bool":
+                    defaultValue = this.fieldConfig.columns[i].value ? (this.fieldConfig.columns[i].value).toLowerCase() == "true" : null;
+                    break;
+                case "text":
+                case "number":
+                    defaultValue = this.fieldConfig.columns[i].value;
+                    break;
+            }
+            fields.push({name: this.fieldConfig.columns[i].key, defaultValue: defaultValue});
         }
 
         var modelName = 'ObjectsMultipleRelations';
