@@ -523,7 +523,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
                 }
 
-                usort($objectData['validLayouts'], static function($layoutData1, $layoutData2) {
+                usort($objectData['validLayouts'], static function ($layoutData1, $layoutData2) {
                     if ($layoutData2['id'] === '-1') {
                         return 1;
                     }
