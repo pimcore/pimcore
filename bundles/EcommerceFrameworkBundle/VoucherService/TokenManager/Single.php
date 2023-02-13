@@ -87,7 +87,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
             $page = isset($params['page']) ? (int)$params['page'] : 1;
             $perPage = isset($params['tokensPerPage']) ? (int)$params['tokensPerPage'] : 25;
 
-            $total = count($tokens);
+            $total = count($codes);
 
             $availablePages = (int) ceil($total / $perPage);
             if ($page > $availablePages) {
@@ -100,7 +100,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
                 $perPage
             );
             $viewParamsBag['paginator'] = $paginator;
-            $viewParamsBag['count'] = count($codes);
+            $viewParamsBag['count'] = $total;
         }
 
         $viewParamsBag['msg']['error'] = $params['error'] ?? null;
