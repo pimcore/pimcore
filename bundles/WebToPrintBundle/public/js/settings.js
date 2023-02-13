@@ -254,17 +254,6 @@ pimcore.bundle.web2print.settings = Class.create({
                         defaults: {width: 450},
                         items: [
                             {
-                                fieldLabel: t('web2print_enable_in_default_view'),
-                                xtype: "checkbox",
-                                name: "enableInDefaultView",
-                                checked: this.getValue("enableInDefaultView")
-                            }, {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t('web2print_enable_in_default_view_txt'),
-                                cls: "pimcore_extra_label_bottom"
-                            },{
                                 fieldLabel: t("web2print_tool"),
                                 xtype: "combo",
                                 width: 600,
@@ -290,7 +279,8 @@ pimcore.bundle.web2print.settings = Class.create({
 
                                     }.bind(this)
                                 }
-                            }, {
+                            },
+                            {
                                 fieldLabel: t("web2print_save_mode"),
                                 xtype: "combo",
                                 width: 600,
@@ -303,7 +293,8 @@ pimcore.bundle.web2print.settings = Class.create({
                                 ],
                                 mode: "local",
                                 triggerAction: "all"
-                            }, {
+                            },
+                            {
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,

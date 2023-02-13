@@ -32,7 +32,7 @@ class DocumentHelperExtensions extends AbstractExtension
 {
     public function getTests(): array
     {
-        $tests = [
+        return [
             new TwigTest('pimcore_document', static function ($object) {
                 return $object instanceof Document;
             }),
@@ -60,24 +60,9 @@ class DocumentHelperExtensions extends AbstractExtension
             new TwigTest('pimcore_document_snippet', static function ($object) {
                 return $object instanceof Document\Snippet;
             }),
+            new TwigTest('pimcore_document_print', static function ($object) {
+                return $object instanceof PrintAbstract;
+            }),
         ];
-
-        if(class_exists(PimcoreWebToPrintBundle::class)) {
-            $webToPrintTests = [
-                new TwigTest('pimcore_document_print', static function ($object) {
-                    return $object instanceof PrintAbstract;
-                }),
-                new TwigTest('pimcore_document_print_container', static function ($object) {
-                    return $object instanceof Printcontainer;
-                }),
-                new TwigTest('pimcore_document_print_page', static function ($object) {
-                    return $object instanceof Printpage;
-                }),
-            ];
-
-            $tests = array_merge($tests, $webToPrintTests);
-        }
-
-        return $tests;
     }
 }

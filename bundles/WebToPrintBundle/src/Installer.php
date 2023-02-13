@@ -20,6 +20,7 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Installer extends SettingsStoreAwareInstaller
 {
@@ -55,9 +56,9 @@ class Installer extends SettingsStoreAwareInstaller
 
     public function uninstall(): void
     {
+        // Only remove permissions. Cleanup can be done by dev or command
+        $this->output->writeln("<info>Uninstalling only removes permissions. To clean up all documents and dependencies, please install the bundle again and run bin/console pimcore:documents:cleanup printpage printcontainer</info>");
         $this->removeUserPermission();
-        $enums = array_diff($this->getCurrentEnumTypes(), self::BUNDLE_EXTRA_DOCUMENT_ENUM_TYPES);
-        $this->modifyEnumTypes($enums);
         parent::uninstall();
     }
 

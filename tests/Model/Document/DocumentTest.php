@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Model\Document;
 
-use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
-use Pimcore\Bundle\WebToPrintBundle\Model\Document\Printpage;
 use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Link;

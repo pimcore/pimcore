@@ -39,11 +39,40 @@ final class Version20221220152444 extends AbstractMigration
             // updating description
             $db = Db::get();
             $db->update('users_permission_definitions', ['category' => 'Pimcore Web2Print Bundle'], ['`key`' => 'web2print_settings']);
+
+            // remove enableInDefaultView setting
+            $settings = SettingsStore::get('web_to_print', 'pimcore_web_to_print');
+            if($settings) {
+                $data = json_decode($settings->getData(), true);
+
+                if(isset($data['enableInDefaultView'])) {
+                    unset($data['enableInDefaultView']);
+                    $data = json_encode($data);
+                    SettingsStore::set('web_to_print', $data,'string', 'pimcore_web_to_print');
+                }
+            }
+
         }
 
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle', 'pimcore'),
            'Please make sure to enable the BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle manually in config/bundles.php'
         );
+    }
+
+    public function down(Schema $schema): void
+    {
+        // restoring the enableInDefaultView might be with wrong value
+
+        $settings = SettingsStore::get('web_to_print', 'pimcore_web_to_print');
+        if($settings) {
+            $data = json_decode($settings->getData(), true);
+
+            if(!isset($data['enableInDefaultView'])) {
+                $data['enableInDefaultView'] = false;
+                $data = json_encode($data);
+                SettingsStore::set('web_to_print', $data,'string', 'pimcore_web_to_print');
+            }
+        }
     }
 }

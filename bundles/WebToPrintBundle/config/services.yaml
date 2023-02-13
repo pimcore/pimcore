@@ -24,6 +24,9 @@ services:
 
 
     # TWIG TEMPLATING
+    Pimcore\Bundle\WebToPrintBundle\Twig\Extension\DocumentHelperExtensions:
+        tags: [ 'twig.extension' ]
+
     Pimcore\Bundle\WebToPrintBundle\Twig\Extension\PrintCatalogExtension:
         tags: [ 'twig.extension' ]
 
