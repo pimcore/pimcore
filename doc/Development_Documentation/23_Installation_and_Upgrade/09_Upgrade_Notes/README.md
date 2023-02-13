@@ -20,6 +20,15 @@
 - [Annotations] Using Annotations `@ResponseHeader` & `@ParamConverter`, `@Template` and rest from [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers) is deprecated and will not be supported on Pimcore 11. Use `#[ResponseHeader]`,`#[DataObjectParam]` argument, `#[Template]` and other attributes instead.
 - [Asset] Deprecated VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111).
 - [Authentication] The method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been deprecated and will be removed in Pimcore 11.
+- [Authentication] It is now possible to configure the password algorithm and its options that Pimcore uses for its backend users and your objects that contain a password field.
+  ```yaml
+    pimcore:
+        security:
+            password:
+                algorithm: !php/const PASSWORD_BCRYPT
+                options:
+                    cost: 13
+  ```
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
@@ -31,7 +40,7 @@
 - [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
          Please use following configuration to allow more in template rendering:
   ```yaml
-  pimcore:
+    pimcore:
         templating_engine:
             twig:
               sandbox_security_policy:
