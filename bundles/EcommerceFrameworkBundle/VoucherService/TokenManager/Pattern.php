@@ -544,9 +544,9 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
 
         $page = (int)($params['page'] ?? 1);
         $perPage = (int)($params['tokensPerPage'] ?? 25);
-        
+
         $total = count($tokens);
-        
+
         $availablePages = (int) ceil($total / $perPage);
         $page = min($page, $availablePages);
 
