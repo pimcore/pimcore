@@ -245,6 +245,8 @@ class File
                 unlink($filePath);
             }
         });
+
+        return $filePath;
     }
 
     /**
