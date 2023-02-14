@@ -402,7 +402,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             details.push(this.customDownloadBox);
 
             this.previewContainerId = 'pimcore_asset_image_preview_' + this.id;
-            this.previewMode = 'image';
 
             this.displayPanel = new Ext.Panel({
                 title: t("view"),
@@ -431,8 +430,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
         var html = '<img src="' + this.data.imageInfo['previewUrl'] + '">';
         Ext.get(this.previewContainerId).setHtml(html);
-
-        this.previewMode = 'image';
 
         let area = this.displayPanel.getEl().down('img');
         if(area) {

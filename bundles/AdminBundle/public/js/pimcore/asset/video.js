@@ -113,11 +113,6 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
 
         if (!this.editPanel) {
             this.previewFrameId = 'asset_video_edit_' + this.id;
-            this.previewMode = 'video';
-
-            if (this.data['videoInfo'] && this.data['videoInfo']['isVrVideo']) {
-                this.previewMode = 'vr';
-            }
 
             this.previewPanel = new Ext.Panel({
                 region: "center",
@@ -323,8 +318,6 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         Ext.get(this.previewFrameId).setStyle({
             height: (this.previewPanel.getHeight() - 7) + "px"
         });
-
-        this.previewMode = 'video';
 
         this.checkVideoplayerInterval = window.setInterval(function () {
             if (window[this.previewFrameId] && window[this.previewFrameId].document.getElementById("video")) {
