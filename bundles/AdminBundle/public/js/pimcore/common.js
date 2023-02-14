@@ -45,16 +45,6 @@ pimcore.globalmanager = {
         this.store[key] = value;
     },
 
-    appendToArray: function (key, value) {
-        if(this.exists(key)) {
-            if (Array.isArray(this.get(key)) && !in_array(value, this.get(key))) {
-                this.get(key).push(value);
-            }
-        } else {
-            this.add(key, [value]);
-        }
-    },
-
     remove: function (key) {
         try {
             if (this.store[key]) {

@@ -71,6 +71,9 @@ class Asset extends Element\AbstractElement
      * @internal
      *
      * @var string[]
+     *
+     * @deprecated use getTypes() instead.
+     *
      */
     public static array $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
 
@@ -164,7 +167,12 @@ class Asset extends Element\AbstractElement
 
     public static function getTypes(): array
     {
-        return self::$types;
+        $assetsConfig = Config::getSystemConfiguration('assets');
+        if (isset($assetsConfig['type_definitions']['map']) && is_array($assetsConfig['type_definitions']['map'])) {
+            return array_keys($assetsConfig['type_definitions']['map']);
+        }
+
+        return [];
     }
 
     /**

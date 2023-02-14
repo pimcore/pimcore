@@ -32,12 +32,6 @@ It needs to extend `pimcore.asset.asset`, be located in namespace `pimcore.asset
 For examples have a look at the Pimcore core asset types at
 [github](https://github.com/pimcore/pimcore/tree/11.x/bundles/AdminBundle/public/js/pimcore/asset)
 
-In addition you need to append this type to the `asset_search_types` right after the namespace registration.
-
-```javascript
-pimcore.globalmanager.appendToArray("asset_search_types", "indesign");
-```
-
 ## 2) Register the asset on the asset type map
 
 Next we need to update `pimcore.assets.type_definitions.map` configuration to include our asset. This can be done in any config
