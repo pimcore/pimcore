@@ -428,15 +428,15 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $newConfiguration = [
             'map' => [],
         ];
-        if (array_key_exists('map', $configuration)) {
+        if (isset($configuration['map'])) {
             foreach ($configuration['map'] as $type => $config) {
-                if (array_key_exists('class', $config)) {
+                if (isset($config['class'])) {
                     $newConfiguration['map'][$type] = $config['class'];
                 }
             }
         }
 
-        if (array_key_exists('prefixes', $configuration)) {
+        if (isset($configuration['prefixes'])) {
             $newConfiguration['prefixes'] = $configuration['prefixes'];
         } else {
             $newConfiguration['prefixes'] = [];
