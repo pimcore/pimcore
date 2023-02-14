@@ -77,7 +77,7 @@ class DocumentMetaDataListener implements EventSubscriberInterface
         if ($document && $request->get('_route') == 'document_' . $document->getId()) {
             if ($document instanceof Page && is_array($document->getMetaData())) {
                 foreach ($document->getMetaData() as $meta) {
-                    $this->headMeta->addRaw($meta);
+                    $this->headMeta->addRaw(htmlspecialchars($meta, ENT_QUOTES, 'UTF-8'));
                 }
             }
         }
