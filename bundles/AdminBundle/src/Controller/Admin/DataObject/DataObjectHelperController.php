@@ -1293,6 +1293,7 @@ class DataObjectHelperController extends AdminController
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
         $delimiter = $settings['delimiter'] ?? ';';
+        $header = $settings['header'] ?? 'title';
 
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -1328,7 +1329,7 @@ class DataObjectHelperController extends AdminController
 
         $list = $beforeListExportEvent->getArgument('list');
 
-        $fields = $request->get('fields');
+        $fields = json_decode($request->get('fields')[0], true);
 
         $addTitles = (bool) $request->get('initial');
 
@@ -1347,7 +1348,7 @@ class DataObjectHelperController extends AdminController
             $context = array_merge($context, $contextFromRequest);
         }
 
-        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles, $context);
+        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $header, $addTitles, $context);
 
         $storage = Storage::get('temp');
         $csvFile = $this->getCsvFile($fileHandle);
@@ -1358,6 +1359,12 @@ class DataObjectHelperController extends AdminController
         stream_copy_to_stream($fileStream, $temp, null, 0);
 
         $firstLine = true;
+
+        if ($request->get('initial') && $header === 'no_header') {
+            array_shift($csv);
+            $firstLine = false;
+        }
+
         $lineCount = count($csv);
 
         if (!$addTitles && $lineCount > 0) {
