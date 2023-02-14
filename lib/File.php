@@ -16,6 +16,8 @@
 namespace Pimcore;
 
 use League\Flysystem\FilesystemOperator;
+use Pimcore;
+use Pimcore\Helper\LongRunningHelper;
 
 class File
 {
@@ -232,7 +234,7 @@ class File
         self::$context = $context;
     }
 
-    public static function getLocalTempFilePath(?string $fileExtension = null): string
+    public static function getLocalTempFilePath(?string $fileExtension = null, bool $keep = false): string
     {
         $filePath = sprintf('%s/temp-file-%s.%s',
             PIMCORE_SYSTEM_TEMP_DIRECTORY,
@@ -240,11 +242,16 @@ class File
             $fileExtension ?: 'tmp'
         );
 
-        register_shutdown_function(static function() use ($filePath) {
-            if(file_exists($filePath)) {
-                unlink($filePath);
-            }
-        });
+        if(!$keep) {
+            register_shutdown_function(static function () use ($filePath) {
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            });
+
+            $longRunningHelper = Pimcore::getContainer()->get(LongRunningHelper::class);
+            $longRunningHelper->addTmpFilePath($filePath);
+        }
 
         return $filePath;
     }
