@@ -20,7 +20,7 @@ The following code will briefly show how to perform a one time payment inside th
 #### CheckoutController.php
 
 ```php
-public function paymentAction(Request $request)
+public function paymentAction(Request $request): Response
 {
     $factory = \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance();
 
@@ -29,8 +29,7 @@ public function paymentAction(Request $request)
 
     // open payment or submit recurring payment
     if ($request->getMethod() == 'POST') {
-        if($sourceOrderId = $request->get("recurring-payment")){
-
+        if ($sourceOrderId = $request->get("recurring-payment")) {
             /* Recurring Payment */
             if ($user && $sourceOrderId) {
                 $sourceOrder = \Pimcore\Model\DataObject\OnlineShopOrder::getById($sourceOrderId);

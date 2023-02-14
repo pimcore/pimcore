@@ -85,7 +85,7 @@ abstract class AbstractConfig implements ConfigInterface
         return $this->attributeConfig;
     }
 
-    protected function buildAttributes(array $attributes)
+    protected function buildAttributes(array $attributes): void
     {
         foreach ($attributes as $attribute) {
             if ($attribute instanceof Attribute) {

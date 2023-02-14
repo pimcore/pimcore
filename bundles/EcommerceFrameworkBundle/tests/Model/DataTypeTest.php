@@ -69,7 +69,7 @@ class DataTypeTest extends TestCase
      * Calls fill* methods on the object as needed in test
      *
      */
-    protected function fillObject(Concrete $object, array|string $fields = [], ?array &$returnData = [])
+    protected function fillObject(Concrete $object, array|string $fields = [], ?array &$returnData = []): void
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {
