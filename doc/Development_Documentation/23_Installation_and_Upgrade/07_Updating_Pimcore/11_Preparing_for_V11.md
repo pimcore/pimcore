@@ -76,6 +76,8 @@
   - Use `Pimcore\Db\Helper::selectAndDeleteWhere()` instead of `selectAndDeleteWhere()`
   - Use `Pimcore\Db\Helper::escapeLike()` instead of `escapeLike()`
 
+- [Deprecations] Constant `PIMCORE_PHP_ERROR_LOG` is deprecated and will be removed in Pimcore 11
+
 - [Config Environment] Replace deprecated setting write targets and storage directory in the .env file with symfony config
     ```bash
     PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS=symfony-config
