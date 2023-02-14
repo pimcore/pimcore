@@ -61,7 +61,6 @@ class Gotenberg
             $chromium->emulateScreenMediaType();
             $chromium->nativePageRanges('1');
 
-            $url = str_replace('localhost', 'nginx:80', $url);
             $request = $chromium->outputFilename($filename)->url($url);
             GotenbergAPI::save($request, $outputPath);
 
