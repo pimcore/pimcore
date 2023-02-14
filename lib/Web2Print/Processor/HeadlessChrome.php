@@ -21,6 +21,7 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\PrintConfigEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Tool\Console;
 use Pimcore\Web2Print\Processor;
 use Spiritix\Html2Pdf\Converter;
 use Spiritix\Html2Pdf\Input\StringInput;
@@ -102,6 +103,10 @@ class HeadlessChrome extends Processor
 
         ['html' => $html, 'params' => $params] = $event->getArguments();
 
+        if (!class_exists(StringInput::class)) {
+            throw new \UnexpectedValueException('Please install spiritix/php-chrome-html2pdf via Composer to use Headless Chrome PDF conversion');
+        }
+
         $input = new StringInput();
         $input->setHtml($html);
 
@@ -109,6 +114,8 @@ class HeadlessChrome extends Processor
         $converter = new Converter($input, $output);
         if ($this->nodePath) {
             $converter->setNodePath($this->nodePath);
+        } else {
+            $converter->setNodePath(Console::getExecutable('node'));
         }
         $converter->setOptions($params);
 

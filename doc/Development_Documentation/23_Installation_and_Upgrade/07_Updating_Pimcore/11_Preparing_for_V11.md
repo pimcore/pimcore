@@ -77,3 +77,4 @@
   - Use `Pimcore\Db\Helper::escapeLike()` instead of `escapeLike()`
 
 - [Ecommerce] Switch to ElasticSearch8 implementations in case you are using elasticsearch indices. 
+- [Deprecations] Constant `PIMCORE_PHP_ERROR_LOG` is deprecated and will be removed in Pimcore 11
