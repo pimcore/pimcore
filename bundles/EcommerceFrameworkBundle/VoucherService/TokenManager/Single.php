@@ -90,9 +90,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
             $total = count($codes);
 
             $availablePages = (int) ceil($total / $perPage);
-            if ($page > $availablePages) {
-                $page = $availablePages;
-            }
+            $page = min($page, $availablePages);
 
             $paginator = $paginator->paginate(
                 (array)$codes,
