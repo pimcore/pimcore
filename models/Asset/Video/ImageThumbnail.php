@@ -143,7 +143,6 @@ final class ImageThumbnail
                         $converter->saveImage($tempFile, $timeOffset);
                         $generated = true;
                         $storage->write($cacheFilePath, file_get_contents($tempFile));
-                        unlink($tempFile);
                     }
 
                     $lock->release();

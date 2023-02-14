@@ -234,11 +234,17 @@ class File
 
     public static function getLocalTempFilePath(?string $fileExtension = null): string
     {
-        return sprintf('%s/temp-file-%s.%s',
+        $filePath = sprintf('%s/temp-file-%s.%s',
             PIMCORE_SYSTEM_TEMP_DIRECTORY,
             uniqid() . '-' .  bin2hex(random_bytes(15)),
             $fileExtension ?: 'tmp'
         );
+
+        register_shutdown_function(function() use ($filePath) {
+            if(file_exists($filePath)) {
+                unlink($filePath);
+            }
+        });
     }
 
     /**
