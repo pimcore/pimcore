@@ -203,9 +203,8 @@ pimcore:
 - [Commands] Calling `configureParallelization` on `Parallelization` trait is deprecated and will be removed in Pimcore 11. Please call `Parallelization::configureCommand` instead.
 - [Events] Event `pimcore.element.note.postAdd` has been deprecated. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Document] Deprecated loading documents via fixed namespace only. It will be removed in Pimcore 11. Use `pimcore:type_definitions instead`
-- [Annotations] Using Annotations `@ResponseHeader` & `@ParamConverter`, `@Template` and 
-rest from [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers) is deprecated and will not be supported on Pimcore 11. 
-Use `#[ResponseHeader]`,`#[DataObjectParam]` argument, `#[Template]` and other attributes instead.
+- [Annotations] Using Annotations `@ResponseHeader` & `@ParamConverter`, `@Template` and rest from [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers) is deprecated and will not be supported on Pimcore 11. Use `#[ResponseHeader]`,`#[DataObjectParam]` argument, `#[Template]` and other attributes instead.
+- [Asset] Deprecated VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111)
 - [Navigation] Changed the navigation building process. It is easier to add main and submenus. For details please see [Adding Custom Main Navigation Items](https://pimcore.com/docs/pimcore/11.0/Development_Documentation/Extending_Pimcore/Bundle_Developers_Guide/Event_Listener_UI.html#page_Adding-Custom-Main-Navigation-Items)
 - [Sites] Default Site Id has been updated from `default` to `0`. Please update configs using default site id accordingly.
 
@@ -405,6 +404,7 @@ $oldId = $object->getId(); //returns 0
 //after:
 $newId = $object->getId(); //returns null
 ```
+- [Asset] Deprectaed the `marshal()/unmarshal()` methods for metadata, use `normalize()/denormalize()` methods instead.
 
 ## 10.3.0
 - **Important**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
