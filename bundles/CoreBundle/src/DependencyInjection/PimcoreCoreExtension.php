@@ -425,10 +425,14 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
      */
     private function flattenConfigurationForTypeLoader(array $configuration) : array
     {
-        $newConfiguration = [];
-        foreach ($configuration['map'] as $type => $config) {
-            if (array_key_exists('class', $config)) {
-                $newConfiguration['map'][$type] = $config['class'];
+        $newConfiguration = [
+            'map' => [],
+        ];
+        if (array_key_exists('map', $configuration)) {
+            foreach ($configuration['map'] as $type => $config) {
+                if (array_key_exists('class', $config)) {
+                    $newConfiguration['map'][$type] = $config['class'];
+                }
             }
         }
 
