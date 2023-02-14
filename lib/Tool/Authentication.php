@@ -83,12 +83,20 @@ class Authentication
     }
 
     /**
+     * @deprecated
+     *
      * @throws \Exception
      *
      * @return User
      */
     public static function authenticateHttpBasic()
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6',
+            sprintf('%s is deprecated and will be removed in Pimcore 11', __METHOD__),
+        );
+
         // we're using Sabre\HTTP for basic auth
         $request = \Sabre\HTTP\Sapi::getRequest();
         $response = new \Sabre\HTTP\Response();
