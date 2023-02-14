@@ -548,9 +548,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $total = count($tokens);
         
         $availablePages = (int) ceil($total / $perPage);
-        if ($page > $availablePages) {
-            $page = $availablePages;
-        }
+        $page = min($page, availablePages);
 
         $paginator = $paginator->paginate(
             $tokens,
