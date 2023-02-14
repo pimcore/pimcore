@@ -124,7 +124,8 @@ pimcore.object.fieldcollection = Class.create({
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick' : this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
+            "beforeitemmove": this.onTreeNodeBeforeMove.bind(this),
         };
 
         return treeNodeListeners;
@@ -180,6 +181,10 @@ pimcore.object.fieldcollection = Class.create({
         }));
 
         menu.showAt(e.pageX, e.pageY);
+    },
+
+    onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
+        return pimcore.helpers.treeDragDropValidate(node, oldParent, newParent);
     },
 
     addField: function () {

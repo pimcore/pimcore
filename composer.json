@@ -239,7 +239,8 @@
       "symfony/symfony": "source"
     },
     "allow-plugins": {
-      "eloquent/composer-npm-bridge": false
+      "eloquent/composer-npm-bridge": false,
+      "php-http/discovery": false
     }
   }
 }
