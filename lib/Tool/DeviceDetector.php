@@ -127,10 +127,7 @@ class DeviceDetector
         return $this->default;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getDevice();
     }
