@@ -126,8 +126,8 @@ pimcore:
                 audio:
                     class: \Pimcore\Model\Asset\Audio
                     mapping: ['/audio/']
-                documents:
-                    class: \Pimcore\Model\Asset\Documents
+                document:
+                    class: \Pimcore\Model\Asset\Document
                     mapping: ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/']
                 folder:
                     class: \Pimcore\Model\Asset\Folder
