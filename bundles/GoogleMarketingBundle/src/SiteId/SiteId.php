@@ -26,7 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class SiteId
 {
-    const CONFIG_KEY_MAIN_DOMAIN = '0';
+    const CONFIG_KEY_MAIN_DOMAIN = 'site_0';
 
     private string $configKey;
 
