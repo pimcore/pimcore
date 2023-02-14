@@ -159,7 +159,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Returns boolean, if the domain table exists
+     * Returns boolean, if the domain table exists & domain registered in config
      *
      * @param string $domain
      *
@@ -168,6 +168,11 @@ class Dao extends Model\Dao\AbstractDao
     public function isAValidDomain(string $domain): bool
     {
         try {
+            $translationDomains = $this->model->getRegisteredDomains();
+            if (!in_array($domain, $translationDomains)) {
+                return false;
+            }
+
             $this->db->fetchOne(sprintf('SELECT * FROM translations_%s LIMIT 1;', $domain));
 
             return true;

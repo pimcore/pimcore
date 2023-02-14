@@ -42,6 +42,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 /**
  * @internal
@@ -157,6 +158,17 @@ class IndexController extends AdminController implements KernelResponseEventInte
     {
         $templateParams['pluginJsPaths'] = $this->bundleManager->getJsPaths();
         $templateParams['pluginCssPaths'] = $this->bundleManager->getCssPaths();
+
+        return $this;
+    }
+
+    protected function setAdminLanguage(Request $request, User $user): static
+    {
+        // set user language
+        $request->setLocale($user->getLanguage());
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($user->getLanguage());
+        }
 
         return $this;
     }
