@@ -169,7 +169,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
   Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
 - [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Environment] - Removed `symfony/dotenv` dependency to make loading of `.env` files optional. please add the requirement to your composer.json, if you still want to use `.env` files.
-- Removed `PIMCORE_SKIP_DOTENV_FILE` constant.
+- Removed `PIMCORE_SKIP_DOTENV_FILE` environment var support.
 - Removed deprecated `SensioFrameworkExtraBundle` which affects the following:
   - `@Template` annotation must be replaced with `#[Template]` attribute. Template guessing based on controller::action is not supported anymore.
   - `@ResponseHeader` annotation must be replaced with `#[ResponseHeader]` attribute. Removed deprecated `Pimcore\Controller\Configuration\ResponseHeader`.
