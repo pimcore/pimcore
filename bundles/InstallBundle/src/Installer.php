@@ -58,13 +58,13 @@ class Installer
     const EVENT_NAME_STEP = 'pimcore.installer.step';
 
     public const INSTALLABLE_BUNDLES = [
-        PimcoreGlossaryBundle::class,
-        PimcoreSeoBundle::class,
-        PimcoreSimpleBackendSearchBundle::class,
-        PimcoreStaticRoutesBundle::class,
-        PimcoreUuidBundle::class,
-        PimcoreWordExportBundle::class,
-        PimcoreXliffBundle::class,
+        'PimcoreGlossaryBundle' => PimcoreGlossaryBundle::class,
+        'PimcoreSeoBundle' => PimcoreSeoBundle::class,
+        'PimcoreSimpleBackendSearchBundle' => PimcoreSimpleBackendSearchBundle::class,
+        'PimcoreStaticRoutesBundle' => PimcoreStaticRoutesBundle::class,
+        'PimcoreUuidBundle' => PimcoreUuidBundle::class,
+        'PimcoreWordExportBundle' => PimcoreWordExportBundle::class,
+        'PimcoreXliffBundle' => PimcoreXliffBundle::class,
     ];
 
     private LoggerInterface $logger;
@@ -174,6 +174,10 @@ class Installer
 
     public function setBundlesToInstall(array $bundlesToInstall): void
     {
+        // map and filter the bundles
+        $bundlesToInstall = array_filter(array_map(static function(string $bundle) {
+           return self::INSTALLABLE_BUNDLES[$bundle] ?? null;
+        }, $bundlesToInstall));
         $this->bundlesToInstall = $bundlesToInstall;
     }
 

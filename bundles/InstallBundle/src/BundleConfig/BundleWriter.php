@@ -29,6 +29,23 @@ class BundleWriter
             $bundlesToInstall = array_merge($bundlesToInstall, $enabledBundles);
         }
 
-        File::putPhpFile($bundlesPhpFile, to_php_data_file_format($bundlesToInstall));
+        File::putPhpFile($bundlesPhpFile, $this->buildContents($bundlesToInstall));
     }
+
+    private function buildContents(array $bundles): string
+    {
+        $contents = "<?php\n\nreturn [\n";
+        foreach ($bundles as $class => $envs) {
+            $contents .= "    $class::class => [";
+            foreach ($envs as $env => $value) {
+                $booleanValue = var_export($value, true);
+                $contents .= "'$env' => $booleanValue, ";
+            }
+            $contents = substr($contents, 0, -2)."],\n";
+        }
+        $contents .= "];\n";
+
+        return $contents;
+    }
+
 }
