@@ -3250,3 +3250,18 @@ pimcore.helpers.deleteConfirm = function (title, name, deleteCallback) {
             }
         }.bind(this))
 };
+
+pimcore.helpers.treeDragDropValidate = function (node, oldParent, newParent) {
+    const disabledLayoutTypes = ['accordion', 'text', 'iframe', 'button']
+    if (newParent.data.editor) {
+        if (disabledLayoutTypes.includes(newParent.data.editor.type)) {
+            return false;
+        }
+    }
+
+    if (newParent.data.root) {
+        return false;
+    }
+
+    return true;
+};
