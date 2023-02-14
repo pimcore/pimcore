@@ -1013,3 +1013,5 @@ email_log_bcc: Bcc
 cols: Columns
 log_search_message: Message
 batch_export_confirmation: You are about to export %s dataObjects. Do you want to continue ?
+header: Header
+no_header: No Header
