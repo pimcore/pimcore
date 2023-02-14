@@ -21,14 +21,28 @@ so they do not support commonly used video codecs such as mpeg4 and many others.
 sudo apt-get install ffmpeg
 ```
 
-## LibreOffice, pdftotext, Inkscape, ...
+## PDF Generation 
+
+It's possible to either choose to install LibreOffice/Chromium or to use them via Gotenberg (Docker-powered API).
+
+### LibreOffice, pdftotext, Inkscape, ...
 
 ```bash
 apt-get install libreoffice libreoffice-script-provider-python libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript
 ```
 
-## Chromium (Chrome Headless)
+### Chromium (Chrome Headless)
 Please visit: [https://www.chromium.org/getting-involved/download-chromium](https://www.chromium.org/getting-involved/download-chromium)
+
+### Gotenberg
+
+To install it, please add it in your Docker Compose services stack as [https://gotenberg.dev/docs/get-started/docker-compose#quick-start](https://gotenberg.dev/docs/get-started/docker-compose#quick-start).
+
+Configure the Docker services accordingly:
+
+- `pimcore.gotenberg.base_url` which by default to `gotenberg:3000`
+- `pimcore.documents.preview_url_prefix` for example to `nginx:80`
+
 
 ## Image Optimizers
 

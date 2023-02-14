@@ -167,7 +167,11 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Asset] Asset/Asset Thumbnail Update messages are now routed to different queue
   instead of `pimcore_core`. please add option `pimcore_asset_update` to command `bin/console messenger:consume pimcore_core... pimcore_asset_update` to post process assets on update.
   Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
-- [Asset] Added support for Gotenberg adapter (as alternative to LibreOffice) in assets' preview generation.
+- [Gotenberg] Introducing support for [Gotenberg](https://gotenberg.dev/) as PDF generation, conversion, merge etc.. tool
+    - [Asset] Added adapter (as alternative to LibreOffice) for preview generation of supported document type assets and set it as default adapter.
+    - [Web2Print] Added settings option, configuration and processor for PDF preview and generation
+    - [Documents] Replaced default preview generator handler with Gotenberg. 
+    - [Version Diff] Added as alternative to Chromium page clip.
 - [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Translations] Translations Domains needs to be registered in order to be considered as valid. If you are using custom domains
   for translations (other than `messages` and `admin`), then it is required to register the domain in config below:

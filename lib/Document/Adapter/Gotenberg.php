@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Adapter;
 
+use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -61,7 +62,7 @@ class Gotenberg extends Ghostscript
      */
     public static function checkGotenberg(): bool
     {
-        $request = GotenbergAPI::chromium('gotenberg:3000')
+        $request = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url'])
             ->html(Stream::string('dummy.html', '<body></body>'));
 
         try {
@@ -134,7 +135,7 @@ class Gotenberg extends Ghostscript
             $localAssetTmpPath = $asset->getLocalFile();
 
             try {
-            $request = GotenbergAPI::libreOffice('gotenberg:3000')
+            $request = GotenbergAPI::libreOffice(Config::getSystemConfiguration('gotenberg')['base_url'])
                 ->convert(
                     Stream::path($localAssetTmpPath)
                 );

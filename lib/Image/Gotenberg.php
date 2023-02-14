@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Image;
 
 use Gotenberg\Gotenberg as GotenbergAPI;
+use Pimcore\Config;
 use Pimcore\Logger;
 
 /**
@@ -32,18 +33,21 @@ class Gotenberg
     /**
      * @throws \Exception
      */
-    public static function convert(string $url, string $outputFile, ?string $sessionId = null, ?string $sessionName = null, string $windowSize = '1280,1024'): bool
+    public static function convert(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
         $outputPath = dirname($outputFile);
         $filename = basename($outputFile, '.png');
 
         try {
             $headers = [];
-            if (null !== $sessionId && null !== $sessionName) {
-                $headers['Cookie'] = $sessionName . '=' . $sessionId;
+            if (php_sapi_name() !== 'cli') {
+                if (null !== $sessionId && null !== $sessionName) {
+                    $headers['Cookie'] = $sessionName . '=' . $sessionId;
+                }
             }
 
-            $chromium = GotenbergAPI::chromium('gotenberg:3000');
+            $gotenbergBaseUrl = Config::getSystemConfiguration('gotenberg')['base_url'];
+            $chromium = GotenbergAPI::chromium($gotenbergBaseUrl);
 
             if (!empty($headers)) {
                 $chromium->extraHttpHeaders($headers);
