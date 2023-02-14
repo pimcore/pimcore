@@ -1016,3 +1016,4 @@ batch_export_confirmation: You are about to export %s dataObjects. Do you want t
 header: Header
 no_header: No Header
 url-slug-invalid-chars: Provided invalid character in URL slug
+delete_entire_folder_question: Do you really want to delete the folder and its contents?
