@@ -36,7 +36,8 @@ final class Localizedfield extends Model\AbstractModel implements
     DirtyIndicatorInterface,
     LazyLoadedFieldsInterface,
     Model\Element\ElementDumpStateInterface,
-    OwnerAwareFieldInterface
+    OwnerAwareFieldInterface,
+    ObjectAwareFieldInterface
 {
     use Model\DataObject\Traits\OwnerAwareFieldTrait;
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
@@ -213,13 +214,12 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @param Concrete|Model\Element\ElementDescriptor|null $object
-     * @param bool $markAsDirty
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setObject(Model\Element\ElementDescriptor|Concrete|null $object, bool $markAsDirty = true): static
+    public function setObject(Model\Element\ElementDescriptor|Concrete|null $object): static
     {
         if ($object instanceof Model\Element\ElementDescriptor) {
             $object = Service::getElementById($object->getType(), $object->getId());
@@ -229,9 +229,7 @@ final class Localizedfield extends Model\AbstractModel implements
             throw new \Exception('must be instance of object concrete');
         }
 
-        if ($markAsDirty) {
-            $this->markAllLanguagesAsDirty();
-        }
+        $this->markAllLanguagesAsDirty();
         $this->object = $object;
         $this->objectId = $object ? $object->getId() : null;
         $this->setClass($object ? $object->getClass() : null);
@@ -750,6 +748,13 @@ final class Localizedfield extends Model\AbstractModel implements
 
         if (!$this->dirtyLanguages) {
             $this->dirtyLanguages = null;
+        }
+    }
+
+    public function markLanguagesAsDirty(array $languages): void
+    {
+        foreach ($languages as $language => $key) {
+            $this->markLanguageAsDirty($language);
         }
     }
 
