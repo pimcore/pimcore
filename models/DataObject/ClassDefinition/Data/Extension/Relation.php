@@ -81,7 +81,6 @@ trait Relation
         } finally {
             return $className;
         }
-        return $className;
     }
 
     /**
