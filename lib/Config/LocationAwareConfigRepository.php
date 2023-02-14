@@ -342,7 +342,7 @@ class LocationAwareConfigRepository
     private function getVarConfigFile(string $key): string
     {
         if($this->options && array_key_exists('directory', $this->options)) {
-            return $this->options['directory'];
+            return $this->options['directory'] . '/' . $key . '.yaml';
         }
         return $this->storageDirectory . '/' . $key . '.yaml';
     }
