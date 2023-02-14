@@ -1,9 +1,10 @@
 # Upgrade Notes
 ## 11.0.0
+- [Logging] Removed constant `PIMCORE_PHP_ERROR_LOG`
 - [General] **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. 
  This results in **various bc breaks**. Please make sure to add the corresponding types to your implementation.
 - [UrlSlug] Removed `index` column and `index` index from `object_url_slugs` table as it was not being used anywhere.
-- Bumped Symfony packages to "^6.1". Pimcore 11 will only support Symfony 6.
+- Bumped Symfony packages to "^6.2". Pimcore 11 will only support Symfony 6.
 - `FrontendController::renderTemplate()`: Changed the visibility to `protected`.
 - [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface`
 - [JSRouting Bundle] Bumped `friendsofsymfony/jsrouting-bundle` to version `^3.2.1`
@@ -32,6 +33,7 @@
 - Removed `SessionConfiguratorInterface` & `SessionConfigurator` so services with tag `pimcore.session.configurator` will not register session bags anymore.
 - Removed parameter `pimcore.admin.session.attribute_bags`
 - TargetingSessionBagListener - changed the signature of `__construct`.
+- Removed deprecated methods `getObject()` and `setObject()` on the classes `Pimcore\Model\Document\Link` and `Pimcore\Model\DataObject\Data\Link`, please use `getElement()` and `setElement()` instead.
 - Removed deprecated `Pimcore\Db\ConnectionInterface` interface, `Pimcore\Db\Connection` class and `Pimcore\Db\PimcoreExtensionsTrait` trait.
 - Removed deprecated `Pimcore\Model\Element\Service::getSaveCopyName()` method, please use the `Pimcore\Model\Element\Service::getSafeCopyName()` method instead.
   Column identifiers for the `insert()` and `update()` method data must be self quoted now. You can use the `Pimcore\Db\Helper::quoteDataIdentifiers()` method for that.
@@ -132,6 +134,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
     - UUID has been moved into PimcoreUuidBundle
       - Config `pimcore:general:instance_identifier` has been removed, please use `pimcore_uuid:instance_identifier` in the PimcoreUuidBundle instead. Please run `bin/console config:dump pimcore_uuid` to see more about the instance identifier config after installing the bundle.
+    - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
@@ -167,6 +170,22 @@ Please make sure to set your preferred storage location ***before*** migration. 
   instead of `pimcore_core`. please add option `pimcore_asset_update` to command `bin/console messenger:consume pimcore_core... pimcore_asset_update` to post process assets on update.
   Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
 - [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
+- [Translations] Translations Domains needs to be registered in order to be considered as valid. If you are using custom domains
+  for translations (other than `messages` and `admin`), then it is required to register the domain in config below:
+```yaml
+pimcore:
+  translations:
+    domains:
+      - site_1
+      - site_2
+```
+- [Environment] - Removed `symfony/dotenv` dependency to make loading of `.env` files optional. please add the requirement to your composer.json, if you still want to use `.env` files.
+- Removed deprecated `SensioFrameworkExtraBundle` which affects the following:
+  - `@Template` annotation must be replaced with `#[Template]` attribute. Template guessing based on controller::action is not supported anymore.
+  - `@ResponseHeader` annotation must be replaced with `#[ResponseHeader]` attribute. Removed deprecated `Pimcore\Controller\Configuration\ResponseHeader`.
+  - `@ParamConverter` annotation must be replaced with `#[DataObjectParam]` attribute.
+  Replace other annotations provided by [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers)
+
 
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
@@ -185,7 +204,11 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Commands] Calling `configureParallelization` on `Parallelization` trait is deprecated and will be removed in Pimcore 11. Please call `Parallelization::configureCommand` instead.
 - [Events] Event `pimcore.element.note.postAdd` has been deprecated. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Document] Deprecated loading documents via fixed namespace only. It will be removed in Pimcore 11. Use `pimcore:type_definitions instead`
+- [Annotations] Using Annotations `@ResponseHeader` & `@ParamConverter`, `@Template` and rest from [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers) is deprecated and will not be supported on Pimcore 11. Use `#[ResponseHeader]`,`#[DataObjectParam]` argument, `#[Template]` and other attributes instead.
+- [Asset] Deprecated VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111)
 - [Navigation] Changed the navigation building process. It is easier to add main and submenus. For details please see [Adding Custom Main Navigation Items](https://pimcore.com/docs/pimcore/11.0/Development_Documentation/Extending_Pimcore/Bundle_Developers_Guide/Event_Listener_UI.html#page_Adding-Custom-Main-Navigation-Items)
+- [Sites] Default Site Id has been updated from `default` to `0`. Please update configs using default site id accordingly.
+
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
 
@@ -382,6 +405,7 @@ $oldId = $object->getId(); //returns 0
 //after:
 $newId = $object->getId(); //returns null
 ```
+- [Asset] Deprectaed the `marshal()/unmarshal()` methods for metadata, use `normalize()/denormalize()` methods instead.
 
 ## 10.3.0
 - **Important**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is

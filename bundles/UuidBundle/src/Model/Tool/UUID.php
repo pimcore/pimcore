@@ -31,9 +31,9 @@ final class UUID extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|string
      */
-    protected int $itemId;
+    protected int|string $itemId;
 
     /**
      * @internal
@@ -93,14 +93,14 @@ final class UUID extends Model\AbstractModel
         return $this;
     }
 
-    public function setItemId(int $id): static
+    public function setItemId(int|string $id): static
     {
         $this->itemId = $id;
 
         return $this;
     }
 
-    public function getItemId(): int
+    public function getItemId(): int|string
     {
         return $this->itemId;
     }

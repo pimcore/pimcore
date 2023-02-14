@@ -200,7 +200,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         }.bind(this)
                     }, {
                         xtype: "button",
-                        text: t("360_viewer"),
+                        text: t("360_viewer") + " (" + t("deprecated") + ")",
                         iconCls: "pimcore_icon_vr",
                         width: "100%",
                         textAlign: "left",

@@ -147,10 +147,7 @@ class Unit extends Model\AbstractModel
         $this->dispatchEvent(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_DELETE);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return ucfirst($this->getAbbreviation() . ' (' . $this->getId() . ')');
     }
