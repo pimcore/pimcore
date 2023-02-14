@@ -182,7 +182,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
                 if (strlen($slug) > 0) {
                     $slugToCompare = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;]/', '-', $item->getSlug());
-                    if($item->getSlug() !== $slugToCompare){
+                    if ($item->getSlug() !== $slugToCompare) {
                         throw new Model\Element\ValidationException('Slug contains forbidden characters!');
                     }
 
