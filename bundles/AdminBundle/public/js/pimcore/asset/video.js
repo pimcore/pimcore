@@ -113,11 +113,6 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
 
         if (!this.editPanel) {
             this.previewFrameId = 'asset_video_edit_' + this.id;
-            this.previewMode = 'video';
-
-            if (this.data['videoInfo'] && this.data['videoInfo']['isVrVideo']) {
-                this.previewMode = 'vr';
-            }
 
             this.previewPanel = new Ext.Panel({
                 region: "center",
@@ -125,11 +120,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 html: ''
             });
             this.previewPanel.on("resize", function (el, width, height, rWidth, rHeight) {
-                if (this.previewMode == 'vr') {
-                    this.initPreviewVr();
-                } else {
-                    this.initPreviewVideo();
-                }
+                this.initPreviewVideo();
             }.bind(this));
 
             var date = new Date();
@@ -186,30 +177,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 items: [{
                     title: t("tools"),
                     bodyStyle: "padding: 10px;",
-                    items: [{
-                        xtype: "button",
-                        text: t("standard_preview"),
-                        iconCls: "pimcore_icon_image",
-                        width: "100%",
-                        textAlign: "left",
-                        style: "margin-top: 5px",
-                        handler: function () {
-                            if (this.previewMode != 'video') {
-                                this.initPreviewVideo();
-                            }
-                        }.bind(this)
-                    }, {
-                        xtype: "button",
-                        text: t("360_viewer") + " (" + t("deprecated") + ")",
-                        iconCls: "pimcore_icon_vr",
-                        width: "100%",
-                        textAlign: "left",
-                        style: "margin-top: 5px",
-                        hidden: !(this.data['videoInfo'] && this.data['videoInfo']['previewUrl']),
-                        handler: function () {
-                            this.initPreviewVr();
-                        }.bind(this)
-                    }, {
+                    items: [ {
                         xtype: "combo",
                         name: "thumbnail",
                         fieldLabel: t("thumbnail"),
@@ -342,21 +310,6 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         return this.editPanel;
     },
 
-    initPreviewVr: function () {
-        var previewContainerId = 'pimcore_video_preview_vr_' + this.id;
-        this.previewPanel.update('<div id="' + previewContainerId + '" class="pimcore_asset_image_preview"></div>');
-        var vrView = new VRView.Player('#' + previewContainerId, {
-            video: Routing.generate('pimcore_admin_asset_servevideopreview', {id: this.data.id}),
-            is_stereo: (this.data['videoInfo']['width'] === this.data['videoInfo']['height']),
-            width: 640,
-            height: 360,
-            hide_fullscreen_button: true
-        });
-
-        this.previewImagePanel.getComponent("inner").hide();
-        this.previewMode = 'vr';
-    },
-
     initPreviewVideo: function (config = "pimcore-system-treepreview") {
         var frameUrl = Routing.generate('pimcore_admin_asset_getpreviewvideo', {id: this.id, config: config});
         var html = '<iframe src="' + frameUrl + '" frameborder="0" id="' + this.previewFrameId + '" name="' + this.previewFrameId + '" style="width:100%;"></iframe>';
@@ -365,8 +318,6 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         Ext.get(this.previewFrameId).setStyle({
             height: (this.previewPanel.getHeight() - 7) + "px"
         });
-
-        this.previewMode = 'video';
 
         this.checkVideoplayerInterval = window.setInterval(function () {
             if (window[this.previewFrameId] && window[this.previewFrameId].document.getElementById("video")) {

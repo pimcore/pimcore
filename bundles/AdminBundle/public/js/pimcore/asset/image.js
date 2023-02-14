@@ -195,30 +195,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 }, {
                     xtype: "container",
                     html: "<hr>"
-                }, {
-                    xtype: "button",
-                    text: t("standard_preview"),
-                    iconCls: "pimcore_icon_image",
-                    width: "100%",
-                    textAlign: "left",
-                    style: "margin-top: 5px",
-                    handler: function () {
-                        if(this.previewMode != 'image') {
-                            this.initPreviewImage();
-                        }
-                    }.bind(this)
-                }, {
-                    xtype: "button",
-                    text: t("360_viewer") + " (" + t("deprecated") + ")",
-                    iconCls: "pimcore_icon_vr",
-                    width: "100%",
-                    textAlign: "left",
-                    style: "margin-top: 5px",
-                    handler: function () {
-                        if(this.previewMode != 'vr') {
-                            this.initPreviewVr();
-                        }
-                    }.bind(this)
                 }]
             }];
 
@@ -426,10 +402,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             details.push(this.customDownloadBox);
 
             this.previewContainerId = 'pimcore_asset_image_preview_' + this.id;
-            this.previewMode = 'image';
-            if(this.data.imageInfo["isVrImage"]) {
-                this.previewMode = 'vr';
-            }
 
             this.displayPanel = new Ext.Panel({
                 title: t("view"),
@@ -447,36 +419,17 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             });
 
             this.displayPanel.on('resize', function () {
-                if(this.previewMode == 'vr') {
-                    this.initPreviewVr();
-                } else {
-                    this.initPreviewImage();
-                }
+                this.initPreviewImage();
             }.bind(this));
         }
 
         return this.displayPanel;
     },
 
-    initPreviewVr: function () {
-        Ext.get(this.previewContainerId).setHtml('');
-        var vrView = new VRView.Player('#' + this.previewContainerId, {
-            image: Routing.generate('pimcore_admin_asset_getimagethumbnail', {id: this.id, width: 2000}),
-            is_stereo: (this.data.imageInfo.dimensions.width === this.data.imageInfo.dimensions.height),
-            width: (this.displayPanel.getWidth()-340),
-            height: (this.displayPanel.getHeight()-40),
-            hide_fullscreen_button: true
-        });
-
-        this.previewMode = 'vr';
-    },
-
     initPreviewImage: function () {
 
         var html = '<img src="' + this.data.imageInfo['previewUrl'] + '">';
         Ext.get(this.previewContainerId).setHtml(html);
-
-        this.previewMode = 'image';
 
         let area = this.displayPanel.getEl().down('img');
         if(area) {
