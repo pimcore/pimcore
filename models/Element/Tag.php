@@ -290,7 +290,7 @@ final class Tag extends Model\AbstractModel
         return '/' . implode('/', $parentNames);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getNamePath();
     }

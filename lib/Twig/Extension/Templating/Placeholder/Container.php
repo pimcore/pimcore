@@ -404,10 +404,8 @@ class Container extends \ArrayObject
 
     /**
      * Serialize object to string
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
     }
