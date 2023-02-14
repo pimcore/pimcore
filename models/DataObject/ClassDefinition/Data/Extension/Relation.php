@@ -78,8 +78,8 @@ trait Relation
             if ($className[0] !== '\\') {
                 $className = '\\' . $className;
             }
-        } catch (\Exception) {
-            //no class override
+        } finally {
+            return $className;
         }
         return $className;
     }
