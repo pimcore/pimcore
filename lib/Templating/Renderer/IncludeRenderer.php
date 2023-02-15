@@ -17,28 +17,25 @@ declare(strict_types=1);
 namespace Pimcore\Templating\Renderer;
 
 use Pimcore\Cache;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
  */
 class IncludeRenderer
 {
-    protected ActionRenderer $actionRenderer;
-
-
-
     public function __construct(
-        ActionRenderer $actionRenderer
+        protected ActionRenderer $actionRenderer,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {
-        $this->actionRenderer = $actionRenderer;
     }
 
     /**
@@ -78,13 +75,11 @@ class IncludeRenderer
             }
         }
 
-        //Personalization & Targeting Specific
-        $container = \Pimcore::getContainer();
-        if ($container->has(DocumentTargetingConfigurator::class)
-            && $include instanceof PageSnippet && $include->isPublished()) {
-            // apply best matching target group (if any)
-            $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
-            $targetingConfigurator->configureTargetGroup($include);
+        if ($include instanceof PageSnippet && $include->isPublished()) {
+            $this->eventDispatcher->dispatch(
+                new DocumentEvent($include, $params),
+                DocumentEvents::RENDERER_PRE_RENDER
+            );
         }
 
         // check if output-cache is enabled, if so, we're also using the cache here
