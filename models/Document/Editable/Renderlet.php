@@ -135,10 +135,11 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
 
             //Personalization & Targeting Specific
             // apply best matching target group (if any)
+            // @phpstan-ignore-next-line
             if ($container->has(DocumentTargetingConfigurator::class)
                 && $this->o instanceof TargetingDocumentInterface) {
                     $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
-                    $targetingConfigurator->configureTargetGroup ($this->o);
+                    $targetingConfigurator->configureTargetGroup($this->o);
             }
 
             $blockparams = ['controller', 'template'];
