@@ -860,6 +860,8 @@ class GridHelperService
 
         $csvStream= $storage->readStream($csvFile);
         $tempMetaData = stream_get_meta_data($csvStream);
+        //TODO: use this method and storage->read() to avoid the extra temp file, is not available in the current version. See: https://github.com/PHPOffice/PhpSpreadsheet/pull/2792
+        //$spreadsheet = $csvReader->loadSpreadsheetFromString($storage->read($csvFile));
         $spreadsheet = $csvReader->load($tempMetaData['uri']);
         $writer = new Xlsx($spreadsheet);
         $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
