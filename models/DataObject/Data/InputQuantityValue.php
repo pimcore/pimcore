@@ -44,11 +44,9 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * @return string
-     *
      * @throws \Exception
      */
-    public function __toString()
+    public function __toString(): string
     {
         $value = $this->getValue();
         if ($this->getUnit() instanceof Unit) {

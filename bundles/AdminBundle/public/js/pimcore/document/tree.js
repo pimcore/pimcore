@@ -85,10 +85,17 @@ pimcore.document.tree = Class.create({
 
         var itemsPerPage = pimcore.settings['document_tree_paging_limit'];
 
-        rootNodeConfig.text = t("home");
-        rootNodeConfig.id = "" +  rootNodeConfig.id;
+        let rootNodeConfigText = t('home');
+        let rootNodeConfigIconCls = "pimcore_icon_home";
+        if(this.config.customViewId !== undefined && rootNodeConfig.id !== 1) {
+            rootNodeConfigText = rootNodeConfig.key;
+            rootNodeConfigIconCls = rootNodeConfig.iconCls;
+        }
+
+        rootNodeConfig.text = rootNodeConfigText;
+        rootNodeConfig.id = "" + rootNodeConfig.id;
         rootNodeConfig.allowDrag = true;
-        rootNodeConfig.iconCls = "pimcore_icon_home";
+        rootNodeConfig.iconCls = rootNodeConfigIconCls;
         rootNodeConfig.cls = "pimcore_tree_node_root";
         rootNodeConfig.expanded = true;
 

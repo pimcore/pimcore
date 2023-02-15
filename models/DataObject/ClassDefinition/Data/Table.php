@@ -402,7 +402,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
-            return base64_encode(Serialize::serialize($data));
+            return json_encode($data);
         }
 
         return '';
