@@ -18,9 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
-use Pimcore\Bundle\WebToPrintBundle\Model\Document\Printcontainer;
-use Pimcore\Bundle\WebToPrintBundle\Model\Document\Printpage;
-use Pimcore\Bundle\WebToPrintBundle\PimcoreWebToPrintBundle;
 use Pimcore\Model\Document;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigTest;
@@ -59,9 +56,6 @@ class DocumentHelperExtensions extends AbstractExtension
             }),
             new TwigTest('pimcore_document_snippet', static function ($object) {
                 return $object instanceof Document\Snippet;
-            }),
-            new TwigTest('pimcore_document_print', static function ($object) {
-                return $object instanceof PrintAbstract;
             }),
         ];
     }
