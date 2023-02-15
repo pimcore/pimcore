@@ -1,4 +1,4 @@
-namespace: Pimcore\Bundle\PersonalizationBundle\Tests\Support
+namespace: Pimcore\Bundle\PersonalizationBundle\Tests
 actor_suffix: Tester
 paths:
     tests: tests

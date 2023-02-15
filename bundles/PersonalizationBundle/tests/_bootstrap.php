@@ -2,8 +2,6 @@
 
 use Pimcore\Tests\Support\Util\Autoloader;
 
-$pimcoreTestsSupportDir = '';
-
 if (file_exists (__DIR__ . '/../vendor/autoload.php')) {
     include __DIR__ . '/../vendor/autoload.php';
     $pimcoreTestDir = __DIR__ . '/../vendor/pimcore/pimcore/tests';
@@ -20,11 +18,6 @@ if (file_exists (__DIR__ . '/../vendor/autoload.php')) {
 }
 
 $pimcoreTestsSupportDir = $pimcoreTestDir . '/Support';
-
-//Pimcore 10 BC layer
-if (!is_dir ($pimcoreTestsSupportDir)) {
-    $pimcoreTestsSupportDir = $pimcoreTestDir . '/_support';
-}
 
 include $pimcoreTestsSupportDir . '/Util/Autoloader.php';
 

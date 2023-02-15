@@ -7,6 +7,8 @@ docker-compose exec php chmod 755 .github/ci/scripts/setup-pimcore-environment.s
 docker-compose exec php .github/ci/scripts/setup-pimcore-environment.sh
 docker-compose exec php composer update
 
+docker-compose exec php-fpm vendor/bin/codecept run -vv
+
 printf "\n\n\n================== \n"
 printf "Run 'docker-compose exec php vendor/bin/codecept run -vv' to re-run the tests.\n"
 printf "Run 'docker-compose down -v --remove-orphans' to shutdown container and cleanup.\n\n"
