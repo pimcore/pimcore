@@ -608,7 +608,7 @@ class Service extends Model\Element\Service
         return $layoutPermissions;
     }
 
-    public static function getFieldForBrickType(ClassDefinition $class, string $bricktype): int|string|null
+    public static function getFieldForBrickType(ClassDefinitionInterface $class, string $bricktype): int|string|null
     {
         $fieldDefinitions = $class->getFieldDefinitions();
         foreach ($fieldDefinitions as $key => $fd) {
@@ -1247,7 +1247,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function getCustomLayoutDefinitionForGridColumnConfig(ClassDefinition $class, int $objectId): array
+    public static function getCustomLayoutDefinitionForGridColumnConfig(ClassDefinitionInterface $class, int $objectId): array
     {
         $layoutDefinitions = $class->getLayoutDefinitions();
 
@@ -1550,7 +1550,7 @@ class Service extends Model\Element\Service
         return self::$systemFields;
     }
 
-    public static function doResetDirtyMap(Model\AbstractModel $container, ClassDefinition|ClassDefinition\Data $fd): void
+    public static function doResetDirtyMap(Model\AbstractModel $container, ClassDefinitionInterface|ClassDefinition\Data $fd): void
     {
         if (!method_exists($fd, 'getFieldDefinitions')) {
             return;

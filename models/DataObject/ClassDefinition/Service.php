@@ -45,11 +45,12 @@ class Service
         self::$doRemoveDynamicOptions = $doRemoveDynamicOptions;
     }
 
-    public static function generateClassDefinitionJson(DataObject\ClassDefinition $class): string
+    public static function generateClassDefinitionJson(DataObject\ClassDefinitionInterface $class): string
     {
         $class = clone $class;
-        if ($class->layoutDefinitions instanceof Layout) {
-            self::removeDynamicOptionsFromLayoutDefinition($class->layoutDefinitions);
+        $layoutDefinitions = $class->getLayoutDefinitions();
+        if ($layoutDefinitions instanceof Layout) {
+            self::removeDynamicOptionsFromLayoutDefinition($layoutDefinitions);
         }
 
         self::setDoRemoveDynamicOptions(true);
@@ -90,7 +91,7 @@ class Service
         }
     }
 
-    public static function importClassDefinitionFromJson(DataObject\ClassDefinition $class, string $json, bool $throwException = false, bool $ignoreId = false): bool
+    public static function importClassDefinitionFromJson(DataObject\ClassDefinitionInterface $class, string $json, bool $throwException = false, bool $ignoreId = false): bool
     {
         $userId = 0;
         $user = \Pimcore\Tool\Admin::getCurrentUser();

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,12 +15,25 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\DataObject\ClassBuilder;
+namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Pimcore\Model\DataObject\ClassDefinitionInterface;
-use Pimcore\Model\DataObject\Objectbrick\Definition;
-
-interface ObjectBrickContainerClassBuilderInterface
+/**
+ * @internal
+ */
+interface VarExportInterface
 {
-    public function buildContainerClass(Definition $definition, ClassDefinitionInterface $classDefinition, string $fieldName, array $brickKeys): string;
+    /**
+     * @return string[]
+     */
+    public function getBlockedVarsForExport(): array;
+
+    /**
+     * @return string[]
+     */
+    public function resolveBlockedVars(): array;
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function __set_state(array $data): static;
 }

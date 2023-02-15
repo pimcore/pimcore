@@ -69,7 +69,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      */
-    protected ?ClassDefinition $class = null;
+    protected ?ClassDefinitionInterface $class = null;
 
     /**
      * @internal
@@ -354,7 +354,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $dependencies = [parent::resolveDependencies()];
 
         // check in fields
-        if ($this->getClass() instanceof ClassDefinition) {
+        if ($this->getClass() instanceof ClassDefinitionInterface) {
             foreach ($this->getClass()->getFieldDefinitions() as $field) {
                 $key = $field->getName();
                 $dependencies[] = $field->resolveDependencies($this->$key ?? null);
@@ -367,7 +367,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @return $this
      */
-    public function setClass(?ClassDefinition $class): static
+    public function setClass(?ClassDefinitionInterface $class): static
     {
         $this->class = $class;
 
@@ -377,11 +377,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @throws \Exception
      */
-    public function getClass(): ClassDefinition
+    public function getClass(): ClassDefinitionInterface
     {
         if (!$this->class) {
             $class = ClassDefinition::getById($this->getClassId());
-            if (!$class instanceof ClassDefinition) {
+            if (!$class instanceof ClassDefinitionInterface) {
                 throw new Model\Exception\NotFoundException('class not found for object id: ' . $this->getId());
             }
 

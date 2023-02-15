@@ -29,13 +29,12 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
-use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentModelInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
  */
-final class ClassDefinition extends Model\AbstractModel implements FieldDefinitionEnrichmentModelInterface
+final class ClassDefinition extends Model\AbstractModel implements ClassDefinitionInterface
 {
     use DataObject\ClassDefinition\Helper\VarExport;
     use DataObject\Traits\LocateFileTrait;
@@ -252,7 +251,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     /**
      * @throws \Exception
      */
-    public static function getByName(string $name): ?ClassDefinition
+    public static function getByName(string $name): ?ClassDefinitionInterface
     {
         try {
             $class = new self();
@@ -264,7 +263,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         }
     }
 
-    public static function create(array $values = []): ClassDefinition
+    public static function create(array $values = []): ClassDefinitionInterface
     {
         $class = new self();
         $class->setValues($values);
@@ -571,7 +570,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     /**
      * @internal
      */
-    public function getDefinitionFile(string $name = null): string
+    public function getDefinitionFile(?string $name = null): string
     {
         return $this->locateDefinitionFile($name ?? $this->getName(), 'definition_%s.php');
     }
@@ -1138,7 +1137,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
      *
      * @return $this
      */
-    public function setDeletedDataComponents(array $deletedDataComponents): ClassDefinition
+    public function setDeletedDataComponents(array $deletedDataComponents): ClassDefinitionInterface
     {
         $this->deletedDataComponents = $deletedDataComponents;
 
@@ -1190,7 +1189,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         }
     }
 
-    public static function getByIdIgnoreCase(string $id): ClassDefinition|null
+    public static function getByIdIgnoreCase(string $id): ClassDefinitionInterface|null
     {
         try {
             $class = new self();

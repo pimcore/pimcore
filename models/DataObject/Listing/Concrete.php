@@ -81,7 +81,7 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    public function getClass(): DataObject\ClassDefinition
+    public function getClass(): DataObject\ClassDefinitionInterface
     {
         $class = DataObject\ClassDefinition::getById($this->getClassId());
 

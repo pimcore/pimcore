@@ -43,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
         throw new \Exception('Needs to be implemented by child class');
     }
 
-    public function createOrUpdateTable(DataObject\ClassDefinition $class): void
+    public function createOrUpdateTable(DataObject\ClassDefinitionInterface $class): void
     {
         $classId = $class->getId();
         $table = 'object_metadata_' . $classId;

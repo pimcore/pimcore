@@ -27,9 +27,9 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
- * @method string getTableName(DataObject\ClassDefinition $class)
- * @method void createUpdateTable(DataObject\ClassDefinition $class)
- * @method string getLocalizedTableName(DataObject\ClassDefinition $class)
+ * @method string getTableName(DataObject\ClassDefinitionInterface $class)
+ * @method void createUpdateTable(DataObject\ClassDefinitionInterface $class)
+ * @method string getLocalizedTableName(DataObject\ClassDefinitionInterface $class)
  */
 class Definition extends Model\AbstractModel
 {

@@ -100,7 +100,7 @@ class ClassesRebuildCommand extends AbstractCommand
         } else {
             $list = new ClassDefinition\Listing();
             foreach ($list->getData() as $class) {
-                if ($class instanceof ClassDefinition) {
+                if ($class instanceof DataObject\ClassDefinitionInterface) {
                     if ($output->isVerbose()) {
                         $output->writeln(sprintf('%s [%s] saved', $class->getName(), $class->getId()));
                     }

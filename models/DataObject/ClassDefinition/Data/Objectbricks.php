@@ -443,7 +443,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $tags;
     }
 
-    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinitionInterface|DataObject\Fieldcollection\Definition $class): string
     {
         // getter
 
@@ -753,7 +753,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the localized data
      *
      */
-    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
+    public function classSaved(DataObject\ClassDefinitionInterface $class, array $params = []): void
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $allowedType) {

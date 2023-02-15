@@ -91,7 +91,7 @@ final class Version20211018104331 extends AbstractMigration
     /**
      * @return string[]
      */
-    private function getForeignKeys(DataObject\ClassDefinition $class): array
+    private function getForeignKeys(DataObject\ClassDefinitionInterface $class): array
     {
         $foreignKeys = [
             'object_query_'.$class->getId() => 'oo_id',

@@ -448,7 +448,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @return DataObject\ClassDefinition[]
+     * @return DataObject\ClassDefinitionInterface[]
      */
     public function getClasses(): array
     {
