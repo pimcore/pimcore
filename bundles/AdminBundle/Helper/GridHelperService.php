@@ -850,7 +850,7 @@ class GridHelperService
 
     /**
      * @throws FilesystemException
-     * @throws Exception
+     * @throws Exception|\PhpOffice\PhpSpreadsheet\Reader\Exception
      */
     public function createXlsxExportFile(FilesystemOperator $storage, string $fileHandle, string $csvFile): BinaryFileResponse
     {
@@ -858,7 +858,9 @@ class GridHelperService
         $csvReader->setDelimiter(';');
         $csvReader->setSheetIndex(0);
 
-        $spreadsheet = $csvReader->loadSpreadsheetFromString($storage->read($csvFile));
+        $csvStream= $storage->readStream($csvFile);
+        $tempMetaData = stream_get_meta_data($csvStream);
+        $spreadsheet = $csvReader->load($tempMetaData['uri']);
         $writer = new Xlsx($spreadsheet);
         $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
         $writer->save($xlsxFilename);
