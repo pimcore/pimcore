@@ -48,7 +48,7 @@ class Installer extends SettingsStoreAwareInstaller
     public function install(): void
     {
         $this->installDatabaseTable();
-        $enums = array_merge($this->getCurrentEnumTypes(), self::BUNDLE_EXTRA_DOCUMENT_ENUM_TYPES);
+        $enums = array_unique(array_merge($this->getCurrentEnumTypes(), self::BUNDLE_EXTRA_DOCUMENT_ENUM_TYPES));
         $this->modifyEnumTypes($enums);
         $this->addUserPermission();
         parent::install();
@@ -67,10 +67,14 @@ class Installer extends SettingsStoreAwareInstaller
         $db = \Pimcore\Db::get();
 
         foreach (self::USER_PERMISSIONS as $permission) {
-            $db->insert('users_permission_definitions', [
-                $db->quoteIdentifier('key') => $permission,
-                $db->quoteIdentifier('category') => self::USER_PERMISSION_CATEGORY,
-            ]);
+            // check if the permission already exists
+            $permissionExists = $db->executeStatement('SELECT `key` FROM users_permission_definitions WHERE `key` = :key', ['key' => $permission]);
+            if(!$permissionExists) {
+                $db->insert('users_permission_definitions', [
+                    $db->quoteIdentifier('key') => $permission,
+                    $db->quoteIdentifier('category') => self::USER_PERMISSION_CATEGORY,
+                ]);
+            }
         }
     }
 
