@@ -14,18 +14,20 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model;
+namespace Pimcore\Bundle\SeoBundle\Model;
 
+use Pimcore\Bundle\SeoBundle\Event\Model\RedirectEvent;
+use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
 use Pimcore\Config;
-use Pimcore\Event\Model\RedirectEvent;
-use Pimcore\Event\RedirectEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
+use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @method \Pimcore\Model\Redirect\Dao getDao()
+ * @method \Pimcore\Bundle\SeoBundle\Model\Redirect\Dao getDao()
  */
 final class Redirect extends AbstractModel
 {
@@ -68,7 +70,7 @@ final class Redirect extends AbstractModel
 
     protected bool $active = true;
 
-    protected ?int $expiry = null;
+    protected int|string|null $expiry = null;
 
     protected ?int $creationDate = null;
 
@@ -279,7 +281,7 @@ final class Redirect extends AbstractModel
         return $this;
     }
 
-    public function setSourceSite(int $sourceSite): static
+    public function setSourceSite(?int $sourceSite): static
     {
         if ($sourceSite) {
             $this->sourceSite = (int) $sourceSite;
@@ -295,7 +297,7 @@ final class Redirect extends AbstractModel
         return $this->sourceSite;
     }
 
-    public function setTargetSite(int $targetSite): static
+    public function setTargetSite(?int $targetSite): static
     {
         if ($targetSite) {
             $this->targetSite = (int) $targetSite;

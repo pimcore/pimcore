@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Maintenance\TaskInterface;
-use Pimcore\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 
 /**
  * @internal

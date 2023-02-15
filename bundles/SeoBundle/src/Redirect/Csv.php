@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Routing\Redirect;
+namespace Pimcore\Bundle\SeoBundle\Redirect;
 
 use League\Csv\EncloseField;
 use League\Csv\Reader;
@@ -23,7 +23,7 @@ use League\Csv\Statement;
 use League\Csv\Writer;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\ArrayNormalizer;
 use Pimcore\Tool\Text;

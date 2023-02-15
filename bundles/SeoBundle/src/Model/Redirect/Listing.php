@@ -14,20 +14,21 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Redirect;
+namespace Pimcore\Bundle\SeoBundle\Model\Redirect;
 
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Redirect\Listing\Dao getDao()
- * @method Model\Redirect[] load()
- * @method Model\Redirect|false current()
+ * @method \Pimcore\Bundle\SeoBundle\Model\Redirect\Listing\Dao getDao()
+ * @method Redirect[] load()
+ * @method Redirect|false current()
  * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @return Model\Redirect[]
+     * @return Redirect[]
      */
     public function getRedirects(): array
     {
@@ -35,7 +36,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param Model\Redirect[]|null $redirects
+     * @param Redirect[]|null $redirects
      *
      * @return $this
      */

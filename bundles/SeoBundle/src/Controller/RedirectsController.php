@@ -15,17 +15,17 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\SeoBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\Redirect\Csv;
+use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
-use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
-use Pimcore\Routing\Redirect\Csv;
-use Pimcore\Routing\RedirectHandler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -18,7 +18,7 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()

@@ -14,19 +14,18 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Routing;
+namespace Pimcore\Bundle\SeoBundle\Redirect;
 
+use Pimcore\Bundle\SeoBundle\Event\Model\RedirectEvent;
+use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Cache;
 use Pimcore\Config;
-use Pimcore\Event\Model\RedirectEvent;
-use Pimcore\Event\RedirectEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
-use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
-use Pimcore\Routing\Redirect\RedirectUrlPartResolver;
 use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

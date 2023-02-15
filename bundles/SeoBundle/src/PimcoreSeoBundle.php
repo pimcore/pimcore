@@ -40,6 +40,7 @@ class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleI
             '/bundles/pimcoreseo/js/httpErrorLog.js',
             '/bundles/pimcoreseo/js/robotstxt.js',
             '/bundles/pimcoreseo/js/seopanel.js',
+            '/bundles/pimcoreseo/js/redirects.js',
         ];
     }
 

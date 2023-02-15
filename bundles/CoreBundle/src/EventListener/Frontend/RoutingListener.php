@@ -17,12 +17,12 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Site;
-use Pimcore\Routing\RedirectHandler;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;

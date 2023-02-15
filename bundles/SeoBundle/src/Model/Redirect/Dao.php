@@ -13,19 +13,19 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Redirect;
+namespace Pimcore\Bundle\SeoBundle\Model\Redirect;
 
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\Redirect\RedirectUrlPartResolver;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
-use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
-use Pimcore\Routing\Redirect\RedirectUrlPartResolver;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Redirect $model
+ * @property \Pimcore\Bundle\SeoBundle\Model\Redirect $model
  */
 class Dao extends Model\Dao\AbstractDao
 {

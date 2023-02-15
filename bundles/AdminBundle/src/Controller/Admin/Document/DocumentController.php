@@ -33,7 +33,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
-use Pimcore\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
 use Pimcore\Tool;

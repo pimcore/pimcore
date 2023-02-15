@@ -13,14 +13,16 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Redirect\Listing;
+namespace Pimcore\Bundle\SeoBundle\Model\Redirect\Listing;
 
+use Pimcore\Bundle\SeoBundle\Model\Redirect\Listing;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Model;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Redirect\Listing $model
+ * @property Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
@@ -35,7 +37,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         $redirects = [];
         foreach ($redirectsData as $redirectData) {
-            $redirects[] = Model\Redirect::getById($redirectData);
+            $redirects[] = Redirect::getById($redirectData);
         }
 
         $this->model->setRedirects(array_filter($redirects));

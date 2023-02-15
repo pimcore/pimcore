@@ -15,9 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Routing\Redirect;
+namespace Pimcore\Bundle\SeoBundle\Redirect;
 
-use Pimcore\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

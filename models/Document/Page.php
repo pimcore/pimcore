@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document;
 
 use Pimcore\Messenger\GeneratePagePreviewMessage;
-use Pimcore\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 
 /**

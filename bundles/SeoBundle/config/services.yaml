@@ -50,6 +50,12 @@ services:
     Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\ModificationDateProcessor: ~
     Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\PropertiesProcessor: ~
 
+    #
+    # REDIRECTS Export
+    #
+
+    Pimcore\Bundle\SeoBundle\Redirect\Csv: ~
+
 
     #
     # DOCUMENTS
@@ -76,3 +82,10 @@ services:
             $processors:
                 - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\ModificationDateProcessor'
                 - '@Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\PropertiesProcessor'
+
+    # redirect handler used to handle redirects before/after routing
+    Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler:
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: routing }

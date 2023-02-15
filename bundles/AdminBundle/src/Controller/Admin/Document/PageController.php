@@ -28,7 +28,7 @@ use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Pimcore\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool\Frontend;

@@ -14,10 +14,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Model;
+namespace Pimcore\Bundle\SeoBundle\Event\Model;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
-use Pimcore\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class RedirectEvent extends Event
