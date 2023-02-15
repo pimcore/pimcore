@@ -44,6 +44,7 @@ class PimcorePersonalizationExtension extends ConfigurableExtension
     {
         $container->setParameter('pimcore_personalization.targeting.enabled', $config['enabled']);
         $container->setParameter ('pimcore_personalization.targeting.conditions', $config['conditions']);
+        // @phpstan-ignore-next-line
         if (!$container->hasParameter('pimcore.geoip.db_file')) {
             $container->setParameter('pimcore.geoip.db_file', '');
         }

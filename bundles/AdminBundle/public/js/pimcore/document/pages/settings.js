@@ -247,14 +247,15 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                     },
                 ]
             });
-            // To add the block "Assign Target Group"
-            const assignTargetGroup = new CustomEvent(pimcore.events.assignTargetGroupToPage, {
+
+            // To add additional block to settings
+            const additionalSettings = new CustomEvent(pimcore.events.prepareDocumentPageSettingsLayout, {
                 detail: {
                    layout: this.layout,
                    document: this.document
                 }
             });
-            document.dispatchEvent(assignTargetGroup);
+            document.dispatchEvent(additionalSettings);
 
             this.layout.add(this.getControllerViewFields(true));
             this.layout.add(this.getStaticGeneratorFields(true));

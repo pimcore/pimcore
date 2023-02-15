@@ -105,6 +105,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         }
 
         //Personalization & Targeting Specific
+        // @phpstan-ignore-next-line
         if ($container->has(DocumentTargetingConfigurator::class)) {
             $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
             // apply best matching target group (if any)

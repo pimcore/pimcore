@@ -243,4 +243,9 @@ final class DocumentEvents
      * @var string
      */
     const NEWSLETTER_POST_SEND = 'pimcore.document.newsletter.post_send';
+
+    /**
+     *
+     */
+    const EDITABLE_RENDERLET_PRE_RENDER = 'pimcore.document.editable.renderlet.pre_render';
 }

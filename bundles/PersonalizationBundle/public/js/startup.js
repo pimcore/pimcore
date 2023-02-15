@@ -25,7 +25,7 @@ pimcore.bundle.personalization.startup = Class.create({
 
         document.addEventListener(pimcore.events.preMenuBuild, this.preMenuBuild.bind(this));
 
-        document.addEventListener(pimcore.events.assignTargetGroupToPage, this.assignTargetGroupToPage.bind(this));
+        document.addEventListener(pimcore.events.prepareDocumentPageSettingsLayout, this.assignTargetGroupToPage.bind(this));
     },
 
 
