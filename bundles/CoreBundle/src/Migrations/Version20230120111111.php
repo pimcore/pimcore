@@ -54,6 +54,9 @@ final class Version20230120111111 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
+        if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', 'pimcore')) {
+            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', 'pimcore');
+        }
         $this->write(sprintf('Please deactivate the %s manually in config/bundles.php', PimcoreApplicationLoggerBundle::class));
     }
 }

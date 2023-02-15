@@ -54,5 +54,9 @@ final class Version20230111074323 extends AbstractMigration
         $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)word_export(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)word_export(?:$|,)\'');
 
         $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'word_export'");
+
+        if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', 'pimcore')) {
+            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle','pimcore');
+        }
     }
 }

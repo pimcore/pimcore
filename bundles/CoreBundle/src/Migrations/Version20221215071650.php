@@ -45,6 +45,8 @@ final class Version20221215071650 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // do nothing
+        if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle', 'pimcore')) {
+            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle', 'pimcore');
+        }
     }
 }
