@@ -341,7 +341,7 @@ class LocationAwareConfigRepository
      */
     private function getVarConfigFile(string $key): string
     {
-        $directory = $this->options['directory'] ?? $this->storageDirectory;
+        $directory = rtrim($this->options['directory'] ?? $this->storageDirectory, '/\\');
 
         return $directory . '/' . $key . '.yaml';
     }
@@ -414,7 +414,7 @@ class LocationAwareConfigRepository
             return $_SERVER[$storageDir];
         }
 
-        return PIMCORE_CONFIGURATION_DIRECTORY . '/' . $configKey;
+        return PIMCORE_CONFIGURATION_DIRECTORY . '/' . str_replace('_', '-',$configKey);
     }
 
     public static function getWriteTargetFromSymfonyConfig(array $config, string $configKey, string $writeTarget): ?string

@@ -23,6 +23,7 @@ use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
@@ -223,7 +224,11 @@ abstract class Kernel extends SymfonyKernel
         ];
 
         foreach ($configArray as $config) {
-            $configDir = rtrim($_SERVER[$config['storageDirectoryEnvVariableName']] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/' . $config['defaultStorageDirectoryName'], '/\\');
+            $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
+            $configKey = str_replace('-', '_', $config['defaultStorageDirectoryName']);
+            $options = $containerConfig['storage'][$configKey]['options'];
+
+            $configDir = rtrim($options['directory'] ?? LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
             $configDir = "$configDir/";
             if (is_dir($configDir)) {
                 // @phpstan-ignore-next-line
