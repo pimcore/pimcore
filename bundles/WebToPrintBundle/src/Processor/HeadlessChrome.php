@@ -22,6 +22,7 @@ use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Logger;
+use Pimcore\Tool\Console;
 use Spiritix\Html2Pdf\Converter;
 use Spiritix\Html2Pdf\Input\StringInput;
 use Spiritix\Html2Pdf\Output\FileOutput;
