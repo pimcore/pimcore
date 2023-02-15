@@ -68,22 +68,6 @@ class TargetingPageController extends PageController
         ]);
     }
 
-    public function configureElementTargeting(Request $request, ElementInterface $element): void
-    {
-        if (!$element instanceof TargetingDocumentInterface) {
-            return;
-        }
-
-        // set selected target group on element
-        if ($request->get('_ptg')) {
-            $targetGroup = TargetGroup::getById((int)$request->get ('_ptg'));
-            if ($targetGroup) {
-                $element->setUseTargetGroup($targetGroup->getId ());
-            }
-        }
-    }
-
-
     protected function addDataToDocument(Request $request, Document $document): void
     {
         if ($document instanceof Document\PageSnippet) {
