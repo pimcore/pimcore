@@ -32,21 +32,21 @@ class Unit extends Model\AbstractModel
 
     protected ?string $id = null;
 
-    protected string $abbreviation;
+    protected ?string $abbreviation = null;
 
-    protected string $group;
+    protected ?string $group = null;
 
-    protected string $longname;
+    protected ?string $longname = null;
 
     protected ?string $baseunit = null;
 
-    protected string $reference;
+    protected ?string $reference = null;
 
     protected ?float $factor = null;
 
     protected ?float $conversionOffset = null;
 
-    protected string $converter;
+    protected ?string $converter = null;
 
     public static function getByAbbreviation(string $abbreviation): ?Unit
     {
@@ -152,18 +152,24 @@ class Unit extends Model\AbstractModel
         return ucfirst($this->getAbbreviation() . ' (' . $this->getId() . ')');
     }
 
-    public function setAbbreviation(string $abbreviation): static
+    /**
+     * @return $this
+     */
+    public function setAbbreviation(?string $abbreviation): static
     {
         $this->abbreviation = $abbreviation;
 
         return $this;
     }
 
-    public function getAbbreviation(): string
+    public function getAbbreviation(): ?string
     {
         return $this->abbreviation;
     }
 
+    /**
+     * @return $this
+     */
     public function setBaseunit(Unit|string|null $baseunit): static
     {
         if ($baseunit instanceof self) {
@@ -183,7 +189,10 @@ class Unit extends Model\AbstractModel
         return null;
     }
 
-    public function setFactor(float $factor): static
+    /**
+     * @return $this
+     */
+    public function setFactor(?float $factor): static
     {
         $this->factor = $factor;
 
@@ -195,48 +204,60 @@ class Unit extends Model\AbstractModel
         return $this->factor;
     }
 
-    public function setGroup(string $group): static
+    /**
+     * @return $this
+     */
+    public function setGroup(?string $group): static
     {
         $this->group = $group;
 
         return $this;
     }
 
-    public function getGroup(): string
+    public function getGroup(): ?string
     {
         return $this->group;
     }
 
-    public function setId(string $id): static
+    /**
+     * @return $this
+     */
+    public function setId(?string $id): static
     {
-        $this->id = (string) $id;
+        $this->id = $id;
 
         return $this;
     }
 
-    public function getId(): string
+    public function getId(): ?string
     {
-        return (string) $this->id;
+        return $this->id;
     }
 
-    public function setLongname(string $longname): static
+    /**
+     * @return $this
+     */
+    public function setLongname(?string $longname): static
     {
         $this->longname = $longname;
 
         return $this;
     }
 
-    public function getLongname(): string
+    public function getLongname(): ?string
     {
         return $this->longname;
     }
 
-    public function getReference(): string
+    public function getReference(): ?string
     {
         return $this->reference;
     }
 
-    public function setReference(string $reference): static
+    /**
+     * @return $this
+     */
+    public function setReference(?string $reference): static
     {
         $this->reference = $reference;
 
@@ -248,21 +269,27 @@ class Unit extends Model\AbstractModel
         return $this->conversionOffset;
     }
 
-    public function setConversionOffset(float $conversionOffset): static
+    /**
+     * @return $this
+     */
+    public function setConversionOffset(?float $conversionOffset): static
     {
         $this->conversionOffset = $conversionOffset;
 
         return $this;
     }
 
-    public function getConverter(): string
+    public function getConverter(): ?string
     {
         return $this->converter;
     }
 
-    public function setConverter(string $converter): static
+    /**
+     * @return $this
+     */
+    public function setConverter(?string $converter): static
     {
-        $this->converter = (string)$converter;
+        $this->converter = $converter;
 
         return $this;
     }
