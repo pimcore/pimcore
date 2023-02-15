@@ -15,11 +15,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap\Document;
+namespace Pimcore\Bundle\SeoBundle\Sitemap\Document;
 
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\AbstractElementGenerator;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Pimcore\Sitemap\Element\AbstractElementGenerator;
 use Presta\SitemapBundle\Service\UrlContainerInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
 use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;

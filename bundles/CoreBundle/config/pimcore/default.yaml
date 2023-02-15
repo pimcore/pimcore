@@ -247,12 +247,7 @@ pimcore:
         domains:
             - messages
             - admin
-    sitemaps:
-        generators:
-            pimcore_documents:
-                enabled: true
-                priority: 100
-                generator_id: Pimcore\Sitemap\Document\DocumentTreeGenerator
+
     redirects:
         status_codes:
             300: Multiple Choices
@@ -267,9 +262,3 @@ pimcore:
                 tags: ['set']
                 filters: ['escape', 'trans', 'default']
                 functions: ['path', 'asset']
-presta_sitemap:
-    # do not add properties by default
-    defaults:
-        lastmod: ~
-        priority: ~
-        changefreq: ~

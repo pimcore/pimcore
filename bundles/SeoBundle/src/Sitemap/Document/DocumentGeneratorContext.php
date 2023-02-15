@@ -15,10 +15,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap\Document;
+namespace Pimcore\Bundle\SeoBundle\Sitemap\Document;
 
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContext;
 use Pimcore\Model\Site;
-use Pimcore\Sitemap\Element\GeneratorContext;
 use Presta\SitemapBundle\Service\UrlContainerInterface;
 
 class DocumentGeneratorContext extends GeneratorContext

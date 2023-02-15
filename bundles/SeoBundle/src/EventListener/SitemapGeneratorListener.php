@@ -15,9 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap\EventListener;
+namespace Pimcore\Bundle\SeoBundle\EventListener;
 
-use Pimcore\Sitemap\GeneratorInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\GeneratorInterface;
 use Presta\SitemapBundle\Event\SitemapPopulateEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -26,14 +26,14 @@ class SitemapGeneratorListener implements EventSubscriberInterface
     /**
      * @var \Iterator|GeneratorInterface[]
      */
-    private array|\Iterator $generators;
+    private array|\IteratorAggregate $generators;
 
     /**
      * @param \Iterator|GeneratorInterface[] $generators
      *
      * TODO type hint against iterable after dropping PHP 7.0 support
      */
-    public function __construct(array|\Iterator $generators)
+    public function __construct(array|\IteratorAggregate $generators)
     {
         $this->generators = $generators;
     }

@@ -15,11 +15,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap\Document;
+namespace Pimcore\Bundle\SeoBundle\Sitemap\Document;
 
+use Pimcore\Bundle\SeoBundle\Sitemap\UrlGeneratorInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Pimcore\Sitemap\UrlGeneratorInterface;
 
 /**
  * URL generator specific to documents with site support.

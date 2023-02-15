@@ -15,11 +15,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap\Element\Filter;
+namespace Pimcore\Bundle\SeoBundle\Sitemap\Element\Filter;
 
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\FilterInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Sitemap\Element\FilterInterface;
-use Pimcore\Sitemap\Element\GeneratorContextInterface;
 
 class PublishedFilter implements FilterInterface
 {

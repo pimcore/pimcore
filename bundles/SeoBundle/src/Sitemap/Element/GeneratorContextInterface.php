@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap\Element;
+namespace Pimcore\Bundle\SeoBundle\Sitemap\Element;
 
 use Presta\SitemapBundle\Service\UrlContainerInterface;
 

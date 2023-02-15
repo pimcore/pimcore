@@ -16,3 +16,18 @@ pimcore_admin:
                 action: httpErrorLog
                 ctrl: true
                 alt: true
+
+pimcore_seo:
+    sitemaps:
+        generators:
+            pimcore_documents:
+                enabled: true
+                priority: 100
+                generator_id: Pimcore\Bundle\SeoBundle\Sitemap\Document\DocumentTreeGenerator
+
+presta_sitemap:
+    # do not add properties by default
+    defaults:
+        lastmod: ~
+        priority: ~
+        changefreq: ~

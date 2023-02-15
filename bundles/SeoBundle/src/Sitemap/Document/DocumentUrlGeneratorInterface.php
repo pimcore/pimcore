@@ -15,13 +15,13 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap\Element;
+namespace Pimcore\Bundle\SeoBundle\Sitemap\Document;
 
-use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\UrlGeneratorInterface;
+use Pimcore\Model\Document;
+use Pimcore\Model\Site;
 
-interface FilterInterface
+interface DocumentUrlGeneratorInterface extends UrlGeneratorInterface
 {
-    public function canBeAdded(ElementInterface $element, GeneratorContextInterface $context): bool;
-
-    public function handlesChildren(ElementInterface $element, GeneratorContextInterface $context): bool;
+    public function generateDocumentUrl(Document $document, Site $site = null, array $options = []): string;
 }

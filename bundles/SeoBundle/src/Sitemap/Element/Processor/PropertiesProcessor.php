@@ -15,11 +15,11 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap\Element\Processor;
+namespace Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor;
 
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\ProcessorInterface;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Sitemap\Element\GeneratorContextInterface;
-use Pimcore\Sitemap\Element\ProcessorInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
 use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
 

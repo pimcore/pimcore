@@ -127,7 +127,6 @@ final class Configuration implements ConfigurationInterface
         $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
         $this->addTargetingNode($rootNode);
-        $this->addSitemapsNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
@@ -1234,44 +1233,6 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
-    }
-
-    private function addSitemapsNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('sitemaps')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('generators')
-                            ->useAttributeAsKey('name')
-                            ->prototype('array')
-                                ->beforeNormalization()
-                                    ->ifString()
-                                    ->then(function ($v) {
-                                        return [
-                                            'enabled' => true,
-                                            'generator_id' => $v,
-                                            'priority' => 0,
-                                        ];
-                                    })
-                                ->end()
-                                ->addDefaultsIfNotSet()
-                                ->canBeDisabled()
-                                ->children()
-                                    ->scalarNode('generator_id')
-                                        ->cannotBeEmpty()
-                                    ->end()
-                                    ->integerNode('priority')
-                                        ->defaultValue(0)
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
     }
 
     private function addWorkflowNode(ArrayNodeDefinition $rootNode): void

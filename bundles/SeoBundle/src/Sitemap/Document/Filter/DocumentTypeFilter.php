@@ -15,12 +15,12 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap\Document\Filter;
+namespace Pimcore\Bundle\SeoBundle\Sitemap\Document\Filter;
 
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\FilterInterface;
+use Pimcore\Bundle\SeoBundle\Sitemap\Element\GeneratorContextInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Sitemap\Element\FilterInterface;
-use Pimcore\Sitemap\Element\GeneratorContextInterface;
 
 class DocumentTypeFilter implements FilterInterface
 {

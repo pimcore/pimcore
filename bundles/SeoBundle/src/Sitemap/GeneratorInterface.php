@@ -15,9 +15,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap;
+namespace Pimcore\Bundle\SeoBundle\Sitemap;
 
-interface UrlGeneratorInterface
+use Presta\SitemapBundle\Service\UrlContainerInterface;
+
+interface GeneratorInterface
 {
-    public function generateUrl(string $path, array $options = []): string;
+    /**
+     * Populates the sitemap
+     */
+    public function populate(UrlContainerInterface $urlContainer, string $section = null): void;
 }

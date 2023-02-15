@@ -15,10 +15,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap\Element;
+namespace Pimcore\Bundle\SeoBundle\Sitemap\Element;
 
+use Pimcore\Bundle\SeoBundle\Sitemap\GeneratorInterface;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Sitemap\GeneratorInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
 
 /**
