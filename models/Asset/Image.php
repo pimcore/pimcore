@@ -173,7 +173,7 @@ EOT;
     /**
      * Returns a path to a given thumbnail or a thumbnail configuration.
      */
-    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\Thumbnail
+    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\ThumbnailInterface
     {
         return new Image\Thumbnail($this, $config, $deferred);
     }

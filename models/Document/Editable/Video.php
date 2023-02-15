@@ -458,7 +458,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    private function getPosterThumbnailImage(Asset\Video $asset): Asset\Video\ImageThumbnail|Asset\Image\Thumbnail
+    private function getPosterThumbnailImage(Asset\Video $asset): Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface
     {
         $config = $this->getConfig();
         if (!array_key_exists('imagethumbnail', $config) || empty($config['imagethumbnail'])) {
@@ -813,7 +813,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    private function getHtml5Code(array $urls = [], Asset\Video\ImageThumbnail|Asset\Image\Thumbnail $thumbnail = null): string
+    private function getHtml5Code(array $urls = [], Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface $thumbnail = null): string
     {
         $code = '';
         $video = $this->getVideoAsset();
@@ -1026,11 +1026,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     /**
      *
-     * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail|string
+     * @return Asset\Image\ThumbnailInterface|Asset\Video\ImageThumbnailInterface|string
      *
      * TODO Pimcore 11: Change empty string return to null
      */
-    public function getImageThumbnail(string|Asset\Video\Thumbnail\Config $config): Asset\Video\ImageThumbnail|Asset\Image\Thumbnail|string
+    public function getImageThumbnail(string|Asset\Video\Thumbnail\Config $config): Asset\Video\ImageThumbnailInterface|Asset\Image\ThumbnailInterface|string
     {
         if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
             return $poster->getThumbnail($config);
