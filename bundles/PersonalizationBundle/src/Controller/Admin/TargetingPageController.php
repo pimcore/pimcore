@@ -26,74 +26,22 @@ use Symfony\Component\Routing\Annotation\Route;
 use Pimcore\Model\Document;
 
 /**
- * @Route("/targeting")
+ * @Route("/targeting/page")
  *
  * @internal
  */
 class TargetingPageController extends PageController
 {
-
      /**
-      * @Route("/clear-targeting-editable-data", name="pimcore_bundle_personalization_clear_targeting_editable_data", methods={"PUT"})
+      * @Route("/clear-targeting-editable-data", name="pimcore_bundle_personalization_clear_targeting_page_editable_data", methods={"PUT"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function clearTargetingEditableDataAction (Request $request): JsonResponse
+    public function clearTargetingEditableDataAction(Request $request): JsonResponse
     {
         $targetGroupId = $request->request->getInt('targetGroup');
-        $docId = $request->request->getInt ('id');
-
-        $doc = Document\PageSnippet::getById ($docId);
-
-        if (!$doc) {
-            throw $this->createNotFoundException ('Document not found');
-        }
-
-        foreach ($doc->getEditables () as $editable) {
-
-            if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
-
-                // remove target group specific elements
-                if (preg_match ('/^' . preg_quote ($doc->getTargetGroupEditablePrefix ($targetGroupId), '/') . '/', $editable->getName ())) {
-                    $doc->removeEditable ($editable->getName ());
-                }
-            }
-        }
-
-        $this->saveToSession ($doc, true);
-
-        return $this->adminJson ([
-            'success' => true,
-        ]);
-    }
-
-    public function configureElementTargeting (Request $request, ElementInterface $element): void
-    {
-        if (!$element instanceof TargetingDocumentInterface) {
-            return;
-        }
-
-        // set selected target group on element
-        if ($request->get ('_ptg')) {
-            $targetGroup = TargetGroup::getById ((int)$request->get ('_ptg'));
-            if ($targetGroup) {
-                $element->setUseTargetGroup ($targetGroup->getId ());
-            }
-        }
-    }
-
-    /**
-     * @Route("/clear-editable-data", name="cleareditabledata", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function clearEditableDataAction(Request $request): JsonResponse
-    {
-        $targetGroupId = $request->request->get('targetGroup');
         $docId = $request->request->getInt('id');
 
         $doc = Document\PageSnippet::getById($docId);
@@ -103,14 +51,11 @@ class TargetingPageController extends PageController
         }
 
         foreach ($doc->getEditables() as $editable) {
+
             if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
+
                 // remove target group specific elements
-                if (preg_match('/^' . preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
-                    $doc->removeEditable($editable->getName());
-                }
-            } else {
-                // remove all but target group data
-                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_EDITABLE_PREFIX, '/') . '/', $editable->getName())) {
+                if (preg_match ('/^' . preg_quote ($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
                     $doc->removeEditable($editable->getName());
                 }
             }
@@ -122,6 +67,22 @@ class TargetingPageController extends PageController
             'success' => true,
         ]);
     }
+
+    public function configureElementTargeting(Request $request, ElementInterface $element): void
+    {
+        if (!$element instanceof TargetingDocumentInterface) {
+            return;
+        }
+
+        // set selected target group on element
+        if ($request->get('_ptg')) {
+            $targetGroup = TargetGroup::getById((int)$request->get ('_ptg'));
+            if ($targetGroup) {
+                $element->setUseTargetGroup($targetGroup->getId ());
+            }
+        }
+    }
+
 
     protected function addDataToDocument(Request $request, Document $document): void
     {

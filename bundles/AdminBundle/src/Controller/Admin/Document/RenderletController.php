@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoResolver;
 use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;

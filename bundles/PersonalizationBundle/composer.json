@@ -22,10 +22,6 @@
         "codeception/module-symfony": "^3.1",
         "codeception/phpunit-wrapper": "^9"
     },
-    "suggest": {
-        "elasticsearch/elasticsearch": "Required for Elastic Search service",
-        "webmozarts/console-parallelization": "Required for parallelization of console commands"
-    },
     "autoload": {
         "psr-4": {
             "Pimcore\\Bundle\\PersonalizationBundle\\": "src/",

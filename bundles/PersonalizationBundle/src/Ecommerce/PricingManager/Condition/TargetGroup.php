@@ -102,12 +102,12 @@ class TargetGroup implements ConditionInterface
         }
     }
 
-    public function getTargetGroup(): \Pimcore\Model\Tool\Targeting\TargetGroup
+    public function getTargetGroup(): ToolTargetGroup
     {
         return $this->targetGroup;
     }
 
-    public function setTargetGroup(\Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup): void
+    public function setTargetGroup(ToolTargetGroup $targetGroup): void
     {
         $this->targetGroup = $targetGroup;
         $this->targetGroupId = $targetGroup->getId();
