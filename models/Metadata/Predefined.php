@@ -33,18 +33,16 @@ final class Predefined extends Model\AbstractModel
 {
     protected ?string $id = null;
 
-    protected string $name;
+    protected ?string $name = null;
 
     protected ?string $description = null;
 
     /**
      * @TODO if required?
-     *
-     * @var string
      */
-    protected string $key;
+    protected ?string $key = null;
 
-    protected string $type;
+    protected ?string $type = null;
 
     protected ?string $targetSubtype = null;
 
@@ -54,10 +52,8 @@ final class Predefined extends Model\AbstractModel
 
     /**
      * @TODO if required?
-     *
-     * @var string
      */
-    protected string $ctype;
+    protected ?string $ctype = null;
 
     protected ?string $language = null;
 
@@ -80,11 +76,6 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $name
-     * @param string $language
-     *
-     * @return self|null
-     *
      * @throws \Exception
      */
     public static function getByName(string $name, string $language = ''): ?Predefined
@@ -107,21 +98,24 @@ final class Predefined extends Model\AbstractModel
         return $type;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    public function getData(): string
+    public function getData(): mixed
     {
         return $this->data;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = str_replace('~', '---', $name);
@@ -129,6 +123,9 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -136,7 +133,10 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    public function setData(string $data): static
+    /**
+     * @return $this
+     */
+    public function setData(mixed $data): static
     {
         $this->data = $data;
 
@@ -148,6 +148,9 @@ final class Predefined extends Model\AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(string $id): static
     {
         $this->id = $id;
@@ -155,6 +158,9 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDescription(?string $description): static
     {
         $this->description = $description;
@@ -167,9 +173,12 @@ final class Predefined extends Model\AbstractModel
         return $this->description;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static
     {
-        $this->creationDate = (int) $creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
@@ -179,9 +188,12 @@ final class Predefined extends Model\AbstractModel
         return $this->creationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static
     {
-        $this->modificationDate = (int) $modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
@@ -191,9 +203,14 @@ final class Predefined extends Model\AbstractModel
         return $this->modificationDate;
     }
 
-    public function setLanguage(?string $language): void
+    /**
+     * @return $this
+     */
+    public function setLanguage(?string $language): static
     {
         $this->language = $language;
+
+        return $this;
     }
 
     public function getLanguage(): ?string
@@ -201,9 +218,14 @@ final class Predefined extends Model\AbstractModel
         return $this->language;
     }
 
-    public function setGroup(?string $group): void
+    /**
+     * @return $this
+     */
+    public function setGroup(?string $group): static
     {
         $this->group = $group;
+
+        return $this;
     }
 
     public function getGroup(): ?string
@@ -211,9 +233,14 @@ final class Predefined extends Model\AbstractModel
         return $this->group;
     }
 
-    public function setTargetSubtype(?string $targetSubtype): void
+    /**
+     * @return $this
+     */
+    public function setTargetSubtype(?string $targetSubtype): static
     {
         $this->targetSubtype = $targetSubtype;
+
+        return $this;
     }
 
     public function getTargetSubtype(): ?string
@@ -226,9 +253,14 @@ final class Predefined extends Model\AbstractModel
         return $this->config;
     }
 
-    public function setConfig(?string $config): void
+    /**
+     * @return $this
+     */
+    public function setConfig(?string $config): static
     {
         $this->config = $config;
+
+        return $this;
     }
 
     public function minimize(): void
