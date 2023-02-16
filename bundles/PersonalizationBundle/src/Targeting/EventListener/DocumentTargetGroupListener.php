@@ -108,17 +108,17 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         }
     }
 
-    public function configureElementTargeting(GenericEvent $event): void
+    public function configureElementTargeting(GenericEvent $event)
     {
-        $request = $event->getArgument('request');
+        $requestParams = $event->getArgument('requestParams');
         $element = $event->getArgument('element');
         if (!$element instanceof TargetingDocumentInterface) {
             return;
         }
 
         // set selected target group on element
-        if ($request->get('_ptg')) {
-            $targetGroup = TargetGroup::getById((int)$request->get('_ptg'));
+        if ($requestParams['_ptg'] ?? false) {
+            $targetGroup = TargetGroup::getById((int)$requestParams['_ptg']);
             if ($targetGroup) {
                 $element->setUseTargetGroup($targetGroup->getId());
             }
