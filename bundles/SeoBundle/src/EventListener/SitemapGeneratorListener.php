@@ -24,12 +24,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class SitemapGeneratorListener implements EventSubscriberInterface
 {
     /**
-     * @var \Iterator|GeneratorInterface[]
+     * @var \IteratorAggregate|GeneratorInterface[]
      */
     private array|\IteratorAggregate $generators;
 
     /**
-     * @param \Iterator|GeneratorInterface[] $generators
+     * @param \IteratorAggregate|GeneratorInterface[] $generators
      *
      * TODO type hint against iterable after dropping PHP 7.0 support
      */
