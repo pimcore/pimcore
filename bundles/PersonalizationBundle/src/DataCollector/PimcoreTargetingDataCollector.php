@@ -23,6 +23,7 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Contracts\Service\ResetInterface;
 
 /**
@@ -81,12 +82,12 @@ class PimcoreTargetingDataCollector extends DataCollector implements ResetInterf
         return $this->data['storage'];
     }
 
-    public function getRules(): array
+    public function getRules(): array|Data
     {
         return $this->data['rules'];
     }
 
-    public function getTargetGroups(): array
+    public function getTargetGroups(): array|Data
     {
         return $this->data['target_groups'];
     }
