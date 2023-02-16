@@ -1293,10 +1293,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public function jsonSerialize(): mixed
     {
-        $data = \Closure::bind(fn($obj) => get_object_vars($obj),null,null)($this); // only get public properties
+        $data = \Closure::bind(fn ($obj) => get_object_vars($obj), null, null)($this); // only get public properties
         $data['fieldtype'] = $this->getFieldType();
         $data['datatype'] = 'data';
         unset($data['blockedVarsForExport']);
+
         return $data;
     }
 }

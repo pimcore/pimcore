@@ -629,7 +629,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     {
         return [
             'image' => 'int(11)',
-            'hotspots' => 'text'
+            'hotspots' => 'text',
         ];
     }
 

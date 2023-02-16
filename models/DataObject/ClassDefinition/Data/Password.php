@@ -27,6 +27,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
+
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
 
     /**

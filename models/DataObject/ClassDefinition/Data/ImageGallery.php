@@ -487,7 +487,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     {
         return [
             'images' => 'text',
-            'hotspots' => 'longtext'
+            'hotspots' => 'longtext',
         ];
     }
 
