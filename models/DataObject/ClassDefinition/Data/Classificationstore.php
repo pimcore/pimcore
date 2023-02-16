@@ -33,15 +33,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     use DataObject\Traits\DataWidthTrait;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'classificationstore';
-
-    /**
      * @internal
      *
      * @var array
@@ -1196,5 +1187,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $obj->setValues($data);
 
         return $obj;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'classificationstore';
     }
 }

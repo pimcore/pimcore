@@ -27,37 +27,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'password';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar(255)';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'varchar(255)';
 
     /**
      * @internal
@@ -428,5 +398,20 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         parent::checkValidity($data, $omitMandatoryCheck, $params);
+    }
+
+    public function getColumnType(): string
+    {
+        return 'varchar(255)';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'password';
     }
 }

@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 
-abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
+abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface, \JsonSerializable
 {
     use DataObject\ClassDefinition\Helper\VarExport;
 
@@ -44,8 +44,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public ?string $style = null;
 
     public array|string|null $permissions = null;
-
-    public string $datatype = 'data';
 
     public string $fieldtype;
 
@@ -218,22 +216,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    public function getDatatype(): string
-    {
-        return $this->datatype;
-    }
-
-    public function setDatatype(string $datatype): static
-    {
-        $this->datatype = $datatype;
-
-        return $this;
-    }
-
-    public function getFieldtype(): string
-    {
-        return $this->fieldtype;
-    }
+    abstract public function getFieldType(): string;
 
     public function getNoteditable(): bool
     {
@@ -1306,5 +1289,14 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function isForbiddenName(): bool
     {
         return in_array($this->getName(), self::FORBIDDEN_NAMES);
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        $data = \Closure::bind(fn($obj) => get_object_vars($obj),null,null)($this); // only get public properties
+        $data['fieldtype'] = $this->getFieldType();
+        $data['datatype'] = 'data';
+        unset($data['blockedVarsForExport']);
+        return $data;
     }
 }
