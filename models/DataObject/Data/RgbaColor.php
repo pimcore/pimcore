@@ -172,10 +172,7 @@ class RgbaColor implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getHex(true, true);
     }

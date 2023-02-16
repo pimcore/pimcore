@@ -584,10 +584,10 @@ class Service extends Model\Element\Service
      */
     public static function generatePagePreview(int $id, Request $request = null, string $hostUrl = null): bool
     {
-        $success = false;
-
-        /** @var Page $doc */
-        $doc = Document::getById($id);
+        $doc = Document\Page::getById($id);
+        if (!$doc) {
+            return false;
+        }
         if (!$hostUrl) {
             $hostUrl = Config::getSystemConfiguration('documents')['preview_url_prefix'];
             if (empty($hostUrl)) {
@@ -609,9 +609,9 @@ class Service extends Model\Element\Service
 
             unlink($tmpFile);
 
-            $success = true;
+            return true;
         }
 
-        return $success;
+        return false;
     }
 }
