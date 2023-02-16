@@ -19,10 +19,7 @@ jobs:
                   labels: "Task"
                   title: PhpStan Version Upgrade ${{ env.MONTH }}
                   body: |-
-                      :wave: Hi, {{#each assignees}}@{{this}}{{#unless @last}}, {{/unless}}{{/each}}!
-                      ## Standup for ${{ env.TODAY }}
-                      1. What did you work on yesterday?
-                      2. What are you working on today?
-                      3. What issues are blocking you?
+                      Please check for a newer PhpStan version. 
+                      Create a PR with the latest version and fix all issues :-)
                   project-v2-path: orgs/pimcore/projects/10
                   token: ${{ secrets.ISSUE_CREATION_TOKEN }}
