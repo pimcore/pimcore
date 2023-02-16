@@ -979,3 +979,5 @@ pimcore.layout.refresh = function () {
 pimcore.helpers.unload = function () {
 
 };
+
+L.Icon.Default.imagePath = '../bundles/pimcoreadmin/build/admin/images/';

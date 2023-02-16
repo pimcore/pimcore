@@ -11,7 +11,11 @@ const standardConfigs = [
         bundleFolderName: "AdminBundle",
         name: "admin",
         bundleName: "pimcoreadmin",
-        configName: "pimcoreAdmin"
+        configName: "pimcoreAdmin",
+        copyFiles: {
+            from: "node_modules/leaflet/dist/images",
+            to: "images/[path]/[name].[ext]"
+        }
     }, {
         bundleFolderName: "AdminBundle",
         name: "imageEditor",
