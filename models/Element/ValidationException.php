@@ -49,10 +49,7 @@ class ValidationException extends \Exception
         return $this->contextStack;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         $result = parent::__toString();
         if (is_array($this->subItems)) {
