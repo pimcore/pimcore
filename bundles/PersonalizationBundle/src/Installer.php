@@ -16,6 +16,9 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\PersonalizationBundle;
 
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class Installer extends SettingsStoreAwareInstaller
 {
@@ -32,8 +35,16 @@ class Installer extends SettingsStoreAwareInstaller
         parent::install();
     }
 
-    public function uninstall (): void
+    public function uninstall(): void
     {
+        // Cleanup should be done manually
+
+        $style = new SymfonyStyle(new StringInput(''), new ConsoleOutput());
+
+        if(!($style->confirm('<comment>[WARNING]</comment> When Uninstalling the bundle, the data types \'Target Group\' and \'Target Group Multiselect\' would be removed. So, if you are using data objects with any of these types, please remove the data type from the class manually before uninstalling. Do you want to continue the uninstall?',false))){
+            exit;
+        }
+
         $this->uninstallDatabaseTable();
         $this->removeUserPermission();
         parent::uninstall();
@@ -43,7 +54,7 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \Pimcore\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach(self::USER_PERMISSIONS as $permission) {
             $db->insert('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
                 $db->quoteIdentifier('category') => self::USER_PERMISSIONS_CATEGORY,
@@ -55,21 +66,21 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \Pimcore\Db::get();
 
-        foreach (self::USER_PERMISSIONS as $permission) {
+        foreach(self::USER_PERMISSIONS as $permission) {
             $db->delete('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
             ]);
         }
     }
 
-    private function installDatabaseTable (): void
+    private function installDatabaseTable(): void
     {
         $sqlPath = __DIR__ . '/Resources/install/';
         $sqlFileNames = ['install.sql'];
         $db = \Pimcore\Db::get();
 
-        foreach ($sqlFileNames as $fileName) {
-            $statement = file_get_contents ($sqlPath . $fileName);
+        foreach($sqlFileNames as $fileName) {
+            $statement = file_get_contents($sqlPath . $fileName);
             $db->executeQuery($statement);
         }
     }
@@ -80,9 +91,9 @@ class Installer extends SettingsStoreAwareInstaller
         $sqlFileNames = ['uninstall.sql'];
         $db = \Pimcore\Db::get();
 
-        foreach ($sqlFileNames as $fileName) {
-            $statement = file_get_contents ($sqlPath . $fileName);
-            $db->executeQuery ($statement);
+        foreach($sqlFileNames as $fileName) {
+            $statement = file_get_contents($sqlPath . $fileName);
+            $db->executeQuery($statement);
         }
     }
 }
