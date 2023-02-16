@@ -22,13 +22,16 @@ use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\ImportExportLocators
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\TranslatorPass;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
+use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 
 /**
  * @internal
  */
-class PimcoreAdminBundle extends Bundle
+class PimcoreAdminBundle extends Bundle implements DependentBundleInterface
 {
     /**
      * {@inheritdoc}
@@ -50,5 +53,10 @@ class PimcoreAdminBundle extends Bundle
     public function getPath(): string
     {
         return \dirname(__DIR__);
+    }
+
+    public static function registerDependentBundles(BundleCollection $collection): void
+    {
+        $collection->addBundle(new WebpackEncoreBundle());
     }
 }

@@ -19,12 +19,13 @@ namespace Pimcore\Bundle\AdminBundle\DependencyInjection;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 /**
  * @internal
  */
-final class PimcoreAdminExtension extends Extension
+final class PimcoreAdminExtension extends Extension implements PrependExtensionInterface
 {
     const PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES = 'pimcore_admin.dataObjects.notes_events.types';
 
@@ -71,5 +72,19 @@ final class PimcoreAdminExtension extends Extension
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcore_admin.unauthenticated_routes', $config['unauthenticated_routes']);
         $container->setParameter('pimcore_admin.translations.path', $config['translations']['path']);
+    }
+
+    public function prepend(ContainerBuilder $container): void
+    {
+        $builds = [
+            'pimcoreAdmin' => realpath(__DIR__ . '/../../public/build/admin'),
+            'pimcoreAdminImageEditor' => realpath(__DIR__ . '/../../public/build/imageEditor'),
+        ];
+
+        $container->prependExtensionConfig('webpack_encore', [
+            //'output_path' => realpath(__DIR__ . '/../Resources/public/build')
+            'output_path' => false,
+            'builds' => $builds
+        ]);
     }
 }

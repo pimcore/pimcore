@@ -100,6 +100,9 @@
 
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
     <script src="{{ path('fos_js_routing_js', {'callback' : 'fos.Router.setData'}) }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
+
+    {{ encore_entry_script_tags('admin', null, 'pimcoreAdmin') }}
+    {{ encore_entry_link_tags('admin', null, 'pimcoreAdmin') }}
 </head>
 
 <body class="pimcore_version_11" data-app-env="{{ app.environment }}">
@@ -150,8 +153,6 @@
 {% set styles = [
         path('pimcore_admin_misc_admincss'),
         "/bundles/pimcoreadmin/css/icons.css",
-        "/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css",
-        "/bundles/pimcoreadmin/js/lib/leaflet.draw/leaflet.draw.css",
         "/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_1.css",
         "/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_2.css",
         "/bundles/pimcoreadmin/css/admin.css"
@@ -186,11 +187,7 @@
     "lib/ext-plugins/portlet/Portlet.js",
     "lib/ext-plugins/portlet/PortalColumn.js",
     "lib/ext-plugins/portlet/PortalPanel.js",
-    "lib/ckeditor/ckeditor.js",
-    "lib/leaflet/leaflet.js",
-    "lib/leaflet.draw/leaflet.draw.js",
-    "lib/ace/src-min-noconflict/ace.js",
-    "lib/ace/src-min-noconflict/ext-modelist.js"
+    "lib/ckeditor/ckeditor.js"
 ] %}
 {% if pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ '/bundles/pimcoreadmin/js/lib/ext-locale/locale-' ~ language ~ '.js') %}
     {% set scriptLibs = scriptLibs|merge(['lib/ext-locale/locale-' ~ language ~ '.js']) %}
@@ -280,7 +277,7 @@
     "pimcore/element/applicationLoggerPanelFacade.js",
     "pimcore/element/customReportsPanelFacade.js",
     "pimcore/element/selector/searchFacade.js",
-    
+
     "pimcore/element/abstract.js",
     "pimcore/element/abstractPreview.js",
     "pimcore/element/properties.js",

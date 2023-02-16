@@ -123,6 +123,7 @@
     "symfony/web-profiler-bundle": "^6.2",
     "symfony/workflow": "^6.2",
     "symfony/yaml": "^6.2",
+    "symfony/webpack-encore-bundle": "^1.7",
     "tijsverkoyen/css-to-inline-styles": "^2.2.3",
     "twig/extra-bundle": "^3.4.0",
     "twig/twig": "^3.3.9",
