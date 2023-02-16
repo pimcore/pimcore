@@ -49,6 +49,10 @@ the attributes directly, you will not get the inherited values.
 > **Bear in mind**
 > The complex data type field collections does not support inheritance.
 
+Getting values from an object without inheritance
+````php
+\Pimcore\Model\DataObject\AbstractObject::setGetInheritedValues(false); // default = true
+``
 
 ## Parent Class - Class Inheritance
 
