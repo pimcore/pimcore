@@ -62,7 +62,7 @@ class Installer extends SettingsStoreAwareInstaller
         $output = new ConsoleOutput(OutputInterface::VERBOSITY_NORMAL, true);
         $output->writeln([
             "\n\n<comment>Uninstalling only removes permissions. To clean up all documents and dependencies</comment>",
-            "<comment>Please run 'bin/console pimcore:documents:cleanup printpage printcontainer'</comment>",
+            "<comment>Please run <options=bold>bin/console pimcore:documents:cleanup printpage printcontainer</></comment>",
             "<comment>-------------------------------------------------------------------------------------</comment>"
         ]);
 
