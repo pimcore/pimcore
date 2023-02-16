@@ -29,23 +29,6 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class Authentication
 {
-    public static function authenticatePlaintext(string $username, string $password): ?User
-    {
-        /** @var User $user */
-        $user = User::getByName($username);
-
-        // user needs to be active, needs a password and an ID (do not allow system user to login, ...)
-        if (self::isValidUser($user)) {
-            if (self::verifyPassword($user, $password)) {
-                $user->setLastLoginDate(); //set user current login date
-
-                return $user;
-            }
-        }
-
-        return null;
-    }
-
     /**
      * @param Request|null $request
      *
