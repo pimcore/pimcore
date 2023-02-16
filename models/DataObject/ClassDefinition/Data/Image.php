@@ -354,14 +354,14 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->getRelationFilterCondition($value, $operator, $name);
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         return 'int(11)';
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        return 'int(11)';
+        return $this->getColumnType();
     }
 
     public function getFieldType(): string

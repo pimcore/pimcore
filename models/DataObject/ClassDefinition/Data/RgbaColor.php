@@ -370,7 +370,7 @@ class RgbaColor extends Data implements
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         return [
             'rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
@@ -378,7 +378,7 @@ class RgbaColor extends Data implements
         ];
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
         return $this->getColumnType();
     }

@@ -265,7 +265,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * {@inheritdoc}
      */
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         if ($this->getInteger()) {
             return [
@@ -290,26 +290,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
-        if ($this->getInteger()) {
-            return [
-                'value' => 'bigint(20)',
-                'unit' => 'varchar(64)',
-            ];
-        }
-
-        if ($this->isDecimalType()) {
-            return [
-                'value' => $this->buildDecimalColumnType(),
-                'unit' => 'varchar(64)',
-            ];
-        }
-
-        return [
-            'value' => 'double',
-            'unit' => 'varchar(64)',
-        ];
+        return $this->getColumnType();
     }
 
     private function isDecimalType(): bool

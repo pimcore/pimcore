@@ -431,14 +431,14 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         return 'bigint(20)';
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        return 'bigint(20)';
+        return $this->getColumnType();
     }
 
     public function getFieldType(): string

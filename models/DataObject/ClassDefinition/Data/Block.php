@@ -1103,7 +1103,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $obj;
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         return 'longtext';
     }

@@ -585,14 +585,14 @@ class Video extends Data implements
         return '\\' . DataObject\Data\Video::class . '|null';
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         return 'text';
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        return 'text';
+        return $this->getColumnType();
     }
 
     public function getFieldType(): string

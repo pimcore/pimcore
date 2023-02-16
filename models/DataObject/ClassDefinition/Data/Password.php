@@ -400,14 +400,14 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         parent::checkValidity($data, $omitMandatoryCheck, $params);
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         return 'varchar(255)';
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        return 'varchar(255)';
+        return $this->getColumnType();
     }
 
     public function getFieldType(): string

@@ -483,7 +483,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return null;
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         return [
             'images' => 'text',
@@ -491,7 +491,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         ];
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
         return $this->getColumnType();
     }

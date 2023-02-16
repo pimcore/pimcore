@@ -344,7 +344,7 @@ class DateRange extends Data implements
         return $date;
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         return [
             'start_date' => 'bigint(20)',
@@ -352,12 +352,9 @@ class DateRange extends Data implements
         ];
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
-        return [
-            'start_date' => 'bigint(20)',
-            'end_date' => 'bigint(20)',
-        ];
+        return $this->getColumnType();
     }
 
     public function getFieldType(): string

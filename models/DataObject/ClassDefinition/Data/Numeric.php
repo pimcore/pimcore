@@ -213,7 +213,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * {@inheritdoc}
      */
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         if ($this->getInteger()) {
             return 'bigint(20)';
@@ -229,17 +229,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        if ($this->getInteger()) {
-            return 'bigint(20)';
-        }
-
-        if ($this->isDecimalType()) {
-            return $this->buildDecimalColumnType();
-        }
-
-        return 'double';
+        return $this->getColumnType();
     }
 
     private function isDecimalType(): bool

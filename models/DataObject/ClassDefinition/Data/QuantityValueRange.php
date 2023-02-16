@@ -433,7 +433,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return parent::isEmpty($data);
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         return [
             'minimum' => 'double',
@@ -442,7 +442,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         ];
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
         return $this->getColumnType();
     }

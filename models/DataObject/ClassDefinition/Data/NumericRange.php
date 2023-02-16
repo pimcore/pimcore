@@ -141,7 +141,7 @@ class NumericRange extends Data implements
     /**
      * {@inheritDoc}
      */
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         if ($this->getInteger()) {
             return [
@@ -163,23 +163,9 @@ class NumericRange extends Data implements
     /**
      * {@inheritDoc}
      */
-    public function getQueryColumnType(): array|null
+    public function getQueryColumnType(): array
     {
-        if ($this->getInteger()) {
-            return [
-                'minimum' => 'bigint(20)',
-                'maximum' => 'bigint(20)',
-            ];
-        }
-
-        if ($this->isDecimalType()) {
-            return $this->buildDecimalColumnType();
-        }
-
-        return [
-            'minimum' => 'double',
-            'maximum' => 'double',
-        ];
+        return $this->getColumnType();
     }
 
     private function isDecimalType(): bool

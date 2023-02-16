@@ -815,7 +815,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this->getRelationFilterCondition($value, $operator, $name);
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
         return 'text';
     }

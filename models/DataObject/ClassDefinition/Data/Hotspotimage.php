@@ -625,7 +625,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $this->getRelationFilterCondition($value, $operator, $name);
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         return [
             'image' => 'int(11)',
@@ -633,7 +633,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         ];
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
         return $this->getColumnType();
     }

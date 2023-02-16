@@ -207,7 +207,7 @@ class Input extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         return 'varchar(' . $this->getColumnLength() . ')';
     }
@@ -215,9 +215,9 @@ class Input extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        return 'varchar(' . $this->getColumnLength() . ')';
+        return $this->getColumnType();
     }
 
     /**

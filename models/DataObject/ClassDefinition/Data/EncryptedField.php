@@ -265,14 +265,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         }
     }
 
-    /**
-     * @param Model\DataObject\ClassDefinition\Data\EncryptedField $masterDefinition
-     */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
-    {
-
-    }
-
     public function isEmpty(mixed $data): bool
     {
         $fd = $this->getDelegateDatatypeDefinition();
@@ -493,7 +485,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return $value;
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         return 'LONGBLOB';
     }

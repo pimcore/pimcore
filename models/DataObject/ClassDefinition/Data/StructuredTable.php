@@ -341,7 +341,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         $columns = [];
         foreach ($this->calculateDbColumns() as $c) {
@@ -354,14 +354,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
-        $columns = [];
-        foreach ($this->calculateDbColumns() as $c) {
-            $columns[$c->name] = $c->type;
-        }
-
-        return $columns;
+        return $this->getColumnType();
     }
 
     protected function calculateDbColumns(): array

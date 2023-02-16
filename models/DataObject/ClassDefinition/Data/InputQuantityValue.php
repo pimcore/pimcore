@@ -122,7 +122,7 @@ class InputQuantityValue extends QuantityValue
         return null;
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         return [
             'value' => 'varchar(255)',
@@ -130,7 +130,7 @@ class InputQuantityValue extends QuantityValue
         ];
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
         return $this->getColumnType();
     }

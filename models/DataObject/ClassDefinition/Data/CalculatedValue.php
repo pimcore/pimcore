@@ -216,7 +216,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
         return 'varchar(' . $this->getColumnLength() . ')';
     }

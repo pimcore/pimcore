@@ -226,14 +226,14 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return 'string|null';
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         return 'longtext';
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        return 'longtext';
+        return $this->getColumnType();
     }
 
     public function getFieldType(): string

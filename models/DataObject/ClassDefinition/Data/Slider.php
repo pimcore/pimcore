@@ -307,14 +307,14 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return 'float|null';
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         return 'double';
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        return 'double';
+        return $this->getColumnType();
     }
 
     public function getFieldType(): string

@@ -313,7 +313,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return null;
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         return [
             'tenant' => 'varchar(100)',
@@ -322,7 +322,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         ];
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
         return $this->getColumnType();
     }

@@ -603,7 +603,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return 'fullpath';
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
         return [
             'id' => 'int(11)',

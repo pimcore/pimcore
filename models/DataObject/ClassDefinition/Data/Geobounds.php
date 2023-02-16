@@ -312,7 +312,7 @@ class Geobounds extends AbstractGeo implements
         return '\\' . DataObject\Data\Geobounds::class . '|null';
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         return [
             'NElongitude' => 'double',
@@ -322,7 +322,7 @@ class Geobounds extends AbstractGeo implements
         ];
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
         return $this->getColumnType();
     }

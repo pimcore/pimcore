@@ -869,7 +869,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->getRelationFilterCondition($value, $operator, $name);
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
         return 'text';
     }

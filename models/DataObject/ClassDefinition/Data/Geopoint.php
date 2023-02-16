@@ -285,7 +285,7 @@ class Geopoint extends AbstractGeo implements
         return '\\' . DataObject\Data\GeoCoordinates::class . '|null';
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         return [
             'longitude' => 'double',
@@ -293,7 +293,7 @@ class Geopoint extends AbstractGeo implements
         ];
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
         return $this->getColumnType();
     }

@@ -274,14 +274,14 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return 'bool|null';
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         return 'tinyint(1)';
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        return 'tinyint(1)';
+        return $this->getColumnType();
     }
 
     public function getFieldType(): string

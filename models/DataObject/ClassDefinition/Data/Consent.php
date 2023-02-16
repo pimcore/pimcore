@@ -398,7 +398,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return null;
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         return [
             'consent' => 'tinyint(1)',
@@ -406,7 +406,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         ];
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
         return 'tinyint(1)';
     }

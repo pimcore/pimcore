@@ -427,14 +427,14 @@ class BooleanSelect extends Data implements
         return 'bool|null';
     }
 
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         return 'tinyint(1) null';
     }
 
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        return 'tinyint(1) null';
+        return $this->getColumnType();
     }
 
     public function getFieldType(): string
