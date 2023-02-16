@@ -45,7 +45,6 @@ framework:
             'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_asset_update
             'Pimcore\Messenger\AssetPreviewImageMessage': pimcore_core
             'Pimcore\Messenger\GeneratePagePreviewMessage': pimcore_core
-            'Pimcore\Messenger\GenerateWeb2PrintPdfMessage': pimcore_core
             'Pimcore\Messenger\VersionDeleteMessage': pimcore_core
             'Pimcore\Messenger\OptimizeImageMessage': pimcore_image_optimize
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
@@ -196,8 +195,6 @@ pimcore:
                 hardlink: \Pimcore\Model\Document\Hardlink
                 email: \Pimcore\Model\Document\Email
                 newsletter: \Pimcore\Model\Document\Newsletter
-                printpage: \Pimcore\Model\Document\Printpage
-                printcontainer: \Pimcore\Model\Document\Printcontainer
             prefixes:
                 - \Pimcore\Model\Document\
         editables:
@@ -206,7 +203,7 @@ pimcore:
         valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
 
     routing:
-        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer']
+        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter']
 
     newsletter:
         source_adapters:

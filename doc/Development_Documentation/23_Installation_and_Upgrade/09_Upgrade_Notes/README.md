@@ -14,6 +14,7 @@
 - [Documents] 
   - Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
   - Removed `pimcore:document:types` from config. The types will be represented by the keys of the `type_definitions:map`
+  - Added `pimcore:documents:cleanup` command to remove documents with specified types and drop the related document type tables, useful in the cases like the removal of headless documents or web2print page/containers after uninstallation,  see [Documents](../../03_Documents/README.md#page_Cleanup-Documents-Types)
 - [Class Definitions] Class Resolver does not catch exceptions anymore.
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
 - [Runtime Cache] Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.  
@@ -120,21 +121,23 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - Removed commands: `pimcore:bundle:enable`, `pimcore:bundle:disable`.
   - Removed `dontCheckEnabled` config support from Areablock editable. 
   - Functionality that was moved into its own bundle and must be enabled manually in `config/bundles.php`
-    - Glossary has been moved into PimcoreGlossaryBundle
+    - [Glossary] has been moved into PimcoreGlossaryBundle
       - Config `pimcore:glossary:` has been removed, please use `pimcore_glossary:` in the PimcoreGlossaryBundle instead.
-    - Staticroutes has been moved into PimcoreStaticRoutesBundle
+    - [Staticroutes] has been moved into PimcoreStaticRoutesBundle
       - Config `pimcore:staticroutes:` has been removed, please use `pimcore_static_routes:` in the PimcoreStaticRoutesBundle instead.
-    - Xliff Translation Import/Export and related Events have been moved into PimcoreXliffBundle. Please check and adapt the Events' namespaces.
-    - CustomReports have been moved into PimcoreCustomReportsBundle
+    - [Xliff Translation] Import/Export and related Events have been moved into PimcoreXliffBundle. Please check and adapt the Events' namespaces.
+    - [CustomReports] have been moved into PimcoreCustomReportsBundle
       - Config `pimcore:custom_reports` has been removed, please use `pimcore_custom_reports:` in the PimcoreCustomReportsBundle insteand.
-    - Search has been moved into PimcoreSimpleBackendSearchBundle
-    - SEO Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
-    - WordExport has been moved into PimcoreWordExportBundle
+    - [Search] has been moved into PimcoreSimpleBackendSearchBundle
+    - [SEO] Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
+    - [WordExport] has been moved into PimcoreWordExportBundle
     - [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
     - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
-    - UUID has been moved into PimcoreUuidBundle
+    - [UUID] has been moved into PimcoreUuidBundle
       - Config `pimcore:general:instance_identifier` has been removed, please use `pimcore_uuid:instance_identifier` in the PimcoreUuidBundle instead. Please run `bin/console config:dump pimcore_uuid` to see more about the instance identifier config after installing the bundle.
     - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`
+    - [Web2Print] has been moved into PimcoreWebToPrintBundle
+      - Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.

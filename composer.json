@@ -193,7 +193,8 @@
       "Pimcore\\Bundle\\CustomReportsBundle\\": "bundles/CustomReportsBundle/src/",
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
       "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
-      "Pimcore\\Bundle\\FileExplorerBundle\\": "bundles/FileExplorerBundle/src/"
+      "Pimcore\\Bundle\\FileExplorerBundle\\": "bundles/FileExplorerBundle/src/",
+      "Pimcore\\Bundle\\WebToPrintBundle\\": "bundles/WebToPrintBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"
