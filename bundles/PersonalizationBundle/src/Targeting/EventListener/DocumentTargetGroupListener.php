@@ -108,7 +108,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         }
     }
 
-    public function configureElementTargeting(GenericEvent $event)
+    public function configureElementTargeting(GenericEvent $event): void
     {
         $requestParams = $event->getArgument('requestParams');
         $element = $event->getArgument('element');
