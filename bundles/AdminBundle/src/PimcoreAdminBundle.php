@@ -22,10 +22,10 @@ use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\ImportExportLocators
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\TranslatorPass;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 
 /**

@@ -84,7 +84,7 @@ final class PimcoreAdminExtension extends Extension implements PrependExtensionI
         $container->prependExtensionConfig('webpack_encore', [
             //'output_path' => realpath(__DIR__ . '/../Resources/public/build')
             'output_path' => false,
-            'builds' => $builds
+            'builds' => $builds,
         ]);
     }
 }
