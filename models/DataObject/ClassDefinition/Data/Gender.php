@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class Gender extends Model\DataObject\ClassDefinition\Data\Select
 {
-    public function configureOptions()
+    public function configureOptions(): void
     {
         $options = [
             ['key' => 'male', 'value' => 'male'],
