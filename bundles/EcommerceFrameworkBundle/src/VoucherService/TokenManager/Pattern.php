@@ -53,7 +53,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         'alpha' => 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
     ];
 
-    public function __construct(AbstractVoucherTokenType $configuration)
+    public function __construct(AbstractVoucherTokenType $configuration, protected PaginatorInterface $paginator)
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypePattern) {
@@ -532,16 +532,22 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
         }
 
-        /** @var PaginatorInterface $paginator */
-        $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
-        $paginator = $paginator->paginate(
+        $page = (int)($params['page'] ?? 1);
+        $perPage = (int)($params['tokensPerPage'] ?? 25);
+
+        $total = count($tokens);
+
+        $availablePages = (int) ceil($total / $perPage);
+        $page = min($page, $availablePages);
+
+        $paginator = $this->paginator->paginate(
             $tokens,
-            $params['page'] ?? 1,
-            isset($params['tokensPerPage']) ? (int)$params['tokensPerPage'] : 25
+            $page ?: 1,
+            $perPage
         );
 
         $viewParamsBag['paginator'] = $paginator;
-        $viewParamsBag['count'] = count($tokens);
+        $viewParamsBag['count'] = $total;
 
         $viewParamsBag['msg']['error'] = $params['error'] ?? null;
         $viewParamsBag['msg']['success'] = $params['success'] ?? null;

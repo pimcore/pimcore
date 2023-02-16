@@ -35,7 +35,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
 {
     protected string $template;
 
-    public function __construct(AbstractVoucherTokenType $configuration)
+    public function __construct(AbstractVoucherTokenType $configuration, protected PaginatorInterface $paginator)
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypeSingle) {
@@ -70,15 +70,21 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         }
 
         if ($codes) {
-            /** @var PaginatorInterface $paginator */
-            $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
-            $paginator = $paginator->paginate(
+            $page = (int)($params['page'] ?? 1);
+            $perPage = (int)($params['tokensPerPage'] ?? 25);
+
+            $total = count($codes);
+
+            $availablePages = (int) ceil($total / $perPage);
+            $page = min($page, $availablePages);
+
+            $paginator = $this->paginator->paginate(
                 (array)$codes,
-                $params['page'] ?? 1,
-                isset($params['tokensPerPage']) ? (int)$params['tokensPerPage'] : 25
+                $page ?: 1,
+                $perPage
             );
             $viewParamsBag['paginator'] = $paginator;
-            $viewParamsBag['count'] = count($codes);
+            $viewParamsBag['count'] = $total;
         }
 
         $viewParamsBag['msg']['error'] = $params['error'] ?? null;

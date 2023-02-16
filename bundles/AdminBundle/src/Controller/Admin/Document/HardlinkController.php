@@ -46,7 +46,7 @@ class HardlinkController extends DocumentControllerBase
             throw $this->createNotFoundException('Hardlink not found');
         }
 
-        if (($lock = $this->checkForLock($link)) instanceof JsonResponse) {
+        if (($lock = $this->checkForLock($link, $request->getSession()->getId())) instanceof JsonResponse) {
             return $lock;
         }
 

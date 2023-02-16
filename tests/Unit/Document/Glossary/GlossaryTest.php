@@ -49,7 +49,7 @@ class GlossaryTest extends TestCase
 
         $expect = '<body><p>This is a Test for the <a class="pimcore_glossary" href="/test">Glossary</a></p></body>';
 
-        $this->assertSame($result, $expect);
+        $this->assertSame($expect, $result);
     }
 
     public function testGlossaryWithHtmlEntities(): void
@@ -70,7 +70,7 @@ class GlossaryTest extends TestCase
 
         $expect = '<body><p>This is a Test for the&nbsp;<a class="pimcore_glossary" href="/test">Entity</a> &copy;</p></body>';
 
-        $this->assertSame($result, html_entity_decode($expect));
+        $this->assertSame(html_entity_decode($expect), $result);
     }
 
     public function testGlossaryWithHtmlEntities2(): void
@@ -85,7 +85,7 @@ class GlossaryTest extends TestCase
 
         $expect = '<body><p>Test &nbsp; <a class="pimcore_glossary" href="/test">Eintrag</a> &copy;</p></body>';
 
-        $this->assertSame($result, html_entity_decode($expect));
+        $this->assertSame(html_entity_decode($expect), $result);
     }
 
     public function testGlossaryWithHtml(): void
@@ -129,7 +129,7 @@ class GlossaryTest extends TestCase
         </div>
     </section>';
 
-        $this->assertSame($result, $expect);
+        $this->assertSame($expect, $result);
     }
 
     public function testGlossaryWithAnotherHtml(): void
@@ -149,7 +149,7 @@ class GlossaryTest extends TestCase
 
         $expect = '<p><a class="pimcore_glossary" href="/hans">hans</a> &amp; gretl</p>';
 
-        $this->assertSame($result, $expect);
+        $this->assertSame($expect, $result);
     }
 
     public function testGlossaryWithLowerThenAndGreaterThenHtml(): void
@@ -169,6 +169,6 @@ class GlossaryTest extends TestCase
 
         $expect = '<p><a class="pimcore_glossary" href="/huber">huber</a> &lt;&gt; is the best</p>';
 
-        $this->assertSame($result, $expect);
+        $this->assertSame($expect, $result);
     }
 }

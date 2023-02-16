@@ -85,7 +85,6 @@ The tests are organized into suites, each one covering specific areas of the cor
 | Suite name | Description                                                    |
 |------------|----------------------------------------------------------------|
 | Cache      | Cache tests                                                    |
-| Ecommerce  | Ecommerce bundle tests                                         |
 | Model      | Dataobject tests                                               |
 | Service    | Test covering common or shared element tasks (versioning, ...) |
 | Unit       | Other tests (may need restructuring)                           |

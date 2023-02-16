@@ -21,9 +21,10 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
 
     initialize: function (data, fieldConfig) {
 
-        this.data = "";
 
-        if (data) {
+        this.data = null;
+
+        if (data !== null && typeof data !== "undefined") {
             this.data = data;
         }
         this.fieldConfig = fieldConfig;
@@ -31,7 +32,10 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
 
     applyDefaultValue: function() {
         this.defaultValue = null;
-        if ((typeof this.data === "undefined" || !this.data) && this.fieldConfig.defaultValue && this.context.type === "classificationstore") {
+        if ((typeof this.data === "undefined" || this.data === null) &&
+            this.fieldConfig.defaultValue &&
+            (this.context.type === "classificationstore" || this.context.containerType === "fieldcollection")
+        ) {
             this.data = this.fieldConfig.defaultValue;
             this.defaultValue = this.fieldConfig.defaultValue;
         }

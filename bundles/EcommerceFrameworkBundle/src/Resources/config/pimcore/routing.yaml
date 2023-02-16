@@ -1,0 +1,12 @@
+_pimcore_ecommerce_backend:
+    resource: "@PimcoreEcommerceFrameworkBundle/Controller/"
+    type:     annotation
+    prefix:   /admin/ecommerceframework
+    options:
+        expose: true
+
+_pimcore_ecommerce_findologic:
+  path: /ecommerceframework/findologic-export
+  defaults: { _controller: Pimcore\Bundle\EcommerceFrameworkBundle\Controller\FindologicController::exportAction }
+  options:
+      expose: true

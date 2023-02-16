@@ -398,10 +398,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * direct output to the frontend
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $result = '';
 

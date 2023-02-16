@@ -213,7 +213,7 @@ class PublicServicesController extends Controller
             $config = Config::getRobotsConfig();
         }
 
-        $siteId = 'default';
+        $siteId = 0;
         if ($site instanceof Site) {
             $siteId = $site->getId();
         }

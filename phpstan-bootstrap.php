@@ -1,5 +1,7 @@
 <?php
 
+use Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb;
+
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     define('PIMCORE_PROJECT_ROOT', __DIR__);
 } elseif (file_exists(__DIR__ . '/../../../vendor/autoload.php')) {
@@ -21,3 +23,5 @@ include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 if (!defined('PIMCORE_TEST')) {
     define('PIMCORE_TEST', true);
 }
+
+@class_alias(ApplicationLoggerDb::class, 'Pimcore\Log\Handler\ApplicationLoggerDb');

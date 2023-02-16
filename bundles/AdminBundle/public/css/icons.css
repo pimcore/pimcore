@@ -235,10 +235,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/survey.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_log_admin {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/text.svg) center center no-repeat !important;
-}
-
 .pimcore_nav_icon_gdpr {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/export.svg) left center no-repeat !important;
 }
@@ -600,10 +596,6 @@
     background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/unknown.svg);
     background-position: center center;
     background-repeat: no-repeat;
-}
-
-.pimcore_icon_vr {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/vr.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_pdf, .pimcore_icon_ps {
