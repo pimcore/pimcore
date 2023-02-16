@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Maintenance\Tasks;
+namespace Pimcore\Bundle\SeoBundle\Maintenance;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Maintenance\TaskInterface;

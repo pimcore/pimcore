@@ -19,12 +19,6 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: cleanuplogfiles }
 
-    Pimcore\Maintenance\Tasks\LogErrorCleanupTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: httperrorlog }
-
     Pimcore\Maintenance\Tasks\CleanupBrickTablesTask:
         arguments:
             - '@logger'
