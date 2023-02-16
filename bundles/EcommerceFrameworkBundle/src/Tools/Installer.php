@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Migrations\Version20210430124911;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -138,22 +139,34 @@ class Installer extends AbstractInstaller
         BundleInterface $bundle,
         Connection $connection
     ) {
-        $this->installSourcesPath = __DIR__ . '/../../install';
+        $this->installSourcesPath = __DIR__ . '/../Resources/install';
         $this->bundle = $bundle;
         $this->db = $connection;
         parent::__construct();
     }
 
-    public function install()
+    public function installDependentBundles(): void
+    {
+        if (\Pimcore\Version::getMajorVersion() >= 11) {
+            $appLoggerInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\ApplicationLoggerBundle\Installer::class);
+
+            if (!$appLoggerInstaller->isInstalled()) {
+                $appLoggerInstaller->install();
+            }
+        }
+    }
+
+    public function install(): void
     {
         $this->installFieldCollections();
         $this->installClasses();
         $this->installTables();
         $this->installTranslations();
         $this->installPermissions();
+        $this->installDependentBundles();
     }
 
-    public function uninstall()
+    public function uninstall(): void
     {
         $this->uninstallPermissions();
         $this->uninstallTables();
@@ -387,5 +400,10 @@ class Installer extends AbstractInstaller
     protected function getSchema(): Schema
     {
         return $this->schema ??= $this->db->createSchemaManager()->introspectSchema();
+    }
+
+    public function getLastMigrationVersionClassName(): ?string
+    {
+        return Version20210430124911::class;
     }
 }

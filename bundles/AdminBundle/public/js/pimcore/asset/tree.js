@@ -12,6 +12,9 @@
  */
 
  pimcore.registerNS("pimcore.asset.tree");
+/**
+ * @private
+ */
  pimcore.asset.tree = Class.create({
  
      treeDataUrl: null,
@@ -67,11 +70,18 @@
      init: function(rootNodeConfig) {
  
          var itemsPerPage = pimcore.settings['asset_tree_paging_limit'];
- 
-         rootNodeConfig.text = t("home");
+
+         let rootNodeConfigText = t('home');
+         let rootNodeConfigIconCls = "pimcore_icon_home";
+         if(this.config.customViewId !== undefined && rootNodeConfig.id !== 1) {
+             rootNodeConfigText = rootNodeConfig.key;
+             rootNodeConfigIconCls = rootNodeConfig.iconCls;
+         }
+
+         rootNodeConfig.text = rootNodeConfigText;
          rootNodeConfig.allowDrag = true;
-         rootNodeConfig.id = "" +  rootNodeConfig.id;
-         rootNodeConfig.iconCls = "pimcore_icon_home";
+         rootNodeConfig.id = "" + rootNodeConfig.id;
+         rootNodeConfig.iconCls = rootNodeConfigIconCls;
          rootNodeConfig.cls = "pimcore_tree_node_root";
          rootNodeConfig.expanded = true;
  
@@ -755,7 +765,10 @@
              var advancedMenuItems = [];
              var user = pimcore.globalmanager.get("user");
  
-             if (record.data.permissions.create && !record.data.locked && perspectiveCfg.inTreeContextMenu("asset.searchAndMove")) {
+             if (record.data.permissions.create &&
+                 !record.data.locked &&
+                 perspectiveCfg.inTreeContextMenu("asset.searchAndMove") &&
+                 pimcore.helpers.hasSearchImplementation()) {
                  advancedMenuItems.push({
                      text: t('search_and_move'),
                      iconCls: "pimcore_icon_search pimcore_icon_overlay_go",

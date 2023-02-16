@@ -115,27 +115,7 @@
 
 <div id="pimcore_sidebar">
     <div id="pimcore_navigation" style="display:none;">
-        <ul>
-            {% set navigations = {
-                'file': {'label': 'file', 'icon': 'file'},
-                'extras': {'label': 'tools', 'icon': 'build'},
-                'marketing': {'label': 'marketing', 'icon': 'bar_chart'},
-                'settings': {'label': 'settings', 'icon': 'settings'},
-                'ecommerce': {'label': 'bundle_ecommerce_mainmenu', 'icon': 'shopping_cart', 'extraAttr': 'style="display: none;"'},
-                'search': {'label': 'search', 'icon': 'search'}
-            } %}
-
-            {% set extraAttr = {'ecommerce': 'style="display: none;"'} %}
-
-            {% for navKey,navData in navigations %}
-                {% if config.inPerspective(runtimePerspective, navKey) %}
-                    <li id="pimcore_menu_{{ navKey }}" data-menu-tooltip="{{ navData["label"]|trans([],'admin') }}" class="pimcore_menu_item pimcore_menu_needs_children" {{ navData["extraAttr"] ?? '' }}>
-                        <img src="/bundles/pimcoreadmin/img/material-icons/outline-{{ navData["icon"] }}-24px.svg">
-                    </li>
-                {% endif %}
-            {% endfor %}
-            <li id="pimcore_menu_maintenance" data-menu-tooltip="{{ "deactivate_maintenance"|trans([], 'admin') }}" class="pimcore_menu_item " style="display:none;"></li>
-        </ul>
+        <ul id="pimcore_navigation_ul"></ul>
     </div>
 
     <div id="pimcore_status"></div>
@@ -150,7 +130,7 @@
     </div>
 
     <form id="pimcore_logout_form" method="post" action="{{ path('pimcore_admin_logout') }}">
-        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken(app.request.session) }}">
 
         <a id="pimcore_logout" data-menu-tooltip="{{ "logout"|trans([],'admin') }}" href="#" style="display: none">
             <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">
@@ -209,7 +189,6 @@
     "lib/ckeditor/ckeditor.js",
     "lib/leaflet/leaflet.js",
     "lib/leaflet.draw/leaflet.draw.js",
-    "lib/vrview/build/vrview.min.js",
     "lib/ace/src-min-noconflict/ace.js",
     "lib/ace/src-min-noconflict/ext-modelist.js"
 ] %}
@@ -236,7 +215,6 @@
 
     "pimcore/perspective.js",
     "pimcore/user.js",
-
 
     "pimcore/tool/paralleljobs.js",
     "pimcore/tool/genericiframewindow.js",
@@ -270,8 +248,6 @@
     "pimcore/settings/translation.js",
     "pimcore/settings/translationEditor.js",
     "pimcore/settings/translation/translationmerger.js",
-    "pimcore/settings/translation/xliff.js",
-    "pimcore/settings/translation/word.js",
     "pimcore/settings/translation/translationSettingsTab.js",
     "pimcore/settings/metadata/predefined.js",
     "pimcore/settings/properties/predefined.js",
@@ -279,15 +255,10 @@
     "pimcore/settings/system.js",
     "pimcore/settings/web2print.js",
     "pimcore/settings/website.js",
-    "pimcore/settings/staticroutes.js",
     "pimcore/settings/redirects.js",
-    "pimcore/settings/glossary.js",
+
     "pimcore/settings/recyclebin.js",
-    "pimcore/settings/fileexplorer/file.js",
-    "pimcore/settings/fileexplorer/explorer.js",
     "pimcore/settings/maintenance.js",
-    "pimcore/settings/robotstxt.js",
-    "pimcore/settings/httpErrorLog.js",
     "pimcore/settings/email/log.js",
     "pimcore/settings/email/blacklist.js",
     "pimcore/settings/targeting/condition/abstract.js",
@@ -306,13 +277,12 @@
     "pimcore/settings/gdpr/dataproviders/sentMail.js",
     "pimcore/settings/gdpr/dataproviders/pimcoreUsers.js",
 
-
+    "pimcore/element/applicationLoggerPanelFacade.js",
+    "pimcore/element/customReportsPanelFacade.js",
+    "pimcore/element/selector/searchFacade.js",
+    
     "pimcore/element/abstract.js",
     "pimcore/element/abstractPreview.js",
-    "pimcore/element/selector/selector.js",
-    "pimcore/element/selector/abstract.js",
-    "pimcore/element/selector/document.js",
-    "pimcore/element/selector/asset.js",
     "pimcore/element/properties.js",
     "pimcore/element/scheduler.js",
     "pimcore/element/dependencies.js",
@@ -339,7 +309,6 @@
     "pimcore/object/helpers/optionEditor.js",
     "pimcore/object/helpers/imageGalleryDropZone.js",
     "pimcore/object/helpers/imageGalleryPanel.js",
-    "pimcore/element/selector/object.js",
     "pimcore/element/tag/configuration.js",
     "pimcore/element/tag/assignment.js",
     "pimcore/element/tag/tree.js",
@@ -364,7 +333,6 @@
     "pimcore/document/newsletters/plaintextPanel.js",
     "pimcore/document/newsletters/addressSourceAdapters/default.js",
     "pimcore/document/newsletters/addressSourceAdapters/csvList.js",
-    "pimcore/document/newsletters/addressSourceAdapters/report.js",
     "pimcore/document/link.js",
     "pimcore/document/hardlink.js",
     "pimcore/document/folder.js",
@@ -377,7 +345,6 @@
     "pimcore/document/printabstract.js",
     "pimcore/document/printpage.js",
     "pimcore/document/printcontainer.js",
-    "pimcore/document/seopanel.js",
     "pimcore/document/document_language_overview.js",
     "pimcore/document/customviews/tree.js",
 
@@ -421,7 +388,6 @@
     "pimcore/asset/customviews/tree.js",
     "pimcore/asset/gridexport/csv.js",
     "pimcore/asset/gridexport/xlsx.js",
-
 
     "pimcore/object/helpers/edit.js",
     "pimcore/object/helpers/layout.js",
@@ -633,27 +599,13 @@
     "pimcore/object/gridexport/csv.js",
     "pimcore/object/gridexport/xlsx.js",
 
-
-    "pimcore/report/panel.js",
-    "pimcore/report/broker.js",
-    "pimcore/report/abstract.js",
     "pimcore/report/settings.js",
     "pimcore/report/analytics/settings.js",
     "pimcore/report/analytics/elementoverview.js",
     "pimcore/report/analytics/elementexplorer.js",
     "pimcore/report/webmastertools/settings.js",
     "pimcore/report/tagmanager/settings.js",
-    "pimcore/report/custom/item.js",
-    "pimcore/report/custom/panel.js",
-    "pimcore/report/custom/settings.js",
-    "pimcore/report/custom/report.js",
-    "pimcore/report/custom/definitions/sql.js",
     "pimcore/report/custom/definitions/analytics.js",
-    "pimcore/report/custom/toolbarenricher.js",
-
-    "pimcore/log/admin.js",
-    "pimcore/log/detailwindow.js",
-
 
     "pimcore/layout/portal.js",
     "pimcore/layout/portlets/abstract.js",
@@ -662,12 +614,11 @@
     "pimcore/layout/portlets/modifiedAssets.js",
     "pimcore/layout/portlets/modificationStatistic.js",
     "pimcore/layout/portlets/analytics.js",
-    "pimcore/layout/portlets/customreports.js",
 
+    "pimcore/layout/menu.js",
     "pimcore/layout/toolbar.js",
     "pimcore/layout/treepanelmanager.js",
     "pimcore/document/seemode.js",
-
 
     "pimcore/object/classificationstore/groupsPanel.js",
     "pimcore/object/classificationstore/propertiesPanel.js",

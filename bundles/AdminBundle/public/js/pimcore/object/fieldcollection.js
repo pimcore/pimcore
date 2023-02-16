@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.fieldcollection");
+/**
+ * @private
+ */
 pimcore.object.fieldcollection = Class.create({
 
     forbiddenNames: [
@@ -124,7 +127,8 @@ pimcore.object.fieldcollection = Class.create({
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick' : this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
+            "beforeitemmove": this.onTreeNodeBeforeMove.bind(this),
         };
 
         return treeNodeListeners;
@@ -182,6 +186,10 @@ pimcore.object.fieldcollection = Class.create({
         menu.showAt(e.pageX, e.pageY);
     },
 
+    onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
+        return pimcore.helpers.treeDragDropValidate(node, oldParent, newParent);
+    },
+
     addField: function () {
         Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                                         this.addFieldComplete.bind(this), null, null, "");
@@ -189,7 +197,7 @@ pimcore.object.fieldcollection = Class.create({
 
     addFieldComplete: function (button, value, object) {
 
-        var isValidName = /^[a-zA-Z]+$/;
+        var isValidName = /^[a-zA-Z][a-zA-Z0-9]*$/;
 
         if (button == "ok" && value.length > 2 && isValidName.test(value) && !in_arrayi(value, this.forbiddenNames)) {
             Ext.Ajax.request({

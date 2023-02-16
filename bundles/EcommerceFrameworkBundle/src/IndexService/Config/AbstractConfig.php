@@ -48,18 +48,15 @@ abstract class AbstractConfig implements ConfigInterface
     protected array $options;
 
     /**
-     * @param string $tenantName
      * @param array[]|Attribute[] $attributes
-     * @param array $searchAttributes
-     * @param array $filterTypes
-     * @param array $options
      */
     public function __construct(
+        AttributeFactory $attributeFactory,
         string $tenantName,
-        array $attributes,
-        array $searchAttributes,
-        array $filterTypes,
-        array $options = []
+        array $attributes = [],
+        array $searchAttributes = [],
+        array $filterTypes = [],
+        array $options = [],
     ) {
         $this->tenantName = $tenantName;
 
@@ -67,6 +64,14 @@ abstract class AbstractConfig implements ConfigInterface
         $this->searchAttributeConfig = $searchAttributes;
 
         $this->filterTypes = $filterTypes;
+
+        $this->attributeFactory = $attributeFactory;
+        $this->buildAttributes($this->attributeConfig);
+
+        foreach ($this->searchAttributeConfig as $searchAttribute) {
+            $this->addSearchAttribute($searchAttribute);
+        }
+
         $this->processOptions($options);
     }
 
@@ -78,34 +83,6 @@ abstract class AbstractConfig implements ConfigInterface
     public function getAttributeConfig(): array
     {
         return $this->attributeConfig;
-    }
-
-    /**
-     * Sets attribute factory as dependency. This was added as setter for BC reasons and will be added to the constructor
-     * signature in Pimcore 10.
-     *
-     * TODO Pimcore 10 add to constructor signature.
-     *
-     * @required
-     *
-     * @param AttributeFactory $attributeFactory
-     */
-    public function setAttributeFactory(AttributeFactory $attributeFactory)
-    {
-        if (null !== $this->attributeFactory) {
-            throw new \RuntimeException('Attribute factory is already set.');
-        }
-
-        $this->attributeFactory = $attributeFactory;
-
-        $this->attributes = [];
-        $this->searchAttributes = [];
-
-        $this->buildAttributes($this->attributeConfig);
-
-        foreach ($this->searchAttributeConfig as $searchAttribute) {
-            $this->addSearchAttribute($searchAttribute);
-        }
     }
 
     protected function buildAttributes(array $attributes)
@@ -125,12 +102,12 @@ abstract class AbstractConfig implements ConfigInterface
         }
     }
 
-    protected function addAttribute(Attribute $attribute)
+    protected function addAttribute(Attribute $attribute): void
     {
         $this->attributes[$attribute->getName()] = $attribute;
     }
 
-    protected function addSearchAttribute(string $searchAttribute)
+    protected function addSearchAttribute(string $searchAttribute): void
     {
         if (!isset($this->attributes[$searchAttribute])) {
             throw new \InvalidArgumentException(sprintf(
@@ -143,7 +120,7 @@ abstract class AbstractConfig implements ConfigInterface
         $this->searchAttributes[] = $searchAttribute;
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         // noop - to implemented by configs supporting options
     }
@@ -151,7 +128,7 @@ abstract class AbstractConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setTenantWorker(WorkerInterface $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker): void
     {
         $this->checkTenantWorker($tenantWorker);
         $this->tenantWorker = $tenantWorker;
@@ -163,7 +140,7 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @param WorkerInterface $tenantWorker
      */
-    protected function checkTenantWorker(WorkerInterface $tenantWorker)
+    protected function checkTenantWorker(WorkerInterface $tenantWorker): void
     {
         if (null !== $this->tenantWorker) {
             throw new \LogicException(sprintf('Worker for tenant "%s" is already set', $this->tenantName));

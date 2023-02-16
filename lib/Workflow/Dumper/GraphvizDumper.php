@@ -220,7 +220,7 @@ class GraphvizDumper implements DumperInterface
     /**
      * @internal
      */
-    protected function dotize($id): string
+    protected function dotize(string $id): string
     {
         return strtolower(preg_replace('/[^\w]/i', '_', $id));
     }

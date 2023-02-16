@@ -22,20 +22,17 @@ use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
 use Pimcore\Db;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Exception\ConfigWriteException;
-use Pimcore\Model\Glossary;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
-use Pimcore\Model\Staticroute;
-use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -405,14 +402,12 @@ class SettingsController extends AdminController
         $valueArray['general']['valid_language'] = explode(',', $valueArray['general']['valid_languages']);
 
         //for "wrong" legacy values
-        if (is_array($valueArray['general']['valid_language'])) {
-            foreach ($valueArray['general']['valid_language'] as $existingValue) {
-                if (!in_array($existingValue, $validLanguages)) {
-                    $languageOptions[] = [
-                        'language' => $existingValue,
-                        'display' => $existingValue,
-                    ];
-                }
+        foreach ($valueArray['general']['valid_language'] as $existingValue) {
+            if (!in_array($existingValue, $validLanguages)) {
+                $languageOptions[] = [
+                    'language' => $existingValue,
+                    'display' => $existingValue,
+                ];
             }
         }
 
@@ -443,10 +438,11 @@ class SettingsController extends AdminController
         $this->checkPermission('system_settings');
 
         $values = $this->decodeJson($request->get('data'));
+        $existingValues = [];
 
         try {
             $file = Config::locateConfigFile('system.yaml');
-            Config::getConfigInstance($file);
+            $existingValues = Config::getConfigInstance($file);
         } catch (\Exception $e) {
             // nothing to do
         }
@@ -531,6 +527,16 @@ class SettingsController extends AdminController
             $settings['pimcore']['email']['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
         }
 
+        if ($existingValues) {
+            $saveSettingsEvent = new GenericEvent(null, [
+                'settings' => $settings,
+                'existingValues' => $existingValues,
+                'values' => $values,
+            ]);
+            $eventDispatcher->dispatch($saveSettingsEvent, AdminEvents::SAVE_ACTION_SYSTEM_SETTINGS);
+            $settings = $saveSettingsEvent->getArgument('settings');
+        }
+
         $settingsYaml = Yaml::dump($settings, 5);
         $configFile = Config::locateConfigFile('system.yaml');
         File::put($configFile, $settingsYaml);
@@ -558,7 +564,7 @@ class SettingsController extends AdminController
      *
      * @throws \Exception
      */
-    protected function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = [])
+    protected function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = []): void
     {
         if (isset($definitions[$source])) {
             $targets = explode(',', $definitions[$source]);
@@ -789,103 +795,6 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/staticroutes", name="pimcore_admin_settings_staticroutes", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function staticroutesAction(Request $request): JsonResponse
-    {
-        if ($request->get('data')) {
-            $this->checkPermission('routes');
-
-            $data = $this->decodeJson($request->get('data'));
-
-            if (is_array($data)) {
-                foreach ($data as &$value) {
-                    if (is_string($value)) {
-                        $value = trim($value);
-                    }
-                }
-            }
-
-            if ($request->get('xaction') == 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
-                $id = $data['id'];
-                $route = Staticroute::getById($id);
-                if (!$route->isWriteable()) {
-                    throw new ConfigWriteException();
-                }
-                $route->delete();
-
-                return $this->adminJson(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') == 'update') {
-                // save routes
-                $route = Staticroute::getById($data['id']);
-                if (!$route->isWriteable()) {
-                    throw new ConfigWriteException();
-                }
-
-                $route->setValues($data);
-
-                $route->save();
-
-                return $this->adminJson(['data' => $route->getObjectVars(), 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
-                if (!(new Staticroute())->isWriteable()) {
-                    throw new ConfigWriteException();
-                }
-                unset($data['id']);
-
-                // save route
-                $route = new Staticroute();
-                $route->setValues($data);
-
-                $route->save();
-
-                $responseData = $route->getObjectVars();
-                $responseData['writeable'] = $route->isWriteable();
-
-                return $this->adminJson(['data' => $responseData, 'success' => true]);
-            }
-        } else {
-            // get list of routes
-
-            $list = new Staticroute\Listing();
-
-            if ($filter = $request->get('filter')) {
-                $list->setFilter(function (Staticroute $staticRoute) use ($filter) {
-                    foreach ($staticRoute->getObjectVars() as $value) {
-                        if (!is_scalar($value)) {
-                            continue;
-                        }
-                        if (stripos((string)$value, $filter) !== false) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                });
-            }
-
-            $routes = [];
-            foreach ($list->getRoutes() as $routeFromList) {
-                $route = $routeFromList->getObjectVars();
-                $route['writeable'] = $routeFromList->isWriteable();
-                if (is_array($routeFromList->getSiteId())) {
-                    $route['siteId'] = implode(',', $routeFromList->getSiteId());
-                }
-                $routes[] = $route;
-            }
-
-            return $this->adminJson(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
-        }
-
-        return $this->adminJson(['success' => false]);
-    }
-
-    /**
      * @Route("/get-available-admin-languages", name="pimcore_admin_settings_getavailableadminlanguages", methods={"GET"})
      *
      * @param Request $request
@@ -912,117 +821,6 @@ class SettingsController extends AdminController
         });
 
         return $this->adminJson($langs);
-    }
-
-    /**
-     * @Route("/glossary", name="pimcore_admin_settings_glossary", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function glossaryAction(Request $request): JsonResponse
-    {
-        if ($request->get('data')) {
-            $this->checkPermission('glossary');
-
-            Cache::clearTag('glossary');
-
-            if ($request->get('xaction') == 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
-                $id = $data['id'];
-                $glossary = Glossary::getById($id);
-                $glossary->delete();
-
-                return $this->adminJson(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') == 'update') {
-                $data = $this->decodeJson($request->get('data'));
-
-                // save glossary
-                $glossary = Glossary::getById($data['id']);
-
-                if (!empty($data['link'])) {
-                    if ($doc = Document::getByPath($data['link'])) {
-                        $data['link'] = $doc->getId();
-                    }
-                }
-
-                $glossary->setValues($data);
-
-                $glossary->save();
-
-                if ($link = $glossary->getLink()) {
-                    if ((int)$link > 0) {
-                        if ($doc = Document::getById((int)$link)) {
-                            $glossary->setLink($doc->getRealFullPath());
-                        }
-                    }
-                }
-
-                return $this->adminJson(['data' => $glossary, 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
-                $data = $this->decodeJson($request->get('data'));
-                unset($data['id']);
-
-                // save glossary
-                $glossary = new Glossary();
-
-                if (!empty($data['link'])) {
-                    if ($doc = Document::getByPath($data['link'])) {
-                        $data['link'] = $doc->getId();
-                    }
-                }
-
-                $glossary->setValues($data);
-
-                $glossary->save();
-
-                if ($link = $glossary->getLink()) {
-                    if ((int)$link > 0) {
-                        if ($doc = Document::getById((int)$link)) {
-                            $glossary->setLink($doc->getRealFullPath());
-                        }
-                    }
-                }
-
-                return $this->adminJson(['data' => $glossary->getObjectVars(), 'success' => true]);
-            }
-        } else {
-            // get list of glossaries
-
-            $list = new Glossary\Listing();
-            $list->setLimit((int) $request->get('limit', 50));
-            $list->setOffset((int) $request->get('start', 0));
-
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-            if ($sortingSettings['orderKey']) {
-                $list->setOrderKey($sortingSettings['orderKey']);
-                $list->setOrder($sortingSettings['order']);
-            }
-
-            if ($request->get('filter')) {
-                $list->setCondition('`text` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
-            }
-
-            $list->load();
-
-            $glossaries = [];
-            foreach ($list->getGlossary() as $glossary) {
-                if ($link = $glossary->getLink()) {
-                    if ((int)$link > 0) {
-                        if ($doc = Document::getById((int)$link)) {
-                            $glossary->setLink($doc->getRealFullPath());
-                        }
-                    }
-                }
-
-                $glossaries[] = $glossary->getObjectVars();
-            }
-
-            return $this->adminJson(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
-        }
-
-        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -1554,49 +1352,6 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxtget", methods={"GET"})
-     *
-     * @return JsonResponse
-     */
-    public function robotsTxtGetAction(): JsonResponse
-    {
-        $this->checkPermission('robots.txt');
-
-        $config = Config::getRobotsConfig();
-
-        return $this->adminJson([
-            'success' => true,
-            'data' => $config,
-            'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt'),
-        ]);
-    }
-
-    /**
-     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxtput", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function robotsTxtPutAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('robots.txt');
-
-        $values = $request->get('data');
-        if (!is_array($values)) {
-            $values = [];
-        }
-
-        foreach ($values as $siteId => $robotsContent) {
-            SettingsStore::set('robots.txt-' . $siteId, $robotsContent, 'string', 'robots.txt');
-        }
-
-        return $this->adminJson([
-            'success' => true,
-        ]);
-    }
-
-    /**
      * @Route("/website-settings", name="pimcore_admin_settings_websitesettings", methods={"POST"})
      *
      * @param Request $request
@@ -1696,6 +1451,9 @@ class SettingsController extends AdminController
         return $this->adminJson(['success' => false]);
     }
 
+    /**
+     * @return array{id: ?int, name: string, language: string, type: string, data: mixed, siteId: ?int, creationDate: ?int, modificationDate: ?int}
+     */
     private function getWebsiteSettingForEditMode(WebsiteSetting $item): array
     {
         $resultItem = [
@@ -1765,7 +1523,7 @@ class SettingsController extends AdminController
      * @param string $language
      * @param string $dbName
      */
-    protected function deleteViews(string $language, string $dbName)
+    protected function deleteViews(string $language, string $dbName): void
     {
         $db = \Pimcore\Db::get();
         $views = $db->fetchAllAssociative('SHOW FULL TABLES IN ' . $db->quoteIdentifier($dbName) . " WHERE TABLE_TYPE LIKE 'VIEW'");
@@ -1804,8 +1562,7 @@ class SettingsController extends AdminController
             ];
         } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\HeadlessChrome) {
             $params = Config::getWeb2PrintConfig();
-            $params = $params['headlessChromeSettings'];
-            $params = json_decode($params, true);
+            $params = json_decode($params['headlessChromeSettings'], true) ?: [];
         }
 
         $responseOptions = [

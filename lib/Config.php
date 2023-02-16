@@ -23,16 +23,21 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\ReportConfigWriter;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\SettingsStore;
-use function preg_replace;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Yaml\Yaml;
 
 final class Config implements ArrayAccess
 {
+    /**
+     * @var array<string, string>
+     */
     protected static array $configFileCache = [];
 
     protected static ?string $environment = null;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     protected static ?array $systemConfig = null;
 
     /**
@@ -61,6 +66,8 @@ final class Config implements ArrayAccess
 
     /**
      * {@inheritdoc}
+     *
+     * @return array<string, mixed>|null
      */
     public function offsetGet($offset): ?array
     {
@@ -122,13 +129,11 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @param array|null $configuration
-     * @param string|null $offset
+     * @param array<string, mixed>|null $configuration
      *
-     *@internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
-     *
+     * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
      */
-    public static function setSystemConfiguration(?array $configuration, string $offset = null)
+    public static function setSystemConfiguration(?array $configuration, string $offset = null): void
     {
         if (null !== $offset) {
             self::getSystemConfiguration();
@@ -139,12 +144,9 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @param string|null $offset
+     * @return null|array<string, mixed>
      *
-     * @return null|array
-     *
-     *@internal
-     *
+     * @internal
      */
     public static function getSystemConfiguration(string $offset = null): ?array
     {
@@ -167,8 +169,7 @@ final class Config implements ArrayAccess
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getWebsiteConfigRuntimeCacheKey(string $languange = null): string
     {
@@ -181,11 +182,7 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @static
-     *
-     * @param string|null $language
-     *
-     * @return array
+     * @return array<string, mixed>
      */
     public static function getWebsiteConfig(string $language = null): array
     {
@@ -197,7 +194,7 @@ final class Config implements ArrayAccess
                 $cacheKey .= '_' . $language;
             }
 
-            $siteId = null;
+            $siteId = 0;
             if (Model\Site::isSiteRequest()) {
                 $siteId = Model\Site::getCurrentSite()->getId();
             } elseif (Tool::isFrontendRequestByAdmin()) {
@@ -293,13 +290,12 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @param array|null $config
+     * @param array<string, mixed>|null $config
      * @param string|null $language
      *
-     *@internal
-     *
+     * @internal
      */
-    public static function setWebsiteConfig(?array $config, string $language = null)
+    public static function setWebsiteConfig(?array $config, string $language = null): void
     {
         RuntimeCache::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
     }
@@ -324,13 +320,11 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      *
      * @throws Exception
      *
      * @internal
-     *
-     * @static
      */
     public static function getReportConfig(): array
     {
@@ -357,64 +351,17 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @static
-     *
-     * @param array $config
+     * @param array<string, mixed> $config
      *
      * @internal
      */
-    public static function setReportConfig(array $config)
+    public static function setReportConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_report', $config);
     }
 
     /**
-     * @static
-     *
-     * @return array
-     *
-     * @internal
-     */
-    public static function getRobotsConfig(): array
-    {
-        $config = [];
-        if (RuntimeCache::isRegistered('pimcore_config_robots')) {
-            $config = RuntimeCache::get('pimcore_config_robots');
-        } else {
-            try {
-                $settingsStoreScope = 'robots.txt';
-                $configData = [];
-                $robotsSettingsIds = SettingsStore::getIdsByScope($settingsStoreScope);
-                foreach ($robotsSettingsIds as $id) {
-                    $robots = SettingsStore::get($id, $settingsStoreScope);
-                    $siteId = preg_replace('/^robots\.txt\-/', '', $robots->getId());
-                    $config[$siteId] = $robots->getData();
-                }
-            } catch (Exception $e) {
-            }
-
-            self::setRobotsConfig($config);
-        }
-
-        return $config;
-    }
-
-    /**
-     * @static
-     *
-     * @param array $config
-     *
-     * @internal
-     */
-    public static function setRobotsConfig(array $config)
-    {
-        RuntimeCache::set('pimcore_config_robots', $config);
-    }
-
-    /**
-     * @static
-     *
-     * @return array
+     * @return array<string, mixed>
      *
      * @internal
      */
@@ -431,37 +378,29 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @static
-     *
-     * @param array $config
+     * @param array<string, mixed> $config
      *
      * @internal
      */
-    public static function setWeb2PrintConfig(array $config)
+    public static function setWeb2PrintConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_web2print', $config);
     }
 
     /**
-     * @static
-     *
-     * @param array $config
+     * @param array<string, mixed> $config
      *
      * @internal
      */
-    public static function setModelClassMappingConfig(array $config)
+    public static function setModelClassMappingConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_model_classmapping', $config);
     }
 
     /**
-     * @param array $runtimeConfig
-     * @param string $key
+     * @param array<string, mixed> $runtimeConfig
      *
-     * @return bool
-     *
-     *@internal
-     *
+     * @internal
      */
     public static function inPerspective(array $runtimeConfig, string $key): bool
     {
@@ -499,18 +438,15 @@ final class Config implements ArrayAccess
 
     public static function getEnvironment(): string
     {
-        return $_SERVER['APP_ENV'];
+        return $_SERVER['APP_ENV'] ?? 'dev';
     }
 
     /**
-     * @param string $file
-     *
-     * @return array
+     * @return array<string, mixed>
      *
      * @throws Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getConfigInstance(string $file): array
     {

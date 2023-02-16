@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.versions");
+/**
+ * @private
+ */
 pimcore.object.versions = Class.create({
 
     initialize: function (object) {

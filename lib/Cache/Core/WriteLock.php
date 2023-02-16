@@ -52,12 +52,12 @@ class WriteLock implements LoggerAwareInterface
         $this->itemPool = $itemPool;
     }
 
-    public function enable()
+    public function enable(): void
     {
         $this->enabled = true;
     }
 
-    public function disable()
+    public function disable(): void
     {
         $this->enabled = false;
     }
@@ -70,7 +70,7 @@ class WriteLock implements LoggerAwareInterface
     /**
      * Initialize lock value once from storage
      */
-    protected function initializeLock()
+    protected function initializeLock(): void
     {
         if ($this->lockInitialized) {
             return;

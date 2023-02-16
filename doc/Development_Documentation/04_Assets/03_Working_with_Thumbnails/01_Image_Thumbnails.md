@@ -52,7 +52,7 @@ Same in Twig:
 
 {# preferred alternative - let Pimcore create the whole image tag #}
 {# including high-res alternatives (srcset) or media queries, if configured #}
-{{ image.thumbnail('myThumbnailName').html }}
+{{ image.thumbnail('myThumbnailName').html|raw }}
 ```
 
 ## Explanation of the Transformations
@@ -80,26 +80,26 @@ Pimcore offers the method `getHTML(array $options)` to get a ready to use `<pict
 
 You can configure the generated markup with the following options: 
 
-| Name                           | Type     | Description                                                                                                                                                                                                                              |
-|--------------------------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `disableWidthHeightAttributes` | bool     | Width & height attributes are set automatically by Pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                                   |
-| `disableAutoTitle`             | bool     | Set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)                                                                                                               |
-| `disableAutoAlt`               | bool     | Set to true, to disable the automatically generated alt attribute                                                                                                                                                                        |
-| `disableAutoCopyright`         | bool     | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                                |
-| `disableAutoCopyright`         | bool     | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                                |
-| `pictureAttributes`            | array    | An key-value array of custom attributes which should be applied to the generated ´<picture>` tag |
-| `imgAttributes`                | array    | An key-value array of custom attributes which should be applied to the generated ´<img>` tag |
+| Name                           | Type     | Description                                                                                                                                                                                                                             |
+|--------------------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `disableWidthHeightAttributes` | bool     | Width & height attributes are set automatically by Pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                                  |
+| `disableAutoTitle`             | bool     | Set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)                                                                                                              |
+| `disableAutoAlt`               | bool     | Set to true, to disable the automatically generated alt attribute                                                                                                                                                                       |
+| `disableAutoCopyright`         | bool     | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                               |
+| `disableAutoCopyright`         | bool     | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                               |
+| `pictureAttributes`            | array    | An key-value array of custom attributes which should be applied to the generated `<picture>` tag |
+| `imgAttributes`                | array    | An key-value array of custom attributes which should be applied to the generated `<img>` tag |
 | `lowQualityPlaceholder`        | bool     | Put's a small SVG/JPEG placeholder image into the `src` (data-uri), the real image path is placed in `data-src` and `data-srcset`.|
-| `pictureCallback`              | callable | A callable to modify the attributes for the generated `<picture>` tag. There 1 argument passed, the array of attributes.  |
-| `sourceCallback`               | callable | A callable to modify the attributes for any of the generated `<source>` tag. There 1 argument passed, the array of attributes.  |
-| `imgCallback`                  | callable | A callable to modify the attributes for the generated `<img>` tag. There 1 argument passed, the array of attributes.  |
+| `pictureCallback`              | callable | A callable to modify the attributes for the generated `<picture>` tag. There 1 argument passed, the array of attributes. |
+| `sourceCallback`               | callable | A callable to modify the attributes for any of the generated `<source>` tag. There 1 argument passed, the array of attributes. |
+| `imgCallback`                  | callable | A callable to modify the attributes for the generated `<img>` tag. There 1 argument passed, the array of attributes. |
 | `disableImgTag`                | bool     | Set to `true` to not include the `<img>` fallback tag in the generated `<picture>` tag.   |
 | `useDataSrc`                   | bool     | Set to `true` to use `data-src(set)` attributes instead of `src(set)`.   |
 
 ## Usage Examples
 ```twig
 /* Use directly on the asset object */
-{{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail('myThumbnail').html }}
+{{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail('myThumbnail').html|raw }}
 
 /* ... with some additional options */
 {{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail('myThumbnail').html({ 
@@ -107,7 +107,7 @@ You can configure the generated markup with the following options:
         data-test: "my value"
     },
     disableImgTag: true
-}) }}
+})|raw }}
 
 /* Use with the image tag in documents */
 <div>
@@ -130,7 +130,7 @@ You can configure the generated markup with the following options:
 /* Use from an object-field */
 /* where "myThumbnail" is the name of the thumbnail configuration in settings -> thumbnails */
 {% if myObject.myImage %}
-   {{ myObject.myImage.thumbnail('myThumbnail').html }}
+   {{ myObject.myImage.thumbnail('myThumbnail').html|raw }}
 {% endif %}
 
  
@@ -139,7 +139,7 @@ You can configure the generated markup with the following options:
  
 
 /* Use directly on the asset object using dynamic configuration */
-{{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail({'width': 500, 'format': 'png'}).html }}
+{{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail({'width': 500, 'format': 'png'}).html|raw}}
 ```
 
 ## Advanced Examples
@@ -211,7 +211,7 @@ $webpThumbnail->getHtml();
         'non-standard': 'HTML attributes',
         'another': 'one'
     }
-}) }}
+})|raw }}
   
 /* same with a thumbnail definition */
 {{ image.thumbnail('exampleScaleWidth').html({
@@ -219,15 +219,15 @@ $webpThumbnail->getHtml();
         'class': 'thumbnail-class',
     },
     'data-my-name': 'my value',
-}) }}
+})|raw }}
   
 /* disable the automatically added width & height attributes */
-{{ image.thumbnail('exampleScaleWidth').html({}, ['width', 'height']) }}
+{{ image.thumbnail('exampleScaleWidth').html({}, ['width', 'height'])|raw }}
 
 /* add alt text */
-{{ image.thumbnail('exampleScaleWidth').html({'alt': 'top priority alt text'}) }}
+{{ image.thumbnail('exampleScaleWidth').html({'alt': 'top priority alt text'})|raw }}
 /* OR */
-{{ image.thumbnail('exampleScaleWidth').html({'defaultalt': 'default alt, if not set in image'}) }}
+{{ image.thumbnail('exampleScaleWidth').html({'defaultalt': 'default alt, if not set in image'})|raw }}
     
 
 /* Output only <img> element wihout <picture> and <source> around it */
@@ -246,7 +246,7 @@ By default, the images are lazy loading. This can be changed by setting the valu
     'imgAttributes': {
         'loading': 'eager',
     }
-}) }}
+})|raw }}
     
 
 ````  

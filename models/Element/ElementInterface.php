@@ -66,17 +66,17 @@ interface ElementInterface extends ModelInterface
     /**
      * get possible types
      *
-     * @return array
+     * @return string[]
      */
     public static function getTypes(): array;
 
     /**
-     * @return Property[]
+     * @return array<string, Property>
      */
     public function getProperties(): array;
 
     /**
-     * @param Property[]|null $properties
+     * @param array<string, Property>|null $properties
      *
      * @return $this
      */
@@ -130,6 +130,11 @@ interface ElementInterface extends ModelInterface
 
     public function getCacheTag(): string;
 
+    /**
+     * @param string[] $tags
+     *
+     * @return string[]
+     */
     public function getCacheTags(array $tags = []): array;
 
     public function __isBasedOnLatestData(): bool;
@@ -153,9 +158,9 @@ interface ElementInterface extends ModelInterface
      */
     public function save(array $parameters = []): static;
 
-    public function delete();
+    public function delete(): void;
 
-    public function clearDependentCache(array $additionalTags = []);
+    public function clearDependentCache(array $additionalTags = []): void;
 
     public function setId(?int $id): static;
 
@@ -181,8 +186,5 @@ interface ElementInterface extends ModelInterface
 
     public function getDependencies(): Dependency;
 
-    /**
-     * @return string
-     */
-    public function __toString();
+    public function __toString(): string;
 }

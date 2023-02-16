@@ -29,14 +29,17 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentModelInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\Dao getDao()
  */
-final class ClassDefinition extends Model\AbstractModel
+final class ClassDefinition extends Model\AbstractModel implements FieldDefinitionEnrichmentModelInterface
 {
     use DataObject\ClassDefinition\Helper\VarExport;
     use DataObject\Traits\LocateFileTrait;
+    use DataObject\Traits\FieldDefinitionEnrichmentModelTrait;
     use RecursionBlockingEventDispatchHelperTrait;
 
     /**
@@ -168,13 +171,6 @@ final class ClassDefinition extends Model\AbstractModel
      * @var bool
      */
     public bool $showVariants = false;
-
-    /**
-     * @internal
-     *
-     * @var DataObject\ClassDefinition\Data[]
-     */
-    public array $fieldDefinitions = [];
 
     /**
      * @internal
@@ -344,10 +340,9 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @param string $name
      *
-     *@internal
-     *
+     * @internal
      */
-    public function rename(string $name)
+    public function rename(string $name): void
     {
         $this->deletePhpClasses();
         $this->getDao()->updateClassNameInObjects($name);
@@ -361,7 +356,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @internal
      */
-    public static function cleanupForExport(mixed &$data)
+    public static function cleanupForExport(mixed &$data): void
     {
         if (!is_object($data)) {
             return;
@@ -403,7 +398,7 @@ final class ClassDefinition extends Model\AbstractModel
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
      */
-    public function save(bool $saveDefinitionFile = true)
+    public function save(bool $saveDefinitionFile = true): void
     {
         if ($saveDefinitionFile && !$this->isWritable()) {
             throw new DataObject\Exception\DefinitionWriteException();
@@ -493,7 +488,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @internal
      */
-    public function generateClassFiles(bool $generateDefinitionFile = true)
+    public function generateClassFiles(bool $generateDefinitionFile = true): void
     {
         \Pimcore::getContainer()->get(PHPClassDumperInterface::class)->dumpPHPClasses($this);
 
@@ -508,7 +503,7 @@ final class ClassDefinition extends Model\AbstractModel
             /** @var self $clone */
             $clone = DataObject\Service::cloneDefinition($this);
             $clone->setDao(null);
-            $clone->fieldDefinitions = [];
+            $clone->setFieldDefinitions([]);
 
             self::cleanupForExport($clone->layoutDefinitions);
 
@@ -560,7 +555,7 @@ final class ClassDefinition extends Model\AbstractModel
         return $cd;
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_DELETE);
 
@@ -638,12 +633,10 @@ final class ClassDefinition extends Model\AbstractModel
      * with PIMCORE_CLASS_DEFINITION_WRITABLE set, it globally allow/disallow creation and change in classes
      * when the ENV is not set, it allows modification and creation of new in classes in /var/classes but disables modification of classes in config/pimcore/classes
      * more details in 05_Deployment_Tools.md
-     *
-     * @return bool
      */
     public function isWritable(): bool
     {
-        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return (bool) ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY));
     }
 
     /**
@@ -651,8 +644,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getDefinitionFile(string $name = null): string
     {
@@ -719,7 +711,7 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    public function setCreationDate(int $creationDate): static
+    public function setCreationDate(?int $creationDate): static
     {
         $this->creationDate = (int)$creationDate;
 
@@ -733,44 +725,24 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    public function setUserOwner(int $userOwner): static
+    public function setUserOwner(?int $userOwner): static
     {
-        $this->userOwner = (int)$userOwner;
+        $this->userOwner = $userOwner;
 
         return $this;
     }
 
-    public function setUserModification(int $userModification): static
+    public function setUserModification(?int $userModification): static
     {
-        $this->userModification = (int)$userModification;
+        $this->userModification = $userModification;
 
         return $this;
-    }
-
-    /**
-     * @param array $context
-     *
-     * @return DataObject\ClassDefinition\Data[]
-     */
-    public function getFieldDefinitions(array $context = []): array
-    {
-        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-            return $this->fieldDefinitions;
-        }
-
-        $enrichedFieldDefinitions = [];
-        foreach ($this->fieldDefinitions as $key => $fieldDefinition) {
-            $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
-            $enrichedFieldDefinitions[$key] = $fieldDefinition;
-        }
-
-        return $enrichedFieldDefinitions;
     }
 
     /**
      * @internal
      */
-    protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
+    public function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['class'] = $this;
@@ -785,39 +757,6 @@ final class ClassDefinition extends Model\AbstractModel
         return $this->layoutDefinitions;
     }
 
-    /**
-     * @param DataObject\ClassDefinition\Data[] $fieldDefinitions
-     *
-     * @return $this
-     */
-    public function setFieldDefinitions(array $fieldDefinitions): static
-    {
-        $this->fieldDefinitions = $fieldDefinitions;
-
-        return $this;
-    }
-
-    public function addFieldDefinition(string $key, ClassDefinition\Data $data): static
-    {
-        $this->fieldDefinitions[$key] = $data;
-
-        return $this;
-    }
-
-    public function getFieldDefinition(string $key, array $context = []): ?ClassDefinition\Data
-    {
-        if (array_key_exists($key, $this->fieldDefinitions)) {
-            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-                return $this->fieldDefinitions[$key];
-            }
-            $fieldDefinition = $this->doEnrichFieldDefinition($this->fieldDefinitions[$key], $context);
-
-            return $fieldDefinition;
-        }
-
-        return null;
-    }
-
     public function setLayoutDefinitions(?ClassDefinition\Layout $layoutDefinitions): static
     {
         $oldFieldDefinitions = null;
@@ -828,7 +767,7 @@ final class ClassDefinition extends Model\AbstractModel
 
         $this->layoutDefinitions = $layoutDefinitions;
 
-        $this->fieldDefinitions = [];
+        $this->setFieldDefinitions([]);
         $this->extractDataDefinitions($this->layoutDefinitions);
 
         if ($oldFieldDefinitions !== null) {
@@ -948,7 +887,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @param array $tables
      */
-    public function addEncryptedTables(array $tables)
+    public function addEncryptedTables(array $tables): void
     {
         $this->encryptedTables = array_unique(array_merge($this->encryptedTables, $tables));
     }
@@ -958,7 +897,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @param array $tables
      */
-    public function removeEncryptedTables(array $tables)
+    public function removeEncryptedTables(array $tables): void
     {
         foreach ($tables as $table) {
             if (($key = array_search($table, $this->encryptedTables)) !== false) {
@@ -1181,6 +1120,16 @@ final class ClassDefinition extends Model\AbstractModel
 
     public function setCompositeIndices(?array $compositeIndices): static
     {
+        $class = $this->getFieldDefinitions([]);
+        foreach ($compositeIndices as $indexInd => $compositeIndex) {
+            foreach ($compositeIndex['index_columns'] as $fieldInd => $fieldName) {
+                if (isset($class[$fieldName]) && $class[$fieldName] instanceof ManyToOneRelation) {
+                    $compositeIndices[$indexInd]['index_columns'][$fieldInd] = $fieldName . '__id';
+                    $compositeIndices[$indexInd]['index_columns'][] = $fieldName . '__type';
+                    $compositeIndices[$indexInd]['index_columns'] = array_unique($compositeIndices[$indexInd]['index_columns']);
+                }
+            }
+        }
         $this->compositeIndices = $compositeIndices ?? [];
 
         return $this;

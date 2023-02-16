@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Routing\Dynamic;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
-use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\DataObject;
 use Pimcore\Routing\DataObjectRoute;
@@ -32,14 +30,10 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
     private SiteResolver $siteResolver;
 
-    private Config $config;
-
     public function __construct(
-        SiteResolver $siteResolver,
-        Config $config
+        SiteResolver $siteResolver
     ) {
         $this->siteResolver = $siteResolver;
-        $this->config = $config;
     }
 
     /**
@@ -64,7 +58,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
+    public function matchRequest(RouteCollection $collection, DynamicRequestContext $context): void
     {
         $site = $this->siteResolver->getSite($context->getRequest());
         $slug = DataObject\Data\UrlSlug::resolveSlug($context->getOriginalPath(), $site ? $site->getId() : 0);
@@ -95,11 +89,6 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         if ($slug->getOwnertype() === 'localizedfield') {
             $route->setDefault('_locale', $slug->getPosition());
         }
-
-        $route->setDefault(
-            ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS,
-            $this->config['routing']['allow_processing_unpublished_fallback_document']
-        );
 
         return $route;
     }

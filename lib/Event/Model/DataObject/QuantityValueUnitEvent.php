@@ -38,7 +38,7 @@ class QuantityValueUnitEvent extends Event
         return $this->unit;
     }
 
-    public function setUnit(Unit $unit)
+    public function setUnit(Unit $unit): void
     {
         $this->unit = $unit;
     }

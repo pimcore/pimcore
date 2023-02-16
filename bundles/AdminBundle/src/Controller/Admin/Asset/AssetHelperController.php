@@ -135,7 +135,7 @@ class AssetHelperController extends AdminController
      */
     public function gridDeleteColumnConfigAction(Request $request): JsonResponse
     {
-        $gridConfigId = $request->get('gridConfigId');
+        $gridConfigId = (int) $request->get('gridConfigId');
         $gridConfig = GridConfig::getById($gridConfigId);
         $success = false;
         if ($gridConfig) {
@@ -183,7 +183,7 @@ class AssetHelperController extends AdminController
 
         $userId = $this->getAdminUser()->getId();
 
-        $requestedGridConfigId = $isDelete ? null : $request->get('gridConfigId');
+        $requestedGridConfigId = $isDelete ? '' : $request->get('gridConfigId', '');
 
         // grid config
         $gridConfig = [];
@@ -207,9 +207,7 @@ class AssetHelperController extends AdminController
 
                 try {
                     $userIds = [$this->getAdminUser()->getId()];
-                    if ($this->getAdminUser()->getRoles()) {
-                        $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
-                    }
+                    $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     $userIds = implode(',', $userIds);
                     $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
                 } catch (\Exception $e) {
@@ -233,10 +231,11 @@ class AssetHelperController extends AdminController
 
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
-                $request->get('no_system_columns', false),
+                $request->query->getBoolean('no_system_columns'),
                 [], //maybe required for types other than metadata
                 $context,
-                $types);
+                $types
+            );
         } else {
             $savedColumns = $gridConfig['columns'];
 
@@ -392,7 +391,7 @@ class AssetHelperController extends AdminController
             }
         }
 
-        Tool\Session::useSession(function (AttributeBagInterface $session) use ($helperColumns) {
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($helperColumns) {
             $existingColumns = $session->get('helpercolumns', []);
             $helperColumns = array_merge($helperColumns, $existingColumns);
             $session->set('helpercolumns', $helperColumns);
@@ -414,7 +413,7 @@ class AssetHelperController extends AdminController
         $asset = Asset::getById($classId);
 
         if ($asset->isAllowed('list')) {
-            $gridConfigId = $request->get('gridConfigId');
+            $gridConfigId = (int) $request->get('gridConfigId');
             $searchType = $request->get('searchType');
             $type = $request->get('type');
             $user = $this->getAdminUser();
@@ -505,7 +504,10 @@ class AssetHelperController extends AdminController
                 $metadata = json_decode($metadata, true);
 
                 $gridConfigId = $metadata['gridConfigId'];
-                $gridConfig = GridConfig::getById($gridConfigId);
+                $gridConfig = null;
+                if ($gridConfigId) {
+                    $gridConfig = GridConfig::getById($gridConfigId);
+                }
 
                 if ($gridConfig && $gridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
                     throw new \Exception("don't mess around with somebody else's configuration");
@@ -571,7 +573,7 @@ class AssetHelperController extends AdminController
      *
      * @throws \Exception
      */
-    protected function updateGridConfigShares(?GridConfig $gridConfig, array $metadata)
+    protected function updateGridConfigShares(?GridConfig $gridConfig, array $metadata): void
     {
         $user = $this->getAdminUser();
         if (!$gridConfig || !$user->isAllowed('share_configurations')) {
@@ -612,7 +614,7 @@ class AssetHelperController extends AdminController
      *
      * @throws \Exception
      */
-    protected function updateGridConfigFavourites(?GridConfig $gridConfig, array $metadata)
+    protected function updateGridConfigFavourites(?GridConfig $gridConfig, array $metadata): void
     {
         $currentUser = $this->getAdminUser();
 
@@ -763,9 +765,9 @@ class AssetHelperController extends AdminController
         return $this->adminJson(['success' => true]);
     }
 
-    public function encodeFunc($value): string
+    public function encodeFunc(?string $value): string
     {
-        $value = str_replace('"', '""', (string) $value);
+        $value = str_replace('"', '""', $value ?? '');
         //force wrap value in quotes and return
         return '"' . $value . '"';
     }

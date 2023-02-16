@@ -27,7 +27,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
@@ -153,6 +153,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
+    /**
+     * @return array<array{assetTypes: string}>
+     */
     public function getAssetTypes(): array
     {
         return $this->assetTypes;
@@ -232,10 +235,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @return string|null
      *
-     *@throws \Exception
+     * @throws \Exception
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -390,7 +392,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -616,7 +618,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @param DataObject\ClassDefinition\Data\ManyToManyRelation $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->maxItems = $masterDefinition->maxItems;
         $this->assetUploadPath = $masterDefinition->assetUploadPath;
@@ -633,7 +635,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      */
     protected function getPhpdocType(): string
     {
-        return implode(' | ', $this->getPhpDocClassString(true));
+        return $this->getPhpDocClassString(true);
     }
 
     public function normalize(mixed $value, array $params = []): ?array

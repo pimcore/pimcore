@@ -25,7 +25,7 @@ final class PropertyGetter extends AbstractOperator
 {
     private string $propertyName;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -49,7 +49,7 @@ final class PropertyGetter extends AbstractOperator
         return $this->propertyName;
     }
 
-    public function setPropertyName(string $propertyName)
+    public function setPropertyName(string $propertyName): void
     {
         $this->propertyName = $propertyName;
     }

@@ -53,14 +53,14 @@ class CsrfProtectionListener implements EventSubscriberInterface
         ];
     }
 
-    public function handleRequest(RequestEvent $event)
+    public function handleRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
             return;
         }
 
-        $this->csrfProtectionHandler->generateCsrfToken();
+        $this->csrfProtectionHandler->generateCsrfToken($event->getRequest()->getSession());
 
         if ($request->isMethodCacheable()) {
             return;
@@ -71,9 +71,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
             'pimcore_admin_webdav',
 
             // external applications
-            'pimcore_admin_external_opcache_index',
-            'pimcore_admin_external_adminer_adminer', 'pimcore_admin_external_adminer_proxy',
-            'pimcore_admin_external_adminer_proxy_1', 'pimcore_admin_external_adminer_proxy_2',
+            'pimcore_bundle_systeminfo_opcache_index',
         ];
 
         $route = $request->attributes->get('_route');

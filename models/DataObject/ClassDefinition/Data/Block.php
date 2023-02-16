@@ -30,9 +30,10 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface, FieldDefinitionEnrichmentModelInterface
 {
     use DataObject\Traits\ClassSavedTrait;
+    use DataObject\Traits\FieldDefinitionEnrichmentDataTrait;
 
     /**
      * @internal
@@ -97,21 +98,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     protected array $referencedFields = [];
 
     /**
-     * @internal
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @var array|null
-     */
-    public ?array $fieldDefinitionsCache = null;
-
-    /**
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string
-     *
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -169,14 +162,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array|null
-     *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
@@ -263,14 +255,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see Data::getDataForEditmode
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
-     *
-     * @see Data::getDataForEditmode
-     *
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -312,14 +303,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see Data::getDataFromEditmode
+     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
-     *
-     * @see Data::getDataFromEditmode
-     *
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -449,14 +439,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * @see Data::getVersionPreview
+     *
      * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return string
-     *
-     * @see Data::getVersionPreview
-     *
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -528,7 +517,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @param Model\DataObject\ClassDefinition\Data\Block $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->disallowAddRemove = $masterDefinition->disallowAddRemove;
         $this->disallowReorder = $masterDefinition->disallowReorder;
@@ -536,6 +525,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->collapsed = $masterDefinition->collapsed;
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return bool
+     */
     public function isEmpty(mixed $data): bool
     {
         return is_null($data) || count($data) === 0;
@@ -549,7 +543,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function setChildren(array $children): static
     {
         $this->children = $children;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
 
         return $this;
     }
@@ -569,10 +563,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @param Data|Layout $child
      */
-    public function addChild(mixed $child)
+    public function addChild(mixed $child): void
     {
         $this->children[] = $child;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
     }
 
     public function setLayout(?array $layout): static
@@ -588,101 +582,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param mixed $def
-     * @param array $fields
-     *
-     * @return array
+     * @internal
      */
-    public function doGetFieldDefinitions(mixed $def = null, array $fields = []): array
-    {
-        if ($def === null) {
-            $def = $this->getChildren();
-        }
-
-        if (is_array($def)) {
-            foreach ($def as $child) {
-                $fields = array_merge($fields, $this->doGetFieldDefinitions($child, $fields));
-            }
-        }
-
-        if ($def instanceof DataObject\ClassDefinition\Layout) {
-            if ($def->hasChildren()) {
-                foreach ($def->getChildren() as $child) {
-                    $fields = array_merge($fields, $this->doGetFieldDefinitions($child, $fields));
-                }
-            }
-        }
-
-        if ($def instanceof DataObject\ClassDefinition\Data) {
-            $existing = $fields[$def->getName()] ?? false;
-            if ($existing && method_exists($existing, 'addReferencedField')) {
-                // this is especially for localized fields which get aggregated here into one field definition
-                // in the case that there are more than one localized fields in the class definition
-                // see also pimcore.object.edit.addToDataFields();
-                $existing->addReferencedField($def);
-            } else {
-                $fields[$def->getName()] = $def;
-            }
-        }
-
-        return $fields;
-    }
-
-    /**
-     * @param array $context additional contextual data
-     *
-     * @return DataObject\ClassDefinition\Data[]|null
-     */
-    public function getFieldDefinitions(array $context = []): ?array
-    {
-        if (empty($this->fieldDefinitionsCache)) {
-            $definitions = $this->doGetFieldDefinitions();
-            foreach ($this->getReferencedFields() as $rf) {
-                if ($rf instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    $definitions = array_merge($definitions, $this->doGetFieldDefinitions($rf->getChildren()));
-                }
-            }
-
-            $this->fieldDefinitionsCache = $definitions;
-        }
-
-        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-            return $this->fieldDefinitionsCache;
-        }
-
-        $enrichedFieldDefinitions = [];
-        if (is_array($this->fieldDefinitionsCache)) {
-            foreach ($this->fieldDefinitionsCache as $key => $fieldDefinition) {
-                $fieldDefinition = $this->doEnrichFieldDefinition($fieldDefinition, $context);
-                $enrichedFieldDefinitions[$key] = $fieldDefinition;
-            }
-        }
-
-        return $enrichedFieldDefinitions;
-    }
-
-    /**
-     * @param string $name
-     * @param array $context additional contextual data
-     *
-     * @return DataObject\ClassDefinition\Data|null
-     */
-    public function getFieldDefinition(string $name, array $context = []): ?Data
-    {
-        $fds = $this->getFieldDefinitions();
-        if (isset($fds[$name])) {
-            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
-                return $fds[$name];
-            }
-            $fieldDefinition = $this->doEnrichFieldDefinition($fds[$name], $context);
-
-            return $fieldDefinition;
-        }
-
-        return null;
-    }
-
-    protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
+    public function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['containerType'] = 'block';
@@ -693,10 +595,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $fieldDefinition;
     }
 
-    public function setReferencedFields(array $referencedFields)
+    public function setReferencedFields(array $referencedFields): void
     {
         $this->referencedFields = $referencedFields;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
     }
 
     /**
@@ -707,10 +609,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->referencedFields;
     }
 
-    public function addReferencedField(Data $field)
+    public function addReferencedField(Data $field): void
     {
         $this->referencedFields[] = $field;
-        $this->fieldDefinitionsCache = null;
+        $this->setFieldDefinitions(null);
     }
 
     public function getBlockedVarsForExport(): array
@@ -726,7 +628,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $vars = get_object_vars($this);
         $blockedVars = $this->getBlockedVarsForExport();
@@ -797,7 +699,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->collapsed;
     }
 
-    public function setCollapsed(bool $collapsed)
+    public function setCollapsed(bool $collapsed): void
     {
         $this->collapsed = (bool) $collapsed;
     }
@@ -807,7 +709,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->collapsible;
     }
 
-    public function setCollapsible(bool $collapsible)
+    public function setCollapsible(bool $collapsible): void
     {
         $this->collapsible = (bool) $collapsible;
     }
@@ -843,7 +745,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * { @inheritdoc }
+     * {@inheritdoc}
      */
     public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
@@ -930,7 +832,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $data;
     }
 
-    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
     }
 
@@ -969,7 +871,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->maxItems;
     }
 
-    public function setMaxItems(?int $maxItems)
+    public function setMaxItems(?int $maxItems): void
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
     }
@@ -979,7 +881,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->disallowAddRemove;
     }
 
-    public function setDisallowAddRemove(bool $disallowAddRemove)
+    public function setDisallowAddRemove(bool $disallowAddRemove): void
     {
         $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
@@ -989,7 +891,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->disallowReorder;
     }
 
-    public function setDisallowReorder(bool $disallowReorder)
+    public function setDisallowReorder(bool $disallowReorder): void
     {
         $this->disallowReorder = (bool) $disallowReorder;
     }
@@ -997,7 +899,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck) {
             if (is_array($data)) {
@@ -1068,7 +970,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved(DataObject\ClassDefinition $class, array $params = [])
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         $blockDefinitions = $this->getFieldDefinitions();
 
@@ -1094,7 +996,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return '?array';
     }
 
-    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = []): void
+    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, array $params = []): void
     {
         if (!isset($params['owner'])) {
             throw new \Error('owner missing');
@@ -1193,7 +1095,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return null;
     }
 
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = new static();
         $obj->setValues($data);

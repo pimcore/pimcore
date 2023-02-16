@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.profile.panel");
+/**
+ * @private
+ */
 pimcore.settings.profile.panel = Class.create({
 
     initialize: function () {
@@ -250,6 +253,9 @@ pimcore.settings.profile.panel = Class.create({
                                 Ext.getCmp("pimcore_profile_delete_image_" + this.currentUser.id).setVisible(true);
                                 pimcore.helpers.reloadUserImage(this.currentUser.id);
                                 this.currentUser.hasImage = true;
+                            }.bind(this),
+                            function () {
+                                Ext.MessageBox.alert(t('error'), t("unsupported_filetype"));
                             }.bind(this)
                         );
                     }.bind(this)

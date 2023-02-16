@@ -37,12 +37,12 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
     protected ?Dao\InheritanceHelper $inheritanceHelper = null;
 
-    public function init()
+    public function init(): void
     {
         return;
     }
 
-    protected function getInheritanceHelper()
+    protected function getInheritanceHelper(): Dao\InheritanceHelper
     {
         if (!$this->inheritanceHelper) {
             $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->model->getClassId());
@@ -58,7 +58,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as locked FROM objects
             LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = 'object'
@@ -137,12 +137,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Get all data-elements for all fields that are not lazy-loaded.
      */
-    public function getData()
+    public function getData(): void
     {
-        if (empty($this->model->getClass())) {
-            return;
-        }
-
         if (!$data = $this->db->fetchAssociative('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()])) {
             return;
         }
@@ -188,7 +184,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      *
      * @param bool|null $isUpdate
      */
-    public function update(bool $isUpdate = null)
+    public function update(bool $isUpdate = null): void
     {
         parent::update($isUpdate);
 
@@ -240,7 +236,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         foreach ($fieldDefinitions as $fieldName => $fd) {
             $getter = 'get' . ucfirst($fieldName);
 
-            if ($fd instanceof CustomResourcePersistingInterface) {
+            if ($fd instanceof CustomResourcePersistingInterface
+                && $fd instanceof DataObject\ClassDefinition\Data) {
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, relational data-types, ...
                 $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
                     'isUpdate' => $isUpdate,
@@ -308,7 +305,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd instanceof QueryResourcePersistenceAwareInterface) {
+            if ($fd instanceof QueryResourcePersistenceAwareInterface
+                && $fd instanceof DataObject\ClassDefinition\Data) {
                 //exclude untouchables if value is not an array - this means data has not been loaded
                 if (!in_array($key, $untouchable)) {
                     $method = 'get' . $key;
@@ -407,7 +405,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         DataObject::setGetInheritedValues($inheritedValues);
     }
 
-    public function saveChildData()
+    public function saveChildData(): void
     {
         $this->getInheritanceHelper()->doUpdate($this->model->getId(), false, [
             'inheritanceRelationContext' => [
@@ -423,11 +421,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     public function delete(): void
     {
         // delete fields which have their own delete algorithm
-        if ($this->model->getClass()) {
-            foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
-                if ($fd instanceof CustomResourcePersistingInterface) {
-                    $fd->delete($this->model);
-                }
+        foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
+            if ($fd instanceof CustomResourcePersistingInterface) {
+                $fd->delete($this->model);
             }
         }
 

@@ -73,7 +73,7 @@ class IndexFieldSelectionCombo extends Select
         return $options;
     }
 
-    public function setSpecificPriceField($specificPriceField)
+    public function setSpecificPriceField(bool $specificPriceField): void
     {
         $this->specificPriceField = $specificPriceField;
     }
@@ -83,7 +83,7 @@ class IndexFieldSelectionCombo extends Select
         return $this->specificPriceField;
     }
 
-    public function setShowAllFields($showAllFields)
+    public function setShowAllFields(bool $showAllFields): void
     {
         $this->showAllFields = $showAllFields;
     }
@@ -93,7 +93,7 @@ class IndexFieldSelectionCombo extends Select
         return $this->showAllFields;
     }
 
-    public function setConsiderTenants($considerTenants)
+    public function setConsiderTenants(bool $considerTenants): void
     {
         $this->considerTenants = $considerTenants;
     }

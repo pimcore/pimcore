@@ -23,7 +23,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class DeviceType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('hardwarePlatform', ChoiceType::class, [
             'label' => 'Hardware Platform',

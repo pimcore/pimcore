@@ -46,7 +46,7 @@ class AdminExceptionListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         $request = $event->getRequest();
         $ex = $event->getThrowable();
@@ -118,7 +118,7 @@ class AdminExceptionListener implements EventSubscriberInterface
      * @param string $message
      * @param string $detailedInfo
      */
-    protected function recursiveAddValidationExceptionSubItems(array $items, string &$message, string &$detailedInfo)
+    protected function recursiveAddValidationExceptionSubItems(array $items, string &$message, string &$detailedInfo): void
     {
         if (!$items) {
             return;
@@ -144,7 +144,7 @@ class AdminExceptionListener implements EventSubscriberInterface
         }
     }
 
-    protected function addContext(ValidationException $e, string &$message)
+    protected function addContext(ValidationException $e, string &$message): void
     {
         $contextStack = $e->getContextStack();
         if ($contextStack) {

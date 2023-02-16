@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.translation.translationSettingsTab");
+/**
+ * @private
+ */
 pimcore.settings.translation.translationSettingsTab = Class.create({
 
     initialize: function (config, showReload, callback) {

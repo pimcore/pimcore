@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Exception;
 use Pimcore;
+use Pimcore\Bundle\CustomReportsBundle\Tool\Config;
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Email;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive;
@@ -26,7 +27,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Listing;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Tool;
-use Pimcore\Model\Tool\CustomReport\Config;
 use Pimcore\Tool\Newsletter;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -58,7 +58,7 @@ class NewsletterController extends DocumentControllerBase
             throw $this->createNotFoundException('Document not found');
         }
 
-        if (($lock = $this->checkForLock($email)) instanceof JsonResponse) {
+        if (($lock = $this->checkForLock($email, $request->getSession()->getId())) instanceof JsonResponse) {
             return $lock;
         }
 
@@ -103,7 +103,7 @@ class NewsletterController extends DocumentControllerBase
         }
 
         list($task, $page, $version) = $this->saveDocument($page, $request);
-        $this->saveToSession($page);
+        $this->saveToSession($page, $request->getSession());
 
         if ($task === self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);
@@ -130,16 +130,16 @@ class NewsletterController extends DocumentControllerBase
         }
     }
 
-    protected function setValuesToDocument(Request $request, Document $page)
+    protected function setValuesToDocument(Request $request, Document $document): void
     {
-        $this->addSettingsToDocument($request, $page);
-        $this->addDataToDocument($request, $page);
-        $this->addPropertiesToDocument($request, $page);
+        $this->addSettingsToDocument($request, $document);
+        $this->addDataToDocument($request, $document);
+        $this->addPropertiesToDocument($request, $document);
 
         // plaintext
         if ($request->get('plaintext')) {
             $plaintext = $this->decodeJson($request->get('plaintext'));
-            $page->setValues($plaintext);
+            $document->setValues($plaintext);
         }
     }
 

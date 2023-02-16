@@ -60,7 +60,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
 
@@ -79,7 +79,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         }
     }
 
-    protected function handleErrorPage(ExceptionEvent $event)
+    protected function handleErrorPage(ExceptionEvent $event): void
     {
         if (\Pimcore::inDebugMode()) {
             return;
@@ -100,8 +100,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
         }
 
         $errorPath = $this->determineErrorPath($request);
-
-        $this->logToHttpErrorLog($event->getRequest(), $statusCode);
 
         // Error page rendering
         if (empty($errorPath)) {
@@ -131,26 +129,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
         $event->setResponse(new Response($response, $statusCode, $headers));
     }
 
-    protected function logToHttpErrorLog(Request $request, $statusCode)
-    {
-        $uri = $request->getUri();
-        $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', [$uri]);
-        if ($exists) {
-            $this->db->executeQuery('UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?', [time(), $uri]);
-        } else {
-            $this->db->insert('http_error_log', [
-                'uri' => $uri,
-                'code' => (int) $statusCode,
-                'parametersGet' => serialize($_GET),
-                'parametersPost' => serialize($_POST),
-                'cookies' => serialize($_COOKIE),
-                'serverVars' => serialize($_SERVER),
-                'date' => time(),
-                'count' => 1,
-            ]);
-        }
-    }
-
     /**
      * @throws \Exception
      */
@@ -177,14 +155,17 @@ class ResponseExceptionListener implements EventSubscriberInterface
             }
         }
 
+        $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'];
+        $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'];
+
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
-            $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments() ?: [];
+            $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments();
             $defaultErrorDocumentPath = $site->getErrorDocument();
-        } else {
-            $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'] ?? [];
-            $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'] ?? '';
         }
+
+        $localizedErrorDocumentsPaths = $localizedErrorDocumentsPaths ?: [];
+        $defaultErrorDocumentPath = $defaultErrorDocumentPath ?: '';
 
         if (!empty($locale) && array_key_exists($locale, $localizedErrorDocumentsPaths)) {
             $errorPath = $localizedErrorDocumentsPaths[$locale];
@@ -192,7 +173,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             // If locale can't be determined check if error page is defined for any of user-agent preferences
             foreach ($request->getLanguages() as $requestLocale) {
                 if (!empty($localizedErrorDocumentsPaths[$requestLocale])) {
-                    $errorPath = $this->config['documents']['error_pages']['localized'][$requestLocale];
+                    $errorPath = $localizedErrorDocumentsPaths[$requestLocale];
 
                     break;
                 }

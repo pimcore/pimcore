@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\AbstractObject;
 
+use Doctrine\DBAL\Exception;
 use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
@@ -36,7 +37,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as locked FROM objects
             LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = 'object'
@@ -56,7 +57,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPath(string $path)
+    public function getByPath(string $path): void
     {
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM objects WHERE `path` = :path AND `key` = :key', $params);
@@ -71,7 +72,7 @@ class Dao extends Model\Element\Dao
     /**
      * Create a new record for the object in database
      */
-    public function create()
+    public function create(): void
     {
         $this->db->insert('objects', Helper::quoteDataIdentifiers($this->db, [
             'key' => $this->model->getKey(),
@@ -89,7 +90,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Exception
      */
-    public function update(bool $isUpdate = null)
+    public function update(bool $isUpdate = null): void
     {
         $object = $this->model->getObjectVars();
 
@@ -142,7 +143,7 @@ class Dao extends Model\Element\Dao
         $this->db->delete('objects', ['id' => $this->model->getId()]);
     }
 
-    public function updateWorkspaces()
+    public function updateWorkspaces(): void
     {
         $this->db->update('users_workspaces_object', [
             'cpath' => $this->model->getRealFullPath(),
@@ -158,12 +159,11 @@ class Dao extends Model\Element\Dao
      *
      * @return null|array
      *
-     *@internal
-     *
+     * @internal
      */
     public function updateChildPaths(string $oldPath): ?array
     {
-        if ($this->hasChildren(DataObject::$types)) {
+        if ($this->hasChildren(DataObject::$types, true)) {
             //get objects to empty their cache
             $objects = $this->db->fetchFirstColumn('SELECT id FROM objects WHERE `path` like ?', [Helper::escapeLike($oldPath) . '%']);
 
@@ -290,14 +290,16 @@ class Dao extends Model\Element\Dao
     /**
      * Quick test if there are children
      *
-     * @param array $objectTypes
-     * @param bool|null $includingUnpublished
-     * @param Model\User|null $user
-     *
-     * @return bool
+     * @throws Exception
      */
-    public function hasChildren(array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null, User $user = null): bool
-    {
+    public function hasChildren(
+        array $objectTypes = [
+            DataObject::OBJECT_TYPE_OBJECT,
+            DataObject::OBJECT_TYPE_VARIANT,
+            DataObject::OBJECT_TYPE_FOLDER],
+        ?bool $includingUnpublished = null,
+        ?User $user = null
+    ): bool {
         if (!$this->model->getId()) {
             return false;
         }
@@ -343,13 +345,16 @@ class Dao extends Model\Element\Dao
     /**
      * Quick test if there are siblings
      *
-     * @param array $objectTypes
-     * @param bool|null $includingUnpublished
-     *
-     * @return bool
+     * @throws Exception
      */
-    public function hasSiblings(array $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null): bool
-    {
+    public function hasSiblings(
+        array $objectTypes = [
+            DataObject::OBJECT_TYPE_OBJECT,
+            DataObject::OBJECT_TYPE_VARIANT,
+            DataObject::OBJECT_TYPE_FOLDER,
+        ],
+        ?bool $includingUnpublished = null
+    ): bool {
         if (!$this->model->getParentId()) {
             return false;
         }
@@ -366,7 +371,11 @@ class Dao extends Model\Element\Dao
             $sql .= ' AND published = 1';
         }
 
-        $sql .= " AND `type` IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
+        if (!empty($objectTypes)) {
+            $sql .= " AND `type` IN ('" . implode("','", $objectTypes) . "')";
+        }
+
+        $sql .= ' LIMIT 1';
 
         $c = $this->db->fetchOne($sql, $params);
 
@@ -645,7 +654,7 @@ class Dao extends Model\Element\Dao
         return $permissions;
     }
 
-    public function saveIndex(int $index)
+    public function saveIndex(int $index): void
     {
         $this->db->update('objects', [
             'index' => $index,

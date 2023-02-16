@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.video");
+/**
+ * @private
+ */
 pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
     type: "video",
@@ -280,12 +283,14 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
     openEdit: function () {
         this.data["path"] = this.data["data"];
         this.window = pimcore.helpers.editmode.openVideoEditPanel(this.data, {
+
             save: function () {
                 this.window.hide();
 
                 var values = this.window.getComponent("form").getForm().getFieldValues();
                 values["data"] = values["path"];
                 delete values["path"];
+                values["allowedTypes"] = this.data.allowedTypes;
 
                 var match, regExp;
 
@@ -370,7 +375,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        if (!this.fieldConfig.noteditable) {
+        if (!this.fieldConfig.noteditable && pimcore.helpers.hasSearchImplementation()) {
             menu.add(new Ext.menu.Item({
                 text: t('search'),
                 iconCls: "pimcore_icon_search",

@@ -44,13 +44,16 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
 
     protected string $template;
 
+    /**
+     * @var array<string, string>
+     */
     protected array $characterPools = [
         'alphaNumeric' => '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
         'numeric' => '123456789',
         'alpha' => 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
     ];
 
-    public function __construct(AbstractVoucherTokenType $configuration)
+    public function __construct(AbstractVoucherTokenType $configuration, protected PaginatorInterface $paginator)
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypePattern) {
@@ -85,8 +88,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return bool
      *
-     *@throws VoucherServiceException
-     *
+     * @throws VoucherServiceException
      */
     public function checkToken(string $code, CartInterface $cart): bool
     {
@@ -109,8 +111,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return bool
      *
-     *@throws VoucherServiceException
-     *
+     * @throws VoucherServiceException
      */
     public function reserveToken(string $code, CartInterface $cart): bool
     {
@@ -498,7 +499,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * @param array $data
      * @param int $usagePeriod
      */
-    protected function prepareUsageStatisticData(array &$data, int $usagePeriod)
+    protected function prepareUsageStatisticData(array &$data, int $usagePeriod): void
     {
         $now = new \DateTime();
         $periodData = [];
@@ -531,16 +532,22 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
         }
 
-        /** @var PaginatorInterface $paginator */
-        $paginator = \Pimcore::getContainer()->get(\Knp\Component\Pager\PaginatorInterface::class);
-        $paginator = $paginator->paginate(
+        $page = (int)($params['page'] ?? 1);
+        $perPage = (int)($params['tokensPerPage'] ?? 25);
+
+        $total = count($tokens);
+
+        $availablePages = (int) ceil($total / $perPage);
+        $page = min($page, $availablePages);
+
+        $paginator = $this->paginator->paginate(
             $tokens,
-            $params['page'] ?? 1,
-            isset($params['tokensPerPage']) ? (int)$params['tokensPerPage'] : 25
+            $page ?: 1,
+            $perPage
         );
 
         $viewParamsBag['paginator'] = $paginator;
-        $viewParamsBag['count'] = count($tokens);
+        $viewParamsBag['count'] = $total;
 
         $viewParamsBag['msg']['error'] = $params['error'] ?? null;
         $viewParamsBag['msg']['success'] = $params['success'] ?? null;
@@ -633,47 +640,51 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         return $this->configuration;
     }
 
-    public function setConfiguration(VoucherTokenTypePattern $configuration)
+    public function setConfiguration(VoucherTokenTypePattern $configuration): void
     {
         $this->configuration = $configuration;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getCharacterPools(): array
     {
         return $this->characterPools;
     }
 
-    public function getCharacterPool()
+    public function getCharacterPool(): string
     {
         return $this->characterPools[$this->configuration->getCharacterType()];
     }
 
-    public function setCharacterPools(array $characterPools)
+    /**
+     * @param array<string, string> $characterPools
+     */
+    public function setCharacterPools(array $characterPools): void
     {
         $this->characterPools = $characterPools;
     }
 
     /**
-     * @param array $pool Associative Array - the key represents the name, the value the characters of the character-pool. i.e.:"['numeric'=>'12345']"
+     * @param array<string, string> $pool Associative Array - the key represents the name, the value the characters of the character-pool. i.e.:"['numeric'=>'12345']"
      */
-    public function addCharacterPool(array $pool)
+    public function addCharacterPool(array $pool): void
     {
-        if (is_array($pool)) {
-            $this->characterPools[] = $pool;
-        }
+        $this->characterPools = array_merge($this->characterPools, $pool);
     }
 
-    public function setTemplate(string $template)
+    public function setTemplate(string $template): void
     {
         $this->template = $template;
     }
 
-    public function setSeriesId(int|string|null $seriesId)
+    public function setSeriesId(int|null $seriesId): void
     {
         $this->seriesId = $seriesId;
     }
 
-    public function getSeriesId(): int|string|null
+    public function getSeriesId(): int|null
     {
         return $this->seriesId;
     }

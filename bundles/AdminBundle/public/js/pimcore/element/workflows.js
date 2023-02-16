@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.workflows");
+/**
+ * @private
+ */
 pimcore.element.workflows = Class.create({
 
     initialize: function(element, type) {

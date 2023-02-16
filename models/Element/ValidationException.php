@@ -34,12 +34,12 @@ class ValidationException extends \Exception
     /**
      * @param \Exception[] $subItems
      */
-    public function setSubItems(array $subItems = [])
+    public function setSubItems(array $subItems = []): void
     {
         $this->subItems = $subItems;
     }
 
-    public function addContext(string $context)
+    public function addContext(string $context): void
     {
         $this->contextStack[] = $context;
     }
@@ -49,10 +49,7 @@ class ValidationException extends \Exception
         return $this->contextStack;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         $result = parent::__toString();
         if (is_array($this->subItems)) {

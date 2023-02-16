@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.permissionchecker");
+/**
+ * @private
+ */
 pimcore.element.permissionchecker = Class.create({
 
 

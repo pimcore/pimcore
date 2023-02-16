@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.element.abstractPreview");
+/**
+ * @private
+ */
 pimcore.element.abstractPreview = Class.create({
 
     initialize: function (element) {

@@ -57,7 +57,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public string $predefinedDataTemplates;
 
-    public function setRatioX(int $ratioX)
+    public function setRatioX(int $ratioX): void
     {
         $this->ratioX = $ratioX;
     }
@@ -67,7 +67,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $this->ratioX;
     }
 
-    public function setRatioY(int $ratioY)
+    public function setRatioY(int $ratioY): void
     {
         $this->ratioY = $ratioY;
     }
@@ -82,7 +82,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $this->predefinedDataTemplates;
     }
 
-    public function setPredefinedDataTemplates(string $predefinedDataTemplates)
+    public function setPredefinedDataTemplates(string $predefinedDataTemplates): void
     {
         $this->predefinedDataTemplates = $predefinedDataTemplates;
     }
@@ -92,7 +92,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $this->uploadPath;
     }
 
-    public function setUploadPath(string $uploadPath)
+    public function setUploadPath(string $uploadPath): void
     {
         $this->uploadPath = $uploadPath;
     }
@@ -166,7 +166,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
         $fd = new Hotspotimage();
 
-        $images = explode(',', $images);
+        $images = array_map('intval', explode(',', $images));
         for ($i = 1; $i < count($images) - 1; $i++) {
             $imageId = $images[$i];
             $hotspotData = $hotspots[$i - 1];
@@ -213,8 +213,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
     {
@@ -252,8 +251,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @return DataObject\Data\ImageGallery
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {
@@ -382,7 +380,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @throws Element\ValidationException
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (
             $this->getMandatory() && !$omitMandatoryCheck &&

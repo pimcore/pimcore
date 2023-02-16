@@ -37,7 +37,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         $data = $this->db->fetchAssociative("SELECT documents.*, tree_locks.locked FROM documents
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
@@ -46,7 +46,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new  Model\Exception\NotFoundException('document with id ' . $id . ' not found');
+            throw new Model\Exception\NotFoundException('document with id ' . $id . ' not found');
         }
     }
 
@@ -57,7 +57,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPath(string $path)
+    public function getByPath(string $path): void
     {
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE `path` = BINARY :path AND `key` = BINARY :key', $params);
@@ -78,7 +78,7 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    public function create()
+    public function create(): void
     {
         $this->db->insert('documents', Helper::quoteDataIdentifiers($this->db, [
             'key' => $this->model->getKey(),
@@ -98,7 +98,7 @@ class Dao extends Model\Element\Dao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         $typeSpecificTable = null;
         $validColumnsTypeSpecific = [];
@@ -162,7 +162,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete('documents', ['id' => $this->model->getId()]);
     }
@@ -172,7 +172,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Exception
      */
-    public function updateWorkspaces()
+    public function updateWorkspaces(): void
     {
         $this->db->update('users_workspaces_document', [
             'cpath' => $this->model->getRealFullPath(),
@@ -188,8 +188,7 @@ class Dao extends Model\Element\Dao
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public function updateChildPaths(string $oldPath): array
     {
@@ -315,20 +314,15 @@ class Dao extends Model\Element\Dao
     /**
      * Deletes all object properties from the database.
      */
-    public function deleteAllProperties()
+    public function deleteAllProperties(): void
     {
         $this->db->delete('properties', ['cid' => $this->model->getId(), 'ctype' => 'document']);
     }
 
     /**
      * Quick check if there are children.
-     *
-     * @param bool|null $includingUnpublished
-     * @param Model\User|null $user
-     *
-     * @return bool
      */
-    public function hasChildren(bool $includingUnpublished = null, User $user = null): bool
+    public function hasChildren(?bool $includingUnpublished = null, ?User $user = null): bool
     {
         if (!$this->model->getId()) {
             return false;
@@ -368,7 +362,7 @@ class Dao extends Model\Element\Dao
      *
      * @return int
      */
-    public function getChildAmount(User $user = null): int
+    public function getChildAmount(?User $user = null): int
     {
         if (!$this->model->getId()) {
             return 0;
@@ -398,7 +392,7 @@ class Dao extends Model\Element\Dao
      *
      * @return bool
      */
-    public function hasSiblings(bool $includingUnpublished = null): bool
+    public function hasSiblings(?bool $includingUnpublished = null): bool
     {
         if (!$this->model->getParentId()) {
             return false;
@@ -456,7 +450,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Exception
      */
-    public function updateLocks()
+    public function updateLocks(): void
     {
         $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'document']);
         if ($this->model->getLocked()) {
@@ -565,7 +559,7 @@ class Dao extends Model\Element\Dao
      *
      * @param int $index
      */
-    public function saveIndex(int $index)
+    public function saveIndex(int $index): void
     {
         $this->db->update('documents', [
             'index' => $index,

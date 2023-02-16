@@ -331,7 +331,7 @@ class Manager
      *
      * @throws \Exception
      */
-    public function ensureInitialPlace(string $workflowName, $subject): bool
+    public function ensureInitialPlace(string $workflowName, object $subject): bool
     {
         if (!$workflow = $this->getWorkflowIfExists($subject, $workflowName)) {
             return false;

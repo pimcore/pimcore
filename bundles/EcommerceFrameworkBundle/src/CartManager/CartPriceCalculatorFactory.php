@@ -38,7 +38,7 @@ class CartPriceCalculatorFactory implements CartPriceCalculatorFactoryInterface
         $this->options = $resolver->resolve($options);
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired('class');
 

@@ -80,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(array $params = [])
+    public function save(array $params = []): void
     {
         $context = $this->model->getContext();
 
@@ -196,7 +196,8 @@ class Dao extends Model\Dao\AbstractDao
                         $fd->save($this->model, $childParams);
                     }
                 }
-                if ($fd instanceof ResourcePersistenceAwareInterface) {
+                if ($fd instanceof ResourcePersistenceAwareInterface
+                    && $fd instanceof DataObject\ClassDefinition\Data) {
                     if (is_array($fd->getColumnType())) {
                         $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
                         $insertDataArray = $fd->getDataForResource(
@@ -307,7 +308,8 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 foreach ($fieldDefinitions as $fd) {
-                    if ($fd instanceof QueryResourcePersistenceAwareInterface) {
+                    if ($fd instanceof QueryResourcePersistenceAwareInterface
+                        &&  $fd instanceof DataObject\ClassDefinition\Data) {
                         $key = $fd->getName();
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
@@ -572,7 +574,7 @@ class Dao extends Model\Dao\AbstractDao
         return false;
     }
 
-    public function load(DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = [])
+    public function load(DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): void
     {
         $validLanguages = Tool::getValidLanguages();
         foreach ($validLanguages as &$language) {
@@ -613,6 +615,7 @@ class Dao extends Model\Dao\AbstractDao
                 ]
             );
         } else {
+            $object->__objectAwareFields['localizedfields'] = true;
             $container = $this->model->getClass();
             $data = $this->db->fetchAllAssociative(
                 'SELECT * FROM '.$this->getTableName().' WHERE ooo_id = ? AND language IN ('.implode(
@@ -646,7 +649,9 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     $params['context']['object'] = $object;
 
-                    if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
+                    if ($fd instanceof LazyLoadingSupportInterface
+                        && $fd instanceof DataObject\ClassDefinition\Data
+                        && $fd->getLazyLoading()) {
                         $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
                     } else {
                         $value = $fd->load($this->model, $params);
@@ -672,7 +677,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function createLocalizedViews()
+    public function createLocalizedViews(): void
     {
         // init
         $languages = Tool::getValidLanguages();
@@ -782,7 +787,7 @@ QUERY;
      *
      * @throws \Exception
      */
-    public function createUpdateTable(array $params = [])
+    public function createUpdateTable(array $params = []): void
     {
         $table = $this->getTableName();
 
@@ -837,7 +842,8 @@ QUERY;
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
         if ($localizedFieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
             foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
-                if ($value instanceof ResourcePersistenceAwareInterface) {
+                if ($value instanceof ResourcePersistenceAwareInterface
+                    && $value instanceof DataObject\ClassDefinition\Data) {
                     if ($value->getColumnType()) {
                         $key = $value->getName();
 

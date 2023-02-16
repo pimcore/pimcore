@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.helpers.customLayoutEditor");
+/**
+ * @private
+ */
 pimcore.object.helpers.customLayoutEditor = Class.create({
 
     uploadRoute: 'pimcore_admin_dataobject_class_importcustomlayoutdefinition',
@@ -323,7 +326,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 disabled: true,
                 listeners:{
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this),
-                    itemclick: this.onTreeNodeClick.bind(this)
+                    itemclick: this.onTreeNodeClick.bind(this),
+                    beforeitemmove: this.onTreeNodeBeforeMove.bind(this)
 
                 },
                 viewConfig: {
@@ -343,6 +347,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
                     if (target != source) {
                         var record = data.records[0];
+                        if (record.data.type === "data" && overModel.data.root) {
+                            dropHandlers.cancelDrop();
+                        }
                         if (record.data.type != "layout"
                             && this.selectionPanel.getRootNode().findChild("key", record.data.key)) {
                             dropHandlers.cancelDrop();
@@ -943,6 +950,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         return true;
     },
 
+    onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
+        return pimcore.helpers.treeDragDropValidate(node, oldParent, newParent);
+    },
 
     clearSelectionPanel: function() {
         this.selectionPanel.getStore().setDisabled(false);

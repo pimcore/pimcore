@@ -53,8 +53,7 @@ class File
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getValidFilename(string $tmpFilename, string $language = null, string $replacement = '-'): string
     {
@@ -108,15 +107,14 @@ class File
      *
      * @return int|false
      *
-     *@internal
-     *
+     * @internal
      */
     public static function putPhpFile(string $path, string $data): bool|int
     {
         $return = self::put($path, $data);
 
-        if (function_exists('opcache_reset')) {
-            opcache_reset();
+        if (\function_exists('opcache_invalidate')) {
+            opcache_invalidate($path);
         }
 
         return $return;

@@ -36,7 +36,7 @@ class QuantityValue extends AbstractQuantityValue
         parent::__construct($unit);
     }
 
-    public function setValue(float|int|string|null $value)
+    public function setValue(float|int|string|null $value): void
     {
         $this->value = $value;
         $this->markMeDirty();
@@ -48,11 +48,9 @@ class QuantityValue extends AbstractQuantityValue
     }
 
     /**
-     * @return string
-     *
      * @throws \Exception
      */
-    public function __toString()
+    public function __toString(): string
     {
         $value = $this->getValue();
         if (is_numeric($value)) {

@@ -51,14 +51,11 @@ final class Console
     }
 
     /**
-     * @param string $name
-     * @param bool $throwException
-     *
-     * @return bool|string
+     * @return ($throwException is true ? string : string|false)
      *
      * @throws \Exception
      */
-    public static function getExecutable(string $name, bool $throwException = false): bool|string
+    public static function getExecutable(string $name, bool $throwException = false): string|false
     {
         if (isset(self::$executableCache[$name])) {
             if (!self::$executableCache[$name] && $throwException) {
@@ -142,32 +139,10 @@ final class Console
         return false;
     }
 
-    protected static function checkComposite(string $process): bool
-    {
-        return self::checkConvert($process);
-    }
-
-    protected static function checkConvert(string $executablePath): bool
-    {
-        try {
-            $process = new Process([$executablePath, '--help']);
-            $process->run();
-            if (strpos($process->getOutput() . $process->getErrorOutput(), 'imagemagick.org') !== false) {
-                return true;
-            }
-        } catch (\Exception $e) {
-            // noting to do
-        }
-
-        return false;
-    }
-
     /**
-     * @return mixed
-     *
      * @throws \Exception
      */
-    public static function getPhpCli(): mixed
+    public static function getPhpCli(): string
     {
         try {
             return self::getExecutable('php', true);
@@ -182,11 +157,16 @@ final class Console
         }
     }
 
-    public static function getTimeoutBinary(): bool|string
+    public static function getTimeoutBinary(): string|false
     {
         return self::getExecutable('timeout');
     }
 
+    /**
+     * @param string[] $arguments
+     *
+     * @return string[]
+     */
     protected static function buildPhpScriptCmd(string $script, array $arguments = []): array
     {
         $phpCli = self::getPhpCli();
@@ -197,20 +177,13 @@ final class Console
             array_push($cmd, '--env=' . Config::getEnvironment());
         }
 
-        if (!empty($arguments)) {
-            $cmd = array_merge($cmd, $arguments);
-        }
+        $cmd = array_merge($cmd, $arguments);
 
         return $cmd;
     }
 
     /**
-     * @param string $script
-     * @param array $arguments
-     * @param string|null $outputFile
-     * @param float $timeout
-     *
-     * @return string
+     * @param string[] $arguments
      */
     public static function runPhpScript(string $script, array $arguments = [], string $outputFile = null, float $timeout = 60): string
     {
@@ -242,8 +215,7 @@ final class Console
      *
      * @return int
      *
-     *@deprecated since v6.9. For long running background tasks switch to a queue implementation.
-     *
+     * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
      */
     public static function runPhpScriptInBackground(string $script, array $arguments = [], string $outputFile = null): int
     {
@@ -260,10 +232,9 @@ final class Console
      *
      * @return int
      *
-     *@deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
+     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
      *
      * @static
-     *
      */
     public static function execInBackground(string $cmd, string $outputFile = null): int
     {
@@ -284,10 +255,9 @@ final class Console
      *
      * @return int
      *
-     *@deprecated since v.6.9. For long running background tasks use queues.
+     * @deprecated since v.6.9. For long running background tasks use queues.
      *
      * @static
-     *
      */
     protected static function execInBackgroundUnix(string $cmd, ?string $outputFile, bool $useNohup = true): int
     {
@@ -335,10 +305,9 @@ final class Console
      *
      * @return int
      *
-     *@deprecated since v.6.9. For long running background tasks use queues.
+     * @deprecated since v.6.9. For long-running background tasks use queues.
      *
      * @static
-     *
      */
     protected static function execInBackgroundWindows(string $cmd, string $outputFile): int
     {
@@ -357,12 +326,9 @@ final class Console
     }
 
     /**
-     * @param array|string $cmd
+     * @param string[]|string $cmd
      *
-     * @return void
-     *
-     *@internal
-     *
+     * @internal
      */
     public static function addLowProcessPriority(array|string &$cmd): void
     {

@@ -28,7 +28,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface, PreSetDataInterface
+class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
@@ -203,8 +203,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -254,8 +253,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return Asset|Document|DataObject\AbstractObject|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Asset|Document|DataObject\AbstractObject|null
     {
@@ -312,7 +310,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -467,7 +465,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @param DataObject\ClassDefinition\Data\ManyToOneRelation $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->assetUploadPath = $masterDefinition->assetUploadPath;
         $this->relationType = $masterDefinition->relationType;
@@ -478,7 +476,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     protected function getPhpdocType(): string
     {
-        return implode(' | ', $this->getPhpDocClassString(false));
+        return $this->getPhpDocClassString(false);
     }
 
     public function normalize(mixed $value, array $params = []): ?array
@@ -598,6 +596,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         return $this->getRelationFilterCondition($value, $operator, $name);
+    }
+
+    public function getVisibleFields(): ?string
+    {
+        return 'fullpath';
     }
 
     public function getQueryColumnType(): array|string|null

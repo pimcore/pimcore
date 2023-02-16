@@ -32,7 +32,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
      *
      * @throws \Exception
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
         $validLanguages = (array) Tool::getValidLanguages();
         $locales = Tool::getSupportedLocales();
@@ -66,12 +66,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
         return $this;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
         $obj->configureOptions();

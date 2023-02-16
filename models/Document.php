@@ -24,10 +24,10 @@ use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
-use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -44,8 +44,6 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $fullPathCache = null;
 
@@ -56,17 +54,8 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $key = null;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    protected ?string $path = null;
 
     /**
      * @internal
@@ -86,37 +75,23 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $children = [];
 
     /**
      * @internal
      *
-     * @var bool[]
-     */
-    protected array $hasChildren = [];
-
-    /**
-     * @internal
-     *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $siblings = [];
-
-    /**
-     * @internal
-     *
-     * @var bool[]
-     */
-    protected array $hasSiblings = [];
 
     /**
      * {@inheritdoc}
      */
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['versions', 'scheduledTasks', 'parent', 'fullPathCache'];
 
         if (!$this->isInDumpState()) {
             // this is if we want to cache the object
@@ -126,16 +101,11 @@ class Document extends Element\AbstractElement
         return $blockedVars;
     }
 
-    /**
-     * get possible types
-     *
-     * @return array
-     */
     public static function getTypes(): array
     {
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
 
-        return $documentsConfig['types'];
+        return  array_keys($documentsConfig['type_definitions']['map']);
     }
 
     /**
@@ -201,11 +171,18 @@ class Document extends Element\AbstractElement
 
     public static function getById(int|string $id, array $params = []): ?static
     {
-        if (!is_numeric($id) || $id < 1) {
+        if (is_string($id)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0',
+                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
+            );
+            $id = is_numeric($id) ? (int) $id : 0;
+        }
+        if ($id < 1) {
             return null;
         }
 
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
         $params = Element\Service::prepareGetByIdParams($params);
 
@@ -230,18 +207,9 @@ class Document extends Element\AbstractElement
                 return null;
             }
 
-            $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
-
-            // this is the fallback for custom document types using prefixes
-            // so we need to check if the class exists first
-            if (!Tool::classExists($className)) {
-                $oldStyleClass = 'Document_' . ucfirst($document->getType());
-                if (Tool::classExists($oldStyleClass)) {
-                    $className = $oldStyleClass;
-                }
-            }
-            /** @var Document $newDocument */
-            $newDocument = self::getModelFactory()->build($className);
+            // Getting Typeloader from container
+            $loader = \Pimcore::getContainer()->get(TypeLoader::class);
+            $newDocument = $loader->build($document->getType());
 
             if (get_class($document) !== get_class($newDocument)) {
                 $document = $newDocument;
@@ -481,10 +449,9 @@ class Document extends Element\AbstractElement
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         $disallowedKeysInFirstLevel = ['install', 'admin', 'plugin'];
         if ($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
@@ -535,16 +502,15 @@ class Document extends Element\AbstractElement
     /**
      * @param int $index
      *
-     *@internal
-     *
+     * @internal
      */
-    public function saveIndex(int $index)
+    public function saveIndex(int $index): void
     {
         $this->getDao()->saveIndex($index);
         $this->clearDependentCache();
     }
 
-    public function clearDependentCache(array $additionalTags = [])
+    public function clearDependentCache(array $additionalTags = []): void
     {
         try {
             $tags = [$this->getCacheTag(), 'document_properties', 'output'];
@@ -559,21 +525,19 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
-     * @param Document[]|null $children
+     * @param Listing|null $children
      * @param bool $includingUnpublished
      *
      * @return $this
      */
-    public function setChildren(?array $children, bool $includingUnpublished = false): static
+    public function setChildren(?Listing $children, bool $includingUnpublished = false): static
     {
         if ($children === null) {
             // unset all cached children
-            $this->hasChildren = [];
             $this->children = [];
-        } elseif (is_array($children)) {
+        } else {
             $cacheKey = $this->getListingCacheKey([$includingUnpublished]);
             $this->children[$cacheKey] = $children;
-            $this->hasChildren[$cacheKey] = (bool) count($children);
         }
 
         return $this;
@@ -581,12 +545,8 @@ class Document extends Element\AbstractElement
 
     /**
      * Get a list of the children (not recursivly)
-     *
-     * @param bool $includingUnpublished
-     *
-     * @return self[]
      */
-    public function getChildren(bool $includingUnpublished = false): array
+    public function getChildren(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -597,9 +557,11 @@ class Document extends Element\AbstractElement
                 $list->setCondition('parentId = ?', $this->getId());
                 $list->setOrderKey('index');
                 $list->setOrder('asc');
-                $this->children[$cacheKey] = $list->load();
+                $this->children[$cacheKey] = $list;
             } else {
-                $this->children[$cacheKey] = [];
+                $list = new Document\Listing();
+                $list->setDocuments([]);
+                $this->children[$cacheKey] = $list;
             }
         }
 
@@ -608,30 +570,16 @@ class Document extends Element\AbstractElement
 
     /**
      * Returns true if the document has at least one child
-     *
-     * @param bool $includingUnpublished
-     *
-     * @return bool
      */
-    public function hasChildren(bool $includingUnpublished = false): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasChildren[$cacheKey])) {
-            return $this->hasChildren[$cacheKey];
-        }
-
-        return $this->hasChildren[$cacheKey] = $this->getDao()->hasChildren($includingUnpublished);
+        return $this->getDao()->hasChildren($includingUnpublished);
     }
 
     /**
      * Get a list of the sibling documents
-     *
-     * @param bool $includingUnpublished
-     *
-     * @return array
      */
-    public function getSiblings(bool $includingUnpublished = false): array
+    public function getSiblings(bool $includingUnpublished = false): Listing
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -645,11 +593,11 @@ class Document extends Element\AbstractElement
                 }
                 $list->setOrderKey('index');
                 $list->setOrder('asc');
-                $this->siblings[$cacheKey] = $list->load();
-                $this->hasSiblings[$cacheKey] = (bool) count($this->siblings[$cacheKey]);
+                $this->siblings[$cacheKey] = $list;
             } else {
-                $this->siblings[$cacheKey] = [];
-                $this->hasSiblings[$cacheKey] = false;
+                $list = new Listing();
+                $list->setDocuments([]);
+                $this->siblings[$cacheKey] = $list;
             }
         }
 
@@ -658,20 +606,10 @@ class Document extends Element\AbstractElement
 
     /**
      * Returns true if the document has at least one sibling
-     *
-     * @param bool|null $includingUnpublished
-     *
-     * @return bool
      */
-    public function hasSiblings(bool $includingUnpublished = null): bool
+    public function hasSiblings(?bool $includingUnpublished = null): bool
     {
-        $cacheKey = $this->getListingCacheKey(func_get_args());
-
-        if (isset($this->hasSiblings[$cacheKey])) {
-            return $this->hasSiblings[$cacheKey];
-        }
-
-        return $this->hasSiblings[$cacheKey] = $this->getDao()->hasSiblings($includingUnpublished);
+        return $this->getDao()->hasSiblings($includingUnpublished);
     }
 
     /**
@@ -679,7 +617,7 @@ class Document extends Element\AbstractElement
      *
      * @throws \Exception
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // remove children
         if ($this->hasChildren()) {
@@ -706,7 +644,7 @@ class Document extends Element\AbstractElement
         $service->removeTranslation($this);
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
 
@@ -918,7 +856,6 @@ class Document extends Element\AbstractElement
         parent::setParentId($id);
 
         $this->siblings = [];
-        $this->hasSiblings = [];
 
         return $this;
     }
@@ -1013,7 +950,7 @@ class Document extends Element\AbstractElement
      *
      * @param bool $hideUnpublished
      */
-    public static function setHideUnpublished(bool $hideUnpublished)
+    public static function setHideUnpublished(bool $hideUnpublished): void
     {
         self::$hideUnpublished = $hideUnpublished;
     }
@@ -1046,7 +983,6 @@ class Document extends Element\AbstractElement
     {
         parent::__clone();
         $this->parent = null;
-        $this->hasSiblings = [];
         $this->siblings = [];
         $this->fullPathCache = null;
     }

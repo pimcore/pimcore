@@ -109,8 +109,7 @@ class Video extends Data implements
      *
      * @return string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -187,8 +186,7 @@ class Video extends Data implements
      *
      * @return string|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -229,8 +227,7 @@ class Video extends Data implements
      *
      * @return DataObject\Data\Video|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
@@ -294,7 +291,7 @@ class Video extends Data implements
             $result['id'] = $id;
         }
 
-        return $result;
+        return $result ?? [];
     }
 
     /**

@@ -12,12 +12,15 @@
  */
 
 pimcore.registerNS("pimcore.object.gridexport.xlsx");
+/**
+ * @private
+ */
 pimcore.object.gridexport.xlsx = Class.create(pimcore.element.gridexport.abstract, {
     name: "xlsx",
     text: t("export_xlsx"),
 
-    getDownloadUrl: function(fileHandle) {
-         return Routing.generate('pimcore_admin_dataobject_dataobjecthelper_downloadxlsxfile', {fileHandle: fileHandle});
+    getDownloadUrl: function (fileHandle) {
+        return Routing.generate('pimcore_admin_dataobject_dataobjecthelper_downloadxlsxfile', { fileHandle: fileHandle });
     },
 
     getObjectSettingsContainer: function () {
@@ -33,6 +36,25 @@ pimcore.object.gridexport.xlsx = Class.create(pimcore.element.gridexport.abstrac
             title: t('object_settings'),
             items: [
                 enableInheritance
+            ]
+        });
+    },
+    getExportSettingsContainer: function () {
+        return new Ext.form.FieldSet({
+            title: t('export_xlsx'),
+            items: [
+                new Ext.form.ComboBox({
+                    fieldLabel: t('header'),
+                    name: 'header',
+                    store: [
+                        ['name', t('name')],
+                        ['title', t('title')],
+                        ['no_header', t('no_header')]
+                    ],
+                    labelWidth: 200,
+                    value: 'title',
+                    forceSelection: true,
+                })
             ]
         });
     }

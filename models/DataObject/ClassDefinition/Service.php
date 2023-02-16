@@ -20,6 +20,7 @@ use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
+use Pimcore\Model\DataObject\ClassDefinition\Data\VarExporterInterface;
 use Pimcore\Tool;
 
 class Service
@@ -63,7 +64,7 @@ class Service
 
     private static function removeDynamicOptionsFromLayoutDefinition(mixed &$layout): void
     {
-        if (method_exists($layout, 'resolveBlockedVars')) {
+        if ($layout instanceof VarExporterInterface) {
             $blockedVars = $layout->resolveBlockedVars();
             foreach ($blockedVars as $blockedVar) {
                 if (isset($layout->{$blockedVar})) {
@@ -298,6 +299,11 @@ class Service
     public static function generateLayoutTreeFromArray(array $array, bool $throwException = false, bool $insideLocalizedField = false): Data\EncryptedField|bool|Data|Layout
     {
         if (is_array($array) && count($array) > 0) {
+            if ($title = $array['title'] ?? false) {
+                if (preg_match('/<.+?>/', $title)) {
+                    throw new \Exception('not a valid title:' . htmlentities($title));
+                }
+            }
             if ($name = $array['name'] ?? false) {
                 if (preg_match('/<.+?>/', $name)) {
                     throw new \Exception('not a valid name:' . htmlentities($name));
@@ -340,7 +346,7 @@ class Service
                 } else {
                     //for BC reasons
                     $blockedVars = [];
-                    if (method_exists($item, 'resolveBlockedVars')) {
+                    if ($item instanceof VarExporterInterface) {
                         $blockedVars = $item->resolveBlockedVars();
                     }
                     self::removeDynamicOptionsFromArray($array, $blockedVars);
@@ -374,8 +380,7 @@ class Service
      * @param array $tableDefinitions
      * @param array $tableNames
      *
-     *@internal
-     *
+     * @internal
      */
     public static function updateTableDefinitions(array &$tableDefinitions, array $tableNames): void
     {
@@ -412,8 +417,7 @@ class Service
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public static function skipColumn(array $tableDefinitions, string $table, string $colName, string $type, string $default, string $null): bool
     {
@@ -444,8 +448,7 @@ class Service
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildImplementsInterfacesCode(array $implementsParts, ?string $newInterfaces): string
     {
@@ -476,8 +479,7 @@ class Service
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildUseTraitsCode(array $useParts, ?string $newTraits): string
     {
@@ -507,8 +509,7 @@ class Service
      *
      * @throws \Exception
      *
-     *@internal
-     *
+     * @internal
      */
     public static function buildUseCode(array $useParts): string
     {

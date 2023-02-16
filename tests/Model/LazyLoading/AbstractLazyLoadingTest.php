@@ -43,7 +43,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_RelationTest();
         $this->tester->setupFieldcollection_LazyLoadingTest();
@@ -56,7 +56,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
         $this->tester->setupObjectbrick_LazyLoadingLocalizedTest();
     }
 
-    protected function createRelationObjects()
+    protected function createRelationObjects(): void
     {
         for ($i = 0; $i < 20; $i++) {
             $object = new RelationTest();
@@ -117,14 +117,17 @@ class AbstractLazyLoadingTest extends ModelTestCase
         return $listing->load()[0];
     }
 
-    protected function checkSerialization(LazyLoading $object, string $messagePrefix, bool $contentShouldBeIncluded = false)
+    protected function checkSerialization(LazyLoading $object, string $messagePrefix, bool $contentShouldBeIncluded = false): void
     {
         $serializedString = serialize($object);
         $this->checkSerializedStringForNeedle($serializedString, ['lazyLoadedFields', 'lazyKeys', 'loadedLazyKeys'], false, $messagePrefix);
         $this->checkSerializedStringForNeedle($serializedString, 'someAttribute";s:14:"Some content', $contentShouldBeIncluded, $messagePrefix);
     }
 
-    protected function checkSerializedStringForNeedle(string $string, $needle, bool $expected, string $messagePrefix = null)
+    /**
+     * @param string[]|string $needle
+     */
+    protected function checkSerializedStringForNeedle(string $string, array|string $needle, bool $expected, string $messagePrefix = null): void
     {
         if (!is_array($needle)) {
             $needle = [$needle];
@@ -135,7 +138,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
         }
     }
 
-    protected function forceSavingAndLoadingFromCache(Concrete $object, $callback)
+    protected function forceSavingAndLoadingFromCache(Concrete $object, callable $callback): void
     {
         //enable cache
         $cacheEnabled = Cache::isEnabled();

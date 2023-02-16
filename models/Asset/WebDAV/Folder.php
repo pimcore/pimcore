@@ -63,8 +63,6 @@ class Folder extends DAV\Collection
     /**
      * @param Asset|string $name
      *
-     * @return File|Folder
-     *
      * @throws DAV\Exception\NotFound
      */
     public function getChild($name): File|Folder
@@ -79,9 +77,7 @@ class Folder extends DAV\Collection
                 $parentPath = '';
             }
 
-            if (!$asset = Asset::getByPath($parentPath . '/' . $name)) {
-                throw new DAV\Exception\NotFound('File not found: ' . $name);
-            }
+            $asset = Asset::getByPath($parentPath . '/' . $name);
         } elseif ($name instanceof Asset) {
             $asset = $name;
         }
@@ -143,7 +139,7 @@ class Folder extends DAV\Collection
      *
      * @throws DAV\Exception\Forbidden
      */
-    public function createDirectory($name)
+    public function createDirectory($name): void
     {
         $user = AdminTool::getCurrentUser();
 
@@ -163,7 +159,7 @@ class Folder extends DAV\Collection
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->asset->isAllowed('delete')) {
             $this->asset->delete();

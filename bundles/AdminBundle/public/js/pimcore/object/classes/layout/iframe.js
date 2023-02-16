@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.layout.iframe");
+/**
+ * @private
+ */
 pimcore.object.classes.layout.iframe = Class.create(pimcore.object.classes.layout.layout, {
 
     type: "iframe",

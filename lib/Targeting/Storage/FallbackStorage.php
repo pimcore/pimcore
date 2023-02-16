@@ -59,7 +59,7 @@ class FallbackStorage implements TargetingStorageInterface
         $this->options = $resolver->resolve($options);
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'clear_after_migration' => false,
@@ -92,7 +92,7 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value): void
     {
         if ($visitorInfo->hasVisitorId()) {
             $this->primaryStorage->set($visitorInfo, $scope, $name, $value);
@@ -120,7 +120,7 @@ class FallbackStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc }
      */
-    public function clear(VisitorInfo $visitorInfo, string $scope = null)
+    public function clear(VisitorInfo $visitorInfo, string $scope = null): void
     {
         $this->fallbackStorage->clear($visitorInfo, $scope);
 
@@ -129,7 +129,7 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
-    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): bool
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): void
     {
         throw new \LogicException('migrateFromStorage() is not supported in FallbackStorage');
     }

@@ -51,7 +51,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public string $predefinedDataTemplates;
 
-    public function setRatioX(int $ratioX)
+    public function setRatioX(int $ratioX): void
     {
         $this->ratioX = $ratioX;
     }
@@ -61,7 +61,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $this->ratioX;
     }
 
-    public function setRatioY(int $ratioY)
+    public function setRatioY(int $ratioY): void
     {
         $this->ratioY = $ratioY;
     }
@@ -76,7 +76,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $this->predefinedDataTemplates;
     }
 
-    public function setPredefinedDataTemplates(string $predefinedDataTemplates)
+    public function setPredefinedDataTemplates(string $predefinedDataTemplates): void
     {
         $this->predefinedDataTemplates = $predefinedDataTemplates;
     }
@@ -194,8 +194,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -259,8 +258,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @return DataObject\Data\Hotspotimage
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\Hotspotimage
     {
@@ -445,7 +443,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @internal
      */
-    public function doRewriteIds($object, $idMapping, $params, $data)
+    public function doRewriteIds(mixed $object, array $idMapping, array $params, mixed $data): mixed
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage()) {
             $id = $data->getImage()->getId();

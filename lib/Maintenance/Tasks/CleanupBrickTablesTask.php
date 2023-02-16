@@ -37,7 +37,7 @@ class CleanupBrickTablesTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $db = Db::get();
         $tableTypes = ['store', 'query', 'localized'];

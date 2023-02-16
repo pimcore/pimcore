@@ -12,13 +12,16 @@
  */
 
 pimcore.registerNS("pimcore.object.gridexport.csv");
+/**
+ * @private
+ */
 pimcore.object.gridexport.csv = Class.create(pimcore.element.gridexport.abstract, {
     name: "csv",
     text: t("export_csv"),
     warningText: t('csv_object_export_warning'),
 
-    getDownloadUrl: function(fileHandle) {
-         return Routing.generate('pimcore_admin_dataobject_dataobjecthelper_downloadcsvfile', {fileHandle: fileHandle});
+    getDownloadUrl: function (fileHandle) {
+        return Routing.generate('pimcore_admin_dataobject_dataobjecthelper_downloadcsvfile', { fileHandle: fileHandle });
     },
 
     getObjectSettingsContainer: function () {
@@ -47,6 +50,18 @@ pimcore.object.gridexport.csv = Class.create(pimcore.element.gridexport.abstract
                     maxLength: 1,
                     labelWidth: 200,
                     value: ';'
+                }),
+                new Ext.form.ComboBox({
+                    fieldLabel: t('header'),
+                    name: 'header',
+                    store: [
+                        ['name', t('name')],
+                        ['title', t('title')],
+                        ['no_header', t('no_header')]
+                    ],
+                    labelWidth: 200,
+                    value: 'title',
+                    forceSelection: true,
                 })
             ]
         });

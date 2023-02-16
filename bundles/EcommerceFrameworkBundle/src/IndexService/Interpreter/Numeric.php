@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 class Numeric implements InterpreterInterface
 {
-    public function interpret($value, $config = null): float
+    public function interpret(mixed $value, ?array $config = null): float
     {
         return (float)$value;
     }

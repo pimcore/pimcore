@@ -105,6 +105,18 @@ abstract class PageSnippet extends Model\Document
      */
     protected array $inheritedEditables = [];
 
+    private static bool $getInheritedValues = false;
+
+    public static function setGetInheritedValues(bool $getInheritedValues): void
+    {
+        self::$getInheritedValues = $getInheritedValues;
+    }
+
+    public static function getGetInheritedValues(): bool
+    {
+        return self::$getInheritedValues;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -123,7 +135,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         // update elements
         $editables = $this->getEditables();
@@ -215,7 +227,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * {@inheritdoc}
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // Dispatch Symfony Message Bus to delete versions
         \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
@@ -460,7 +472,15 @@ abstract class PageSnippet extends Model\Document
     public function getEditables(): array
     {
         if ($this->editables === null) {
-            $this->setEditables($this->getDao()->getEditables());
+            $documentEditables = $this->getDao()->getEditables();
+
+            if (self::getGetInheritedValues() && $this->supportsContentMaster() && $this->getContentMasterDocument()) {
+                $contentMasterEditables = $this->getContentMasterDocument()->getEditables();
+                $documentEditables = array_merge($contentMasterEditables, $documentEditables);
+                $this->inheritedEditables = $documentEditables;
+            }
+
+            $this->setEditables($documentEditables);
         }
 
         return $this->editables;
@@ -505,7 +525,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * {@inheritdoc}
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
@@ -601,7 +621,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @internal
      */
-    protected function checkMissingRequiredEditable()
+    protected function checkMissingRequiredEditable(): void
     {
         // load data which must be requested
         $this->getProperties();

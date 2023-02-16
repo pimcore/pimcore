@@ -25,7 +25,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\GroupConfig\Dao getDao()
- * @method int hasChildren()
+ * @method bool hasChildren()
  */
 final class GroupConfig extends Model\AbstractModel
 {
@@ -57,9 +57,8 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * The group description.
      *
-     * @var string
      */
-    protected string $description = '';
+    protected ?string $description = null;
 
     protected ?int $creationDate = null;
 
@@ -154,7 +153,7 @@ final class GroupConfig extends Model\AbstractModel
         return $this->parentId;
     }
 
-    public function setParentId(int $parentId)
+    public function setParentId(int $parentId): void
     {
         $this->parentId = $parentId;
     }
@@ -174,9 +173,8 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Returns the description.
      *
-     * @return string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -184,11 +182,10 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Sets the description.
      *
-     * @param string $description
      *
-     * @return Model\DataObject\Classificationstore\GroupConfig
+     * @return $this
      */
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
@@ -198,7 +195,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Deletes the key value group configuration
      */
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_DELETE);
         if ($this->getId()) {
@@ -212,7 +209,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Saves the group config
      */
-    public function save()
+    public function save(): void
     {
         $isUpdate = false;
 
@@ -225,15 +222,13 @@ final class GroupConfig extends Model\AbstractModel
             $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_ADD);
         }
 
-        $model = $this->getDao()->save();
+        $this->getDao()->save();
 
         if ($isUpdate) {
             $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_POST_UPDATE);
         } else {
             $this->dispatchEvent(new GroupConfigEvent($this), DataObjectClassificationStoreEvents::GROUP_CONFIG_POST_ADD);
         }
-
-        return $model;
     }
 
     public function setModificationDate(int $modificationDate): static
@@ -279,7 +274,7 @@ final class GroupConfig extends Model\AbstractModel
         return $this->storeId;
     }
 
-    public function setStoreId(int $storeId)
+    public function setStoreId(int $storeId): void
     {
         $this->storeId = $storeId;
     }
@@ -300,8 +295,12 @@ final class GroupConfig extends Model\AbstractModel
     private function removeCache(): void
     {
         // Remove runtime cache
-        RuntimeCache::set(self::getCacheKey($this->getId()), null);
-        RuntimeCache::set(self::getCacheKey($this->getStoreId(), $this->getName()), null);
+        if (RuntimeCache::getInstance()->offsetExists(self::getCacheKey($this->getId()))) {
+            RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getId()));
+        }
+        if (RuntimeCache::getInstance()->offsetExists(self::getCacheKey($this->getStoreId(), $this->getName()))) {
+            RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getStoreId(), $this->getName()));
+        }
 
         // Remove persisted cache
         Cache::remove(self::getCacheKey($this->getId()));

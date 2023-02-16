@@ -12,23 +12,30 @@
  */
 
 pimcore.registerNS("pimcore.object.object");
+/**
+ * @private
+ */
 pimcore.object.object = Class.create(pimcore.object.abstract, {
     willClose: false,
     initialize: function (id, options) {
         this.id = intval(id);
         this.options = options;
+        this.addLoadingPanel();
 
         const preOpenObject = new CustomEvent(pimcore.events.preOpenObject, {
             detail: {
                 object: this,
                 type: "object"
-            }
+            },
+            cancelable: true
         });
 
-        document.dispatchEvent(preOpenObject);
+        const isAllowed = document.dispatchEvent(preOpenObject);
+        if (!isAllowed) {
+            this.removeLoadingPanel();
+            return;
+        }
 
-
-        this.addLoadingPanel();
 
         var user = pimcore.globalmanager.get("user");
 
@@ -45,14 +52,17 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.notes = new pimcore.element.notes(this, "object");
         }
 
-        this.reports = new pimcore.report.panel("object_concrete", this);
+        if(pimcore.globalmanager.get('customReportsPanelImplementationFactory').hasImplementation()) {
+            this.reports = pimcore.globalmanager.get('customReportsPanelImplementationFactory').getNewReportInstance("object_concrete");
+        }
         this.variants = new pimcore.object.variantsTab(this);
-        this.appLogger = new pimcore.log.admin({
-            localMode: true,
-            searchParams: {
-                relatedobject: this.id
-            }
-        });
+        if(pimcore.globalmanager.get('applicationLoggerPanelImplementationFactory').hasImplementation()) {
+            this.appLogger = pimcore.globalmanager.get('applicationLoggerPanelImplementationFactory').getNewLoggerInstance({localMode: true,
+                searchParams: {
+                    relatedobject: this.id
+                }
+            });
+        }
         this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
 
         this.getData();
@@ -303,9 +313,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
 
         try {
-            var reportLayout = this.reports.getLayout();
-            if (reportLayout) {
-                items.push(reportLayout);
+            if(this.reports) {
+                var reportLayout = this.reports.getLayout();
+                if (reportLayout) {
+                    items.push(reportLayout);
+                }
             }
         } catch (e) {
             console.log(e);
@@ -344,7 +356,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
         }
 
-        if (user.isAllowed("application_logging") && this.data.general.showAppLoggerTab) {
+        if (this.appLogger && user.isAllowed("application_logging") && this.data.general.showAppLoggerTab) {
             try {
                 var appLoggerTab = this.appLogger.getTabPanel();
                 items.push(appLoggerTab);
@@ -908,13 +920,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             parentid: this.data.general.parentId,
             classid: this.data.general.classId,
             "class": this.data.general.className,
+            type: this.data.general.type,
             modificationdate: this.data.general.modificationDate,
             creationdate: this.data.general.creationDate,
             usermodification: this.data.general.userModification,
             usermodification_name: this.data.general.userModificationFullname,
             userowner: this.data.general.userOwner,
             userowner_name: this.data.general.userOwnerFullname,
-            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, "object")
+            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, this.data.general.type)
         };
     },
 
@@ -938,6 +951,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }, {
                 name: "class",
                 value: metainfo.class
+            }, {
+                name: "type",
+                value: metainfo.type
             }, {
                 name: "modificationdate",
                 type: "date",

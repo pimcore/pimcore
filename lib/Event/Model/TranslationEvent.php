@@ -43,7 +43,7 @@ class TranslationEvent extends Event
         return $this->translation;
     }
 
-    public function setTranslation(Translation $translation)
+    public function setTranslation(Translation $translation): void
     {
         $this->translation = $translation;
     }

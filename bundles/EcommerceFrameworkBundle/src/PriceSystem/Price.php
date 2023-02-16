@@ -46,7 +46,7 @@ class Price implements PriceInterface
         $this->minPrice = $minPrice;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $string = $this->getCurrency()->toCurrency($this->grossAmount);
 
@@ -61,7 +61,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false)
+    public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false): void
     {
         switch ($priceMode) {
             case self::PRICE_MODE_GROSS:
@@ -85,7 +85,7 @@ class Price implements PriceInterface
         return $this->grossAmount;
     }
 
-    public function setCurrency(Currency $currency)
+    public function setCurrency(Currency $currency): void
     {
         $this->currency = $currency;
     }
@@ -172,7 +172,7 @@ class Price implements PriceInterface
      *
      * @param string $calculationMode
      */
-    protected function updateTaxes(string $calculationMode)
+    protected function updateTaxes(string $calculationMode): void
     {
         $taxCalculationService = new TaxCalculationService();
         $taxCalculationService->updateTaxes($this, $calculationMode);

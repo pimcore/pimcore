@@ -40,7 +40,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     {
     }
 
-    public function setConsiderTenants($considerTenants)
+    public function setConsiderTenants(bool $considerTenants): void
     {
         $this->considerTenants = $considerTenants;
     }
@@ -50,7 +50,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return $this->considerTenants;
     }
 
-    public function setFilterGroups(array $filterGroups)
+    public function setFilterGroups(array $filterGroups): void
     {
         $this->filterGroups = $filterGroups;
     }
@@ -60,7 +60,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return $this->filterGroups;
     }
 
-    public function setMultiPreSelect(string $multiPreSelect)
+    public function setMultiPreSelect(string $multiPreSelect): void
     {
         $this->multiPreSelect = $multiPreSelect;
     }
@@ -70,7 +70,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return $this->multiPreSelect;
     }
 
-    public function setPredefinedPreSelectOptions(array $predefinedPreSelectOptions)
+    public function setPredefinedPreSelectOptions(array $predefinedPreSelectOptions): void
     {
         $this->predefinedPreSelectOptions = $predefinedPreSelectOptions;
     }
@@ -133,8 +133,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, $object = null, array $params = []): array
     {
@@ -171,8 +170,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *
      * @return ObjectData\IndexFieldSelection|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?ObjectData\IndexFieldSelection
     {
@@ -209,7 +207,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() &&
             ($data === null || $data->getField() === null)) {
@@ -225,8 +223,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
@@ -262,7 +259,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return $this->width;
     }
 
-    public function setWidth(mixed $width)
+    public function setWidth(mixed $width): void
     {
         $this->width = (int)$width;
     }

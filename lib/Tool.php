@@ -109,12 +109,9 @@ final class Tool
     }
 
     /**
-     * @param string $language
+     * @return string[]
      *
-     * @return array
-     *
-     *@internal
-     *
+     * @internal
      */
     public static function getFallbackLanguagesFor(string $language): array
     {
@@ -199,8 +196,7 @@ final class Tool
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public static function getLanguageFlagFile(string $language, bool $absolutePath = true): string
     {
@@ -578,8 +574,7 @@ final class Tool
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public static function classExists(string $class): bool
     {
@@ -591,8 +586,7 @@ final class Tool
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public static function interfaceExists(string $class): bool
     {
@@ -604,8 +598,7 @@ final class Tool
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public static function traitExists(string $class): bool
     {
@@ -655,7 +648,7 @@ final class Tool
     /**
      * @internal
      *
-     * @return array
+     * @return string[]
      */
     public static function getCachedSymfonyEnvironments(): array
     {
@@ -675,8 +668,7 @@ final class Tool
     /**
      * @param string $message
      *
-     *@internal
-     *
+     * @internal
      */
     public static function exitWithError(string $message): void
     {

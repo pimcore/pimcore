@@ -99,7 +99,7 @@ class Document extends Url
         return $this->_documentId;
     }
 
-    public function setDocumentId(int $documentId)
+    public function setDocumentId(int $documentId): void
     {
         $this->_documentId = $documentId;
     }
@@ -109,7 +109,7 @@ class Document extends Url
         return $this->documentType;
     }
 
-    public function setDocumentType(string $documentType)
+    public function setDocumentType(string $documentType): void
     {
         $this->documentType = $documentType;
     }
@@ -119,7 +119,7 @@ class Document extends Url
         return $this->realFullPath;
     }
 
-    public function setRealFullPath(string $realFullPath)
+    public function setRealFullPath(string $realFullPath): void
     {
         $this->realFullPath = $realFullPath;
     }

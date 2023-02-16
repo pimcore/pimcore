@@ -16,7 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7;
 
+use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
+use Pimcore\Bundle\ApplicationLoggerBundle\FileObject;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\CommitOrderProcessorEvents;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotSuccessfulException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -25,11 +28,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInte
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
-use Pimcore\Event\Ecommerce\CommitOrderProcessorEvents;
 use Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent;
 use Pimcore\Event\Model\Ecommerce\SendConfirmationMailEvent;
-use Pimcore\Log\ApplicationLogger;
-use Pimcore\Log\FileObject;
 use Pimcore\Logger;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -73,19 +73,19 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
         $this->lockFactory = $lockFactory;
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         if (isset($options['confirmation_mail'])) {
             $this->confirmationMail = $options['confirmation_mail'];
         }
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefined('confirmation_mail');
     }
 
-    public function setConfirmationMail(string $confirmationMail)
+    public function setConfirmationMail(string $confirmationMail): void
     {
         if (!empty($confirmationMail)) {
             $this->confirmationMail = $confirmationMail;
@@ -256,7 +256,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
      * @param StatusInterface $paymentStatus
      * @param PaymentInterface $paymentProvider
      */
-    protected function applyAdditionalDataToOrder(AbstractOrder $order, StatusInterface $paymentStatus, PaymentInterface $paymentProvider)
+    protected function applyAdditionalDataToOrder(AbstractOrder $order, StatusInterface $paymentStatus, PaymentInterface $paymentProvider): void
     {
         // nothing to do by default
     }
@@ -289,12 +289,12 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
      *
      * @param AbstractOrder $order
      */
-    protected function processOrder(AbstractOrder $order)
+    protected function processOrder(AbstractOrder $order): void
     {
         // nothing to do
     }
 
-    protected function sendConfirmationMail(AbstractOrder $order)
+    protected function sendConfirmationMail(AbstractOrder $order): void
     {
         $event = new SendConfirmationMailEvent($this, $order, $this->confirmationMail);
         $this->eventDispatcher->dispatch($event, CommitOrderProcessorEvents::SEND_CONFIRMATION_MAILS);

@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.objectbrick");
+/**
+ * @private
+ */
 pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
     forbiddenNames: [
@@ -102,7 +105,8 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick': this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
+            "beforeitemmove": this.onTreeNodeBeforeMove.bind(this)
         };
         return treeNodeListeners;
     },
@@ -153,6 +157,10 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         }));
 
         menu.showAt(e.pageX, e.pageY);
+    },
+
+    onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
+        return pimcore.helpers.treeDragDropValidate(node, oldParent, newParent);
     },
 
     addField: function () {

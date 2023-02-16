@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.advancedManyToManyRelation");
+/**
+ * @private
+ */
 pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tags.abstractRelations, {
 
     type: "advancedManyToManyRelation",
@@ -40,20 +43,31 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
         var fields = [];
 
-        fields.push("id");
-        fields.push("path");
-        fields.push("inheritedFields");
-        fields.push("metadata");
-        fields.push("type");
-        fields.push("subtype");
+        fields.push({name: "id"});
+        fields.push({name:"path"});
+        fields.push({name:"inheritedFields"});
+        fields.push({name:"metadata"});
+        fields.push({name:"type"});
+        fields.push({name:"subtype"});
 
         var i;
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
-            fields.push(this.fieldConfig.columns[i].key);
+            let defaultValue = null;
+            switch(this.fieldConfig.columns[i].type.toLowerCase()){
+                case "bool":
+                case "columnbool":
+                    defaultValue = this.fieldConfig.columns[i].value ? (this.fieldConfig.columns[i].value).toLowerCase() == "true" : null;
+                    break;
+                case "text":
+                case "number":
+                    defaultValue = this.fieldConfig.columns[i].value;
+                    break;
+            }
+            fields.push({name: this.fieldConfig.columns[i].key, defaultValue: defaultValue});
         }
 
-        fields.push("rowId");
+        fields.push({name: "rowId"});
 
         var modelName = 'ObjectsMultihrefMetadataEntry';
         if (!Ext.ClassManager.isCreated(modelName)) {
@@ -594,24 +608,26 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 });
             }
 
-            toolbarItems = toolbarItems.concat([
-                {
+            if (this.fieldConfig.assetsAllowed && this.fieldConfig.noteditable == false) {
+                toolbarItems.push({
                     xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                }
-                //,
-                //this.getCreateControl()
-            ]);
-        }
+                    cls: "pimcore_inline_upload",
+                    iconCls: "pimcore_icon_upload",
+                    handler: this.uploadDialog.bind(this)
+                });
+            }
 
-        if (this.fieldConfig.assetsAllowed && this.fieldConfig.noteditable == false) {
-            toolbarItems.push({
-                xtype: "button",
-                cls: "pimcore_inline_upload",
-                iconCls: "pimcore_icon_upload",
-                handler: this.uploadDialog.bind(this)
-            });
+            if(pimcore.helpers.hasSearchImplementation()) {
+                toolbarItems = toolbarItems.concat([
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_search",
+                        handler: this.openSearchEditor.bind(this)
+                    }
+                    //,
+                    //this.getCreateControl()
+                ]);
+            }
         }
 
         return toolbarItems;
@@ -723,14 +739,16 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             }.bind(this, data)
         }));
 
-        menu.add(new Ext.menu.Item({
-            text: t('search'),
-            iconCls: "pimcore_icon_search",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.openSearchEditor();
-            }.bind(this)
-        }));
+        if(pimcore.helpers.hasSearchImplementation()) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+        }
 
         e.stopEvent();
         menu.showAt(e.getXY());

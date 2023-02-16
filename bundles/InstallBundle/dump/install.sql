@@ -1,28 +1,6 @@
 
 SET NAMES utf8mb4;
 
-DROP TABLE IF EXISTS `application_logs`;
-CREATE TABLE `application_logs` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `pid` INT(11) NULL DEFAULT NULL,
-  `timestamp` datetime NOT NULL,
-  `message` TEXT NULL,
-  `priority` ENUM('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
-  `fileobject` varchar(1024) DEFAULT NULL,
-  `info` varchar(1024) DEFAULT NULL,
-  `component` varchar(190) DEFAULT NULL,
-  `source` varchar(190) DEFAULT NULL,
-  `relatedobject` int(11) unsigned DEFAULT NULL,
-  `relatedobjecttype` enum('object','document','asset') DEFAULT NULL,
-  `maintenanceChecked` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `component` (`component`),
-  KEY `timestamp` (`timestamp`),
-  KEY `relatedobject` (`relatedobject`),
-  KEY `priority` (`priority`),
-  KEY `maintenanceChecked` (`maintenanceChecked`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `assets`;
 CREATE TABLE `assets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -279,41 +257,6 @@ CREATE TABLE `email_log` (
   CONSTRAINT `fk_email_log_documents` FOREIGN KEY (`documentId`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `glossary`;
-CREATE TABLE `glossary` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `language` varchar(10) DEFAULT NULL,
-  `casesensitive` tinyint(1) DEFAULT NULL,
-  `exactmatch` tinyint(1) DEFAULT NULL,
-  `text` varchar(255) DEFAULT NULL,
-  `link` varchar(255) DEFAULT NULL,
-  `abbr` varchar(255) DEFAULT NULL,
-  `site` int(11) unsigned DEFAULT NULL,
-  `creationDate` int(11) unsigned DEFAULT '0',
-  `modificationDate` int(11) unsigned DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `language` (`language`),
-  KEY `site` (`site`)
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `http_error_log`;
-CREATE TABLE `http_error_log` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `uri` varchar(1024) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `code` int(3) DEFAULT NULL,
-  `parametersGet` longtext,
-  `parametersPost` longtext,
-  `cookies` longtext,
-  `serverVars` longtext,
-  `date` int(11) unsigned DEFAULT NULL,
-  `count` bigint(20) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `uri` (`uri`),
-  KEY `code` (`code`),
-  KEY `date` (`date`),
-  KEY `count` (`count`)
-) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
-
 DROP TABLE IF EXISTS `lock_keys`;
 CREATE TABLE `lock_keys` (
   `key_id` varchar(64) NOT NULL,
@@ -530,7 +473,7 @@ CREATE TABLE `targeting_storage` (
   `visitorId` varchar(100) NOT NULL,
   `scope` varchar(50) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `value` text,
+  `value` json,
   `creationDate` datetime DEFAULT NULL,
   `modificationDate` datetime DEFAULT NULL,
   PRIMARY KEY (`visitorId`,`scope`,`name`),
@@ -638,7 +581,7 @@ CREATE TABLE `users` (
 	`websiteTranslationLanguagesEdit` LONGTEXT NULL DEFAULT NULL,
   `websiteTranslationLanguagesView` LONGTEXT NULL DEFAULT NULL,
   `lastLogin` int(11) unsigned DEFAULT NULL,
-  `keyBindings` TEXT NULL,
+  `keyBindings` json NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),
@@ -723,15 +666,6 @@ CREATE TABLE `users_workspaces_object` (
   CONSTRAINT `fk_users_workspaces_object_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `uuids`;
-CREATE TABLE `uuids` (
-  `uuid` CHAR(36) NOT NULL,
-  `itemId` int(11) unsigned NOT NULL,
-  `type` VARCHAR(25) NOT NULL,
-  `instanceIdentifier` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`uuid`, `itemId`, `type`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `versions`;
 CREATE TABLE `versions` (
   `id` bigint(20) unsigned NOT NULL auto_increment,
@@ -808,7 +742,7 @@ CREATE TABLE `classificationstore_keys` (
 	`type` VARCHAR(190) NULL DEFAULT NULL,
 	`creationDate` INT(11) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT '0',
-	`definition` LONGTEXT NULL,
+	`definition` json NULL,
 	`enabled` TINYINT(1) NULL DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`),
@@ -883,7 +817,7 @@ CREATE TABLE `gridconfigs` (
 	`name` VARCHAR(50) NULL,
 	`searchType` VARCHAR(50) NULL,
 	`type` enum('asset','object') NOT NULL DEFAULT 'object',
-	`config` LONGTEXT NULL,
+	`config` json NULL,
 	`description` LONGTEXT NULL,
 	`creationDate` INT(11) NULL,
 	`modificationDate` INT(11) NULL,
@@ -932,7 +866,7 @@ CREATE TABLE `importconfigs` (
 	`ownerId` INT(11) NULL,
 	`classId` VARCHAR(50) NULL DEFAULT NULL,
 	`name` VARCHAR(50) NULL,
-	`config` LONGTEXT NULL,
+	`config` json NULL,
   `description` LONGTEXT NULL,
 	`creationDate` INT(11) NULL,
 	`modificationDate` INT(11) NULL,

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use League\HTMLToMarkdown\HtmlConverter;
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
@@ -57,14 +56,14 @@ class Mail extends Email
     /**
      * Contains the dynamic Params for the Twig engine
      *
-     * @var array
+     * @var mixed[]
      */
     private array $params = [];
 
     /**
      * Options passed to html2text
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private array $html2textOptions = [
         'ignore_errors' => true,
@@ -166,7 +165,7 @@ class Mail extends Email
      *
      * @internal
      */
-    public function init(string $type = 'email')
+    public function init(string $type = 'email'): void
     {
         $config = Config::getSystemConfiguration($type);
 
@@ -233,7 +232,7 @@ class Mail extends Email
     /**
      * Returns options for html2text
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getHtml2TextOptions(): array
     {
@@ -329,7 +328,7 @@ class Mail extends Email
     /**
      * Returns the parameters which were set with "setParams" or "setParam"
      *
-     * @return array
+     * @return mixed[]
      */
     public function getParams(): array
     {
@@ -353,7 +352,7 @@ class Mail extends Email
      *
      * @param bool $value
      */
-    public static function setForceDebugMode(bool $value)
+    public static function setForceDebugMode(bool $value): void
     {
         self::$forceDebugMode = $value;
     }
@@ -574,6 +573,11 @@ class Mail extends Email
         return $this;
     }
 
+    /**
+     * @param array<Address|string> $addresses
+     *
+     * @return array<Address|string>
+     */
     private function filterLogAddresses(array $addresses): array
     {
         foreach ($addresses as $addrKey => $address) {
@@ -593,6 +597,11 @@ class Mail extends Email
         return $addresses;
     }
 
+    /**
+     * @param array<Address|string> $recipients
+     *
+     * @return array<Address|string>
+     */
     private function getDebugMailRecipients(array $recipients): array
     {
         $headers = $this->getHeaders();
@@ -675,7 +684,6 @@ class Mail extends Email
             // render document
             if ($this->getDocument() instanceof Model\Document) {
                 $attributes = $this->getParams();
-                $attributes[ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS] = true;
 
                 $html = Model\Document\Service::render($this->getDocument(), $attributes);
             }
@@ -840,10 +848,9 @@ class Mail extends Email
     /**
      * @param array|null $originalData
      *
-     *@internal
-     *
+     * @internal
      */
-    public function setOriginalData(?array $originalData)
+    public function setOriginalData(?array $originalData): void
     {
         $this->originalData = $originalData;
     }
@@ -868,7 +875,9 @@ class Mail extends Email
     }
 
     /**
-     * format Address from old params(string $address, string $name)
+     * @param Address|string|string[] ...$addresses
+     *
+     * @return array<Address|string>
      */
     private function formatAddress(Address|string|array ...$addresses): array
     {
@@ -885,7 +894,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function addTo(...$addresses): static
+    public function addTo(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -897,7 +906,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function addCc(...$addresses): static
+    public function addCc(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -909,7 +918,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function addBcc(...$addresses): static
+    public function addBcc(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -921,7 +930,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function addFrom(...$addresses): static
+    public function addFrom(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -933,7 +942,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    public function addReplyTo(...$addresses): static
+    public function addReplyTo(Address|string ...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 

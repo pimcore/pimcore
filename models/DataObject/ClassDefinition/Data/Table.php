@@ -177,8 +177,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @return string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -246,8 +245,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @return string
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
@@ -357,7 +355,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -375,7 +373,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
-            return base64_encode(Serialize::serialize($data));
+            return json_encode($data);
         }
 
         return '';
@@ -464,7 +462,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @param DataObject\ClassDefinition\Data\Table $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->cols = $masterDefinition->cols;
         $this->colsFixed = $masterDefinition->colsFixed;

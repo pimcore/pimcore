@@ -97,69 +97,14 @@ services:
       arguments:
         - 'Pimcore\Document\Newsletter\AddressSourceAdapter\CsvList'
 
-    pimcore.document.newsletter.factory.report:
-      class: Pimcore\Document\Newsletter\ReportAddressSourceAdapterFactory
-      arguments:
-        - '@pimcore.custom_report.adapter.factories'
-
     pimcore.newsletter.address_source_adapter.factories:
         public: true
         class: Symfony\Component\DependencyInjection\ServiceLocator
         tags: ['container.service_locator']
 
-
-    # CustomReport Adapter
-    pimcore.custom_report.adapter.factory.sql:
-      class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
-      arguments:
-        - 'Pimcore\Model\Tool\CustomReport\Adapter\Sql'
-
-    pimcore.custom_report.adapter.factory.analytics:
-      class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
-      arguments:
-        - 'Pimcore\Model\Tool\CustomReport\Adapter\Analytics'
-
-    pimcore.custom_report.adapter.factories:
-        class: Symfony\Component\DependencyInjection\ServiceLocator
-        public: true
-        tags: ['container.service_locator']
-
-
     # DataObject Consent Service
     Pimcore\DataObject\Consent\Service:
         public: true
-
-    Pimcore\Translation\ExportDataExtractorService\ExportDataExtractorServiceInterface:
-        class:  Pimcore\Translation\ExportDataExtractorService\ExportDataExtractorService
-
-    Pimcore\Translation\ExportService\ExportServiceInterface:
-        class:  Pimcore\Translation\ExportService\ExportService
-
-    Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor:
-        tags: [{name: pimcore.translation.data-extractor, type: object}]
-
-    Pimcore\Translation\ExportDataExtractorService\DataExtractor\DocumentDataExtractor:
-        tags: [{name: pimcore.translation.data-extractor, type: document}]
-
-    Pimcore\Translation\ExportService\Exporter\ExporterInterface:
-        class: Pimcore\Translation\ExportService\Exporter\Xliff12Exporter
-
-    Pimcore\Translation\ImporterService\ImporterServiceInterface:
-        class: Pimcore\Translation\ImporterService\ImporterService
-
-    Pimcore\Translation\ImporterService\Importer\DataObjectImporter:
-        tags: [{name: pimcore.translation.importer, type: object}]
-
-    Pimcore\Translation\ImporterService\Importer\DocumentImporter:
-        tags: [{name: pimcore.translation.importer, type: document}]
-
-    Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface:
-        class: Pimcore\Translation\ImportDataExtractor\Xliff12DataExtractor
-
-    Pimcore\Translation\ImportDataExtractor\TranslationItemResolver\TranslationItemResolverInterface:
-        class: Pimcore\Translation\ImportDataExtractor\TranslationItemResolver\TranslationItemResolver
-
-    Pimcore\Translation\Escaper\Xliff12Escaper: ~
 
     Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager:
         public: true
@@ -186,9 +131,9 @@ services:
         public: true
         class: Pimcore\Model\DataObject\QuantityValue\DefaultConverter
 
-    Pimcore\Bundle\CoreBundle\Request\ParamConverter\DataObjectParamConverter:
+    Pimcore\Bundle\CoreBundle\Request\ParamResolver\DataObjectParamResolver:
         tags:
-            - { name: request.param_converter, priority: -2, converter: data_object_converter }
+            - { name: controller.argument_value_resolver, priority: 101}
 
     Symfony\Component\Lock\PersistingStoreInterface:
         class: Symfony\Component\Lock\Store\DoctrineDbalStore

@@ -287,43 +287,6 @@ class Link extends Model\Document
         return $this;
     }
 
-    /**
-     * @deprecated use getElement() instead, will be removed in Pimcore 11
-     *
-     * @return Model\Element\ElementInterface|null
-     */
-    public function getObject(): ?Model\Element\ElementInterface
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            'The Link::getObject() method is deprecated, use Link::getElement() instead.'
-        );
-
-        return $this->getElement();
-    }
-
-    /**
-     * @param Model\Element\ElementInterface $object
-     *
-     * @return $this
-     *
-     *@deprecated use getElement() instead, will be removed in Pimcore 11
-     *
-     */
-    public function setObject(Model\Element\ElementInterface $object): static
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            'The Link::setObject() method is deprecated, use Link::setElement() instead.'
-        );
-
-        $this->setElement($object);
-
-        return $this;
-    }
-
     private function setObjectFromId(): ?Model\Element\ElementInterface
     {
         try {
@@ -383,14 +346,14 @@ class Link extends Model\Document
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         parent::update($params);
 
         $this->saveScheduledTasks();
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

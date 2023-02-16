@@ -1,15 +1,18 @@
 # Upgrade Notes
 ## 11.0.0
+- [Logging] Removed constant `PIMCORE_PHP_ERROR_LOG`
 - [General] **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. 
  This results in **various bc breaks**. Please make sure to add the corresponding types to your implementation.
 - [UrlSlug] Removed `index` column and `index` index from `object_url_slugs` table as it was not being used anywhere.
-- Bumped Symfony packages to "^6.1". Pimcore 11 will only support Symfony 6.
+- Bumped Symfony packages to "^6.2". Pimcore 11 will only support Symfony 6.
 - `FrontendController::renderTemplate()`: Changed the visibility to `protected`.
 - [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface`
 - [JSRouting Bundle] Bumped `friendsofsymfony/jsrouting-bundle` to version `^3.2.1`
 - [Installer] Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
 - [Assets] Refactored `Pimcore\Model\Asset::getMetadata` method to allow listing of all metadata entries filtered by a specific language. Prior this version, the language filter was only available when a specific metadata name was defined in the parameters. Added native type hints and related tests.
-- [Documents] Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
+- [Documents] 
+  - Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
+  - Removed `pimcore:document:types` from config. The types will be represented by the keys of the `type_definitions:map`
 - [Class Definitions] Class Resolver does not catch exceptions anymore.
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
 - [Runtime Cache] Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.  
@@ -30,6 +33,7 @@
 - Removed `SessionConfiguratorInterface` & `SessionConfigurator` so services with tag `pimcore.session.configurator` will not register session bags anymore.
 - Removed parameter `pimcore.admin.session.attribute_bags`
 - TargetingSessionBagListener - changed the signature of `__construct`.
+- Removed deprecated methods `getObject()` and `setObject()` on the classes `Pimcore\Model\Document\Link` and `Pimcore\Model\DataObject\Data\Link`, please use `getElement()` and `setElement()` instead.
 - Removed deprecated `Pimcore\Db\ConnectionInterface` interface, `Pimcore\Db\Connection` class and `Pimcore\Db\PimcoreExtensionsTrait` trait.
   Column identifiers for the `insert()` and `update()` method data must be self quoted now. You can use the `Pimcore\Db\Helper::quoteDataIdentifiers()` method for that.
 - [Config] `Pimcore\Config\Config` has been removed, see [#12477](https://github.com/pimcore/pimcore/issues/12477). Please use the returned array instead, e.g.
@@ -55,7 +59,10 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Email] Removed the deprecated methods setBodyHtml(), setBodyText(), createAttachment() and setSubject(). Use html(),
   text(), attach() and subject() instead.
 - [Application Logger] Table names of archive tables are now named with year-month rather than month-year see [#8237](https://github.com/pimcore/pimcore/issues/8237).
-- [Glossary] `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
+- [Glossary] 
+  - `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
+  - Config `pimcore:glossary:` has been removed, please use `pimcore_glossary:` instead.
+    - Make sure to enable the PimcoreGlossaryBundle manually in the `config\bundles.php`
 - [Elements] Passing $force parameter as boolean is not valid anymore in `getById`, `getByPath`, `getElementById` methods. Instead, please pass it as an associative array ( eg.`['force' => true]`).
    For details, please see [#12789](https://github.com/pimcore/pimcore/issues/12789)
 - [DataObjects] Changed default behaviour: getByXXX methods on `Concrete` class now returns objects and variants if nothing else is specified.
@@ -67,11 +74,14 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [PhpArrayTable]: Removed PhpArrayTable class
 - [Elements] Changed method signature on `Pimcore\Model\Element\ElementInterface::save()`, this changes the `::save()` method on all classes (e.g. DataObjects and Pages) implementing the interface, including those inheriting from `Concrete`/`AbstractObject`, see [#13207](https://github.com/pimcore/pimcore/issues/13207)
 - [Document Editables] Removed method_exists bc layer for `getDataEditmode()`, `rewriteIds()` & `load()`, please use the corresponding interfaces `EditmodeDataInterface`, `IdRewriterInterface` & `LazyLoadingInterface` instead.
-- [Parallelization] Removed `webmozarts/console-parallelization` dependency due to maintainability reasons. If you still want to use parallelization for console commands, please add the dependency to your own `composer.json`.
+- [Commands] 
+  - Removed `webmozarts/console-parallelization` dependency to make parallelization optional. If you still want to use parallelization for console commands, please add the dependency to your own `composer.json`.
+  - Removed the deprecated `Parallelization::configureParallelization()` method.
 - [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is
   removed. Instead, please pass the arguments as an associative array (eg.`getNavigation($args)`.For details, please see [#12310](https://github.com/pimcore/pimcore/issues/12310)
 - [Flysystem] Bumped `league/flysystem-bundle` minimum requirement to ^3.0 (which introduces `directoryExists()`,`has()` methods and fixes support for `directory_visibility` configuration option). Please bump the Flysystem Adapters requirement accordingly to `^3.0` in your project `composer.json`. 
  NB: [Visibility](https://flysystem.thephpleague.com/docs/visibility/) permissions were specified as `0644` for files and `0755` for directories, are now using the more simplified `public/private` options which are translated respectively into `0600` and `0744`. 
+- [AdminBundle] Removed deprecated methods `getTranslator()`, `getBundleManager()` and `getTokenResolver()` from the `Pimcore\Bundle\AdminBundle\Controller\AdminController`
 - [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
 - [Sitemap] Bumped minimum requirement of `presta\sitemap-bundle` to `^3.3`, dropped support for `v2` and removed related BC Layer.
 - [Relations]: Add confirm dialog to empty button of relations and add possibility to disable clear relations in the class layout.
@@ -86,6 +96,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Video] It's now possible to drop a video asset directly into an video editable in class
 - [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
 - [Config] The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
+- [Config] The deprecated config node `pimcore.error_handling` and the related parameter `pimcore.response_exception_listener.render_error_document` was removed.
 - [DataObjects] Removed deprecated preview url in class editor.
 - [DataObjects] Removed sql filter functionality for data object grid
 - [DataObjects] Loading non-Concrete objects with the Concrete class is no longer possible
@@ -95,12 +106,34 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - Removed BruteforceProtection
 - Removed PreAuthenticatedAdminToken
 - [Logger] Bumped `monolog/monolog` to [^3.2](https://github.com/Seldaek/monolog/blob/main/UPGRADE.md#300) and `symfony/monolog-bundle` to [^3.8](https://github.com/symfony/monolog-bundle/blob/master/CHANGELOG.md#380-2022-05-10) (which adds support for monolog v3). Please adapt your custom implementation accordingly eg. log records are now `LogRecord` Objects instead of array.
-- [Ecommerce] The constructor of the indexing services (eg. `DefaultMysql`, `AbstractElasticSearch`) and related workers were changed to support the injection of monolog logger, please adapt your custom implementation.
-- [Bundles] 
+- [Ecommerce] 
+  - Ecommerce bundle has been moved into a package `pimcore/ecommerce-bundle`. If you wish to continue using the ecommerce framework, then please require the package in your composer.json and install it after enabling in `config/bundles.php`.
+  - The constructor of the following services has been changed, please adapt your custom implementation accordingly:
+    - `IndexService\ProductList\DefaultMysql`, `IndexService\ProductList\DefaultFindologic`
+    - `IndexService\Worker\AbstractElasticSearch`, `IndexService\Worker\DefaultFindologic`, `IndexService\Worker\DefaultMysql`, `IndexService\Worker\OptimizedMysql`
+    - `IndexService\Config\AbstractConfig` and it's sub-classes.
+    - `Tracking\Tracker\Analytics\AbstractAnalyticsTracker` and it's sub-classes.
+- [Bundles]
   - Removed support for loading bundles through `extensions.php`.
   - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.
   - Removed commands: `pimcore:bundle:enable`, `pimcore:bundle:disable`.
-  - Removed `dontCheckEnabled` config support from Areablock editable.
+  - Removed `dontCheckEnabled` config support from Areablock editable. 
+  - Functionality that was moved into its own bundle and must be enabled manually in `config/bundles.php`
+    - Glossary has been moved into PimcoreGlossaryBundle
+      - Config `pimcore:glossary:` has been removed, please use `pimcore_glossary:` in the PimcoreGlossaryBundle instead.
+    - Staticroutes has been moved into PimcoreStaticRoutesBundle
+      - Config `pimcore:staticroutes:` has been removed, please use `pimcore_static_routes:` in the PimcoreStaticRoutesBundle instead.
+    - Xliff Translation Import/Export and related Events have been moved into PimcoreXliffBundle. Please check and adapt the Events' namespaces.
+    - CustomReports have been moved into PimcoreCustomReportsBundle
+      - Config `pimcore:custom_reports` has been removed, please use `pimcore_custom_reports:` in the PimcoreCustomReportsBundle insteand.
+    - Search has been moved into PimcoreSimpleBackendSearchBundle
+    - SEO Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
+    - WordExport has been moved into PimcoreWordExportBundle
+    - [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
+    - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
+    - UUID has been moved into PimcoreUuidBundle
+      - Config `pimcore:general:instance_identifier` has been removed, please use `pimcore_uuid:instance_identifier` in the PimcoreUuidBundle instead. Please run `bin/console config:dump pimcore_uuid` to see more about the instance identifier config after installing the bundle.
+    - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
@@ -115,8 +148,48 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Ecommerce] Elasticsearch 7 support was removed
 - [Ecommerce] Config option `es_client_params` in `index_service` was removed 
 - [ClassSavedInterface] Removed `method_exists` bc layer. Please add the corresponding `ClassSavedInterface` interface to your custom field definitions. For more details check the 10.6.0 patch notes.
- 
+- [UrlSlug] Allow processing unpublished fallback document is now default behaviour, removed the related configuration options and usages (`allow_processing_unpublished_fallback_document`, `ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS`). For details, please see [#10005](https://github.com/pimcore/pimcore/issues/10005#issuecomment-907007745)
+- [DataObjects\Documents] **BC Break**: Calling `getChildren/getSiblings` on `AbstractObject`, `Document` and `Asset` now returns unloaded listing. If the list is not traveresed immediately, then it is required to call `load()` explicitily.
+  Also, `setChildren` now accepts `Listing` as first parameter instead of array.
+- [Admin] Removed `adminer` as built-in database management tool.
+- [Search] The search functionality has been extracted to its own bundle (`PimcoreSimpleBackendSearchBundle`)
+  - The `pimcore:search-backend-reindex` command has been moved to the search bundle
+  - Search icons all over Pimcore won't be available without the search bundle
+  - The inline search feature for some relations won't be available without the search bundle
+  - The "advanced" GDPR search has also been moved. We provide a basic search to cover the fundamental functionality if the search bundle isn't available.
+  - The asset, object, document and quick search have been moved to the search bundle
+  - All backend-search related files have been moved to the search bundle (please check custom implementations if you rely on any backend-search component!)
+  - Added additional messenger transport for backend search (`pimcore_search_backend_message`)
+- [DataObjects] Text data types now set their corresponding database columns to `null` instead of `''` (empty string) when empty.
+- [Ecommerce][Product Interfaces] Changed return type-hints of `CheckoutableInterface` methods `getOSPrice`, `getOSPriceInfo`, `getOSAvailabilityInfo`, `getPriceSystemName`, `getAvailabilitySystemName`, `getPriceSystemImplementation`, `getAvailabilitySystemImplementation` to be non-nullable.
+- [Elements] Removed the deprecated `Pimcore\Model\Element\Service::getType()`, use `Pimcore\Model\Element\Service::getElementType()` instead.
+- [DataObjects] Method `Concrete::getClass()` throws NotFoundException if class is not found for an object.
+- [Asset] Removed the deprecated `marshal()/unmarshal()` methods for metadata, use `normalize()/denormalize()` methods instead.
+- [Asset] Asset/Asset Thumbnail Update messages are now routed to different queue
+  instead of `pimcore_core`. please add option `pimcore_asset_update` to command `bin/console messenger:consume pimcore_core... pimcore_asset_update` to post process assets on update.
+  Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
+- [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
+- [Asset] Removed VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111)
+- [Translations] Translations Domains needs to be registered in order to be considered as valid. If you are using custom domains
+  for translations (other than `messages` and `admin`), then it is required to register the domain in config below:
+```yaml
+pimcore:
+  translations:
+    domains:
+      - site_1
+      - site_2
+```
+- [Environment] - Removed `symfony/dotenv` dependency to make loading of `.env` files optional. please add the requirement to your composer.json, if you still want to use `.env` files.
+- Removed deprecated `SensioFrameworkExtraBundle` which affects the following:
+  - `@Template` annotation must be replaced with `#[Template]` attribute. Template guessing based on controller::action is not supported anymore.
+  - `@ResponseHeader` annotation must be replaced with `#[ResponseHeader]` attribute. Removed deprecated `Pimcore\Controller\Configuration\ResponseHeader`.
+  - `@ParamConverter` annotation must be replaced with `#[DataObjectParam]` attribute.
+  Replace other annotations provided by [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers)
+- [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
+- [DataObjects][CSV Export] Changed encoding of table data-types to `json_encode` from `base64_encoded`.
+
 ## 10.6.0
+- [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
 - [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isBrickEnabled()` method which is also deprecated.
 - [Twig] Pimcore now requires the `twig/extra-bundle` which eases the usage of Twig's "extra" extensions.
 - [UrlSlug] Deprecated `$index` property and its getter and setter methods as they were not being used. These will be removed in Pimcore 11.
@@ -124,8 +197,19 @@ Please make sure to set your preferred storage location ***before*** migration. 
   This method will return the field/column name for the current version and provide a way to support both version for bundles. 
   E.g. passing `o_id` in Pimcore 10 will return `o_id`, but `id` in Pimcore 11. 
 - [Ecommerce] Elasticsearch 7 support has been deprecated, elasticsearch 8 supported was added.
-- [ClassSavedInterface] Introduced additional interface implementing the `classSaved` method. The interface will be used by field definitions in `Pimcore\Model\DataObject\ClassDefinition\Data\*`. If your custom field definition implements the `classSaved` method, please use the `ClassSavedInterface` interface. Make sure that you either provide a default value (e.g. `$params = []`) for `$params` or don't use a second parameter in the method signature at all. Note that using the `classSaved` method without implementing the interface is deprecated and won't work in Pimcore 11. 
-
+- [CustomLayout] Passing `int` to `setDefault` is deprecated and will be removed in Pimcore 11. Use type `bool` instead. Same for `getDefault` method, it will return type `bool` only in Pimcore 11.
+- [DataObjects] Traits `ColumnType` and `QueryColumnType` are deprecated. These will be removed in Pimcore 11.
+- [ClassSavedInterface] Introduced additional interface implementing the `classSaved` method. The interface will be used by field definitions in `Pimcore\Model\DataObject\ClassDefinition\Data\*`. If your custom field definition implements the `classSaved` method, please use the `ClassSavedInterface` interface. Make sure that you either provide a default value (e.g. `$params = []`) for `$params` or don't use a second parameter in the method signature at all. Note that using the `classSaved` method without implementing the interface is deprecated and won't work in Pimcore 11.
+- [DataObject]: The usage of `getO_` or `setO_` methods is deprecated. The BC layer supporting these methods will be removed in Pimcore 11.
+- [Classification Store] Deleting the data from deleted groups and keys.
+- [Commands] Calling `configureParallelization` on `Parallelization` trait is deprecated and will be removed in Pimcore 11. Please call `Parallelization::configureCommand` instead.
+- [Events] Event `pimcore.element.note.postAdd` has been deprecated. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
+- [Document] Deprecated loading documents via fixed namespace only. It will be removed in Pimcore 11. Use `pimcore:type_definitions` instead.
+- [Annotations] Using Annotations `@ResponseHeader` & `@ParamConverter`, `@Template` and rest from [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers) is deprecated and will not be supported on Pimcore 11. Use `#[ResponseHeader]`,`#[DataObjectParam]` argument, `#[Template]` and other attributes instead.
+- [Navigation] Changed the navigation building process. It is easier to add main and submenus. For details please see [Adding Custom Main Navigation Items](https://pimcore.com/docs/pimcore/11.0/Development_Documentation/Extending_Pimcore/Bundle_Developers_Guide/Event_Listener_UI.html#page_Adding-Custom-Main-Navigation-Items)
+- [Sites] Default Site Id has been updated from `default` to `0`. Please update configs using default site id accordingly.
+- [Asset] Deprecated VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111).
+- [Authentication] The method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been deprecated and will be removed in Pimcore 11.
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
@@ -323,6 +407,7 @@ $oldId = $object->getId(); //returns 0
 //after:
 $newId = $object->getId(); //returns null
 ```
+- [Asset] Deprectaed the `marshal()/unmarshal()` methods for metadata, use `normalize()/denormalize()` methods instead.
 
 ## 10.3.0
 - **Important**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
@@ -462,6 +547,7 @@ framework:
 - Removed `\Pimcore\Tool::getValidCacheKey/()`, use `preg_replace('/[^a-zA-Z0-9]/', '_', $key)` instead.
 - Removed `\Pimcore\Tool::isValidPath/()`, use `\Pimcore\Model\Element\Service::isValidPath()` instead.
 - Deprecated `\Pimcore\Model\Element\Service::getSaveCopyName()`, use `getSafeCopyName()` instead.
+- Deprecated methods `getObject()` and `setObject()` on the classes `\Pimcore\Model\Document\Link` and `\Pimcore\Model\DataObject\Data\Link`, use `getElement()` and `setElement()` instead.
 - Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) does not work anymore.
 - Removed `\Pimcore\Controller\Config\ConfigNormalizer`.
 - Removed `pimcore_action()` Twig extension. Use Twig `render()` instead.

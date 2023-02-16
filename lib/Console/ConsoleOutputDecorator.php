@@ -40,17 +40,17 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
         $this->errorOutput = $errorOutput;
     }
 
-    public function write($messages, $newline = false, $options = 0)
+    public function write(string|iterable $messages, bool $newline = false, int $options = 0): void
     {
         $this->output->write($messages, $newline, $options);
     }
 
-    public function writeln($messages, $options = 0)
+    public function writeln(string|iterable $messages, int $options = 0): void
     {
         $this->output->writeln($messages, $options);
     }
 
-    public function setVerbosity($level)
+    public function setVerbosity(int $level): void
     {
         $this->output->setVerbosity($level);
     }
@@ -80,7 +80,7 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
         return $this->output->isDebug();
     }
 
-    public function setDecorated($decorated)
+    public function setDecorated(bool $decorated): void
     {
         $this->output->setDecorated($decorated);
     }
@@ -90,7 +90,7 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
         return $this->output->isDecorated();
     }
 
-    public function setFormatter(OutputFormatterInterface $formatter)
+    public function setFormatter(OutputFormatterInterface $formatter): void
     {
         $this->output->setFormatter($formatter);
     }
@@ -110,7 +110,7 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
         return $this->errorOutput;
     }
 
-    public function setErrorOutput(OutputInterface $error)
+    public function setErrorOutput(OutputInterface $error): void
     {
         $this->errorOutput = $error;
     }

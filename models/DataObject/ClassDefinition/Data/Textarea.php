@@ -51,7 +51,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->maxLength;
     }
 
-    public function setMaxLength(?int $maxLength)
+    public function setMaxLength(?int $maxLength): void
     {
         $this->maxLength = $maxLength;
     }
@@ -61,7 +61,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->showCharCount;
     }
 
-    public function setShowCharCount(bool $showCharCount)
+    public function setShowCharCount(bool $showCharCount): void
     {
         $this->showCharCount = (bool) $showCharCount;
     }
@@ -85,8 +85,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -100,8 +99,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -115,8 +113,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -139,17 +136,15 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param mixed $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     *
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
+        if ($data === '') {
+            return null;
+        }
+
         return $data;
     }
 
@@ -192,7 +187,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMaxLength() !== null) {
             if (mb_strlen($data) > $this->getMaxLength()) {

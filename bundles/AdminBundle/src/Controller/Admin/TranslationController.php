@@ -22,24 +22,15 @@ use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
-use Pimcore\Translation\ExportService\Exporter\ExporterInterface;
-use Pimcore\Translation\ExportService\ExportServiceInterface;
-use Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface;
-use Pimcore\Translation\ImporterService\ImporterServiceInterface;
-use Pimcore\Translation\TranslationItemCollection\TranslationItemCollection;
 use Pimcore\Translation\Translator;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -64,7 +55,7 @@ class TranslationController extends AdminController
         $admin = $domain == Translation::DOMAIN_ADMIN;
 
         $dialect = $request->get('csvSettings', null);
-        $session = Session::get('pimcore_importconfig');
+        $session = Session::getSessionBag($request->getSession(), 'pimcore_importconfig');
         $tmpFile = $session->get('translation_import_file');
 
         if ($dialect) {
@@ -135,7 +126,7 @@ class TranslationController extends AdminController
         $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $filename;
         File::put($importFile, $tmpData);
 
-        Session::useSession(function (AttributeBagInterface $session) use ($importFile) {
+        Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($importFile) {
             $session->set('translation_import_file', $importFile);
         }, 'pimcore_importconfig');
 
@@ -517,7 +508,7 @@ class TranslationController extends AdminController
         return $prefixedTranslations;
     }
 
-    protected function extendTranslationQuery(array $joins, Translation\Listing $list, string $tableName, array $filters)
+    protected function extendTranslationQuery(array $joins, Translation\Listing $list, string $tableName, array $filters): void
     {
         if ($joins) {
             $list->onCreateQueryBuilder(
@@ -560,7 +551,7 @@ class TranslationController extends AdminController
         }
     }
 
-    protected function getGridFilterCondition(Request $request, string $tableName, bool $languageMode = false, $admin = false): array|string|null
+    protected function getGridFilterCondition(Request $request, string $tableName, bool $languageMode = false, bool $admin = false): array|string|null
     {
         $joins = [];
         $conditions = [];
@@ -693,6 +684,7 @@ class TranslationController extends AdminController
         $source = $request->get('source', '');
         $target = $request->get('target', '');
         $type = $request->get('type');
+        $jobUrl = $request->get('job_url', $request->getBaseUrl() . '/admin/translation/' . $type . '-export');
 
         $source = str_replace('_', '-', $source);
         $target = str_replace('_', '-', $target);
@@ -761,12 +753,10 @@ class TranslationController extends AdminController
 
         $elements = array_values($elements);
 
-        $elementsPerJob = 10;
-        if ($type == 'word') {
-            // the word export can only handle one document per request
-            // the problem is Document\Service::render(), ... in the action can be a $this->redirect() or exit;
-            // nobody knows what's happening in an action ;-) So we need to isolate them in isolated processes
-            // so that the export doesn't stop completely after a "redirect" or any other unexpected behavior of an action
+        $elementsPerJob = (int)$request->get('elements_per_job', 10);
+
+        // make sure elements per job is not 0
+        if (!$elementsPerJob) {
             $elementsPerJob = 1;
         }
 
@@ -774,7 +764,7 @@ class TranslationController extends AdminController
         $elements = array_chunk($elements, $elementsPerJob);
         foreach ($elements as $chunk) {
             $jobs[] = [[
-                'url' => $request->getBaseUrl() . '/admin/translation/' . $type . '-export',
+                'url' => $jobUrl,
                 'method' => 'POST',
                 'params' => [
                     'id' => $exportId,
@@ -792,407 +782,6 @@ class TranslationController extends AdminController
                 'id' => $exportId,
             ]
         );
-    }
-
-    /**
-     * @Route("/xliff-export", name="pimcore_admin_translation_xliffexport", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ExportServiceInterface $exportService
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function xliffExportAction(Request $request, ExportServiceInterface $exportService): JsonResponse
-    {
-        $id = $request->get('id');
-        $data = $this->decodeJson($request->get('data'));
-        $source = $request->get('source');
-        $target = $request->get('target');
-
-        $translationItems = new TranslationItemCollection();
-
-        foreach ($data as $el) {
-            $element = Element\Service::getElementById($el['type'], $el['id']);
-            $translationItems->addPimcoreElement($element);
-        }
-
-        $exportService->exportTranslationItems($translationItems, $source, [$target], $id);
-
-        return $this->adminJson([
-            'success' => true,
-        ]);
-    }
-
-    /**
-     * @Route("/xliff-export-download", name="pimcore_admin_translation_xliffexportdownload", methods={"GET"})
-     *
-     *
-     */
-    public function xliffExportDownloadAction(Request $request, ExporterInterface $translationExporter, ExportServiceInterface $exportService): BinaryFileResponse
-    {
-        $id = $request->get('id');
-        $exportFile = $exportService->getTranslationExporter()->getExportFilePath($id);
-
-        $response = new BinaryFileResponse($exportFile);
-        $response->headers->set('Content-Type', $translationExporter->getContentType());
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($exportFile));
-        $response->deleteFileAfterSend(true);
-
-        return $response;
-    }
-
-    /**
-     * @Route("/xliff-import-upload", name="pimcore_admin_translation_xliffimportupload", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ImportDataExtractorInterface $importDataExtractor
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function xliffImportUploadAction(Request $request, ImportDataExtractorInterface $importDataExtractor): JsonResponse
-    {
-        $jobs = [];
-        $id = uniqid();
-        $importFile = $importDataExtractor->getImportFilePath($id);
-        copy($_FILES['file']['tmp_name'], $importFile);
-
-        $steps = $importDataExtractor->countSteps($id);
-
-        for ($i = 0; $i < $steps; $i++) {
-            $jobs[] = [[
-                'url' => $this->generateUrl('pimcore_admin_translation_xliffimportelement'),
-                'method' => 'POST',
-                'params' => [
-                    'id' => $id,
-                    'step' => $i,
-                ],
-            ]];
-        }
-
-        $response = $this->adminJson([
-            'success' => true,
-            'jobs' => $jobs,
-            'id' => $id,
-        ]);
-        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
-        // Ext.form.Action.Submit and mark the submission as failed
-        $response->headers->set('Content-Type', 'text/html');
-
-        return $response;
-    }
-
-    /**
-     * @Route("/xliff-import-element", name="pimcore_admin_translation_xliffimportelement", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ImportDataExtractorInterface $importDataExtractor
-     * @param ImporterServiceInterface $importerService
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function xliffImportElementAction(Request $request, ImportDataExtractorInterface $importDataExtractor, ImporterServiceInterface $importerService): JsonResponse
-    {
-        $id = $request->get('id');
-        $step = (int) $request->get('step');
-
-        try {
-            $attributeSet = $importDataExtractor->extractElement($id, $step);
-            if ($attributeSet) {
-                $importerService->import($attributeSet);
-            } else {
-                Logger::warning(sprintf('Could not resolve element %s', $id));
-            }
-        } catch (\Exception $e) {
-            Logger::err($e->getMessage());
-
-            return $this->adminJson([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ]);
-        }
-
-        return $this->adminJson([
-            'success' => true,
-        ]);
-    }
-
-    /**
-     * @Route("/word-export", name="pimcore_admin_translation_wordexport", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function wordExportAction(Request $request): JsonResponse
-    {
-        ini_set('display_errors', 'off');
-
-        $id = $this->sanitzeExportId((string)$request->get('id'));
-        $exportFile = $this->getExportFilePath($id, false);
-
-        $data = $this->decodeJson($request->get('data'));
-        $source = $request->get('source');
-
-        if (!is_file($exportFile)) {
-            File::put($exportFile, '');
-        }
-
-        foreach ($data as $el) {
-            try {
-                $element = Element\Service::getElementById($el['type'], $el['id']);
-                $output = '';
-
-                // check supported types (subtypes)
-                if (!in_array($element->getType(), ['page', 'snippet', 'email', 'object'])) {
-                    continue;
-                }
-
-                if ($element instanceof Element\ElementInterface) {
-                    $output .= '<h1 class="element-headline">' . ucfirst(
-                        $element->getType()
-                    ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
-                }
-
-                if ($element instanceof Document\PageSnippet) {
-                    if ($element instanceof Document\Page) {
-                        $structuredDataEmpty = true;
-                        $structuredData = '
-                            <table border="1" cellspacing="0" cellpadding="5">
-                                <tr>
-                                    <td colspan="2"><span style="color:#cc2929;font-weight: bold;">Structured Data</span></td>
-                                </tr>
-                        ';
-
-                        if ($element->getTitle()) {
-                            $structuredData .= '<tr>
-                                    <td><span style="color:#cc2929;">Title</span></td>
-                                    <td>' . $element->getTitle() . '&nbsp;</td>
-                                </tr>';
-                            $structuredDataEmpty = false;
-                        }
-
-                        if ($element->getDescription()) {
-                            $structuredData .= '<tr>
-                                    <td><span style="color:#cc2929;">Description</span></td>
-                                    <td>' . $element->getDescription() . '&nbsp;</td>
-                                </tr>';
-                            $structuredDataEmpty = false;
-                        }
-
-                        if ($element->getProperty('navigation_name')) {
-                            $structuredData .= '<tr>
-                                    <td><span style="color:#cc2929;">Navigation</span></td>
-                                    <td>' . $element->getProperty('navigation_name') . '&nbsp;</td>
-                                </tr>';
-                            $structuredDataEmpty = false;
-                        }
-
-                        $structuredData .= '</table>';
-
-                        if (!$structuredDataEmpty) {
-                            $output .= $structuredData;
-                        }
-                    }
-
-                    // we need to set the parameter "pimcore_admin" here to be able to render unpublished documents
-                    $html = Document\Service::render($element, [], false, ['pimcore_admin' => true]);
-
-                    $html = preg_replace(
-                        '@</?(img|meta|div|section|aside|article|body|bdi|bdo|canvas|embed|footer|head|header|html)([^>]+)?>@',
-                        '',
-                        $html
-                    );
-                    $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
-
-                    $dom = new Tool\DomCrawler($html);
-                    // remove containers including their contents
-                    $elements = $dom->filter('form, script, style, noframes, noscript, object, area, mapm, video, audio, iframe, textarea, input, select, button');
-                    foreach ($elements as $element) {
-                        $element->parentNode->removeChild($element);
-                    }
-
-                    $clearText = function ($string) {
-                        $string = str_replace("\r\n", '', $string);
-                        $string = str_replace("\n", '', $string);
-                        $string = str_replace("\r", '', $string);
-                        $string = str_replace("\t", '', $string);
-                        $string = preg_replace('/&[a-zA-Z0-9]+;/', '', $string); // remove html entities
-                        $string = preg_replace('#[ ]+#', '', $string);
-
-                        return $string;
-                    };
-
-                    // remove empty tags (where it matters)
-                    // replace links => links get [Linktext]
-                    $elements = $dom->filter('a');
-                    foreach ($elements as $element) {
-                        $string = $clearText($element->textContent);
-                        if (!empty($string)) {
-                            $newNode = $element->ownerDocument->createTextNode('[' . $element->textContent . ']');
-
-                            $element->parentNode->replaceChild($newNode, $element);
-                        } else {
-                            $element->ownerDocument->textContent = '';
-                        }
-                    }
-
-                    if ($dom->count() > 0) {
-                        $html = $dom->html();
-                    }
-
-                    $dom->clear();
-                    unset($dom);
-
-                    // force closing tags
-                    $doc = new \DOMDocument();
-                    libxml_use_internal_errors(true);
-                    $doc->loadHTML('<?xml encoding="UTF-8"><article>' . $html . '</article>');
-                    libxml_clear_errors();
-                    $html = $doc->saveHTML();
-
-                    $bodyStart = strpos($html, '<body>');
-                    $bodyEnd = strpos($html, '</body>');
-                    if ($bodyStart && $bodyEnd) {
-                        $html = substr($html, $bodyStart + 6, $bodyEnd - $bodyStart);
-                    }
-
-                    $output .= $html;
-                } elseif ($element instanceof DataObject\Concrete) {
-                    $hasContent = false;
-
-                    /** @var DataObject\ClassDefinition\Data\Localizedfields|null $fd */
-                    $fd = $element->getClass()->getFieldDefinition('localizedfields');
-                    if ($fd) {
-                        $definitions = $fd->getFieldDefinitions();
-
-                        $locale = str_replace('-', '_', $source);
-                        if (!Tool::isValidLanguage($locale)) {
-                            $locale = \Locale::getPrimaryLanguage($locale);
-                        }
-
-                        $output .= '
-                            <table border="1" cellspacing="0" cellpadding="2">
-                                <tr>
-                                    <td colspan="2"><span style="color:#cc2929;font-weight: bold;">Localized Data</span></td>
-                                </tr>
-                        ';
-
-                        foreach ($definitions as $definition) {
-                            // check allowed datatypes
-                            if (!in_array($definition->getFieldtype(), ['input', 'textarea', 'wysiwyg'])) {
-                                continue;
-                            }
-
-                            $content = $element->{'get' . ucfirst($definition->getName())}($locale);
-
-                            if (!empty($content)) {
-                                $output .= '
-                                <tr>
-                                    <td><span style="color:#cc2929;">' . $definition->getTitle() . ' (' . $definition->getName() . ')<span></td>
-                                    <td>' . $content . '&nbsp;</td>
-                                </tr>
-                                ';
-
-                                $hasContent = true;
-                            }
-                        }
-
-                        $output .= '</table>';
-                    }
-
-                    if (!$hasContent) {
-                        $output = ''; // there's no content in the object, so reset all contents and do not inclide it in the export
-                    }
-                }
-
-                // append contents
-                if (!empty($output)) {
-                    $f = fopen($exportFile, 'a+');
-                    fwrite($f, $output);
-                    fclose($f);
-                }
-            } catch (\Exception $e) {
-                Logger::error('Word Export: ' . $e->getMessage());
-                Logger::error((string) $e);
-
-                throw $e;
-            }
-        }
-
-        return $this->adminJson(
-            [
-                'success' => true,
-            ]
-        );
-    }
-
-    /**
-     * @Route("/word-export-download", name="pimcore_admin_translation_wordexportdownload", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function wordExportDownloadAction(Request $request): Response
-    {
-        $id = $this->sanitzeExportId((string)$request->get('id'));
-        $exportFile = $this->getExportFilePath($id, true);
-
-        // no conversion, output html file, works fine with MS Word and LibreOffice
-        $content = file_get_contents($exportFile);
-        @unlink($exportFile);
-
-        // replace <script> and <link>
-        $content = preg_replace('/<link[^>]+>/im', '$1', $content);
-        $content = preg_replace("/<script[^>]+>(.*)?<\/script>/im", '$1', $content);
-
-        $content =
-            "<html>\n" .
-            "<head>\n" .
-            '<style type="text/css">' . "\n" .
-            file_get_contents(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/css/word-export.css') .
-            "</style>\n" .
-            "</head>\n\n" .
-            "<body>\n" .
-            $content .
-            "\n\n</body>\n" .
-            "</html>\n";
-
-        $response = new Response($content);
-        $response->headers->set('Content-Type', 'text/html');
-        $response->headers->set(
-            'Content-Disposition',
-            'attachment; filename="word-export-' . date('Ymd') . '_' . uniqid() . '.htm"'
-        );
-
-        return $response;
-    }
-
-    private function sanitzeExportId(string $id): string
-    {
-        if (empty($id) || !preg_match('/^[a-z0-9]+$/', $id)) {
-            throw new BadRequestHttpException('Invalid export ID format');
-        }
-
-        return $id;
-    }
-
-    private function getExportFilePath(string $id, bool $checkExistence = true): string
-    {
-        // no need to check for path traversals here as sanitizeExportId restricted the ID parameter
-        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . $id . '.html';
-
-        if ($checkExistence && !file_exists($exportFile)) {
-            throw $this->createNotFoundException(sprintf('Export file does not exist at path %s', $exportFile));
-        }
-
-        return $exportFile;
     }
 
     /**

@@ -29,7 +29,10 @@ use Pimcore\Model\User;
  */
 class PermissionChecker
 {
-    public static function check(ElementInterface $element, $users): array
+    /**
+     * @param User[] $users
+     */
+    public static function check(ElementInterface $element, array $users): array
     {
         $protectedColumns = ['cid', 'cpath', 'userId', 'lEdit', 'lView', 'layouts'];
 
@@ -66,7 +69,6 @@ class PermissionChecker
         $permissions = [];
         $details = [];
 
-        /** @var User $user */
         foreach ($users as $user) {
             if (!$user instanceof User) {
                 continue;
@@ -148,7 +150,7 @@ class PermissionChecker
         return $result;
     }
 
-    protected static function collectParentIds($element): array
+    protected static function collectParentIds(ElementInterface $element): array
     {
         // collect properties via parent - ids
         $parentIds = [1];
@@ -165,7 +167,7 @@ class PermissionChecker
         return $parentIds;
     }
 
-    protected static function createDetail($user, $a = null, $b = null, $c = null, $d = null, $e = null, $f = null): array
+    protected static function createDetail(User $user, ?string $a = null, ?bool $b = null, ?string $c = null, ?string $d = null, ?string $e = null, ?string $f = null): array
     {
         $detailEntry = [
             'userId' => $user->getId(),
@@ -175,13 +177,12 @@ class PermissionChecker
             'd' => $d,
             'e' => $e,
             'f' => $f,
-
         ];
 
         return $detailEntry;
     }
 
-    protected static function getUserPermissions($user, &$details): void
+    protected static function getUserPermissions(User $user, array &$details): void
     {
         if ($user->isAdmin()) {
             $details[] = self::createDetail($user, 'ADMIN', true, null, null);

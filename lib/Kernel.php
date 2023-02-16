@@ -29,7 +29,6 @@ use Pimcore\Event\SystemEvents;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
-use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -123,7 +122,7 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
@@ -198,7 +197,7 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
-    public function boot()
+    public function boot(): void
     {
         if (true === $this->booted) {
             // make sure container reset is handled properly
@@ -216,7 +215,7 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
-    public function shutdown()
+    public function shutdown(): void
     {
         if (true === $this->booted) {
             // cleanup runtime cache, doctrine, monolog ... to free some memory and avoid locking issues
@@ -229,7 +228,7 @@ abstract class Kernel extends SymfonyKernel
     /**
      * {@inheritdoc}
      */
-    protected function initializeContainer()
+    protected function initializeContainer(): void
     {
         parent::initializeContainer();
 
@@ -309,7 +308,7 @@ abstract class Kernel extends SymfonyKernel
      *
      * @param BundleCollection $collection
      */
-    protected function registerCoreBundlesToCollection(BundleCollection $collection)
+    protected function registerCoreBundlesToCollection(BundleCollection $collection): void
     {
         $collection->addBundles([
             // symfony "core"/standard
@@ -320,7 +319,6 @@ abstract class Kernel extends SymfonyKernel
             new MonologBundle(),
             new DoctrineBundle(),
             new DoctrineMigrationsBundle(),
-            new SensioFrameworkExtraBundle(),
             new CmfRoutingBundle(),
             new PrestaSitemapBundle(),
             new SchebTwoFactorBundle(),
@@ -344,6 +342,9 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
+    /**
+     * @return string[]
+     */
     protected function getEnvironmentsForDevBundles(): array
     {
         return ['dev', 'test'];
@@ -357,14 +358,14 @@ abstract class Kernel extends SymfonyKernel
      *
      * @param BundleCollection $collection
      */
-    public function registerBundlesToCollection(BundleCollection $collection)
+    public function registerBundlesToCollection(BundleCollection $collection): void
     {
     }
 
     /**
      * Handle system settings and requirements
      */
-    protected function setSystemRequirements()
+    protected function setSystemRequirements(): void
     {
         // try to set system-internal variables
         $maxExecutionTime = 240;

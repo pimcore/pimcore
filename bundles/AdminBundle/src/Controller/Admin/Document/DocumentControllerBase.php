@@ -33,6 +33,7 @@ use Pimcore\Model\Version;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -106,7 +107,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         throw $this->createAccessDeniedHttpException();
     }
 
-    protected function addPropertiesToDocument(Request $request, Model\Document $document)
+    protected function addPropertiesToDocument(Request $request, Model\Document $document): void
     {
         // properties
         if ($request->get('properties')) {
@@ -206,7 +207,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     public function saveToSessionAction(Request $request): JsonResponse
     {
         if ($documentId = (int) $request->get('id')) {
-            if (!$document = Model\Document\Service::getElementFromSession('document', $documentId)) {
+            if (!$document = Model\Document\Service::getElementFromSession('document', $documentId, $request->getSession()->getId())) {
                 $document = Model\Document\PageSnippet::getById($documentId);
                 if (!$document) {
                     throw $this->createNotFoundException();
@@ -218,19 +219,19 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
             $document->setInDumpState(true);
             $this->setValuesToDocument($request, $document);
 
-            Model\Document\Service::saveElementToSession($document);
+            Model\Document\Service::saveElementToSession($document, $request->getSession()->getId());
         }
 
         return $this->adminJson(['success' => true]);
     }
 
-    protected function saveToSession(Model\Document $doc, bool $useForSave = false): void
+    protected function saveToSession(Model\Document $doc, SessionInterface $session, bool $useForSave = false): void
     {
         // save to session
-        Model\Document\Service::saveElementToSession($doc);
+        Model\Document\Service::saveElementToSession($doc, $session->getId());
 
         if ($useForSave) {
-            Model\Document\Service::saveElementToSession($doc, '_useForSave');
+            Model\Document\Service::saveElementToSession($doc, $session->getId(), '_useForSave');
         }
     }
 
@@ -239,7 +240,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      *
      * @return Model\Document|null $sessionDocument
      */
-    protected function getFromSession(Model\Document $doc): ?Model\Document
+    protected function getFromSession(Model\Document $doc, SessionInterface $session): ?Model\Document
     {
         $sessionDocument = null;
 
@@ -247,9 +248,9 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         // see also PageController::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
         // outdated and unused data elements in this document (eg. entries of area-blocks)
 
-        if (($sessionDocument = Model\Document\Service::getElementFromSession('document', $doc->getId())) &&
-            (Model\Document\Service::getElementFromSession('document', $doc->getId(), '_useForSave'))) {
-            Model\Document\Service::removeElementFromSession('document', $doc->getId(), '_useForSave');
+        if (($sessionDocument = Model\Document\Service::getElementFromSession('document', $doc->getId(), $session->getId())) &&
+            (Model\Document\Service::getElementFromSession('document', $doc->getId(), $session->getId(), '_useForSave'))) {
+            Model\Document\Service::removeElementFromSession('document', $doc->getId(), $session->getId(), '_useForSave');
         }
 
         return $sessionDocument;
@@ -264,7 +265,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     public function removeFromSessionAction(Request $request): JsonResponse
     {
-        Model\Document\Service::removeElementFromSession('document', $request->get('id'));
+        Model\Document\Service::removeElementFromSession('document', $request->get('id'), $request->getSession()->getId());
 
         return $this->adminJson(['success' => true]);
     }
@@ -339,26 +340,26 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $this->checkPermission('documents');
     }
 
-    abstract protected function setValuesToDocument(Request $request, Model\Document $page);
+    abstract protected function setValuesToDocument(Request $request, Model\Document $document): void;
 
-    protected function handleTask(string $task, Model\Document\PageSnippet $page)
+    protected function handleTask(string $task, Model\Document\PageSnippet $page): void
     {
         if ($task === self::TASK_PUBLISH || $task === self::TASK_VERSION) {
             $page->deleteAutoSaveVersions($this->getAdminUser()->getId());
         }
     }
 
-    protected function checkForLock(Model\Document $document): JsonResponse|bool
+    protected function checkForLock(Model\Document $document, string $sessionId): JsonResponse|bool
     {
         // check for lock
         if ($document->isAllowed(self::TASK_SAVE)
             || $document->isAllowed(self::TASK_PUBLISH)
             || $document->isAllowed(self::TASK_UNPUBLISH)
             || $document->isAllowed(self::TASK_DELETE)) {
-            if (Element\Editlock::isLocked($document->getId(), 'document')) {
+            if (Element\Editlock::isLocked($document->getId(), 'document', $sessionId)) {
                 return $this->getEditLockResponse($document->getId(), 'document');
             }
-            Element\Editlock::lock($document->getId(), 'document');
+            Element\Editlock::lock($document->getId(), 'document', $sessionId);
         }
 
         return true;
@@ -368,7 +369,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      * @throws Element\ValidationException
      * @throws \Exception
      */
-    protected function saveDocument(Model\Document $document, Request $request, bool $latestVersion = false, $task = null): array
+    protected function saveDocument(Model\Document $document, Request $request, bool $latestVersion = false, ?string $task = null): array
     {
         if ($latestVersion && $document instanceof  Model\Document\PageSnippet) {
             $document = $this->getLatestVersion($document);

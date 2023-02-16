@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.gender");
+/**
+ * @private
+ */
 pimcore.object.classes.data.gender = Class.create(pimcore.object.classes.data.data, {
 
     type: "gender",

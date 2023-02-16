@@ -45,14 +45,13 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      * @param mixed $data
-     * @param Concrete|null $object
+     * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
-     *
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
      */
     public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?string
     {
@@ -68,14 +67,13 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      * @param mixed $data
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return null|string
-     *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -94,7 +92,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @internal
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
         $list = new Model\User\Listing();
         $list->setOrder('asc');
@@ -124,7 +122,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -143,12 +141,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return '';
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
 
@@ -159,7 +152,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $vars = get_object_vars($this);
         unset($vars['options']);
@@ -167,7 +160,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return array_keys($vars);
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         //loads select list options
         $this->init();
@@ -198,7 +191,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return $this->unique;
     }
 
-    public function setUnique(bool $unique)
+    public function setUnique(bool $unique): void
     {
         $this->unique = (bool) $unique;
     }

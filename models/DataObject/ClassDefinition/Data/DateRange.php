@@ -38,8 +38,7 @@ class DateRange extends Data implements
     /**
      * @param DataObject\Concrete|null $object
      *
-     *@see ResourcePersistenceAwareInterface::getDataForResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -74,8 +73,7 @@ class DateRange extends Data implements
     /**
      * @param null|DataObject\Concrete $object
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {
@@ -108,8 +106,7 @@ class DateRange extends Data implements
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -147,8 +144,7 @@ class DateRange extends Data implements
      *
      * @return CarbonPeriod|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?CarbonPeriod
     {

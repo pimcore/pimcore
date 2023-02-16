@@ -91,7 +91,7 @@ final class ImageThumbnail
 
                 if ($config) {
                     if ($deferred || $cacheFileStream) {
-                        $this->pathReference = Image\Thumbnail\Processor::process($this->asset, $config, (string)$cacheFileStream, $deferred, $generated);
+                        $this->pathReference = Image\Thumbnail\Processor::process($this->asset, $config, $cacheFileStream, $deferred, $generated);
                     }
                 }
             } catch (\Exception $e) {
@@ -159,7 +159,7 @@ final class ImageThumbnail
      *
      * @return string Public path to thumbnail image.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getPath();
     }

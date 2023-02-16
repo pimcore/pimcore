@@ -191,8 +191,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      *
      * @return array
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -239,8 +238,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      *
      * @return DataObject\Data\StructuredTable
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\StructuredTable
     {
@@ -296,7 +294,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory()) {
             $empty = true;
@@ -447,7 +445,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @param DataObject\ClassDefinition\Data\StructuredTable $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->labelWidth = $masterDefinition->labelWidth;
         $this->labelFirstCell = $masterDefinition->labelFirstCell;

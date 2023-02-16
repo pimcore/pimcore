@@ -1,0 +1,15 @@
+# Pimcore
+pimcore_glossary:
+    blocked_tags: [
+        'a', 'script', 'style', 'code', 'pre', 'textarea', 'acronym',
+        'abbr', 'option', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+    ]
+
+pimcore_admin:
+    user:
+        default_key_bindings:
+            glossary:
+                key: 'G'
+                action: glossary
+                alt: true
+                shift: true

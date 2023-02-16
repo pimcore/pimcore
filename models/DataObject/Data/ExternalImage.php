@@ -39,16 +39,13 @@ class ExternalImage implements OwnerAwareFieldInterface
         return $this->url;
     }
 
-    public function setUrl(?string $url)
+    public function setUrl(?string $url): void
     {
         $this->url = $url;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return (is_null($this->url)) ? '' : $this->url;
     }

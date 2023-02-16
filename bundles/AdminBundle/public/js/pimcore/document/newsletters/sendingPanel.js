@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.document.newsletters.sendingPanel");
+/**
+ * @private
+ */
 pimcore.document.newsletters.sendingPanel = Class.create({
 
     isProcessRunning: false,

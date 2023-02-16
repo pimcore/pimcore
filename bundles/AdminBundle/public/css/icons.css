@@ -126,6 +126,25 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/overlay-google.svg) center center no-repeat !important;
 }
 
+.pimcore_main_nav_icon_file {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-file-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_build {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-build-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_marketing {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-bar_chart-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_settings {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-settings-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_search {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-search-24px.svg) center center no-repeat !important;
+}
 
 .pimcore_nav_icon_perspective {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/reading.svg) center center no-repeat !important;
@@ -139,16 +158,9 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/sms.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_fileexplorer {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/search.svg) center center no-repeat !important;
-}
 
 .pimcore_nav_icon_bundles {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/puzzle.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_word_export {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/word.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_close_all {
@@ -207,10 +219,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/pimcore-sign.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_glossary {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/book.svg) center center no-repeat !important;
-}
-
 .pimcore_nav_icon_redirects {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/redirect.svg) center center no-repeat !important;
 }
@@ -227,10 +235,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/survey.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_log_admin {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/text.svg) center center no-repeat !important;
-}
-
 .pimcore_nav_icon_gdpr {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/export.svg) left center no-repeat !important;
 }
@@ -243,16 +247,8 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/stop-circle.svg) center center no-repeat !important
 }
 
-.pimcore_nav_icon_php {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/php.svg) center center no-repeat !important;
-}
-
 .pimcore_nav_icon_reports {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/pie_chart.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_systemrequirements {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/factory.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_server_info {
@@ -289,26 +285,6 @@
 
 .pimcore_nav_icon_targeting_toolbar {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/ok.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_document_seo {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/document.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_robots {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/robot.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_httperrorlog {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/medium_priority.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_seo {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/google.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_reports {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/pie_chart.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_marketing_settings {
@@ -622,10 +598,6 @@
     background-repeat: no-repeat;
 }
 
-.pimcore_icon_vr {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/vr.svg) center center no-repeat !important;
-}
-
 .pimcore_icon_pdf, .pimcore_icon_ps {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/pdf.svg) center center no-repeat !important;
 }
@@ -726,10 +698,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/filing_cabinet.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_glossary {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/book.svg) center center no-repeat !important;
-}
-
 .pimcore_icon_tabs {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/tabs.svg) center center no-repeat !important;
 }
@@ -802,15 +770,9 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/wysiwyg.svg) center center no-repeat !important;
 }
 
-
-.pimcore_icon_routes {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/globe.svg) center center no-repeat !important;
-}
-
 .pimcore_icon_redirects {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/redirect.svg) center center no-repeat !important;
 }
-
 
 .pimcore_icon_dependencies {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/parallel_tasks.svg) center center no-repeat !important;
@@ -1036,10 +998,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/info.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_php {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/php.svg) center center no-repeat !important;
-}
-
 .pimcore_icon_mysql {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/mysql.svg) center center no-repeat !important;
 }
@@ -1050,10 +1008,6 @@
 
 .pimcore_icon_videoedit {
     background: url(/bundles/pimcoreadmin/img/icon/film_edit.png) center center no-repeat !important;
-}
-
-.pimcore_icon_seo {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/google.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_robots {
@@ -1090,10 +1044,6 @@
 
 .pimcore_icon_mobile_landscape {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/cell_phone_landscape.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_systemrequirements {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/factory.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_notes {

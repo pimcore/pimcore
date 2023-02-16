@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+/**
+ * @private
+ */
 pimcore.registerNS("pimcore.layout.treepanelmanager");
 pimcore.layout.treepanelmanager = {
     

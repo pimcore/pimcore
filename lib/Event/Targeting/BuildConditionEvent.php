@@ -62,7 +62,7 @@ class BuildConditionEvent extends Event
         return $this->condition;
     }
 
-    public function setCondition(ConditionInterface $condition)
+    public function setCondition(ConditionInterface $condition): void
     {
         $this->condition = $condition;
 

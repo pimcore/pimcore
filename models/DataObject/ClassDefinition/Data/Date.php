@@ -73,8 +73,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @return \Carbon\Carbon|null
      *
-     *@see ResourcePersistenceAwareInterface::getDataFromResource
-     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
@@ -101,8 +100,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @return int|null
      *
-     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
     public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
@@ -143,8 +141,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @return \Carbon\Carbon|null
      *
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
     {

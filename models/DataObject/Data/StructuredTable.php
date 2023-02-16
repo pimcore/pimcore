@@ -50,7 +50,7 @@ class StructuredTable implements OwnerAwareFieldInterface
      * @param string $name
      * @param array $arguments
      *
-     * @return mixed
+     * @return mixed|void
      *
      * @throws \Exception
      */
@@ -115,10 +115,7 @@ class StructuredTable implements OwnerAwareFieldInterface
         return true;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         $string = '<table>';
 

@@ -70,7 +70,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     //TODO remove childs in Pimcore 12
     /**
-     * @var array
+     * @var string[]
      */
     protected const FORBIDDEN_NAMES = [
         'id', 'key', 'path', 'type', 'index', 'classname', 'creationdate', 'userowner', 'value', 'class', 'list',
@@ -113,7 +113,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @throws \Exception
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
 
@@ -141,8 +141,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @return string
      *
-     *@internal
-     *
+     * @internal
      */
     public function getForCsvExport(DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object, array $params = []): string
     {
@@ -1211,12 +1210,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $data;
     }
 
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         // implement in child classes
     }
 
-    public function adoptMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function adoptMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $vars = get_object_vars($this);
         $protectedFields = ['noteditable', 'invisible'];
@@ -1258,7 +1257,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return false;
     }
 
-    public function markLazyloadedFieldAsLoaded(Localizedfield|AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object)
+    public function markLazyloadedFieldAsLoaded(Localizedfield|AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object): void
     {
         if ($object instanceof DataObject\LazyLoadedFieldsInterface) {
             $object->markLazyKeyAsLoaded($this->getName());

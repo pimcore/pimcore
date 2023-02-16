@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.settings.translation.translationmerger");
+/**
+ * @private
+ */
 pimcore.settings.translation.translationmerger = Class.create({
 
 

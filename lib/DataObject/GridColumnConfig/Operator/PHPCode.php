@@ -29,7 +29,7 @@ final class PHPCode extends AbstractOperator
 
     private ?OperatorInterface $instance = null;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -42,7 +42,7 @@ final class PHPCode extends AbstractOperator
         return $this->phpClass;
     }
 
-    public function setPhpClass(string $phpClass)
+    public function setPhpClass(string $phpClass): void
     {
         $this->phpClass = $phpClass;
         $this->instance = null;

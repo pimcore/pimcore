@@ -26,7 +26,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    protected ElementDescriptor|Asset\Image|null $image;
+    protected ElementDescriptor|Asset\Image|null $image = null;
 
     /**
      * @var array[]|null
@@ -122,7 +122,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     /**
      * @param array[]|null $crop
      */
-    public function setCrop(?array $crop)
+    public function setCrop(?array $crop): void
     {
         $this->crop = $crop;
         $this->markMeDirty();
@@ -199,10 +199,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
         return $this->getImage()->getThumbnail($thumbConfig, $deferred);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         if ($this->image) {
             return $this->image->__toString();
@@ -211,7 +208,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
         return '';
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->image instanceof ElementDescriptor) {
             $image = Service::getElementById($this->image->getType(), $this->image->getId());

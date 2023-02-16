@@ -53,7 +53,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getByKeyCartId(string $key, int|string $cartId)
+    public function getByKeyCartId(string $key, int|string $cartId): void
     {
         $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE `key`=' . $this->db->quote($key). ' AND cartId = ' . $this->db->quote($cartId));
         if (empty($classRaw)) {
@@ -65,7 +65,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     /**
      * Save object to database
      */
-    public function save()
+    public function save(): void
     {
         $this->update();
     }
@@ -104,7 +104,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->db->delete(self::TABLE_NAME, ['key' => $this->model->getKey(), 'cartId' => $this->model->getCartId()]);
     }
 
-    public function removeAllFromCart(int|string $cartId)
+    public function removeAllFromCart(int|string $cartId): void
     {
         $this->db->delete(self::TABLE_NAME, ['cartId' => $cartId]);
     }

@@ -280,8 +280,7 @@ class Container extends \ArrayObject
      *
      * @return void
      *
-     *@throws Exception
-     *
+     * @throws Exception
      */
     public function captureStart(int|string $type = self::APPEND, mixed $key = null): void
     {
@@ -405,10 +404,8 @@ class Container extends \ArrayObject
 
     /**
      * Serialize object to string
-     *
-     * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
     }

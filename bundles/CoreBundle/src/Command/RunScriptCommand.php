@@ -29,7 +29,7 @@ class RunScriptCommand extends AbstractCommand
 {
     use DryRun;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('pimcore:run-script')

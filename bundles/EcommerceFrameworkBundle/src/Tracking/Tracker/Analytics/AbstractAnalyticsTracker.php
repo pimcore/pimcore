@@ -19,22 +19,26 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
 use Pimcore\Analytics\Google\Tracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker as EcommerceTracker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilderInterface;
+use Twig\Environment;
 
 abstract class AbstractAnalyticsTracker extends EcommerceTracker
 {
     protected Tracker $tracker;
 
     /**
-     * @required
-     *
      * @internal
      *
-     * TODO Pimcore 10 remove this setter and set as constructor dependency!
-     *
-     * @param Tracker $tracker
      */
-    public function setTracker(Tracker $tracker)
-    {
+    public function __construct(
+        TrackingItemBuilderInterface $trackingItemBuilder,
+        Environment $twig,
+        Tracker $tracker,
+        array $options = [],
+        array $assortmentTenants = [],
+        array $checkoutTenants = []
+    ) {
+        parent::__construct($trackingItemBuilder, $twig, $options, $assortmentTenants, $checkoutTenants);
         $this->tracker = $tracker;
     }
 }

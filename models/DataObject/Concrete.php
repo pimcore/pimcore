@@ -122,7 +122,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * {@inheritdoc}
      */
-    protected function update(bool $isUpdate = null, array $params = [])
+    protected function update(bool $isUpdate = null, array $params = []): void
     {
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
@@ -130,6 +130,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         foreach ($fieldDefinitions as $fd) {
             try {
+                if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $this->__objectAwareFields['localizedfields'] = true;
+                }
+
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
@@ -225,7 +229,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * {@inheritdoc}
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // Dispatch Symfony Message Bus to delete versions
         \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
@@ -385,10 +389,18 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
-    public function getClass(): ?ClassDefinition
+    /**
+     * @throws \Exception
+     */
+    public function getClass(): ClassDefinition
     {
         if (!$this->class) {
-            $this->setClass(ClassDefinition::getById($this->getClassId()));
+            $class = ClassDefinition::getById($this->getClassId());
+            if (!$class instanceof ClassDefinition) {
+                throw new Model\Exception\NotFoundException('class not found for object id: ' . $this->getId());
+            }
+
+            $this->setClass($class);
         }
 
         return $this->class;
@@ -692,7 +704,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $lazyLoadedFieldNames = [];
         $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface
+                && $field->getLazyLoading()
+                && $field instanceof DataObject\ClassDefinition\Data) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -712,12 +726,12 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this->allLazyKeysMarkedAsLoaded;
     }
 
-    public function markAllLazyLoadedKeysAsLoaded()
+    public function markAllLazyLoadedKeysAsLoaded(): void
     {
         $this->allLazyKeysMarkedAsLoaded = true;
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $parentVars = parent::__sleep();
 
@@ -741,21 +755,16 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $finalVars;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         parent::__wakeup();
 
-        // renew localized fields
-        // do not use the getter ($this->getLocalizedfields()) as it somehow slows down the process around a sec
-        // no clue why this happens
-        if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
-            $this->localizedfields->setObject($this, false);
-        }
-
         // renew object reference to other object aware fields
         foreach ($this->__objectAwareFields as $objectAwareField => $exists) {
-            if (isset($this->$objectAwareField) && $this->$objectAwareField instanceof ObjectAwareFieldInterface) {
-                $this->$objectAwareField->setObject($this);
+            if (isset($this->$objectAwareField)) {
+                if ($this->$objectAwareField instanceof ObjectAwareFieldInterface) {
+                    $this->$objectAwareField->setObject($this);
+                }
             }
         }
     }
@@ -795,8 +804,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public function retrieveSlugData(array $descriptor): array
     {
@@ -810,8 +818,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return array
      *
-     *@internal
-     *
+     * @internal
      */
     public function retrieveRelationData(array $descriptor): array
     {

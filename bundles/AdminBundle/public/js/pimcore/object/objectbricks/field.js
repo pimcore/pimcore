@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.objectbricks.field");
+/**
+ * @private
+ */
 pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
     allowedInType: 'objectbrick',
@@ -93,8 +96,16 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             ]
         });
 
+        let invalidDefinitions = 0;
         for (var i = 0; i < this.data.classDefinitions.length; i++) {
-            this.addClassDefinition(this.data.classDefinitions[i]);
+            if (this.availableClasses[this.data.classDefinitions[i].classname]) {
+                this.addClassDefinition(this.data.classDefinitions[i]);
+            } else {
+                invalidDefinitions ++;
+            }
+        }
+        if (invalidDefinitions > 0) {
+            this.save(false);
         }
         return this.classDefinitionsItems;
     },
@@ -311,7 +322,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         this.classDefinitionsItems.updateLayout();
     },
 
-    save: function () {
+    save: function (showSuccess = true) {
         var reload = false;
         var newGroup = this.groupField.getValue();
         if (newGroup != this.data.group) {
@@ -341,7 +352,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                     title: this.data.title,
                     group: this.data.group
                 },
-                success: this.saveOnComplete.bind(this, reload)
+                success: showSuccess ? this.saveOnComplete.bind(this, reload) : null
             });
         }
     },

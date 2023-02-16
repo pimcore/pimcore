@@ -26,6 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * Default configuration for elastic search as product index implementation.
@@ -72,6 +73,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * @param SynonymProviderInterface[] $synonymProviders
      */
     public function __construct(
+        AttributeFactory $attributeFactory,
         string $tenantName,
         array $attributes,
         array $searchAttributes,
@@ -80,10 +82,10 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         iterable $synonymProviders = []
     ) {
         $this->synonymProviders = $synonymProviders;
-        parent::__construct($tenantName, $attributes, $searchAttributes, $filterTypes, $options);
+        parent::__construct($attributeFactory, $tenantName, $attributes, $searchAttributes, $filterTypes, $options);
     }
 
-    protected function addAttribute(Attribute $attribute)
+    protected function addAttribute(Attribute $attribute): void
     {
         parent::addAttribute($attribute);
 
@@ -95,7 +97,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $this->fieldMapping[$attribute->getName()] = sprintf('%s.%s', $attributeType, $attribute->getName());
     }
 
-    protected function addSearchAttribute(string $searchAttribute)
+    protected function addSearchAttribute(string $searchAttribute): void
     {
         if (isset($this->attributes[$searchAttribute])) {
             $this->searchAttributes[] = $searchAttribute;
@@ -119,7 +121,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         ));
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         $options = $this->resolveOptions($options);
 
@@ -128,7 +130,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $this->indexSettings = $options['index_settings'];
     }
 
-    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver): void
     {
         $arrayFields = [
             'client_config',
@@ -294,7 +296,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /**
      * {@inheritdoc}
      */
-    public function setTenantWorker(WorkerInterface $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker): void
     {
         if (!$tenantWorker instanceof DefaultElasticSearchWorker) {
             throw new \InvalidArgumentException(sprintf(
@@ -310,12 +312,12 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * creates object mockup for given data
      *
      * @param int $objectId
-     * @param mixed $data
+     * @param array $data
      * @param array $relations
      *
      * @return DefaultMockup
      */
-    public function createMockupObject(int $objectId, mixed $data, array $relations): DefaultMockup
+    public function createMockupObject(int $objectId, array $data, array $relations): DefaultMockup
     {
         return new DefaultMockup($objectId, $data, $relations);
     }
@@ -338,12 +340,8 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         return $product ? $product : null;
     }
 
-    /**
-     * @required
-     *
-     * @param EnvironmentInterface $environment
-     */
-    public function setEnvironment(EnvironmentInterface $environment)
+    #[Required]
+    public function setEnvironment(EnvironmentInterface $environment): void
     {
         $this->environment = $environment;
     }

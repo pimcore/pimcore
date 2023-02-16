@@ -90,6 +90,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     protected ?array $allowedTypes = null;
 
+    /**
+     * @return $this
+     */
     public function setId(int|string|null $id): static
     {
         $this->id = $id;
@@ -185,7 +188,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     public function getData(): mixed
     {
         $path = $this->id;
-        if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
+        if ($this->id && $this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
             $path = $video->getFullPath();
         }
 
@@ -217,9 +220,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
-    protected function getDataEditmode()
+    protected function getDataEditmode(): mixed
     {
         $data = $this->getData();
 

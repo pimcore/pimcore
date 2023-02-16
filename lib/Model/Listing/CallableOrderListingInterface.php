@@ -18,7 +18,10 @@ namespace Pimcore\Model\Listing;
 
 interface CallableOrderListingInterface
 {
-    public function setOrder(?callable $order);
+    /**
+     * @return $this
+     */
+    public function setOrder(?callable $order): static;
 
     public function getOrder(): ?callable;
 }
