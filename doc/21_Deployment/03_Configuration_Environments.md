@@ -91,6 +91,11 @@ pimcore:
 	          type: 'symfony-config'
               options:
                 directory: '/var/www/html/var/config/object_custom_layouts'
+        select_options:
+            write_target:
+                type: 'symfony-config'
+                options:
+                    directory: '/var/www/html/var/config/select_options'
 ```
 
 #### Production environment with `symfony-config`

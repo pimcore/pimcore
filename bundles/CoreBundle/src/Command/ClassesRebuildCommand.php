@@ -146,6 +146,19 @@ class ClassesRebuildCommand extends AbstractCommand
             $fc->save(false);
         }
 
+        if ($output->isVerbose()) {
+            $output->writeln('---------------------');
+            $output->writeln('Saving all select options');
+        }
+        $selectOptionConfigurations = new DataObject\SelectOptions\Config\Listing();
+        foreach ($selectOptionConfigurations as $selectOptionConfiguration) {
+            if ($output->isVerbose()) {
+                $output->writeln(sprintf('%s saved', $selectOptionConfiguration->getId()));
+            }
+
+            $selectOptionConfiguration->generateEnumFiles();
+        }
+
         return 0;
     }
 }
