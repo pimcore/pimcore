@@ -36,7 +36,7 @@ final class TmpStore extends Model\AbstractModel
      *
      * @var string
      */
-    protected string $tag;
+    protected ?string $tag = null;
 
     /**
      * @internal
@@ -167,7 +167,7 @@ final class TmpStore extends Model\AbstractModel
         $this->id = $id;
     }
 
-    public function getTag(): string
+    public function getTag(): ?string
     {
         return $this->tag;
     }
