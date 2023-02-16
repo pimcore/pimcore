@@ -18,8 +18,7 @@ namespace Pimcore\Bundle\PersonalizationBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\Document\PageController;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
-use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
-use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Document\StaticPageGenerator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -68,13 +67,28 @@ class TargetingPageController extends PageController
         ]);
     }
 
+    /**
+     * @Route("/save", name="pimcore_admin_document_page_save", methods={"PUT", "POST"})
+     *
+     * @param Request $request
+     * @param StaticPageGenerator $staticPageGenerator
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function saveAction(Request $request, StaticPageGenerator $staticPageGenerator): JsonResponse
+    {
+        return parent::saveAction($request, $staticPageGenerator);
+    }
+
     protected function addDataToDocument(Request $request, Document $document): void
     {
         if ($document instanceof Document\PageSnippet) {
             // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
 
             if ($request->get('appendEditables')
-                || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) { // ensure editable are loaded
+                || ($document instanceof TargetingDocumentInterface)) { // ensure editable are loaded
                 $document->getEditables();
             } else {
                 // ensure no editables (e.g. from session, version, ...) are still referenced

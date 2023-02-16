@@ -32,8 +32,8 @@ pimcore.document.edit = Class.create({
         }
 
         if (pimcore.bundle.personalization) {
-            if(areatoolbar.targetGroup && areatoolbar.targetGroup.getValue()) {
-                link += "&_ptg=" + areatoolbar.targetGroup.getValue();
+            if (this.areaToolBar && this.areaToolBar.targetGroup && this.areaToolBar.targetGroup.getValue()) {
+                link += "&_ptg=" + this.areaToolBar.targetGroup.getValue();
             }
         }
 
@@ -102,8 +102,7 @@ pimcore.document.edit = Class.create({
             }];
 
             if (pimcore.bundle.personalization) {
-                areatoolbar.addTargetingPanel(this.document
-               , lbar);
+                this.areaToolBar = new pimcore.bundle.personalization.document.areatoolbar(this.document, lbar);
             }
 
             // edit panel configuration

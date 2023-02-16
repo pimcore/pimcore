@@ -20,7 +20,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     getData: function () {
         var options = this.options || {};
         Ext.Ajax.request({
-            url: Routing.getBaseUrl() + "/admin/" + this.getType() + "/get-data-by-id",
+            url: Routing.generate('pimcore_admin_document_' + this.type + '_getdatabyid'),
             params: {id: this.id},
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
@@ -115,7 +115,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             }
 
             Ext.Ajax.request({
-                url: Routing.getBaseUrl() + "/admin/" + this.getType() + '/save?task=' + task,
+                url: Routing.generate('pimcore_admin_document_' + this.type + '_save', {task: task}),
                 method: "PUT",
                 params: saveData,
                 success: function (response) {
