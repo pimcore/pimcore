@@ -38,7 +38,7 @@ class PimcoreWebToPrintBundle extends AbstractPimcoreBundle
             '/bundles/pimcorewebtoprint/js/document/printabstract.js',
             '/bundles/pimcorewebtoprint/js/document/printcontainer.js',
             '/bundles/pimcorewebtoprint/js/document/printpage.js',
-            "/bundles/pimcorewebtoprint/js/document/printpages/pdf_preview.js",
+            '/bundles/pimcorewebtoprint/js/document/printpages/pdf_preview.js',
         ];
     }
 
@@ -49,7 +49,6 @@ class PimcoreWebToPrintBundle extends AbstractPimcoreBundle
     {
         return $this->container->get(Installer::class);
     }
-
 
     public function getPath(): string
     {

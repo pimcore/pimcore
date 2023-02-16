@@ -23,11 +23,9 @@ use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Service;
 use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Schedule\Task;
-use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -145,7 +143,6 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         }
     }
 
-
     /**
      * @Route("/add", name="add", methods={"POST"})
      *
@@ -198,7 +195,6 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
                 } catch (Exception $e) {
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
-
             } else {
                 $errorMessage = "prevented adding a document because document with same path+key [ $intendedPath ] already exists";
                 Logger::debug($errorMessage);

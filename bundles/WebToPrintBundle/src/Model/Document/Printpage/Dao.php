@@ -15,8 +15,9 @@
 
 namespace Pimcore\Bundle\WebToPrintBundle\Model\Document\Printpage;
 
-use Pimcore\Bundle\WebToPrintBundle\Model\Document\Printpage;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
+use Pimcore\Bundle\WebToPrintBundle\Model\Document\Printpage;
+
 /**
  * @internal
  *

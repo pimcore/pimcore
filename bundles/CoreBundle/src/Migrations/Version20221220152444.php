@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Db;
 use Pimcore\Model\Tool\SettingsStore;
 
 /**
@@ -35,17 +34,17 @@ final class Version20221220152444 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $enableBundle = false;
-        if(!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle', 'pimcore')) {
+        if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle', 'pimcore')) {
             // remove enableInDefaultView setting
             $settings = SettingsStore::get('web_to_print', 'pimcore_web_to_print');
-            if($settings) {
+            if ($settings) {
                 $data = json_decode($settings->getData(), true);
 
-                if(isset($data['enableInDefaultView'])) {
+                if (isset($data['enableInDefaultView'])) {
                     $enableBundle = $data['enableInDefaultView'];
                     unset($data['enableInDefaultView']);
                     $data = json_encode($data);
-                    SettingsStore::set('web_to_print', $data,'string', 'pimcore_web_to_print');
+                    SettingsStore::set('web_to_print', $data, 'string', 'pimcore_web_to_print');
                 }
             }
             // updating description  of permissions
@@ -66,16 +65,16 @@ final class Version20221220152444 extends AbstractMigration
         // restoring the permission
         $this->addSql("UPDATE `users_permission_definitions` SET `category` = '' WHERE `key` = 'web2print_settings'");
         // restoring the enableInDefaultView might be with wrong value
-        SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle','pimcore');
+        SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle', 'pimcore');
         $settings = SettingsStore::get('web_to_print', 'pimcore_web_to_print');
 
-        if($settings) {
+        if ($settings) {
             $data = json_decode($settings->getData(), true);
-            if(!isset($data['enableInDefaultView'])) {
+            if (!isset($data['enableInDefaultView'])) {
                 // we do not know the original value so we set it to false
                 $data['enableInDefaultView'] = false;
                 $data = json_encode($data);
-                SettingsStore::set('web_to_print', $data,'string', 'pimcore_web_to_print');
+                SettingsStore::set('web_to_print', $data, 'string', 'pimcore_web_to_print');
             }
         }
         // always warn

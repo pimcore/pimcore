@@ -89,7 +89,7 @@ final class Config
 
         $repository->saveConfig(self::CONFIG_ID, $data, function ($key, $data) {
             return [
-                'pimcore_web_to_print' => $data
+                'pimcore_web_to_print' => $data,
             ];
         });
     }

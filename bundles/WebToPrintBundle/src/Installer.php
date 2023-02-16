@@ -20,14 +20,13 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
-use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Installer extends SettingsStoreAwareInstaller
 {
-
     protected const USER_PERMISSION_CATEGORY = 'Pimcore Web2Print Bundle';
+
     protected const USER_PERMISSIONS = [
         'web2print_settings',
     ];
@@ -39,12 +38,12 @@ class Installer extends SettingsStoreAwareInstaller
         'folder',
         'hardlink',
         'email',
-        'newsletter'
+        'newsletter',
     ];
 
     protected const BUNDLE_EXTRA_DOCUMENT_ENUM_TYPES = [
         'printpage',
-        'printcontainer'
+        'printcontainer',
     ];
 
     public function install(): void
@@ -62,8 +61,8 @@ class Installer extends SettingsStoreAwareInstaller
         $output = new ConsoleOutput(OutputInterface::VERBOSITY_NORMAL, true);
         $output->writeln([
             "\n\n<comment>Uninstalling only removes permissions. To clean up all documents and dependencies</comment>",
-            "<comment>Please run <options=bold>bin/console pimcore:documents:cleanup printpage printcontainer</></comment>",
-            "<comment>-------------------------------------------------------------------------------------</comment>"
+            '<comment>Please run <options=bold>bin/console pimcore:documents:cleanup printpage printcontainer</></comment>',
+            '<comment>-------------------------------------------------------------------------------------</comment>',
         ]);
 
         $this->removeUserPermission();
@@ -77,7 +76,7 @@ class Installer extends SettingsStoreAwareInstaller
         foreach (self::USER_PERMISSIONS as $permission) {
             // check if the permission already exists
             $permissionExists = $db->executeStatement('SELECT `key` FROM users_permission_definitions WHERE `key` = :key', ['key' => $permission]);
-            if(!$permissionExists) {
+            if (!$permissionExists) {
                 $db->insert('users_permission_definitions', [
                     $db->quoteIdentifier('key') => $permission,
                     $db->quoteIdentifier('category') => self::USER_PERMISSION_CATEGORY,
@@ -112,20 +111,23 @@ class Installer extends SettingsStoreAwareInstaller
     private function getCurrentEnumTypes(): array
     {
         $db = Db::get();
+
         try {
             $result = $db->executeQuery("SHOW COLUMNS FROM `documents` LIKE 'type'");
             $typeColumn = $result->fetchAllAssociative();
-            return explode("','",preg_replace("/(enum)\('(.+?)'\)/","\\2", $typeColumn[0]['Type']));
+
+            return explode("','", preg_replace("/(enum)\('(.+?)'\)/", '\\2', $typeColumn[0]['Type']));
         } catch (\Exception $ex) {
             // nothing to do here if it does not work we return the standard types
         }
+
         return self::STANDARD_DOCUMENT_ENUM_TYPES;
     }
 
     private function modifyEnumTypes(array $enums): void
     {
         $type = Connection::PARAM_STR_ARRAY;
-        if(class_exists('Doctrine\\DBAL\\ArrayParameterType')) {
+        if (class_exists('Doctrine\\DBAL\\ArrayParameterType')) {
             $type = ArrayParameterType::STRING;
         }
         $db = Db::get();

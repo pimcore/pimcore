@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WebToPrintBundle\Model\Document;
 
-use Pimcore\Model\Document;
-
 /**
  * @method Printpage\Dao getDao()
  */

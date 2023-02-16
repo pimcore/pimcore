@@ -5,17 +5,16 @@
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\WebToPrintBundle\Twig\Extension;
 
-use App\Website\Tool\Text;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Hotspotimage;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ImageGallery;
@@ -61,7 +60,7 @@ class PrintCatalogExtension extends AbstractExtension
         return [
             new TwigFunction('app_print_output_spec_value', [$this, 'getSpecValue']),
             new TwigFunction('app_print_create_register', [$this, 'createRegisterTitleStyling']),
-            new TwigFunction('app_print_get_register_name', [$this, 'getRegisterName'])
+            new TwigFunction('app_print_get_register_name', [$this, 'getRegisterName']),
         ];
     }
 
@@ -127,6 +126,7 @@ class PrintCatalogExtension extends AbstractExtension
         if ($image) {
             return "<img src='{$hotspotimage->getThumbnail($thumbnailName)}' alt='image' />";
         }
+
         return '';
     }
 

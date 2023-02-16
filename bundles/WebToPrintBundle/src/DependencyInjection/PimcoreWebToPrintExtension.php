@@ -35,7 +35,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
  */
 final class PimcoreWebToPrintExtension extends ConfigurableExtension
 {
-
     public function loadInternal(array $config, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(

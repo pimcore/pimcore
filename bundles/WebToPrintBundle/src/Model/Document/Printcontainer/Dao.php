@@ -15,8 +15,8 @@
 
 namespace Pimcore\Bundle\WebToPrintBundle\Model\Document\Printcontainer;
 
-use Pimcore\Bundle\WebToPrintBundle\Model\Document\Printcontainer;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
+use Pimcore\Bundle\WebToPrintBundle\Model\Document\Printcontainer;
 use Pimcore\Db\Helper;
 
 /**

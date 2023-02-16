@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
-use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Model\Document;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigTest;

@@ -105,7 +105,7 @@ class SettingsController extends AdminController
             $params = $params['headlessChromeSettings'];
             $params = json_decode($params, true);
 
-            if(!is_array($params)) {
+            if (!is_array($params)) {
                 $params = [];
             }
         }
