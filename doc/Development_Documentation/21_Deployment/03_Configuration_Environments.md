@@ -7,11 +7,9 @@ configurations including a fallback mechanism.
 Pimcore is relying on Symfony's environments, with some extras, however all the essential 
 information can be found in the [Symfony Docs](https://symfony.com/doc/current/configuration.html#configuration-environments)
 
-> Note: While Pimcore uses Symfony's DotEnv component to allow you to 
+> Note: Require `symfony/dotenv` in your project to use Symfony's DotEnv component to allow you to 
 [configure environment variables in `.env` files](https://symfony.com/doc/current/configuration.html#configuring-environment-variables-in-env-files), 
-sometimes (e.g. in *prod* environments) you may want to configure everything via real 
-environment variables instead. In this case, you can disable loading of `.env` files 
-by setting the `PIMCORE_SKIP_DOTENV_FILE` environment variable to a truthy value.
+or (e.g. in *prod* environments) you can configure everything via real environment variables.
 
 In addition to Symfony configurations, Pimcore also supports environment specific configs for: 
 

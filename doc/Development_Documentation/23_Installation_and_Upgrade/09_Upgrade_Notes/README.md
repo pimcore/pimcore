@@ -180,6 +180,7 @@ pimcore:
       - site_2
 ```
 - [Environment] - Removed `symfony/dotenv` dependency to make loading of `.env` files optional. please add the requirement to your composer.json, if you still want to use `.env` files.
+- Removed `PIMCORE_SKIP_DOTENV_FILE` environment var support. You still can use environment specific file like `.env.test` or `.env.prod` for environment specific environment variables. 
 - Removed deprecated `SensioFrameworkExtraBundle` which affects the following:
   - `@Template` annotation must be replaced with `#[Template]` attribute. Template guessing based on controller::action is not supported anymore.
   - `@ResponseHeader` annotation must be replaced with `#[ResponseHeader]` attribute. Removed deprecated `Pimcore\Controller\Configuration\ResponseHeader`.
