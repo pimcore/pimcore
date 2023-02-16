@@ -79,4 +79,4 @@
 - [Ecommerce] Switch to ElasticSearch8 implementations in case you are using elasticsearch indices. 
 
 - [Symfony]
-  - Require `symfony/dotenv` package in your projct to keep using .env files and stop using `PIMCORE_SKIP_DOTENV_FILE` env var as by default it is skipped.
+  - Require `symfony/dotenv` package in your projct to keep using `.env` files and stop using `PIMCORE_SKIP_DOTENV_FILE` env var as by default it is skipped. You could still use environment specific file like `.env.test` or `.env.prod` for environment specific environment variables. 
