@@ -54,13 +54,6 @@ class DateRange extends Data implements
                 $endDateKey => $endDate instanceof CarbonInterface ? $endDate->getTimestamp() : null,
             ];
 
-            if ($this->getColumnType() === 'date') {
-                $result = [
-                    $startDateKey => \date('Y-m-d', $result[$startDateKey]),
-                    $endDateKey => null !== $result[$endDateKey] ? \date('Y-m-d', $result[$endDateKey]) : null,
-                ];
-            }
-
             return $result;
         }
 
