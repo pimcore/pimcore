@@ -1,0 +1,28 @@
+name: Monthly Recurring Issues
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: 0 4 1 * *
+
+jobs:
+    monthly_recurring_issues:
+        name: Monthly Recurring Issues
+        runs-on: ubuntu-latest
+        steps:
+
+            - name: Today's date
+              run: echo "MONTH=$(date '+%B')" >> $GITHUB_ENV
+
+            - name: PhpStan Version Upgrade
+              uses: imjohnbo/issue-bot@v3
+              with:
+                  labels: "Task"
+                  title: PhpStan Version Upgrade ${{ env.MONTH }}
+                  body: |-
+                      :wave: Hi, {{#each assignees}}@{{this}}{{#unless @last}}, {{/unless}}{{/each}}!
+                      ## Standup for ${{ env.TODAY }}
+                      1. What did you work on yesterday?
+                      2. What are you working on today?
+                      3. What issues are blocking you?
+                  project-v2-path: orgs/pimcore/projects/10
+                  token: ${{ secrets.ISSUE_CREATION_TOKEN }}
