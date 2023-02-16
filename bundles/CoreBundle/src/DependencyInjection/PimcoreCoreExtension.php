@@ -25,6 +25,8 @@ use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
+use Pimcore\Model\Document\TypeDefinition\Loader\PrefixLoader as DocumentTypePrefixLoader;
+use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
@@ -76,9 +78,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
 
-        // @deprecated since Pimcore 10.1, parameter will be removed in Pimcore 11
-        $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
-
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
@@ -111,7 +110,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('services_routing.yaml');
         $loader->load('services_workflow.yaml');
         $loader->load('extensions.yaml');
-        $loader->load('logging.yaml');
         $loader->load('request_response.yaml');
         $loader->load('l10n.yaml');
         $loader->load('argument_resolvers.yaml');
@@ -140,7 +138,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
-        $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
         $this->configureSitemaps($container, $config['sitemaps']);
 
@@ -183,6 +180,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             'pimcore.implementation_loader.asset.metadata.data' => [
                 'config' => $config['assets']['metadata']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class,
+            ],
+            TypeLoader::class => [
+                'config' => $config['documents']['type_definitions'],
+                'prefixLoader' => DocumentTypePrefixLoader::class,
             ],
         ];
 

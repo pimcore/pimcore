@@ -73,6 +73,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * @param SynonymProviderInterface[] $synonymProviders
      */
     public function __construct(
+        AttributeFactory $attributeFactory,
         string $tenantName,
         array $attributes,
         array $searchAttributes,
@@ -81,7 +82,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         iterable $synonymProviders = []
     ) {
         $this->synonymProviders = $synonymProviders;
-        parent::__construct($tenantName, $attributes, $searchAttributes, $filterTypes, $options);
+        parent::__construct($attributeFactory, $tenantName, $attributes, $searchAttributes, $filterTypes, $options);
     }
 
     protected function addAttribute(Attribute $attribute): void

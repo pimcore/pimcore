@@ -22,7 +22,7 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class SettingsStoreTest extends ModelTestCase
 {
-    protected function doTest($data, $scope, $type)
+    protected function doTest(float|bool|int|string $data, ?string $scope, string $type): void
     {
         $db = Db::get();
 
@@ -64,31 +64,31 @@ class SettingsStoreTest extends ModelTestCase
         $this->assertFalse($queryResult);
     }
 
-    public function testCreateStringEntry()
+    public function testCreateStringEntry(): void
     {
         $this->doTest('this is a string', null, 'string');
         $this->doTest('this is another string with scope', 'my-scope', 'string');
     }
 
-    public function testCreateIntegerEntry()
+    public function testCreateIntegerEntry(): void
     {
         $this->doTest(123, null, 'int');
         $this->doTest(321, 'my-scope', 'int');
     }
 
-    public function testCreateBoolEntry()
+    public function testCreateBoolEntry(): void
     {
         $this->doTest(true, null, 'bool');
         $this->doTest(false, 'my-scope', 'bool');
     }
 
-    public function testCreateFloatEntry()
+    public function testCreateFloatEntry(): void
     {
         $this->doTest(2154.12, null, 'float');
         $this->doTest(2541.1247, 'my-scope', 'float');
     }
 
-    public function testScoping()
+    public function testScoping(): void
     {
         SettingsStore::set('my-id1', 'some-data-1-scopeless', 'string');
         SettingsStore::set('my-id1', 'some-data-1', 'string', 'scope1');
@@ -114,7 +114,7 @@ class SettingsStoreTest extends ModelTestCase
         $this->assertNull(SettingsStore::get('my-id1'));
     }
 
-    public function testNotExistingSettings()
+    public function testNotExistingSettings(): void
     {
         SettingsStore::set('my-id1x', true, 'bool');
 

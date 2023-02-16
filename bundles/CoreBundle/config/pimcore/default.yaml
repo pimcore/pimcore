@@ -41,7 +41,6 @@ framework:
             'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
             'Pimcore\Messenger\CleanupThumbnailsMessage': pimcore_core
-            'Pimcore\Messenger\SearchBackendMessage': pimcore_core
             'Pimcore\Messenger\SanityCheckMessage': pimcore_core
             'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_asset_update
             'Pimcore\Messenger\AssetPreviewImageMessage': pimcore_core
@@ -188,10 +187,22 @@ pimcore:
                     - \Object_Class_Layout_
 
     documents:
+        type_definitions:
+            map:
+                folder: \Pimcore\Model\Document\Folder
+                page: \Pimcore\Model\Document\Page
+                snippet: \Pimcore\Model\Document\Snippet
+                link: \Pimcore\Model\Document\Link
+                hardlink: \Pimcore\Model\Document\Hardlink
+                email: \Pimcore\Model\Document\Email
+                newsletter: \Pimcore\Model\Document\Newsletter
+                printpage: \Pimcore\Model\Document\Printpage
+                printcontainer: \Pimcore\Model\Document\Printcontainer
+            prefixes:
+                - \Pimcore\Model\Document\
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-        types: ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer']
         valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
 
     routing:
@@ -201,12 +212,6 @@ pimcore:
         source_adapters:
             defaultAdapter: pimcore.document.newsletter.factory.default
             csvList: pimcore.document.newsletter.factory.csv
-            reportAdapter: pimcore.document.newsletter.factory.report
-
-    custom_report:
-        adapters:
-            sql: pimcore.custom_report.adapter.factory.sql
-            analytics: pimcore.custom_report.adapter.factory.analytics
 
     targeting:
         data_providers:
@@ -238,10 +243,10 @@ pimcore:
         profiler:
             routes:
                 - { path: ^/_(profiler|wdt)(/.*)?$ }
-        plugin:
-            routes:
-                - { path: ^/plugin(/.*)?$ }
-
+    translations:
+        domains:
+            - messages
+            - admin
     sitemaps:
         generators:
             pimcore_documents:
@@ -268,7 +273,3 @@ presta_sitemap:
         lastmod: ~
         priority: ~
         changefreq: ~
-
-sensio_framework_extra:
-    router:
-        annotations: false

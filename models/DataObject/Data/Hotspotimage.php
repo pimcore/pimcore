@@ -26,7 +26,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    protected ElementDescriptor|Asset\Image|null $image;
+    protected ElementDescriptor|Asset\Image|null $image = null;
 
     /**
      * @var array[]|null
@@ -199,10 +199,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
         return $this->getImage()->getThumbnail($thumbConfig, $deferred);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         if ($this->image) {
             return $this->image->__toString();

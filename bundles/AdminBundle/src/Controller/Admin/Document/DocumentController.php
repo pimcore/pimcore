@@ -757,7 +757,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function getDocTypesAction(Request $request): JsonResponse
     {
         $list = new DocType\Listing();
-
         if ($type = $request->get('type')) {
             if (!Document\Service::isValidType($type)) {
                 throw new BadRequestHttpException('Invalid type: ' . $type);
@@ -784,12 +783,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function versionToSessionAction(Request $request): Response
     {
-        $version = Version::getById((int) $request->get('id'));
-        if (!$version) {
-            throw $this->createNotFoundException();
+        $id = (int)$request->get('id');
+        $version = Version::getById($id);
+        $document = $version?->loadData();
+        if (!$document) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
-        $document = $version->loadData();
-        Document\Service::saveElementToSession($document);
+        Document\Service::saveElementToSession($document, $request->getSession()->getId());
 
         return new Response();
     }
@@ -805,11 +805,12 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $this->versionToSessionAction($request);
 
-        $version = Version::getById((int) $request->get('id'));
-        if (!$version) {
-            throw $this->createNotFoundException();
+        $id = (int)$request->get('id');
+        $version = Version::getById($id);
+        $document = $version?->loadData();
+        if (!$document) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
-        $document = $version->loadData();
 
         $currentDocument = Document::getById($document->getId());
         if ($currentDocument->isAllowed('publish')) {
@@ -902,7 +903,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $transactionId = time();
         $pasteJobs = [];
 
-        Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+        Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId) {
             $session->set((string) $transactionId, ['idMapping' => []]);
         }, 'pimcore_copy');
 
@@ -1000,7 +1001,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $transactionId = $request->get('transactionId');
 
-        $idStore = Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+        $idStore = Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId) {
             return $session->get($transactionId);
         }, 'pimcore_copy');
 
@@ -1024,7 +1025,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         }
 
         // write the store back to the session
-        Session::useSession(function (AttributeBagInterface $session) use ($transactionId, $idStore) {
+        Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId, $idStore) {
             $session->set($transactionId, $idStore);
         }, 'pimcore_copy');
 
@@ -1046,7 +1047,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $success = false;
         $sourceId = (int)$request->get('sourceId');
         $source = Document::getById($sourceId);
-        $session = Session::get('pimcore_copy');
+        $session = Session::getSessionBag($request->getSession(), 'pimcore_copy');
 
         $targetId = (int)$request->get('targetId');
 
@@ -1095,7 +1096,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
                             $sessionBag['parentId'] = $newDocument->getId();
                         }
                         $session->set($request->get('transactionId'), $sessionBag);
-                        Session::writeClose();
                     } elseif ($request->get('type') == 'replace') {
                         $this->_documentService->copyContents($target, $source);
                     }
@@ -1131,7 +1131,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
         }
 
         $versionFrom = Version::getById($from);
-        $docFrom = $versionFrom->loadData();
+        $docFrom = $versionFrom?->loadData();
+
+        if (!$docFrom) {
+            throw $this->createNotFoundException('Version with id [' . $from . "] doesn't exist");
+        }
 
         $prefix = Config::getSystemConfiguration('documents')['preview_url_prefix'];
         if (empty($prefix)) {
@@ -1152,8 +1156,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $viewParams = [];
 
-        Chromium::convert($fromUrl, $fromFile);
-        Chromium::convert($toUrl, $toFile);
+        $session = $request->getSession();
+
+        Chromium::convert($fromUrl, $fromFile, $session->getName(), $session->getId());
+        Chromium::convert($toUrl, $toFile, $session->getName(), $session->getId());
 
         $image1 = new Imagick($fromFile);
         $image2 = new Imagick($toFile);

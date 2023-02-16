@@ -20,10 +20,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Compiler\Registe
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\Version;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
+class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle implements DependentBundleInterface
 {
     /**
      * {@inheritdoc}
@@ -58,7 +60,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
             '/bundles/pimcoreecommerceframework/js/indexfieldselectionfield/tags/indexFieldSelectionCombo.js',
             '/bundles/pimcoreecommerceframework/js/indexfieldselectionfield/data/indexFieldSelection.js',
             '/bundles/pimcoreecommerceframework/js/indexfieldselectionfield/tags/indexFieldSelection.js',
-            '/bundles/pimcoreecommerceframework/js/bundle.js',
+            '/bundles/pimcoreecommerceframework/js/startup.js',
             '/bundles/pimcoreecommerceframework/js/pricing/config/panel.js',
             '/bundles/pimcoreecommerceframework/js/pricing/config/item.js',
             '/bundles/pimcoreecommerceframework/js/pricing/config/objects.js',
@@ -80,8 +82,10 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
         return $this->container->get(Installer::class);
     }
 
-    public function getPath(): string
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
-        return \dirname(__DIR__);
+        if (\Pimcore\Version::getMajorVersion() >= 11) {
+            $collection->addBundle(\Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle::class);
+        }
     }
 }

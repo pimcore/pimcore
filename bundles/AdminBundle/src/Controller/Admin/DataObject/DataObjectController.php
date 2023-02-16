@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
-use Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
@@ -38,7 +37,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Helper\OptionsProviderResolver;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Schedule\Task;
-use Pimcore\Model\Version;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -375,11 +373,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         // check for lock
         if ($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete')) {
-            if (Element\Editlock::isLocked($objectId, 'object')) {
+            if (Element\Editlock::isLocked($objectId, 'object', $request->getSession()->getId())) {
                 return $this->getEditLockResponse($objectId, 'object');
             }
 
-            Element\Editlock::lock($objectId, 'object');
+            Element\Editlock::lock($request->get('id'), 'object', $request->getSession()->getId());
         }
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
@@ -511,7 +509,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             if ($currentLayoutId === null && count($validLayouts) > 0) {
-                $currentLayoutId = $validLayouts[0]->getId();
+                $currentLayoutId = reset($validLayouts)->getId();
             }
 
             if (!empty($validLayouts)) {
@@ -520,6 +518,25 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 foreach ($validLayouts as $validLayout) {
                     $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
                 }
+
+                usort($objectData['validLayouts'], static function ($layoutData1, $layoutData2) {
+                    if ($layoutData2['id'] === '-1') {
+                        return 1;
+                    }
+
+                    if ($layoutData1['id'] === '-1') {
+                        return -1;
+                    }
+
+                    if ($layoutData2['id'] === '0') {
+                        return 1;
+                    }
+                    if ($layoutData1['id'] === '0') {
+                        return -1;
+                    }
+
+                    return strcasecmp($layoutData1['name'], $layoutData2['name']);
+                });
 
                 $user = Tool\Admin::getCurrentUser();
 
@@ -544,164 +561,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GET_PRE_SEND_DATA);
             $data = $event->getArgument('data');
 
-            DataObject\Service::removeElementFromSession('object', $object->getId());
+            DataObject\Service::removeElementFromSession('object', $object->getId(), $request->getSession()->getId());
 
             return $this->adminJson($data);
         }
 
         throw $this->createAccessDeniedHttpException();
-    }
-
-    /**
-     * @Route("/relation-objects-list", name="relation_objects_list", methods={"GET"})
-     */
-    public function optionsAction(Request $request): JsonResponse
-    {
-        $fieldConfigData = json_decode($request->get('fieldConfig'), true);
-        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
-        if (!$loader->supports($fieldConfigData['fieldtype'])) {
-            return new JsonResponse([]);
-        }
-
-        /** @var AbstractRelations $fieldConfig */
-        $fieldConfig = $loader->build($fieldConfigData['fieldtype']);
-        $fieldConfig->setValues($fieldConfigData);
-
-        $visibleFields = null;
-        if (method_exists($fieldConfig, 'getVisibleFields')) {
-            $visibleFields = is_array($fieldConfig->getVisibleFields()) ? $fieldConfig->getVisibleFields() : explode(',', $fieldConfig->getVisibleFields());
-        }
-
-        if (!$visibleFields) {
-            $visibleFields = ['id', 'fullpath', 'classname'];
-        }
-
-        $searchRequest = $request;
-
-        $allowedTypes = [];
-        $subTypes = [];
-        $classes = [];
-        $allowClasses = true;
-
-        if ($fieldConfig->getAssetsAllowed()) {
-            $allowedTypes[] = 'asset';
-            $allowClasses = false;
-
-            foreach ($fieldConfig->getAssetTypes() as $subType) {
-                $subTypes[] = $subType['assetTypes'];
-            }
-        }
-
-        if (method_exists($fieldConfig, 'getDocumentsAllowed') && $fieldConfig->getDocumentsAllowed()) {
-            $allowedTypes[] = 'document';
-            $allowClasses = false;
-
-            foreach ($fieldConfig->getDocumentTypes() as $subType) {
-                $subTypes[] = $subType['documentTypes'];
-            }
-        }
-
-        if (method_exists($fieldConfig, 'getObjectsAllowed') && $fieldConfig->getObjectsAllowed()) {
-            $allowedTypes[] = 'object';
-
-            if ($allowClasses) {
-                $subTypes = array_merge($subTypes, ['object', 'variant']);
-
-                foreach ($fieldConfig->getClasses() as $classData) {
-                    $classes[] = $classData['classes'];
-                }
-            }
-        }
-
-        $searchRequest->request->set('type', implode(',', $allowedTypes));
-        $searchRequest->request->set('subtype', implode(',', $subTypes));
-        $searchRequest->request->set('class', implode(',', $classes));
-        $searchRequest->request->set('fields', $visibleFields);
-        $searchRequest->attributes->set('unsavedChanges', $request->get('unsavedChanges', ''));
-        $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
-        $objects = json_decode($res->getContent(), true)['data'];
-
-        if ($request->get('data')) {
-            foreach (json_decode($request->get('data'), true) as $preSelectedElement) {
-                if (isset($preSelectedElement['id'], $preSelectedElement['type'])) {
-                    $objects[] = ['id' => $preSelectedElement['id'], 'type' => $preSelectedElement['type']];
-                }
-            }
-        }
-
-        $options = [];
-        foreach ($objects as $objectData) {
-            $option = [
-                'id' => $objectData['id'],
-                'type' => $objectData['type'],
-            ];
-
-            $visibleFieldValues = [];
-            foreach ($visibleFields as $visibleField) {
-                if ($visibleField === 'fullpath' && $fieldConfig instanceof DataObject\ClassDefinition\PathFormatterAwareInterface) {
-                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
-                    if (!$object instanceof Element\ElementInterface) {
-                        continue;
-                    }
-
-                    $formatter = $fieldConfig->getPathFormatterClass();
-
-                    if (null !== $formatter) {
-                        $pathFormatter = DataObject\ClassDefinition\Helper\PathFormatterResolver::resolvePathFormatter(
-                            $fieldConfig->getPathFormatterClass()
-                        );
-
-                        if ($pathFormatter instanceof DataObject\ClassDefinition\PathFormatterInterface) {
-                            $formattedPath = $pathFormatter->formatPath(
-                                [],
-                                $object,
-                                [$objectData],
-                                [
-                                    'fd' => $fieldConfig,
-                                    'context' => [],
-                                ]
-                            )[0] ?? null;
-                            if ($formattedPath) {
-                                $objectData['fullpath'] = $formattedPath;
-                            }
-                        }
-                    }
-                }
-
-                if (isset($objectData[$visibleField])) {
-                    $visibleFieldValues[] = $objectData[$visibleField];
-                } else {
-                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
-                    if (!$object instanceof Element\ElementInterface) {
-                        continue;
-                    }
-
-                    $inheritValues = DataObject\Concrete::getGetInheritedValues();
-                    $fallbackValues = DataObject\Localizedfield::getGetFallbackValues();
-
-                    DataObject\Concrete::setGetInheritedValues(true);
-                    DataObject\Localizedfield::setGetFallbackValues(true);
-
-                    $getter = 'get'.ucfirst($visibleField);
-                    if (method_exists($object, $getter)) {
-                        $visibleFieldValue = $object->$getter();
-                        if ($visibleField === 'key' && $object instanceof DataObject\Concrete && count($classes) > 1) {
-                            $visibleFieldValue .= ' ('.$object->getClassName().')';
-                        }
-                        $visibleFieldValues[] = $visibleFieldValue;
-                    }
-
-                    DataObject\Concrete::setGetInheritedValues($inheritValues);
-                    DataObject\Localizedfield::setGetFallbackValues($fallbackValues);
-                }
-            }
-
-            $option['label'] = implode(', ', $visibleFieldValues);
-
-            $options[] = $option;
-        }
-
-        return new JsonResponse($options);
     }
 
     /**
@@ -1041,14 +906,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         /** @var DataObject\Concrete $object */
         $object = $modelFactory->build($className);
         $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
-        $object->setClassId($request->get('classId'));
-
+        $classId = $request->request->get('classId');
         if ($request->get('variantViaTree')) {
             $parentId = $request->request->getInt('parentId');
             $parent = DataObject\Concrete::getById($parentId);
-            $object->setClassId($parent->getClass()->getId());
+            $classId = $parent->getClass()->getId();
         }
 
+        $object->setClassId($classId);
         $object->setClassName($request->request->get('className'));
         $object->setParentId($request->request->getInt('parentId'));
         $object->setKey($request->request->get('key'));
@@ -1585,7 +1450,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             ]);
         } elseif ($request->get('task') == 'session') {
             //TODO https://github.com/pimcore/pimcore/issues/9536
-            DataObject\Service::saveElementToSession($object, '', false);
+            DataObject\Service::saveElementToSession($object, $request->getSession()->getId(), '', false);
 
             return $this->adminJson(['success' => true]);
         } elseif ($request->get('task') == 'scheduler') {
@@ -1747,9 +1612,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function publishVersionAction(Request $request): JsonResponse
     {
-        $version = Model\Version::getById((int) $request->get('id'));
-        if (!$version) {
-            throw $this->createNotFoundException();
+        $id = (int)$request->get('id');
+        $version = Model\Version::getById($id);
+        $object = $version?->loadData();
+        if (!$object) {
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
         $object = $version->loadData();
 
@@ -1793,17 +1660,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
-        $object = $version->loadData();
-
-        if (method_exists($object, 'getLocalizedFields')) {
-            /** @var DataObject\Localizedfield $localizedFields */
-            $localizedFields = $object->getLocalizedFields();
-            $localizedFields->setLoadedAllLazyData();
-        }
-
-        DataObject::setDoNotRestoreKeyAndPath(false);
+        $object = $version?->loadData();
 
         if ($object) {
+            if (method_exists($object, 'getLocalizedFields')) {
+                /** @var DataObject\Localizedfield $localizedFields */
+                $localizedFields = $object->getLocalizedFields();
+                $localizedFields->setLoadedAllLazyData();
+            }
+
+            DataObject::setDoNotRestoreKeyAndPath(false);
+
             if ($object->isAllowed('versions')) {
                 return $this->render('@PimcoreAdmin/admin/data_object/data_object/preview_version.html.twig',
                     [
@@ -1838,7 +1705,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $id2 = (int)$to;
 
         $version1 = Model\Version::getById($id1);
-        $object1 = $version1->loadData();
+        $object1 = $version1?->loadData();
+
+        if (!$object1) {
+            throw $this->createNotFoundException('Version with id [' . $id1 . "] doesn't exist");
+        }
 
         if (method_exists($object1, 'getLocalizedFields')) {
             /** @var DataObject\Localizedfield $localizedFields1 */
@@ -1847,7 +1718,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         $version2 = Model\Version::getById($id2);
-        $object2 = $version2->loadData();
+        $object2 = $version2?->loadData();
+
+        if (!$object2) {
+            throw $this->createNotFoundException('Version with id [' . $id2 . "] doesn't exist");
+        }
 
         if (method_exists($object2, 'getLocalizedFields')) {
             /** @var DataObject\Localizedfield $localizedFields2 */
@@ -1857,22 +1732,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         DataObject::setDoNotRestoreKeyAndPath(false);
 
-        if ($object1 && $object2) {
-            if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
-                return $this->render('@PimcoreAdmin/admin/data_object/data_object/diff_versions.html.twig',
-                    [
-                        'object1' => $object1,
-                        'versionNote1' => $version1->getNote(),
-                        'object2' => $object2,
-                        'versionNote2' => $version2->getNote(),
-                        'validLanguages' => Tool::getValidLanguages(),
-                    ]);
-            }
-
-            throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
+        if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
+            return $this->render('@PimcoreAdmin/admin/data_object/data_object/diff_versions.html.twig',
+                [
+                    'object1' => $object1,
+                    'versionNote1' => $version1->getNote(),
+                    'object2' => $object2,
+                    'versionNote2' => $version2->getNote(),
+                    'validLanguages' => Tool::getValidLanguages(),
+                ]);
         }
 
-        throw $this->createNotFoundException('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
+        throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
     }
 
     /**
@@ -1933,7 +1804,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $transactionId = time();
         $pasteJobs = [];
 
-        Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId) {
             $session->set((string) $transactionId, ['idMapping' => []]);
         }, 'pimcore_copy');
 
@@ -2024,7 +1895,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $transactionId = $request->get('transactionId');
 
-        $idStore = Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+        $idStore = Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId) {
             return $session->get($transactionId);
         }, 'pimcore_copy');
 
@@ -2044,7 +1915,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object->save();
 
         // write the store back to the session
-        Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId, $idStore) {
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($transactionId, $idStore) {
             $session->set($transactionId, $idStore);
         }, 'pimcore_copy');
 
@@ -2067,7 +1938,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $sourceId = (int)$request->get('sourceId');
         $source = DataObject::getById($sourceId);
 
-        $session = Tool\Session::get('pimcore_copy');
+        $session = Tool\Session::getSessionBag($request->getSession(), 'pimcore_copy');
         $sessionBag = $session->get($request->get('transactionId'));
 
         $targetId = (int)$request->get('targetId');
@@ -2111,7 +1982,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 }
 
                 $session->set($request->get('transactionId'), $sessionBag);
-                Tool\Session::writeClose();
 
                 return $this->adminJson(['success' => true, 'message' => $message]);
             } else {
@@ -2134,7 +2004,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     public function previewAction(Request $request): RedirectResponse|Response
     {
         $id = $request->query->getInt('id');
-        $object = DataObject\Service::getElementFromSession('object', $id);
+        $object = DataObject\Service::getElementFromSession('object', $id, $request->getSession()->getId());
 
         if ($object instanceof DataObject\Concrete) {
             $url = null;

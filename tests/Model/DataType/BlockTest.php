@@ -47,7 +47,7 @@ class BlockTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_Block();
     }
@@ -104,7 +104,7 @@ class BlockTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testReferencesInsideBlock()
+    public function testReferencesInsideBlock(): void
     {
         $cacheEnabled = Cache::isEnabled();
         if (!$cacheEnabled) {
@@ -138,8 +138,9 @@ class BlockTest extends ModelTestCase
 
         $loadedData = $object->getTestblock();
 
+        /** @var Link $loadedLink */
         $loadedLink = $loadedData[0]['blocklink']->getData();
-        $this->assertEquals($targetDocument->getId(), $loadedLink->getObject()->getId());
+        $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
 
         $loadedHotspotImage = $loadedData[0]['blockhotspotimage']->getData();
         $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
@@ -155,7 +156,7 @@ class BlockTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testReferencesInsideLocalizedBlock()
+    public function testReferencesInsideLocalizedBlock(): void
     {
         $cacheEnabled = Cache::isEnabled();
         if (!$cacheEnabled) {
@@ -188,8 +189,9 @@ class BlockTest extends ModelTestCase
         $object = DataObject::getById($objectRef->getId(), ['force' => true]);
         $loadedData = $object->getLtestblock('de');
 
+        /** @var Link $loadedLink */
         $loadedLink = $loadedData[0]['lblocklink']->getData();
-        $this->assertEquals($targetDocument->getId(), $loadedLink->getObject()->getId());
+        $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
 
         $loadedHotspotImage = $loadedData[0]['lblockhotspotimage']->getData();
         $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
@@ -205,7 +207,7 @@ class BlockTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testBlockDataFromReferences()
+    public function testBlockDataFromReferences(): void
     {
         $cacheEnabled = Cache::isEnabled();
         if (!$cacheEnabled) {

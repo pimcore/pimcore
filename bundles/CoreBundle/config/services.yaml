@@ -97,33 +97,10 @@ services:
       arguments:
         - 'Pimcore\Document\Newsletter\AddressSourceAdapter\CsvList'
 
-    pimcore.document.newsletter.factory.report:
-      class: Pimcore\Document\Newsletter\ReportAddressSourceAdapterFactory
-      arguments:
-        - '@pimcore.custom_report.adapter.factories'
-
     pimcore.newsletter.address_source_adapter.factories:
         public: true
         class: Symfony\Component\DependencyInjection\ServiceLocator
         tags: ['container.service_locator']
-
-
-    # CustomReport Adapter
-    pimcore.custom_report.adapter.factory.sql:
-      class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
-      arguments:
-        - 'Pimcore\Model\Tool\CustomReport\Adapter\Sql'
-
-    pimcore.custom_report.adapter.factory.analytics:
-      class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
-      arguments:
-        - 'Pimcore\Model\Tool\CustomReport\Adapter\Analytics'
-
-    pimcore.custom_report.adapter.factories:
-        class: Symfony\Component\DependencyInjection\ServiceLocator
-        public: true
-        tags: ['container.service_locator']
-
 
     # DataObject Consent Service
     Pimcore\DataObject\Consent\Service:
@@ -154,9 +131,9 @@ services:
         public: true
         class: Pimcore\Model\DataObject\QuantityValue\DefaultConverter
 
-    Pimcore\Bundle\CoreBundle\Request\ParamConverter\DataObjectParamConverter:
+    Pimcore\Bundle\CoreBundle\Request\ParamResolver\DataObjectParamResolver:
         tags:
-            - { name: request.param_converter, priority: -2, converter: data_object_converter }
+            - { name: controller.argument_value_resolver, priority: 101}
 
     Symfony\Component\Lock\PersistingStoreInterface:
         class: Symfony\Component\Lock\Store\DoctrineDbalStore

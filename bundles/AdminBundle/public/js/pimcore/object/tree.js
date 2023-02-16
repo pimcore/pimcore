@@ -80,10 +80,17 @@ pimcore.registerNS("pimcore.object.tree");
 
          var itemsPerPage = pimcore.settings['object_tree_paging_limit'];
 
-         rootNodeConfig.text = t("home");
-         rootNodeConfig.id = "" +  rootNodeConfig.id;
+         let rootNodeConfigText = t('home');
+         let rootNodeConfigIconCls = "pimcore_icon_home";
+         if(this.config.customViewId !== undefined && rootNodeConfig.id !== 1) {
+             rootNodeConfigText = rootNodeConfig.key;
+             rootNodeConfigIconCls = rootNodeConfig.iconCls;
+         }
+
+         rootNodeConfig.text = rootNodeConfigText;
          rootNodeConfig.allowDrag = true;
-         rootNodeConfig.iconCls = "pimcore_icon_home";
+         rootNodeConfig.id = "" + rootNodeConfig.id;
+         rootNodeConfig.iconCls = rootNodeConfigIconCls;
          rootNodeConfig.cls = "pimcore_tree_node_root";
          rootNodeConfig.expanded = true;
 
@@ -259,6 +266,13 @@ pimcore.registerNS("pimcore.object.tree");
      },
 
      onTreeNodesDrop: function (node, data, overModel, dropPosition, eOpts) {
+         if (typeof this.treeNodeMoveParameter.oldParent.getOwnerTree !== "function") {
+             Ext.Array.each(data.records, function (record) {
+                 if (this.onTreeNodeBeforeMove(record, record.parentNode, overModel)) {
+                     this.onTreeNodeMove(record, record.parentNode, overModel, 0);
+                 }
+             }.bind(this));
+         }
 
          if (typeof this.treeNodeMoveParameter.oldParent.getOwnerTree !== "function") {
              return;
@@ -650,7 +664,9 @@ pimcore.registerNS("pimcore.object.tree");
              var advancedMenuItems = [];
              var user = pimcore.globalmanager.get("user");
 
-             if (record.data.permissions.create && perspectiveCfg.inTreeContextMenu("object.searchAndMove")) {
+             if (record.data.permissions.create &&
+                 perspectiveCfg.inTreeContextMenu("object.searchAndMove") &&
+                 pimcore.helpers.hasSearchImplementation()) {
                  advancedMenuItems.push({
                      text: t('search_and_move'),
                      iconCls: "pimcore_icon_search pimcore_icon_overlay_go",

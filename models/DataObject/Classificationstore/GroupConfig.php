@@ -25,7 +25,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\GroupConfig\Dao getDao()
- * @method int hasChildren()
+ * @method bool hasChildren()
  */
 final class GroupConfig extends Model\AbstractModel
 {
@@ -57,9 +57,8 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * The group description.
      *
-     * @var string
      */
-    protected string $description = '';
+    protected ?string $description = null;
 
     protected ?int $creationDate = null;
 
@@ -174,9 +173,8 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Returns the description.
      *
-     * @return string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -184,11 +182,10 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * Sets the description.
      *
-     * @param string $description
      *
-     * @return Model\DataObject\Classificationstore\GroupConfig
+     * @return $this
      */
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
@@ -298,8 +295,12 @@ final class GroupConfig extends Model\AbstractModel
     private function removeCache(): void
     {
         // Remove runtime cache
-        RuntimeCache::set(self::getCacheKey($this->getId()), null);
-        RuntimeCache::set(self::getCacheKey($this->getStoreId(), $this->getName()), null);
+        if (RuntimeCache::getInstance()->offsetExists(self::getCacheKey($this->getId()))) {
+            RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getId()));
+        }
+        if (RuntimeCache::getInstance()->offsetExists(self::getCacheKey($this->getStoreId(), $this->getName()))) {
+            RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getStoreId(), $this->getName()));
+        }
 
         // Remove persisted cache
         Cache::remove(self::getCacheKey($this->getId()));

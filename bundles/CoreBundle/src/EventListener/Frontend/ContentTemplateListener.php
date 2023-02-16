@@ -19,10 +19,15 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\TemplateResolver;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Twig\Environment;
 
 /**
  * If a contentTemplate attribute was set on the request (done by router when building a document route), extract the
@@ -34,7 +39,7 @@ class ContentTemplateListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    public function __construct(protected TemplateResolver $templateResolver)
+    public function __construct(protected TemplateResolver $templateResolver, protected Environment $twig)
     {
     }
 
@@ -63,10 +68,9 @@ class ContentTemplateListener implements EventSubscriberInterface
             return;
         }
 
-        $template = $request->attributes->get('_template');
+        $attribute = $event->controllerArgumentsEvent?->getAttributes()[Template::class][0] ?? null;
 
-        // no @Template present -> nothing to do
-        if (null === $template || !($template instanceof Template)) {
+        if (!$attribute instanceof Template) {
             return;
         }
 
@@ -76,6 +80,37 @@ class ContentTemplateListener implements EventSubscriberInterface
             return;
         }
 
-        $template->setTemplate($resolvedTemplate);
+        $parameters = $this->resolveParameters($event->controllerArgumentsEvent, $attribute->vars);
+        $status = 200;
+
+        foreach ($parameters as $k => $v) {
+            if (!$v instanceof FormInterface) {
+                continue;
+            }
+            if ($v->isSubmitted() && !$v->isValid()) {
+                $status = 422;
+            }
+            $parameters[$k] = $v->createView();
+        }
+
+        $event->setResponse($attribute->stream
+            ? new StreamedResponse(fn () => $this->twig->display($resolvedTemplate, $parameters), $status)
+            : new Response($this->twig->render($resolvedTemplate, $parameters), $status)
+        );
+    }
+
+    private function resolveParameters(ControllerArgumentsEvent $event, ?array $vars): array
+    {
+        if ([] === $vars) {
+            return [];
+        }
+
+        $parameters = $event->getNamedArguments();
+
+        if (null !== $vars) {
+            $parameters = array_intersect_key($parameters, array_flip($vars));
+        }
+
+        return $parameters;
     }
 }

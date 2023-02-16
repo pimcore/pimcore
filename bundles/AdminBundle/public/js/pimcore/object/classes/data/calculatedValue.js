@@ -69,6 +69,7 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
             name: 'calculatorType',
             displayField: 'name',
             valueField: 'value',
+            forceSelection: true,
             store: [
                 { value: 'class', name: t('calculatedValue_calculatortype_class') },
                 { value: 'expression', name: t('calculatedValue_calculatortype_expression') },

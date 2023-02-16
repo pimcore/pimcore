@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use function date;
-use Pimcore\Config;
+use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Controller\Controller;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -156,7 +156,14 @@ class PublicServicesController extends Controller
                                 // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                                 // is set to auto-optimized format so the resulting thumbnail can be jpeg
                                 $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $pathReference['src']);
-                                $storage->writeStream($requestedFile, $thumbnailStream);
+
+                                //Only copy the file if not exists yet
+                                if (!$storage->fileExists($requestedFile)) {
+                                    $storage->writeStream($requestedFile, $thumbnailStream);
+                                }
+
+                                //Stream can be closed by writeStream and needs to be reloaded.
+                                $thumbnailStream = $storage->readStream($requestedFile);
                             }
                         } elseif ($thumbnailType =='video' && isset($storagePath)) {
                             $mime = $storage->mimeType($storagePath);
@@ -200,9 +207,13 @@ class PublicServicesController extends Controller
         $domain = \Pimcore\Tool::getHostname();
         $site = Site::getByDomain($domain);
 
-        $config = Config::getRobotsConfig();
+        $config = [];
 
-        $siteId = 'default';
+        if (class_exists(Config::class)) {
+            $config = Config::getRobotsConfig();
+        }
+
+        $siteId = 0;
         if ($site instanceof Site) {
             $siteId = $site->getId();
         }

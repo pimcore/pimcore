@@ -55,26 +55,6 @@ final class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->arrayNode('error_handling')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->booleanNode('render_error_document')
-                            ->info('Render error document in case of an error instead of showing Symfony\'s error page')
-                            ->defaultTrue()
-                            ->beforeNormalization()
-                                ->ifString()
-                                ->then(function ($v) {
-                                    return (bool)$v;
-                                })
-                            ->end()
-                        ->end()
-                    ->end()
-                    ->setDeprecated(
-                        'pimcore/pimcore',
-                        '10.1',
-                        'The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.'
-                    )
-                ->end()
                 ->arrayNode('bundles')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -93,6 +73,10 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('translations')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('domains')
+                            ->info('Valid domains for translations')
+                            ->prototype('scalar')->end()
+                        ->end()
                         ->arrayNode('admin_translation_mapping')
                             ->useAttributeAsKey('locale')
                             ->prototype('scalar')->end()
@@ -142,7 +126,6 @@ final class Configuration implements ConfigurationInterface
         $this->addSecurityNode($rootNode);
         $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
-        $this->addCustomReportsNode($rootNode);
         $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
         $this->addWorkflowNode($rootNode);
@@ -878,10 +861,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('types')
-                    ->info('list of supported document types')
-                    ->scalarPrototype()->end()
-                ->end()
                 ->arrayNode('valid_tables')
                     ->info('list of supported documents_* tables')
                     ->scalarPrototype()->end()
@@ -955,6 +934,8 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                 ->end()
             ->end();
+
+        $this->addImplementationLoaderNode($documentsNode, 'type_definitions');
     }
 
     /**
@@ -1209,60 +1190,6 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                         ->arrayNode('source_adapters')
-                            ->useAttributeAsKey('name')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    /**
-     * Adds configuration tree for custom report adapters
-     */
-    private function addCustomReportsNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('custom_report')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('definitions')
-                                ->normalizeKeys(false)
-                                ->prototype('array')
-                                    ->children()
-                                        ->scalarNode('id')->end()
-                                        ->scalarNode('name')->end()
-                                        ->scalarNode('niceName')->end()
-                                        ->scalarNode('sql')->end()
-                                        ->scalarNode('group')->end()
-                                        ->scalarNode('groupIconClass')->end()
-                                        ->scalarNode('iconClass')->end()
-                                        ->booleanNode('menuShortcut')->end()
-                                        ->scalarNode('reportClass')->end()
-                                        ->scalarNode('chartType')->end()
-                                        ->scalarNode('pieColumn')->end()
-                                        ->scalarNode('pieLabelColumn')->end()
-                                        ->variableNode('xAxis')->end()
-                                        ->variableNode('yAxis')->end()
-                                        ->integerNode('modificationDate')->end()
-                                        ->integerNode('creationDate')->end()
-                                        ->booleanNode('shareGlobally')->end()
-                                        ->variableNode('sharedUserNames')->end()
-                                        ->variableNode('sharedRoleNames')->end()
-                                        ->arrayNode('dataSourceConfig')
-                                            ->prototype('variable')
-                                            ->end()
-                                        ->end()
-                                        ->arrayNode('columnConfiguration')
-                                            ->prototype('variable')
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                        ->end()
-                        ->arrayNode('adapters')
                             ->useAttributeAsKey('name')
                                 ->prototype('scalar')
                             ->end()

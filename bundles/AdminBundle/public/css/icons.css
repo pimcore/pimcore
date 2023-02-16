@@ -126,6 +126,25 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/overlay-google.svg) center center no-repeat !important;
 }
 
+.pimcore_main_nav_icon_file {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-file-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_build {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-build-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_marketing {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-bar_chart-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_settings {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-settings-24px.svg) center center no-repeat !important;
+}
+
+.pimcore_main_nav_icon_search {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-search-24px.svg) center center no-repeat !important;
+}
 
 .pimcore_nav_icon_perspective {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/reading.svg) center center no-repeat !important;
@@ -139,16 +158,9 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/sms.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_fileexplorer {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/search.svg) center center no-repeat !important;
-}
 
 .pimcore_nav_icon_bundles {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/puzzle.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_word_export {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/word.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_close_all {
@@ -221,10 +233,6 @@
 
 .pimcore_nav_icon_notes {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/survey.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_log_admin {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/text.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_gdpr {
@@ -588,10 +596,6 @@
     background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/unknown.svg);
     background-position: center center;
     background-repeat: no-repeat;
-}
-
-.pimcore_icon_vr {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/vr.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_pdf, .pimcore_icon_ps {

@@ -40,7 +40,7 @@ jobs:
                 include:
                     - { php-version: "8.1", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.1", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.1", dependencies: "highest", experimental: true, symfony: "6.2.x-dev", composer-options: "" }
+                    - { php-version: "8.1", dependencies: "highest", experimental: true, symfony: "6.3.x-dev", composer-options: "" }
 
         steps:
             - name: "Checkout code"

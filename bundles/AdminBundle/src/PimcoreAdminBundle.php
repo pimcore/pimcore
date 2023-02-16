@@ -22,10 +22,6 @@ use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\ImportExportLocators
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\TranslatorPass;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface;
-use Pimcore\Bundle\AdminBundle\Security\Factory\PreAuthenticatedAdminSessionFactory;
-use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
-use Pimcore\HttpKernel\BundleCollection\BundleCollection;
-use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
@@ -50,10 +46,6 @@ class PimcoreAdminBundle extends Bundle implements DependentBundleInterface
         $container->addCompilerPass(new ImportExportLocatorsPass());
         $container->addCompilerPass(new TranslatorPass());
         $container->addCompilerPass(new ContentSecurityPolicyUrlsPass());
-
-        /** @var SecurityExtension $extension */
-        $extension = $container->getExtension('security');
-        $extension->addAuthenticatorFactory(new PreAuthenticatedAdminSessionFactory());
     }
 
     public function getPath(): string
