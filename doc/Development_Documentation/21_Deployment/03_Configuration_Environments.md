@@ -7,7 +7,7 @@ configurations including a fallback mechanism.
 Pimcore is relying on Symfony's environments, with some extras, however all the essential 
 information can be found in the [Symfony Docs](https://symfony.com/doc/current/configuration.html#configuration-environments)
 
-> Note: Require in your project "symfony/dotenv" - Symfony's DotEnv component to allow you to 
+> Note: Require `symfony/dotenv` in your project to use Symfony's DotEnv component to allow you to 
 [configure environment variables in `.env` files](https://symfony.com/doc/current/configuration.html#configuring-environment-variables-in-env-files), 
 or (e.g. in *prod* environments) you can configure everything via real environment variables.
 
