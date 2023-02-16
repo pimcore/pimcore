@@ -48,13 +48,10 @@ final class Version20221220152444 extends AbstractMigration
                     SettingsStore::set('web_to_print', $data,'string', 'pimcore_web_to_print');
                 }
             }
-            // updating description or deleting permissions
-            if($enableBundle) {
-                $this->addSql("UPDATE `users_permission_definitions` SET `category` = 'Pimcore Web2Print Bundle' WHERE `key` = 'web2print_settings'");
-            } else {
-                $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)web2print_settings(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)web2print_settings(?:$|,)\'');
-                $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'web2print_settings'");
-            }
+            // updating description  of permissions
+
+            $this->addSql("UPDATE `users_permission_definitions` SET `category` = 'Pimcore Web2Print Bundle' WHERE `key` = 'web2print_settings'");
+
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle', $enableBundle, 'bool', 'pimcore');
         }
 
@@ -67,7 +64,7 @@ final class Version20221220152444 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // restoring the permission
-        $this->addSql("INSERT IGNORE INTO `users_permission_definitions` (`key`) VALUES ('web2print_settings')");
+        $this->addSql("UPDATE `users_permission_definitions` SET `category` = '' WHERE `key` = 'web2print_settings'");
         // restoring the enableInDefaultView might be with wrong value
         SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle','pimcore');
         $settings = SettingsStore::get('web_to_print', 'pimcore_web_to_print');

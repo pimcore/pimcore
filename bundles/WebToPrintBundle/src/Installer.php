@@ -20,6 +20,8 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
+use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Installer extends SettingsStoreAwareInstaller
@@ -57,7 +59,13 @@ class Installer extends SettingsStoreAwareInstaller
     public function uninstall(): void
     {
         // Only remove permissions. Cleanup can be done by dev or command
-        $this->output->writeln("<info>Uninstalling only removes permissions. To clean up all documents and dependencies, please run 'bin/console pimcore:documents:cleanup printpage printcontainer'</info>");
+        $output = new ConsoleOutput(OutputInterface::VERBOSITY_NORMAL, true);
+        $output->writeln([
+            "\n\n<comment>Uninstalling only removes permissions. To clean up all documents and dependencies</comment>",
+            "<comment>Please run 'bin/console pimcore:documents:cleanup printpage printcontainer'</comment>",
+            "<comment>-------------------------------------------------------------------------------------</comment>"
+        ]);
+
         $this->removeUserPermission();
         parent::uninstall();
     }

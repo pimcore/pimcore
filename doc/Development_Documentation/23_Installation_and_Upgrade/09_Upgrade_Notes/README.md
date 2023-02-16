@@ -13,6 +13,7 @@
 - [Documents] 
   - Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
   - Removed `pimcore:document:types` from config. The types will be represented by the keys of the `type_definitions:map`
+  - Adding document cleanup command to clean up unused tables and document types, see [Documents](../../03_Documents/README.md#page_Cleanup-Documents-Types)
 - [Class Definitions] Class Resolver does not catch exceptions anymore.
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
 - [Runtime Cache] Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.  
