@@ -25,6 +25,8 @@ use Symfony\Component\HttpFoundation\Request;
 class Authentication
 {
     /**
+     * @deprecated
+     *
      * @param string $username
      * @param string $password
      *
@@ -32,6 +34,12 @@ class Authentication
      */
     public static function authenticatePlaintext($username, $password)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6',
+            sprintf('%s is deprecated and will be removed in Pimcore 11', __METHOD__),
+        );
+
         /** @var User $user */
         $user = User::getByName($username);
 
