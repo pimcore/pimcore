@@ -78,7 +78,7 @@ class IncludeRenderer
         if ($include instanceof PageSnippet && $include->isPublished()) {
             $this->eventDispatcher->dispatch(
                 new DocumentEvent($include, $params),
-                DocumentEvents::RENDERER_PRE_RENDER
+                DocumentEvents::INCLUDERENDERER_PRE_RENDER
             );
         }
 

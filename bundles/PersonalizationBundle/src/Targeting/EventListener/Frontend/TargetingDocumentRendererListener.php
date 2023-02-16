@@ -43,6 +43,7 @@ class TargetingDocumentRendererListener implements EventSubscriberInterface
     {
         return [
             DocumentEvents::RENDERER_PRE_RENDER => 'onPreRender',
+            DocumentEvents::INCLUDERENDERER_PRE_RENDER => 'onPreRender'
         ];
     }
 
