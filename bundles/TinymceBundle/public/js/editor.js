@@ -69,6 +69,7 @@ pimcore.bundle.tinymce.editor = Class.create({
             inline: true,
             base_url: '/bundles/pimcoretinymce/build/tinymce',
             suffix: '.min',
+            convert_urls: false,
             extended_valid_elements: 'a[name|href|target|title|pimcore_type|pimcore_id],img[style|longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align|pimcore_type|pimcore_id]',
             init_instance_callback: function (editor) {
                 editor.on('input', function (eChange) {
