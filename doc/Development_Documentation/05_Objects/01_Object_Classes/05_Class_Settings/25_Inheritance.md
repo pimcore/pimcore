@@ -50,9 +50,17 @@ the attributes directly, you will not get the inherited values.
 > The complex data type field collections does not support inheritance.
 
 Getting values from an object without inheritance
-````php
+```php
+$inheritanceModeBackup = DataObject::getGetInheritedValues();
 \Pimcore\Model\DataObject\AbstractObject::setGetInheritedValues(false); // default = true
-``
+
+// ... your code goes here
+// ...
+// ...
+
+// set status back to the original value 
+DataObject::setGetInheritedValues($inheritanceModeBackup);
+
 
 ## Parent Class - Class Inheritance
 
