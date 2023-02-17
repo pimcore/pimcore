@@ -59,60 +59,55 @@ class PublicServicesController extends Controller
             if ($thumbnail) {
                 $storage = Storage::get('thumbnail');
 
-                if ($assetInfo['type'] === 'video') {
+                if ($assetInfo['type'] === 'image') {
+                    $thumbnailStream = $thumbnail->getStream();
+
+                    $mime = $thumbnail->getMimeType();
+                    $fileSize = $thumbnail->getFileSize();
+                    $pathReference = $thumbnail->getPathReference();
+                    $actualFileExtension = File::getFileExtension($pathReference['src']);
+
+                    if ($actualFileExtension !== $requestedFileExtension) {
+                        // create a copy/symlink to the file with the original file extension
+                        // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
+                        // is set to auto-optimized format so the resulting thumbnail can be jpeg
+                        $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $pathReference['src']);
+
+                        //Only copy the file if not exists yet
+                        if (!$storage->fileExists($requestedFile)) {
+                            $storage->writeStream($requestedFile, $thumbnailStream);
+                        }
+
+                        //Stream can be closed by writeStream and needs to be reloaded.
+                        $thumbnailStream = $storage->readStream($requestedFile);
+                    }
+                } elseif ($assetInfo['type'] === 'video') {
                     $storagePath = urldecode($thumbnail['formats'][$requestedFileExtension]);
 
                     if ($storage->fileExists($storagePath)) {
                         $thumbnailStream = $storage->readStream($storagePath);
                     }
+                    $mime = $storage->mimeType($storagePath);
+                    $fileSize = $storage->fileSize($storagePath);
                 } else {
-                    $thumbnailStream = $thumbnail->getStream();
+                    throw new \Exception('Cannot determine mime type and file size of ' . $assetInfo['type'] . ' thumbnail, see logs for details.');
                 }
+                // set appropriate caching headers
+                // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
+                $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
 
-                if ($thumbnailStream) {
-                    if ($assetInfo['type'] === 'image') {
-                        $mime = $thumbnail->getMimeType();
-                        $fileSize = $thumbnail->getFileSize();
-                        $pathReference = $thumbnail->getPathReference();
-                        $actualFileExtension = File::getFileExtension($pathReference['src']);
+                $headers = [
+                    'Cache-Control' => 'public, max-age=' . $lifetime,
+                    'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
+                    'Content-Type' => $mime,
+                    'Content-Length' => $fileSize,
+                ];
 
-                        if ($actualFileExtension !== $requestedFileExtension) {
-                            // create a copy/symlink to the file with the original file extension
-                            // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
-                            // is set to auto-optimized format so the resulting thumbnail can be jpeg
-                            $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $pathReference['src']);
+                $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
 
-                            //Only copy the file if not exists yet
-                            if (!$storage->fileExists($requestedFile)) {
-                                $storage->writeStream($requestedFile, $thumbnailStream);
-                            }
-
-                            //Stream can be closed by writeStream and needs to be reloaded.
-                            $thumbnailStream = $storage->readStream($requestedFile);
-                        }
-                    } elseif ($assetInfo['type'] === 'video' && isset($storagePath)) {
-                        $mime = $storage->mimeType($storagePath);
-                        $fileSize = $storage->fileSize($storagePath);
-                    } else {
-                        throw new \Exception('Cannot determine mime type and file size of ' . $assetInfo['type'] . ' thumbnail, see logs for details.');
-                    }
-                    // set appropriate caching headers
-                    // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
-                    $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
-
-                    $headers = [
-                        'Cache-Control' => 'public, max-age=' . $lifetime,
-                        'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
-                        'Content-Type' => $mime,
-                        'Content-Length' => $fileSize,
-                    ];
-
-                    $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
-
-                    return new StreamedResponse(function () use ($thumbnailStream) {
-                        fpassthru($thumbnailStream);
-                    }, 200, $headers);
-                }
+                return new StreamedResponse(function () use ($thumbnailStream) {
+                    fpassthru($thumbnailStream);
+                }, 200, $headers);
             }
             throw new \Exception('Unable to generate '.$assetInfo['type'].' thumbnail, see logs for details.');
         } catch (\Exception $e) {
