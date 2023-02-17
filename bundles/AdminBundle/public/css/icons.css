@@ -311,10 +311,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/candle_sticks.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_print_settings {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/print.svg) center center no-repeat !important;
-}
-
 .pimcore_nav_icon_users {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/person-circle.svg) center center no-repeat !important;
 }
@@ -596,10 +592,6 @@
     background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/unknown.svg);
     background-position: center center;
     background-repeat: no-repeat;
-}
-
-.pimcore_icon_vr {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/vr.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_pdf, .pimcore_icon_ps {
@@ -1442,14 +1434,6 @@
 
 .pimcore_icon_pdf {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/pdf.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_printpage {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/print.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_printcontainer {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/book.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_workflow_action {

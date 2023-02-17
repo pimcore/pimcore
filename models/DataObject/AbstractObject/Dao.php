@@ -163,7 +163,7 @@ class Dao extends Model\Element\Dao
      */
     public function updateChildPaths(string $oldPath): ?array
     {
-        if ($this->hasChildren(DataObject::$types)) {
+        if ($this->hasChildren(DataObject::$types, true)) {
             //get objects to empty their cache
             $objects = $this->db->fetchFirstColumn('SELECT id FROM objects WHERE `path` like ?', [Helper::escapeLike($oldPath) . '%']);
 

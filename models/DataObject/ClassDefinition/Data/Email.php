@@ -23,13 +23,6 @@ use Pimcore\Model;
 class Email extends Model\DataObject\ClassDefinition\Data\Input
 {
     /**
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'email';
-
-    /**
      * {@inheritdoc}
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
@@ -42,5 +35,10 @@ class Email extends Model\DataObject\ClassDefinition\Data\Input
         }
 
         parent::checkValidity($data, $omitMandatoryCheck);
+    }
+
+    public function getFieldType(): string
+    {
+        return 'email';
     }
 }

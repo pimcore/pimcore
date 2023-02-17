@@ -30,3 +30,7 @@ nbproject
 /tests/Support/Resources/objects/
 /cache/
 /.htaccess
+
+#npm
+**/node_modules
+**/package-lock.json

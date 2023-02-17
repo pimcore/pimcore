@@ -23,15 +23,6 @@ use Pimcore\Model\Tool;
 class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'targetGroupMultiselect';
-
-    /**
      * @internal
      */
     public function configureOptions(): void
@@ -65,13 +56,13 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
         return $obj;
     }
 
-    public function jsonSerialize(): static
+    public function jsonSerialize(): mixed
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
     /**
@@ -83,5 +74,10 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
         $blockedVars[] = 'options';
 
         return $blockedVars;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'targetGroupMultiselect';
     }
 }

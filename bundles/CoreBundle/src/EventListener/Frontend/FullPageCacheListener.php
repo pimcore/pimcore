@@ -51,7 +51,7 @@ class FullPageCacheListener
 
     protected ?string $disableReason = null;
 
-    protected string $defaultCacheKey;
+    protected ?string $defaultCacheKey = null;
 
     public function __construct(
         private VisitorInfoStorageInterface $visitorInfoStorage,
