@@ -524,7 +524,7 @@ class Service extends Model\Element\Service
             if (!$thumbnailConfig) {
                 // check if there's an item in the TmpStore
                 // remove an eventually existing cache-buster prefix first (eg. when using with a CDN)
-                $pathInfo = preg_replace('@^/cache-buster\-[\d]+@', '', $uri);
+                $pathInfo = preg_replace('@^/cache-buster\-[\d]+@', '', $assetInfo['prefix']);
                 $deferredConfigId = 'thumb_' . $assetInfo['asset_id'] . '__' . md5(urldecode($pathInfo));
 
                 if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
@@ -606,7 +606,7 @@ class Service extends Model\Element\Service
     {
         $assetInfo = self::extractThumbnailInfoFromUri($uri);
         if (!$assetInfo) {
-            throw new Exception(sprint_r('Uri `%s` is not valid and could not be parsed', $uri));
+            throw new \Exception(sprintf('Uri `%s` is not valid and could not be parsed', $uri));
         }
 
         return self::getImageThumbnailByParsedArray($assetInfo);
