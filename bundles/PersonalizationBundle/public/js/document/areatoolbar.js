@@ -17,7 +17,9 @@ pimcore.registerNS("pimcore.bundle.personalization.document.areatoolbar");
  */
 pimcore.bundle.personalization.document.areatoolbar = Class.create({
 
-
+    initialize: function (document , lbar) {
+        this.addTargetingPanel(document , lbar);
+    },
 
     addTargetingPanel: function (document , lbar) {
         if (!Ext.Array.contains(['page', 'snippet'], document.getType())) {
@@ -120,5 +122,4 @@ pimcore.bundle.personalization.document.areatoolbar = Class.create({
         }
     },
 
-})
-const areatoolbar = new pimcore.bundle.personalization.document.areatoolbar();
+});
