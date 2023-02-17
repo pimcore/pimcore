@@ -22,6 +22,7 @@ use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
 use Pimcore\Db;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
@@ -437,10 +438,11 @@ class SettingsController extends AdminController
         $this->checkPermission('system_settings');
 
         $values = $this->decodeJson($request->get('data'));
+        $existingValues = [];
 
         try {
             $file = Config::locateConfigFile('system.yaml');
-            Config::getConfigInstance($file);
+            $existingValues = Config::getConfigInstance($file);
         } catch (\Exception $e) {
             // nothing to do
         }
@@ -525,6 +527,16 @@ class SettingsController extends AdminController
             $settings['pimcore']['email']['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
         }
 
+        if ($existingValues) {
+            $saveSettingsEvent = new GenericEvent(null, [
+                'settings' => $settings,
+                'existingValues' => $existingValues,
+                'values' => $values,
+            ]);
+            $eventDispatcher->dispatch($saveSettingsEvent, AdminEvents::SAVE_ACTION_SYSTEM_SETTINGS);
+            $settings = $saveSettingsEvent->getArgument('settings');
+        }
+
         $settingsYaml = Yaml::dump($settings, 5);
         $configFile = Config::locateConfigFile('system.yaml');
         File::put($configFile, $settingsYaml);
@@ -570,48 +582,6 @@ class SettingsController extends AdminController
         } else {
             throw new \Exception("Language `$source` doesn't exist");
         }
-    }
-
-    /**
-     * @Route("/get-web2print", name="pimcore_admin_settings_getweb2print", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getWeb2printAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('web2print_settings');
-
-        $valueArray = Config::getWeb2PrintConfig();
-
-        $response = [
-            'values' => $valueArray,
-        ];
-
-        return $this->adminJson($response);
-    }
-
-    /**
-     * @Route("/set-web2print", name="pimcore_admin_settings_setweb2print", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function setWeb2printAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('web2print_settings');
-
-        $values = $this->decodeJson($request->get('data'));
-
-        unset($values['documentation']);
-        unset($values['additions']);
-        unset($values['json_converter']);
-
-        \Pimcore\Web2Print\Config::save($values);
-
-        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1522,49 +1492,5 @@ class SettingsController extends AdminController
                 $db->executeQuery($sql);
             }
         }
-    }
-
-    /**
-     * @Route("/test-web2print", name="pimcore_admin_settings_testweb2print", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function testWeb2printAction(Request $request): Response
-    {
-        $this->checkPermission('web2print_settings');
-
-        $response = $this->render('@PimcoreAdmin/admin/settings/test_web2print.html.twig');
-        $html = $response->getContent();
-
-        $adapter = \Pimcore\Web2Print\Processor::getInstance();
-        $params = [];
-
-        if ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
-            $params['adapterConfig'] = [
-                'javaScriptMode' => 0,
-                'addLinks' => true,
-                'appendLog' => true,
-                'enableDebugMode' => true,
-            ];
-        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\HeadlessChrome) {
-            $params = Config::getWeb2PrintConfig();
-            $params = $params['headlessChromeSettings'];
-            $params = json_decode($params, true);
-        }
-
-        $responseOptions = [
-            'Content-Type' => 'application/pdf',
-        ];
-
-        $pdfData = $adapter->getPdfFromString($html, $params);
-
-        return new \Symfony\Component\HttpFoundation\Response(
-            $pdfData,
-            200,
-            $responseOptions
-
-        );
     }
 }

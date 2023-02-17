@@ -194,7 +194,7 @@ final class Config implements ArrayAccess
                 $cacheKey .= '_' . $language;
             }
 
-            $siteId = null;
+            $siteId = 0;
             if (Model\Site::isSiteRequest()) {
                 $siteId = Model\Site::getCurrentSite()->getId();
             } elseif (Tool::isFrontendRequestByAdmin()) {
@@ -361,33 +361,6 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @return array<string, mixed>
-     *
-     * @internal
-     */
-    public static function getWeb2PrintConfig(): array
-    {
-        if (RuntimeCache::isRegistered('pimcore_config_web2print')) {
-            $config = RuntimeCache::get('pimcore_config_web2print');
-        } else {
-            $config = Web2Print\Config::get();
-            self::setWeb2PrintConfig($config);
-        }
-
-        return $config;
-    }
-
-    /**
-     * @param array<string, mixed> $config
-     *
-     * @internal
-     */
-    public static function setWeb2PrintConfig(array $config): void
-    {
-        RuntimeCache::set('pimcore_config_web2print', $config);
-    }
-
-    /**
      * @param array<string, mixed> $config
      *
      * @internal
@@ -438,7 +411,7 @@ final class Config implements ArrayAccess
 
     public static function getEnvironment(): string
     {
-        return $_SERVER['APP_ENV'];
+        return $_SERVER['APP_ENV'] ?? 'dev';
     }
 
     /**

@@ -29,27 +29,12 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
-    use Extension\ColumnType {
-        getColumnType as public genericGetColumnType;
-    }
-    use Extension\QueryColumnType {
-        getQueryColumnType as public genericGetQueryColumnType;
-    }
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\Traits\DataWidthTrait;
 
     const DECIMAL_SIZE_DEFAULT = 64;
 
     const DECIMAL_PRECISION_DEFAULT = 0;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'quantityValue';
 
     /**
      * @internal
@@ -137,30 +122,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @internal
      */
     public bool $autoConvert = false;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'value' => 'double',
-        'unit' => 'varchar(64)',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'value' => 'double',
-        'unit' => 'varchar(64)',
-    ];
 
     public function getUnitWidth(): int|string
     {
@@ -304,7 +265,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * {@inheritdoc}
      */
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         if ($this->getInteger()) {
             return [
@@ -320,29 +281,18 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             ];
         }
 
-        return $this->genericGetColumnType();
+        return [
+            'value' => 'double',
+            'unit' => 'varchar(64)',
+        ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
-        if ($this->getInteger()) {
-            return [
-                'value' => 'bigint(20)',
-                'unit' => 'varchar(64)',
-            ];
-        }
-
-        if ($this->isDecimalType()) {
-            return [
-                'value' => $this->buildDecimalColumnType(),
-                'unit' => 'varchar(64)',
-            ];
-        }
-
-        return $this->genericGetQueryColumnType();
+        return $this->getColumnType();
     }
 
     private function isDecimalType(): bool
@@ -835,5 +785,10 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return parent::isEmpty($data);
+    }
+
+    public function getFieldType(): string
+    {
+        return 'quantityValue';
     }
 }

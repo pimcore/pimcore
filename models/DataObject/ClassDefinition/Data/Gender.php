@@ -21,15 +21,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class Gender extends Model\DataObject\ClassDefinition\Data\Select
 {
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'gender';
-
     public function configureOptions(): void
     {
         $options = [
@@ -50,13 +41,13 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    public function jsonSerialize(): static
+    public function jsonSerialize(): mixed
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
     /**
@@ -68,5 +59,10 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
         $blockedVars[] = 'options';
 
         return $blockedVars;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'gender';
     }
 }

@@ -24,24 +24,15 @@ use Pimcore\Model\Tool;
 class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'targetGroup';
-
-    /**
      * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return string|null
+     * @return  null|string|int
      *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
-    public function getDataFromResource(mixed $data, Dataobject\Concrete $object = null, array $params = []): ?string
+    public function getDataFromResource(mixed $data, Dataobject\Concrete $object = null, array $params = []): null|string|int
     {
         if (!empty($data)) {
             try {
@@ -59,11 +50,11 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return null|string
+     * @return  null|string|int
      *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): null|string|int
     {
         if (!empty($data)) {
             try {
@@ -128,13 +119,13 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    public function jsonSerialize(): static
+    public function jsonSerialize(): mixed
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
     /**
@@ -146,5 +137,10 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         $blockedVars[] = 'options';
 
         return $blockedVars;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'targetGroup';
     }
 }

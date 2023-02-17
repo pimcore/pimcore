@@ -391,7 +391,7 @@ class AssetHelperController extends AdminController
             }
         }
 
-        Tool\Session::useSession(function (AttributeBagInterface $session) use ($helperColumns) {
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($helperColumns) {
             $existingColumns = $session->get('helpercolumns', []);
             $helperColumns = array_merge($helperColumns, $existingColumns);
             $session->set('helpercolumns', $helperColumns);
@@ -765,9 +765,9 @@ class AssetHelperController extends AdminController
         return $this->adminJson(['success' => true]);
     }
 
-    public function encodeFunc(string $value): string
+    public function encodeFunc(?string $value): string
     {
-        $value = str_replace('"', '""', $value);
+        $value = str_replace('"', '""', $value ?? '');
         //force wrap value in quotes and return
         return '"' . $value . '"';
     }
