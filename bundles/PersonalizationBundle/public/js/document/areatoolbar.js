@@ -31,7 +31,7 @@ pimcore.bundle.personalization.document.areatoolbar = Class.create({
         }
 
         var cleanupFunction = function () {
-            console.log("remove editable");
+
             Ext.Ajax.request({
                 url: Routing.generate('pimcore_bundle_personalization_clear_targeting_page_editable_data'),
                 method: "PUT",
