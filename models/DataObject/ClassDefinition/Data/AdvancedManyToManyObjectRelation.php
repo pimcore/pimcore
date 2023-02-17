@@ -62,15 +62,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     public array $columnKeys = [];
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'advancedManyToManyObjectRelation';
-
-    /**
      * @internal
      */
     public bool $enableBatchEdit = false;
@@ -983,5 +974,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     public function getPhpdocReturnType(): ?string
     {
         return '\\'.DataObject\Data\ObjectMetadata::class.'[]';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'advancedManyToManyObjectRelation';
     }
 }

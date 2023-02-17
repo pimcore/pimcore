@@ -394,6 +394,12 @@ class Service extends Model\AbstractModel
      */
     public static function getSaveCopyName(string $type, string $sourceKey, ElementInterface $target): string
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.0',
+            'The Service::getSaveCopyName() method is deprecated, use Service::getSafeCopyName() instead.'
+        );
+
         return self::getSafeCopyName($sourceKey, $target);
     }
 

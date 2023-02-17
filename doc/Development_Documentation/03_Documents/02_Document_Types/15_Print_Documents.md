@@ -1,13 +1,8 @@
-
 # Print Documents
 
 Print documents are the way to create print-ready PDFs directly within Pimcore. 
 They are based on the normal Pimcore documents and therefore support everything as pages do - starting from MVC pattern 
 and template creation to document composing within Pimcore backend with areas, drag&drop etc. 
-
-By default, web-to-print documents are disabled. To enable them, you need to activate them in the web-to-print settings:
-
-![Web2Print settings](../../img/printdocuments_settings.png)
 
 Web to print flow implemented in Pimcore:
 
