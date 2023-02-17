@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend;
 
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\CookieStorage;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
-use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\CookieStorage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 

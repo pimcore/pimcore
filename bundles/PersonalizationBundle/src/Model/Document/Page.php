@@ -10,15 +10,15 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\PersonalizationBundle\Model\Document;
 
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
-use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Traits\TargetDocumentTrait;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 
 /**
  * @method \Pimcore\Bundle\PersonalizationBundle\Model\Document\Page\Dao getDao()
@@ -43,13 +43,13 @@ class Page extends \Pimcore\Model\Document\Page implements TargetingDocumentInte
      *
      * @param array|string $targetGroupIds
      */
-    public function setTargetGroupIds (array|string $targetGroupIds): void
+    public function setTargetGroupIds(array|string $targetGroupIds): void
     {
-        if (is_array ($targetGroupIds)) {
-            $targetGroupIds = implode (',', $targetGroupIds);
+        if (is_array($targetGroupIds)) {
+            $targetGroupIds = implode(',', $targetGroupIds);
         }
 
-        $targetGroupIds = trim ($targetGroupIds, ' ,');
+        $targetGroupIds = trim($targetGroupIds, ' ,');
 
         if (!empty($targetGroupIds)) {
             $targetGroupIds = ',' . $targetGroupIds . ',';
@@ -63,7 +63,7 @@ class Page extends \Pimcore\Model\Document\Page implements TargetingDocumentInte
      *
      * @return string
      */
-    public function getTargetGroupIds (): string
+    public function getTargetGroupIds(): string
     {
         return $this->targetGroupIds;
     }
@@ -73,21 +73,21 @@ class Page extends \Pimcore\Model\Document\Page implements TargetingDocumentInte
      *
      * @param TargetGroup[]|int[] $targetGroups
      */
-    public function setTargetGroups (array $targetGroups): void
+    public function setTargetGroups(array $targetGroups): void
     {
-        $ids = array_map (function ($targetGroup) {
-            if (is_numeric ($targetGroup)) {
+        $ids = array_map(function ($targetGroup) {
+            if (is_numeric($targetGroup)) {
                 return (int)$targetGroup;
             } elseif ($targetGroup instanceof TargetGroup) {
-                return $targetGroup->getId ();
+                return $targetGroup->getId();
             }
         }, $targetGroups);
 
-        $ids = array_filter ($ids, function ($id) {
+        $ids = array_filter($ids, function ($id) {
             return null !== $id && $id > 0;
         });
 
-        $this->setTargetGroupIds ($ids);
+        $this->setTargetGroupIds($ids);
     }
 
     /**
@@ -95,23 +95,22 @@ class Page extends \Pimcore\Model\Document\Page implements TargetingDocumentInte
      *
      * @return TargetGroup[]
      */
-    public function getTargetGroups (): array
+    public function getTargetGroups(): array
     {
-        $ids = explode (',', $this->targetGroupIds);
+        $ids = explode(',', $this->targetGroupIds);
 
-        $targetGroups = array_map (function ($id) {
-            $id = trim ($id);
+        $targetGroups = array_map(function ($id) {
+            $id = trim($id);
             if (!empty($id)) {
-                $targetGroup = TargetGroup::getById ((int)$id);
+                $targetGroup = TargetGroup::getById((int)$id);
                 if ($targetGroup) {
                     return $targetGroup;
                 }
             }
         }, $ids);
 
-        $targetGroups = array_filter ($targetGroups);
+        $targetGroups = array_filter($targetGroups);
 
         return $targetGroups;
     }
-
 }

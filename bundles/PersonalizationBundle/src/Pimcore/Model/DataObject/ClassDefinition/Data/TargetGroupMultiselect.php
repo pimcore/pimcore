@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
-use Pimcore\Bundle\PersonalizationBundle\Model\Tool;
 
 class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {

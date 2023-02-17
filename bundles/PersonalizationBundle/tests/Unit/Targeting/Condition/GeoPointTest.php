@@ -11,8 +11,8 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\PersonalizationBundle\Tests\Unit\Targeting\Condition;
@@ -66,7 +66,7 @@ class GeoPointTest extends \Codeception\Test\Unit
      */
     public function testMatch(GeoPoint $condition, VisitorInfo $visitorInfo, bool $expected): void
     {
-        $this->assertEquals ($expected, $condition->match ($visitorInfo));
+        $this->assertEquals($expected, $condition->match($visitorInfo));
     }
 
     /**
@@ -74,55 +74,55 @@ class GeoPointTest extends \Codeception\Test\Unit
      */
     public function testCannotMatchIfOptionsEmpty(GeoPoint $condition): void
     {
-        $this->assertFalse ($condition->canMatch ());
+        $this->assertFalse($condition->canMatch());
     }
 
-    public function matchProvider (): \Generator
+    public function matchProvider(): \Generator
     {
         yield [
-            $this->createCondition ('sbg', 110),
-            $this->createVisitorInfo ('muc'),
+            $this->createCondition('sbg', 110),
+            $this->createVisitorInfo('muc'),
             false,
         ];
 
         yield [
-            $this->createCondition ('sbg', 120),
-            $this->createVisitorInfo ('muc'),
+            $this->createCondition('sbg', 120),
+            $this->createVisitorInfo('muc'),
             true,
         ];
 
         yield [
-            $this->createCondition ('sbg', 500),
-            $this->createVisitorInfo ('ber'),
+            $this->createCondition('sbg', 500),
+            $this->createVisitorInfo('ber'),
             false,
         ];
 
         yield [
-            $this->createCondition ('sbg', 600),
-            $this->createVisitorInfo ('ber'),
+            $this->createCondition('sbg', 600),
+            $this->createVisitorInfo('ber'),
             true,
         ];
 
         yield [
-            $this->createCondition ('sbg', 100),
-            $this->createVisitorInfo ('bkk'),
+            $this->createCondition('sbg', 100),
+            $this->createVisitorInfo('bkk'),
             false,
         ];
 
         yield [
-            $this->createCondition ('sbg', 8000),
-            $this->createVisitorInfo ('bkk'),
+            $this->createCondition('sbg', 8000),
+            $this->createVisitorInfo('bkk'),
             false,
         ];
 
         yield [
-            $this->createCondition ('sbg', 9000),
-            $this->createVisitorInfo ('bkk'),
+            $this->createCondition('sbg', 9000),
+            $this->createVisitorInfo('bkk'),
             true,
         ];
     }
 
-    public function noMatchProvider (): \Generator
+    public function noMatchProvider(): \Generator
     {
         yield [new GeoPoint(1.2, 2.3, null)];
         yield [new GeoPoint(1.2, null, 4)];
@@ -133,10 +133,10 @@ class GeoPointTest extends \Codeception\Test\Unit
         yield [new GeoPoint(null, null, null)];
     }
 
-    private function createCondition (string $point, int $radius): GeoPoint
+    private function createCondition(string $point, int $radius): GeoPoint
     {
         if (!isset($this->points[$point])) {
-            throw new \InvalidArgumentException(sprintf ('Point "%s" is not defined', $point));
+            throw new \InvalidArgumentException(sprintf('Point "%s" is not defined', $point));
         }
 
         return new GeoPoint(
@@ -146,17 +146,17 @@ class GeoPointTest extends \Codeception\Test\Unit
         );
     }
 
-    private function createVisitorInfo (string $point): VisitorInfo
+    private function createVisitorInfo(string $point): VisitorInfo
     {
         if (!isset($this->points[$point])) {
-            throw new \InvalidArgumentException(sprintf ('Point "%s" is not defined', $point));
+            throw new \InvalidArgumentException(sprintf('Point "%s" is not defined', $point));
         }
 
         $geoLocation = new GeoLocationModel($this->points[$point][0], $this->points[$point][1]);
 
         // create visitor info and set geolocation as GeoLocation provider key
         $visitorInfo = new VisitorInfo(new Request());
-        $visitorInfo->set (GeoLocation::PROVIDER_KEY, $geoLocation);
+        $visitorInfo->set(GeoLocation::PROVIDER_KEY, $geoLocation);
 
         return $visitorInfo;
     }

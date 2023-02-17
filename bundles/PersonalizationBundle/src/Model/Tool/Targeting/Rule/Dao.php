@@ -15,8 +15,8 @@
 
 namespace Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 
-use Pimcore\Model;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
+use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
 /**

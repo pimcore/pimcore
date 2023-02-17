@@ -15,9 +15,9 @@
 
 namespace Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule\Listing;
 
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule\Listing;
 use Pimcore\Model;
-use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 
 /**
  * @internal

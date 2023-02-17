@@ -154,4 +154,4 @@ class TargetGroup extends Model\AbstractModel
     }
 }
 
-@class_alias (TargetGroup::class, 'Pimcore\Model\Tool\Targeting\TargetGroup');
+@class_alias(TargetGroup::class, 'Pimcore\Model\Tool\Targeting\TargetGroup');

@@ -135,7 +135,6 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     protected function isEnabled(): bool
     {
-        return \Pimcore::getKernel()->getContainer()->getParameter ('pimcore_personalization.targeting.session.enabled');
-
+        return \Pimcore::getKernel()->getContainer()->getParameter('pimcore_personalization.targeting.session.enabled');
     }
 }

@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler;
 
-use Pimcore\Model\Document;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
+use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class Redirect implements ActionHandlerInterface

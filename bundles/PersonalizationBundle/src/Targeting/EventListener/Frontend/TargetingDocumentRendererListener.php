@@ -32,8 +32,7 @@ class TargetingDocumentRendererListener implements EventSubscriberInterface
     public function __construct(
         private DocumentTargetingConfigurator $targetingConfigurator,
         protected DocumentResolver $documentResolver
-    )
-    {
+    ) {
     }
 
     /**
@@ -43,7 +42,7 @@ class TargetingDocumentRendererListener implements EventSubscriberInterface
     {
         return [
             DocumentEvents::RENDERER_PRE_RENDER => 'onPreRender',
-            DocumentEvents::INCLUDERENDERER_PRE_RENDER => 'onPreRender'
+            DocumentEvents::INCLUDERENDERER_PRE_RENDER => 'onPreRender',
         ];
     }
 

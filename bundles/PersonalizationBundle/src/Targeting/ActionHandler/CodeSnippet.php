@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler;
 
-use Pimcore\Http\Response\CodeInjector;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
+use Pimcore\Http\Response\CodeInjector;
 use Symfony\Component\HttpFoundation\Response;
 
 class CodeSnippet implements ActionHandlerInterface, ResponseTransformingActionHandlerInterface

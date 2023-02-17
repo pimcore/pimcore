@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -9,17 +10,17 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\PersonalizationBundle;
 
 use Pimcore\Bundle\PersonalizationBundle\DependencyInjection\Compiler\DebugStopwatchPass;
+use Pimcore\Bundle\PersonalizationBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Pimcore\Bundle\PersonalizationBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
 
 class PimcorePersonalizationBundle extends AbstractPimcoreBundle
 {
@@ -32,15 +33,15 @@ class PimcorePersonalizationBundle extends AbstractPimcoreBundle
        return 'pimcore/personalization-bundle';
     }*/
 
-    public function getCssPaths (): array
+    public function getCssPaths(): array
     {
         return [
             '/bundles/pimcorepersonalization/css/icons.css',
-            '/bundles/pimcorepersonalization/css/targeting.css'
+            '/bundles/pimcorepersonalization/css/targeting.css',
         ];
     }
 
-    public function getJsPaths (): array
+    public function getJsPaths(): array
     {
         return [
             '/bundles/pimcorepersonalization/js/startup.js',
@@ -66,22 +67,22 @@ class PimcorePersonalizationBundle extends AbstractPimcoreBundle
     /**
      * @return Installer
      */
-    public function getInstaller (): Installer
+    public function getInstaller(): Installer
     {
-        return $this->container->get (Installer::class);
+        return $this->container->get(Installer::class);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function build (ContainerBuilder $container): void
+    public function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass (new TargetingOverrideHandlersPass());
+        $container->addCompilerPass(new TargetingOverrideHandlersPass());
         $container->addCompilerPass(new DebugStopwatchPass());
     }
 
-    public function getPath (): string
+    public function getPath(): string
     {
-        return \dirname (__DIR__);
+        return \dirname(__DIR__);
     }
 }

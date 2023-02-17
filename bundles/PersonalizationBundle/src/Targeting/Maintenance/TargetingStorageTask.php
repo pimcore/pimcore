@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\Maintenance;
 
-use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\MaintenanceStorageInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\TargetingStorageInterface;
+use Pimcore\Maintenance\TaskInterface;
 
 class TargetingStorageTask implements TaskInterface
 {

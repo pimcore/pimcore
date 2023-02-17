@@ -19,9 +19,9 @@ namespace Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider;
 
 use GeoIp2\Model\City;
 use GeoIp2\ProviderInterface;
-use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\Util\OverrideAttributeResolver;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 

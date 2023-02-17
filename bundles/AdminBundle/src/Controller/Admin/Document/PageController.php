@@ -341,8 +341,8 @@ class PageController extends DocumentControllerBase
         foreach ($doc->getEditables() as $editable) {
             // remove all but target group data
             // Hardcoded the TARGET_GROUP_EDITABLE_PREFIX prefix here as we shouldn't remove the bundle specific editables even if bundle is not enabled/installed
-            if (!preg_match ('/^' . preg_quote ('persona_ -', '/') . '/', $editable->getName ())) {
-                $doc->removeEditable ($editable->getName ());
+            if (!preg_match('/^' . preg_quote('persona_ -', '/') . '/', $editable->getName())) {
+                $doc->removeEditable($editable->getName());
             }
         }
 

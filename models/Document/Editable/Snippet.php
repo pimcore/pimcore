@@ -16,12 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Editable;
 
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Cache;
 use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 
 /**
@@ -29,7 +29,6 @@ use Pimcore\Tool\DeviceDetector;
  */
 class Snippet extends Model\Document\Editable implements IdRewriterInterface, EditmodeDataInterface, LazyLoadingInterface
 {
-
     /**
      * Contains the ID of the linked snippet
      *
@@ -94,7 +93,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         $container = \Pimcore::getContainer();
 
         $editableHandler = $container->get(EditableHandler::class);
-
 
         if (!$this->snippet instanceof Document\Snippet) {
             return '';

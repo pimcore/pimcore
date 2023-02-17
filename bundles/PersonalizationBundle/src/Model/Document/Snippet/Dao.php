@@ -15,9 +15,9 @@
 
 namespace Pimcore\Bundle\PersonalizationBundle\Model\Document\Snippet;
 
-use Pimcore\Model;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentDaoInterface;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentDaoTrait;
+use Pimcore\Model;
 
 /**
  * @internal

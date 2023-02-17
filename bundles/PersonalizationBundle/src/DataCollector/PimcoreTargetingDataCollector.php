@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\DataCollector;
 
-use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\TargetingDataCollector;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;

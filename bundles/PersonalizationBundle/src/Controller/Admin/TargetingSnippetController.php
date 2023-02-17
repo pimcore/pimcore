@@ -18,10 +18,10 @@ namespace Pimcore\Bundle\PersonalizationBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\Document\SnippetController;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
+use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Pimcore\Model\Document;
 
 /**
  * @Route("/targeting/snippet")
@@ -30,8 +30,8 @@ use Pimcore\Model\Document;
  */
 class TargetingSnippetController extends SnippetController
 {
-     /**
-      * @Route("/clear-targeting-editable-data", name="pimcore_bundle_personalization_clear_targeting_snippet_editable_data", methods={"PUT"})
+    /**
+     * @Route("/clear-targeting-editable-data", name="pimcore_bundle_personalization_clear_targeting_snippet_editable_data", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -50,9 +50,8 @@ class TargetingSnippetController extends SnippetController
 
         foreach ($doc->getEditables() as $editable) {
             if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
-
                 // remove target group specific elements
-                if (preg_match ('/^' . preg_quote ($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
+                if (preg_match('/^' . preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
                     $doc->removeEditable($editable->getName());
                 }
             }

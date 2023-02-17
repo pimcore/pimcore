@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -9,23 +10,23 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\PersonalizationBundle;
 
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Installer extends SettingsStoreAwareInstaller
 {
     protected const USER_PERMISSIONS_CATEGORY = 'Pimcore Personalization Bundle';
 
     protected const USER_PERMISSIONS = [
-        'targeting'
+        'targeting',
     ];
 
     public function install(): void
@@ -42,13 +43,12 @@ class Installer extends SettingsStoreAwareInstaller
         $output = new ConsoleOutput();
         $style = new SymfonyStyle(new StringInput(''), $output);
 
-        if(!($style->confirm(
+        if (!($style->confirm(
             "<comment>[WARNING]</comment> Before Uninstalling the bundle, 'Target Group' references must be removed from DataObject classes,\n" .
             "Custom services and Ecommerce Pricing Rules manually.\n\n" .
-            "Do you want to continue the uninstall?"
-            ,false))){
-                $output->writeln("<info>Uninstall Aborted.</info>");
-                exit;
+            'Do you want to continue the uninstall?', false))) {
+            $output->writeln('<info>Uninstall Aborted.</info>');
+            exit;
         }
 
         $this->uninstallDatabaseTable();
@@ -60,7 +60,7 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \Pimcore\Db::get();
 
-        foreach(self::USER_PERMISSIONS as $permission) {
+        foreach (self::USER_PERMISSIONS as $permission) {
             $db->insert('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
                 $db->quoteIdentifier('category') => self::USER_PERMISSIONS_CATEGORY,
@@ -72,7 +72,7 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \Pimcore\Db::get();
 
-        foreach(self::USER_PERMISSIONS as $permission) {
+        foreach (self::USER_PERMISSIONS as $permission) {
             $db->delete('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
             ]);
@@ -85,7 +85,7 @@ class Installer extends SettingsStoreAwareInstaller
         $sqlFileNames = ['install.sql'];
         $db = \Pimcore\Db::get();
 
-        foreach($sqlFileNames as $fileName) {
+        foreach ($sqlFileNames as $fileName) {
             $statement = file_get_contents($sqlPath . $fileName);
             $db->executeQuery($statement);
         }
@@ -97,7 +97,7 @@ class Installer extends SettingsStoreAwareInstaller
         $sqlFileNames = ['uninstall.sql'];
         $db = \Pimcore\Db::get();
 
-        foreach($sqlFileNames as $fileName) {
+        foreach ($sqlFileNames as $fileName) {
             $statement = file_get_contents($sqlPath . $fileName);
             $db->executeQuery($statement);
         }

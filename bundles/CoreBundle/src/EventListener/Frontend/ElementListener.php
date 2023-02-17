@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
@@ -95,7 +94,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             if ($document) {
                 // for public versions
                 $document = $this->handleVersion($request, $document);
-
 
                 $this->documentResolver->setDocument($request, $document);
             }

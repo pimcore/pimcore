@@ -19,10 +19,10 @@ namespace Pimcore\Bundle\PersonalizationBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\Document\PageController;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Document\StaticPageGenerator;
+use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Pimcore\Model\Document;
 
 /**
  * @Route("/targeting/page")
@@ -31,8 +31,8 @@ use Pimcore\Model\Document;
  */
 class TargetingPageController extends PageController
 {
-     /**
-      * @Route("/clear-targeting-editable-data", name="pimcore_bundle_personalization_clear_targeting_page_editable_data", methods={"PUT"})
+    /**
+     * @Route("/clear-targeting-editable-data", name="pimcore_bundle_personalization_clear_targeting_page_editable_data", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -50,11 +50,9 @@ class TargetingPageController extends PageController
         }
 
         foreach ($doc->getEditables() as $editable) {
-
             if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
-
                 // remove target group specific elements
-                if (preg_match ('/^' . preg_quote ($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
+                if (preg_match('/^' . preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
                     $doc->removeEditable($editable->getName());
                 }
             }

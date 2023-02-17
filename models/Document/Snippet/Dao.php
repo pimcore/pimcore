@@ -24,7 +24,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Document\PageSnippet\Dao
 {
-
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *

@@ -17,14 +17,15 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\PersonalizationBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Cache\Core\CoreCacheHandler;
-use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Cache\Core\CoreCacheHandler;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+
 /**
  * @Route("/targeting")
  *

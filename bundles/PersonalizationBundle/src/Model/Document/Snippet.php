@@ -10,14 +10,14 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\PersonalizationBundle\Model\Document;
 
-use Pimcore\Bundle\PersonalizationBundle\Model\Document\Traits\TargetDocumentTrait;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
+use Pimcore\Bundle\PersonalizationBundle\Model\Document\Traits\TargetDocumentTrait;
 
 /**
  * @method \Pimcore\Bundle\PersonalizationBundle\Model\Document\Snippet\Dao getDao()
@@ -25,6 +25,7 @@ use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocum
 class Snippet extends \Pimcore\Model\Document\Snippet implements TargetingDocumentInterface
 {
     use TargetDocumentTrait;
+
     /**
      * {@inheritdoc}
      */

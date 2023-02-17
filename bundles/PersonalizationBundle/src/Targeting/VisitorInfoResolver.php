@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingEvent;
 use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingResolveVisitorInfoEvent;
 use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingRuleEvent;
@@ -28,6 +27,7 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerIn
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\TargetingStorageInterface;
+use Pimcore\Debug\Traits\StopwatchTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 

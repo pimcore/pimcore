@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 
-use Pimcore\Model;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
+use Pimcore\Model;
 
 /**
  * @internal
