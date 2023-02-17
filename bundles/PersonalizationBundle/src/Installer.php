@@ -39,10 +39,16 @@ class Installer extends SettingsStoreAwareInstaller
     {
         // Cleanup should be done manually
 
-        $style = new SymfonyStyle(new StringInput(''), new ConsoleOutput());
+        $output = new ConsoleOutput();
+        $style = new SymfonyStyle(new StringInput(''), $output);
 
-        if(!($style->confirm('<comment>[WARNING]</comment> When Uninstalling the bundle, the data types \'Target Group\' and \'Target Group Multiselect\' would be removed. So, if you are using data objects with any of these types, please remove the data type from the class manually before uninstalling. Do you want to continue the uninstall?',false))){
-            exit;
+        if(!($style->confirm(
+            "<comment>[WARNING]</comment> Before Uninstalling the bundle, 'Target Group' references must be removed from DataObject classes,\n" .
+            "Custom services and Ecommerce Pricing Rules manually.\n\n" .
+            "Do you want to continue the uninstall?"
+            ,false))){
+                $output->writeln("<info>Uninstall Aborted.</info>");
+                exit;
         }
 
         $this->uninstallDatabaseTable();
