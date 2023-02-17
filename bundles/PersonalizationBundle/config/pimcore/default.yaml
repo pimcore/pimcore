@@ -1,0 +1,42 @@
+pimcore_personalization:
+    targeting:
+        data_providers:
+            device: Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\Device
+            geoip: Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\GeoIp
+            geolocation: Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\GeoLocation
+            targeting_storage: Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\TargetingStorage
+            visited_pages_counter: Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\VisitedPagesCounter
+        conditions:
+            browser: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\Browser
+            country: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\Country
+            geopoint: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\GeoPoint
+            hardwareplatform: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\HardwarePlatform
+            language: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\Language
+            operatingsystem: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\OperatingSystem
+            referringsite: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\ReferringSite
+            searchengine: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\SearchEngine
+            target_group: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\TargetGroup
+            timeonsite: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\TimeOnSite
+            url: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\Url
+            visitedpagesbefore: Pimcore\Bundle\PersonalizationBundle\Targeting\Condition\VisitedPagesBefore
+        action_handlers:
+            assign_target_group: Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\AssignTargetGroup
+            codesnippet: Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\CodeSnippet
+            redirect: Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\Redirect
+pimcore:
+    documents:
+        type_definitions:
+            map:
+                snippet: Pimcore\Bundle\PersonalizationBundle\Model\Document\Snippet
+                page: Pimcore\Bundle\PersonalizationBundle\Model\Document\Page
+    objects:
+        class_definitions:
+            data:
+                map:
+                    targetGroup: Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup
+                    targetGroupMultiselect: Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect
+
+pimcore_ecommerce_framework:
+    pricing_manager:
+        conditions:
+            TargetGroup: \Pimcore\Bundle\PersonalizationBundle\Ecommerce\PricingManager\Condition\TargetGroup

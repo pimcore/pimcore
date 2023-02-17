@@ -26,7 +26,6 @@ use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Localization\LocaleService;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Schedule\Task;
@@ -332,9 +331,7 @@ class PageController extends DocumentControllerBase
      */
     public function clearEditableDataAction(Request $request): JsonResponse
     {
-        $targetGroupId = $request->request->get('targetGroup');
         $docId = $request->request->getInt('id');
-
         $doc = Document\PageSnippet::getById($docId);
 
         if (!$doc) {
@@ -342,16 +339,10 @@ class PageController extends DocumentControllerBase
         }
 
         foreach ($doc->getEditables() as $editable) {
-            if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
-                // remove target group specific elements
-                if (preg_match('/^' . preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
-                    $doc->removeEditable($editable->getName());
-                }
-            } else {
-                // remove all but target group data
-                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_EDITABLE_PREFIX, '/') . '/', $editable->getName())) {
-                    $doc->removeEditable($editable->getName());
-                }
+            // remove all but target group data
+            // Hardcoded the TARGET_GROUP_EDITABLE_PREFIX prefix here as we shouldn't remove the bundle specific editables even if bundle is not enabled/installed
+            if (!preg_match ('/^' . preg_quote ('persona_ -', '/') . '/', $editable->getName ())) {
+                $doc->removeEditable ($editable->getName ());
             }
         }
 

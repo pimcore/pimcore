@@ -161,8 +161,6 @@ pimcore:
                     advancedManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
                     password: \Pimcore\Model\DataObject\ClassDefinition\Data\Password
                     rgbaColor: \Pimcore\Model\DataObject\ClassDefinition\Data\RgbaColor
-                    targetGroup: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup
-                    targetGroupMultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect
                     quantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue
                     quantityValueRange: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValueRange
                     inputQuantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue
@@ -209,31 +207,6 @@ pimcore:
         source_adapters:
             defaultAdapter: pimcore.document.newsletter.factory.default
             csvList: pimcore.document.newsletter.factory.csv
-
-    targeting:
-        data_providers:
-            device: Pimcore\Targeting\DataProvider\Device
-            geoip: Pimcore\Targeting\DataProvider\GeoIp
-            geolocation: Pimcore\Targeting\DataProvider\GeoLocation
-            targeting_storage: Pimcore\Targeting\DataProvider\TargetingStorage
-            visited_pages_counter: Pimcore\Targeting\DataProvider\VisitedPagesCounter
-        conditions:
-            browser: Pimcore\Targeting\Condition\Browser
-            country: Pimcore\Targeting\Condition\Country
-            geopoint: Pimcore\Targeting\Condition\GeoPoint
-            hardwareplatform: Pimcore\Targeting\Condition\HardwarePlatform
-            language: Pimcore\Targeting\Condition\Language
-            operatingsystem: Pimcore\Targeting\Condition\OperatingSystem
-            referringsite: Pimcore\Targeting\Condition\ReferringSite
-            searchengine: Pimcore\Targeting\Condition\SearchEngine
-            target_group: Pimcore\Targeting\Condition\TargetGroup
-            timeonsite: Pimcore\Targeting\Condition\TimeOnSite
-            url: Pimcore\Targeting\Condition\Url
-            visitedpagesbefore: Pimcore\Targeting\Condition\VisitedPagesBefore
-        action_handlers:
-            assign_target_group: Pimcore\Targeting\ActionHandler\AssignTargetGroup
-            codesnippet: Pimcore\Targeting\ActionHandler\CodeSnippet
-            redirect: Pimcore\Targeting\ActionHandler\Redirect
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:

@@ -194,7 +194,9 @@
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
       "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
       "Pimcore\\Bundle\\FileExplorerBundle\\": "bundles/FileExplorerBundle/src/",
-      "Pimcore\\Bundle\\WebToPrintBundle\\": "bundles/WebToPrintBundle/src/"
+      "Pimcore\\Bundle\\WebToPrintBundle\\": "bundles/WebToPrintBundle/src/",
+      "Pimcore\\Bundle\\PersonalizationBundle\\": "bundles/PersonalizationBundle/src/",
+      "Pimcore\\Model\\DataObject\\": "bundles/PersonalizationBundle/src/Pimcore/Model/DataObject"
     },
     "classmap": [
       "lib/Pimcore.php"

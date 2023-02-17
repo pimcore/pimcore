@@ -16,10 +16,3 @@ services:
                 id:       'pimcore'
                 priority: 500
 
-    Pimcore\Bundle\CoreBundle\DataCollector\PimcoreTargetingDataCollector:
-        tags:
-            -
-                name:     data_collector
-                template: '@PimcoreCore/Profiler/targeting_data_collector.html.twig'
-                id:       'pimcore_targeting'
-                priority: 312

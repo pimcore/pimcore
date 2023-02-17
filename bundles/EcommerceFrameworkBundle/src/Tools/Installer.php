@@ -147,12 +147,16 @@ class Installer extends AbstractInstaller
 
     public function installDependentBundles(): void
     {
-        if (\Pimcore\Version::getMajorVersion() >= 11) {
-            $appLoggerInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\ApplicationLoggerBundle\Installer::class);
+        //Install ApplicationLoggerBundle Bundle
+        $appLoggerInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\ApplicationLoggerBundle\Installer::class);
+        if (!$appLoggerInstaller->isInstalled()) {
+            $appLoggerInstaller->install();
+        }
 
-            if (!$appLoggerInstaller->isInstalled()) {
-                $appLoggerInstaller->install();
-            }
+        //Install PersonalizationBundle
+        $personalizationInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\PersonalizationBundle\Installer::class);
+        if (!$personalizationInstaller->isInstalled()) {
+            $personalizationInstaller->install();
         }
     }
 

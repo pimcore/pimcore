@@ -1,0 +1,5 @@
+actor: UnitTester
+suite_namespace: Tests\Unit
+modules:
+    # enable helpers as array
+    enabled: []

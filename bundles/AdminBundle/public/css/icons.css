@@ -275,18 +275,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/targetgroup.svg) center center no-repeat !important;
 }
 
-.pimcore_nav_icon_targeting {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/person.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_target_groups {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/targetgroup.svg) center center no-repeat !important;
-}
-
-.pimcore_nav_icon_targeting_toolbar {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/ok.svg) center center no-repeat !important;
-}
-
 .pimcore_nav_icon_marketing_settings {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/settings.svg) center center no-repeat !important;
 }
@@ -794,10 +782,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/settings.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_targeting {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/person.svg) center center no-repeat !important;
-}
-
 .pimcore_icon_versions {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/org_unit.svg) center center no-repeat !important;
 }
@@ -976,18 +960,6 @@
 
 .pimcore_icon_maintenance {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_targeting_toolbar_enable {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/ok.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_targeting_toolbar_disable {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_targeting_toolbar {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/list.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_info {
