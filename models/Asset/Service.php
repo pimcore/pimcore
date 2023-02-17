@@ -577,26 +577,26 @@ class Service extends Model\Element\Service
             } elseif ($asset instanceof Asset\Image) {
                 //check if high res image is called
 
-//                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $assetInfo['$filename'], $matches);
-//
-//                if (empty($matches) || !isset($matches[1])) {
-//                    return null;
-//                }
+                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $assetInfo['$filename'], $matches);
 
-//                if (array_key_exists(2, $matches) && $matches[2]) {
-//                    $highResFactor = (float)str_replace(['@', 'x'], '', $matches[2]);
-//                    $thumbnailConfig->setHighResolution($highResFactor);
-//                }
-//
-//                // check if a media query thumbnail was requested
-//                if (preg_match("#~\-~media\-\-(.*)\-\-query#", $matches[1], $mediaQueryResult)) {
-//                    $thumbnailConfig->selectMedia($mediaQueryResult[1]);
-//                }
+                if (empty($matches) || !isset($matches[1])) {
+                    return null;
+                }
+
+                if (array_key_exists(2, $matches) && $matches[2]) {
+                    $highResFactor = (float)str_replace(['@', 'x'], '', $matches[2]);
+                    $thumbnailConfig->setHighResolution($highResFactor);
+                }
+
+                // check if a media query thumbnail was requested
+                if (preg_match("#~\-~media\-\-(.*)\-\-query#", $matches[1], $mediaQueryResult)) {
+                    $thumbnailConfig->selectMedia($mediaQueryResult[1]);
+                }
 
                 return $asset->getThumbnail($thumbnailConfig);
             }
         }
-//        return null;
+        return null;
     }
 
     /**
@@ -617,7 +617,7 @@ class Service extends Model\Element\Service
         // See `_pimcore_service_thumbnail` in `CoreBundle\config\routing.yaml`
 
         $regExpression = sprintf('/(%s)(%s)-thumb__(%s)__(%s)\/(%s)/',
-            '.*',        // prefix
+            '.*',               // prefix
             'video|image',      // type
             '\d+',              // assetId
             '[a-zA-Z0-9_\-]+',  // thumbnailName
@@ -634,7 +634,7 @@ class Service extends Model\Element\Service
                 'thumbnail_name' => $matches[4],
                 'filename' => $matches[5],
             ];
-        }else{
+        } else {
             return null;
         }
     }
