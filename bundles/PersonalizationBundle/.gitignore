@@ -2,12 +2,50 @@
 Thumbs.db
 *.log
 
+# symfony default
+/.web-server-pid
+/app/config/parameters.yml
+/build/
+/phpunit.xml
+/web/bundles/
+
+# local config
+!/app/config/local
+/app/config/local/*
+!app/config/local/.gitkeep
+
+# pimcore legacy (remove this for your own development)
+!/legacy
+/legacy/*
+!legacy/.gitkeep
+!legacy/bundle
+
+/var/*
+!/var/.gitkeep
+!/var/classes/
+/var/classes/DataObject
+
+!/var/config
+/var/config/system.php
+/var/config/debug-mode.php
+/var/config/maintenance.php
+
+# project specific recommendations
+/var/config/tag-manager.php
+/var/config/reports.php
+
+
+/web/var/
+
 # PHP-CS-Fixer
 /.php_cs
 /.php_cs.cache
 
 # composer
-composer.lock
+/composer.lock
+!/vendor
+/vendor/*
+!/vendor/.gitkeep
 
 # PhpStorm / IDEA
 .idea
@@ -15,19 +53,16 @@ composer.lock
 # NetBeans
 nbproject
 
-# npm
-/node_modules
+node_modules/
 
-# Test env
-/bin
-/cache
-/config
-/kernel
-/public
-/templates
-/var
-/vendor
-/.env
-/.htaccess
-/auth.json
-/config.json
+# codeception (only stage *.dist.yml config files)
+/codeception.yml
+/pimcore/codeception.yml
+/pimcore/tests/*.suite.yml
+/pimcore/tests/_output/*
+/pimcore/tests/_support/_generated/*
+
+# keep legacy paths ignored for easier migration
+/plugins/
+/tools/
+/website/
