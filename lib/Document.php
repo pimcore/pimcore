@@ -91,7 +91,7 @@ class Document
      */
     public static function getDefaultAdapter(): ?Document\Adapter
     {
-        $adapters = ['Gotenberg', 'Ghostscript'];
+        $adapters = ['Gotenberg', 'LibreOffice', 'Ghostscript'];
 
         foreach ($adapters as $adapter) {
             $adapterClass = '\\Pimcore\\Document\\Adapter\\' . $adapter;
