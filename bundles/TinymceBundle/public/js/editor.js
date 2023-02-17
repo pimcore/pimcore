@@ -26,7 +26,8 @@ pimcore.bundle.tinymce.editor = Class.create({
     },
 
     createWysiwyg: function (e) {
-        this.textareaId = e.detail.textarea.id;
+        this.textareaId = e.detail.textarea.id ?? e.detail.textarea;
+
         const userLanguage = pimcore.globalmanager.get("user").language;
         let language = this.languageMapping[userLanguage];
         if (!language) {
@@ -37,7 +38,26 @@ pimcore.bundle.tinymce.editor = Class.create({
         } else {
             language = {};
         }
-        tinymce.init(mergeObject({
+
+        const toolbar1 = 'undo redo | formatselect | ' +
+                'bold italic | alignleft aligncenter ' +
+                'alignright alignjustify | link';
+
+        const toolbar2 = 'table | bullist numlist outdent indent | removeformat | code | help';
+        let toolbar;
+        if(e.detail.context === 'translation') {
+            toolbar = {
+                toolbar1: toolbar1,
+                toolbar2: toolbar2
+            };
+        } else {
+            toolbar = {
+              toolbar: `${toolbar1} | ${toolbar2}`
+            };
+        }
+
+
+        tinymce.init(Object.assign({
             selector: `#${this.textareaId}`,
             height: 500,
             menubar: false,
@@ -45,10 +65,6 @@ pimcore.bundle.tinymce.editor = Class.create({
                 'autolink', 'lists', 'link', 'image', 'code',
                 'insertdatetime', 'media', 'table', 'help', 'wordcount'
             ],
-            toolbar: 'undo redo | formatselect | ' +
-                'bold italic | alignleft aligncenter ' +
-                'alignright alignjustify | link | table | bullist numlist outdent indent | ' +
-                'removeformat | code | help',
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
             inline: true,
             base_url: '/bundles/pimcoretinymce/build/tinymce',
@@ -57,7 +73,7 @@ pimcore.bundle.tinymce.editor = Class.create({
             init_instance_callback: function (editor) {
                 editor.on('input', function (eChange) {
                     const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
-                    if(this.maxChars != -1 && charCount > this.maxChars) {
+                    if(this.maxChars !== -1 && charCount > this.maxChars) {
                         pimcore.helpers.showNotification(t('error'), t('char_count_limit_reached'), 'error');
                     }
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
@@ -70,7 +86,7 @@ pimcore.bundle.tinymce.editor = Class.create({
                 }.bind(this));
             }.bind(this)
 
-        }, language));
+        }, language, toolbar));
 
     },
 
@@ -98,7 +114,7 @@ pimcore.bundle.tinymce.editor = Class.create({
 
         // remove existing links out of the wrapped text
         wrappedText = wrappedText.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, function ($0, $1) {
-            if ($1.toLowerCase() == "a") {
+            if ($1.toLowerCase() === "a") {
                 return "";
             }
             return $0;
@@ -108,8 +124,8 @@ pimcore.bundle.tinymce.editor = Class.create({
         let uri = data.path;
         const browserPossibleExtensions = ["jpg", "jpeg", "gif", "png"];
 
-        if (data.elementType == "asset") {
-            if (data.type == "image" && textIsSelected == false) {
+        if (data.elementType === "asset") {
+            if (data.type === "image" && textIsSelected === false) {
                 // images bigger than 600px or formats which cannot be displayed by the browser directly will be
                 // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 let defaultWidth = 600;
@@ -159,8 +175,8 @@ pimcore.bundle.tinymce.editor = Class.create({
             }
         }
 
-        if (data.elementType == "document" && (data.type == "page"
-            || data.type == "hardlink" || data.type == "link")) {
+        if (data.elementType === "document" && (data.type === "page"
+            || data.type === "hardlink" || data.type === "link")) {
             tinymce.activeEditor.selection.setContent(tinymce.activeEditor.dom.createHTML('a', {
                 href: uri,
                 pimcore_type: 'document',
@@ -169,7 +185,7 @@ pimcore.bundle.tinymce.editor = Class.create({
             return true;
         }
 
-        if (data.elementType == "object") {
+        if (data.elementType === "object") {
             tinymce.activeEditor.selection.setContent(tinymce.activeEditor.dom.createHTML('a', {
                 href: uri,
                 pimcore_type: 'object',
