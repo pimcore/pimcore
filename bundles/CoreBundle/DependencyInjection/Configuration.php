@@ -1213,7 +1213,7 @@ final class Configuration implements ConfigurationInterface
                                 ->enumNode('algorithm')
                                     ->info('The hashing algorithm to use for backend users and objects containing a "password" field.')
                                     ->example('!php/const PASSWORD_BCRYPT')
-                                    ->values([PASSWORD_BCRYPT, PASSWORD_ARGON2I, PASSWORD_ARGON2ID])
+                                    ->values([PASSWORD_DEFAULT, PASSWORD_BCRYPT, PASSWORD_ARGON2I, PASSWORD_ARGON2ID])
                                     ->defaultValue(PASSWORD_DEFAULT)
                                 ->end()
                                 ->arrayNode('options')
