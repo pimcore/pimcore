@@ -111,9 +111,11 @@ class VisitorInfoResolver
             return $this->targetingConfigured;
         }
 
-        $configuredRules = $this->db->fetchOne(
-            'SELECT id FROM targeting_target_groups UNION SELECT id FROM targeting_rules LIMIT 1'
-        );
+        try {
+            $configuredRules = $this->db->fetchOne('SELECT id FROM targeting_target_groups UNION SELECT id FROM targeting_rules LIMIT 1');
+        } catch (\Exception $exception) {
+            return false;
+        }
 
         $this->targetingConfigured = $configuredRules && (int)$configuredRules > 0;
 
