@@ -173,7 +173,7 @@
     "codeception/codeception": "^4.1.12",
     "codeception/module-symfony": "^1.6.0",
     "codeception/phpunit-wrapper": "^9",
-    "phpstan/phpstan": "^1.9.5",
+    "phpstan/phpstan": "1.9.17",
     "phpstan/phpstan-symfony": "^1.2.19",
     "phpunit/phpunit": "^9.3",
     "spiritix/php-chrome-html2pdf": "^1.6",
