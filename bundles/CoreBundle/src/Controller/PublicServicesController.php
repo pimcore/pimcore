@@ -40,165 +40,85 @@ class PublicServicesController extends Controller
 {
     public function thumbnailAction(Request $request): RedirectResponse|StreamedResponse
     {
-        $storage = Storage::get('thumbnail');
+        $thumbnailStream = null;
 
-        $assetId = (int) $request->get('assetId');
-        $thumbnailName = $request->get('thumbnailName');
-        $thumbnailType = $request->get('type');
+
         $filename = $request->get('filename');
         $requestedFileExtension = strtolower(File::getFileExtension($filename));
-        $asset = Asset::getById($assetId);
 
-        if ($asset) {
-            $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix') ?? '');
-            $prefix = preg_replace('@' . $asset->getId() . '/$@', '', $prefix);
-            if ($asset->getPath() === ('/' . $prefix)) {
-                // we need to check the path as well, this is important in the case you have restricted the public access to
-                // assets via rewrite rules
+        $assetInfo = [
+            'prefix' => $request->get('prefix'),
+            'type' => $request->get('type'),
+            'asset_id' => (int) $request->get('assetId'),
+            'thumbnail_name' => $request->get('thumbnailName'),
+            'filename' => $filename,
+            'file_extension' => $requestedFileExtension
+        ];
+        try {
+            $thumbnail = Asset\Service::getImageThumbnailByParsedArray($assetInfo);
+            if ($thumbnail) {
+                $storage = Storage::get('thumbnail');
 
-                try {
-                    $thumbnail = null;
-                    $thumbnailStream = null;
+                if ($assetInfo['type'] === 'video') {
+                    $storagePath = urldecode($thumbnail['formats'][$requestedFileExtension]);
 
-                    // just check if the thumbnail exists -> throws exception otherwise
-                    $thumbnailConfigClass = 'Pimcore\\Model\\Asset\\' . ucfirst($thumbnailType) . '\\Thumbnail\Config';
-                    $thumbnailConfig = $thumbnailConfigClass::getByName($thumbnailName);
-
-                    if (!$thumbnailConfig) {
-                        // check if there's an item in the TmpStore
-                        // remove an eventually existing cache-buster prefix first (eg. when using with a CDN)
-                        $pathInfo = preg_replace('@^/cache-buster\-[\d]+@', '', $request->getPathInfo());
-                        $deferredConfigId = 'thumb_' . $assetId . '__' . md5(urldecode($pathInfo));
-                        if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
-                            $thumbnailConfig = $thumbnailConfigItem->getData();
-                            TmpStore::delete($deferredConfigId);
-
-                            if (!$thumbnailConfig instanceof $thumbnailConfigClass) {
-                                throw new \Exception('Deferred thumbnail config file doesn\'t contain a valid '.$thumbnailConfigClass.' object');
-                            }
-                        } elseif ($this->getParameter('pimcore.config')['assets'][$thumbnailType]['thumbnails']['status_cache']) {
-                            // Delete Thumbnail Name from Cache so the next call can generate a new TmpStore entry
-                            $asset->getDao()->deleteFromThumbnailCache($thumbnailName);
-                        }
+                    if ($storage->fileExists($storagePath)) {
+                        $thumbnailStream = $storage->readStream($storagePath);
                     }
+                } else {
+                    $thumbnailStream = $thumbnail->getStream();
+                }
 
-                    if (!$thumbnailConfig) {
-                        throw $this->createNotFoundException("Thumbnail '" . $thumbnailName . "' file doesn't exist");
-                    }
+                if ($thumbnailStream) {
+                    if ($assetInfo['type'] === 'image') {
+                        $mime = $thumbnail->getMimeType();
+                        $fileSize = $thumbnail->getFileSize();
+                        $pathReference = $thumbnail->getPathReference();
+                        $actualFileExtension = File::getFileExtension($pathReference['src']);
 
-                    if ($thumbnailType == 'image' && strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
-                        $formatOverride = $requestedFileExtension;
-                        if (in_array($requestedFileExtension, ['jpg', 'jpeg'])) {
-                            $formatOverride = 'pjpeg';
-                        }
-                        $thumbnailConfig->setFormat($formatOverride);
-                    }
+                        if ($actualFileExtension !== $requestedFileExtension) {
+                            // create a copy/symlink to the file with the original file extension
+                            // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
+                            // is set to auto-optimized format so the resulting thumbnail can be jpeg
+                            $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $pathReference['src']);
 
-                    if ($asset instanceof Asset\Video) {
-                        if ($thumbnailType == 'video') {
-                            $thumbnail = $asset->getThumbnail($thumbnailName, [$requestedFileExtension]);
-                            $storagePath = urldecode($thumbnail['formats'][$requestedFileExtension]);
-
-                            if ($storage->fileExists($storagePath)) {
-                                $thumbnailStream = $storage->readStream($storagePath);
-                            }
-                        } else {
-                            $time = 1;
-                            if (preg_match("|~\-~time\-(\d+)\.|", $filename, $matchesThumbs)) {
-                                $time = (int)$matchesThumbs[1];
+                            //Only copy the file if not exists yet
+                            if (!$storage->fileExists($requestedFile)) {
+                                $storage->writeStream($requestedFile, $thumbnailStream);
                             }
 
-                            $thumbnail = $asset->getImageThumbnail($thumbnailConfig, $time);
-                            $thumbnailStream = $thumbnail->getStream();
+                            //Stream can be closed by writeStream and needs to be reloaded.
+                            $thumbnailStream = $storage->readStream($requestedFile);
                         }
-                    } elseif ($asset instanceof Asset\Document) {
-                        $page = 1;
-                        if (preg_match("|~\-~page\-(\d+)\.|", $filename, $matchesThumbs)) {
-                            $page = (int)$matchesThumbs[1];
-                        }
-
-                        $thumbnailConfig->setName(preg_replace("/\-[\d]+/", '', $thumbnailConfig->getName()));
-                        $thumbnailConfig->setName(str_replace('document_', '', $thumbnailConfig->getName()));
-
-                        $thumbnail = $asset->getImageThumbnail($thumbnailConfig, $page);
-                        $thumbnailStream = $thumbnail->getStream();
-                    } elseif ($asset instanceof Asset\Image) {
-                        //check if high res image is called
-
-                        preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $filename, $matches);
-
-                        if (empty($matches) || !isset($matches[1])) {
-                            throw $this->createNotFoundException('Requested asset does not exist');
-                        }
-                        if (array_key_exists(2, $matches) && $matches[2]) {
-                            $highResFactor = (float)str_replace(['@', 'x'], '', $matches[2]);
-                            $thumbnailConfig->setHighResolution($highResFactor);
-                        }
-
-                        // check if a media query thumbnail was requested
-                        if (preg_match("#~\-~media\-\-(.*)\-\-query#", $matches[1], $mediaQueryResult)) {
-                            $thumbnailConfig->selectMedia($mediaQueryResult[1]);
-                        }
-
-                        $thumbnail = $asset->getThumbnail($thumbnailConfig);
-                        $thumbnailStream = $thumbnail->getStream();
+                    } elseif ($assetInfo['type'] === 'video' && isset($storagePath)) {
+                        $mime = $storage->mimeType($storagePath);
+                        $fileSize = $storage->fileSize($storagePath);
+                    } else {
+                        throw new \Exception('Cannot determine mime type and file size of ' . $assetInfo['type'] . ' thumbnail, see logs for details.');
                     }
+                    // set appropriate caching headers
+                    // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
+                    $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
 
-                    if ($thumbnail && $thumbnailStream) {
-                        if ($thumbnailType == 'image') {
-                            $mime = $thumbnail->getMimeType();
-                            $fileSize = $thumbnail->getFileSize();
-                            $pathReference = $thumbnail->getPathReference();
-                            $actualFileExtension = File::getFileExtension($pathReference['src']);
+                    $headers = [
+                        'Cache-Control' => 'public, max-age=' . $lifetime,
+                        'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
+                        'Content-Type' => $mime,
+                        'Content-Length' => $fileSize,
+                    ];
 
-                            if ($actualFileExtension !== $requestedFileExtension) {
-                                // create a copy/symlink to the file with the original file extension
-                                // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
-                                // is set to auto-optimized format so the resulting thumbnail can be jpeg
-                                $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $pathReference['src']);
+                    $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
 
-                                //Only copy the file if not exists yet
-                                if (!$storage->fileExists($requestedFile)) {
-                                    $storage->writeStream($requestedFile, $thumbnailStream);
-                                }
-
-                                //Stream can be closed by writeStream and needs to be reloaded.
-                                $thumbnailStream = $storage->readStream($requestedFile);
-                            }
-                        } elseif ($thumbnailType =='video' && isset($storagePath)) {
-                            $mime = $storage->mimeType($storagePath);
-                            $fileSize = $storage->fileSize($storagePath);
-                        } else {
-                            throw new \Exception('Cannot determine mime type and file size of '.$thumbnailType.' thumbnail, see logs for details.');
-                        }
-                        // set appropriate caching headers
-                        // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
-                        $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
-
-                        $headers = [
-                            'Cache-Control' => 'public, max-age=' . $lifetime,
-                            'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
-                            'Content-Type' => $mime,
-                            'Content-Length' => $fileSize,
-                        ];
-
-                        $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
-
-                        return new StreamedResponse(function () use ($thumbnailStream) {
-                            fpassthru($thumbnailStream);
-                        }, 200, $headers);
-                    }
-
-                    throw new \Exception('Unable to generate '.$thumbnailType.' thumbnail, see logs for details.');
-                } catch (\Exception $e) {
-                    Logger::error($e->getMessage());
-
-                    return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');
+                    return new StreamedResponse(function () use ($thumbnailStream) {
+                        fpassthru($thumbnailStream);
+                    }, 200, $headers);
                 }
             }
+            throw new \Exception('Unable to generate '.$assetInfo['type'].' thumbnail, see logs for details.');
+        } catch (\Exception $e) {
+            Logger::error($e->getMessage());
+            return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');
         }
-
-        throw $this->createNotFoundException('Asset not found');
     }
 
     public function robotsTxtAction(Request $request): Response
