@@ -1,0 +1,162 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #
+    # TARGETING STORAGE
+    #
+    # The TargetingStorageInterface alias will be set to whatever service_id is configured
+    # in pimcore_personalization.targeting.service_id. The services below are just the core storages, but
+    # it's possible to define a custom service which can be configured via service_id.
+    #
+
+    # Cookie
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\Cookie\JWTCookieSaveHandler:
+        arguments:
+            $secret: '%kernel.secret%'
+
+    # NOTE: using this save handler is inherently insecure and can open vulnerabilities by injecting malicious data into the
+    # client cookie. Use only for testing!
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\Cookie\JsonCookieSaveHandler: ~
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\CookieStorage:
+        arguments:
+            $saveHandler: '@Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\Cookie\JWTCookieSaveHandler'
+
+    # Session Storage. If this is used, the pimcore_personalization.targeting.session.enabled entry
+    # must be set to true to load the session configurator.
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\SessionStorage: ~
+
+    # Database
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\DbStorage: ~
+
+    # Example for redis
+    # pimcore_personalization.targeting.storage.redis.connection:
+    #    class: Credis_Client
+    #    factory: [Pimcore\Storage\Redis\ConnectionFactory, createConnection]
+    #    arguments:
+    #        - { server: 127.0.0.1, database: 7 }
+
+    # Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\RedisStorage:
+    #     arguments:
+    #         $redis: '@pimcore_personalization.targeting.storage.redis.connection'
+
+    # Example for fallback
+    # Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\FallbackStorage:
+    #    arguments:
+    #        $primaryStorage: '@Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\DbStorage'
+    #        $fallbackStorage: '@Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\CookieStorage'
+
+
+    #
+    # VISITOR INFO
+    #
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface: '@Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorage'
+    Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorage: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoResolver: ~
+
+
+    #
+    # DATA PROVIDERS
+    #
+
+    GeoIp2\ProviderInterface: '@GeoIp2\Database\Reader'
+    GeoIp2\Database\Reader:
+        arguments:
+            $filename: '%pimcore.geoip.db_file%'
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\DataLoaderInterface: '@Pimcore\Bundle\PersonalizationBundle\Targeting\DataLoader'
+    Pimcore\Bundle\PersonalizationBundle\Targeting\DataLoader: ~
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\GeoIp:
+        calls:
+            - [ setCache, [ '@Pimcore\Cache\Core\CoreCacheHandler' ] ]
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\GeoLocation: ~
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\Device:
+        calls:
+            - [ setCache, [ '@Pimcore\Cache\Core\CoreCacheHandler' ] ]
+            - [ setCachePool, [ '@pimcore.cache.pool' ] ]
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\TargetingStorage: ~
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Service\VisitedPagesCounter: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\VisitedPagesCounter: ~
+
+
+    #
+    # CONDITIONS
+    #
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionFactoryInterface: '@Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionFactory'
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionFactory:
+        arguments:
+            $conditions: '%pimcore_personalization.targeting.conditions%'
+
+    pimcore_personalization.targeting.condition_matcher.expression_language:
+        class: Symfony\Component\ExpressionLanguage\ExpressionLanguage
+        arguments:
+            $cache: '@pimcore.cache.pool'
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionMatcherInterface: '@Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionMatcher'
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionMatcher:
+        arguments:
+            $expressionLanguage: '@pimcore_personalization.targeting.condition_matcher.expression_language'
+
+
+    #
+    # ACTION HANDLERS
+    #
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerInterface: '@Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler'
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\AssignTargetGroup: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\Redirect: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\CodeSnippet: ~
+
+
+    #
+    # DOCUMENT HANDLING
+    #
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator:
+        public: true
+
+
+    #
+    # TARGETING CODE
+    #
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Code\TargetingCodeGenerator: ~
+
+    #
+    # TOOLBAR AND PROFILER
+    #
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\TargetingDataCollector: ~
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\OverrideHandler:
+        lazy: true
+        arguments:
+            # injected by TargetingOverrideHandlersPass
+            $overrideHandlers: '?@'
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\Override\DocumentTargetingOverrideHandler:
+        tags:
+            - { name: pimcore_personalization.targeting.override_handler, priority: 500 }
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\Override\LanguageOverrideHandler:
+        tags:
+            - { name: pimcore_personalization.targeting.override_handler, priority: 475 }
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\Override\DeviceOverrideHandler:
+        tags:
+            - { name: pimcore_personalization.targeting.override_handler, priority: 450 }
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\Override\LocationOverrideHandler:
+        tags:
+            - { name: pimcore_personalization.targeting.override_handler, priority: 425 }

@@ -29,46 +29,6 @@ class Geobounds extends AbstractGeo implements
     VarExporterInterface,
     NormalizerInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'geobounds';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'NElongitude' => 'double',
-        'NElatitude' => 'double',
-        'SWlongitude' => 'double',
-        'SWlatitude' => 'double',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'NElongitude' => 'double',
-        'NElatitude' => 'double',
-        'SWlongitude' => 'double',
-        'SWlatitude' => 'double',
-    ];
-
     /**
      * @param mixed $data
      * @param null|DataObject\Concrete $object
@@ -350,5 +310,25 @@ class Geobounds extends AbstractGeo implements
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Geobounds::class . '|null';
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'NElongitude' => 'double',
+            'NElatitude' => 'double',
+            'SWlongitude' => 'double',
+            'SWlatitude' => 'double',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'geobounds';
     }
 }

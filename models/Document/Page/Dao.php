@@ -16,17 +16,14 @@
 namespace Pimcore\Model\Document\Page;
 
 use Pimcore\Model;
-use Pimcore\Model\Document\Targeting\TargetingDocumentDaoInterface;
 
 /**
  * @internal
  *
  * @property \Pimcore\Model\Document\Page $model
  */
-class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDaoInterface
+class Dao extends Model\Document\PageSnippet\Dao
 {
-    use Model\Document\Targeting\TargetingDocumentDaoTrait;
-
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *

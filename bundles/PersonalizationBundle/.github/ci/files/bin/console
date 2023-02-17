@@ -1,0 +1,46 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+ob_get_clean();
+
+if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
+    include $a;
+} elseif (file_exists($a = __DIR__ . '/../../../../vendor/autoload.php')) {
+    include $a;
+} elseif (file_exists($a = __DIR__ . '/../vendor/autoload.php')) {
+    include $a;
+} else {
+    fwrite(STDERR, 'Cannot locate autoloader; please run "composer install"' . PHP_EOL);
+    exit(1);
+}
+
+\Pimcore\Bootstrap::setProjectRoot();
+
+define('PIMCORE_CONSOLE', true);
+
+
+$input = new \Symfony\Component\Console\Input\ArgvInput();
+if (null !== $env = $input->getParameterOption(['--env', '-e'], null, true)) {
+    putenv('APP_ENV='.$_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = $env);
+}
+
+if ($input->hasParameterOption('--no-debug', true)) {
+    putenv('APP_DEBUG='.$_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = '0');
+}
+
+/** @var \Pimcore\Kernel $kernel */
+$kernel = \Pimcore\Bootstrap::startupCli();
+$application = new \Pimcore\Console\Application($kernel);
+$application->run();

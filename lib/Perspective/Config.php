@@ -129,13 +129,6 @@ final class Config
                 'expanded' => false,
                 'hidden' => false,
                 'sort' => -3,
-                'treeContextMenu' => [
-                    'document' => [
-                        'items' => [
-                            'addPrintPage' => \Pimcore\Config::getWeb2PrintConfig()['enableInDefaultView'] ? true : false, // hide add print documents by default
-                        ],
-                    ],
-                ],
             ],
             [
                 'type' => 'assets',

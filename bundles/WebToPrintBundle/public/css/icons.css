@@ -1,0 +1,11 @@
+.pimcore_nav_icon_print_settings {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/print.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_printpage {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/print.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_printcontainer {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/book.svg) center center no-repeat !important;
+}
