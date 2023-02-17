@@ -55,31 +55,14 @@ Menus and buttons may vary depending on the current GUI version
       * Add email address: owner@gmail.com
       * Read and analysis
 
-## CSE - Custom Search Engine
-* <https://cse.google.com/cse/all>, <http://support.google.com/customsearch/>
-* `[Add]`
-  * Sites to search: **www.project.example/***
-  * Language: **slovak**
-  * Name: **project.example/**
-* *Menu:* `Setup`
-  * Search engine ID: **cse_id**
-  * Image search: OK
-* *Menu:* `Statistics & logs`
-  * *Tab:* `Google analytics`
-    * Select profile: **project: All website data**
-
 ## Configuring Google Services in Pimcore
 **APIs**
 * copy **JSON** to `/config/pimcore/google-api-private-key.json`
-* edit `/var/config/system.yaml` or use System Settings in admin interface
+* edit `/config/config.yaml` or use System Settings in admin interface
   * services/google/client_id = **api_id**
   * services/google/email = **api_email**
   * services/google/simple_api_key = **s_api_key**
   * services/google/browser_api_key = **b_api_key**
-
-**CSE**
-* edit `www/config/services.yaml`
-  * search.google.cse_cx = **cse_id**
 
 **Analytics**
 * *Pimcore admin menu:* `Marketing` / `Marketing settings`
