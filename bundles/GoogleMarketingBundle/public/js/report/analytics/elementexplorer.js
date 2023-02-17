@@ -19,7 +19,7 @@ pimcore.bundle.googlemarketing.report.analytics.elementexplorer = Class.create(p
 
     matchType: function (type) {
         var types = ["document_page","global"];
-        if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)
+        if (pimcore.bundle.googlemarketing.report.abstract.prototype.matchTypeValidate(type, types)
             && pimcore.settings.google_analytics_enabled) {
             return true;
         }

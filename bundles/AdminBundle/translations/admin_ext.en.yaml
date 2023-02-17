@@ -464,7 +464,6 @@ preview_width: Preview Width
 preview_height: Preview Height
 url_width: URL Width
 externalImage: External Image
-log_pid: PID
 fieldcontainer: Field Container
 store: Store
 edit_configuration: Edit Store Configuration
