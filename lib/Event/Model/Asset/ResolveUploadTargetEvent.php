@@ -23,24 +23,38 @@ class ResolveUploadTargetEvent extends Event
 {
     use ArgumentsAwareTrait;
 
+    protected int $parentId;
+
     protected string $filename;
 
-    protected array $context;
+    protected string $sourcePath;
 
-    protected int $parentId;
+    protected array $context;
 
     /**
      * ResolveUploadTargetEvent constructor.
      *
      * @param int $parentId
      * @param string $filename
+     * @param string $sourcePath
      * @param array $context contextual information
      */
-    public function __construct(int $parentId, string $filename, array $context)
+    public function __construct(int $parentId, string $filename, string $sourcePath, array $context)
     {
         $this->parentId = $parentId;
         $this->filename = $filename;
+        $this->sourcePath = $sourcePath;
         $this->context = $context;
+    }
+
+    public function getParentId(): int
+    {
+        return $this->parentId;
+    }
+
+    public function setParentId(int $parentId): void
+    {
+        $this->parentId = $parentId;
     }
 
     public function getFilename(): string
@@ -53,6 +67,16 @@ class ResolveUploadTargetEvent extends Event
         $this->filename = $filename;
     }
 
+    public function getSourcePath(): string
+    {
+        return $this->sourcePath;
+    }
+
+    public function setSourcePath(string $sourcePath): void
+    {
+        $this->sourcePath = $sourcePath;
+    }
+
     public function getContext(): array
     {
         return $this->context;
@@ -61,15 +85,5 @@ class ResolveUploadTargetEvent extends Event
     public function setContext(array $context): void
     {
         $this->context = $context;
-    }
-
-    public function getParentId(): int
-    {
-        return $this->parentId;
-    }
-
-    public function setParentId(int $parentId): void
-    {
-        $this->parentId = $parentId;
     }
 }

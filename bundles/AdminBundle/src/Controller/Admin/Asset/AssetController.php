@@ -501,7 +501,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $this->validateManyToManyRelationAssetType($context, $filename, $sourcePath);
 
-            $event = new ResolveUploadTargetEvent($parentId, $filename, $context);
+            $event = new ResolveUploadTargetEvent($parentId, $filename, $sourcePath, $context);
             \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::RESOLVE_UPLOAD_TARGET);
             $filename = Element\Service::getValidKey($event->getFilename(), 'asset');
             $parentId = $event->getParentId();
