@@ -186,6 +186,9 @@ pimcore:
   - `@ParamConverter` annotation must be replaced with `#[DataObjectParam]` attribute.
   Replace other annotations provided by [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers)
 - [DataObjects][CSV Export] Changed encoding of table data-types to `json_encode` from `base64_encoded`.
+- [Security] Admin Login Events
+  - Removed `AdminEvents::LOGIN_CREDENTIALS` event.
+  - Removed `AdminEvents::LOGIN_FAILED` event. Use `Symfony\Component\HttpFoundation\Request\LoginFailureEvent` instead.
 
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
