@@ -29,8 +29,17 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class Authentication
 {
+    /**
+     * @deprecated
+     */
     public static function authenticatePlaintext(string $username, string $password): ?User
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6',
+            sprintf('%s is deprecated and will be removed in Pimcore 11', __METHOD__),
+        );
+
         /** @var User $user */
         $user = User::getByName($username);
 
