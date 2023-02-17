@@ -35,8 +35,3 @@ pimcore:
                 map:
                     targetGroup: Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup
                     targetGroupMultiselect: Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect
-
-pimcore_ecommerce_framework:
-    pricing_manager:
-        conditions:
-            TargetGroup: \Pimcore\Bundle\PersonalizationBundle\Ecommerce\PricingManager\Condition\TargetGroup

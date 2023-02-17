@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\PersonalizationBundle\Ecommerce\PricingManager\Condition;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
@@ -123,5 +123,3 @@ class TargetGroup implements ConditionInterface
         $this->threshold = $threshold;
     }
 }
-
-class_alias(TargetGroup::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\TargetGroup');
