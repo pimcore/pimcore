@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WebToPrintBundle\Processor;
 
-use Pimcore\Config;
+use Pimcore\Bundle\WebToPrintBundle\Config;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent;
 use Pimcore\Bundle\WebToPrintBundle\Processor;

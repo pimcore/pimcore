@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\WebToPrintBundle\Controller;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\WebToPrintBundle\Config;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
+use Pimcore\Bundle\WebToPrintBundle\Processor\Chromium;
 use Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome;
 use Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor;
 use Pimcore\Bundle\WebToPrintBundle\ProcessorChromium;

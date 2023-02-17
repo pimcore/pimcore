@@ -1962,10 +1962,10 @@ final class Configuration implements ConfigurationInterface
             ->arrayNode('gotenberg')
             ->addDefaultsIfNotSet()
             ->children()
-            ->scalarNode('base_url')
-            ->defaultValue('gotenberg:3000')
+                ->scalarNode('base_url')
+                ->defaultValue('gotenberg:3000')
+                ->end()
             ->end()
-            ->end()
-            ->end();
+        ->end();
     }
 }
