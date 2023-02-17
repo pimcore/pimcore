@@ -100,7 +100,7 @@ class Chromium extends Processor
 
         $tempFileName = uniqid('web2print_');
 
-        $chromium = Gotenberg::chromium(Pimcore/Config::getSystemConfiguration('gotenberg')['base_url']);
+        $chromium = Gotenberg::chromium(\Pimcore\Config::getSystemConfiguration('gotenberg')['base_url']);
 
         $options = [
             'printBackground', 'landscape', 'preferCssPageSize', 'omitBackground', 'emulatePrintMediaType',
