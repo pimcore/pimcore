@@ -60,7 +60,7 @@ $inheritanceModeBackup = DataObject::getGetInheritedValues();
 
 // set status back to the original value 
 DataObject::setGetInheritedValues($inheritanceModeBackup);
-
+```
 
 ## Parent Class - Class Inheritance
 
