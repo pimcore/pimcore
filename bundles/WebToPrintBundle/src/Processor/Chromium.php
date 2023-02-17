@@ -14,14 +14,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Web2Print\Processor;
+namespace Pimcore\Bundle\WebToPrintBundle\Processor;
 
 use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Model\PrintConfigEvent;
+use Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent;
+use Pimcore\Bundle\WebToPrintBundle\Processor;
 use Pimcore\Logger;
-use Pimcore\Model\Document;
-use Pimcore\Web2Print\Processor;
+use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Gotenberg\Gotenberg;
 use Gotenberg\Stream;
 
@@ -30,7 +30,7 @@ class Chromium extends Processor
     /**
      * @internal
      */
-    protected function buildPdf(Document\PrintAbstract $document, object $config): string
+    protected function buildPdf(PrintAbstract $document, object $config): string
     {
         $web2printConfig = Config::getWeb2PrintConfig();
         $web2printConfig = $web2printConfig['chromiumSettings'];
