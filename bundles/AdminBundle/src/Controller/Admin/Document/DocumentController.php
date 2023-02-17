@@ -282,10 +282,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
                     }
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
                     $createValues['controller'] = $this->getParameter('pimcore.documents.default_controller');
-                } elseif ($request->get('type') == 'printpage') {
-                    $createValues['controller'] = $this->getParameter('pimcore.documents.web_to_print.default_controller_print_page');
-                } elseif ($request->get('type') == 'printcontainer') {
-                    $createValues['controller'] = $this->getParameter('pimcore.documents.web_to_print.default_controller_print_container');
                 }
 
                 if ($request->get('inheritanceSource')) {

@@ -20,12 +20,8 @@ use Pimcore\Model;
 
 class Firstname extends Model\DataObject\ClassDefinition\Data\Input
 {
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'firstname';
+    public function getFieldType(): string
+    {
+        return 'firstname';
+    }
 }

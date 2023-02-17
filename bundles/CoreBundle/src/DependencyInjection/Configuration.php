@@ -136,7 +136,6 @@ final class Configuration implements ConfigurationInterface
         $this->addCustomViewsNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
-        $this->addGotenbergNode($rootNode);
 
         return $treeBuilder;
     }
@@ -888,38 +887,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('web_to_print')
-                    ->addDefaultsIfNotSet()
-                        ->children()
-                            ->scalarNode('pdf_creation_php_memory_limit')
-                                ->defaultValue('2048M')
-                            ->end()
-                            ->scalarNode('default_controller_print_page')
-                                ->defaultValue('App\\Controller\\Web2printController::defaultAction')
-                            ->end()
-                            ->scalarNode('default_controller_print_container')
-                                ->defaultValue('App\\Controller\\Web2printController::containerAction')
-                            ->end()
-                            ->booleanNode('enableInDefaultView')
-                                ->defaultValue(false)
-                            ->end()
-                            ->scalarNode('generalTool')
-                                ->defaultValue('')
-                            ->end()
-                            ->scalarNode('generalDocumentSaveMode')->end()
-                            ->scalarNode('pdfreactorVersion')->end()
-                            ->scalarNode('pdfreactorProtocol')->end()
-                            ->scalarNode('pdfreactorServer')->end()
-                            ->scalarNode('pdfreactorServerPort')->end()
-                            ->scalarNode('pdfreactorBaseUrl')->end()
-                            ->scalarNode('pdfreactorApiKey')->end()
-                            ->scalarNode('pdfreactorLicence')->end()
-                            ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
-                            ->booleanNode('pdfreactorEnableDebugMode')->end()
-                            ->scalarNode('headlessChromeSettings')->end()
-                            ->scalarNode('chromiumSettings')->end()
-                        ->end()
-                ->end()
                 ->integerNode('auto_save_interval')
                     ->defaultValue(60)
                 ->end()
@@ -934,6 +901,20 @@ final class Configuration implements ConfigurationInterface
                             ->defaultNull()
                             ->info('Optionally define route patterns to lookup static pages. Regular Expressions like: /^\/en\/Magazine/')
                         ->end()
+                ->end()
+            ->end()
+            ->arrayNode('class_definitions')
+                ->children()
+                    ->arrayNode('data')
+                        ->children()
+                            ->arrayNode('map')
+                                ->useAttributeAsKey('name')
+                                ->prototype('scalar')->end()
+                            ->end()
+                            ->arrayNode('prefixes')
+                                ->prototype('scalar')->end()
+                        ->end()
+                    ->end()
                 ->end()
             ->end();
 
@@ -1968,20 +1949,6 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
-                ->end()
-            ->end()
-        ->end();
-    }
-
-    private function addGotenbergNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-            ->arrayNode('gotenberg')
-            ->addDefaultsIfNotSet()
-            ->children()
-                ->scalarNode('base_url')
-                ->defaultValue('gotenberg:3000')
                 ->end()
             ->end()
         ->end();

@@ -746,7 +746,6 @@ class Installer
             'users',
             'website_settings',
             'admin_translations',
-            'web2print_settings',
             'workflow_details',
             'notifications',
             'notifications_send',

@@ -36,21 +36,10 @@ class Select extends Data implements
     FieldDefinitionEnrichmentInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\Traits\DefaultValueTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
     use DataObject\Traits\DataWidthTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'select';
 
     /**
      * Available options to select
@@ -87,24 +76,6 @@ class Select extends Data implements
     public ?string $optionsProviderData = null;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'varchar';
-
-    /**
      * Column length
      *
      * @internal
@@ -133,39 +104,19 @@ class Select extends Data implements
     }
 
     /**
-     * Correct old column definitions (e.g varchar(255)) to the new format
-     *
-     * @param string $type
+     * {@inheritdoc}
      */
-    private function correctColumnDefinition(string $type): void
+    public function getColumnType(): string
     {
-        if (preg_match("/(.*)\((\d+)\)/i", $this->$type, $matches)) {
-            $this->{'set' . ucfirst($type)}($matches[1]);
-            if ($matches[2] > 190) {
-                $matches[2] = 190;
-            }
-            $this->setColumnLength($matches[2] <= 190 ? $matches[2] : 190);
-        }
+        return 'varchar(' . $this->getColumnLength() . ')';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        $this->correctColumnDefinition('columnType');
-
-        return $this->columnType . '(' . $this->getColumnLength() . ')';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueryColumnType(): array|string|null
-    {
-        $this->correctColumnDefinition('queryColumnType');
-
-        return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
+        return $this->getColumnType();
     }
 
     public function getOptions(): ?array
@@ -504,13 +455,13 @@ class Select extends Data implements
         return $this->getDefaultValue();
     }
 
-    public function jsonSerialize(): static
+    public function jsonSerialize(): mixed
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
     /**
@@ -550,5 +501,10 @@ class Select extends Data implements
     public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         return $oldValue == $newValue;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'select';
     }
 }

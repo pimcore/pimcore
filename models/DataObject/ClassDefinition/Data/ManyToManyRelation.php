@@ -29,7 +29,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
-    use Extension\QueryColumnType;
+    use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
@@ -37,15 +37,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\DataHeightTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'manyToManyRelation';
 
     /**
      * @internal
@@ -70,15 +61,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @internal
      */
     public bool $allowToClearRelation = true;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'text';
 
     /**
      * @internal
@@ -885,5 +867,15 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         $name = $params['name'] ?: $this->name;
 
         return $this->getRelationFilterCondition($value, $operator, $name);
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return 'text';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'manyToManyRelation';
     }
 }

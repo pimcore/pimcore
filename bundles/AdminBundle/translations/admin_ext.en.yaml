@@ -503,34 +503,6 @@ width_explanation: >-
 height_explanation: >-
     The height of this component. A numeric value will be interpreted as the
     number of pixels; a string value will be treated as a CSS value with units.
-web2print_enable_in_default_view: Enable Web2Print documents in default documents view
-web2print_enable_in_default_view_txt: >-
-    Enables Web2Print documents in default documents view in default perspective.
-    Either activate this or create custom views and perspectives for managing
-    Web2Print documents.
-web2print_tool: Tool
-web2print_save_mode: Document Save Mode
-web2print_save_mode_txt: >-
-    Document Save Mode = cleanup deletes all not used document elements for
-    current document. This might be necessary for useage reports in print
-    documents.
-web2print_pdfreactor_settings: PDFreactor Settings
-web2print_server: Server
-web2print_baseURL: BaseURL
-web2print_baseURL_txt: >-
-    BaseURL for PDFreactor. This is prefixed to each relative url in print
-    templates when creating PDFs.
-web2print_apiKey_txt: >-
-    If the PDFreactor instance is set up to require API keys, you can enter it
-    here.
-web2print_licence: Licence
-web2print_wkhtmltopdf_settings: Wkhtmltopdf Settings
-web2print_wkhtmltopdf_binary: wkhtmltopdf Binary
-web2print_wkhtmltopdf_options: Options
-web2print_wkhtmltopdf_options_txt: One per line with '--' and whitespace between key and value (e.g. --key value)
-web2print_headlesschrome_settings: Headless Chrome settings
-web2print_headlesschrome_json_converter: Open JSON converter/validator
-web2print_hostname: Hostname
 disable_tree_preview: Disable Tree Preview
 PHP Class Name: PHP Class Name
 editor_configuration: Editor Configuration
@@ -553,7 +525,6 @@ language_permissions: Language Permissions (no view permission means all)
 rendering_class: Custom Renderer class
 rendering_data: Data passed to renderer
 drag_object_preview: Drag Object for Preview
-web2print_protocol: Protocol
 rows_fixed: Rows fixed
 cols_fixed: Cols fixed
 force_resize: Force resize
@@ -698,7 +669,6 @@ custom_report_class: Report class
 hide: Hide
 clear_full_page_cache: Clear Full Page Cache
 all_caches: All Caches
-web2print_settings: Web-to-Print Settings
 admin_translations: Admin Translations
 lock: Lock
 unlock: Unlock
@@ -738,11 +708,6 @@ invitation_link_sent: 'A temporary login link has been sent to email address: "%
 classificationstore_group_by_key: Group by key
 allow_to_create_new_object: Allow to create a new object in relation field
 puppeteer_documentation: Puppeteer
-web2print_headlesschrome_documentation: Option Documentation
-web2print_headlesschrome_documentation_additions: Additional Options
-web2print_headlesschrome_documentation_additions_text: >-
-    There are two additional options: "header" and "footer". This options need a
-    URL, which returns the header or footer template.
 json_converter: Formatting the Options
 json_converter_link: JSON Formatter
 max_characters: Maximum Characters

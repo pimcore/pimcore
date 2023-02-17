@@ -515,15 +515,6 @@ pimcore.layout.toolbar = Class.create({
                  });
              }
  
-             if (user.isAllowed("web2print_settings") && perspectiveCfg.inToolbar("settings.web2print")) {
-                 settingsItems.push({
-                     text: t("web2print_settings"),
-                     iconCls: "pimcore_nav_icon_print_settings",
-                     itemId: 'pimcore_menu_settings_web2print_settings',
-                     handler: this.web2printSettings
-                 });
-             }
- 
              if (user.isAllowed("users") && perspectiveCfg.inToolbar("settings.users")) {
                  var userItems = [];
  
@@ -1253,16 +1244,6 @@ pimcore.layout.toolbar = Class.create({
          }
          catch (e) {
              pimcore.globalmanager.add("reports_settings", new pimcore.report.settings());
-         }
-     },
- 
-     web2printSettings: function () {
- 
-         try {
-             pimcore.globalmanager.get("settings_web2print").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("settings_web2print", new pimcore.settings.web2print());
          }
      },
  
