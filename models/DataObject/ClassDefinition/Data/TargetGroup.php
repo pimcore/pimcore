@@ -24,15 +24,6 @@ use Pimcore\Model\Tool;
 class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'targetGroup';
-
-    /**
      * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param array $params
@@ -128,13 +119,13 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    public function jsonSerialize(): static
+    public function jsonSerialize(): mixed
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
     /**
@@ -146,5 +137,10 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         $blockedVars[] = 'options';
 
         return $blockedVars;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'targetGroup';
     }
 }

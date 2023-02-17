@@ -322,6 +322,8 @@ final class Config implements ArrayAccess
     /**
      * @return array<string, mixed>
      *
+     * @throws Exception
+     *
      * @internal
      */
     public static function getReportConfig(): array
@@ -356,28 +358,6 @@ final class Config implements ArrayAccess
     public static function setReportConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_report', $config);
-    }
-
-    public static function getWeb2PrintConfig(): array
-    {
-        if (RuntimeCache::isRegistered('pimcore_config_web2print')) {
-            $config = RuntimeCache::get('pimcore_config_web2print');
-        } else {
-            $config = Web2Print\Config::get();
-            self::setWeb2PrintConfig($config);
-        }
-
-        return $config;
-    }
-
-    /**
-     * @param array<string, mixed> $config
-     *
-     * @internal
-     */
-    public static function setWeb2PrintConfig(array $config): void
-    {
-        RuntimeCache::set('pimcore_config_web2print', $config);
     }
 
     /**

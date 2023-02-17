@@ -168,10 +168,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     public function getObject(): ?Concrete
     {
-        if ($this->objectId && !$this->object) {
-            $this->setObject(Concrete::getById($this->objectId));
-        }
-
         return $this->object;
     }
 
