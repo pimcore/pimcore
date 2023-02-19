@@ -283,11 +283,7 @@ final class Redirect extends AbstractModel
 
     public function setSourceSite(?int $sourceSite): static
     {
-        if ($sourceSite) {
-            $this->sourceSite = $sourceSite;
-        } else {
-            $this->sourceSite = null;
-        }
+        $this->sourceSite = $sourceSite;
 
         return $this;
     }
@@ -299,11 +295,7 @@ final class Redirect extends AbstractModel
 
     public function setTargetSite(?int $targetSite): static
     {
-        if ($targetSite) {
-            $this->targetSite = $targetSite;
-        } else {
-            $this->targetSite = null;
-        }
+        $this->targetSite = $targetSite;
 
         return $this;
     }

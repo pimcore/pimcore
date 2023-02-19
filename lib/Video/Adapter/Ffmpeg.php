@@ -342,7 +342,6 @@ class Ffmpeg extends Adapter
 
     public function setVideoBitrate(int $videoBitrate): static
     {
-
         $videoBitrate = (int) ceil($videoBitrate / 2) * 2;
 
         parent::setVideoBitrate($videoBitrate);
@@ -356,7 +355,6 @@ class Ffmpeg extends Adapter
 
     public function setAudioBitrate(int $audioBitrate): static
     {
-
         $audioBitrate = (int) ceil($audioBitrate / 2) * 2;
 
         parent::setAudioBitrate($audioBitrate);
