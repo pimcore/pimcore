@@ -393,7 +393,7 @@ abstract class AbstractRenderer implements RendererInterface
         }
 
         if (str_contains($value, '[')) {
-            if ('[]' == substr($value, -2)) {
+            if (str_ends_with($value, '[]')) {
                 $value = substr($value, 0, strlen($value) - 2);
             }
             $value = trim($value, ']');
