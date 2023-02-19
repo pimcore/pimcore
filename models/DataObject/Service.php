@@ -335,7 +335,7 @@ class Service extends Model\Element\Service
                 } elseif (count($keyParts) > 1) {
                     // brick
                     $brickType = $keyParts[0];
-                    if (strpos($brickType, '?') !== false) {
+                    if (str_contains($brickType, '?')) {
                         $brickDescriptor = substr($brickType, 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
                         $brickType = $brickDescriptor['containerKey'];
@@ -1821,7 +1821,7 @@ class Service extends Model\Element\Service
                     $brickDescriptor = null;
                     $innerContainer = null;
 
-                    if (strpos($brickType, '?') !== false) {
+                    if (str_contains($brickType, '?')) {
                         $brickDescriptor = substr($brickType, 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
                         $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';

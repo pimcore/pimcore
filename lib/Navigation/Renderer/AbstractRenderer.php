@@ -365,7 +365,7 @@ abstract class AbstractRenderer implements RendererInterface
                 $val = $this->_normalizeId($val);
             }
 
-            if (strpos($val, '"') !== false) {
+            if (str_contains($val, '"')) {
                 $xhtml .= " $key='$val'";
             } else {
                 $xhtml .= " $key=\"$val\"";
@@ -392,7 +392,7 @@ abstract class AbstractRenderer implements RendererInterface
             }
         }
 
-        if (strstr($value, '[')) {
+        if (str_contains($value, '[')) {
             if ('[]' == substr($value, -2)) {
                 $value = substr($value, 0, strlen($value) - 2);
             }

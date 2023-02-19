@@ -730,11 +730,10 @@ class Document extends Element\AbstractElement
                     if ($hardlinkTarget) {
                         $hardlinkPath = preg_replace('@^' . preg_quote(Site::getCurrentSite()->getRootPath(), '@') . '@', '', $hardlink->getRealFullPath());
 
-                        $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@',
-                            $hardlinkPath, $this->getRealFullPath());
+                        $link = preg_replace('@^' . preg_quote($hardlinkTarget->getRealFullPath(), '@') . '@', $hardlinkPath, $this->getRealFullPath());
                     }
 
-                    if (strpos($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath()) === false && strpos($link, $hardlinkPath) === false) {
+                    if (!str_contains($link, $hardlinkPath) && !str_contains($this->getRealFullPath(), Site::getCurrentSite()->getRootDocument()->getRealFullPath())) {
                         $link = null;
                     }
                 }

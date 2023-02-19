@@ -208,7 +208,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $url = $this->data['path'] ?? '';
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
-            $url .= (strpos($url, '?') !== false ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
+            $url .= (str_contains($url, '?') ? '&' : '?') . htmlspecialchars(str_replace('?', '', $this->getParameters()));
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
