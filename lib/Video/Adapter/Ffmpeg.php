@@ -280,7 +280,7 @@ class Ffmpeg extends Adapter
 
             if (preg_match('/ ([0-9]+x[0-9]+)[, ]/', $output, $matches)) {
                 $dimensionRaw = $matches[1];
-                list($width, $height) = explode('x', $dimensionRaw);
+                [$width, $height] = explode('x', $dimensionRaw);
 
                 return ['width' => $width, 'height' => $height];
             }
