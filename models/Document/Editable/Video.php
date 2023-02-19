@@ -595,7 +595,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         $wmode = '?wmode=transparent';
         $seriesPrefix = '';
-        if (strpos($youtubeId, 'PL') === 0) {
+        if (str_starts_with($youtubeId, 'PL')) {
             $wmode = '';
             $seriesPrefix = 'videoseries?list=';
         }

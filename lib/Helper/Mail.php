@@ -164,7 +164,7 @@ CSS;
         $emailLog->setSentDate(time());
 
         $subject = $mail->getSubjectRendered();
-        if (0 === strpos($subject, '=?')) {
+        if (str_starts_with($subject, '=?')) {
             $mbIntEnc = mb_internal_encoding();
             mb_internal_encoding($mail->getTextCharset());
             $subject = mb_decode_mimeheader($subject);
@@ -233,12 +233,12 @@ CSS;
             foreach ($matches[0] as $key => $value) {
                 $path = $matches[2][$key];
 
-                if (strpos($path, '//') === 0) {
+                if (str_starts_with($path, '//')) {
                     $absolutePath = 'http:' . $path;
-                } elseif (strpos($path, '/') === 0) {
+                } elseif (str_starts_with($path, '/')) {
                     $absolutePath = preg_replace('@^' . $replacePrefix . '(/(.*))?$@', '/$2', $path);
                     $absolutePath = $hostUrl . $absolutePath;
-                } elseif (strpos($path, 'file://') === 0) {
+                } elseif (str_starts_with($path, 'file://')) {
                     continue;
                 } else {
                     $absolutePath = $hostUrl . "/$path";
@@ -260,10 +260,10 @@ CSS;
             foreach ($parts as $key => $v) {
                 $v = trim($v);
                 // ignore absolute urls
-                if (strpos($v, 'http://') === 0 ||
-                    strpos($v, 'https://') === 0 ||
-                    strpos($v, '//') === 0 ||
-                    strpos($v, 'file://') === 0
+                if (str_starts_with($v, 'http://') ||
+                    str_starts_with($v, 'https://') ||
+                    str_starts_with($v, '//') ||
+                    str_starts_with($v, 'file://')
                 ) {
                     continue;
                 }
@@ -305,7 +305,7 @@ CSS;
                             $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                         }
                     }
-                } elseif (strpos($path, 'http') === 0) {
+                } elseif (str_starts_with($path, 'http')) {
                     $fileContent = \Pimcore\Tool::getHttpData($path);
                     $fileInfo = [
                         'fileUrlNormalized' => $path,

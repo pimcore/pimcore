@@ -343,7 +343,7 @@ abstract class AbstractRenderer implements RendererInterface
         foreach ($attribs as $key => $val) {
             $key = htmlspecialchars($key, ENT_COMPAT, 'UTF-8');
 
-            if (('on' == substr($key, 0, 2)) || ('constraints' == $key)) {
+            if ('constraints' === $key || str_starts_with($key, 'on')) {
                 // Don't escape event attributes; _do_ substitute double quotes with singles
                 if (!is_scalar($val)) {
                     // non-scalar data should be cast to JSON first
