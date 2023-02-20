@@ -34,6 +34,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 {
     use DataObject\Traits\DataWidthTrait;
     use Model\DataObject\Traits\ContextPersistenceTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     /**
      * @internal
