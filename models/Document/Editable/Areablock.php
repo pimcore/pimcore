@@ -402,9 +402,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->outputEditmode($html);
     }
 
-    /**
-     * @param Document\Editable\Area\Info $info
-     */
     public function blockStart(Area\Info $info = null): array
     {
         $this->blockStarted = true;

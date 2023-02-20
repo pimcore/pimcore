@@ -97,9 +97,6 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
 
     public function testLocalizedFieldInObjectBrick(): void
     {
-        /**
-         * @var LazyLoading $object
-         */
         $object = $this->createDataObject();
         $brick = new LazyLoadingLocalizedTest($object);
         $brick->setLInput(uniqid());
