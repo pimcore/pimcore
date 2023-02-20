@@ -66,8 +66,11 @@ class ClassDefinitionTest extends ModelTestCase
 */
 public function setInput(?string $input): static
 {
-	$this->input = $input;
+	if ($this->getInput() !== $input) {
+		$this->markFieldDirty("input", true);
 
+		$this->input = $input;
+	}
 	return $this;
 }
 
@@ -134,7 +137,11 @@ public function setMybricks(?\Pimcore\Model\DataObject\Objectbrick $mybricks): s
 */
 public function setQuantityValue(?\Pimcore\Model\DataObject\Data\QuantityValue $quantityValue): static
 {
-	$this->quantityValue = $quantityValue;
+	if ($this->getQuantityValue() !== $quantityValue) {
+		$this->markFieldDirty("quantityValue", true);
+
+		$this->quantityValue = $quantityValue;
+	}
 
 	return $this;
 }
@@ -156,7 +163,11 @@ public function setQuantityValue(?\Pimcore\Model\DataObject\Data\QuantityValue $
 */
 public function setLinput(?string $linput): static
 {
-	$this->linput = $linput;
+	if ($this->getLinput() !== $linput) {
+		$this->markFieldDirty("linput", true);
+
+		$this->linput = $linput;
+	}
 
 	return $this;
 }
