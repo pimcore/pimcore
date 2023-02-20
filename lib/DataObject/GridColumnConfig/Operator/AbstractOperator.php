@@ -21,8 +21,6 @@ use Pimcore\Tool;
 
 abstract class AbstractOperator implements OperatorInterface
 {
-    protected ?string $renderer = null;
-
     protected string $label;
 
     protected array $context = [];
@@ -82,6 +80,6 @@ abstract class AbstractOperator implements OperatorInterface
 
     public function getRenderer(): ?string
     {
-        return $this->renderer;
+        return null;
     }
 }
