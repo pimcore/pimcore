@@ -17,7 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Analytics\Code;
 
-use Pimcore\Bundle\GoogleMarketingBundle\Code\CodeBlock;
+
+use Pimcore\Analytics\Code\CodeBlock;
 use Pimcore\Tests\Support\Test\TestCase;
 
 class CodeBlockTest extends TestCase
