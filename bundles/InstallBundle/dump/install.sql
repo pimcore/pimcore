@@ -1,28 +1,6 @@
 
 SET NAMES utf8mb4;
 
-DROP TABLE IF EXISTS `application_logs`;
-CREATE TABLE `application_logs` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `pid` INT(11) NULL DEFAULT NULL,
-  `timestamp` datetime NOT NULL,
-  `message` TEXT NULL,
-  `priority` ENUM('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
-  `fileobject` varchar(1024) DEFAULT NULL,
-  `info` varchar(1024) DEFAULT NULL,
-  `component` varchar(190) DEFAULT NULL,
-  `source` varchar(190) DEFAULT NULL,
-  `relatedobject` int(11) unsigned DEFAULT NULL,
-  `relatedobjecttype` enum('object','document','asset') DEFAULT NULL,
-  `maintenanceChecked` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `component` (`component`),
-  KEY `timestamp` (`timestamp`),
-  KEY `relatedobject` (`relatedobject`),
-  KEY `priority` (`priority`),
-  KEY `maintenanceChecked` (`maintenanceChecked`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `assets`;
 CREATE TABLE `assets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -96,7 +74,7 @@ DROP TABLE IF EXISTS `documents` ;
 CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
-  `type` enum('page','link','snippet','folder','hardlink','email','newsletter','printpage','printcontainer') DEFAULT NULL,
+  `type` enum('page','link','snippet','folder','hardlink','email','newsletter') DEFAULT NULL,
   `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT '',
   `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `index` int(11) unsigned DEFAULT '0',
@@ -219,19 +197,6 @@ CREATE TABLE `documents_translations` (
   KEY `id` (`id`),
   KEY `language` (`language`),
   CONSTRAINT `fk_documents_translations_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `documents_printpage`;
-CREATE TABLE `documents_printpage` (
-  `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `controller` varchar(500) DEFAULT NULL,
-  `template` varchar(255) DEFAULT NULL,
-  `lastGenerated` int(11) DEFAULT NULL,
-  `lastGenerateMessage` text,
-  `contentMasterDocumentId` int(11) DEFAULT NULL,
-  `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_documents_printpage_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 
@@ -477,42 +442,6 @@ CREATE TABLE `tags_assignment` (
   KEY `ctype_cid` (`cid`,`ctype`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `targeting_rules`;
-CREATE TABLE `targeting_rules` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `description` text,
-  `scope` varchar(50) DEFAULT NULL,
-  `active` tinyint(1) DEFAULT NULL,
-  `prio` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `conditions` longtext,
-  `actions` longtext,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `targeting_storage`;
-CREATE TABLE `targeting_storage` (
-  `visitorId` varchar(100) NOT NULL,
-  `scope` varchar(50) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `value` json,
-  `creationDate` datetime DEFAULT NULL,
-  `modificationDate` datetime DEFAULT NULL,
-  PRIMARY KEY (`visitorId`,`scope`,`name`),
-  KEY `targeting_storage_scope_index` (`scope`),
-  KEY `targeting_storage_name_index` (`name`)
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `targeting_target_groups`;
-CREATE TABLE `targeting_target_groups` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `description` text,
-  `threshold` int(11) DEFAULT NULL,
-  `active` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `tmp_store`;
 CREATE TABLE `tmp_store` (
   `id` varchar(190) NOT NULL DEFAULT '',
@@ -687,15 +616,6 @@ CREATE TABLE `users_workspaces_object` (
   CONSTRAINT `fk_users_workspaces_object_objects` FOREIGN KEY (`cid`) REFERENCES `objects` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_object_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
-
-DROP TABLE IF EXISTS `uuids`;
-CREATE TABLE `uuids` (
-  `uuid` CHAR(36) NOT NULL,
-  `itemId` int(11) unsigned NOT NULL,
-  `type` VARCHAR(25) NOT NULL,
-  `instanceIdentifier` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`uuid`, `itemId`, `type`)
-) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `versions`;
 CREATE TABLE `versions` (

@@ -26,38 +26,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, NormalizerInterface
 {
-    use Data\Extension\ColumnType;
-    use Data\Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @var string
-     */
-    public string $fieldtype = 'indexFieldSelection';
-
-    /**
-     * Type for the column to query
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'tenant' => 'varchar(100)',
-        'field' => 'varchar(200)',
-        'preSelect' => 'text',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @var array
-     */
-    public $columnType = [
-        'tenant' => 'varchar(100)',
-        'field' => 'varchar(200)',
-        'preSelect' => 'text',
-    ];
-
     public mixed $width = null;
 
     public bool $considerTenants = false;
@@ -343,5 +311,24 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         }
 
         return null;
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'tenant' => 'varchar(100)',
+            'field' => 'varchar(200)',
+            'preSelect' => 'text',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'indexFieldSelection';
     }
 }

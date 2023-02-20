@@ -1,0 +1,6 @@
+_pimcore_application_logger:
+    resource: "@PimcoreApplicationLoggerBundle/src/Controller/"
+    type: annotation
+    prefix: /admin/bundle/applicationlogger
+    options:
+        expose: true

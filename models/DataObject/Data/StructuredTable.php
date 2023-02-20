@@ -115,10 +115,7 @@ class StructuredTable implements OwnerAwareFieldInterface
         return true;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         $string = '<table>';
 

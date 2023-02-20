@@ -116,11 +116,6 @@ pimcore_admin:
                 action: notesEvents
                 ctrl: true
                 alt: true
-            application_logger:
-                key: 'L'
-                action: applicationLogger
-                ctrl: true
-                alt: true
             tag_manager:
                 key: 'H'
                 action: tagManager

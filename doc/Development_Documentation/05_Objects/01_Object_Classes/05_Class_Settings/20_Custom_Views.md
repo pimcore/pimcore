@@ -174,7 +174,6 @@ pimcore:
                             addNewsletter: true
                             addHardlink: true
                             addFolder: true
-                            addPrintPage: true
                             paste: true
                             pasteCut: true
                             copy: true

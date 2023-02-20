@@ -295,14 +295,12 @@ Therefore create another action in the controller (ContentController) called `pr
 namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class ContentController extends FrontendController
 {
-    /**
-     * @Template
-     */
+    #[Template('content/default.html.twig')]
     public function defaultAction (Request $request)
     {
         return [];

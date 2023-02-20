@@ -11,13 +11,13 @@ pimcore_uuid:
   instance_identifier: 'your_unique_instance_identifier'
 ```
 
-Once set, Pimcore automatically creates an UUID for each newly created document, asset and object. 
+Once set, Pimcore automatically creates an UUID for each newly created document, asset, class and object. 
 With the class `Tool\UUID` you have access to the UUIDs as follows:
 
 ```php
 use Pimcore\Bundle\UuidBundle\Model\Tool;
   
-//get UUID for given element (document, asset, object)
+//get UUID for given element (document, asset, class, object)
 $uuid = Tool\UUID::getByItem($document);
  
 //get element for given UUID

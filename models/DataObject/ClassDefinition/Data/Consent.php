@@ -25,17 +25,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'consent';
 
     /**
      * @internal
@@ -43,27 +32,6 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @var int
      */
     public int $defaultValue = 0;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'tinyint(1)';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'consent' => 'tinyint(1)',
-        'note' => 'int(11)',
-    ];
 
     /**
      * @param mixed $data
@@ -428,5 +396,23 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         return null;
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'consent' => 'tinyint(1)',
+            'note' => 'int(11)',
+        ];
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return 'tinyint(1)';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'consent';
     }
 }

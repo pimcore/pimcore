@@ -34,41 +34,6 @@ class DateRange extends Data implements
     NormalizerInterface
 {
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'dateRange';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'start_date' => 'bigint(20)',
-        'end_date' => 'bigint(20)',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'start_date' => 'bigint(20)',
-        'end_date' => 'bigint(20)',
-    ];
 
     /**
      * @param DataObject\Concrete|null $object
@@ -88,13 +53,6 @@ class DateRange extends Data implements
                 $startDateKey => $startDate->getTimestamp(),
                 $endDateKey => $endDate instanceof CarbonInterface ? $endDate->getTimestamp() : null,
             ];
-
-            if ($this->getColumnType() === 'date') {
-                $result = [
-                    $startDateKey => \date('Y-m-d', $result[$startDateKey]),
-                    $endDateKey => null !== $result[$endDateKey] ? \date('Y-m-d', $result[$endDateKey]) : null,
-                ];
-            }
 
             return $result;
         }
@@ -116,10 +74,6 @@ class DateRange extends Data implements
         $endDateKey = $this->getName() . '__end_date';
 
         if (isset($data[$startDateKey], $data[$endDateKey])) {
-            if ($this->getColumnType() === 'date') {
-                return CarbonPeriod::create($data[$startDateKey], $data[$endDateKey]);
-            }
-
             $startDate = $this->getDateFromTimestamp($data[$startDateKey]);
             $endDate = $this->getDateFromTimestamp($data[$endDateKey]);
             $period = CarbonPeriod::create()->setStartDate($startDate);
@@ -377,5 +331,23 @@ class DateRange extends Data implements
         $date->setTimestamp($timestamp);
 
         return $date;
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'start_date' => 'bigint(20)',
+            'end_date' => 'bigint(20)',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'dateRange';
     }
 }
