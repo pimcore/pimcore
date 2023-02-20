@@ -46,7 +46,7 @@ class Price implements PriceInterface
         $this->minPrice = $minPrice;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $string = $this->getCurrency()->toCurrency($this->grossAmount);
 

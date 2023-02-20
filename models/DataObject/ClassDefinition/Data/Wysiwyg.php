@@ -30,35 +30,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'wysiwyg';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
 
     /**
      * @internal
@@ -328,5 +299,20 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';
+    }
+
+    public function getColumnType(): string
+    {
+        return 'longtext';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'wysiwyg';
     }
 }

@@ -16,9 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
+use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Compiler\RegisterConfiguredServicesPass;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Bundle\PersonalizationBundle\PimcorePersonalizationBundle;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
@@ -84,8 +86,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle implements D
 
     public static function registerDependentBundles(BundleCollection $collection): void
     {
-        if (\Pimcore\Version::getMajorVersion() >= 11) {
-            $collection->addBundle(\Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle::class);
-        }
+        $collection->addBundle(PimcoreApplicationLoggerBundle::class);
+        $collection->addBundle(PimcorePersonalizationBundle::class);
     }
 }

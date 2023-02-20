@@ -138,8 +138,9 @@ class BlockTest extends ModelTestCase
 
         $loadedData = $object->getTestblock();
 
+        /** @var Link $loadedLink */
         $loadedLink = $loadedData[0]['blocklink']->getData();
-        $this->assertEquals($targetDocument->getId(), $loadedLink->getObject()->getId());
+        $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
 
         $loadedHotspotImage = $loadedData[0]['blockhotspotimage']->getData();
         $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
@@ -188,8 +189,9 @@ class BlockTest extends ModelTestCase
         $object = DataObject::getById($objectRef->getId(), ['force' => true]);
         $loadedData = $object->getLtestblock('de');
 
+        /** @var Link $loadedLink */
         $loadedLink = $loadedData[0]['lblocklink']->getData();
-        $this->assertEquals($targetDocument->getId(), $loadedLink->getObject()->getId());
+        $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
 
         $loadedHotspotImage = $loadedData[0]['lblockhotspotimage']->getData();
         $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());

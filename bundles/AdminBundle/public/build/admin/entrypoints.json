@@ -1,0 +1,13 @@
+{
+  "entrypoints": {
+    "admin": {
+      "js": [
+        "/bundles/pimcoreadmin/build/admin/runtime.js",
+        "/bundles/pimcoreadmin/build/admin/admin.js"
+      ],
+      "css": [
+        "/bundles/pimcoreadmin/build/admin/404.css"
+      ]
+    }
+  }
+}

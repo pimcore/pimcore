@@ -80,7 +80,7 @@ class QuantityValueRange extends AbstractQuantityValue
         ];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
 

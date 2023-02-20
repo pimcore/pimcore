@@ -43,6 +43,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 /**
  * @internal
@@ -86,6 +87,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         ];
 
         $this
+            ->setAdminLanguage($request, $user)
             ->addRuntimePerspective($templateParams, $user)
             ->addPluginAssets($templateParams);
 
@@ -164,6 +166,17 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
+    protected function setAdminLanguage(Request $request, User $user): static
+    {
+        // set user language
+        $request->setLocale($user->getLanguage());
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($user->getLanguage());
+        }
+
+        return $this;
+    }
+
     protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection, SiteConfigProvider $siteConfigProvider): static
     {
         $config                = $templateParams['config'];
@@ -213,7 +226,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'asset_tree_paging_limit'        => $config['assets']['tree_paging_limit'],
             'document_tree_paging_limit'     => $config['documents']['tree_paging_limit'],
             'object_tree_paging_limit'       => $config['objects']['tree_paging_limit'],
-            'maxmind_geoip_installed'        => (bool) $this->getParameter('pimcore.geoip.db_file'),
             'hostname'                       => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
 
             'document_auto_save_interval' => $config['documents']['auto_save_interval'],
@@ -231,7 +243,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'image-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable(),
             'video-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Video\Thumbnail\Config())->isWriteable(),
             'document-types-writeable'            => (new DocType())->isWriteable(),
-            'web2print-writeable'                 => \Pimcore\Web2Print\Config::isWriteable(),
             'predefined-properties-writeable'     => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
             'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
             'perspectives-writeable'              => \Pimcore\Perspective\Config::isWriteable(),

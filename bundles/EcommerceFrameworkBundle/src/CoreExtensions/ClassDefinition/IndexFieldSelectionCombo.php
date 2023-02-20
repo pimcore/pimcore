@@ -103,12 +103,12 @@ class IndexFieldSelectionCombo extends Select
         return $this->considerTenants;
     }
 
-    public function jsonSerialize(): static
+    public function jsonSerialize(): mixed
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 }

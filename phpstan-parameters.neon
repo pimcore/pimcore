@@ -16,6 +16,8 @@ parameters:
         - '**/Processor/PdfReactor.php'
         - '**/PDFreactor.class.php'
         - 'bundles/EcommerceFrameworkBundle/*'
+        - 'bundles/PersonalizationBundle/src/Targeting/DataProvider/GeoIp.php'
+        - 'bundles/PersonalizationBundle/tests/Support/UnitTester.php'
 
     ignoreErrors:
         - '~^Unsafe usage of new static\(\)~'
