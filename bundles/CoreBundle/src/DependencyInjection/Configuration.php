@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
-use Pimcore\Targeting\Storage\CookieStorage;
-use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
@@ -55,26 +53,6 @@ final class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->arrayNode('error_handling')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->booleanNode('render_error_document')
-                            ->info('Render error document in case of an error instead of showing Symfony\'s error page')
-                            ->defaultTrue()
-                            ->beforeNormalization()
-                                ->ifString()
-                                ->then(function ($v) {
-                                    return (bool)$v;
-                                })
-                            ->end()
-                        ->end()
-                    ->end()
-                    ->setDeprecated(
-                        'pimcore/pimcore',
-                        '10.1',
-                        'The "%node%" option is deprecated since Pimcore 10.1, it will be removed in Pimcore 11.'
-                    )
-                ->end()
                 ->arrayNode('bundles')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -93,6 +71,10 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('translations')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('domains')
+                            ->info('Valid domains for translations')
+                            ->prototype('scalar')->end()
+                        ->end()
                         ->arrayNode('admin_translation_mapping')
                             ->useAttributeAsKey('locale')
                             ->prototype('scalar')->end()
@@ -142,7 +124,6 @@ final class Configuration implements ConfigurationInterface
         $this->addSecurityNode($rootNode);
         $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
-        $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
@@ -903,37 +884,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('web_to_print')
-                    ->addDefaultsIfNotSet()
-                        ->children()
-                            ->scalarNode('pdf_creation_php_memory_limit')
-                                ->defaultValue('2048M')
-                            ->end()
-                            ->scalarNode('default_controller_print_page')
-                                ->defaultValue('App\\Controller\\Web2printController::defaultAction')
-                            ->end()
-                            ->scalarNode('default_controller_print_container')
-                                ->defaultValue('App\\Controller\\Web2printController::containerAction')
-                            ->end()
-                            ->booleanNode('enableInDefaultView')
-                                ->defaultValue(false)
-                            ->end()
-                            ->scalarNode('generalTool')
-                                ->defaultValue('')
-                            ->end()
-                            ->scalarNode('generalDocumentSaveMode')->end()
-                            ->scalarNode('pdfreactorVersion')->end()
-                            ->scalarNode('pdfreactorProtocol')->end()
-                            ->scalarNode('pdfreactorServer')->end()
-                            ->scalarNode('pdfreactorServerPort')->end()
-                            ->scalarNode('pdfreactorBaseUrl')->end()
-                            ->scalarNode('pdfreactorApiKey')->end()
-                            ->scalarNode('pdfreactorLicence')->end()
-                            ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
-                            ->booleanNode('pdfreactorEnableDebugMode')->end()
-                            ->scalarNode('headlessChromeSettings')->end()
-                        ->end()
-                ->end()
                 ->integerNode('auto_save_interval')
                     ->defaultValue(60)
                 ->end()
@@ -948,6 +898,20 @@ final class Configuration implements ConfigurationInterface
                             ->defaultNull()
                             ->info('Optionally define route patterns to lookup static pages. Regular Expressions like: /^\/en\/Magazine/')
                         ->end()
+                ->end()
+            ->end()
+            ->arrayNode('class_definitions')
+                ->children()
+                    ->arrayNode('data')
+                        ->children()
+                            ->arrayNode('map')
+                                ->useAttributeAsKey('name')
+                                ->prototype('scalar')->end()
+                            ->end()
+                            ->arrayNode('prefixes')
+                                ->prototype('scalar')->end()
+                        ->end()
+                    ->end()
                 ->end()
             ->end();
 
@@ -1206,43 +1170,6 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                         ->arrayNode('source_adapters')
-                            ->useAttributeAsKey('name')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    private function addTargetingNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('targeting')
-                    ->canBeDisabled()
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('storage_id')
-                            ->info('Service ID of the targeting storage which should be used. This ID will be aliased to ' . TargetingStorageInterface::class)
-                            ->defaultValue(CookieStorage::class)
-                            ->cannotBeEmpty()
-                        ->end()
-                        ->arrayNode('session')
-                            ->info('Enables HTTP session support by configuring session bags and the full page cache')
-                            ->canBeEnabled()
-                        ->end()
-                        ->arrayNode('data_providers')
-                            ->useAttributeAsKey('key')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                        ->arrayNode('conditions')
-                            ->useAttributeAsKey('key')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                        ->arrayNode('action_handlers')
                             ->useAttributeAsKey('name')
                                 ->prototype('scalar')
                             ->end()

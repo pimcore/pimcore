@@ -15,12 +15,6 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: scheduledtasks }
 
-    Pimcore\Maintenance\Tasks\LogMailMaintenanceTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: logmaintenance }
-
     Pimcore\Maintenance\Tasks\LogCleanupTask:
         tags:
             - { name: pimcore.maintenance.task, type: cleanuplogfiles }
@@ -30,12 +24,6 @@ services:
             - '@doctrine.dbal.default_connection'
         tags:
             - { name: pimcore.maintenance.task, type: httperrorlog }
-
-    Pimcore\Maintenance\Tasks\LogArchiveTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: archiveLogEntries }
 
     Pimcore\Maintenance\Tasks\CleanupBrickTablesTask:
         arguments:

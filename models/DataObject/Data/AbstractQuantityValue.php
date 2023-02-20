@@ -95,5 +95,5 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 
     abstract public function getValue(): mixed;
 
-    abstract public function __toString();
+    abstract public function __toString(): string;
 }

@@ -42,5 +42,5 @@ interface ResourcePersistenceAwareInterface
      */
     public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): mixed;
 
-    public function getColumnType(): array|string|null;
+    public function getColumnType(): array|string;
 }

@@ -1033,7 +1033,12 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure, descri
             iconCls: 'pimcore_icon_upload'
         },
         listeners: {
-            change: function () {
+            change: function (fileUploadField) {
+                if(fileUploadField.fileInputEl.dom.files[0].size > pimcore.settings["upload_max_filesize"]) {
+                    pimcore.helpers.showNotification(t("error"), t("file_is_bigger_that_upload_limit") + " " + fileUploadField.fileInputEl.dom.files[0].name, "error");
+                    return;
+                }
+
                 uploadForm.getForm().submit({
                     url: url,
                     params: {
@@ -2837,13 +2842,6 @@ pimcore.helpers.notesEvents = function() {
     }
 };
 
-pimcore.helpers.applicationLogger = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("application_logging")) {
-        pimcore.layout.toolbar.prototype.logAdmin();
-    }
-};
-
 pimcore.helpers.tagConfiguration = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("tags_configuration")) {
@@ -2902,7 +2900,6 @@ pimcore.helpers.keyBindingMapping = {
     "sharedTranslations": pimcore.helpers.sharedTranslations,
     "recycleBin": pimcore.helpers.recycleBin,
     "notesEvents": pimcore.helpers.notesEvents,
-    "applicationLogger": pimcore.helpers.applicationLogger,
     "tagManager": pimcore.helpers.tagManager,
     "tagConfiguration": pimcore.helpers.tagConfiguration,
     "users": pimcore.helpers.users,
@@ -3206,6 +3203,21 @@ pimcore.helpers.deleteConfirm = function (title, name, deleteCallback) {
         }.bind(this))
 };
 
+pimcore.helpers.treeDragDropValidate = function (node, oldParent, newParent) {
+    const disabledLayoutTypes = ['accordion', 'text', 'iframe', 'button']
+    if (newParent.data.editor) {
+        if (disabledLayoutTypes.includes(newParent.data.editor.type)) {
+            return false;
+        }
+    }
+
+    if (newParent.data.root) {
+        return false;
+    }
+
+    return true;
+};
+
 /**
  * Building menu with priority
  * @param items
@@ -3252,7 +3264,7 @@ pimcore.helpers.buildMainNavigationMarkup = function(menu) {
     const dh = Ext.DomHelper;
     const ul = Ext.get("pimcore_navigation_ul");
     const menuPrefix = 'pimcore_menu_';
-    
+
     // sorting must be done manually here.
     Object.keys(menu).sort((a, b) => {
         // a and b are the keys like file, extras e.t.c

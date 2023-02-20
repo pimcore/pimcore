@@ -1,0 +1,19 @@
+{
+  "devDependencies": {
+    "@symfony/webpack-encore": "^4.2.0",
+    "file-loader": "^6.2.0",
+    "webpack-notifier": "^1.15.0"
+  },
+  "scripts": {
+    "dev-server": "encore dev-server",
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production --progress"
+  },
+  "dependencies": {
+    "ace-builds": "^1.14.0",
+    "chart.js": "^4.2.0",
+    "leaflet": "^1.9.3",
+    "leaflet-draw": "^1.0.4"
+  }
+}

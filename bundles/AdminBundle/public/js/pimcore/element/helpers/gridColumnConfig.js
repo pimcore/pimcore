@@ -740,7 +740,8 @@ pimcore.element.helpers.gridColumnConfig = {
         let params = this.getGridParams();
 
         var fields = this.getGridConfig().columns;
-        var fieldKeys = Object.keys(fields);
+        var fieldKeys = Object.entries(fields).map(([key, value]) => ({ key: key, label: value.fieldConfig?.label || key }));
+        fieldKeys = Ext.encode(fieldKeys);
         params["fields[]"] = fieldKeys;
         if (this.context) {
             params["context"] = Ext.encode(this.context);
@@ -756,7 +757,19 @@ pimcore.element.helpers.gridColumnConfig = {
                 var rdata = Ext.decode(response.responseText);
 
                 if (rdata.success && rdata.jobs) {
-                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings, exportType);
+                    const exportSize = rdata.jobs.reduce((a, b) => a + b.length, 0)
+                    if (exportSize > 25) {
+                        Ext.Msg.confirm("Confirmation", sprintf(t('batch_export_confirmation'), `<b>${new Intl.NumberFormat(navigator.language).format(exportSize)}</b>`),
+                            (btn) => {
+                                if (btn === "yes") {
+                                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings, exportType);
+                                } else {
+                                    return;
+                                }
+                            });
+                    } else {
+                        this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings, exportType);
+                    }
                 }
             }.bind(this)
         });

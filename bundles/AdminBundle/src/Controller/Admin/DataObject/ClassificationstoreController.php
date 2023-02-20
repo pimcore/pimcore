@@ -1443,8 +1443,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
     public function editStoreAction(Request $request): JsonResponse
     {
         $id = $request->request->getInt('id');
-        $data = json_decode($request->get('data'), true);
-
+        $data = json_decode($request->request->get('data'), true);
         $name = $data['name'];
         if (!$name) {
             throw new \Exception('Name must not be empty');

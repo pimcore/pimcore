@@ -48,7 +48,7 @@ class MultiSelectRelation extends AbstractFilterType
         }
 
         foreach ($values as $v) {
-            if (empty($availableRelations) || ($availableRelations[$v['value']] ?? false)) {
+            if (empty($availableRelations) || ($availableRelations[$v['value']] ?? false) === true) {
                 $objects[$v['value']] = DataObject::getById($v['value']);
             }
         }

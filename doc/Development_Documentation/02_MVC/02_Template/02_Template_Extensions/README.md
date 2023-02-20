@@ -84,10 +84,15 @@ The following table gives an overview of all available tests:
 | `pimcore_document_page`                | Checks if object is instanceof Document\Page                        |
 | `pimcore_document_link`                | Checks if object is instanceof Document\Link                        |
 | `pimcore_document_page_snippet`        | Checks if object is instanceof Document\PageSnippet                 |
+| `pimcore_document_snippet`             | Checks if object is instanceof Document\Snippet                     |
+
+The following test are only available if the PimcoreWebToPrintBundle is enabled and installed:
+
+| Test                      | Description                                                                      |
+|---------------------------|----------------------------------------------------------------------------------|
 | `pimcore_document_print`               | Checks if object is instanceof Document\PrintAbstract               |
 | `pimcore_document_print_container`     | Checks if object is instanceof Document\Printcontainer              |
 | `pimcore_document_print_page`          | Checks if object is instanceof Document\Printpage                   |
-| `pimcore_document_snippet`             | Checks if object is instanceof Document\Snippet                     |
 
 You can also create your own custom Twig Extension to make certain functionalities available to your views.  
 Here you can find an example how to [create](https://symfony.com/doc/current/templating/twig_extension.html)

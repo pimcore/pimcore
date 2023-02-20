@@ -519,6 +519,25 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
                 }
 
+                usort($objectData['validLayouts'], static function ($layoutData1, $layoutData2) {
+                    if ($layoutData2['id'] === '-1') {
+                        return 1;
+                    }
+
+                    if ($layoutData1['id'] === '-1') {
+                        return -1;
+                    }
+
+                    if ($layoutData2['id'] === '0') {
+                        return 1;
+                    }
+                    if ($layoutData1['id'] === '0') {
+                        return -1;
+                    }
+
+                    return strcasecmp($layoutData1['name'], $layoutData2['name']);
+                });
+
                 $user = Tool\Admin::getCurrentUser();
 
                 if ($currentLayoutId == -1 && $user->isAdmin()) {
@@ -887,14 +906,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         /** @var DataObject\Concrete $object */
         $object = $modelFactory->build($className);
         $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
-        $object->setClassId($request->get('classId'));
-
+        $classId = $request->request->get('classId');
         if ($request->get('variantViaTree')) {
             $parentId = $request->request->getInt('parentId');
             $parent = DataObject\Concrete::getById($parentId);
-            $object->setClassId($parent->getClass()->getId());
+            $classId = $parent->getClass()->getId();
         }
 
+        $object->setClassId($classId);
         $object->setClassName($request->request->get('className'));
         $object->setParentId($request->request->getInt('parentId'));
         $object->setKey($request->request->get('key'));

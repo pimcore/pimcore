@@ -108,13 +108,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     protected bool $allLazyKeysMarkedAsLoaded = false;
 
     /**
-     * @internal
-     *
-     * @var Localizedfield|null
-     */
-    protected $localizedfields = null;
-
-    /**
      * returns the class ID of the current object class
      *
      * @return string
@@ -137,6 +130,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         foreach ($fieldDefinitions as $fd) {
             try {
+                if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $this->__objectAwareFields['localizedfields'] = true;
+                }
+
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
@@ -762,17 +759,12 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         parent::__wakeup();
 
-        // renew localized fields
-        // do not use the getter ($this->getLocalizedfields()) as it somehow slows down the process around a sec
-        // no clue why this happens
-        if ($this->localizedfields instanceof Localizedfield) {
-            $this->localizedfields->setObject($this, false);
-        }
-
         // renew object reference to other object aware fields
         foreach ($this->__objectAwareFields as $objectAwareField => $exists) {
-            if (isset($this->$objectAwareField) && $this->$objectAwareField instanceof ObjectAwareFieldInterface) {
-                $this->$objectAwareField->setObject($this);
+            if (isset($this->$objectAwareField)) {
+                if ($this->$objectAwareField instanceof ObjectAwareFieldInterface) {
+                    $this->$objectAwareField->setObject($this);
+                }
             }
         }
     }

@@ -90,9 +90,10 @@ pimcore.bundle.search.layout.toolbar = Class.create({
 
             if (searchItems.length > 0) {
                 this.menu.search = {
+                    label: t('search'),
+                    iconCls: 'pimcore_main_nav_icon_search',
                     items: searchItems,
                     shadow: false,
-                    listeners: true,
                     cls: "pimcore_navigation_flyout"
                 };
             }

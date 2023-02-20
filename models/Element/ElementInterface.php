@@ -186,8 +186,5 @@ interface ElementInterface extends ModelInterface
 
     public function getDependencies(): Dependency;
 
-    /**
-     * @return string
-     */
-    public function __toString();
+    public function __toString(): string;
 }

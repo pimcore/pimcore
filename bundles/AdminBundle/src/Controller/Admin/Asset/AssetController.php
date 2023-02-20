@@ -101,8 +101,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $assetId = (int)$request->get('id');
-        $type = (string)$request->get('type');
+        $assetId = $request->query->getInt('id');
+        $type = $request->query->get('type');
 
         $asset = Asset::getById($assetId);
         if (!$asset instanceof Asset) {
@@ -115,7 +115,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 return $this->getEditLockResponse($assetId, 'asset');
             }
 
-            Element\Editlock::lock($request->query->getInt('id'), 'asset', $request->getSession()->getId());
+            Element\Editlock::lock($assetId, 'asset', $request->getSession()->getId());
         }
 
         $asset = clone $asset;
@@ -2333,7 +2333,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             for ($i = $offset; $i < ($offset + $limit); $i++) {
                 $path = $zip->getNameIndex($i);
 
-                if (str_starts_with($path, '__MACOSX/')) {
+                if (str_starts_with($path, '__MACOSX/') || $path === 'Thumbs.db') {
                     continue;
                 }
 
