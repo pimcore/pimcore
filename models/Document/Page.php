@@ -128,22 +128,35 @@ class Page extends TargetingDocument
     }
 
     /**
+     * @deprecated
      * @param array $metaData
      *
      * @return $this
      */
     public function setMetaData($metaData)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11.', __METHOD__)
+        );
+
         $this->metaData = $metaData;
 
         return $this;
     }
 
     /**
+     * @deprecated
      * @return array
      */
     public function getMetaData()
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11.', __METHOD__)
+        );
         return $this->metaData;
     }
 
