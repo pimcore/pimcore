@@ -142,7 +142,6 @@ public function setQuantityValue(?\Pimcore\Model\DataObject\Data\QuantityValue $
 
 		$this->quantityValue = $quantityValue;
 	}
-
 	return $this;
 }
 
@@ -168,7 +167,6 @@ public function setLinput(?string $linput): static
 
 		$this->linput = $linput;
 	}
-
 	return $this;
 }
 
