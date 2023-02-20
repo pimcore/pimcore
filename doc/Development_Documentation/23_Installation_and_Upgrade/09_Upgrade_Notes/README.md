@@ -138,6 +138,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`
     - [Web2Print] has been moved into PimcoreWebToPrintBundle
       - Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
+    - [Personalization and targeting] has been moved to `pimcore/personalization` package.
+       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting:` in the PimcoreStaticRoutesBundle instead.
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
@@ -215,6 +217,7 @@ pimcore:
 - [Sites] Default Site Id has been updated from `default` to `0`. Please update configs using default site id accordingly.
 - [Asset] Deprecated VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111).
 - [Authentication] The method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been deprecated and will be removed in Pimcore 11.
+- [Authentication] The method `Pimcore\Tool\Authentication::authenticatePlaintext()` has been deprecated and will be removed in Pimcore 11.
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).

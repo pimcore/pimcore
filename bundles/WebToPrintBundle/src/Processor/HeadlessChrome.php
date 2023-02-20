@@ -114,8 +114,8 @@ class HeadlessChrome extends Processor
         $converter = new Converter($input, $output);
         if ($this->nodePath) {
             $converter->setNodePath($this->nodePath);
-        } else {
-            $converter->setNodePath(Console::getExecutable('node'));
+        } elseif ($nodePath = Console::getExecutable('node')) {
+            $converter->setNodePath($nodePath);
         }
         $converter->setOptions($params);
 

@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
-use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Environment implements EnvironmentInterface

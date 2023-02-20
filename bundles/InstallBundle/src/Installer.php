@@ -740,7 +740,6 @@ class Installer
             'tags_configuration',
             'tags_assignment',
             'tags_search',
-            'targeting',
             'thumbnails',
             'translations',
             'users',

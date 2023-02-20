@@ -18,12 +18,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup as ToolTargetGroup;
 
 class TargetGroup implements ConditionInterface
 {
     protected ?int $targetGroupId = null;
 
-    protected ?\Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup = null;
+    protected ?ToolTargetGroup $targetGroup = null;
 
     protected int $threshold = 0;
 
@@ -58,7 +59,7 @@ class TargetGroup implements ConditionInterface
     public function __wakeup(): void
     {
         if ($this->targetGroupId) {
-            $this->targetGroup = \Pimcore\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
+            $this->targetGroup = ToolTargetGroup::getById($this->targetGroupId);
         }
     }
 
@@ -95,18 +96,18 @@ class TargetGroup implements ConditionInterface
     {
         $this->targetGroupId = $targetGroupId;
         if ($this->targetGroupId) {
-            $this->targetGroup = \Pimcore\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
+            $this->targetGroup = ToolTargetGroup::getById($this->targetGroupId);
         } else {
             $this->targetGroup = null;
         }
     }
 
-    public function getTargetGroup(): \Pimcore\Model\Tool\Targeting\TargetGroup
+    public function getTargetGroup(): ToolTargetGroup
     {
         return $this->targetGroup;
     }
 
-    public function setTargetGroup(\Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup): void
+    public function setTargetGroup(ToolTargetGroup $targetGroup): void
     {
         $this->targetGroup = $targetGroup;
         $this->targetGroupId = $targetGroup->getId();
