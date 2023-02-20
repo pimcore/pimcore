@@ -577,7 +577,7 @@ class Service extends Model\Element\Service
             } elseif ($asset instanceof Asset\Image) {
                 //check if high res image is called
 
-                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $assetInfo['$filename'], $matches);
+                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $assetInfo['filename'], $matches);
 
                 if (empty($matches) || !isset($matches[1])) {
                     return null;
