@@ -55,13 +55,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public ?array $availableSites = null;
 
     /**
-     * @internal
-     *
-     * @var string|array|null
-     */
-    protected $columnType = null;
-
-    /**
      * @see Data::getDataForEditmode
      *
      * @param mixed $data

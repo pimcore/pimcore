@@ -57,20 +57,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      */
     public array $rows = [];
 
-    /**
-     * @internal
-     *
-     * @var string|array|null
-     */
-    protected $columnType = null;
-
-    /**
-     * @internal
-     *
-     * @var string|array|null
-     */
-    protected $queryColumnType = null;
-
     public function getLabelWidth(): int
     {
         return $this->labelWidth;

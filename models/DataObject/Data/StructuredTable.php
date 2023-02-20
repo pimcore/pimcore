@@ -25,15 +25,6 @@ class StructuredTable implements OwnerAwareFieldInterface
 
     protected array $data = [];
 
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public array $queryColumnType = [];
-
     public function __construct(array $data = [])
     {
         if ($data) {
