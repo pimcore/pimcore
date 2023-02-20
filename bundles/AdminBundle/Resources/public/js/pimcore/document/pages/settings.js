@@ -17,6 +17,10 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
     getLayout: function () {
 
         if (this.layout == null) {
+
+            /**
+             * @deprecated
+             */
             // meta-data
             var addMetaData = function (value) {
 
@@ -50,8 +54,11 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                 this.metaDataPanel.updateLayout();
             }.bind(this);
 
+            /**
+             * @deprecated
+             */
             this.metaDataPanel = new Ext.form.FieldSet({
-                title: t("html_tags") + " (&lt;meta .../&gt; &lt;link .../&gt; ...)",
+                title: t("html_tags") + " (&lt;meta .../&gt; &lt;link .../&gt; ...) (Deprecated)",
                 collapsible: false,
                 autoHeight:true,
                 width: 700,
