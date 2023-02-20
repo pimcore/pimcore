@@ -13,7 +13,7 @@ class BundleWriter
         $bundlesPhpFile = PIMCORE_PROJECT_ROOT . '/config/bundles.php';
 
         if (!file_exists($bundlesPhpFile)) {
-            throw new FileNotFoundException();
+            throw new FileNotFoundException("File \"$bundlesPhpFile\" not found!");
         }
         $bundlesToInstall = [];
         foreach($bundles as $bundle) {
