@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\GoogleMarketingBundle\Tests\Unit\Code;
+namespace Pimcore\Tests\Unit\Analytics\Code;
 
 use Pimcore\Bundle\GoogleMarketingBundle\Code\CodeBlock;
 use Pimcore\Tests\Support\Test\TestCase;
