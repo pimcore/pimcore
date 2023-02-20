@@ -418,10 +418,8 @@ class Mail extends Email
                 }
 
                 $replyTo = \Pimcore\Helper\Mail::parseEmailAddressField($document->getReplyTo());
-                if (!empty($replyTo)) {
-                    foreach ($replyTo as $replyToEntry) {
-                        $this->addReplyTo(new Address($replyToEntry['email'], $replyToEntry['name'] ?? ''));
-                    }
+                foreach ($replyTo as $replyToEntry) {
+                    $this->addReplyTo(new Address($replyToEntry['email'], $replyToEntry['name']));
                 }
             }
         }
