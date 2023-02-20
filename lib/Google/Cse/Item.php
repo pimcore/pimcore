@@ -18,6 +18,11 @@ namespace Pimcore\Google\Cse;
 use Google\Service\CustomSearchAPI\Result;
 use Pimcore\Model;
 
+trigger_deprecation('pimcore/pimcore', '10.6', 'The "%s" class is deprecated and will be removed in Pimcore 11.', Item::class);
+
+/**
+ * @deprecated since Pimcore 10.6 and will be removed in Pimcore 11
+ */
 class Item
 {
     /**

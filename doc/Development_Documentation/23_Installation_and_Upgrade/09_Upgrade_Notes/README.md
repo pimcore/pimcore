@@ -16,10 +16,12 @@
 - [Classification Store] Deleting the data from deleted groups and keys.
 - [Commands] Calling `configureParallelization` on `Parallelization` trait is deprecated and will be removed in Pimcore 11. Please call `Parallelization::configureCommand` instead.
 - [Events] Event `pimcore.element.note.postAdd` has been deprecated. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
-- [Document] Deprecated loading documents via fixed namespace only. It will be removed in Pimcore 11. Use `pimcore:type_definitions instead`
-- [Annotations] Using Annotations `@ResponseHeader` & `@ParamConverter`, `@Template` and 
-rest from [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers) is deprecated and will not be supported on Pimcore 11. 
-Use `#[ResponseHeader]`,`#[DataObjectParam]` argument, `#[Template]` and other attributes instead.
+- [Document] Deprecated loading documents via fixed namespace only. It will be removed in Pimcore 11. Use `pimcore:type_definitions` instead.
+- [Annotations] Using Annotations `@ResponseHeader` & `@ParamConverter`, `@Template` and rest from [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers) is deprecated and will not be supported on Pimcore 11. Use `#[ResponseHeader]`,`#[DataObjectParam]` argument, `#[Template]` and other attributes instead.
+- [Asset] Deprecated VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111).
+- [Authentication] The method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been deprecated and will be removed in Pimcore 11.
+- [Authentication] The method `Pimcore\Tool\Authentication::authenticatePlaintext()` has been deprecated and will be removed in Pimcore 11.
+- [Google] Classes `Google\Cse` and `Google\Cse\Item` are deprecated and will be removed in Pimcore 11.
 - [Page] Deprecated the `metatdata` functionality in Settings section of document.
 
 ## 10.5.13
@@ -217,6 +219,7 @@ $oldId = $object->getId(); //returns 0
 //after:
 $newId = $object->getId(); //returns null
 ```
+- [Asset] Deprectaed the `marshal()/unmarshal()` methods for metadata, use `normalize()/denormalize()` methods instead.
 
 ## 10.3.0
 - **Important**: [Symfony Messenger] Pimcore Core & Maintenance messages are now routed to different queues instead of default. It is
@@ -356,6 +359,7 @@ framework:
 - Removed `\Pimcore\Tool::getValidCacheKey/()`, use `preg_replace('/[^a-zA-Z0-9]/', '_', $key)` instead.
 - Removed `\Pimcore\Tool::isValidPath/()`, use `\Pimcore\Model\Element\Service::isValidPath()` instead.
 - Deprecated `\Pimcore\Model\Element\Service::getSaveCopyName()`, use `getSafeCopyName()` instead.
+- Deprecated methods `getObject()` and `setObject()` on the classes `\Pimcore\Model\Document\Link` and `\Pimcore\Model\DataObject\Data\Link`, use `getElement()` and `setElement()` instead.
 - Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) does not work anymore.
 - Removed `\Pimcore\Controller\Config\ConfigNormalizer`.
 - Removed `pimcore_action()` Twig extension. Use Twig `render()` instead.

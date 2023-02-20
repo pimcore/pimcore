@@ -37,7 +37,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return null|string|int
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -59,7 +59,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return null|string
+     * @return null|string|int
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
