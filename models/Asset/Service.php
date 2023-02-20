@@ -605,14 +605,13 @@ class Service extends Model\Element\Service
     public static function getImageThumbnailByUri(string $uri): null|ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array
     {
         $assetInfo = self::extractThumbnailInfoFromUri($uri);
-        if (!$assetInfo) {
-            throw new \Exception(sprintf('Uri `%s` is not valid and could not be parsed', $uri));
-        }
-
         return self::getImageThumbnailByParsedArray($assetInfo);
     }
 
-    public static function extractThumbnailInfoFromUri(string $uri): ?array
+    /**
+     * @throws \Exception
+     */
+    public static function extractThumbnailInfoFromUri(string $uri): array
     {
         // See `_pimcore_service_thumbnail` in `CoreBundle\config\routing.yaml`
 
@@ -635,7 +634,7 @@ class Service extends Model\Element\Service
                 'filename' => $matches[5],
             ];
         } else {
-            return null;
+            throw new \Exception(sprintf('Uri `%s` is not valid and could not be parsed', $uri));
         }
     }
 }

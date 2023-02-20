@@ -47,13 +47,16 @@ class PublicServicesController extends Controller
         $requestedFileExtension = strtolower(File::getFileExtension($filename));
 
         $assetInfo = [
-            'prefix' => $request->get('prefix'),
+            'prefix' => $request->get('prefix', ''),
             'type' => $request->get('type'),
             'asset_id' => (int) $request->get('assetId'),
             'thumbnail_name' => $request->get('thumbnailName'),
             'filename' => $filename,
             'file_extension' => $requestedFileExtension
         ];
+
+
+
         try {
             $thumbnail = Asset\Service::getImageThumbnailByParsedArray($assetInfo);
             if ($thumbnail) {
