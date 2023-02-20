@@ -30,40 +30,6 @@ use Pimcore\Model\DataObject\QuantityValue\Unit;
  */
 class InputQuantityValue extends QuantityValue
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'inputQuantityValue';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'value' => 'varchar(255)',
-        'unit' => 'varchar(50)',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'value' => 'varchar(255)',
-        'unit' => 'varchar(50)',
-    ];
-
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?InputQuantityValueDataObject
     {
         if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {
@@ -154,5 +120,23 @@ class InputQuantityValue extends QuantityValue
         }
 
         return null;
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'value' => 'varchar(255)',
+            'unit' => 'varchar(50)',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'inputQuantityValue';
     }
 }

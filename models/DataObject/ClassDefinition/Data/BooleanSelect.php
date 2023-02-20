@@ -32,8 +32,6 @@ class BooleanSelect extends Data implements
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /** storage value for yes */
@@ -69,15 +67,6 @@ class BooleanSelect extends Data implements
     ];
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'booleanSelect';
-
-    /**
      * @internal
      *
      * @var string
@@ -104,24 +93,6 @@ class BooleanSelect extends Data implements
      * @var array<int, array{key: string, value: int}>
      */
     public array $options = self::DEFAULT_OPTIONS;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'tinyint(1) null';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'tinyint(1) null';
 
     public function getOptions(): array
     {
@@ -454,5 +425,20 @@ class BooleanSelect extends Data implements
     public function getPhpdocReturnType(): ?string
     {
         return 'bool|null';
+    }
+
+    public function getColumnType(): string
+    {
+        return 'tinyint(1) null';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'booleanSelect';
     }
 }

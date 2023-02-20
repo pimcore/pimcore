@@ -13,7 +13,7 @@ The E-Commerce Framework provides a two level Assortment Tenant system for the P
 One system can have multiple tenants (heavy- and light-weight). But too many tenants can have bad effects on the performance 
 of saving products, since all *Product Indices* need to be updated on every save. 
 
-By default the system always uses one heavy-weight tenant (= `DefaultMysql`), but the default tenant can be disabled. 
+By default the system always uses one heavy-weight tenant (which is `DefaultMysql`), but the default tenant can be disabled. 
 
 
 ## Assortment Tenants
@@ -40,7 +40,7 @@ attributes. Depending on the *Product Index* implementation, additional configur
 
 - **Declare the service:**
 You need to declare the service as well so the class can be used. On your service configuration or for instance at the top of the ecommerce configuration file:
-```
+```yaml
 services:
     MyBundle\Service\MySubtenantConfig:
         calls:
@@ -146,7 +146,7 @@ In order to populate the additional mapping data, also following methods have to
      *
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null);
+    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null);
 
     /**
      * populates index for tenant relations based on given data
@@ -176,7 +176,7 @@ In order to populate the additional mapping data, the following method has to be
      *
      * @return array $subTenantData
      */
-    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null);
+    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null);
 
 ```
 

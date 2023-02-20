@@ -413,41 +413,10 @@ pimcore.layout.toolbar = Class.create({
                  cls: "pimcore_navigation_flyout"
              };
          }
- 
+
          if (perspectiveCfg.inToolbar("marketing")) {
              // marketing menu
              var marketingItems = [];
-
-             if (user.isAllowed("targeting") && perspectiveCfg.inToolbar("marketing.targeting")) {
-                 marketingItems.push({
-                     text: t("personalization") + " / " + t("targeting"),
-                     iconCls: "pimcore_nav_icon_usergroup",
-                     itemId: 'pimcore_menu_marketing_personalization',
-                     hideOnClick: false,
-                     menu: {
-                         cls: "pimcore_navigation_flyout",
-                         shadow: false,
-                         items: [
-                             {
-                                 text: t("global_targeting_rules"),
-                                 iconCls: "pimcore_nav_icon_targeting",
-                                 itemId: 'pimcore_menu_marketing_personalization_global_targeting_rules',
-                                 handler: this.showTargetingRules
-                             }, {
-                                 text: t('target_groups'),
-                                 iconCls: "pimcore_nav_icon_target_groups",
-                                 itemId: 'pimcore_menu_marketing_personalization_target_groups',
-                                 handler: this.showTargetGroups
-                             }, {
-                                 text: t("targeting_toolbar"),
-                                 iconCls: "pimcore_nav_icon_targeting_toolbar",
-                                 itemId: 'pimcore_menu_marketing_personalization_targeting_toolbar',
-                                 handler: this.showTargetingToolbarSettings
-                             }
-                         ]
-                     }
-                 });
-             }
 
              menu.marketing = {
                  label: t('marketing'),
@@ -503,15 +472,6 @@ pimcore.layout.toolbar = Class.create({
                      iconCls: "pimcore_nav_icon_website_settings",
                      itemId: 'pimcore_menu_settings_website_settings',
                      handler: this.websiteSettings
-                 });
-             }
- 
-             if (user.isAllowed("web2print_settings") && perspectiveCfg.inToolbar("settings.web2print")) {
-                 settingsItems.push({
-                     text: t("web2print_settings"),
-                     iconCls: "pimcore_nav_icon_print_settings",
-                     itemId: 'pimcore_menu_settings_web2print_settings',
-                     handler: this.web2printSettings
                  });
              }
  
@@ -1152,50 +1112,6 @@ pimcore.layout.toolbar = Class.create({
          pimcore.helpers.sendTestEmail(pimcore.settings.mailDefaultAddress);
      },
 
-     showTargetingRules: function () {
-         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-         try {
-             tabPanel.setActiveTab(pimcore.globalmanager.get("targeting").getLayout());
-         }
-         catch (e) {
-             var targeting = new pimcore.settings.targeting.rules.panel();
-             pimcore.globalmanager.add("targeting", targeting);
- 
-             tabPanel.add(targeting.getLayout());
-             tabPanel.setActiveTab(targeting.getLayout());
- 
-             targeting.getLayout().on("destroy", function () {
-                 pimcore.globalmanager.remove("targeting");
-             }.bind(this));
- 
-             pimcore.layout.refresh();
-         }
-     },
- 
-     showTargetGroups: function () {
-         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-         try {
-             tabPanel.setActiveTab(pimcore.globalmanager.get("targetGroupsPanel").getLayout());
-         }
-         catch (e) {
-             var targetGroups = new pimcore.settings.targeting.targetGroups.panel();
-             pimcore.globalmanager.add("targetGroupsPanel", targetGroups);
- 
-             tabPanel.add(targetGroups.getLayout());
-             tabPanel.setActiveTab(targetGroups.getLayout());
- 
-             targetGroups.getLayout().on("destroy", function () {
-                 pimcore.globalmanager.remove("targetGroupsPanel");
-             }.bind(this));
- 
-             pimcore.layout.refresh();
-         }
-     },
- 
-     showTargetingToolbarSettings: function () {
-         new pimcore.settings.targetingToolbar();
-     },
- 
      notes: function () {
          try {
              pimcore.globalmanager.get("notes").activate();
@@ -1234,16 +1150,6 @@ pimcore.layout.toolbar = Class.create({
          }
          catch (e) {
              pimcore.globalmanager.add("reports_settings", new pimcore.report.settings());
-         }
-     },
- 
-     web2printSettings: function () {
- 
-         try {
-             pimcore.globalmanager.get("settings_web2print").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("settings_web2print", new pimcore.settings.web2print());
          }
      },
  

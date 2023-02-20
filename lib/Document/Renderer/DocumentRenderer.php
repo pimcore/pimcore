@@ -23,7 +23,6 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Localization\LocaleService;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
@@ -40,8 +39,6 @@ class DocumentRenderer implements DocumentRendererInterface
 
     private DocumentRouteHandler $documentRouteHandler;
 
-    private DocumentTargetingConfigurator $targetingConfigurator;
-
     private EventDispatcherInterface $eventDispatcher;
 
     private LocaleService $localeService;
@@ -51,7 +48,6 @@ class DocumentRenderer implements DocumentRendererInterface
         ActionRenderer $actionRenderer,
         FragmentRendererInterface $fragmentRenderer,
         DocumentRouteHandler $documentRouteHandler,
-        DocumentTargetingConfigurator $targetingConfigurator,
         EventDispatcherInterface $eventDispatcher,
         LocaleService $localeService
     ) {
@@ -59,7 +55,6 @@ class DocumentRenderer implements DocumentRendererInterface
         $this->actionRenderer = $actionRenderer;
         $this->fragmentRenderer = $fragmentRenderer;
         $this->documentRouteHandler = $documentRouteHandler;
-        $this->targetingConfigurator = $targetingConfigurator;
         $this->eventDispatcher = $eventDispatcher;
         $this->localeService = $localeService;
     }
@@ -82,9 +77,6 @@ class DocumentRenderer implements DocumentRendererInterface
             new DocumentEvent($document, $attributes),
             DocumentEvents::RENDERER_PRE_RENDER
         );
-
-        // apply best matching target group (if any)
-        $this->targetingConfigurator->configureTargetGroup($document);
 
         // add document route to request if no route is set
         // this is needed for logic relying on the current route (e.g. pimcoreUrl helper)

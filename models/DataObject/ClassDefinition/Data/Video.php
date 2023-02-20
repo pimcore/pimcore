@@ -37,8 +37,6 @@ class Video extends Data implements
 {
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     public const TYPE_ASSET = 'asset';
 
@@ -49,36 +47,9 @@ class Video extends Data implements
     public const TYPE_DAILYMOTION = 'dailymotion';
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'video';
-
-    /**
      * @internal
      */
     public string $uploadPath = '';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'text';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'text';
 
     /**
      * @internal
@@ -612,5 +583,20 @@ class Video extends Data implements
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Video::class . '|null';
+    }
+
+    public function getColumnType(): string
+    {
+        return 'text';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'video';
     }
 }

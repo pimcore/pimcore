@@ -30,17 +30,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'table';
 
     /**
      * @internal
@@ -86,24 +75,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var array
      */
     public array $columnConfig = [];
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
 
     public function getCols(): ?int
     {
@@ -697,5 +668,20 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= "}\n\n";
 
         return $code;
+    }
+
+    public function getColumnType(): string
+    {
+        return 'longtext';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'table';
     }
 }
