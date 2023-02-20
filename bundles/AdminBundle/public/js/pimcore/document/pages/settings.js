@@ -124,7 +124,6 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             var serpAbsoluteUrl = this.document.data.url;
 
             // create layout
-
             this.layout = new Ext.FormPanel({
                 title: t('SEO') + ' &amp; ' + t('settings'),
                 border: false,
@@ -245,39 +244,28 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                 }
                             }
                         ]
-                    }, {
-                        xtype:'fieldset',
-                        title: t('assign_target_groups'),
-                        collapsible: true,
-                        autoHeight:true,
-                        defaults: {
-                            labelWidth: 300
-                        },
-                        defaultType: 'textfield',
-                        items :[
-                            Ext.create('Ext.ux.form.MultiSelect', {
-                                fieldLabel: t('visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups'),
-                                store: pimcore.globalmanager.get("target_group_store"),
-                                displayField: "text",
-                                valueField: "id",
-                                name: 'targetGroupIds',
-                                width: 700,
-                                //listWidth: 200,
-                                value: this.document.data["targetGroupIds"].split(',').map(Number).filter(item => item),
-                                minHeight: 100
-                            })
-                        ]
                     },
-                    this.getControllerViewFields(true),
-                    this.getStaticGeneratorFields(true),
-                    this.getPathAndKeyFields(true),
-                    this.getContentMasterFields(true)
                 ]
-
             });
+
+            // To add additional block to settings
+            const additionalSettings = new CustomEvent(pimcore.events.prepareDocumentPageSettingsLayout, {
+                detail: {
+                   layout: this.layout,
+                   document: this.document
+                }
+            });
+            document.dispatchEvent(additionalSettings);
+
+            this.layout.add(this.getControllerViewFields(true));
+            this.layout.add(this.getStaticGeneratorFields(true));
+            this.layout.add(this.getPathAndKeyFields(true));
+            this.layout.add(this.getContentMasterFields(true));
         }
 
         return this.layout;
     }
+
+
 
 });

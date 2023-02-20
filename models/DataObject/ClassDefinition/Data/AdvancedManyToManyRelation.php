@@ -48,15 +48,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     public array $columnKeys;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'advancedManyToManyRelation';
-
-    /**
      * Type for the generated phpdoc
      *
      * @internal
@@ -1025,5 +1016,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     public function getPhpdocReturnType(): ?string
     {
         return '\\'.DataObject\Data\ElementMetadata::class.'[]';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'advancedManyToManyRelation';
     }
 }

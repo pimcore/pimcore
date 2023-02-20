@@ -21,8 +21,6 @@ use Pimcore\Model\Document\Email;
 use Pimcore\Model\Document\Link;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Document\Page;
-use Pimcore\Model\Document\PrintAbstract;
-use Pimcore\Model\Document\Printpage;
 use Pimcore\Model\Document\Service;
 use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Tests\Support\Test\ModelTestCase;
@@ -366,17 +364,5 @@ class DocumentTest extends ModelTestCase
         $loadedDocument = Service::getElementFromSession('document', $document->getId(), $session->getId());
 
         $this->assertEquals(count($document->getEditables()), count($loadedDocument->getEditables()));
-    }
-
-    public function testDocumentPrint(): void
-    {
-        $printpage = TestHelper::createEmptyDocument('print-', true, true, '\\Pimcore\\Model\\Document\\Printpage');
-        $this->assertInstanceOf(Printpage::class, $printpage);
-
-        //Load via abstract class
-        $printpage = PrintAbstract::getById($printpage->getId());
-        $this->assertInstanceOf(Printpage::class, $printpage);
-        $printpage = PrintAbstract::getByPath($printpage->getRealFullPath());
-        $this->assertInstanceOf(Printpage::class, $printpage);
     }
 }

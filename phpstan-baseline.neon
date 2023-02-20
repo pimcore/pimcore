@@ -2,7 +2,7 @@ parameters:
 	ignoreErrors:
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
-			count: 3
+			count: 2
 			path: bundles/CoreBundle/src/DependencyInjection/PimcoreCoreExtension.php
 
 		-
@@ -91,14 +91,14 @@ parameters:
 			path: lib/Mail.php
 
 		-
-			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:postMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
+			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:postMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
 			count: 1
-			path: lib/Targeting/ConditionMatcher.php
+			path: bundles/PersonalizationBundle/src/Targeting/ConditionMatcher.php
 
 		-
-			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:preMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
+			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:preMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
 			count: 1
-			path: lib/Targeting/ConditionMatcher.php
+			path: bundles/PersonalizationBundle/src/Targeting/ConditionMatcher.php
 
 		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"

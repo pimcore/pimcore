@@ -28,12 +28,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\Traits\SimpleNormalizerTrait;
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType {
-        getColumnType as public genericGetColumnType;
-    }
-    use Extension\QueryColumnType {
-        getQueryColumnType as public genericGetQueryColumnType;
-    }
 
     const DECIMAL_SIZE_DEFAULT = 64;
 
@@ -51,38 +45,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     ];
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'numeric';
-
-    /**
      * @internal
      *
      * @var float|int|string|null
      */
     public string|int|null|float $defaultValue = null;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'double';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'double';
 
     /**
      * @internal
@@ -246,7 +213,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * {@inheritdoc}
      */
-    public function getColumnType(): array|string|null
+    public function getColumnType(): string
     {
         if ($this->getInteger()) {
             return 'bigint(20)';
@@ -256,23 +223,15 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return $this->buildDecimalColumnType();
         }
 
-        return $this->genericGetColumnType();
+        return 'double';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): string
     {
-        if ($this->getInteger()) {
-            return 'bigint(20)';
-        }
-
-        if ($this->isDecimalType()) {
-            return $this->buildDecimalColumnType();
-        }
-
-        return $this->genericGetQueryColumnType();
+        return $this->getColumnType();
     }
 
     private function isDecimalType(): bool
@@ -575,5 +534,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getPhpdocReturnType(): ?string
     {
         return $this->getPhpdocType() . '|null';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'numeric';
     }
 }

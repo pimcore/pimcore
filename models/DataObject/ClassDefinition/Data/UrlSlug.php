@@ -31,17 +31,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
     use Model\DataObject\Traits\ContextPersistenceTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'urlSlug';
 
     /**
      * @internal
@@ -694,5 +684,10 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         return null;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'urlSlug';
     }
 }

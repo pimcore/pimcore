@@ -23,15 +23,6 @@ use Pimcore\Tool;
 class Language extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'language';
-
-    /**
      * @internal
      */
     public bool $onlySystemLanguages = false;
@@ -81,13 +72,13 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    public function jsonSerialize(): static
+    public function jsonSerialize(): mixed
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
     /**
@@ -107,5 +98,10 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'language';
     }
 }

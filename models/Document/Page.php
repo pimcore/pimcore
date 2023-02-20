@@ -18,12 +18,11 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Redirect;
-use Pimcore\Model\Tool\Targeting\TargetGroup;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
  */
-class Page extends TargetingDocument
+class Page extends PageSnippet
 {
     /**
      * Contains the title of the page (meta-title)
@@ -61,15 +60,6 @@ class Page extends TargetingDocument
      * @var string|null
      */
     protected ?string $prettyUrl = null;
-
-    /**
-     * Comma separated IDs of target groups
-     *
-     * @internal
-     *
-     * @var string
-     */
-    protected string $targetGroupIds = '';
 
     /**
      * {@inheritdoc}
@@ -157,82 +147,6 @@ class Page extends TargetingDocument
     public function getPrettyUrl(): ?string
     {
         return $this->prettyUrl;
-    }
-
-    /**
-     * Set linked Target Groups as set in properties panel as list of IDs
-     *
-     * @param array|string $targetGroupIds
-     */
-    public function setTargetGroupIds(array|string $targetGroupIds): void
-    {
-        if (is_array($targetGroupIds)) {
-            $targetGroupIds = implode(',', $targetGroupIds);
-        }
-
-        $targetGroupIds = trim($targetGroupIds, ' ,');
-
-        if (!empty($targetGroupIds)) {
-            $targetGroupIds = ',' . $targetGroupIds . ',';
-        }
-
-        $this->targetGroupIds = $targetGroupIds;
-    }
-
-    /**
-     * Get serialized list of Target Group IDs
-     *
-     * @return string
-     */
-    public function getTargetGroupIds(): string
-    {
-        return $this->targetGroupIds;
-    }
-
-    /**
-     * Set assigned target groups
-     *
-     * @param TargetGroup[]|int[] $targetGroups
-     */
-    public function setTargetGroups(array $targetGroups): void
-    {
-        $ids = array_map(function ($targetGroup) {
-            if (is_numeric($targetGroup)) {
-                return (int)$targetGroup;
-            } elseif ($targetGroup instanceof TargetGroup) {
-                return $targetGroup->getId();
-            }
-        }, $targetGroups);
-
-        $ids = array_filter($ids, function ($id) {
-            return null !== $id && $id > 0;
-        });
-
-        $this->setTargetGroupIds($ids);
-    }
-
-    /**
-     * Return list of assigned target groups (via properties panel)
-     *
-     * @return TargetGroup[]
-     */
-    public function getTargetGroups(): array
-    {
-        $ids = explode(',', $this->targetGroupIds);
-
-        $targetGroups = array_map(function ($id) {
-            $id = trim($id);
-            if (!empty($id)) {
-                $targetGroup = TargetGroup::getById((int) $id);
-                if ($targetGroup) {
-                    return $targetGroup;
-                }
-            }
-        }, $ids);
-
-        $targetGroups = array_filter($targetGroups);
-
-        return $targetGroups;
     }
 
     public function getPreviewImageFilesystemPath(): string
