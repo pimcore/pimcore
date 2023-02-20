@@ -15,6 +15,10 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader as DocumentTypeLoader;
+use function Symfony\Component\String\u;
+
 trait Relation
 {
     /**
@@ -39,7 +43,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\Document' . $strArray;
             } elseif (is_array($documentTypes)) {
                 foreach ($documentTypes as $item) {
-                    $class[] = $this->getMappedClassName('\Pimcore\Model\Document\\' . ucfirst($item['documentTypes'])) . $strArray;
+                    $class[] = $this->getClassName('document', $item['documentTypes']) . $strArray;
                 }
             }
         }
@@ -51,7 +55,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\Asset' . $strArray;
             } elseif (is_array($assetTypes)) {
                 foreach ($assetTypes as $item) {
-                    $class[] = $this->getMappedClassName('\Pimcore\Model\Asset\\' . ucfirst($item['assetTypes'])) . $strArray;
+                    $class[] = $this->getClassName('asset', $item['assetTypes']) . $strArray;
                 }
             }
         }
@@ -63,7 +67,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\DataObject\AbstractObject' . $strArray;
             } elseif (is_array($classes)) {
                 foreach ($classes as $item) {
-                    $class[] = $this->getMappedClassName('\Pimcore\Model\DataObject\\' . ucfirst($item['classes'])) . $strArray;
+                    $class[] = $this->getClassName('object', $item['classes']) . $strArray;
                 }
             }
         }
@@ -71,14 +75,40 @@ trait Relation
         return $class;
     }
 
-    protected function getMappedClassName(string $className): string
+    /**
+     * @param 'asset'|'document'|'object' $type
+     */
+    private function getClassName(string $type, string $shortName): string
     {
-        try {
-            $className = \Pimcore::getContainer()->get('pimcore.model.factory')->getClassNameFor($className);
-            if ($className[0] !== '\\') {
-                $className = '\\' . $className;
+        $typeLoader = match ($type) {
+            'document' => \Pimcore::getContainer()->get(DocumentTypeLoader::class),
+            default => null,
+        };
+
+        if ($typeLoader) {
+            try {
+                return u($typeLoader->getClassNameFor($shortName))->ensureStart('\\');
+            } catch (UnsupportedException) {
+                // try next
             }
-        } finally {
+
+            try {
+                return u($typeLoader->build($shortName)::class)->ensureStart('\\');
+            } catch (UnsupportedException) {
+                // try next
+            }
+        }
+
+        $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
+        $className = match ($type) {
+            'asset' => '\Pimcore\Model\Asset\\' . ucfirst($shortName),
+            'document' => '\Pimcore\Model\Document\\' . ucfirst($shortName),
+            'object' => '\Pimcore\Model\DataObject\\' . ucfirst($shortName),
+        };
+
+        try {
+            return u($factory->getClassNameFor($className))->ensureStart('\\');
+        } catch (UnsupportedException) {
             return $className;
         }
     }
