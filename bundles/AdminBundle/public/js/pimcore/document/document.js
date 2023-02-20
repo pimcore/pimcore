@@ -17,11 +17,12 @@ pimcore.registerNS("pimcore.document.document");
  */
 pimcore.document.document = Class.create(pimcore.element.abstract, {
     willClose: false,
+
     getData: function () {
         var options = this.options || {};
         Ext.Ajax.request({
-            url: Routing.getBaseUrl() + "/admin/" + this.getType() + "/get-data-by-id",
-            params: {id: this.id},
+            url: Routing.generate(this.getDataRoute()),
+            params: {id: this.id} ,
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
             failure: function () {
@@ -86,6 +87,9 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             return;
         }
 
+        if(typeof task !== 'string') {
+            task = '';
+        }
 
         if(task != 'autoSave'){
             this.tab.mask();
@@ -115,7 +119,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             }
 
             Ext.Ajax.request({
-                url: Routing.getBaseUrl() + "/admin/" + this.getType() + '/save?task=' + task,
+                url: Routing.generate(this.getSaveRoute(), {'task': task}),
                 method: "PUT",
                 params: saveData,
                 success: function (response) {
@@ -556,7 +560,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                                     }
 
                                     Ext.Ajax.request({
-                                        url: Routing.generate('pimcore_admin_document_document_add'),
+                                        url: Routing.generate(this.getAddRoute()),
                                         method: 'POST',
                                         params: params,
                                         success: function (response) {
@@ -684,5 +688,17 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 this.data.key = rdata.key;
             }.bind(this)
         });
+    },
+
+    getDataRoute: function() {
+        return "pimcore_admin_document_" + this.type + '_getdatabyid';
+    },
+
+    getSaveRoute: function() {
+        return "pimcore_admin_document_" + this.type + '_save';
+    },
+
+    getAddRoute: function() {
+        return "pimcore_admin_document_document_add";
     }
 });

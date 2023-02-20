@@ -28,17 +28,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class QuantityValueRange extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'quantityValueRange';
 
     /**
      * @internal
@@ -64,28 +53,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      * @internal
      */
     public bool $autoConvert = false;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     */
-    public array $queryColumnType = [
-        'minimum' => 'double',
-        'maximum' => 'double',
-        'unit' => 'varchar(64)',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     */
-    public array $columnType = [
-        'minimum' => 'double',
-        'maximum' => 'double',
-        'unit' => 'varchar(64)',
-    ];
 
     public function getUnitWidth(): string|int
     {
@@ -464,5 +431,24 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         }
 
         return parent::isEmpty($data);
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'minimum' => 'double',
+            'maximum' => 'double',
+            'unit' => 'varchar(64)',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'quantityValueRange';
     }
 }

@@ -351,8 +351,6 @@ class Decimal
 
     /**
      * Default string representation
-     *
-     * @return string
      */
     public function __toString(): string
     {

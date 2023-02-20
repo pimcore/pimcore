@@ -17,30 +17,25 @@ declare(strict_types=1);
 namespace Pimcore\Templating\Renderer;
 
 use Pimcore\Cache;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
  */
 class IncludeRenderer
 {
-    protected ActionRenderer $actionRenderer;
-
-    private DocumentTargetingConfigurator $targetingConfigurator;
-
     public function __construct(
-        ActionRenderer $actionRenderer,
-        DocumentTargetingConfigurator $targetingConfigurator
+        protected ActionRenderer $actionRenderer,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {
-        $this->actionRenderer = $actionRenderer;
-        $this->targetingConfigurator = $targetingConfigurator;
     }
 
     /**
@@ -81,8 +76,10 @@ class IncludeRenderer
         }
 
         if ($include instanceof PageSnippet && $include->isPublished()) {
-            // apply best matching target group (if any)
-            $this->targetingConfigurator->configureTargetGroup($include);
+            $this->eventDispatcher->dispatch(
+                new DocumentEvent($include, $params),
+                DocumentEvents::INCLUDERENDERER_PRE_RENDER
+            );
         }
 
         // check if output-cache is enabled, if so, we're also using the cache here
@@ -103,7 +100,7 @@ class IncludeRenderer
             });
 
             // TODO is this enough for cache or should we disable caching completely?
-            if ($include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
+            if (method_exists($include, 'getUseTargetGroup') && $include->getUseTargetGroup()) {
                 $cacheParams['target_group'] = $include->getUseTargetGroup();
             }
 

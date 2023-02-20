@@ -14,6 +14,7 @@
   "minimum-stability": "dev",
   "require": {
     "pimcore/pimcore": "^11.0",
+    "pimcore/personalization-bundle": "^1.0",
     "knplabs/knp-paginator-bundle": "^6.0.0"
   },
   "require-dev": {

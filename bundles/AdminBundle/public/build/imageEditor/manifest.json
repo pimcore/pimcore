@@ -1,0 +1,4 @@
+{
+  "AdminBundle/build/imageEditor.js": "/bundles/pimcoreadmin/build/imageEditor/imageEditor.js",
+  "AdminBundle/build/runtime.js": "/bundles/pimcoreadmin/build/imageEditor/runtime.js"
+}

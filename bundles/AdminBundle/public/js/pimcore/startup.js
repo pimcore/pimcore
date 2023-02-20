@@ -371,7 +371,7 @@ Ext.onReady(function () {
         });
 
         pimcore.globalmanager.add("document_types_store", store);
-        pimcore.globalmanager.add("document_valid_types", ["page","snippet","email","newsletter","link","hardlink","printpage","printcontainer"]);
+        pimcore.globalmanager.add("document_valid_types", ["page","snippet","email","newsletter","link","hardlink"]);
     }
 
     //search element types
@@ -498,27 +498,6 @@ Ext.onReady(function () {
     });
     sitesStore.load();
     pimcore.globalmanager.add("sites", sitesStore);
-
-    // target groups
-    Ext.define('pimcore.model.target_groups', {
-        extend: 'Ext.data.Model',
-        fields: ["id", "text"]
-    });
-
-    var targetGroupStore = Ext.create('Ext.data.JsonStore', {
-        model: "pimcore.model.target_groups",
-        proxy: {
-            type: 'ajax',
-            url: Routing.generate('pimcore_admin_targeting_targetgrouplist'),
-            reader: {
-                type: 'json'
-            }
-        }
-    });
-
-    targetGroupStore.load();
-    pimcore.globalmanager.add("target_group_store", targetGroupStore);
-
 
     // check for updates
     window.setTimeout(function () {
@@ -979,3 +958,5 @@ pimcore.layout.refresh = function () {
 pimcore.helpers.unload = function () {
 
 };
+
+L.Icon.Default.imagePath = '../bundles/pimcoreadmin/build/admin/images/';
