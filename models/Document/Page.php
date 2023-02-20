@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document;
 
 use Pimcore\Messenger\GeneratePagePreviewMessage;
-use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 
 /**
@@ -76,15 +75,6 @@ class Page extends TargetingDocument
      */
     protected function doDelete(): void
     {
-        // check for redirects pointing to this document, and delete them too
-        $redirects = new Redirect\Listing();
-        $redirects->setCondition('target = ?', $this->getId());
-        $redirects->load();
-
-        foreach ($redirects->getRedirects() as $redirect) {
-            $redirect->delete();
-        }
-
         parent::doDelete();
     }
 

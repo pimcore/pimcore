@@ -248,14 +248,6 @@ pimcore:
             - messages
             - admin
 
-    redirects:
-        status_codes:
-            300: Multiple Choices
-            301: Moved Permanently
-            302: Found
-            303: See Other
-            307: Temporary Redirect
-
     templating_engine:
         twig:
             sandbox_security_policy:

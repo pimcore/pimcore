@@ -1,0 +1,16 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # Maintenance
+    #
+    # Configure all maintenance tasks
+
+    Pimcore\Bundle\SeoBundle\Maintenance\RedirectCleanupTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: redirectcleanup }

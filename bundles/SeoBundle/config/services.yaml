@@ -28,9 +28,11 @@ services:
     #
 
     Pimcore\Bundle\SeoBundle\EventListener\ResponseExceptionListener: ~
-
+    Pimcore\Bundle\SeoBundle\EventListener\UrlSlugUpdateListener: ~
+    Pimcore\Bundle\SeoBundle\EventListener\PageDocumentListener: ~
     # Sitemap listener delegating work to configured generators
     Pimcore\Bundle\SeoBundle\EventListener\SitemapGeneratorListener: ~
+    Pimcore\Bundle\SeoBundle\EventListener\RoutingListener: ~
 
 
     #
@@ -50,11 +52,6 @@ services:
     Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\ModificationDateProcessor: ~
     Pimcore\Bundle\SeoBundle\Sitemap\Element\Processor\PropertiesProcessor: ~
 
-    #
-    # REDIRECTS Export
-    #
-
-    Pimcore\Bundle\SeoBundle\Redirect\Csv: ~
 
 
     #
@@ -89,3 +86,8 @@ services:
             - [ setLogger, [ '@logger' ] ]
         tags:
             - { name: monolog.logger, channel: routing }
+
+    #
+    # REDIRECTS Export
+    #
+    Pimcore\Bundle\SeoBundle\Redirect\Csv: ~

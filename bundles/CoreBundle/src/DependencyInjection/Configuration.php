@@ -133,7 +133,6 @@ final class Configuration implements ConfigurationInterface
         $this->addPredefinedPropertiesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
-        $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
 
         return $treeBuilder;
@@ -159,21 +158,6 @@ final class Configuration implements ConfigurationInterface
                         ->defaultValue(1800)
                     ->end()
         ;
-    }
-
-    private function buildRedirectsStatusCodes(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-            ->arrayNode('redirects')
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('status_codes')
-                        ->info('List all redirect status codes.')
-                        ->prototype('scalar')
-                    ->end()
-                ->end()
-            ->end();
     }
 
     /**

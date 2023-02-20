@@ -14,10 +14,10 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Maintenance\Tasks;
+namespace Pimcore\Bundle\SeoBundle\Maintenance;
 
-use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
+use Pimcore\Maintenance\TaskInterface;
 
 /**
  * @internal

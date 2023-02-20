@@ -11,7 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.redirects");
+pimcore.registerNS("pimcore.bundle.seo.redirects");
 /**
  * @private
  */
@@ -23,7 +23,7 @@ pimcore.settings.redirects = Class.create({
 
     getData: function () {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_redirects_statuscodes'),
+            url: Routing.generate('pimcore_bundle_seo_redirects_statuscodes'),
             success: function (response) {
                 this.data = Ext.decode(response.responseText);
                 //valid status codes
@@ -90,7 +90,7 @@ pimcore.settings.redirects = Class.create({
         var that = this;
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = Routing.generate('pimcore_admin_redirects_redirects');
+        var url = Routing.generate('pimcore_bundle_seo_redirects_redirects');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
@@ -416,7 +416,7 @@ pimcore.settings.redirects = Class.create({
                     text: t("export_csv"),
                     iconCls: "pimcore_icon_export",
                     handler: function () {
-                        pimcore.helpers.download(Routing.generate('pimcore_admin_redirects_csvexport'));
+                        pimcore.helpers.download(Routing.generate('pimcore_bundle_seo_redirects_csvexport'));
                     }
                 },
                 {
@@ -424,7 +424,7 @@ pimcore.settings.redirects = Class.create({
                     iconCls: "pimcore_icon_import",
                     handler: function () {
                         pimcore.helpers.uploadDialog(
-                            Routing.generate('pimcore_admin_redirects_csvimport'), 'redirects',
+                            Routing.generate('pimcore_bundle_seo_redirects_csvimport'), 'redirects',
                             function (res) {
                                 that.store.reload();
 
@@ -579,7 +579,7 @@ pimcore.settings.redirects = Class.create({
 
     cleanupExpiredRedirects: function () {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_redirects_cleanup'),
+            url: Routing.generate('pimcore_bundle_seo_redirects_cleanup'),
             method: 'DELETE',
             success: function (response) {
                 try{

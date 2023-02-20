@@ -16,9 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\Model;
 
+use Pimcore;
 use Pimcore\Bundle\SeoBundle\Event\Model\RedirectEvent;
 use Pimcore\Bundle\SeoBundle\Event\RedirectEvents;
-use Pimcore\Config;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
@@ -390,6 +390,7 @@ final class Redirect extends AbstractModel
      */
     public static function getStatusCodes(): array
     {
-        return Config::getSystemConfiguration('redirects')['status_codes'];
+        $pimcore_seo_redirects = Pimcore::getContainer()->getParameter('pimcore_seo.redirects');
+        return $pimcore_seo_redirects['status_codes'];
     }
 }

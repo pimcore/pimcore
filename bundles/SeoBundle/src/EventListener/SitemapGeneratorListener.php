@@ -29,7 +29,6 @@ class SitemapGeneratorListener implements EventSubscriberInterface
     private array|\IteratorAggregate $generators;
 
     /**
-     * @param \IteratorAggregate|GeneratorInterface[] $generators
      *
      * TODO type hint against iterable after dropping PHP 7.0 support
      */

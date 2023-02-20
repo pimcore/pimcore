@@ -41,7 +41,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class RedirectsController extends AdminController
 {
     /**
-     * @Route("/list", name="pimcore_admin_redirects_redirects", methods={"POST"})
+     * @Route("/list", name="pimcore_bundle_seo_redirects_redirects", methods={"POST"})
      *
      * @param Request $request
      * @param RedirectHandler $redirectHandler
@@ -181,7 +181,7 @@ class RedirectsController extends AdminController
     }
 
     /**
-     * @Route("/csv-export", name="pimcore_admin_redirects_csvexport", methods={"GET"})
+     * @Route("/csv-export", name="pimcore_bundle_seo_redirects_csvexport", methods={"GET"})
      *
      * @param Csv $csv
      *
@@ -212,7 +212,7 @@ class RedirectsController extends AdminController
     }
 
     /**
-     * @Route("/csv-import", name="pimcore_admin_redirects_csvimport", methods={"POST"})
+     * @Route("/csv-import", name="pimcore_bundle_seo_redirects_csvimport", methods={"POST"})
      *
      * @param Request $request
      * @param Csv $csv
@@ -239,7 +239,7 @@ class RedirectsController extends AdminController
     }
 
     /**
-     * @Route("/cleanup", name="pimcore_admin_redirects_cleanup", methods={"DELETE"})
+     * @Route("/cleanup", name="pimcore_bundle_seo_redirects_cleanup", methods={"DELETE"})
      *
      * @return JsonResponse
      */
@@ -266,7 +266,7 @@ class RedirectsController extends AdminController
     }
 
     /**
-     * @Route("/get-statuscodes", name="pimcore_admin_redirects_statuscodes", methods={"GET"})
+     * @Route("/get-statuscodes", name="pimcore_bundle_seo_redirects_statuscodes", methods={"GET"})
      *
      * @return JsonResponse
      */

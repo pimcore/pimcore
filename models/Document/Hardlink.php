@@ -18,7 +18,6 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Bundle\SeoBundle\Model\Redirect;
 
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
@@ -201,15 +200,6 @@ class Hardlink extends Document
      */
     protected function doDelete(): void
     {
-        // check for redirects pointing to this document, and delete them too
-        $redirects = new Redirect\Listing();
-        $redirects->setCondition('target = ?', $this->getId());
-        $redirects->load();
-
-        foreach ($redirects->getRedirects() as $redirect) {
-            $redirect->delete();
-        }
-
         parent::doDelete();
     }
 
