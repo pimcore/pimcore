@@ -30,7 +30,7 @@ Their names should be self-explaining, just have a look at the [class source fil
 
 Particular useful can be following methods:
 * `getElementByPath()`
-* `getSaveCopyName()`
+* `getSafeCopyName()`
 * `pathExists()`
 * `getElementById()`
 * `getElementType()`

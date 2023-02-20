@@ -520,6 +520,12 @@ class Link implements OwnerAwareFieldInterface
      */
     public function getObject()
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.0',
+            'The Link::getObject() method is deprecated, use Link::getElement() instead.'
+        );
+
         return $this->getElement();
     }
 
@@ -530,6 +536,12 @@ class Link implements OwnerAwareFieldInterface
      */
     public function setObject($object)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.0',
+            'The Link::setObject() method is deprecated, use Link::setElement() instead.'
+        );
+
         return $this->setElement($object);
     }
 
