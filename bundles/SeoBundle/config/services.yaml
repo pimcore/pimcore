@@ -24,18 +24,6 @@ services:
 
 
     #
-    # EVENTLISTENER
-    #
-
-    Pimcore\Bundle\SeoBundle\EventListener\ResponseExceptionListener: ~
-    Pimcore\Bundle\SeoBundle\EventListener\UrlSlugUpdateListener: ~
-    Pimcore\Bundle\SeoBundle\EventListener\PageDocumentListener: ~
-    # Sitemap listener delegating work to configured generators
-    Pimcore\Bundle\SeoBundle\EventListener\SitemapGeneratorListener: ~
-    Pimcore\Bundle\SeoBundle\EventListener\RoutingListener: ~
-
-
-    #
     # ELEMENTS
     #
     # Services valid for all elements

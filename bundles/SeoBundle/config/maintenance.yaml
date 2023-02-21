@@ -14,3 +14,9 @@ services:
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: redirectcleanup }
+
+    Pimcore\Bundle\SeoBundle\Maintenance\LogErrorCleanupTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: httperrorlog }
