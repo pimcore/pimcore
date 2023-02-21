@@ -102,13 +102,6 @@ class Page extends PageSnippet
         return $this;
     }
 
-    public function setMetaData(array $metaData): static
-    {
-        $this->metaData = $metaData;
-
-        return $this;
-    }
-
     public function getMetaData(): array
     {
         return $this->metaData;
