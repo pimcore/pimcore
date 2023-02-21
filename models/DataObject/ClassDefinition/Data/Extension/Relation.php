@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
@@ -38,7 +39,7 @@ trait Relation
             if ($documentTypes = $this->getDocumentTypes()) {
                 $loader = \Pimcore::getContainer()->get(TypeLoader::class);
                 foreach ($documentTypes as $item) {
-                    $types[] = '\\' . $loader->getClassNameFor($item['documentTypes']);
+                    $types[] = $this->resolveClassName($loader, 'document', $item['documentTypes']);
                 }
             } else {
                 $types[] = '\\' . Page::class;
@@ -52,8 +53,7 @@ trait Relation
             if ($assetTypes = $this->getAssetTypes()) {
                 $assetLoader = \Pimcore::getContainer()->get(AssetTypeLoader::class);
                 foreach ($assetTypes as $item) {
-                    $types[] = '\\' . $assetLoader->getClassNameFor($item['assetTypes']);
-                    $types[] = sprintf('\Pimcore\Model\Asset\%s', ucfirst($item['assetTypes']));
+                    $types[] = $this->resolveClassName($assetLoader, 'asset', $item['assetTypes']);
                 }
             } else {
                 $types[] = '\\' . Asset::class;
@@ -115,5 +115,24 @@ trait Relation
     public function getObjectsAllowed(): bool
     {
         return false;
+    }
+
+    /**
+     * @param 'asset'|'document'|'object' $type
+     */
+    private function resolveClassName(TypeLoader|AssetTypeLoader $loader, string $type, string $shortName): string
+    {
+        $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
+        $className = match ($type) {
+            'asset' => '\\Pimcore\Model\Asset\\' . ucfirst($shortName),
+            'document' => '\\Pimcore\Model\Document\\' . ucfirst($shortName),
+            'object' => '\\Pimcore\Model\DataObject\\' . ucfirst($shortName),
+        };
+
+        try {
+            return $factory->getClassNameFor($className);
+        } catch (UnsupportedException) {
+            return '\\' . $loader->getClassNameFor($shortName);
+        }
     }
 }
