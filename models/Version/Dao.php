@@ -143,6 +143,8 @@ class Dao extends Model\Dao\AbstractDao
 
                         $versionIds = array_merge($versionIds, $elementVersions);
 
+                        Logger::info($versionInfo['cid'].'(object '.$count.') Vcount '.count($versionIds));
+
                         // call the garbage collector if memory consumption is > 100MB
                         if (memory_get_usage() > 100000000 && ($count % 100 == 0)) {
                             \Pimcore::collectGarbage();
