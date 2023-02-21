@@ -10,7 +10,7 @@
     }
   },
   "require": {
-    "pimcore/pimcore": "10.6.x-dev as 10.6 || ^11.0",
+    "pimcore/pimcore": "^11.0",
     "symfony/webpack-encore-bundle": "^1.7"
   },
   "require-dev": {
