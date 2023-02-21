@@ -38,7 +38,7 @@ class SettingsController extends ReportsControllerBase
      */
     public function getAction(Request $request): JsonResponse
     {
-        $this->checkPermission('system_settings');
+        $this->checkPermission('google_marketing');
         $config = $this->getConfig();
 
         $response = [
@@ -59,7 +59,7 @@ class SettingsController extends ReportsControllerBase
      */
     public function saveAction(Request $request, ReportConfigWriter $configWriter): JsonResponse
     {
-        $this->checkPermission('system_settings');
+        $this->checkPermission('google_marketing');
 
         $values = $this->decodeJson($request->get('data'));
         if (!is_array($values)) {

@@ -11,7 +11,7 @@ pimcore.bundle.googlemarketing.startup = Class.create({
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
 
         if (menu.marketing && perspectiveCfg.inToolbar("settings.marketingReports")
-            && user.isAllowed("google_marketing") && user.isAllowed("system_settings")) {
+            && user.isAllowed("google_marketing")) {
             menu.marketing.items.push({
                 text: t("marketing_settings"),
                 iconCls: "pimcore_nav_icon_marketing_settings",
