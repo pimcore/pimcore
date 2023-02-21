@@ -274,3 +274,9 @@ pimcore.events.onDropWysiwyg = "pimcore.wysiwyg.onDrop";
  */
 pimcore.events.beforeDestroyWysiwyg = "pimcore.wysiwyg.beforeDestroy";
 
+/**
+ * after settings tab of page is opened
+ * layout and document are passed as parameter
+ */
+pimcore.events.prepareDocumentPageSettingsLayout = "pimcore.documentPageSettingsLayout.prepare";
+

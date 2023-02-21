@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
-use Pimcore\Targeting\Storage\CookieStorage;
-use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
@@ -126,7 +124,6 @@ final class Configuration implements ConfigurationInterface
         $this->addSecurityNode($rootNode);
         $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
-        $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
@@ -1173,43 +1170,6 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                         ->arrayNode('source_adapters')
-                            ->useAttributeAsKey('name')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    private function addTargetingNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('targeting')
-                    ->canBeDisabled()
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('storage_id')
-                            ->info('Service ID of the targeting storage which should be used. This ID will be aliased to ' . TargetingStorageInterface::class)
-                            ->defaultValue(CookieStorage::class)
-                            ->cannotBeEmpty()
-                        ->end()
-                        ->arrayNode('session')
-                            ->info('Enables HTTP session support by configuring session bags and the full page cache')
-                            ->canBeEnabled()
-                        ->end()
-                        ->arrayNode('data_providers')
-                            ->useAttributeAsKey('key')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                        ->arrayNode('conditions')
-                            ->useAttributeAsKey('key')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                        ->arrayNode('action_handlers')
                             ->useAttributeAsKey('name')
                                 ->prototype('scalar')
                             ->end()

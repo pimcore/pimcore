@@ -111,7 +111,7 @@ pimcore.document.newsletters.addressSourceAdapters.default = Class.create({
                     },{
                         fieldLabel: t('assign_target_group'),
                         xtype: "multiselect",
-                        hidden: pimcore.globalmanager.get("target_group_store").getCount() < 1,
+                        hidden: !pimcore.globalmanager.get("target_group_store"),
                         store: pimcore.globalmanager.get("target_group_store"),
                         displayField: "text",
                         valueField: "id",

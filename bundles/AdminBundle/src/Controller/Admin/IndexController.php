@@ -226,7 +226,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'asset_tree_paging_limit'        => $config['assets']['tree_paging_limit'],
             'document_tree_paging_limit'     => $config['documents']['tree_paging_limit'],
             'object_tree_paging_limit'       => $config['objects']['tree_paging_limit'],
-            'maxmind_geoip_installed'        => (bool) $this->getParameter('pimcore.geoip.db_file'),
             'hostname'                       => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
 
             'document_auto_save_interval' => $config['documents']['auto_save_interval'],

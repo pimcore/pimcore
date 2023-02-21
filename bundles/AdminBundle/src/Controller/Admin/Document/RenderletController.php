@@ -19,16 +19,18 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Document\Editable\EditableHandler;
+use Pimcore\Event\DocumentEvents;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
@@ -51,7 +53,8 @@ class RenderletController extends AdminController
         Request $request,
         ActionRenderer $actionRenderer,
         EditableHandler $editableHandler,
-        LocaleServiceInterface $localeService
+        LocaleServiceInterface $localeService,
+        EventDispatcherInterface $eventDispatcher
     ): Response {
         $query = $request->query->all();
         $attributes = [];
@@ -59,8 +62,11 @@ class RenderletController extends AdminController
         // load element to make sure the request is valid
         $element = $this->loadElement($request);
 
-        // apply targeting to element
-        $this->configureElementTargeting($request, $element);
+        $event = new GenericEvent($this, [
+            'requestParams' => array_merge($request->request->all(), $request->query->all()),
+            'element' => $element,
+        ]);
+        $eventDispatcher->dispatch($event, DocumentEvents::EDITABLE_RENDERLET_PRE_RENDER);
 
         $controller = $request->get('controller');
         $action = $request->get('action');
@@ -123,20 +129,5 @@ class RenderletController extends AdminController
         }
 
         return $element;
-    }
-
-    private function configureElementTargeting(Request $request, ElementInterface $element): void
-    {
-        if (!$element instanceof Document\Targeting\TargetingDocumentInterface) {
-            return;
-        }
-
-        // set selected target group on element
-        if ($request->get('_ptg')) {
-            $targetGroup = TargetGroup::getById((int)$request->get('_ptg'));
-            if ($targetGroup) {
-                $element->setUseTargetGroup($targetGroup->getId());
-            }
-        }
     }
 }
