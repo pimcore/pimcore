@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `http_error_log` (
     KEY `count` (`count`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-CREATE TABLE `redirects` (
+CREATE TABLE IF NOT EXISTS `redirects` (
      `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
      `type` ENUM('entire_uri','path_query','path','auto_create') NOT NULL,
      `source` varchar(255) DEFAULT NULL,
