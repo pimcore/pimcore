@@ -60,14 +60,6 @@ class Page extends PageSnippet
      */
     protected ?string $prettyUrl = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function doDelete(): void
-    {
-        parent::doDelete();
-    }
-
     public function getDescription(): string
     {
         return $this->description;

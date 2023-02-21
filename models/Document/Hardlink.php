@@ -198,14 +198,6 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    protected function doDelete(): void
-    {
-        parent::doDelete();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function update(array $params = []): void
     {
         parent::update($params);
