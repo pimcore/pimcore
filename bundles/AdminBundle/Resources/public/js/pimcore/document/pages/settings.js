@@ -19,7 +19,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
         if (this.layout == null) {
 
             /**
-             * @deprecated
+             * @deprecated 10.6 Will be removed in 11.
              */
             // meta-data
             var addMetaData = function (value) {
