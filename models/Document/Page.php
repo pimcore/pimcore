@@ -129,6 +129,7 @@ class Page extends TargetingDocument
 
     /**
      * @deprecated
+     *
      * @param array $metaData
      *
      * @return $this
@@ -148,6 +149,7 @@ class Page extends TargetingDocument
 
     /**
      * @deprecated
+     *
      * @return array
      */
     public function getMetaData()
@@ -157,6 +159,7 @@ class Page extends TargetingDocument
             '10.6.0',
             sprintf('%s is deprecated and will be removed in Pimcore 11.', __METHOD__)
         );
+
         return $this->metaData;
     }
 
