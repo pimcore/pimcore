@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\Version;
 
-use Doctrine\DBAL\FetchMode;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;

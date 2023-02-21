@@ -58,6 +58,7 @@ class GeneratePagePreviews extends AbstractCommand
                 'Excludes all documents whose path property matches the regex pattern.'
             );
     }
+
     protected function fetchItems(InputInterface $input): Document\Listing
     {
         $docs = new Document\Listing();
