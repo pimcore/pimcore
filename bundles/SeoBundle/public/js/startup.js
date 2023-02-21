@@ -79,7 +79,7 @@ pimcore.bundle.seo.startup = Class.create({
             menu.extras.items.push({
                 text: t("redirects"),
                 iconCls: "pimcore_nav_icon_redirects",
-                priority: 1,
+                priority: 5,
                 itemId: 'pimcore_menu_extras_redirects',
                 handler: this.editRedirects
             });

@@ -25,5 +25,5 @@ final class UrlSlugEvents
      *
      * @var string
      */
-    const POST_SAVE = 'pimcore.model.oataobject.classdefinition.urlslug.postsave';
+    const POST_SAVE = 'pimcore.model.dataobject.classdefinition.urlslug.postsave';
 }
