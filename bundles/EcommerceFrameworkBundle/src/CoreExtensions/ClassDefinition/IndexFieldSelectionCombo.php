@@ -69,6 +69,7 @@ class IndexFieldSelectionCombo extends Select
                 Logger::error((string) $e);
             }
         }
+
         return $options;
     }
 
