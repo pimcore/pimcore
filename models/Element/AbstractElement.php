@@ -686,7 +686,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setInDumpState(false);
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->dependencies = null;

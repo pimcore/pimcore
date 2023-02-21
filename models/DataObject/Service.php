@@ -1229,7 +1229,7 @@ class Service extends Model\Element\Service
      *
      * @return T
      */
-    public static function cloneDefinition(mixed $definition)
+    public static function cloneDefinition(mixed $definition): mixed
     {
         $deepCopy = new \DeepCopy\DeepCopy();
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('fieldDefinitionsCache'));

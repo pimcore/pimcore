@@ -73,15 +73,14 @@ For example, `\NewsletterController`: `src/Controllers/NewsletterController.php`
 
 namespace App\Controller; 
 
-use Pimcore\Controller\FrontendController;
 use Pimcore\Model;
 use Pimcore\Tool\Newsletter;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\HttpFoundation\Response;
 
 class NewsletterController extends FrontendController
 {
-    public function subscribeAction(Request $request)
+    public function subscribeAction(Request $request): Response
     {
         $newsletter = new Newsletter("person"); // replace "person" with the class name you have used for your class above (mailing list)
         $params = $request->request->all();
@@ -116,7 +115,7 @@ class NewsletterController extends FrontendController
         return $this->render('Newsletter/subscribe.html.twig', ['success' => $success]);
     }
 
-    public function confirmAction(Request $request)
+    public function confirmAction(Request $request): Response
     {
         $success = false;
 
@@ -129,7 +128,7 @@ class NewsletterController extends FrontendController
         return $this->render('Newsletter/confirm.html.twig', ['success' => $success]);
     }
 
-    public function unsubscribeAction(Request $request)
+    public function unsubscribeAction(Request $request): Response
     {
         $newsletter = new Newsletter("person"); // replace "person" with the class name you have used for your class above (mailing list)
 
