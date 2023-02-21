@@ -31,12 +31,6 @@ pimcore:
         icc_cmyk_profile: ''
         hide_edit_image: false
         disable_tree_preview: false
-    services:
-        google:
-            client_id: ''
-            email: ''
-            simple_api_key: ''
-            browser_api_key: ''
     full_page_cache:
         enabled: false
         lifetime: null
@@ -78,3 +72,9 @@ pimcore_admin:
         color_login_screen: ''
         color_admin_interface: ''
         login_screen_custom_image: ''
+
+pimcore_google_marketing:
+    client_id: ''
+    email: ''
+    simple_api_key: ''
+    browser_api_key: ''

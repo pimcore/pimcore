@@ -2,9 +2,6 @@
 declare(strict_types=1);
 
 return [
-    "Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle" => [
-        'all' => TRUE
-    ],
     "Pimcore\\Bundle\\EcommerceFrameworkBundle\\PimcoreEcommerceFrameworkBundle" => [
         "all" => TRUE
     ],
