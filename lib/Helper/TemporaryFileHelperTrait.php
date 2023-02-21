@@ -15,7 +15,6 @@
 
 namespace Pimcore\Helper;
 
-use Pimcore;
 use Pimcore\File;
 
 /**

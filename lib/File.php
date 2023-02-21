@@ -242,7 +242,7 @@ class File
             $fileExtension ?: 'tmp'
         );
 
-        if(!$keep) {
+        if (!$keep) {
             register_shutdown_function(static function () use ($filePath) {
                 if (file_exists($filePath)) {
                     unlink($filePath);
