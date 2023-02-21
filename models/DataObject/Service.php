@@ -263,6 +263,7 @@ class Service extends Model\Element\Service
             'target_element' => $target,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::PRE_COPY);
+        $target = $event->getArgument('target_element');
 
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
