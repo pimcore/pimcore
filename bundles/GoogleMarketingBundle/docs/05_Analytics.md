@@ -13,12 +13,15 @@ action in an autowired controller:
 namespace App\Controller;
 
 use Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend\GoogleAnalyticsCodeListener;
+use Symfony\Component\HttpFoundation\Response;
 
 class TestController
 {
-    public function testAction(GoogleAnalyticsCodeListener $analyticsCodeListener)
+    public function testAction(GoogleAnalyticsCodeListener $analyticsCodeListener): Response
     {
         $analyticsCodeListener->disable();
+        
+        // ...
     }
 }
 ```
@@ -48,10 +51,11 @@ namespace App\Controller;
 
 use Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker;
 use Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteId;
+use Symfony\Component\HttpFoundation\Response;
 
 class ContentController
 {
-    public function defaultAction(Tracker $tracker)
+    public function defaultAction(Tracker $tracker): Response
     {
         // append a part to the default block
         $tracker->addCodePart('console.log("foo");');
@@ -65,6 +69,8 @@ class ContentController
         // you can also add the code only for a specific site
         // if you want to do so, you need to pass a SiteId object which identifies a tracking site
         $tracker->addCodePart('console.log("foo");', Tracker::BLOCK_AFTER_TRACK, true, SiteId::forMainDomain());
+        
+        // ...
     }
 }
 ``` 
@@ -94,7 +100,7 @@ class GoogleTrackingCodeListener implements EventSubscriberInterface
         ];
     }
 
-    public function onTrackingData(TrackingDataEvent $event)
+    public function onTrackingData(TrackingDataEvent $event): void
     {
         // append data to a block
         $event->getBlock(Tracker::BLOCK_AFTER_TRACK)->append([

@@ -51,7 +51,7 @@ class TargetingCodeListener implements EventSubscriberInterface
         ];
     }
 
-    public function onTargetingCode(TargetingCodeEvent $event)
+    public function onTargetingCode(TargetingCodeEvent $event): void
     {
         // add code to a code block (see TargetingCodeGenerator and the default
         // template for a list of blocks and their location)

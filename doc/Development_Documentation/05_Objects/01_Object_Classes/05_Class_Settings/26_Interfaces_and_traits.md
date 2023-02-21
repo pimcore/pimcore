@@ -14,14 +14,8 @@ namespace App\Model\Product;
 
 interface TransmissionInterface
 {
-    /**
-     * @return string|null
-     */
     public function getGearboxType(): ?string;
 
-    /**
-     * @return int|null
-     */
     public function getNumberOfGears(): ?int;
 }
 ```

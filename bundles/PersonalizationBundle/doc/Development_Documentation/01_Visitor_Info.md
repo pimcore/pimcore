@@ -50,17 +50,14 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 
 class MyService
 {
-    /**
-     * @var VisitorInfoStorageInterface
-     */
-    private $visitorInfoStorage;
+    private VisitorInfoStorageInterface $visitorInfoStorage;
 
     public function __construct(VisitorInfoStorageInterface $visitorInfoStorage)
     {
         $this->visitorInfoStorage = $visitorInfoStorage;
     }
 
-    public function getVisitorId()
+    public function getVisitorId(): ?string
     {
         // always check if there is a visitor info before trying to fetch it
         if (!$this->visitorInfoStorage->hasVisitorInfo()) {
@@ -110,7 +107,7 @@ class VisitorInfoController
     /**
      * @Route("/visitor-info")
      */
-    public function visitorInfoAction(VisitorInfoStorageInterface $visitorInfoStorage)
+    public function visitorInfoAction(VisitorInfoStorageInterface $visitorInfoStorage): JsonResponse
     {
         $data = [
             'visitorId' => null

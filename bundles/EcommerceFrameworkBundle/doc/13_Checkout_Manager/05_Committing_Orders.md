@@ -40,15 +40,13 @@ A simple implementation of `App\Ecommerce\Order\OrderManager` could look like:
 
 ```php
 <?php
-class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager {
 
+class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager
+{
     /**
-     * @param CartInterface $cart
-     * @param AbstractOrder $order
-     * @return AbstractOrder
      * @throws InvalidConfigException
      */
-    protected function applyCustomCheckoutDataToOrder(CartInterface $cart, AbstractOrder $order)
+    protected function applyCustomCheckoutDataToOrder(CartInterface $cart, AbstractOrder $order): AbstractOrder
     {
         /** @var AbstractOrder $order */
         $order = parent::applyCustomCheckoutDataToOrder($cart, $order);
@@ -96,9 +94,11 @@ A simple implementation of `\App\Checkout\Processor` could look like:
 
 ```php
 <?php
-class Processor extends CommitOrderProcessor {
- 
-   protected function processOrder(AbstractOrder $order) {
+
+class Processor extends CommitOrderProcessor
+{
+   protected function processOrder(AbstractOrder $order): void
+   {
       //send order to ERP-System
       try {
           $connector = ERPConnector::getInstance();

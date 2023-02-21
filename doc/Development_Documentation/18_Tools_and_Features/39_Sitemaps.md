@@ -64,11 +64,8 @@ interface GeneratorInterface
 {
     /**
      * Populates the sitemap
-     *
-     * @param UrlContainerInterface $urlContainer
-     * @param string $section
      */
-    public function populate(UrlContainerInterface $urlContainer, string $section = null);
+    public function populate(UrlContainerInterface $urlContainer, string $section = null): void;
 }
 ```
 
@@ -167,7 +164,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BlogGenerator extends AbstractElementGenerator
 {
-    public function populate(UrlContainerInterface $urlContainer, string $section = null)
+    public function populate(UrlContainerInterface $urlContainer, string $section = null): void
     {
         if (null !== $section && $section !== 'blog') {
             // do not add entries if section doesn't match
@@ -278,10 +275,7 @@ use Pimcore\Sitemap\Element\GeneratorContextInterface;
 
 class AgeFilter implements FilterInterface
 {
-    /**
-     * @var int
-     */
-    private $maxYears = 1;
+    private int $maxYears;
 
     public function __construct(int $maxYears = 1)
     {
@@ -343,7 +337,7 @@ use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
 
 class RandomPriorityProcessor implements ProcessorInterface
 {
-    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context)
+    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context): Url
     {
         if ($url instanceof UrlConcrete) {
             $url->setPriority(rand(0, 10) / 10);
@@ -400,17 +394,14 @@ use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
 
 class RandomPathProcessor implements ProcessorInterface
 {
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
+    private UrlGeneratorInterface $urlGenerator;
 
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
     }
 
-    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context)
+    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context): UrlConcrete
     {
         $path = $this->urlGenerator->generateUrl('/foo/bar');
         $url  = new UrlConcrete($path);
