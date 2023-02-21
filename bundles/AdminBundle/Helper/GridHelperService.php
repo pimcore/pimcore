@@ -876,6 +876,7 @@ class GridHelperService
 
         return $response;
     }
+
     /**
      * @param string $query
      *

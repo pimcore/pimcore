@@ -42,7 +42,6 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -925,6 +924,7 @@ class AssetHelperController extends AdminController
         $storage = Storage::get('temp');
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $csvFile = $this->getCsvFile($fileHandle);
+
         try {
             return $gridHelperService->createXlsxExportFile($storage, $fileHandle, $csvFile);
         } catch (\Exception | FilesystemException | UnableToReadFile $exception) {
