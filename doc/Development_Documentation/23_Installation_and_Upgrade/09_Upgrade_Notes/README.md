@@ -195,7 +195,7 @@ pimcore:
   Replace other annotations provided by [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers)
 - [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
 - [DataObjects][CSV Export] Changed encoding of table data-types to `json_encode` from `base64_encoded`.
-- [Page] Deprecated the functionality to input `metadata` html tags in Settings section of the document.
+- [Page] Removed the functionality to input `metadata` html tags in Settings section of the document.
 
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
