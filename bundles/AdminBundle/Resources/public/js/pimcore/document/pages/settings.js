@@ -23,7 +23,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
              */
             // meta-data
             var addMetaData = function (value) {
-
+                console.warn('Setting/Editing the `HTML-tags` field is deprecated');
                 if(typeof value != "string") {
                     value = "";
                 }
