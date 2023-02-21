@@ -18,30 +18,24 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Analytics\Code;
 
 use Pimcore\Analytics\Code\CodeBlock;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 
 class CodeBlockTest extends TestCase
 {
-    /**
-     * @var array
-     */
-    private $defaultParts = [
+    private array $defaultParts = [
         'foo;',
         'bar?',
         'bazinga!' . "\n" . '!!!',
     ];
 
-    /**
-     * @var string
-     */
-    private $defaultResult = <<<'EOL'
+    private string $defaultResult = <<<'EOL'
 foo;
 bar?
 bazinga!
 !!!
 EOL;
 
-    public function testToString()
+    public function testToString(): void
     {
         $block = new CodeBlock($this->defaultParts);
 
@@ -50,7 +44,7 @@ EOL;
         $this->assertEquals($this->defaultResult, $block->__toString());
     }
 
-    public function testSetParts()
+    public function testSetParts(): void
     {
         $block = new CodeBlock();
 
@@ -62,7 +56,7 @@ EOL;
         $this->assertEquals($this->defaultResult, $block->asString());
     }
 
-    public function testAppend()
+    public function testAppend(): void
     {
         $block = new CodeBlock($this->defaultParts);
 
@@ -79,7 +73,7 @@ EOL;
         $this->assertEquals($expected, $block->asString());
     }
 
-    public function testPrepend()
+    public function testPrepend(): void
     {
         $block = new CodeBlock($this->defaultParts);
 

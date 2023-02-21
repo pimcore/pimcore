@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,15 +21,9 @@ namespace Pimcore\Document\Newsletter;
  */
 final class DefaultAddressSourceAdapterFactory implements AddressSourceAdapterFactoryInterface
 {
-    /**
-     * @var string
-     */
-    private $className;
+    private string $className;
 
-    /**
-     * @param string $className
-     */
-    public function __construct($className)
+    public function __construct(string $className)
     {
         $this->className = $className;
     }
@@ -36,7 +31,7 @@ final class DefaultAddressSourceAdapterFactory implements AddressSourceAdapterFa
     /**
      * {@inheritdoc}
      */
-    public function create($params)
+    public function create(array $params): AddressSourceAdapterInterface
     {
         return new $this->className($params);
     }

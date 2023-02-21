@@ -71,7 +71,7 @@ Menus and buttons may vary depending on the current GUI version
 ## Configuring Google Services in Pimcore
 **APIs**
 * copy **JSON** to `/config/pimcore/google-api-private-key.json`
-* edit `/var/config/system.yml` or use System Settings in admin interface
+* edit `/var/config/system.yaml` or use System Settings in admin interface
   * services/google/client_id = **api_id**
   * services/google/email = **api_email**
   * services/google/simple_api_key = **s_api_key**

@@ -38,62 +38,41 @@ class ElementAdminStyleEvent extends Event
      */
     const CONTEXT_SEARCH = 3;
 
-    /**
-     * @var int
-     */
-    protected $context;
+    protected ?int $context = null;
 
-    /**
-     * @var ElementInterface
-     */
-    protected $element;
+    protected ElementInterface $element;
 
-    /**
-     * @var AdminStyle
-     */
-    protected $adminStyle;
+    protected AdminStyle $adminStyle;
 
     /**
      * ElementAdminStyleEvent constructor.
      *
      * @param ElementInterface $element
      * @param AdminStyle $adminStyle
-     * @param null|int $context
+     * @param int|null $context
      */
-    public function __construct(ElementInterface $element, AdminStyle $adminStyle, $context = null)
+    public function __construct(ElementInterface $element, AdminStyle $adminStyle, int $context = null)
     {
         $this->element = $element;
         $this->adminStyle = $adminStyle;
         $this->context = $context;
     }
 
-    /**
-     * @return ElementInterface
-     */
     public function getElement(): ElementInterface
     {
         return $this->element;
     }
 
-    /**
-     * @param ElementInterface $element
-     */
     public function setElement(ElementInterface $element): void
     {
         $this->element = $element;
     }
 
-    /**
-     * @return AdminStyle
-     */
     public function getAdminStyle(): AdminStyle
     {
         return $this->adminStyle;
     }
 
-    /**
-     * @param AdminStyle $adminStyle
-     */
     public function setAdminStyle(AdminStyle $adminStyle): void
     {
         $this->adminStyle = $adminStyle;
@@ -104,15 +83,12 @@ class ElementAdminStyleEvent extends Event
      *
      * @return null|int
      */
-    public function getContext()
+    public function getContext(): ?int
     {
         return $this->context;
     }
 
-    /**
-     * @param null|int $context
-     */
-    public function setContext($context): void
+    public function setContext(?int $context): void
     {
         $this->context = $context;
     }

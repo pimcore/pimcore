@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,7 +37,7 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @var array
      */
-    protected $indices = [];
+    protected array $indices = [];
 
     /**
      * Current step of the block while iteration
@@ -45,12 +46,12 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @var int
      */
-    protected $current = 0;
+    protected int $current = 0;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'block';
     }
@@ -58,7 +59,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->indices;
     }
@@ -84,7 +85,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         $this->indices = \Pimcore\Tool\Serialize::unserialize($data);
 
@@ -94,7 +95,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->indices = $data;
 
@@ -106,7 +107,7 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @return $this
      */
-    protected function setDefault()
+    protected function setDefault(): static
     {
         if (empty($this->indices) && isset($this->config['default']) && $this->config['default']) {
             for ($i = 0; $i < (int)$this->config['default']; $i++) {
@@ -117,10 +118,7 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
+    public function getIterator(): \Generator
     {
         while ($this->loop()) {
             yield $this->getCurrentIndex();
@@ -167,7 +165,7 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @return bool
      */
-    public function loop()
+    public function loop(): bool
     {
         $manual = false;
         if (($this->config['manual'] ?? false) == true) {
@@ -230,14 +228,12 @@ class Block extends Model\Document\Editable implements BlockInterface
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
-
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function end()
+    public function end(bool $return = false)
     {
         $this->current = 0;
 
@@ -253,17 +249,17 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function blockConstruct()
+    public function blockConstruct(): void
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
         // this will be removed in blockDestruct
-        $this->getBlockState()->pushIndex($this->indices[$this->current] ?? 0);
+        $this->getBlockState()->pushIndex((int) ($this->indices[$this->current] ?? 0));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function blockDestruct()
+    public function blockDestruct(): void
     {
         $blockState = $this->getBlockState();
         if ($blockState->hasIndexes()) {
@@ -272,9 +268,11 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param bool $showControls
+     * @param bool $return
+     * @param string $additionalClass
      */
-    public function blockStart($showControls = true, $return = false, $additionalClass = '')
+    public function blockStart(bool $showControls = true, bool $return = false, string $additionalClass = '')
     {
         $attr = $this->getBlockAttributes();
 
@@ -304,9 +302,9 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * Custom position of button controls between blockStart -> blockEnd
      *
-     * @param bool $return
+     * @return ($return is true ? string : void)
      */
-    public function blockControls($return = false)
+    public function blockControls(bool $return = false)
     {
         $attr = $this->getBlockAttributes();
 
@@ -331,9 +329,9 @@ EOT;
     }
 
     /**
-     * {@inheritdoc}
+     * @param bool $return
      */
-    public function blockEnd($return = false)
+    public function blockEnd(bool $return = false)
     {
         // close outer element
         $html = '</div>';
@@ -345,10 +343,7 @@ EOT;
         $this->outputEditmode($html);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfig($config)
+    public function setConfig(array $config): static
     {
         if (empty($config['limit'])) {
             $config['limit'] = 1000000;
@@ -366,7 +361,7 @@ EOT;
     /**
      * {@inheritdoc}
      */
-    public function getCount()
+    public function getCount(): int
     {
         return count($this->indices);
     }
@@ -374,7 +369,7 @@ EOT;
     /**
      * {@inheritdoc}
      */
-    public function getCurrent()
+    public function getCurrent(): int
     {
         return $this->current - 1;
     }
@@ -382,15 +377,12 @@ EOT;
     /**
      * {@inheritdoc}
      */
-    public function getCurrentIndex()
+    public function getCurrentIndex(): int
     {
-        return $this->indices[$this->getCurrent()] ?? 0;
+        return (int) ($this->indices[$this->getCurrent()] ?? 0);
     }
 
-    /**
-     * @return array
-     */
-    public function getIndices()
+    public function getIndices(): array
     {
         return $this->indices;
     }
@@ -398,15 +390,12 @@ EOT;
     /**
      * If object was serialized, set the counter back to 0
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->current = 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return !(bool) count($this->indices);
     }
@@ -414,7 +403,7 @@ EOT;
     /**
      * @return Block\Item[]
      */
-    public function getElements()
+    public function getElements(): array
     {
         $document = $this->getDocument();
 
@@ -434,9 +423,6 @@ EOT;
         return $list;
     }
 
-    /**
-     * @return string
-     */
     private function getBlockAttributes(): string
     {
         $attributes = [
@@ -447,9 +433,6 @@ EOT;
         return HtmlUtils::assembleAttributeString($attributes);
     }
 
-    /**
-     * @return bool
-     */
     private function isIgnoreEditmodeIndices(): bool
     {
         $requestStack = \Pimcore::getContainer()->get('request_stack');
@@ -458,6 +441,6 @@ EOT;
             return false;
         }
 
-        return $request->get(self::ATTRIBUTE_IGNORE_EDITMODE_INDICES, false);
+        return $request->attributes->getBoolean(self::ATTRIBUTE_IGNORE_EDITMODE_INDICES);
     }
 }

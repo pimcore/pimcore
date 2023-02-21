@@ -15,7 +15,10 @@ Common applications are tabs/groups for different languages or logical groups li
 In addition to the master editor layout, Custom Layouts for different views on the object data can be defined. 
 
 To define a class, the menu `Settings` -> `Data Objects` -> `Classes` needs to be used in the Pimcore toolbar menu. 
-The class name has to be a valid PHP class name. After creating a new class, the class attributes and layout can be built.
+The class name has to be a valid PHP class name. After creating a new class, the class attributes and layout can be built.  
+
+Add `title` field to classdefinitions, where you can add a translation key like `app.classes.product` which is used for
+translations in your translation file.
 
 Class attributes are defined from a set of predefined data types. 
 These data types define not only the type of data such as text, number, image, reference to another object etc. but 

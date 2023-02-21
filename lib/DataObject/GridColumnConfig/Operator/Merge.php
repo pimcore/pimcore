@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,25 +16,18 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
 final class Merge extends AbstractOperator
 {
-    /**
-     * @var bool
-     */
-    private $flatten;
+    private bool $flatten;
 
-    /**
-     * @var bool
-     */
-    private $unique;
+    private bool $unique;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -44,16 +38,16 @@ final class Merge extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
         $result->isArrayType = true;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
         $resultItems = [];
 
-        foreach ($childs as $c) {
+        foreach ($children as $c) {
             $childResult = $c->getLabeledValue($element);
             $childValues = $childResult->value ?? null;
 
@@ -82,34 +76,22 @@ final class Merge extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @return bool
-     */
-    public function getFlatten()
+    public function getFlatten(): bool
     {
         return $this->flatten;
     }
 
-    /**
-     * @param bool $flatten
-     */
-    public function setFlatten($flatten)
+    public function setFlatten(bool $flatten): void
     {
         $this->flatten = $flatten;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUnique()
+    public function getUnique(): bool
     {
         return $this->unique;
     }
 
-    /**
-     * @param bool $unique
-     */
-    public function setUnique($unique)
+    public function setUnique(bool $unique): void
     {
         $this->unique = $unique;
     }

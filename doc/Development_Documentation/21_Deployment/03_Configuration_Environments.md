@@ -5,18 +5,16 @@ Pimcore supports different configurations for different environments (dev, test,
 configurations including a fallback mechanism. 
 
 Pimcore is relying on Symfony's environments, with some extras, however all the essential 
-information can be found in the [Symfony Docs](https://symfony.com/doc/5.2/configuration.html#configuration-environments)
+information can be found in the [Symfony Docs](https://symfony.com/doc/current/configuration.html#configuration-environments)
 
-> Note: While Pimcore uses Symfony's DotEnv component to allow you to 
-[configure environment variables in `.env` files](https://symfony.com/doc/5.4/configuration.html#configuring-environment-variables-in-env-files), 
-sometimes (e.g. in *prod* environments) you may want to configure everything via real 
-environment variables instead. In this case, you can disable loading of `.env` files 
-by setting the `PIMCORE_SKIP_DOTENV_FILE` environment variable to a truthy value.
+> Note: Require `symfony/dotenv` in your project to use Symfony's DotEnv component to allow you to 
+[configure environment variables in `.env` files](https://symfony.com/doc/current/configuration.html#configuring-environment-variables-in-env-files), 
+or (e.g. in *prod* environments) you can configure everything via real environment variables.
 
 In addition to Symfony configurations, Pimcore also supports environment specific configs for: 
 
-* <https://github.com/pimcore/demo/tree/10.2/config/pimcore> 
-* <https://github.com/pimcore/demo/tree/10.2/var/config>
+* <https://github.com/pimcore/demo/tree/11.x/config/pimcore> 
+* <https://github.com/pimcore/demo/tree/11.x/var/config>
 
 The environment specific config file has priority over the default config, so if your 
 current environment is `dev` Pimcore first checks if e.g. `var/config/image-thumbnails_dev.php`
@@ -41,6 +39,7 @@ This feature is currently supported by the following configurations:
 - Static Routes
 - Perspectives
 - Custom views
+- DataObject Custom Layouts
 
 
 You can change the write target individually for each type by using environment variables.
@@ -64,6 +63,7 @@ PIMCORE_WRITE_TARGET_PREDEFINED_ASSET_METADATA=settings-store
 PIMCORE_WRITE_TARGET_STATICROUTES=settings-store
 PIMCORE_WRITE_TARGET_PERSPECTIVES=settings-store
 PIMCORE_WRITE_TARGET_CUSTOM_VIEWS=settings-store
+PIMCORE_WRITE_TARGET_OBJECT_CUSTOM_LAYOUTS=settings-store
 ```
 #### Storage directory for symfony Config files
 
@@ -81,6 +81,7 @@ PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_ASSET_METADATA=/var/www/html/var/config/pr
 PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES=/var/www/html/var/config/staticroutes
 PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES=/var/www/html/var/config/perspectives
 PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS=/var/www/html/var/config/custom-views
+PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS=/var/www/html/var/config/custom-layouts
 ```
 
 #### Production environment with `symfony-config`

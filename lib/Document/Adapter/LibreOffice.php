@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,10 +29,7 @@ use Symfony\Component\Process\Process;
  */
 class LibreOffice extends Ghostscript
 {
-    /**
-     * @return bool
-     */
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         try {
             $lo = self::getLibreOfficeCli();
@@ -45,10 +43,7 @@ class LibreOffice extends Ghostscript
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isFileTypeSupported($fileType)
+    public function isFileTypeSupported(string $fileType): bool
     {
         // it's also possible to pass a path or filename
         if (preg_match("/\.?(pdf|doc|docx|odt|xls|xlsx|ods|ppt|pptx|odp)$/i", $fileType)) {
@@ -63,15 +58,12 @@ class LibreOffice extends Ghostscript
      *
      * @throws \Exception
      */
-    public static function getLibreOfficeCli()
+    public static function getLibreOfficeCli(): string
     {
         return Console::getExecutable('soffice', true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(Asset\Document $asset)
+    public function load(Asset\Document $asset): static
     {
         // avoid timeouts
         $maxExecTime = (int) ini_get('max_execution_time');
@@ -173,10 +165,7 @@ class LibreOffice extends Ghostscript
         return $storage->readStream($storagePath);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getText(?int $page = null, ?Asset\Document $asset = null)
+    public function getText(?int $page = null, ?Asset\Document $asset = null): mixed
     {
         if (!$asset && $this->asset) {
             $asset = $this->asset;

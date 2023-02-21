@@ -1,0 +1,149 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
+
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Db;
+use Pimcore\Logger;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation;
+use Pimcore\Model\DataObject\Folder;
+
+class MultiSelectRelation extends AbstractFilterType
+{
+    /**
+     * @param FilterMultiRelation $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
+    {
+        $field = $this->getField($filterDefinition);
+        $values = $productList->getGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());
+
+        $objects = [];
+        Logger::info('Load Objects...');
+        $availableRelations = [];
+        if ($filterDefinition->getAvailableRelations()) {
+            $availableRelations = $this->loadAllAvailableRelations($filterDefinition->getAvailableRelations());
+        }
+
+        foreach ($values as $v) {
+            if (empty($availableRelations) || ($availableRelations[$v['value']] ?? false) === true) {
+                $objects[$v['value']] = DataObject::getById($v['value']);
+            }
+        }
+        Logger::info('done.');
+
+        return [
+            'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
+            'label' => $filterDefinition->getLabel(),
+            'currentValue' => $currentFilter[$field],
+            'values' => $values,
+            'objects' => $objects,
+            'fieldname' => $field,
+            'metaData' => $filterDefinition->getMetaData(),
+            'resultCount' => $productList->count(),
+        ];
+    }
+
+    /**
+     * @param DataObject\AbstractObject[] $availableRelations
+     * @param array<int, true> $availableRelationsArray
+     *
+     * @return array<int, true>
+     */
+    protected function loadAllAvailableRelations(array $availableRelations, array $availableRelationsArray = []): array
+    {
+        foreach ($availableRelations as $rel) {
+            if ($rel instanceof Folder) {
+                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChildren()->load(), $availableRelationsArray);
+            } else {
+                $availableRelationsArray[$rel->getId()] = true;
+            }
+        }
+
+        return $availableRelationsArray;
+    }
+
+    /**
+     * @param FilterMultiRelation $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     * @param array $params
+     * @param bool $isPrecondition
+     *
+     * @return array
+     */
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter, array $params, bool $isPrecondition = false): array
+    {
+        $field = $this->getField($filterDefinition);
+        $preSelect = $this->getPreSelect($filterDefinition);
+
+        $value = $params[$field] ?? null;
+        $isReload = $params['is_reload'] ?? null;
+
+        if (empty($value) && !$isReload) {
+            $objects = $preSelect ?: [];
+            $value = [];
+
+            if (!is_array($objects)) {
+                $objects = explode(',', $objects);
+            }
+
+            if (is_array($objects)) {
+                foreach ($objects as $o) {
+                    if (is_object($o)) {
+                        $value[] = $o->getId();
+                    } else {
+                        $value[] = $o;
+                    }
+                }
+            }
+        } elseif (!empty($value) && in_array(AbstractFilterType::EMPTY_STRING, $value)) {
+            $value = null;
+        }
+
+        $currentFilter[$field] = $value;
+
+        if (!empty($value)) {
+            $quotedValues = [];
+            $db = Db::get();
+            foreach ($value as $v) {
+                if (!empty($v)) {
+                    $quotedValues[] = $db->quote($v);
+                }
+            }
+            if (!empty($quotedValues)) {
+                if ($filterDefinition->getUseAndCondition()) {
+                    foreach ($quotedValues as $value) {
+                        $productList->addRelationCondition($field, 'dest = ' . $value);
+                    }
+                } else {
+                    $productList->addRelationCondition($field, 'dest IN (' . implode(',', $quotedValues) . ')');
+                }
+            }
+        }
+
+        return $currentFilter;
+    }
+}

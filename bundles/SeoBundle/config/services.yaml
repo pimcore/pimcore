@@ -1,0 +1,42 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # INSTALLER
+    #
+    Pimcore\Bundle\SeoBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreSeoBundle')"
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\SeoBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+
+    #
+    # EVENTLISTENER
+    #
+
+    Pimcore\Bundle\SeoBundle\EventListener\ResponseExceptionListener: ~
+
+
+    #
+    # MAINTENANCE TASK
+    #
+
+    Pimcore\Bundle\SeoBundle\Maintenance\LogErrorCleanupTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: httperrorlog }
+

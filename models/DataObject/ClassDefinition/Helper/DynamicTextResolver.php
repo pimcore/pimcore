@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,19 +16,12 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Pimcore\Model\DataObject\ClassDefinition\Layout\DynamicTextLabelInterface;
-
 /**
  * @internal
  */
 class DynamicTextResolver extends ClassResolver
 {
-    /**
-     * @param string $renderingClass
-     *
-     * @return DynamicTextLabelInterface|null
-     */
-    public static function resolveRenderingClass($renderingClass)
+    public static function resolveRenderingClass(string $renderingClass): ?object
     {
         return self::resolve($renderingClass);
     }

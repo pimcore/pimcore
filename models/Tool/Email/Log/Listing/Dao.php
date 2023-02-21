@@ -29,7 +29,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $emailLogs = $this->db->fetchFirstColumn('SELECT id FROM email_log' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
@@ -47,7 +47,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function getDataArray()
+    public function getDataArray(): array
     {
         $emailLogData = $this->db->fetchAllAssociative('SELECT * FROM email_log ' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
@@ -59,7 +59,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return int
      */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM email_log ' . $this->getCondition(), $this->model->getConditionVariables());

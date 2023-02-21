@@ -1,6 +1,6 @@
 # Pimcore Mail
 
-The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://symfony.com/doc/5.2/mailer.html#email-addresses)
+The `Pimcore\Mail` Class extends the [`Symfony\Component\Mime\Email`](https://symfony.com/doc/current/mailer.html#email-addresses)
 Class and adds some features for the usage with Pimcore.
 
 If email settings are configured in your `config/config.yaml` then on initializing

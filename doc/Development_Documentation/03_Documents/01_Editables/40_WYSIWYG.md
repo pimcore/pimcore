@@ -106,7 +106,7 @@ pimcore.document.editables.wysiwyg.defaultEditorConfig.uiColor = '#AADC6E';
 ```
 
 To load that file in editmode, you need to implement `getEditmodeJsPaths` in your bundle class. Given your bundle is named
-`AppAdminBundle` and your `editmode.js` created before was saved to `src/AppAdminBundle/Resources/public/js/editmode.js`:
+`AppAdminBundle` and your `editmode.js` created before was saved to `src/AppAdminBundle/public/js/editmode.js`:
  
 ```php
 <?php

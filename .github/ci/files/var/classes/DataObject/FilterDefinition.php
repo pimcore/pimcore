@@ -1,74 +1,73 @@
 <?php
+declare(strict_types=1);
 
 /**
-* Inheritance: yes
-* Variants: no
-
-
-Fields Summary:
-- pageLimit [numeric]
-- defaultOrderByInheritance [select]
-- defaultOrderBy [fieldcollections]
-- orderByAsc [indexFieldSelectionField]
-- orderByDesc [indexFieldSelectionField]
-- ajaxReload [checkbox]
-- infiniteScroll [checkbox]
-- limitOnFirstLoad [numeric]
-- conditionsInheritance [select]
-- conditions [fieldcollections]
-- filtersInheritance [select]
-- filters [fieldcollections]
-- crossSellingCategory [manyToOneRelation]
-- similarityFieldsInheritance [select]
-- similarityFields [fieldcollections]
-*/
+ * Inheritance: yes
+ * Variants: no
+ *
+ * Fields Summary:
+ * - pageLimit [numeric]
+ * - defaultOrderByInheritance [select]
+ * - defaultOrderBy [fieldcollections]
+ * - orderByAsc [indexFieldSelectionField]
+ * - orderByDesc [indexFieldSelectionField]
+ * - ajaxReload [checkbox]
+ * - infiniteScroll [checkbox]
+ * - limitOnFirstLoad [numeric]
+ * - conditionsInheritance [select]
+ * - conditions [fieldcollections]
+ * - filtersInheritance [select]
+ * - filters [fieldcollections]
+ * - crossSellingCategory [manyToOneRelation]
+ * - similarityFieldsInheritance [select]
+ * - similarityFields [fieldcollections]
+ */
 
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\PreGetValueHookInterface;
+use Pimcore\Model\Element\AbstractElement;
 
 /**
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing getList()
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByPageLimit($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByDefaultOrderByInheritance($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByOrderByAsc($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByOrderByDesc($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByAjaxReload($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByInfiniteScroll($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByLimitOnFirstLoad($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByConditionsInheritance($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByFiltersInheritance($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByCrossSellingCategory($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getBySimilarityFieldsInheritance($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing getList(array $config = [])
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByPageLimit(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByDefaultOrderByInheritance(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByOrderByAsc(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByOrderByDesc(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByAjaxReload(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByInfiniteScroll(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByLimitOnFirstLoad(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByConditionsInheritance(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByFiltersInheritance(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getByCrossSellingCategory(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\FilterDefinition\Listing|\Pimcore\Model\DataObject\FilterDefinition|null getBySimilarityFieldsInheritance(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
 */
 
 class FilterDefinition extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinition
 {
-protected $o_classId = "EF_FD";
-protected $o_className = "FilterDefinition";
-protected $pageLimit;
-protected $defaultOrderByInheritance;
-protected $defaultOrderBy;
-protected $orderByAsc;
-protected $orderByDesc;
-protected $ajaxReload;
-protected $infiniteScroll;
-protected $limitOnFirstLoad;
-protected $conditionsInheritance;
-protected $conditions;
-protected $filtersInheritance;
-protected $filters;
-protected $crossSellingCategory;
-protected $similarityFieldsInheritance;
-protected $similarityFields;
+protected $classId = "EF_FD";
+protected $className = "FilterDefinition";
+protected ?float $pageLimit = null;
+protected ?string $defaultOrderByInheritance = null;
+protected ?Fieldcollection $defaultOrderBy = null;
+protected ?string $orderByAsc = null;
+protected ?string $orderByDesc = null;
+protected ?bool $ajaxReload = null;
+protected ?bool $infiniteScroll = null;
+protected ?float $limitOnFirstLoad = null;
+protected ?string $conditionsInheritance = null;
+protected ?Fieldcollection $conditions = null;
+protected ?string $filtersInheritance = null;
+protected ?Fieldcollection $filters = null;
+protected \Pimcore\Model\Element\AbstractElement|ProductCategory|null $crossSellingCategory;
+protected ?string $similarityFieldsInheritance = null;
+protected ?Fieldcollection $similarityFields = null;
 
 
-/**
-* @param array $values
-* @return \Pimcore\Model\DataObject\FilterDefinition
-*/
-public static function create($values = array()) {
+
+public static function create(array $values = []): static
+{
 	$object = new static();
 	$object->setValues($values);
 	return $object;
@@ -76,9 +75,9 @@ public static function create($values = array()) {
 
 /**
 * Get pageLimit - Results per Page
-* @return float|null
+* @return float|Fieldcollection|null
 */
-public function getPageLimit(): ?float
+public function getPageLimit(): Fieldcollection|float|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("pageLimit");
@@ -107,22 +106,21 @@ public function getPageLimit(): ?float
 /**
 * Set pageLimit - Results per Page
 * @param float|null $pageLimit
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setPageLimit(?float $pageLimit)
+public function setPageLimit(?float $pageLimit): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getClass()->getFieldDefinition("pageLimit");
 	$this->pageLimit = $fd->preSetData($this, $pageLimit);
-
 	return $this;
 }
 
 /**
 * Get defaultOrderByInheritance - inherit Default OrderBy
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getDefaultOrderByInheritance(): ?string
+public function getDefaultOrderByInheritance(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("defaultOrderByInheritance");
@@ -151,19 +149,16 @@ public function getDefaultOrderByInheritance(): ?string
 /**
 * Set defaultOrderByInheritance - inherit Default OrderBy
 * @param string|null $defaultOrderByInheritance
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setDefaultOrderByInheritance(?string $defaultOrderByInheritance)
+public function setDefaultOrderByInheritance(?string $defaultOrderByInheritance): static
 {
 	$this->defaultOrderByInheritance = $defaultOrderByInheritance;
 
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getDefaultOrderBy()
+    public function getDefaultOrderBy(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("defaultOrderBy");
@@ -172,32 +167,28 @@ public function getDefaultOrderBy()
 		}
 	}
 
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
-	$fd = $this->getClass()->getFieldDefinition("defaultOrderBy");
-	$data = $fd->preGetData($this);
-
+	$data = $this->getClass()->getFieldDefinition("defaultOrderBy")->preGetData($this);
 	return $data;
 }
 
 /**
 * Set defaultOrderBy - Default OrderBy
 * @param \Pimcore\Model\DataObject\Fieldcollection|null $defaultOrderBy
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setDefaultOrderBy(?\Pimcore\Model\DataObject\Fieldcollection $defaultOrderBy)
+public function setDefaultOrderBy(?\Pimcore\Model\DataObject\Fieldcollection $defaultOrderBy): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
 	$fd = $this->getClass()->getFieldDefinition("defaultOrderBy");
 	$this->defaultOrderBy = $fd->preSetData($this, $defaultOrderBy);
-
 	return $this;
 }
 
 /**
 * Get orderByAsc - OrderBy
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getOrderByAsc(): ?string
+public function getOrderByAsc(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("orderByAsc");
@@ -226,9 +217,9 @@ public function getOrderByAsc(): ?string
 /**
 * Set orderByAsc - OrderBy
 * @param string|null $orderByAsc
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setOrderByAsc(?string $orderByAsc)
+public function setOrderByAsc(?string $orderByAsc): static
 {
 	$this->orderByAsc = $orderByAsc;
 
@@ -237,9 +228,9 @@ public function setOrderByAsc(?string $orderByAsc)
 
 /**
 * Get orderByDesc - OrderBy Descending
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getOrderByDesc(): ?string
+public function getOrderByDesc(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("orderByDesc");
@@ -268,9 +259,9 @@ public function getOrderByDesc(): ?string
 /**
 * Set orderByDesc - OrderBy Descending
 * @param string|null $orderByDesc
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setOrderByDesc(?string $orderByDesc)
+public function setOrderByDesc(?string $orderByDesc): static
 {
 	$this->orderByDesc = $orderByDesc;
 
@@ -279,9 +270,9 @@ public function setOrderByDesc(?string $orderByDesc)
 
 /**
 * Get ajaxReload - ajaxReload
-* @return bool|null
+* @return bool|Fieldcollection|null
 */
-public function getAjaxReload(): ?bool
+public function getAjaxReload(): Fieldcollection|bool|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("ajaxReload");
@@ -310,9 +301,9 @@ public function getAjaxReload(): ?bool
 /**
 * Set ajaxReload - ajaxReload
 * @param bool|null $ajaxReload
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setAjaxReload(?bool $ajaxReload)
+public function setAjaxReload(?bool $ajaxReload): static
 {
 	$this->ajaxReload = $ajaxReload;
 
@@ -321,9 +312,9 @@ public function setAjaxReload(?bool $ajaxReload)
 
 /**
 * Get infiniteScroll - Infinite Scroll
-* @return bool|null
+* @return bool|Fieldcollection|null
 */
-public function getInfiniteScroll(): ?bool
+public function getInfiniteScroll(): Fieldcollection|bool|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("infiniteScroll");
@@ -352,9 +343,9 @@ public function getInfiniteScroll(): ?bool
 /**
 * Set infiniteScroll - Infinite Scroll
 * @param bool|null $infiniteScroll
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setInfiniteScroll(?bool $infiniteScroll)
+public function setInfiniteScroll(?bool $infiniteScroll): static
 {
 	$this->infiniteScroll = $infiniteScroll;
 
@@ -363,9 +354,9 @@ public function setInfiniteScroll(?bool $infiniteScroll)
 
 /**
 * Get limitOnFirstLoad - Limit on First Load
-* @return float|null
+* @return float|Fieldcollection|null
 */
-public function getLimitOnFirstLoad(): ?float
+public function getLimitOnFirstLoad(): Fieldcollection|float|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("limitOnFirstLoad");
@@ -394,22 +385,21 @@ public function getLimitOnFirstLoad(): ?float
 /**
 * Set limitOnFirstLoad - Limit on First Load
 * @param float|null $limitOnFirstLoad
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setLimitOnFirstLoad(?float $limitOnFirstLoad)
+public function setLimitOnFirstLoad(?float $limitOnFirstLoad): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getClass()->getFieldDefinition("limitOnFirstLoad");
 	$this->limitOnFirstLoad = $fd->preSetData($this, $limitOnFirstLoad);
-
 	return $this;
 }
 
 /**
 * Get conditionsInheritance - inherit Conditions
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getConditionsInheritance(): ?string
+public function getConditionsInheritance(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("conditionsInheritance");
@@ -438,19 +428,16 @@ public function getConditionsInheritance(): ?string
 /**
 * Set conditionsInheritance - inherit Conditions
 * @param string|null $conditionsInheritance
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setConditionsInheritance(?string $conditionsInheritance)
+public function setConditionsInheritance(?string $conditionsInheritance): static
 {
 	$this->conditionsInheritance = $conditionsInheritance;
 
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getConditions()
+    public function getConditions(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("conditions");
@@ -459,32 +446,28 @@ public function getConditions()
 		}
 	}
 
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
-	$fd = $this->getClass()->getFieldDefinition("conditions");
-	$data = $fd->preGetData($this);
-
+	$data = $this->getClass()->getFieldDefinition("conditions")->preGetData($this);
 	return $data;
 }
 
 /**
 * Set conditions - Conditions
 * @param \Pimcore\Model\DataObject\Fieldcollection|null $conditions
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setConditions(?\Pimcore\Model\DataObject\Fieldcollection $conditions)
+public function setConditions(?\Pimcore\Model\DataObject\Fieldcollection $conditions): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
 	$fd = $this->getClass()->getFieldDefinition("conditions");
 	$this->conditions = $fd->preSetData($this, $conditions);
-
 	return $this;
 }
 
 /**
 * Get filtersInheritance - inherit Filters
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getFiltersInheritance(): ?string
+public function getFiltersInheritance(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("filtersInheritance");
@@ -513,19 +496,16 @@ public function getFiltersInheritance(): ?string
 /**
 * Set filtersInheritance - inherit Filters
 * @param string|null $filtersInheritance
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setFiltersInheritance(?string $filtersInheritance)
+public function setFiltersInheritance(?string $filtersInheritance): static
 {
 	$this->filtersInheritance = $filtersInheritance;
 
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getFilters()
+    public function getFilters(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("filters");
@@ -534,32 +514,28 @@ public function getFilters()
 		}
 	}
 
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
-	$fd = $this->getClass()->getFieldDefinition("filters");
-	$data = $fd->preGetData($this);
-
+	$data = $this->getClass()->getFieldDefinition("filters")->preGetData($this);
 	return $data;
 }
 
 /**
 * Set filters - Filters
 * @param \Pimcore\Model\DataObject\Fieldcollection|null $filters
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setFilters(?\Pimcore\Model\DataObject\Fieldcollection $filters)
+public function setFilters(?\Pimcore\Model\DataObject\Fieldcollection $filters): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
 	$fd = $this->getClass()->getFieldDefinition("filters");
 	$this->filters = $fd->preSetData($this, $filters);
-
 	return $this;
 }
 
 /**
 * Get crossSellingCategory - Base category for recommendations
-* @return \Pimcore\Model\DataObject\ProductCategory|null
+* @return Fieldcollection|ProductCategory|\Pimcore\Model\Element\AbstractElement|\Pimcore\Model\Element\ElementInterface|null
 */
-public function getCrossSellingCategory(): ?\Pimcore\Model\Element\AbstractElement
+public function getCrossSellingCategory(): Fieldcollection|ProductCategory|\Pimcore\Model\Element\ElementInterface|AbstractElement|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("crossSellingCategory");
@@ -568,9 +544,7 @@ public function getCrossSellingCategory(): ?\Pimcore\Model\Element\AbstractEleme
 		}
 	}
 
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */
-	$fd = $this->getClass()->getFieldDefinition("crossSellingCategory");
-	$data = $fd->preGetData($this);
+	$data = $this->getClass()->getFieldDefinition("crossSellingCategory")->preGetData($this);
 
 	if (\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("crossSellingCategory")->isEmpty($data)) {
 		try {
@@ -587,12 +561,12 @@ public function getCrossSellingCategory(): ?\Pimcore\Model\Element\AbstractEleme
 	return $data;
 }
 
-/**
-* Set crossSellingCategory - Base category for recommendations
-* @param \Pimcore\Model\DataObject\ProductCategory $crossSellingCategory
-* @return \Pimcore\Model\DataObject\FilterDefinition
-*/
-public function setCrossSellingCategory(?\Pimcore\Model\Element\AbstractElement $crossSellingCategory)
+    /**
+     * Set crossSellingCategory - Base category for recommendations
+     * @param AbstractElement|null $crossSellingCategory
+     * @return $this
+     */
+public function setCrossSellingCategory(?\Pimcore\Model\Element\AbstractElement $crossSellingCategory): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */
 	$fd = $this->getClass()->getFieldDefinition("crossSellingCategory");
@@ -608,15 +582,14 @@ public function setCrossSellingCategory(?\Pimcore\Model\Element\AbstractElement 
 		$this->markFieldDirty("crossSellingCategory", true);
 	}
 	$this->crossSellingCategory = $fd->preSetData($this, $crossSellingCategory);
-
 	return $this;
 }
 
 /**
 * Get similarityFieldsInheritance - inherit SimilarityFields
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getSimilarityFieldsInheritance(): ?string
+public function getSimilarityFieldsInheritance(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("similarityFieldsInheritance");
@@ -645,19 +618,16 @@ public function getSimilarityFieldsInheritance(): ?string
 /**
 * Set similarityFieldsInheritance - inherit SimilarityFields
 * @param string|null $similarityFieldsInheritance
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setSimilarityFieldsInheritance(?string $similarityFieldsInheritance)
+public function setSimilarityFieldsInheritance(?string $similarityFieldsInheritance): static
 {
 	$this->similarityFieldsInheritance = $similarityFieldsInheritance;
 
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getSimilarityFields()
+    public function getSimilarityFields(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("similarityFields");
@@ -666,24 +636,20 @@ public function getSimilarityFields()
 		}
 	}
 
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
-	$fd = $this->getClass()->getFieldDefinition("similarityFields");
-	$data = $fd->preGetData($this);
-
+	$data = $this->getClass()->getFieldDefinition("similarityFields")->preGetData($this);
 	return $data;
 }
 
 /**
 * Set similarityFields - SimilarityFields
 * @param \Pimcore\Model\DataObject\Fieldcollection|null $similarityFields
-* @return \Pimcore\Model\DataObject\FilterDefinition
+* @return $this
 */
-public function setSimilarityFields(?\Pimcore\Model\DataObject\Fieldcollection $similarityFields)
+public function setSimilarityFields(?\Pimcore\Model\DataObject\Fieldcollection $similarityFields): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
 	$fd = $this->getClass()->getFieldDefinition("similarityFields");
 	$this->similarityFields = $fd->preSetData($this, $similarityFields);
-
 	return $this;
 }
 

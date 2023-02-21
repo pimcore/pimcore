@@ -22,14 +22,14 @@ use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Model\LazyLoading\AbstractLazyLoadingTest;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
 {
     private function reloadObject(int $id): array
     {
         //reload object from database
-        $databaseObject = AbstractObject::getById($id, true);
+        $databaseObject = AbstractObject::getById($id, ['force' => true]);
 
         //load latest version of object
         $latestVersion = $databaseObject->getLatestVersion();
@@ -55,7 +55,7 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->save();
 
         //create new unpublished version of object
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();
 
@@ -81,7 +81,7 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->save();
 
         //create new unpublished version of object
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $object->getFieldcollection();
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();
@@ -109,7 +109,7 @@ class ObjectAwareFieldsTest extends AbstractLazyLoadingTest
         $object->save();
 
         //create new unpublished version of object
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $object->getBricks();
         $object->setInput($object->getInput() + 1);
         $object->saveVersion();

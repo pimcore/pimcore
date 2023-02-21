@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,10 +30,5 @@ interface OptimizerInterface
      */
     public function optimizeImage(string $input, string $output): string;
 
-    /**
-     * @param string $mimeType
-     *
-     * @return bool
-     */
     public function supports(string $mimeType): bool;
 }

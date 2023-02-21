@@ -12,7 +12,7 @@ Pimcore provides 2 possible ways of working with custom entities namely Doctrine
 
 ## Option 1: Use Doctrine ORM
 Pimcore comes already with the Doctrine bundle, so you can easily create your own entities.
-Please check <https://symfony.com/doc/5.2/doctrine.html> for more details.
+Please check <https://symfony.com/doc/current/doctrine.html> for more details.
 
 ## Option 2: Working with Pimcore Data Access Objects (Dao)
 
@@ -415,7 +415,7 @@ class Dao extends Listing\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    protected function getTableName()
+    protected function getTableName(): string
     {
         return $this->tableName;
     }
@@ -446,8 +446,8 @@ class Dao extends Listing\Dao\AbstractDao
         $list = $this->loadIdList();
 
         $objects = array();
-        foreach ($list as $o_id) {
-            if ($object = Model\Vote::getById($o_id)) {
+        foreach ($list as $id) {
+            if ($object = Model\Vote::getById($id)) {
                 $objects[] = $object;
             }
         }

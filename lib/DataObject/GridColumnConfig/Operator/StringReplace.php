@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,30 +16,20 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
 final class StringReplace extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $search;
+    private string $search;
 
-    /**
-     * @var string
-     */
-    private $replace;
+    private string $replace;
 
-    /**
-     * @var bool
-     */
-    private $insensitive;
+    private bool $insensitive;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -50,18 +41,18 @@ final class StringReplace extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
         $result->value = null;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
-        if ($childs) {
-            $newChildsResult = [];
+        if ($children) {
+            $newChildrenResult = [];
 
-            foreach ($childs as $c) {
+            foreach ($children as $c) {
                 $childResult = $c->getLabeledValue($element);
 
                 $childValues = $childResult->value;
@@ -86,21 +77,16 @@ final class StringReplace extends AbstractOperator
                     }
                 }
 
-                $newChildsResult[] = $newValue;
+                $newChildrenResult[] = $newValue;
             }
 
-            $result->value = $newChildsResult;
+            $result->value = $newChildrenResult;
         }
 
         return $result;
     }
 
-    /**
-     * @param string $value
-     *
-     * @return string
-     */
-    public function replace($value)
+    public function replace(string $value): string
     {
         if ($this->getInsensitive()) {
             return str_ireplace($this->getSearch(), $this->getReplace(), $value);
@@ -109,50 +95,32 @@ final class StringReplace extends AbstractOperator
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getSearch()
+    public function getSearch(): string
     {
         return $this->search;
     }
 
-    /**
-     * @param string $search
-     */
-    public function setSearch($search)
+    public function setSearch(string $search): void
     {
         $this->search = $search;
     }
 
-    /**
-     * @return string
-     */
-    public function getReplace()
+    public function getReplace(): string
     {
         return $this->replace;
     }
 
-    /**
-     * @param string $replace
-     */
-    public function setReplace($replace)
+    public function setReplace(string $replace): void
     {
         $this->replace = $replace;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInsensitive()
+    public function getInsensitive(): bool
     {
         return $this->insensitive;
     }
 
-    /**
-     * @param bool $insensitive
-     */
-    public function setInsensitive($insensitive)
+    public function setInsensitive(bool $insensitive): void
     {
         $this->insensitive = $insensitive;
     }

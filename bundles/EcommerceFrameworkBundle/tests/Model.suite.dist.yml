@@ -1,0 +1,7 @@
+actor: ModelTester
+modules:
+  enabled:
+    - \Pimcore\Tests\Support\Helper\Pimcore:
+        connect_db: true
+    - \Pimcore\Tests\Support\Helper\ClassManager
+    - \Pimcore\Bundle\EcommerceFrameworkBundle\Tests\Support\Helper\EcommerceModel

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,18 +21,9 @@ namespace Pimcore\Helper;
  */
 final class ImageChart
 {
-    /**
-     * @var string
-     */
-    public static $serviceUrl = 'https://chart.googleapis.com/chart';
+    public static string $serviceUrl = 'https://chart.googleapis.com/chart';
 
-    /**
-     * @param array $data
-     * @param string $parameters
-     *
-     * @return string
-     */
-    public static function lineSmall($data, $parameters = '')
+    public static function lineSmall(array $data, string $parameters = ''): string
     {
         return self::$serviceUrl . '?cht=lc&chs=150x40&chd=t:' . implode(',', $data) . '&chds=' . min($data) . ',' . max($data) . '&' . $parameters;
     }

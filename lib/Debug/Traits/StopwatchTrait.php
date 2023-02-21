@@ -33,9 +33,6 @@ use Symfony\Component\Stopwatch\Stopwatch;
  */
 trait StopwatchTrait
 {
-    /**
-     * @var Stopwatch|null
-     */
     private ?Stopwatch $stopwatch = null;
 
     public function setStopwatch(Stopwatch $stopwatch = null): void

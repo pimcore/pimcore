@@ -8,10 +8,10 @@ but [Symfony-style locations](https://symfony.com/doc/4.4/best_practices.html#us
 Pimcore uses the Twig templating engine, you can use Twig exactly as documented in:
 
 * [Twig Documentation](https://twig.symfony.com/doc/3.x/)
-* [Symfony Templating Documentation](https://symfony.com/doc/5.2/templating.html)
+* [Symfony Templating Documentation](https://symfony.com/doc/current/templating.html)
 * Check also our [Demo](https://github.com/pimcore/demo) as starting point
 
-Just use annotations or render the view directly to use Twig:
+Just use attributes or render the view directly to use Twig:
 
 ```php
 <?php
@@ -19,16 +19,15 @@ Just use annotations or render the view directly to use Twig:
 namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 
 class MyController extends FrontendController
 {
     /**
-     * The annotation will automatically resolve the view to MyController/myAnnotatedAction.html.twig
-     * 
-     * @Template() 
+     * The attribute will resolve the defined view
      */
-    public function myAnnotatedAction()
+    #[Template('content/default.html.twig', vars: ['param1' => 'value1'])]
+    public function attributeAction()
     {   
     }
     
@@ -48,7 +47,7 @@ template will be used for auto-rendering when the controller does not return a r
 To make Pimcore's functions available in Twig templates, Pimcore implements a set of extensions. Please see our [Demo](https://github.com/pimcore/demo)
 as first reference how to use Pimcore with Twig. 
 
-You can take a look at the [implementations](https://github.com/pimcore/pimcore/tree/10.5/lib/Twig)
+You can take a look at the [implementations](https://github.com/pimcore/pimcore/tree/11.x/pimcore/lib/Pimcore/Twig)
 for further details. Note that all of Pimcore's Twig extensions are prefixed with `pimcore` to avoid naming collisions.
 
 ### Pimcore Editables
@@ -100,7 +99,7 @@ or
 
 For documents, Pimcore also provides a function to handle hardlinks through the `pimcore_document_wrap_hardlink` method.
 
-See [PimcoreObjectExtension](https://github.com/pimcore/pimcore/blob/10.5/lib/Twig/Extension/PimcoreObjectExtension.php)
+See [PimcoreObjectExtension](https://github.com/pimcore/pimcore/blob/11.x/lib/Twig/Extension/PimcoreObjectExtension.php)
 for details.
 
 

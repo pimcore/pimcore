@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,10 +37,7 @@ class Newsletter
 
     public const SENDING_MODE_SINGLE = 'single';
 
-    /**
-     * @var DataObject\ClassDefinition
-     */
-    protected $class;
+    protected DataObject\ClassDefinition $class;
 
     /**
      * @param Document\Newsletter $newsletterDocument
@@ -53,7 +51,7 @@ class Newsletter
     public static function prepareMail(
         Document\Newsletter $newsletterDocument,
         SendingParamContainer $sendingContainer = null,
-        $hostUrl = null
+        string $hostUrl = null
     ): Mail {
         $mail = new Mail();
         $mail->setIgnoreDebugMode(true);
@@ -181,12 +179,7 @@ class Newsletter
         }
     }
 
-    /**
-     * @param string $email
-     *
-     * @return string
-     */
-    protected static function obfuscateEmail($email)
+    protected static function obfuscateEmail(string $email): string
     {
         $email = substr_replace($email, '.xxx', strrpos($email, '.'));
 
@@ -198,7 +191,7 @@ class Newsletter
      *
      * @throws Exception
      */
-    public function __construct($classId)
+    public function __construct(string $classId)
     {
         $class = null;
         if (is_numeric($classId)) {
@@ -216,20 +209,12 @@ class Newsletter
         }
     }
 
-    /**
-     * @return string
-     */
     protected function getClassName(): string
     {
         return '\\Pimcore\\Model\\DataObject\\' . ucfirst($this->getClass()->getName());
     }
 
-    /**
-     * @param array $params
-     *
-     * @return bool
-     */
-    public function checkParams($params): bool
+    public function checkParams(array $params): bool
     {
         if (!array_key_exists('email', $params)) {
             return false;
@@ -251,7 +236,7 @@ class Newsletter
      *
      * @throws Exception
      */
-    public function subscribe($params)
+    public function subscribe(array $params): DataObject\Concrete
     {
         $onlyCreateVersion = false;
         $className = $this->getClassName();
@@ -318,7 +303,7 @@ class Newsletter
      *
      * @throws Exception
      */
-    public function sendConfirmationMail($object, $mailDocument, $params = []): void
+    public function sendConfirmationMail(DataObject\Concrete $object, Document $mailDocument, array $params = []): void
     {
         $defaultParameters = [
             'gender' => null,
@@ -354,12 +339,7 @@ class Newsletter
         $mail->send();
     }
 
-    /**
-     * @param string $token
-     *
-     * @return DataObject\Concrete|null
-     */
-    public function getObjectByToken($token): ?DataObject\Concrete
+    public function getObjectByToken(string $token): ?DataObject\Concrete
     {
         $originalToken = $token;
         $token = str_replace('~', '=', $token); // base64 can contain = which isn't safe in URL's
@@ -386,7 +366,7 @@ class Newsletter
      *
      * @throws Exception
      */
-    public function confirm($token): bool
+    public function confirm(string $token): bool
     {
         $object = $this->getObjectByToken($token);
         if ($object) {
@@ -415,7 +395,7 @@ class Newsletter
      *
      * @throws Exception
      */
-    public function unsubscribeByToken($token): bool
+    public function unsubscribeByToken(string $token): bool
     {
         $object = $this->getObjectByToken($token);
 
@@ -433,7 +413,7 @@ class Newsletter
      *
      * @throws Exception
      */
-    public function unsubscribeByEmail($email): bool
+    public function unsubscribeByEmail(string $email): bool
     {
         $className = $this->getClassName();
         $objects = $className::getByEmail($email);
@@ -467,11 +447,7 @@ class Newsletter
         return true;
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param string $title
-     */
-    public function addNoteOnObject($object, $title): void
+    public function addNoteOnObject(DataObject\Concrete $object, string $title): void
     {
         $note = new Model\Element\Note();
         $note->setElement($object);
@@ -496,7 +472,7 @@ class Newsletter
      *
      * @return bool
      */
-    public function isEmailExists($params): bool
+    public function isEmailExists(array $params): bool
     {
         $className = $this->getClassName();
         $existingObject = $className::getByEmail($params['email'], 1);
@@ -507,17 +483,11 @@ class Newsletter
         return false;
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
-    public function setClass($class): void
+    public function setClass(DataObject\ClassDefinition $class): void
     {
         $this->class = $class;
     }
 
-    /**
-     * @return DataObject\ClassDefinition
-     */
     public function getClass(): DataObject\ClassDefinition
     {
         return $this->class;
@@ -530,7 +500,7 @@ class Newsletter
      *
      * @return bool
      */
-    public static function to_domain_exists($email): bool
+    public static function to_domain_exists(string $email): bool
     {
         [, $domain] = explode('@', $email);
 

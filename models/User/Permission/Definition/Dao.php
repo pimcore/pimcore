@@ -26,7 +26,7 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    public function save()
+    public function save(): void
     {
         try {
             Helper::insertOrUpdate($this->db, 'users_permission_definitions', [

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,15 +18,14 @@ namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Model\Asset;
-use Pimcore\Tests\Test\TestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\Request;
 
 class AssetThumbnailCacheTest extends TestCase
 {
-    /** @var Asset */
-    protected $testAsset;
+    protected Asset $testAsset;
 
     protected string $thumbnailName;
 
@@ -49,12 +49,12 @@ class AssetThumbnailCacheTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return true;
     }
 
-    public function testThumbnailCache()
+    public function testThumbnailCache(): void
     {
         $asset = $this->testAsset;
         $thumbnailName = $this->thumbnailName;

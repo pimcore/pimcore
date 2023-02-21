@@ -64,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         $this->update();
     }
@@ -72,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::TABLE_NAME_RELATIONS, [
             'colId' => $this->model->getColId(),
@@ -83,7 +83,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         $type = $this->model->getObjectVars();
         $validTableColumns = $this->getValidTableColumns(self::TABLE_NAME_RELATIONS);

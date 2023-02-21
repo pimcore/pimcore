@@ -51,6 +51,8 @@ pimcore_admin:
 Pimcore ships with a reasonable default configuration. By using it, all data object classes are considered in the search, 
 export concludes all attributes directly attached to the data object (no relations) and allows deletion of the data objects 
 directly in the result list. 
+
+> Please note: The GDPR search will be very limited if haven`t installed the simpleBackendSearchBundle!
  
  
 ## Extending GDPR Data Extractor with Custom Data Sources
@@ -60,7 +62,7 @@ exports can be attached or external data sources can be included.
 To do so, following steps are necessary: 
 
 1) Create a custom implementation of 
-[`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/pimcore/blob/10.5/bundles/AdminBundle/GDPR/DataProvider/DataProviderInterface.php#L20). 
+[`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/src/GDPR/DataProvider/DataProviderInterface.php#L20). 
 The following functions need to be implemented:
 
     * `getSortPriority()` - Returns sort priority for the tabs - higher is sorted first.

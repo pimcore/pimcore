@@ -1,0 +1,25 @@
+services:
+    _defaults:
+        public: true
+        autowire: true
+        autoconfigure: true
+
+    #
+    # INSTALLER
+    #
+
+    pimcore.ecommerceframework.installer: '@Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer'
+    Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer:
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreEcommerceFrameworkBundle')"
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\EcommerceFrameworkBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
+

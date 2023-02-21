@@ -31,7 +31,7 @@ class ModificationDateProcessor implements ProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context)
+    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context): Url|UrlConcrete|null
     {
         if (!$url instanceof UrlConcrete) {
             return $url;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,20 +26,12 @@ class StaticPageResolver extends AbstractRequestResolver
 {
     const ATTRIBUTE_PIMCORE_STATIC_PAGE = '_pimcore_static_page';
 
-    /**
-     * @param Request $request
-     *
-     * @return bool
-     */
-    public function hasStaticPageContext($request)
+    public function hasStaticPageContext(Request $request): bool
     {
         return $request->attributes->has(self::ATTRIBUTE_PIMCORE_STATIC_PAGE);
     }
 
-    /**
-     * @param Request $request
-     */
-    public function setStaticPageContext($request)
+    public function setStaticPageContext(Request $request): void
     {
         $request->attributes->set(self::ATTRIBUTE_PIMCORE_STATIC_PAGE, true);
     }

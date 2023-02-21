@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,25 +25,13 @@ class SendConfirmationMailEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var CommitOrderProcessorInterface
-     */
-    protected $commitOrderProcessor;
+    protected CommitOrderProcessorInterface $commitOrderProcessor;
 
-    /**
-     * @var AbstractOrder
-     */
-    protected $order;
+    protected AbstractOrder $order;
 
-    /**
-     * @var string
-     */
-    protected $confirmationMailConfig;
+    protected string $confirmationMailConfig;
 
-    /**
-     * @var bool
-     */
-    protected $skipDefaultBehaviour = false;
+    protected bool $skipDefaultBehaviour = false;
 
     /**
      * SendConfirmationMailEvent constructor.
@@ -58,65 +47,41 @@ class SendConfirmationMailEvent extends Event
         $this->confirmationMailConfig = $confirmationMailConfig;
     }
 
-    /**
-     * @return CommitOrderProcessorInterface
-     */
     public function getCommitOrderProcessor(): CommitOrderProcessorInterface
     {
         return $this->commitOrderProcessor;
     }
 
-    /**
-     * @param CommitOrderProcessorInterface $commitOrderProcessor
-     */
     public function setCommitOrderProcessor(CommitOrderProcessorInterface $commitOrderProcessor): void
     {
         $this->commitOrderProcessor = $commitOrderProcessor;
     }
 
-    /**
-     * @return AbstractOrder
-     */
     public function getOrder(): AbstractOrder
     {
         return $this->order;
     }
 
-    /**
-     * @param AbstractOrder $order
-     */
     public function setOrder(AbstractOrder $order): void
     {
         $this->order = $order;
     }
 
-    /**
-     * @return string
-     */
     public function getConfirmationMailConfig(): string
     {
         return $this->confirmationMailConfig;
     }
 
-    /**
-     * @param string $confirmationMailConfig
-     */
     public function setConfirmationMailConfig(string $confirmationMailConfig): void
     {
         $this->confirmationMailConfig = $confirmationMailConfig;
     }
 
-    /**
-     * @return bool
-     */
     public function doSkipDefaultBehaviour(): bool
     {
         return $this->skipDefaultBehaviour;
     }
 
-    /**
-     * @param bool $skipDefaultBehaviour
-     */
     public function setSkipDefaultBehaviour(bool $skipDefaultBehaviour): void
     {
         $this->skipDefaultBehaviour = $skipDefaultBehaviour;

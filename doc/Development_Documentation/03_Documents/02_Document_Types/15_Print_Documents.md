@@ -4,10 +4,6 @@ Print documents are the way to create print-ready PDFs directly within Pimcore.
 They are based on the normal Pimcore documents and therefore support everything as pages do - starting from MVC pattern 
 and template creation to document composing within Pimcore backend with areas, drag&drop etc. 
 
-By default, web-to-print documents are disabled. To enable them, you need to activate them in the web-to-print settings:
-
-![Web2Print settings](../../img/printdocuments_settings.png)
-
 Web to print flow implemented in Pimcore:
 
 ![Web2Print Flow](../../img/printdocuments_flow.png)
@@ -48,7 +44,7 @@ Pimcore ships with default implementations (`Web2PrintController`, `containerAct
 
 Both web-to-print documents have an additional tab that is the place for rendering documents to print-ready PDFs.
 When rendering, the print is first rendererd to HTML, then rendered as a Twig template (yes, you can use Twig expressions in the document) and then rendered to an PDF. PDF rendering itself is done by an
-third party renderer. Currently we support [wkhtmltopdf](http://wkhtmltopdf.org/) (deprecated), [pdfreactor](http://www.pdfreactor.com/) 
+third party renderer. Currently we support [pdfreactor](http://www.pdfreactor.com/) 
 and [Headless Chrome](https://developers.google.com/web/tools/puppeteer). 
 Please see their documentation for details concerning template possibilities.
 
@@ -78,29 +74,14 @@ security policies for tags, filters & functions. Please use following configurat
 They can be activated by the printermarks rendering setting. Technically they are implemented by an additional CSS-file which needs to be included.
 For Details, check links below:
 
-* [view-script](https://github.com/pimcore/demo/blob/10.2/templates/layouts/print_catalog.html.twig#L18-L20)
-* [css-file](https://github.com/pimcore/pimcore/blob/10.5/bundles/AdminBundle/Resources/public/css/print/print-printermarks.css)
+* [view-script](https://github.com/pimcore/demo/blob/11.x/templates/layouts/print_catalog.html.twig#L18-L20)
+* [css-file](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/public/css/print/print-printermarks.css)
 
 ## Settings
 In the web-to-print settings, the used PDF renderer is specified. Depending on the renderer, there are additional settings to be made. 
 Additional explanation can be found directly in the settings form. 
 These settings have to be set properly before starting PDF rendering.
 
-## Settings for WkHtmlToPdf (Deprecated)
-
-In the binary field enter the path to the wkhtmltopdf binary. For example: "/usr/bin/wkhtmltopdf". If you get an error like "QXcbConnection: 
-Could not connect to display" you will need to install xvfb. 
-[More about this error](https://unix.stackexchange.com/questions/192642/wkhtmltopdf-qxcbconnection-could-not-connect-to-display)
-
-The command that you enter in the binary field can then be something like this:
-```
-xvfb-run -a -s "-screen 0 640x480x16" /usr/bin/wkhtmltopdf
-```
-In the host field, enter the full URL, like you would in a web browser, but without the leading `http://` or `https://`. 
-For example: `example.mydevdomain.local`
-
-To test and debug the PDF rendering, open a Print document, go to the tab "Generate & Preview PDF", click the "Generate PDF" 
-button and observe the message field for any errors.
 
 ## Settings for Headless Chrome
 

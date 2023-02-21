@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,75 +20,54 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 
 class ReverseObjectRelation extends ManyToManyObjectRelation
 {
     /**
-     * Static type of this element
-     *
      * @internal
      *
      * @var string
      */
-    public $fieldtype = 'reverseObjectRelation';
-
-    /**
-     * @internal
-     *
-     * @var string
-     */
-    public $ownerClassName;
+    public string $ownerClassName;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public $ownerClassId;
+    public ?string $ownerClassId = null;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $ownerFieldName;
+    public string $ownerFieldName;
 
     /**
      * ReverseObjectRelation must be lazy loading!
      *
      * @internal
-     *
-     * @var bool
      */
-    public $lazyLoading = true;
+    public bool $lazyLoading = true;
 
-    /**
-     * @param array $classes
-     *
-     * @return $this
-     */
-    public function setClasses($classes)
+    public function setClasses(array $classes): static
     {
         //dummy, classes are set from owner classId
         return $this;
     }
 
-    /**
-     * @param string $ownerClassName
-     *
-     * @return $this
-     */
-    public function setOwnerClassName($ownerClassName)
+    public function setOwnerClassName(string $ownerClassName): static
     {
         $this->ownerClassName = $ownerClassName;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getOwnerClassName()
+    public function getOwnerClassName(): ?string
     {
         //fallback for legacy data
         if (empty($this->ownerClassName) && $this->ownerClassId) {
@@ -105,10 +85,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this->ownerClassName;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getOwnerClassId()
+    public function getOwnerClassId(): ?string
     {
         if (empty($this->ownerClassId)) {
             try {
@@ -127,20 +104,12 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this->ownerClassId;
     }
 
-    /**
-     * @return string
-     */
-    public function getOwnerFieldName()
+    public function getOwnerFieldName(): string
     {
         return $this->ownerFieldName;
     }
 
-    /**
-     * @param  string $fieldName
-     *
-     * @return $this
-     */
-    public function setOwnerFieldName($fieldName)
+    public function setOwnerFieldName(string $fieldName): static
     {
         $this->ownerFieldName = $fieldName;
 
@@ -150,7 +119,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * {@inheritdoc}
      */
-    protected function allowObjectRelation($object)
+    protected function allowObjectRelation($object): bool
     {
         //only relations of owner type are allowed
         $ownerClass = DataObject\ClassDefinition::getByName($this->getOwnerClassName());
@@ -167,7 +136,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         //TODO
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
@@ -184,13 +153,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         }
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function load($object, $params = [])
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array
     {
         if ($this->getOwnerClassId() === null) {
             return [];
@@ -214,20 +177,12 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $data['data'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheTags($data, array $tags = [])
+    public function getCacheTags(mixed $data, array $tags = []): array
     {
         return $tags;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
-    public function resolveDependencies($data)
+    public function resolveDependencies(mixed $data): array
     {
         return [];
     }
@@ -243,7 +198,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * {@inheritdoc}
      */
-    public function preGetData($container, $params = [])
+    public function preGetData(mixed $container, array $params = []): array
     {
         return $this->load($container);
     }
@@ -251,11 +206,13 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     /**
      * @return false
      */
-    public function supportsInheritance()
+    public function supportsInheritance(): bool
     {
         return false;
     }
-}
 
-//TODO remove in Pimcore 11
-class_alias(ReverseObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation');
+    public function getFieldType(): string
+    {
+        return 'reverseObjectRelation';
+    }
+}

@@ -11,7 +11,7 @@ To create a new document, you need to specify two mandatory attributes:
  
 You can set also every other value available in documents structure (settings, properties, children etc.).
 
-> Type of the document (page, folder, link, email, snippet etc.) The complete list with available core types you can find here: `\Pimcore\Model\Document::$types`
+> Type of the document (page, folder, link, email, snippet etc.) The complete list can be obtained using: `\Pimcore\Model\Document::getTypes()`
 > Every type has it's own model, for example: a link document could be created by `new \Pimcore\Model\Document\Link`.
 
 The example below, shows how to create simple page document via the PHP API. 

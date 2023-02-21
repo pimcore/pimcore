@@ -1,7 +1,7 @@
 # Preparing Pimcore for Version 11
 
 ## Preparatory Work
-- Upgrade to version 10.5.x, if you are using a lower version.
+- Upgrade to version 10.6.x, if you are using a lower version.
 - [Security] Enable New Security Authenticator and adapt your security.yaml as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml) :
     ```
     security:
@@ -30,7 +30,7 @@
         },
     
         preSaveObject: function (object, type) {
-            var userAnswer = confirm("Are you sure you want to save " + object.data.general.o_className + "?");
+            var userAnswer = confirm("Are you sure you want to save " + object.data.general.className + "?");
             if (!userAnswer) {
                 throw new pimcore.error.ActionCancelledException('Cancelled by user');
             }
@@ -42,7 +42,7 @@
     
     ```javascript
     document.addEventListener(pimcore.events.preSaveObject, (e) => {
-        let userAnswer = confirm(`Are you sure you want to save ${e.detail.object.data.general.o_className}?`);
+        let userAnswer = confirm(`Are you sure you want to save ${e.detail.object.data.general.className}?`);
         if (!userAnswer) {
            e.preventDefault();
            e.stopPropagation();
@@ -75,3 +75,11 @@
   - Use `Pimcore\Db\Helper::queryIgnoreError()` instead of `queryIgnoreError()`
   - Use `Pimcore\Db\Helper::selectAndDeleteWhere()` instead of `selectAndDeleteWhere()`
   - Use `Pimcore\Db\Helper::escapeLike()` instead of `escapeLike()`
+
+- [Ecommerce] Switch to ElasticSearch8 implementations in case you are using elasticsearch indices. 
+
+- [Symfony]
+  - Require `symfony/dotenv` package in your projct to keep using `.env` files and stop using `PIMCORE_SKIP_DOTENV_FILE` env var as by default it is skipped. You  still could use environment specific file like `.env.test` or `.env.prod` for environment specific environment variables. 
+
+- [Deprecations] Constant `PIMCORE_PHP_ERROR_LOG` is deprecated and will be removed in Pimcore 11
+

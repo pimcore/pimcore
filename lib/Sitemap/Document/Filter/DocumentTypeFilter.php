@@ -24,19 +24,13 @@ use Pimcore\Sitemap\Element\GeneratorContextInterface;
 
 class DocumentTypeFilter implements FilterInterface
 {
-    /**
-     * @var array
-     */
-    private $documentTypes = [
+    private array $documentTypes = [
         'page',
         'link',
         'hardlink',
     ];
 
-    /**
-     * @var array
-     */
-    private $containerTypes = [
+    private array $containerTypes = [
         'page',
         'folder',
         'link',

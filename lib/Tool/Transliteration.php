@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ class Transliteration
      *
      * @return string
      */
-    public static function toASCII($value, $language = null)
+    public static function toASCII(string $value, string $language = null): string
     {
         if($language !== null && in_array($language.'-ASCII', transliterator_list_ids())) {
             return transliterator_transliterate($language.'-ASCII; [^\u001F-\u007f] remove', $value);

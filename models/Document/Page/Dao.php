@@ -16,25 +16,22 @@
 namespace Pimcore\Model\Document\Page;
 
 use Pimcore\Model;
-use Pimcore\Model\Document\Targeting\TargetingDocumentDaoInterface;
 
 /**
  * @internal
  *
  * @property \Pimcore\Model\Document\Page $model
  */
-class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDaoInterface
+class Dao extends Model\Document\PageSnippet\Dao
 {
-    use Model\Document\Targeting\TargetingDocumentDaoTrait;
-
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
-     * @param int $id
+     * @param int|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id = null)
+    public function getById(int $id = null): void
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -46,7 +43,9 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
                 WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
-            $data['metaData'] = @unserialize($data['metaData']);
+            if (is_string($data['metaData'])) {
+                $data['metaData'] = @unserialize($data['metaData']);
+            }
             if (!is_array($data['metaData'])) {
                 $data['metaData'] = [];
             }
@@ -56,7 +55,7 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
         }
     }
 
-    public function create()
+    public function create(): void
     {
         parent::create();
 
@@ -68,7 +67,7 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleteAllProperties();
 

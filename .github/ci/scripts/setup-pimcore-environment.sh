@@ -13,6 +13,6 @@ cp -r .github/ci/files/public/. public
 cp .github/ci/files/.env ./
 
 if [ ${PIMCORE_STORAGE:-local} = "minio" ]; then
-    cp .github/ci/files/minio-flysystem.yml config/local/
+    cp .github/ci/files/minio-flysystem.yaml config/local/
     composer require -n --no-update league/flysystem-aws-s3-v3
 fi

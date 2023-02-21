@@ -1,0 +1,6 @@
+_pimcore_bundle_system_info_backend:
+    resource: "../../src/Controller/"
+    type:     annotation
+    prefix:   /admin/bundle/system-info
+    options:
+        expose: true

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,23 +25,16 @@ class GlobalAction implements NotesAwareInterface
 {
     use NotesAwareTrait;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
     /**
      * @var array
      */
     private $options;
 
-    /**
-     * @var ExpressionService
-     */
-    private $expressionService;
+    private ExpressionService $expressionService;
 
-    /** @var string */
-    private $workflowName;
+    private string $workflowName;
 
     /**
      * @param string $name
@@ -61,17 +55,11 @@ class GlobalAction implements NotesAwareInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getLabel(): string
     {
         return $this->options['label'] ?: $this->getName();
@@ -85,34 +73,22 @@ class GlobalAction implements NotesAwareInterface
     /**
      * @return string|int|false
      */
-    public function getObjectLayout()
+    public function getObjectLayout(): bool|int|string
     {
         return $this->options['objectLayout'] ?: false;
     }
 
-    /**
-     * @return array
-     */
     public function getTos(): array
     {
         return $this->options['to'] ?? [];
     }
 
-    /**
-     * @return null|string
-     */
     public function getGuard(): ?string
     {
         return $this->options['guard'] ?? null;
     }
 
-    /**
-     * @param Workflow $workflow
-     * @param object $subject
-     *
-     * @return bool
-     */
-    public function isGuardValid(Workflow $workflow, $subject): bool
+    public function isGuardValid(Workflow $workflow, object $subject): bool
     {
         if (empty($this->getGuard())) {
             return true;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,12 +33,12 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      *
      * @var array|null
      */
-    protected $data;
+    protected ?array $data = null;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'link';
     }
@@ -45,7 +46,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         // update path if internal link
         $this->updatePathFromInternal(true);
@@ -56,7 +57,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?array
     {
         // update path if internal link
         $this->updatePathFromInternal(true, true);
@@ -67,7 +68,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    protected function getEditmodeElementClasses($options = []): array
+    protected function getEditmodeElementClasses(array $options = []): array
     {
         // we don't want the class attribute being applied to the editable container element (<div>, only to the <a> tag inside
         // the default behavior of the parent method is to include the "class" attribute
@@ -185,10 +186,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity()
+    public function checkValidity(): bool
     {
         $sane = true;
         if (is_array($this->data) && isset($this->data['internal']) && $this->data['internal']) {
@@ -228,10 +226,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $sane;
     }
 
-    /**
-     * @return string
-     */
-    public function getHref()
+    public function getHref(): string
     {
         $this->updatePathFromInternal();
 
@@ -250,11 +245,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $url;
     }
 
-    /**
-     * @param bool $realPath
-     * @param bool $editmode
-     */
-    private function updatePathFromInternal($realPath = false, $editmode = false)
+    private function updatePathFromInternal(bool $realPath = false, bool $editmode = false): void
     {
         $method = 'getFullPath';
         if ($realPath) {
@@ -306,90 +297,57 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getText()
+    public function getText(): string
     {
         return $this->data['text'] ?? '';
     }
 
-    /**
-     * @param string $text
-     */
-    public function setText($text)
+    public function setText(string $text): void
     {
         $this->data['text'] = $text;
     }
 
-    /**
-     * @return string
-     */
-    public function getTarget()
+    public function getTarget(): string
     {
         return $this->data['target'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getParameters()
+    public function getParameters(): string
     {
         return $this->data['parameters'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getAnchor()
+    public function getAnchor(): string
     {
         return $this->data['anchor'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->data['title'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getRel()
+    public function getRel(): string
     {
         return $this->data['rel'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getTabindex()
+    public function getTabindex(): string
     {
         return $this->data['tabindex'] ?? '';
     }
 
-    /**
-     * @return string
-     */
-    public function getAccesskey()
+    public function getAccesskey(): string
     {
         return $this->data['accesskey'] ?? '';
     }
 
-    /**
-     * @return mixed
-     */
-    public function getClass()
+    public function getClass(): mixed
     {
         return $this->data['class'] ?? '';
     }
 
-    /**
-     * @return mixed
-     */
-    public function getAttributes()
+    public function getAttributes(): mixed
     {
         return $this->data['attributes'] ?? '';
     }
@@ -397,7 +355,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
         if (!is_array($this->data)) {
@@ -410,7 +368,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         if (!is_array($data)) {
             $data = [];
@@ -460,10 +418,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return strlen($this->getHref()) < 1;
     }
@@ -471,7 +426,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $dependencies = [];
         $isInternal = $this->data['internal'] ?? false;
@@ -506,7 +461,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         if (isset($this->data['internal']) && $this->data['internal']) {
             $type = $this->data['internalType'];

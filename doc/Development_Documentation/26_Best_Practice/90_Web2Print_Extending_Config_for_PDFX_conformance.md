@@ -1,4 +1,4 @@
-# Web2Print - Extending PDF Creation Config for PDF/X Conformance
+# PimcoreWebToPrintBundle - Extending PDF Creation Config for PDF/X Conformance
 
 Sometimes it is necessary to add additional configuration options to the PDF processing configuration in the Pimcore backend UI - 
 for example when creating PDF/X conform PDFs with PDF Reactor.
@@ -11,11 +11,11 @@ creating the file.
 **Solution**
 
 To do so, Pimcore provides two events:
-- [`PRINT_MODIFY_PROCESSING_OPTIONS`](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/DocumentEvents.php#L126):
+- [`PRINT_MODIFY_PROCESSING_OPTIONS`](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DocumentEvents.php#L126):
   Event to modify the processing options displayed in the Pimcore backend UI. For example add additional options like `AppendLog` and `My Additional ...` 
   in the screenshot above. 
   
-- [`PRINT_MODIFY_PROCESSING_CONFIG`](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/DocumentEvents.php#L148)
+- [`PRINT_MODIFY_PROCESSING_CONFIG`](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DocumentEvents.php#L148)
   Event to modify the configuration for the PDF processor when the PDF gets created. For example read values for additional
   options and apply these values to the configuration of the PDF processor accordingly or do some other stuff. 
   
@@ -32,19 +32,20 @@ Services in Container:
 ```
 
 Implementation of Listener
+
 ```php
 <?php 
 namespace App\EventListener;
 
 class PDFConfigListener
 {
-    public function modifyProcessingOptions(\Pimcore\Event\Model\PrintConfigEvent $event) {
+    public function modifyProcessingOptions(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event) {
 
         $arguments = $event->getArguments();
         $options = $arguments['options'];
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
+        if($processor instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
             
             //add option to append log into generated PDF (pdf reactor functionality) 
             $options[] = ['name' => 'appendLog', 'type' => 'bool', 'default' => false];
@@ -54,12 +55,12 @@ class PDFConfigListener
         $event->setArguments($arguments);
     }
 
-    public function modifyConfig(\Pimcore\Event\Model\PrintConfigEvent $event) {
+    public function modifyConfig(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event) {
 
         $arguments = $event->getArguments();
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
+        if($processor instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
             
             //check if option for appending log to PDF is set in configuration and apply it to reactor config accordingly  
             if($arguments['config']->appendLog == 'true'){
@@ -79,22 +80,23 @@ class PDFConfigListener
 Services in Container see above. 
 
 Implementation of Listener
+
 ```php
 <?php 
 namespace App\EventListener;
 
 class PDFConfigListener
 {
-    public function modifyProcessingOptions(\Pimcore\Event\Model\PrintConfigEvent $event) {
+    public function modifyProcessingOptions(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event) {
         //optionally add some configuration options for user interface here - e.g. some select options for user
     }
 
-    public function modifyConfig(\Pimcore\Event\Model\PrintConfigEvent $event){
+    public function modifyConfig(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event){
 
         $arguments = $event->getArguments();
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
+        if($processor instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
             
             //Set pdf reactor config for generating PDF/X conform PDF  
             $arguments['reactorConfig']['conformance'] = \Conformance::PDFX4;

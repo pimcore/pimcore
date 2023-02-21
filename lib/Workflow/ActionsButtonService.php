@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,23 +22,14 @@ use Symfony\Component\Workflow\Workflow;
 
 class ActionsButtonService
 {
-    /**
-     * @var Manager
-     */
-    private $workflowManager;
+    private Manager $workflowManager;
 
     public function __construct(Manager $workflowManager)
     {
         $this->workflowManager = $workflowManager;
     }
 
-    /**
-     * @param Workflow $workflow
-     * @param ElementInterface $element
-     *
-     * @return array
-     */
-    public function getAllowedTransitions(Workflow $workflow, ElementInterface $element)
+    public function getAllowedTransitions(Workflow $workflow, ElementInterface $element): array
     {
         $allowedTransitions = [];
 
@@ -55,19 +47,14 @@ class ActionsButtonService
                 'iconCls' => $transition->getIconClass(),
                 'objectLayout' => $transition->getObjectLayout(),
                 'notes' => $notes,
+                'unsavedChangesBehaviour' => $transition->getOptions()['unsavedChangesBehaviour'],
             ];
         }
 
         return $allowedTransitions;
     }
 
-    /**
-     * @param Workflow $workflow
-     * @param ElementInterface $element
-     *
-     * @return array
-     */
-    public function getGlobalActions(Workflow $workflow, ElementInterface $element)
+    public function getGlobalActions(Workflow $workflow, ElementInterface $element): array
     {
         $globalActions = [];
         foreach ($this->workflowManager->getGlobalActions($workflow->getName()) as $globalAction) {
@@ -89,13 +76,7 @@ class ActionsButtonService
         return $globalActions;
     }
 
-    /**
-     * @param AbstractObject $object
-     * @param array $notes
-     *
-     * @return array
-     */
-    private function enrichNotes(AbstractObject $object, array $notes)
+    private function enrichNotes(AbstractObject $object, array $notes): array
     {
         if (!empty($notes['commentGetterFn'])) {
             $commentGetterFn = $notes['commentGetterFn'];

@@ -6,7 +6,7 @@ The installation of some of the tools is covered in this guide and should work a
 For other Linux distributions you might have to adopt some commands to your platform-specific environment, but we try to use as many statically linked software as possible, that can be used on any x64 Linux platform.  
 
 > It's important that all tools (incl. `composer`) are added to the `$PATH` env. variable, so that Pimcore is able to find the executables. 
-If you're not able to control the `$PATH` variable, you can also [manually configure the paths for each application](https://github.com/pimcore/skeleton/blob/10.2/config/services.yaml).
+If you're not able to control the `$PATH` variable, you can also [manually configure the paths for each application](https://github.com/pimcore/skeleton/blob/11.x/config/services.yaml).
 
 
 ## Composer 
@@ -29,10 +29,6 @@ apt-get install libreoffice libreoffice-script-provider-python libreoffice-math 
 
 ## Chromium (Chrome Headless)
 Please visit: [https://www.chromium.org/getting-involved/download-chromium](https://www.chromium.org/getting-involved/download-chromium)
-
-## Wkhtmltopdf (Deprecated)
-Please visit: [http://wkhtmltopdf.org/downloads.html](http://wkhtmltopdf.org/downloads.html)
-
 
 ## Image Optimizers
 
@@ -86,7 +82,7 @@ apt-get install facedetect
 ```
 
 
-# Check your installation
+# Check your installation (requires pimcore/system-info-bundle package)
 
 You can check system requirements via Admin UI `Tools` / `System Info & Tools` / `System-Requirements Check` menu.
 

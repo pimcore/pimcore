@@ -26,23 +26,14 @@ use Pimcore\Localization\LocaleServiceInterface;
  */
 final class LocaleSwitcherFactory implements OperatorFactoryInterface
 {
-    /**
-     * @var LocaleServiceInterface
-     */
-    private $localeService;
+    private LocaleServiceInterface $localeService;
 
-    /**
-     * @param LocaleServiceInterface $localeService
-     */
     public function __construct(LocaleServiceInterface $localeService)
     {
         $this->localeService = $localeService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function build(\stdClass $configElement, $context = null): OperatorInterface
+    public function build(\stdClass $configElement, array $context = []): OperatorInterface
     {
         return new LocaleSwitcher($this->localeService, $configElement, $context);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,18 +23,12 @@ use Pimcore\Model\Asset;
  */
 class Service
 {
-    /**
-     * @return string
-     */
-    public static function getDeleteLogFile()
+    public static function getDeleteLogFile(): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-delete.dat';
     }
 
-    /**
-     * @return array
-     */
-    public static function getDeleteLog()
+    public static function getDeleteLog(): array
     {
         $log = [];
         if (file_exists(self::getDeleteLogFile())) {
@@ -56,10 +51,7 @@ class Service
         return $log;
     }
 
-    /**
-     * @param array $log
-     */
-    public static function saveDeleteLog($log)
+    public static function saveDeleteLog(array $log): void
     {
         // cleanup old entries
         $tmpLog = [];

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,12 +16,28 @@
 
 namespace Pimcore\Db;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Types\Type;
 use Pimcore\Model\Element\ValidationException;
 
 class Helper
 {
-    public static function insertOrUpdate(ConnectionInterface|\Doctrine\DBAL\Connection $connection, $table, array $data)
+    public static function upsert(Connection $connection, string $table, array $data, array $keys): int|string
+    {
+        try {
+            return $connection->insert($table, $data);
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
+            $critera = [];
+            foreach ($keys as $key) {
+                $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%1$s" passed for upsert not found in data', $key));
+            }
+
+            return $connection->update($table, $data, $critera);
+        }
+    }
+
+    public static function insertOrUpdate(Connection $connection, string $table, array $data): int|string
     {
         // extract and quote col names from the array keys
         $i = 0;
@@ -29,7 +46,7 @@ class Helper
         $vals = [];
         foreach ($data as $col => $val) {
             $cols[] = $connection->quoteIdentifier($col);
-            $bind[':col' . $i] = $val;
+            $bind['col' . $i] = $val;
             $vals[] = ':col' . $i;
             $i++;
         }
@@ -53,7 +70,7 @@ class Helper
         return $connection->executeStatement($sql, $bind);
     }
 
-    public static function fetchPairs(ConnectionInterface|\Doctrine\DBAL\Connection $db, $sql, array $params = [], $types = [])
+    public static function fetchPairs(Connection $db, string $sql, array $params = [], array $types = []): array
     {
         $stmt = $db->executeQuery($sql, $params, $types);
         $data = [];
@@ -66,7 +83,7 @@ class Helper
         return $data;
     }
 
-    public static function selectAndDeleteWhere(ConnectionInterface|\Doctrine\DBAL\Connection $db, $table, $idColumn = 'id', $where = '')
+    public static function selectAndDeleteWhere(Connection $db, string $table, string $idColumn = 'id', string $where = ''): void
     {
         $sql = 'SELECT ' . $db->quoteIdentifier($idColumn) . '  FROM ' . $table;
 
@@ -85,7 +102,7 @@ class Helper
         }
     }
 
-    public static function queryIgnoreError(ConnectionInterface|\Doctrine\DBAL\Connection $db, $sql, $exclusions = [])
+    public static function queryIgnoreError(Connection $db, string $sql, array $exclusions = []): ?\Doctrine\DBAL\Result
     {
         try {
             return $db->executeQuery($sql);
@@ -101,7 +118,7 @@ class Helper
         return null;
     }
 
-    public static function quoteInto(ConnectionInterface|\Doctrine\DBAL\Connection $db, $text, $value, $type = null, $count = null)
+    public static function quoteInto(Connection $db, string $text, mixed $value, int|string|Type|null $type = null, ?int $count = null): array|string
     {
         if ($count === null) {
             return str_replace('?', $db->quote($value, $type), $text);
@@ -113,5 +130,15 @@ class Helper
     public static function escapeLike(string $like): string
     {
         return str_replace(['_', '%'], ['\\_', '\\%'], $like);
+    }
+
+    public static function quoteDataIdentifiers(Connection $db, array $data): array
+    {
+        $newData = [];
+        foreach ($data as $key => $value) {
+            $newData[$db->quoteIdentifier($key)] = $value;
+        }
+
+        return $newData;
     }
 }

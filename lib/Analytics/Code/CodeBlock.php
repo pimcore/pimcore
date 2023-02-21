@@ -24,29 +24,38 @@ namespace Pimcore\Analytics\Code;
 final class CodeBlock
 {
     /**
-     * @var array
+     * @var string[]
      */
-    private $parts = [];
+    private array $parts = [];
 
+    /**
+     * @param string[] $parts
+     */
     public function __construct(array $parts = [])
     {
         $this->parts = $parts;
     }
 
-    public function setParts(array $parts)
+    /**
+     * @param string[] $parts
+     */
+    public function setParts(array $parts): void
     {
         $this->parts = $parts;
     }
 
+    /**
+     * @return string[]
+     */
     public function getParts(): array
     {
         return $this->parts;
     }
 
     /**
-     * @param array|string $parts
+     * @param string[]|string $parts
      */
-    public function append($parts)
+    public function append(array|string $parts): void
     {
         $parts = (array)$parts;
 
@@ -56,9 +65,9 @@ final class CodeBlock
     }
 
     /**
-     * @param array|string $parts
+     * @param string[]|string $parts
      */
-    public function prepend($parts)
+    public function prepend(array|string $parts): void
     {
         $parts = (array)$parts;
         $parts = array_reverse($parts); // prepend parts in the order they were passed
@@ -76,7 +85,7 @@ final class CodeBlock
         return $string;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->asString();
     }

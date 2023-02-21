@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,15 +27,13 @@ class Select extends Model\Document\Editable
      * Contains the current selected value
      *
      * @internal
-     *
-     * @var string
      */
-    protected $text;
+    protected ?string $text = null;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'select';
     }
@@ -42,15 +41,12 @@ class Select extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
-        return $this->text;
+        return (string) $this->text;
     }
 
-    /**
-     * @return string
-     */
-    public function getText()
+    public function getText(): string
     {
         return $this->getData();
     }
@@ -66,9 +62,9 @@ class Select extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
-        $this->text = $data;
+        $this->text = (string)$data;
 
         return $this;
     }
@@ -76,17 +72,14 @@ class Select extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
-        $this->text = $data;
+        $this->text = (string)$data;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->text);
     }

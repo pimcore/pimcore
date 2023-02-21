@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,18 +17,11 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
 
 class Time extends Model\DataObject\ClassDefinition\Data\Input
 {
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'time';
-
     /**
      * Column length
      *
@@ -35,41 +29,35 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @var int
      */
-    public $columnLength = 5;
+    public int $columnLength = 5;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public $minValue;
+    public ?string $minValue = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public $maxValue;
+    public ?string $maxValue = null;
 
     /**
      * @internal
      *
      * @var int
      */
-    public $increment = 15 ;
+    public int $increment = 15 ;
 
-    /**
-     * @return string|null
-     */
-    public function getMinValue()
+    public function getMinValue(): ?string
     {
         return $this->minValue;
     }
 
-    /**
-     * @param string|null $minValue
-     */
-    public function setMinValue($minValue)
+    public function setMinValue(?string $minValue): void
     {
         if (is_string($minValue) && strlen($minValue)) {
             $this->minValue = $this->toTime($minValue);
@@ -78,18 +66,12 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         }
     }
 
-    /**
-     * @return string|null
-     */
-    public function getMaxValue()
+    public function getMaxValue(): ?string
     {
         return $this->maxValue;
     }
 
-    /**
-     * @param string|null $maxValue
-     */
-    public function setMaxValue($maxValue)
+    public function setMaxValue(?string $maxValue): void
     {
         if (is_string($maxValue) && strlen($maxValue)) {
             $this->maxValue = $this->toTime($maxValue);
@@ -101,7 +83,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         parent::checkValidity($data, $omitMandatoryCheck);
 
@@ -131,17 +113,12 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
-    /**
-     * @param string|null $data
-     *
-     * @return bool
-     */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data): bool
     {
         return !is_string($data) || !preg_match('/^(2[0-3]|[01][0-9]):[0-5][0-9]$/', $data);
     }
@@ -153,7 +130,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return null|string
      */
-    private function toTime($timestamp)
+    private function toTime(string $timestamp): ?string
     {
         $timestamp = strtotime($timestamp);
         if (!$timestamp) {
@@ -171,7 +148,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return int
      */
-    private function toTimestamp($string, $baseTimestamp = null)
+    private function toTimestamp(string $string, int $baseTimestamp = null): int
     {
         if ($baseTimestamp === null) {
             $baseTimestamp = time();
@@ -188,7 +165,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return bool
      */
-    private function isEarlier($subject, $comparison)
+    private function isEarlier(string $subject, string $comparison): bool
     {
         $baseTs = time();
 
@@ -203,34 +180,30 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return bool
      */
-    private function isLater($subject, $comparison)
+    private function isLater(string $subject, string $comparison): bool
     {
         $baseTs = time();
 
         return $this->toTimestamp($subject, $baseTs) < $this->toTimestamp($comparison, $baseTs);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * @return int
-     */
-    public function getIncrement()
+    public function getIncrement(): int
     {
         return $this->increment;
     }
 
-    /**
-     * @param int $increment
-     */
-    public function setIncrement($increment)
+    public function setIncrement(int $increment): void
     {
         $this->increment = (int) $increment;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'time';
     }
 }

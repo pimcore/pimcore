@@ -28,7 +28,6 @@ All Twig extension functions are described below in detail, the following tables
 |------------------------------------------|-------------------------------------------------------------------|
 | `pimcore_cache()`         | Simple in-template caching functionality                                         |
 | `pimcore_device()`        | Helps implementing adaptive designs                                              |
-| `pimcoreglossary()`       | Deprecated: Extension to control the glossary engine                             |
 | `pimcore_glossary`        | Twig Filter: Apply filter on content to pass it to Glossary engine               |
 | `pimcore_placeholder()`   | Adding and embedding custom placeholders, e.g. for special header tags, etc.     |
 | `pimcore_head_link()`     | Embeding / managing referenced stylesheets (alternative to `assets()`)           |
@@ -85,13 +84,18 @@ The following table gives an overview of all available tests:
 | `pimcore_document_page`                | Checks if object is instanceof Document\Page                        |
 | `pimcore_document_link`                | Checks if object is instanceof Document\Link                        |
 | `pimcore_document_page_snippet`        | Checks if object is instanceof Document\PageSnippet                 |
+| `pimcore_document_snippet`             | Checks if object is instanceof Document\Snippet                     |
+
+The following test are only available if the PimcoreWebToPrintBundle is enabled and installed:
+
+| Test                      | Description                                                                      |
+|---------------------------|----------------------------------------------------------------------------------|
 | `pimcore_document_print`               | Checks if object is instanceof Document\PrintAbstract               |
 | `pimcore_document_print_container`     | Checks if object is instanceof Document\Printcontainer              |
 | `pimcore_document_print_page`          | Checks if object is instanceof Document\Printpage                   |
-| `pimcore_document_snippet`             | Checks if object is instanceof Document\Snippet                     |
 
 You can also create your own custom Twig Extension to make certain functionalities available to your views.  
-Here you can find an example how to [create](https://symfony.com/doc/5.2/templating/twig_extension.html)
+Here you can find an example how to [create](https://symfony.com/doc/current/templating/twig_extension.html)
 your own Twig Extension.
     
 ### `pimcore_cache`
@@ -141,18 +145,10 @@ This extension makes it easy to implement "Adaptive Design" in Pimcore.
    
 For details also see [Adaptive Design](../../../19_Development_Tools_and_Details/21_Adaptive_Design_Helper.md).
 
-### `pimcoreglossary`
+### `pimcore_glossary`
 
-The `pimcoreglossary` block replaces glossary terms. See [Glossary](../../../18_Tools_and_Features/21_Glossary.md) for details.
+The `pimcore_glossary` filter replaces glossary terms. See [Glossary](../../../18_Tools_and_Features/21_Glossary.md) for details.
 
-Old way (Deprecated):
-```twig
-{% pimcoreglossary %}
-My content
-{% endpimcoreglossary %}
-``` 
-
-New way:
 ```twig
 {% apply pimcore_glossary %}
 My content

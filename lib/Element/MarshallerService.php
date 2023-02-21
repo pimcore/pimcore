@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,37 +21,19 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 
 final class MarshallerService
 {
-    /**
-     * @var ServiceLocator
-     */
-    private $marshallerLocator;
+    private ServiceLocator $marshallerLocator;
 
-    /**
-     * @param ServiceLocator $marshallerLocator
-     */
     public function __construct(ServiceLocator $marshallerLocator)
     {
         $this->marshallerLocator = $marshallerLocator;
     }
 
-    /**
-     * @param string $format
-     * @param string $name
-     *
-     * @return MarshallerInterface
-     */
-    public function buildFieldefinitionMarshaller($format, $name)
+    public function buildFieldefinitionMarshaller(string $format, string $name): MarshallerInterface
     {
         return $this->marshallerLocator->get($format . '_' . $name);
     }
 
-    /**
-     * @param string $format
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function supportsFielddefinition(string $format, string $name)
+    public function supportsFielddefinition(string $format, string $name): bool
     {
         return $this->marshallerLocator->has($format . '_' . $name);
     }

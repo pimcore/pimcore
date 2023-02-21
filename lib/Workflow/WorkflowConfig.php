@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,15 +18,9 @@ namespace Pimcore\Workflow;
 
 class WorkflowConfig
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
-    /**
-     * @var array
-     */
-    private $workflowConfigArray;
+    private array $workflowConfigArray;
 
     public function __construct(string $name, array $workflowConfigArray)
     {
@@ -53,9 +48,6 @@ class WorkflowConfig
         return $this->workflowConfigArray['type'];
     }
 
-    /**
-     * @return array
-     */
     public function getWorkflowConfigArray(): array
     {
         return $this->workflowConfigArray;

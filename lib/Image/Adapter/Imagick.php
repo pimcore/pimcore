@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,37 +25,25 @@ use Pimcore\Model\Asset;
 
 class Imagick extends Adapter
 {
-    /**
-     * @var string
-     */
-    protected static $RGBColorProfile;
+    protected static string $RGBColorProfile;
 
-    /**
-     * @var string
-     */
-    protected static $CMYKColorProfile;
+    protected static string $CMYKColorProfile;
 
     /**
      * @var \Imagick|null
      */
-    protected $resource;
+    protected mixed $resource = null;
 
-    /**
-     * @var string
-     */
-    protected $imagePath;
+    protected string $imagePath;
 
-    /**
-     * @var array
-     */
-    protected static $supportedFormatsCache = [];
+    protected static array $supportedFormatsCache = [];
 
     private ?array $initalOptions = null;
 
     /**
      * {@inheritdoc}
      */
-    public function load($imagePath, $options = [])
+    public function load(string $imagePath, array $options = []): bool|static
     {
         $this->initalOptions ??= $options;
 
@@ -181,10 +170,7 @@ class Imagick extends Adapter
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getContentOptimizedFormat()
+    public function getContentOptimizedFormat(): string
     {
         $format = 'pjpeg';
         if ($this->hasAlphaChannel()) {
@@ -197,7 +183,7 @@ class Imagick extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function save($path, $format = null, $quality = null)
+    public function save(string $path, string $format = null, int $quality = null): static
     {
         if (!$format) {
             $format = 'png32';
@@ -296,14 +282,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * @param string $format
-     * @param \Imagick|null $i
-     * @param bool $checkNumberOfImages
-     *
-     * @return bool
-     */
-    private function checkPreserveAnimation(string $format = '', \Imagick $i = null, bool $checkNumberOfImages = true)
+    private function checkPreserveAnimation(string $format = '', \Imagick $i = null, bool $checkNumberOfImages = true): bool
     {
         if (!$this->isPreserveAnimation()) {
             return false;
@@ -327,7 +306,7 @@ class Imagick extends Adapter
     /**
      * {@inheritdoc}
      */
-    protected function destroy()
+    protected function destroy(): void
     {
         if ($this->resource) {
             $this->resource->clear();
@@ -336,10 +315,7 @@ class Imagick extends Adapter
         }
     }
 
-    /**
-     * @return bool
-     */
-    private function hasAlphaChannel()
+    private function hasAlphaChannel(): bool
     {
         if ($this->isAlphaPossible) {
             $width = $this->resource->getImageWidth(); // Get the width of the image
@@ -361,10 +337,7 @@ class Imagick extends Adapter
         return false;
     }
 
-    /**
-     * @return $this
-     */
-    private function setColorspaceToRGB()
+    private function setColorspaceToRGB(): static
     {
         $imageColorspace = $this->resource->getImageColorspace();
 
@@ -442,11 +415,11 @@ class Imagick extends Adapter
     }
 
     /**
-     * @internal
-     *
      * @param string $CMYKColorProfile
+     *
+     * @internal
      */
-    public static function setCMYKColorProfile($CMYKColorProfile)
+    public static function setCMYKColorProfile(string $CMYKColorProfile): void
     {
         self::$CMYKColorProfile = $CMYKColorProfile;
     }
@@ -456,7 +429,7 @@ class Imagick extends Adapter
      *
      * @return string
      */
-    public static function getCMYKColorProfile()
+    public static function getCMYKColorProfile(): string
     {
         if (!self::$CMYKColorProfile) {
             $path = Config::getSystemConfiguration('assets')['icc_cmyk_profile'] ?? null;
@@ -473,11 +446,12 @@ class Imagick extends Adapter
     }
 
     /**
+     * @param string $RGBColorProfile
+     *
      * @internal
      *
-     * @param string $RGBColorProfile
      */
-    public static function setRGBColorProfile($RGBColorProfile)
+    public static function setRGBColorProfile(string $RGBColorProfile): void
     {
         self::$RGBColorProfile = $RGBColorProfile;
     }
@@ -487,7 +461,7 @@ class Imagick extends Adapter
      *
      * @return string
      */
-    public static function getRGBColorProfile()
+    public static function getRGBColorProfile(): string
     {
         if (!self::$RGBColorProfile) {
             $path = Config::getSystemConfiguration('assets')['icc_rgb_profile'] ?? null;
@@ -503,10 +477,7 @@ class Imagick extends Adapter
         return self::$RGBColorProfile;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resize($width, $height)
+    public function resize(int $width, int $height): static
     {
         $this->preModify();
 
@@ -566,10 +537,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function crop($x, $y, $width, $height)
+    public function crop(int $x, int $y, int $width, int $height): static
     {
         $this->preModify();
 
@@ -584,17 +552,14 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function frame($width, $height, $forceResize = false)
+    public function frame(int $width, int $height, bool $forceResize = false): static
     {
         $this->preModify();
 
         $this->contain($width, $height, $forceResize);
 
-        $x = ($width - $this->getWidth()) / 2;
-        $y = ($height - $this->getHeight()) / 2;
+        $x = (int)(($width - $this->getWidth()) / 2);
+        $y = (int)(($height - $this->getHeight()) / 2);
 
         $newImage = $this->createCompositeImageFromResource($width, $height, $x, $y);
         $this->resource = $newImage;
@@ -609,10 +574,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function trim($tolerance)
+    public function trim(int $tolerance): static
     {
         $this->preModify();
 
@@ -627,10 +589,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setBackgroundColor($color)
+    public function setBackgroundColor(string $color): static
     {
         $this->preModify();
         $newImage = $this->createCompositeImageFromResource($this->getWidth(), $this->getHeight(), 0, 0, $color);
@@ -643,14 +602,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * @param int $width
-     * @param int $height
-     * @param string $color
-     *
-     * @return \Imagick
-     */
-    private function createImage($width, $height, $color = 'transparent')
+    private function createImage(int $width, int $height, string $color = 'transparent'): \Imagick
     {
         $newImage = new \Imagick();
         $newImage->newimage($width, $height, $color);
@@ -659,17 +611,7 @@ class Imagick extends Adapter
         return $newImage;
     }
 
-    /**
-     * @param int $width
-     * @param int $height
-     * @param int $x
-     * @param int $y
-     * @param string $color
-     * @param int $composite
-     *
-     * @return \Imagick
-     */
-    private function createCompositeImageFromResource($width, $height, $x, $y, $color = 'transparent', $composite = \Imagick::COMPOSITE_DEFAULT)
+    private function createCompositeImageFromResource(int $width, int $height, int $x, int $y, string $color = 'transparent', int $composite = \Imagick::COMPOSITE_DEFAULT): \Imagick
     {
         $newImage = null;
         if ($this->checkPreserveAnimation()) {
@@ -690,10 +632,7 @@ class Imagick extends Adapter
         return $newImage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rotate($angle)
+    public function rotate(int $angle): static
     {
         $this->preModify();
 
@@ -708,10 +647,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function roundCorners($width, $height)
+    public function roundCorners(int $width, int $height): static
     {
         $this->preModify();
 
@@ -726,11 +662,8 @@ class Imagick extends Adapter
 
     /**
      * Workaround for Imagick PHP extension v3.4.4 which removed Imagick::roundCorners
-     *
-     * @param int $width
-     * @param int $height
      */
-    private function internalRoundCorners($width, $height)
+    private function internalRoundCorners(int $width, int $height): void
     {
         $imageWidth = $this->resource->getImageWidth();
         $imageHeight = $this->resource->getImageHeight();
@@ -746,10 +679,7 @@ class Imagick extends Adapter
         $this->resource->compositeImage($mask, \Imagick::COMPOSITE_DSTIN, 0, 0);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setBackgroundImage($image, $mode = null)
+    public function setBackgroundImage(string $image, string $mode = null): static
     {
         $this->preModify();
 
@@ -785,7 +715,7 @@ class Imagick extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = 'COMPOSITE_DEFAULT', $origin = 'top-left')
+    public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): static
     {
         $this->preModify();
 
@@ -845,10 +775,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addOverlayFit($image, $composite = 'COMPOSITE_DEFAULT')
+    public function addOverlayFit(string $image, string $composite = 'COMPOSITE_DEFAULT'): static
     {
         $asset = Asset\Image::getByPath($image);
         if ($asset instanceof Asset\Image) {
@@ -873,10 +800,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function applyMask($image)
+    public function applyMask(string $image): static
     {
         $this->preModify();
         $image = ltrim($image, '/');
@@ -897,10 +821,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function grayscale()
+    public function grayscale(): static
     {
         $this->preModify();
         $this->resource->setImageType(\Imagick::IMGTYPE_GRAYSCALEMATTE);
@@ -909,10 +830,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sepia()
+    public function sepia(): static
     {
         $this->preModify();
         $this->resource->sepiatoneimage(85);
@@ -921,10 +839,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sharpen($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05)
+    public function sharpen(float $radius = 0, float $sigma = 1.0, float $amount = 1.0, float $threshold = 0.05): static
     {
         $this->preModify();
         $this->resource->normalizeImage();
@@ -934,10 +849,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function gaussianBlur($radius = 0, $sigma = 1.0)
+    public function gaussianBlur(int $radius = 0, float $sigma = 1.0): static
     {
         $this->preModify();
         $this->resource->gaussianBlurImage($radius, $sigma);
@@ -946,10 +858,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100)
+    public function brightnessSaturation(int $brightness = 100, int $saturation = 100, int $hue = 100): static
     {
         $this->preModify();
         $this->resource->modulateImage($brightness, $saturation, $hue);
@@ -958,10 +867,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function mirror($mode)
+    public function mirror(string $mode): static
     {
         $this->preModify();
 
@@ -976,10 +882,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isVectorGraphic($imagePath = null)
+    public function isVectorGraphic(?string $imagePath = null): bool
     {
         if (!$imagePath) {
             $imagePath = $this->imagePath;
@@ -1027,10 +930,7 @@ class Imagick extends Adapter
         return false;
     }
 
-    /**
-     * @return array
-     */
-    private function getDimensions()
+    private function getDimensions(): array
     {
         if ($vectorDimensions = $this->getVectorFormatEmbeddedRasterDimensions()) {
             return $vectorDimensions;
@@ -1042,10 +942,7 @@ class Imagick extends Adapter
         ];
     }
 
-    /**
-     * @return array|null
-     */
-    private function getVectorFormatEmbeddedRasterDimensions()
+    private function getVectorFormatEmbeddedRasterDimensions(): ?array
     {
         if (in_array($this->resource->getimageformat(), ['EPT', 'EPDF', 'EPI', 'EPS', 'EPS2', 'EPS3', 'EPSF', 'EPSI', 'EPT', 'PDF', 'PFA', 'PFB', 'PFM', 'PS', 'PS2', 'PS3'])) {
             // we need a special handling for PhotoShop EPS
@@ -1055,8 +952,8 @@ class Imagick extends Adapter
             while (($eps_line = fgets($epsFile)) && ($i < 100)) {
                 if (preg_match('/%ImageData: ([0-9]+) ([0-9]+)/i', $eps_line, $matches)) {
                     return [
-                        'width' => $matches[1],
-                        'height' => $matches[2],
+                        'width' => (int) $matches[1],
+                        'height' => (int) $matches[2],
                     ];
                 }
                 $i++;
@@ -1066,10 +963,7 @@ class Imagick extends Adapter
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getVectorRasterDimensions()
+    protected function getVectorRasterDimensions(): array
     {
         if ($vectorDimensions = $this->getVectorFormatEmbeddedRasterDimensions()) {
             return $vectorDimensions;
@@ -1081,7 +975,7 @@ class Imagick extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function supportsFormat(string $format, bool $force = false)
+    public function supportsFormat(string $format, bool $force = false): mixed
     {
         if ($force) {
             return $this->checkFormatSupport($format);
@@ -1104,11 +998,6 @@ class Imagick extends Adapter
         return self::$supportedFormatsCache[$format];
     }
 
-    /**
-     * @param string $format
-     *
-     * @return bool
-     */
     private function checkFormatSupport(string $format): bool
     {
         try {

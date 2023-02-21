@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,8 +25,8 @@ use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestBlock;
 use Pimcore\Model\Document\Page;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class BlockTest
@@ -46,7 +47,7 @@ class BlockTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_Block();
     }
@@ -56,7 +57,7 @@ class BlockTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    protected function createBlockObject()
+    protected function createBlockObject(): unittestBlock
     {
         $object = new unittestBlock();
         $object->setParent(Service::createFolderByPath('/blocks'));
@@ -66,12 +67,7 @@ class BlockTest extends ModelTestCase
         return $object;
     }
 
-    /**
-     * @param Page $document
-     *
-     * @return Link
-     */
-    protected function createLinkData($document)
+    protected function createLinkData(Page $document): Link
     {
         $link = new Link();
         $link->setPath($document->getFullPath());
@@ -79,12 +75,7 @@ class BlockTest extends ModelTestCase
         return $link;
     }
 
-    /**
-     * @param Image $image
-     *
-     * @return Hotspotimage
-     */
-    protected function createHotspotImage($image)
+    protected function createHotspotImage(Image $image): Hotspotimage
     {
         $hotspot1 = [
             'name' => 'hotspot1',
@@ -113,7 +104,7 @@ class BlockTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testReferencesInsideBlock()
+    public function testReferencesInsideBlock(): void
     {
         $cacheEnabled = Cache::isEnabled();
         if (!$cacheEnabled) {
@@ -147,8 +138,9 @@ class BlockTest extends ModelTestCase
 
         $loadedData = $object->getTestblock();
 
+        /** @var Link $loadedLink */
         $loadedLink = $loadedData[0]['blocklink']->getData();
-        $this->assertEquals($targetDocument->getId(), $loadedLink->getObject()->getId());
+        $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
 
         $loadedHotspotImage = $loadedData[0]['blockhotspotimage']->getData();
         $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
@@ -164,7 +156,7 @@ class BlockTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testReferencesInsideLocalizedBlock()
+    public function testReferencesInsideLocalizedBlock(): void
     {
         $cacheEnabled = Cache::isEnabled();
         if (!$cacheEnabled) {
@@ -197,8 +189,9 @@ class BlockTest extends ModelTestCase
         $object = DataObject::getById($objectRef->getId(), ['force' => true]);
         $loadedData = $object->getLtestblock('de');
 
+        /** @var Link $loadedLink */
         $loadedLink = $loadedData[0]['lblocklink']->getData();
-        $this->assertEquals($targetDocument->getId(), $loadedLink->getObject()->getId());
+        $this->assertEquals($targetDocument->getId(), $loadedLink->getElement()->getId());
 
         $loadedHotspotImage = $loadedData[0]['lblockhotspotimage']->getData();
         $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
@@ -214,7 +207,7 @@ class BlockTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testBlockDataFromReferences()
+    public function testBlockDataFromReferences(): void
     {
         $cacheEnabled = Cache::isEnabled();
         if (!$cacheEnabled) {

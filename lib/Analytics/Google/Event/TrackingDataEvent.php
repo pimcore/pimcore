@@ -24,31 +24,26 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class TrackingDataEvent extends Event
 {
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
+
+    private SiteId $siteId;
 
     /**
-     * @var SiteId
+     * @var array<string, mixed>
      */
-    private $siteId;
-
-    /**
-     * @var array
-     */
-    private $data;
+    private array $data;
 
     /**
      * @var CodeBlock[]
      */
-    private $blocks;
+    private array $blocks;
+
+    private string $template;
 
     /**
-     * @var string
+     * @param array<string, mixed> $data
+     * @param CodeBlock[] $blocks
      */
-    private $template;
-
     public function __construct(
         Config $config,
         SiteId $siteId,
@@ -73,12 +68,18 @@ class TrackingDataEvent extends Event
         return $this->siteId;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         return $this->data;
     }
 
-    public function setData(array $data)
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
@@ -105,7 +106,7 @@ class TrackingDataEvent extends Event
         return $this->template;
     }
 
-    public function setTemplate(string $template)
+    public function setTemplate(string $template): void
     {
         $this->template = $template;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ trait CompositeIndexTrait
      * @param array $compositeIndices
      *
      */
-    public function updateCompositeIndices(string $table, string $type, array $compositeIndices)
+    public function updateCompositeIndices(string $table, string $type, array $compositeIndices): void
     {
         // fetch existing indices
         $existingMap = [];

@@ -1,12 +1,13 @@
 <?php
+declare(strict_types=1);
 
 /**
-Fields Summary:
-- name [input]
-- netAmount [numeric]
-- pricingRuleId [numeric]
-- amount [numeric]
-*/
+ * Fields Summary:
+ * - name [input]
+ * - netAmount [numeric]
+ * - pricingRuleId [numeric]
+ * - amount [numeric]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -15,11 +16,11 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class OrderPriceModifications extends DataObject\Fieldcollection\Data\AbstractData
 {
-protected $type = "OrderPriceModifications";
-protected $name;
-protected $netAmount;
-protected $pricingRuleId;
-protected $amount;
+protected string $type = "OrderPriceModifications";
+protected ?string $name;
+protected ?string $netAmount;
+protected ?int $pricingRuleId;
+protected ?string $amount;
 
 
 /**
@@ -39,9 +40,9 @@ public function getName(): ?string
 /**
 * Set name - Name
 * @param string|null $name
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications
+* @return $this
 */
-public function setName(?string $name)
+public function setName(?string $name): static
 {
 	$this->name = $name;
 
@@ -65,14 +66,13 @@ public function getNetAmount(): ?string
 /**
 * Set netAmount - NetAmount
 * @param string|null $netAmount
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications
+* @return $this
 */
-public function setNetAmount(?string $netAmount)
+public function setNetAmount(?string $netAmount): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("netAmount");
 	$this->netAmount = $fd->preSetData($this, $netAmount);
-
 	return $this;
 }
 
@@ -93,14 +93,13 @@ public function getPricingRuleId(): ?int
 /**
 * Set pricingRuleId - Applied pricing rule ID
 * @param int|null $pricingRuleId
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications
+* @return $this
 */
-public function setPricingRuleId(?int $pricingRuleId)
+public function setPricingRuleId(?int $pricingRuleId): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("pricingRuleId");
 	$this->pricingRuleId = $fd->preSetData($this, $pricingRuleId);
-
 	return $this;
 }
 
@@ -121,14 +120,13 @@ public function getAmount(): ?string
 /**
 * Set amount - Amount
 * @param string|null $amount
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications
+* @return $this
 */
-public function setAmount(?string $amount)
+public function setAmount(?string $amount): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("amount");
 	$this->amount = $fd->preSetData($this, $amount);
-
 	return $this;
 }
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Redirect[]
      */
-    public function getRedirects()
+    public function getRedirects(): array
     {
         return $this->getData();
     }
@@ -38,7 +39,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setRedirects($redirects)
+    public function setRedirects(?array $redirects): static
     {
         return $this->setData($redirects);
     }

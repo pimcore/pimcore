@@ -31,5 +31,5 @@ interface ProcessorInterface
      *
      * @return Url|null
      */
-    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context);
+    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context): ?Url;
 }

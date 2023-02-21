@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,9 +19,8 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestLink;
-use Pimcore\Model\Element\ValidationException;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class LinkTest
@@ -41,7 +41,7 @@ class LinkTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_Link();
     }
@@ -51,7 +51,7 @@ class LinkTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    protected function createLinkObject()
+    protected function createLinkObject(): unittestLink
     {
         $object = new unittestLink();
         $object->setParent(Service::createFolderByPath('/links'));
@@ -66,7 +66,7 @@ class LinkTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testSave()
+    public function testSave(): void
     {
         $linkObject = $this->createLinkObject();
         $link = new Link();
@@ -86,15 +86,15 @@ class LinkTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testCheckValidity()
+    public function testCheckValidity(): void
     {
-        $linkObject = $this->createLinkObject();
-        $linkObject->setTestlink('https://pimcore.com/');
-        $linkObject->setLtestlink('https://pimcore.com/');
-
-        $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('Expected DataObject\\Data\\Link or null');
-
-        $linkObject->save();
+        try {
+            $linkObject = $this->createLinkObject();
+            $linkObject->setTestlink('https://pimcore.com/');
+            $linkObject->setLtestlink('https://pimcore.com/');
+            $this->fail('Expected a TypeError');
+        } catch (\Throwable $e) {
+            $this->assertInstanceOf(\TypeError::class, $e);
+        }
     }
 }

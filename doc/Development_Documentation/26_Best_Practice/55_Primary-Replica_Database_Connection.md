@@ -1,11 +1,8 @@
-
 # How to configure Pimcore to use a Primary/Replica Database Connection 
 **IMPORTANT**: Please be aware that the primary/replica connection can only be used for a clustered MariaDB/MySQL environment, **NOT** 
 for a primary/replica server setup! Due to the extensive multi-layered, consistent and tagged caching of Pimcore
 it is necessary that Pimcore always has access to the latest data in the database. Due to the asynchronous nature 
 of the primary/replica setup, this isn't ensured for that.
-
-Note: Doctrine\DBAL versions older than 2.11 uses master/slave terminology.
 
 ### Create a Project specific Database Connection Class 
 
@@ -16,13 +13,10 @@ Create a new class at `src\Db\Connection.php`, with the following content:
 
 namespace App\Db;
 
-use Pimcore\Db\PimcoreExtensionsTrait;
-use Pimcore\Db\ConnectionInterface;
+use Doctrine\DBAL\Connections\PrimaryReadReplicaConnection;
 
-class Connection extends \Doctrine\DBAL\Connections\PrimaryReadReplicaConnection implements ConnectionInterface
+class Connection extends PrimaryReadReplicaConnection
 {
-    use PimcoreExtensionsTrait;
-
     public function connect($connectionName = null)
     {
         $returnValue = parent::connect($connectionName);

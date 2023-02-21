@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,15 +20,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attri
 
 class PreprocessAttributeErrorEvent extends PreprocessErrorEvent
 {
-    /**
-     * @var Attribute
-     */
-    protected $attribute;
+    protected Attribute $attribute;
 
-    /**
-     * @var bool
-     */
-    protected $skipAttribute = false;
+    protected bool $skipAttribute = false;
 
     /**
      * PreprocessAttributeErrorEvent constructor.
@@ -44,27 +39,16 @@ class PreprocessAttributeErrorEvent extends PreprocessErrorEvent
         $this->skipAttribute = $skipAttribute;
     }
 
-    /**
-     * @return Attribute
-     */
     public function getAttribute(): Attribute
     {
         return $this->attribute;
     }
 
-    /**
-     * @return bool
-     */
     public function doSkipAttribute(): bool
     {
         return $this->skipAttribute;
     }
 
-    /**
-     * @param bool $skipAttribute
-     *
-     * @return PreprocessErrorEvent
-     */
     public function setSkipAttribute(bool $skipAttribute): PreprocessErrorEvent
     {
         $this->skipAttribute = $skipAttribute;

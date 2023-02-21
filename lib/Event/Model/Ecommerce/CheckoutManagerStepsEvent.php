@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,21 +25,10 @@ class CheckoutManagerStepsEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var CheckoutStepInterface
-     */
-    protected $currentStep;
+    protected ?CheckoutStepInterface $currentStep = null;
 
-    /**
-     * @var CheckoutManagerInterface
-     */
-    protected $checkoutManager;
+    protected CheckoutManagerInterface $checkoutManager;
 
-    /**
-     * @param CheckoutManagerInterface $checkoutManager
-     * @param CheckoutStepInterface|null $currentStep
-     * @param array $arguments
-     */
     public function __construct(CheckoutManagerInterface $checkoutManager, ?CheckoutStepInterface $currentStep, array $arguments = [])
     {
         $this->checkoutManager = $checkoutManager;
@@ -46,33 +36,21 @@ class CheckoutManagerStepsEvent extends Event
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return CheckoutStepInterface|null
-     */
     public function getCurrentStep(): ?CheckoutStepInterface
     {
         return $this->currentStep;
     }
 
-    /**
-     * @param CheckoutStepInterface|null $currentStep
-     */
     public function setCurrentStep(?CheckoutStepInterface $currentStep): void
     {
         $this->currentStep = $currentStep;
     }
 
-    /**
-     * @return CheckoutManagerInterface
-     */
     public function getCheckoutManager(): CheckoutManagerInterface
     {
         return $this->checkoutManager;
     }
 
-    /**
-     * @param CheckoutManagerInterface $checkoutManager
-     */
     public function setCheckoutManager(CheckoutManagerInterface $checkoutManager): void
     {
         $this->checkoutManager = $checkoutManager;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -155,12 +156,6 @@ final class DocumentEvents
      * Modify the configuration for the processor (when the pdf gets created)
      *
      * Arguments:
-     * WkHtmlToPdfAdapter:
-     *  - wkhtmltopdfBin | path to wkhtmltopdf binary
-     *  - options | configuration options
-     *  - srcUrl | path tho source html file
-     *  - dstFile | path to the output pdf file
-     *  - config | configuration which is passed from the pimcore admin interface
      *
      * PDFReactor:
      *  - config | configuration which is passed from the pimcore admin interface
@@ -248,4 +243,24 @@ final class DocumentEvents
      * @var string
      */
     const NEWSLETTER_POST_SEND = 'pimcore.document.newsletter.post_send';
+
+    /**
+     * The INCLUDERENDERER_PRE_RENDER event is triggered before the IncludeRenderer renders an include
+     *
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const INCLUDERENDERER_PRE_RENDER = 'pimcore.document.IncludeRenderer.pre_render';
+
+    /**
+     * Arguments:
+     *  - element | \Pimcore\Mail | the pimcore mail instance
+     *  - requestParams | contains the request parameters
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const EDITABLE_RENDERLET_PRE_RENDER = 'pimcore.document.editable.renderlet.pre_render';
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class Service
      *
      * @return array
      */
-    public static function createNoteData($fc, $value)
+    public static function createNoteData(array $fc, mixed $value): array
     {
         $data = [];
 
@@ -70,13 +71,7 @@ class Service
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param string $pimcoreTagName
-     *
-     * @return mixed
-     */
-    public static function getDataFromEditmode($data, $pimcoreTagName)
+    public static function getDataFromEditmode(mixed $data, string $pimcoreTagName): mixed
     {
         $tagClass = '\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($pimcoreTagName);
         if (\Pimcore\Tool::classExists($tagClass)) {
@@ -106,7 +101,7 @@ class Service
      *
      * @return Element\Note $note
      */
-    public static function createActionNote(Element\ElementInterface $element, $type, $title, $description, $noteData, $user = null)
+    public static function createActionNote(Element\ElementInterface $element, string $type, string $title, string $description, array $noteData, User $user = null): Element\Note
     {
         //prepare some vars for creating the note
         if (!$user) {

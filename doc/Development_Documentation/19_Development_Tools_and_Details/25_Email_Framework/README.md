@@ -39,7 +39,7 @@ framework:
             main: smtp://user:pass@smtp.example.com:port
             pimcore_newsletter: smtp://user:pass@smtp.example.com:port
 ```
-Please refer to the [Transport Setup](https://symfony.com/doc/5.2/mailer.html#transport-setup) for further details on how this can be set up.
+Please refer to the [Transport Setup](https://symfony.com/doc/current/mailer.html#transport-setup) for further details on how this can be set up.
 
 
 Pimcore provides a `Document Email` type where you can define the recipients ... (more information 

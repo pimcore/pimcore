@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,14 +24,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
  */
 trait SelectionProviderTrait
 {
-    /**
-     * @param DataObject\Concrete|null $object
-     * @param string $fieldname
-     * @param string $purpose
-     * @param int $mode
-     * @param array $context
-     */
-    protected function doEnrichDefinitionDefinition(/*?Concrete */ $object, string $fieldname, string $purpose, int $mode, /**  array */ $context = [])
+    protected function doEnrichDefinitionDefinition(/*?Concrete */ ?DataObject\Concrete $object, string $fieldname, string $purpose, int $mode, /**  array */ array $context = []): void
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),

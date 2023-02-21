@@ -20,16 +20,16 @@ and after the string, if `Debug Admin-Translations (wrapped in +)` is activated 
 But you can use the admin translation also in your custom templates. 
 Admin translations use the same translator component (Symfony) but on a different domain.
 
-Admin translations underly the same case sensitivity logic as [shared translations](./04_Shared_Translations.md#page_Translations_case_sensitivity).
+Admin translations underlay the same case sensitivity logic as [shared translations](./04_Shared_Translations.md#page_Translations_case_sensitivity).
 
-#### Example: Translate Options of a Select Editable
+#### Example: Translate Options of a Select Editable in the language of the current user
 
 ```twig
 {{ pimcore_select("select", {
 	"store": [
-		["option1", {{ "Option One"|trans({}, 'admin') }}],
-		["option2", {{ "Option Two"|trans({}, 'admin') }}],
-		["option3", {{ "Option Three"|trans({}, 'admin') }}]
+		["option1", {{ "Option One"|trans({}, 'admin', pimcore_editmode_admin_language()) }}],
+		["option2", {{ "Option Two"|trans({}, 'admin', pimcore_editmode_admin_language()) }}],
+		["option3", {{ "Option Three"|trans({}, 'admin', pimcore_editmode_admin_language()) }}]
 	]
 }) }}
 ```

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,5 +26,5 @@ class Unknown extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'unknown';
+    protected string $type = 'unknown';
 }

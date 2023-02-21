@@ -55,17 +55,16 @@ class MyProductTeaser extends AbstractAreabrick
 ```php
     public function productCellAction(Request $request)
     {
-    
-        $id = $request->get("id");
-        $type = $request->get("type");
+        $id = $request->attribute->getInt('id');
+        $type = $request->attribute->get('type');
 
-        if($type == 'object') {
-
+        if ($type === 'object') {
             $product = Product::getById($id);
+
             return $this->render('product/product_cell.html.twig', ['product' => $product]);
-        } else {
-            throw new \Exception("Invalid Type");
         }
+
+        throw new \Exception('Invalid Type');
     }
 ```
 

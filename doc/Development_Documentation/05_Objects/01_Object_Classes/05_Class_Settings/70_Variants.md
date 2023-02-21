@@ -53,13 +53,13 @@ If only variants should be returned use following line.
 $objectX->getChildren([DataObject::OBJECT_TYPE_VARIANT]);
 ```
 
-By default, `getChildren` delivers objects and folders but no variants.
+By default, `getChildren` delivers objects, variants, and folders.
 
 
 #### Object Variants in Object Lists
 
 Similar to `getChildren`, the object list objects now have an object type property, which defines the object types to 
-deliver. Per default objects and folders are delivered. To deliver object variants, use one of the following code 
+deliver. Per default objects, variants and folders are delivered. To deliver object variants, use one of the following code 
 snippets:
 
 ```php

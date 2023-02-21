@@ -1,0 +1,22 @@
+{# @var $element \Pimcore\Model\Asset\Image|\Pimcore\Model\Asset\Document|\Pimcore\Model\Asset\Video #}
+{% set previewImage = null %}
+{% set params = { 'id': element.id, 'treepreview': true } %}
+
+{% if element is instanceof('\\Pimcore\\Model\\Asset\\Image') %}
+    {% set previewImage = path('pimcore_admin_asset_getimagethumbnail', params) %}
+{% elseif element is instanceof('\\Pimcore\\Model\\Asset\\Video') and pimcore_video_is_available() %}
+    {% set previewImage = path('pimcore_admin_asset_getvideothumbnail', params) %}
+{% elseif element is instanceof('\\Pimcore\\Model\\Asset\\Document') and pimcore_document_is_available() %}
+    {% set previewImage = path('pimcore_admin_asset_getdocumentthumbnail', params) %}
+{% endif %}
+
+{% if previewImage is defined %}
+    <div class="full-preview">
+        <img src="{{ previewImage }}" onload="this.parentNode.className += ' complete';">
+        {% include '@PimcoreAdmin/searchadmin/search/quicksearch/info_table.html.twig' with {'element': element} %}
+    </div>
+{% else %}
+    <div class="mega-icon {{ iconCls }}"></div>
+    {% include '@PimcoreAdmin/searchadmin/search/quicksearch/info_table.html.twig' with {'element': element} %}
+{% endif %}
+

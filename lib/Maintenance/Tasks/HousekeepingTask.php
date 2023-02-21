@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,20 +23,10 @@ use Pimcore\Maintenance\TaskInterface;
  */
 class HousekeepingTask implements TaskInterface
 {
-    /**
-     * @var int
-     */
-    protected $tmpFileTime;
+    protected int $tmpFileTime;
 
-    /**
-     * @var int
-     */
-    protected $profilerTime;
+    protected int $profilerTime;
 
-    /**
-     * @param int $tmpFileTime
-     * @param int $profilerTime
-     */
     public function __construct(int $tmpFileTime, int $profilerTime)
     {
         $this->tmpFileTime = $tmpFileTime;
@@ -45,7 +36,7 @@ class HousekeepingTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         foreach (['dev'] as $environment) {
             $profilerDir = sprintf('%s/%s/profiler', PIMCORE_SYMFONY_CACHE_DIRECTORY, $environment);
@@ -54,11 +45,7 @@ class HousekeepingTask implements TaskInterface
         }
     }
 
-    /**
-     * @param string $folder
-     * @param int $seconds
-     */
-    private function deleteFilesInFolderOlderThanSeconds($folder, $seconds)
+    private function deleteFilesInFolderOlderThanSeconds(string $folder, int $seconds): void
     {
         if (!is_dir($folder)) {
             return;

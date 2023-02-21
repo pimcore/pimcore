@@ -1,0 +1,19 @@
+pimcore:
+    newsletter:
+        source_adapters:
+            reportAdapter: pimcore.document.newsletter.factory.report
+
+pimcore_admin:
+    user:
+        default_key_bindings:
+            reports:
+                key: 'M'
+                action: reports
+                ctrl: true
+                alt: true
+            custom_reports:
+                key: 'C'
+                action: customReports
+                ctrl: true
+                alt: true
+

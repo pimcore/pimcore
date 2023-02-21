@@ -61,7 +61,7 @@ class Dao extends AbstractDao
         }
     }
 
-    public function save()
+    public function save(): void
     {
         $this->update();
     }
@@ -69,7 +69,7 @@ class Dao extends AbstractDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::TABLE_NAME_RELATIONS, [
             'keyId' => $this->model->getKeyId(),
@@ -77,7 +77,7 @@ class Dao extends AbstractDao
         ]);
     }
 
-    public function update()
+    public function update(): void
     {
         $type = $this->model->getObjectVars();
         $validTableColumns = $this->getValidTableColumns(self::TABLE_NAME_RELATIONS);

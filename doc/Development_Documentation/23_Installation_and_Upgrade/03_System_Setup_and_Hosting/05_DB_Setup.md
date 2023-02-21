@@ -28,7 +28,7 @@ While setting up the MySQL Server you can enforce `utf8mb4` character set and [l
 ```ini
 # MySQL Server configuration for Pimcore.
 # @See https://dev.mysql.com/doc/refman/8.0/en/option-files.html
-# @See https://pimcore.com/docs/6.x/Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/DB_Setup.html
+# @See https://pimcore.com/docs/pimcore/11.0/Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/DB_Setup.html
 
 # Applies to any client connecting to this sever
 [client]

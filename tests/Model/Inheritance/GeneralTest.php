@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,15 +16,15 @@
 
 namespace Pimcore\Tests\Model\Inheritance;
 
-use Pimcore\Db\Connection;
+use Doctrine\DBAL\Connection;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class GeneralTest extends ModelTestCase
 {
@@ -43,7 +44,7 @@ class GeneralTest extends ModelTestCase
      *
      * two is created after one. two gets moved out and moved in again. Then one gets updated.
      */
-    public function testInheritance()
+    public function testInheritance(): void
     {
         // According to the bootstrap file en and de are valid website languages
 
@@ -145,7 +146,7 @@ class GeneralTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    public function testEqual()
+    public function testEqual(): void
     {
         // According to the bootstrap file en and de are valid website languages
 
@@ -210,7 +211,7 @@ class GeneralTest extends ModelTestCase
      *
      * object relations field should inherit it's values from one to two
      */
-    public function testInheritanceWithFolder()
+    public function testInheritanceWithFolder(): void
     {
         // According to the bootstrap file en and de are valid website languages
 
@@ -273,7 +274,7 @@ class GeneralTest extends ModelTestCase
      *
      * object relations field should inherit it's values from one to two
      */
-    public function testInheritanceWithOtherClassObjectBetween()
+    public function testInheritanceWithOtherClassObjectBetween(): void
     {
         // According to the bootstrap file en and de are valid website languages
 

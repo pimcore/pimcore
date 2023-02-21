@@ -2,8 +2,9 @@
 
 ## General
 
-The application logger is a tool, which developers can use to log 
-certain events and errors within a Pimcore powered application. 
+The application logger bundle is a tool, which developers can use to log 
+certain events and errors within a Pimcore powered application.
+To use this feature please enable `PimcoreApplicationLoggerBundle` in your `bundles.php` file.
 
 <div class="inline-imgs">
 
@@ -18,7 +19,7 @@ The logs are visible and searchable within the Pimcore backend GUI ![Tools menu]
 
 ## How to create log entries
 
-The application logger is a PSR-3 compatible component and available on the service container as service `Pimcore\Log\ApplicationLogger`
+The application logger is a PSR-3 compatible component and available on the service container as service `Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger`
 and therefore it can be used the usual way.
 
 ### Basic Usage - Example
@@ -30,7 +31,7 @@ and therefore it can be used the usual way.
 
 namespace App\Controller;
 
-use Pimcore\Log\ApplicationLogger;
+use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
 use Pimcore\Controller\FrontendController;
 
 class TestController extends FrontendController
@@ -57,7 +58,7 @@ class TestController extends FrontendController
 ```yaml
 App\YourService: 
     calls:
-        - [setLogger, ['@Pimcore\Log\ApplicationLogger']]
+        - [setLogger, ['@Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger']]
 ```
 
 You can also make use of autowiring by defining the application logger as dependency:
@@ -75,7 +76,7 @@ services:
 
 namespace App;
 
-use Pimcore\Log\ApplicationLogger;
+use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
 
 class YourService
 {
@@ -106,12 +107,12 @@ monolog:
         # note that the only supported extra option besides type and id is channels
         application_logger_db:
             type: service
-            id: Pimcore\Log\Handler\ApplicationLoggerDb
+            id: Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb
             channels: ["application_logger"]
 ``` 
 
-Note that the channel(s) need to exist. This can either by achieved by [configuring them manually](https://symfony.com/doc/5.2/logging/channels_handlers.html#creating-your-own-channel)
-or by using [DI tags](https://symfony.com/doc/5.2/reference/dic_tags.html#dic-tags-monolog) to select the logger for
+Note that the channel(s) need to exist. This can either by achieved by [configuring them manually](https://symfony.com/doc/current/logging/channels_handlers.html#creating-your-own-channel)
+or by using [DI tags](https://symfony.com/doc/current/reference/dic_tags.html#dic-tags-monolog) to select the logger for
 the channel you want to log to. When using DI tags, the channel will be created implicitly by monolog.
 
 > **IMPORTANT**: As the `ApplicationLoggerDb` handler has a dependency on the database connection it is important to exclude
@@ -137,34 +138,13 @@ monolog:
             min_level: ERROR
         application_logger_db:
             type: service
-            id: Pimcore\Log\Handler\ApplicationLoggerDb
+            id: Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb
 ```
 
-Of course you can also use the handler in combination with other log handlers such as the [Fingers Crossed Handler](https://symfony.com/doc/5.2/logging.html#handlers-that-modify-log-entries).
-See the [Symfony Logging Documentation](https://symfony.com/doc/5.2/logging.html) for details.
+Of course you can also use the handler in combination with other log handlers such as the [Fingers Crossed Handler](https://symfony.com/doc/current/logging.html#handlers-that-modify-log-entries).
+See the [Symfony Logging Documentation](https://symfony.com/doc/current/logging.html) for details.
 
-As soon as the handler is configured, you can use it (as any other monolog logger) either by fetching a dedicated monolog
-channel logger or by using a DI tag to specify the channel you want to log to:
-
-```php
-<?php
-
-namespace App\Controller;
-
-use Pimcore\Controller\FrontendController;
-
-class TestController extends FrontendController
-{
-    public function testAction()
-    {
-        // fetch the channel logger by its known name monolog.logger.<channel>
-        $logger = $this->get('monolog.logger.application_logger');
-        $logger->error('Your error message');
-    }   
-}
-```
-
-Or use DI tags in combination with the `@logger` service to inject the channel logger you want to use:
+As soon as the handler is configured, you can use it (as any other monolog logger) by using a DI tag to specify the channel you want to log to:
 
 ```php
 <?php
@@ -206,6 +186,19 @@ services:
             - { name: monolog.logger, channel: application_logger }
 ``` 
 
+It's also possible to autowire the logger channel by changing the argument name format to `(channel name in camel case) + Logger`. 
+
+An example for channel `foo_bar`:
+
+```php
+  public function __construct(LoggerInterface $fooBarLogger)
+  {
+      $this->logger = $fooBarLogger;
+  }
+```
+
+More details on [Logging Chanel Handlers](https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels)
+
 ### Special context variables
 
 There are some context variables with a special functionality: `fileObject`, `relatedObject`, `component`.
@@ -215,8 +208,8 @@ There are some context variables with a special functionality: `fileObject`, `re
 
 namespace App\Controller;
 
-use Pimcore\Log\ApplicationLogger;
-use Pimcore\Log\FileObject;
+use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
+use Pimcore\Bundle\ApplicationLoggerBundle\FileObject;
 use Pimcore\Model\DataObject\AbstractObject;
 
 class TestController
@@ -251,7 +244,7 @@ when writing the log entry. This can be done in 2 ways depending on how you use 
 ```php
 <?php
 
-use Pimcore\Log\ApplicationLogger;
+use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
 
 $exception = new \RuntimeException('failed :(');
 
@@ -275,7 +268,7 @@ ApplicationLogger::logExceptionObject($logger, 'Oh no!', $exception, 'alert', $r
 Adds a console logger and sets the minimum logging level to *INFO* (overwrites log level in Pimcore system settings):
 
 ```php
-$logger = \Pimcore\Log\ApplicationLogger::getInstance("SAP_exporter", true); 
+$logger = \Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger::getInstance("SAP_exporter", true); 
 // returns a PSR-3 compatible logger, registers a custom app logger as `pimcore.app_logger.SAP_exporter` on the service container
 $logger->addWriter(new \Monolog\Handler\StreamHandler('php://output', \Monolog\Logger::INFO));
 ```

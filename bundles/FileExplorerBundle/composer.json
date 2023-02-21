@@ -1,0 +1,27 @@
+{
+  "name": "pimcore/system-file-explorer",
+  "license": "GPL-3.0+",
+  "type": "pimcore-bundle",
+  "description": "Pimcore File Explorer Bundle that allows to read/write files on the server from within the Pimcore Admin.",
+  "config": {
+    "sort-packages": true
+  },
+  "prefer-stable": true,
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^8.1",
+    "pimcore/pimcore": "^11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pimcore\\Bundle\\FileExplorerBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "pimcore": {
+      "bundles": [
+        "Pimcore\\Bundle\\FileExplorerBundle\\PimcoreFileExplorerBundle"
+      ]
+    }
+  }
+}

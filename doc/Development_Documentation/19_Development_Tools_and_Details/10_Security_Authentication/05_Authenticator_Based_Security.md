@@ -27,4 +27,4 @@ and refactor `security.yaml` to adapt new changes. See demo changes [here](https
 - Anonymous user no longer exist.
 
 For more information on new Authenticator Based Security, please read the
-[Symfony Security Component documentation](https://symfony.com/doc/5.3/security.html).
+[Symfony Security Component documentation](https://symfony.com/doc/current/security.html).

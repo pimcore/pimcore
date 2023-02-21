@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class VersionDeleteHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
 
-    public function __invoke(VersionDeleteMessage $message, Acknowledger $ack = null)
+    public function __invoke(VersionDeleteMessage $message, Acknowledger $ack = null): mixed
     {
         return $this->handle($message, $ack);
     }

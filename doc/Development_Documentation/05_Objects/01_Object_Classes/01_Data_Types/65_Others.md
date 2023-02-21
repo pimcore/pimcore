@@ -147,7 +147,7 @@ class ProductController extends FrontendController
 {
     public function slugAction(Request $request, DataObject\Foo $object, DataObject\Data\UrlSlug $urlSlug) {
         
-        // we use param converters to the the matched data object ($object)
+        // we use param resolver to the the matched data object ($object)
         // $urlSlug contains the context information of the slug
 
         return [

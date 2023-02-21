@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <style type="text/css">
+
+        html, body, #wrapper {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            border: none;
+            text-align: center;
+        }
+
+        #wrapper {
+            margin: 0 auto;
+            text-align: left;
+            vertical-align: middle;
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+
+<table id="wrapper" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td>
+            Sorry, no preview available<br>
+            {% set tempFile = asset.getTemporaryFile() %}
+            {% set dataUri = pimcore_asset_version_preview(tempFile) %}
+
+            <a href="{{ dataUri }}" download="{{ asset.getFilename() }}" id="download-version-link">{{ 'download'|trans([],'admin') }}</a>
+        </td>
+    </tr>
+</table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        {% set filenamePrefix = asset.getFilename()|split('.')|slice(0,-1)|join('.') %}
+        {% set filenameSuffix = asset.getFilename()|split('.')|last %}
+        let versionDate = Ext.Date.format(new Date({{ version.getDate() * 1000 }}), 'Y-m-d-H-i-s');
+        document.getElementById('download-version-link').setAttribute('download', "{{ filenamePrefix }}-" + versionDate + ".{{ filenameSuffix }}");
+    }, false);
+</script>
+
+<script src="/bundles/pimcoreadmin/js/../extjs/js/ext-all.js" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
+</body>
+</html>

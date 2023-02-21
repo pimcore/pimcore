@@ -1,0 +1,1129 @@
+---
+unsupported_feature: "Desteklenmeyen \xF6zellik. L\xFCtfen sistem gereksinimlerini
+  kontrol ediniz."
+screen_size_to_small: "Ekran\u0131n\u0131z istenen \xF6nizlemeyi g\xF6r\xFCnt\xFClemek
+  i\xE7in \xE7ok k\xFC\xE7\xFCk."
+too_many_children_for_recyclebin: "Bu \xF6\u011Fe \xE7\xF6p kutusuna ta\u015F\u0131nacak
+  \xE7ok fazla alt \xF6\u011Fe i\xE7eriyor."
+default: "Varsay\u0131lan"
+metadata: Metadata
+email_address: E-posta Adresi
+email_blacklist: E-posta Kara Listesi
+OK: TAMAM
+optional: "iste\u011Fe ba\u011Fl\u0131"
+search_replace_assignments_error: "L\xFCtfen de\u011Fi\u015Ftirilecek \xF6\u011Feleri
+  ve yeni bir hedef \xF6\u011Feyi se\xE7in."
+replace_assignments_in_selected_elements: "Se\xE7ilen \xF6\u011Felerdeki atamalar\u0131
+  de\u011Fi\u015Ftir"
+search_replace_assignments: "Atamalar\u0131 Ara & De\u011Fi\u015Ftir"
+imageadvanced: "Geli\u015Fmi\u015F Resim"
+filter_active_message: "Sadece filtrelenmi\u015F de\u011Ferleri mi d\u0131\u015Fa
+  aktarmak istiyorsunuz?"
+close_others: "Di\u011Ferlerini Kapat"
+close_all: "T\xFCm\xFCn\xFC Kapat"
+close_unmodified: "De\u011Fi\u015Ftirmeden Kapat"
+classid: Class ID
+parentid: Ebeveyn ID
+mimetype: MIME-Tipi
+creationdate: "Olu\u015Fturulma Tarihi"
+usermodification: "Kullan\u0131c\u0131 De\u011Fi\u015Fikli\u011Fi"
+userowner: "Kullan\u0131c\u0131 Sahibi"
+languages: Diller
+password_was_not_changed: "Yeterince g\xFCvenilir olmad\u0131\u011F\u0131 i\xE7in
+  \u015Fifre de\u011Fi\u015Ftirilemedi"
+marketing: Pazarlama
+clear_content_of_current_view: "Mevcut g\xF6r\xFCn\xFCm\xFCn i\xE7eri\u011Fini temizle"
+highlight_editable_elements: "D\xFCzenlenebilir \xF6\u011Feleri vurgula"
+continue: Devam et
+you_have_unsaved_changes: "Kaydedilmemi\u015F de\u011Fi\u015Fiklikleriniz mevcut."
+global_targeting_rule: Global Targeting Rule
+global_targeting_rules: "Global Hedefleme Kurallar\u0131"
+personalization: "Ki\u015Fiselle\u015Ftirme"
+shared_translations: "Ortak \xC7eviri"
+textfield: "Metin alan\u0131"
+add_data: Veri ekle
+add_hotspot: Hotspot ekle
+add_marker_or_hotspots: "\u0130\u015Faret\xE7i veya hotspot ekle"
+custom_reports: "\xD6zel Raporlar"
+start_date: "Ba\u015Flang\u0131\xE7 tarihi"
+start_date_relative: "Ba\u015Flang\u0131\xE7 tarihi (bug\xFCn g\xF6receli)"
+end_date: "Biti\u015F tarihi"
+end_date_relative: "Biti\u015F tarihi (bug\xFCn g\xF6receli)"
+relative_date_description: "\xF6rnek -1m + 1d (d = g\xFCn, m = ay, y = y\u0131l)"
+source_definition: "Kaynak Tan\u0131m\u0131"
+clear_thumbnails: "K\xFC\xE7\xFCk Resimleri Temizle"
+recipients: "Al\u0131c\u0131lar"
+newsletter_send_error: "B\xFClteninizi g\xF6nderemezsiniz, l\xFCtfen y\xF6neticinize
+  ba\u015Fvurun!"
+newsletter_sent_message: "B\xFClteniniz t\xFCm al\u0131c\u0131lara g\xF6nderiliyor,
+  bu i\u015Flem arka planda devam edecek (bu arada internet taray\u0131c\u0131n\u0131z\u0131
+  kapatabilirsiniz) ve bir saat kadar s\xFCrebilir."
+do_you_really_want_to_send_the_newsletter_to_all_recipients: "B\xFClteni ger\xE7ekten
+  t\xFCm al\u0131c\u0131lara g\xF6ndermek istiyormusunuz?"
+send_test_newsletter: "Test Haber B\xFClteni G\xF6nder"
+send_newsletter: "Haber B\xFCltenini G\xF6nder"
+object_filter: Nesne Filtresi
+add_newsletter: "Haber B\xFClteni Ekle"
+newsletter: "Haber B\xFClteni"
+crm: "M\xFC\u015Fteri \u0130li\u015Fkileri (CRM)"
+notes_events: Notlar & Etkinlikler
+delete_folder: "Klas\xF6r\xFC Sil"
+home: Anasayfa
+subject: Konu
+poster_image: "Poster - G\xF6r\xFCnt\xFC"
+tablet: Levha
+hardlink: Hardlink
+convert_to: "\u015Euna d\xF6n\xFC\u015Ft\xFCr"
+replace: "De\u011Fi\u015Ftir"
+targeting: Hedefleme
+paste_inheritance: "Yap\u0131\u015Ft\u0131r (oldu\u011Fu gibi)"
+are_you_sure: Eminmisin?
+all_content_will_be_lost: "B\xFCt\xFCn i\xE7erik silinecek"
+content_master_document: "i\xE7erik - Ana belge"
+overwrite: "\xDCzerine yaz"
+click_right_to_overwrite: "\xFCzerine yazmak i\xE7in sa\u011F klik yap\u0131n\u0131z."
+open_document_by_id: "Belgeyi a\xE7"
+open_asset_by_id: "Varl\u0131\u011F\u0131 a\xE7"
+open_object_by_id: "Nesneyi A\xE7"
+element_not_found: "\xD6\u011Fe bulunamad\u0131"
+import_from_url: URL den al
+do_you_really_want_to_leave_the_editmode: "D\xFCzenleme modundan ger\xE7ekten ayr\u0131lmak
+  istiyor musunuz (HAYIR!)"
+or_specify_an_asset_image_below: "veya a\u015Fa\u011F\u0131da bir varl\u0131k resmi
+  belirtin"
+medium: Orta
+saved_successfully: "Kay\u0131t edildi"
+qr_codes: "QR-Kodlar\u0131"
+element: "\xD6\u011Fe"
+details_for_selected_event: "Se\xE7ilen \xF6\u011Fenin detaylar\u0131"
+fields: Alanlar
+not_possible_with_paging: "\xDCzg\xFCn\xFCz, bu sayfalanm\u0131\u015F \xF6\u011Felerde
+  m\xFCmk\xFCn de\u011Fildir, a\u011Fa\xE7taki sayfalardan ka\xE7\u0131nmak i\xE7in
+  verinizi yeniden yap\u0131land\u0131rmay\u0131 deneyin."
+inherited: "Devral\u0131nan"
+length: Uzunluk
+show_in_tree: "A\u011Fa\xE7ta G\xF6ster"
+exactmatch: "tam e\u015Fle\u015Fme"
+desktop: "Masa\xFCst\xFC"
+drag_me: "Beni S\xFCr\xFCkle"
+serverVars: "Sunucu De\u011Fi\u015Fkenleri"
+attributes: Nitelikler
+code: Kod
+tag: Tag
+tags: Etiketler
+Click here to proceed: "Devam etmek i\xE7in t\u0131klay\u0131n"
+Your browser is not supported. Please install the latest version of one of the following browsers.: "Taray\u0131c\u0131n\u0131z
+  desteklenmiyor. L\xFCtfen a\u015Fa\u011F\u0131daki taray\u0131c\u0131lardan birinin
+  en son s\xFCr\xFCm\xFCn\xFC y\xFCkleyin."
+open_in_new_window: "Yeni Pencerede A\xE7"
+limit_reached: "s\u0131n\u0131ra ula\u015Ft\u0131n\u0131z"
+casesensitive: "B\xFCy\xFCk-k\xFC\xE7\xFCk harf duyarl\u0131"
+path_aliases: "Yol Takma Adlar\u0131"
+pretty_url: "K\u0131sa URL"
+pretty_url_label: "K\u0131sa URL (a\u011Fa\xE7 yap\u0131s\u0131ndan gelen yolu ge\xE7ersiz
+  k\u0131lar)"
+password_cannot_be_changed: "\u015Eifre de\u011Fi\u015Ftirilemedi"
+old_password: "Eski \u015Eifre"
+new_password: "Yeni \u015Eifre"
+retype_password: "\u015Eifreyi tekrar yaz\u0131n"
+reports: Raporlar
+roles: Yetkiler
+Password: "\u015Eifre"
+Forgot your password: "\u015Eifrenimi unuttun?"
+Back to Login: "Giri\u015F sayfas\u0131na d\xF6n"
+Enter your username and pimcore will send a login link to your email address: "E-posta
+  adresinizi girdikten sonra size giri\u015F i\xE7in bir ba\u011Flant\u0131 g\xF6nderilecek."
+Please check your mailbox.: "L\xFCtfen posta kutunuzu kontrol edin."
+Login: "Giri\u015F"
+Submit: "G\xF6nder"
+A temporary login link has been sent to your email address.: "Ge\xE7ici ba\u011Flant\u0131
+  adresi mail adresinize g\xF6nderildi."
+user_inactive: User is not active
+user_no_email_address: User has no email address
+user_no_password: User has no password
+user_unknown: User unknown
+lost_password_email_error: Could not send password recovery email
+use_current_player_position_as_preview: "\xD6nizleme i\xE7in mevcut player konumunu
+  kullan\u0131n"
+select_image_preview: "G\xF6r\xFCnt\xFC \xF6nizlemeyi se\xE7"
+preview_not_available: "\xD6nizleme mevcut dce\u011Fil"
+status: Durum
+video_preview_in_progress: "Bu video i\xE7in \xF6nizleme i\u015Flemesi devam ediyor."
+php_cli_binary_and_or_ffmpeg_binary_setting_is_missing: "PHP-CLI binary veya FFMPEG
+  mevcut de\u011Fil, l\xFCtfen sistem ayarlar\u0131nda hem y\xFCkl\xFC / \xE7al\u0131\u015Ft\u0131r\u0131labilir
+  hem de yap\u0131land\u0131r\u0131lm\u0131\u015F oldu\u011Fundan emin olun!"
+video_thumbnails: "Video k\xFC\xE7\xFCk resimi"
+do_you_really_want_to_close_pimcore: "Pimcore uygulamas\u0131n\u0131 kapatmak istedi\u011Finizden
+  emin misiniz?"
+drop_element_here: "\xD6\u011Feyi buraya b\u0131rak"
+select_specific_area_of_image: "Resimin belirli bir alan\u0131n\u0131 se\xE7in"
+paste_recursive_updating_references: "Yinelemeli, g\xFCncelleme referanslar\u0131
+  yap\u0131\u015Ft\u0131r\u0131n"
+add_hardlink: Hardlink Ekle
+source_path: Kaynak yolu
+properties_from_source: "Kaynak belgedeki \xF6zellikleri kullan"
+children_from_source: Use children from source document
+click_right_for_more_options: "Daha fazla se\xE7enek i\xE7in sa\u011F t\u0131klay\u0131n\u0131z"
+move_to_tab: "Sekmeyi (Tab) ta\u015F\u0131"
+not_supported: Desteklenmez
+edit_link: "Ba\u011Flant\u0131 (Link) d\xFCzenle"
+resize: "Boyutland\u0131r"
+scalebyheight: "Y\xFCkseklikle \xD6l\xE7ekle"
+scalebywidth: "Geni\u015Flikle \xD6l\xE7ekle"
+crop: Kes
+cleanup: Temizle
+this_element_cannot_be_edited: "Bu \xF6\u011Fe d\xFCzenlenemez."
+details: "Ayr\u0131nt\u0131lar"
+cannot_save_object_please_try_to_edit_the_object_in_detail_view: "<b>Bu nesne kaydedilemedi!</b><br
+  />L\xFCtefen nesneyi detayl\u0131 g\xF6r\xFCnt\xFCleme de d\xFCzenleyin."
+size: Boyut
+select_a_file: "Dosya se\xE7"
+upload_compatibility_mode: "Dosya Y\xFCkle ( Uyumluluk Modu )"
+the_system_is_in_maintenance_mode_please_wait: "Sistem bak\u0131m modunda, l\xFCtfen
+  bekleyin.."
+activate: "Etkinle\u015Ftir"
+image_is_too_small: "Resim \xE7ok ufak , l\xFCtfen daha b\xFCy\xFCk se\xE7iniz"
+name_is_not_allowed: "\u0130sime m\xFCsade verilmiyor"
+import_from_server: 'Sunucudan veri al '
+upload_files: "Dosyalar\u0131 kar\u015F\u0131ya y\xFCkle"
+upload_zip: "S\u0131k\u0131\u015Ft\u0131r\u0131lm\u0131\u015F dosyalar\u0131 kar\u015F\u0131ya
+  y\xFCkle"
+document_root: Dosya Ana Dizini
+batch_change_selected: "Toplu de\u011Fi\u015Fim se\xE7imi"
+download_as_zip: ZIP olarak indir
+locked: Kilitli
+element_cannot_be_move_because_it_is_locked: "\xF6\u011Feler kilitli oldu\u011Fundan
+  ta\u015F\u0131namaz."
+element_cannot_be_moved: "Se\xE7ilen \xF6\u011Fe buraya ta\u015F\u0131namaz."
+element_cannot_be_moved_because_target_is_paginated: The element cannot be dragged
+  on a paginated tree/folder with manual indexing (Sort by index). Please change the
+  sorting method or use "Search & Move" option under the "Advanced" context menu of
+  the target to move the elements.
+no_collections_allowed: "Hi\xE7bir kolleksiyona izin verilmedi"
+filter_condition: "Filtre Ko\u015Fulu"
+all_types: "T\xFCm \xC7e\u015Fitler"
+audio: Ses
+video: "g\xF6r\xFCn\xFCt\xFC"
+archive: "Ar\u015Fiv"
+unknown: Bilinmeyen
+class: "s\u0131n\u0131f"
+page: sayfa
+objectbrick: Objectbrick
+field_collection: Field-Collection
+snippet: pasaj
+folder: "Klas\xF6r"
+your_selection: "Se\xE7iminiz"
+double_click_to_add_item_to_selection: "Bu se\xE7ime eklemek i\xE7in soldaki bir \xF6\u011Feye
+  \xE7ift t\u0131klay\u0131n."
+label: Etiket
+error_auth_failed: "Giri\u015F ba\u015Far\u0131s\u0131z! L\xFCtfen tekrar deneyiniz."
+error_session_expired: "Maksimum ba\u011Flant\u0131 s\xFCresini a\u015Ft\u0131n\u0131z.
+  L\xFCtfen tekrar giri\u015F yap\u0131n\u0131z."
+site: site
+descending: Azaltarak
+ascending: "Artt\u0131rarak"
+sort: Listele
+results: "Sonu\xE7lar"
+dimension: "A\xE7\u0131"
+metric: Metrik
+segment: "B\xF6l\xFCm"
+data_explorer: "Data D\xFCzenleyici"
+navigation: Navigasyon
+entrances: "Giri\u015Fler"
+exits: "\xC7\u0131k\u0131\u015Flar"
+restore: "Geri Y\xFCkleme"
+amount: Miktar
+flush_recyclebin: "Geri D\xF6n\xFC\u015F\xFCm Kutusu'nu Bo\u015Falt."
+recyclebin: "Geri D\xF6n\xFC\u015F\xFCm Kutusu"
+deletedby: 'Silen :'
+open_select_editor: "Se\xE7im D\xFCzenleyicisini A\xE7"
+ignore: "dikkate alma - ge\xE7"
+email_log: Email Log
+email_log_resend: "E-postay\u0131 tekrar g\xF6nder"
+email_log_resend_window_msg: "L\xFCtfen e-postay\u0131 t\xFCm al\u0131c\u0131lara
+  tekrar g\xF6ndermek istedi\u011Finizi onaylay\u0131n."
+select_site: "Bir Site Se\xE7"
+main_site: Ana Site
+filename: "Dosya Ad\u0131"
+unsupported_filetype: Desteklenmeyen Dosya Tipi
+email_log_resend_window_success_message: "Mail t\xFCm al\u0131c\u0131lara ba\u015Far\u0131yla
+  g\xF6nderildi."
+email_log_resend_window_error_message: "Bir hata olu\u015Ftu. Mail g\xF6nderilemedi."
+error_jobs: "\u0130\u015Flemler ger\xE7ekle\u015Ftiremedi."
+batch_change: Toplu Atama
+batch_edit_field: "Toplu D\xFCzenleme Alan\u0131"
+published: "Yay\u0131nland\u0131"
+all: "t\xFCm\xFC"
+items_per_page: "sayfa ba\u015F\u0131na"
+reload_pimcore_changes: "De\u011Fi\u015Fikliklerin aktif olmas\u0131 i\xE7in Pimcore
+  yeniden y\xFCklenmelidir. \u015Eimdi yeniden y\xFCklemek istermisiniz ?"
+info: Bilgi
+or: veya
+paste_contents: "Sadece \u0130\xE7eri\u011Fi yap\u0131\u015Ft\u0131r"
+paste_as_child: "alt \xF6\u011Fe olarak yap\u0131\u015Ft\u0131r"
+paste_recursive_as_child: Paste as child (recursive)
+view_original: "Orjinal halini g\xF6ster"
+feed: Beslemek
+no_items_found: "Hi\xE7bir \xF6\u011Fe bulunamad\u0131"
+public_url: Genel URL
+pageviews: "Sayfa G\xF6r\xFCn\xFCmleri"
+visits: Ziyaretler
+detail: Detay
+report_settings: "Rapor Ayarlar\u0131"
+overview: "Genel Bak\u0131\u015F"
+visitor_overview: "Ziyaret\xE7i Bak\u0131\u015F"
+other: "Di\u011Fer"
+google_analytics: Google Analytics
+reports_and_marketing: Raporlar ve Pazarlama
+save_only_scheduled_tasks: "Sadece zamanlanm\u0131\u015F g\xF6revleri kaydet"
+modified_assets: "De\u011Fi\u015Ftirilmi\u015F Varl\u0131klar"
+modification_statistic: "Son 31 g\xFCn i\xE7erisindeki de\u011Fi\u015Fiklikler"
+add_portlet: Portlet Ekle
+modified_documents: "De\u011Fi\u015Ftirilmi\u015F Belgeler"
+modified_objects: "De\u011Fi\u015Ftirilmi\u015F Nesneler"
+welcome: "Ho\u015Fgeldiniz"
+save_and_publish: "Kaydet ve Yay\u0131nla"
+delete: Sil
+save: Kaydet
+add_assets: "Varl\u0131k Ekle"
+preview: "\xD6nizle"
+advanced: "Geli\u015Fmi\u015F"
+basic: Temel
+list: Liste
+view: "G\xF6r\xFCn\xFCm"
+publish: "G\xF6nder"
+rename: "Yeniden adland\u0131r"
+settings: Ayarlar
+properties: "\xD6zellikler"
+versions: "S\xFCr\xFCmler"
+add: Ekle
+date: Tarih
+user: "Kullan\u0131c\u0131"
+note: Not
+email_cc: Cc
+email_bcc: Bcc
+email_settings: "E-Posta Ayarlar\u0131"
+email_settings_receiver_description: "Birden \xE7ok al\u0131c\u0131 e-posta adresini
+  noktal\u0131 virg\xFClle ay\u0131rarak giriniz. <br/> \xD6rnek: alici@ornek.org;
+  alici2@ornek.org <br/> 'Kimden' k\u0131sm\u0131 i\xE7in e-posta adresinin \xF6n\xFCne
+  ek ekleyebilirsiniz <i> ismim & lt; \xF6rnek@ornek.com&gt; </ i>"
+email_logs: "E-posta G\xF6nder"
+email_log_sent_Date: "G\xF6nderme tarihi"
+predefined_document_type: "\xD6nceden Tan\u0131mlanm\u0131\u015F Belge T\xFCr\xFC"
+controller: Kontrol eden
+action: Eylem
+actions: Eylemler
+template: "\u015Eablon"
+staticroute: Static Route
+static_generator: Static Page Generator
+static_generator_enable: Enable server side static rendering
+static_generator_lifetime: Lifetime (in minutes) for static page (optional)
+last_generated: Last generated
+key: Anahtar
+id: Kimlik
+name: "\u0130sim"
+title: "Ba\u015Fl\u0131k"
+description: "Tan\u0131m"
+unpublish: "Yay\u0131ndan Kald\u0131r"
+target: Hedef
+type: Tip
+please_enter_the_new_name: "L\xFCtfen yeni ismi giriniz"
+add_page: Sayfa Ekle
+add_snippet: Pasaj ekle
+add_email: E-posta Ekle
+add_link: "Ba\u011Flant\u0131 Ekle"
+copy: Kopyala
+paste: "Yap\u0131\u015Ft\u0131r"
+close_all_tabs: "T\xFCm Sekmeleri Kapat"
+search: Arama
+import: "D\u0131\u015Far\u0131 Ver"
+export: "\u0130\xE7eri Al"
+document_type: Document Type
+document_types: "Belge T\xFCrleri"
+predefined_properties: "\xD6nceden Tan\u0131ml\u0131 \xD6zellikler"
+users: "Kullan\u0131c\u0131lar"
+profile: "Kullan\u0131c\u0131 Profili"
+my_profile: Profilim
+documentation: Belgeleme
+report_bugs: "Hata Raporlar\u0131"
+about: "Hakk\u0131nda"
+file: Dosya
+extras: Ekstralar
+help: "Yard\u0131m"
+configuration: "Yap\u0131land\u0131rma"
+value: "De\u011Fer"
+add_a_custom_property: "\xD6zel Emlak Ekle"
+custom: Custom
+general: Genel
+language: Dil
+quality: Kalite
+format: "Bi\xE7im"
+documents: Belgeler
+assets: Aktif
+upload: "Y\xFCkleme"
+width: "Geni\u015Flik"
+height: "Y\xFCkseklik"
+empty: "Bo\u015F"
+workflow: "\u0130\u015F ak\u0131\u015F\u0131"
+modify: "De\u011Fi\u015Ftir"
+create: "Olu\u015Ftur"
+edit: "D\xFCzenle"
+logout: "\xC7\u0131k\u0131\u015F"
+refresh: Yenile
+input: "Giri\u015F"
+checkbox: Onay Kutusu
+textarea: "Yaz\u0131 Alan\u0131"
+image: Resim
+select: "Se\xE7"
+base: Baz
+add_object: Nesne Ekleme
+border: "S\u0131n\u0131r"
+document: "D\xF6k\xFCman"
+asset: "Varl\u0131k"
+object: Nesne
+remove: "Kald\u0131r"
+hidden_dependencies: "Kullan\u0131c\u0131 g\xF6rmek i\xE7in izinlere sahip de\u011Fildir.
+  Ek ba\u011F\u0131ml\u0131l\u0131klar\u0131 vard\u0131r."
+open: "A\xE7\u0131k"
+days: "G\xFCnler"
+seemode: "G\xF6r\xFCnt\xFC modu"
+edit_current_page: "Sayfay\u0131 D\xFCzenle"
+close: Kapat
+name_already_in_use: "Bu ad daha \xF6nce kullan\u0131lm\u0131\u015Ft\u0131r. Ba\u015Fka
+  bir isim giriniz."
+name_and_key_must_be_defined: "Ad ve t\xFCr tan\u0131mlamas\u0131 yapmak zorundas\u0131n\u0131z."
+mandatory_field_empty: "T\xFCm zorunlu alanlar\u0131 doldurun."
+reload: "Yeniden y\xFCkle"
+schedule: "G\xF6rev zamanlay\u0131c\u0131s\u0131 ( schedule )"
+time: Zaman
+version: "S\xFCr\xFCm ( versiyon )"
+active: Aktif
+success: "Ba\u015Far\u0131yla tamamland\u0131."
+translations: "Websitesi \xE7evirileri"
+translation_simple: Simple Text
+translation_custom: ICU Format
+firstname: "Ad\u0131"
+lastname: "Soyad\u0131"
+email: E-Posta
+cant_move_node_to_target: "Nod'u ta\u015F\u0131yamazs\u0131n\u0131z"
+error_moving_object: "Nesne ta\u015F\u0131namaz"
+translations_are_not_configured: "\xC7eviriler yap\u0131land\u0131r\u0131lmad\u0131"
+read_more_here: "Detayl\u0131 bilgi oku"
+publish_version: "Yay\u0131nlanma s\xFCr\xFCm\xFC"
+start: "Ba\u015Flang\u0131\xE7"
+su: Paz.
+mo: Pzt.
+tu: Sa.
+we: "\xC7ar."
+th: Per.
+fr: Cum.
+sa: Cmt.
+session_error_text: "Oturumunuzda bir sorun var gibi g\xF6r\xFCn\xFCyor. Kaydetmek
+  i\xE7in bu sayfay\u0131 yeniden y\xFCklemenizi \xF6neririz, ancak \xF6nce de\u011Fi\u015Fikliklerinizi
+  kaydetmeyi deneyebilirsiniz."
+session_error: "Oturum hatas\u0131"
+please_wait: "L\xFCtfen Bekleyiniz..."
+download: indirin
+inheritable: "Kal\u0131tsal"
+redirects: "Y\xF6nlendirmeler"
+source: Kaynak
+link: "Ba\u011Flant\u0131 ( Link )"
+abbr: "K\u0131salt."
+stop: Durdur
+dependencies: "Ba\u011F\u0131ml\u0131l\u0131klar"
+requires: Zorunlu
+required_by: "\u015Eunun i\xE7in gerekli:"
+search_edit: "ara, d\xFCzenle ve d\u0131\u015Far\u0131 aktar"
+subtype: "Alt t\xFCr"
+initializing: "Ba\u015Flat\u0131l\u0131yor ..."
+please_select_a_type: "L\xFCtfen bir t\xFCr se\xE7in"
+filter: Filtre
+field: Alan
+operator: "Operat\xF6r"
+apply: Uygula
+show: "G\xF6ster"
+public: "Halka a\xE7\u0131k"
+maximum_2_versions: "En fazla 2 s\xFCr\xFCm kar\u015F\u0131la\u015Ft\u0131rabilirsiniz"
+error: Hata
+element_is_locked: "Se\xE7ilen Eleman ba\u015Fkas\u0131 taraf\u0131ndan kullan\u0131lmaktad\u0131r."
+element_lock_question: "Yine de a\xE7mak ister misiniz?"
+since: Beri
+longitude: Boylam
+latitude: Enlem
+geopoint: "Co\u011Frafi Nokta"
+cancel: "\u0130ptal"
+open_search_editor: "Arama edit\xF6r\xFCn\xFC a\xE7"
+parameters: "de\u011Fi\u015Fkenler"
+anchor: "\xC7apa"
+accesskey: "Eri\u015Fim Tu\u015Fu"
+relation: "\u0130li\u015Fki"
+tabindex: "Sekme \u0130ndeks"
+not_set: "Giri\u015F Ger\xE7ekle\u015Fmedi"
+export_csv: "CSV format\u0131nda DI\u015EARI VER"
+import_csv: "CSV format\u0131nda \u0130\xC7ER\u0130 AL"
+show_welcome_screen: "Ba\u015Flang\u0131\xE7ta Ho\u015Fgeldin Ekran\u0131n\u0131 G\xF6ster"
+importFileHasHeadRow: "\u0130lk Sat\u0131r = Ba\u015Fl\u0131k"
+overwrite_object_with_same_key_description: "\xDCzerine yazmay\u0131 etkinle\u015Ftirdi\u011Finizde,
+  her i\xE7e aktarmada her sat\u0131r i\xE7in yeni bir nesne olu\u015Fturmak yerine,
+  ayn\u0131 anahtara sahip nesneler de\u011Fi\u015Ftirilir. \u0130\xE7e aktarma klas\xF6r\xFCn\xFCzdeki
+  mevcut nesneler, i\xE7e aktarma dosyas\u0131nda bulunmuyor ise eski de\u011Ferler
+  de\u011Fi\u015Ftirilmez. \u0130\xE7e aktarma dosyas\u0131nda e\u015Fle\u015Fen bir
+  de\u011Fer bulunan t\xFCm nesnelerin hedef klas\xF6rde de\u011Fi\u015Ftirilece\u011Fini
+  l\xFCtfen unutmay\u0131n. Bu, farkl\u0131 bir s\u0131n\u0131fa veya hatta nesne
+  klas\xF6rlerine dayal\u0131 nesneler i\xE7in de ge\xE7erlidir! Alan haritalamas\u0131nda
+  g\xF6z ard\u0131 etmek i\xE7in ayarlanan nesne alanlar\u0131 eski de\u011Ferlerini
+  korur."
+object_import_filename_description: "Anahtar nesne olu\u015Fturmak i\xE7in kullan\u0131lacak
+  alan\u0131 se\xE7in."
+save_pubish_close: "Kaydet,Yay\u0131nla ve Kapat"
+save_close: Kaydet ve Kapat
+error_general: "Sunucu hatas\u0131 - i\u015Flem ger\xE7ekle\u015Ftirilemedi"
+owner_class: "S\u0131n\u0131f sahibi"
+owner_field: Alan sahibi
+nonownerobject_warning: "Mevcut nesne bu ili\u015Fkilerin sahibi de\u011Fildir. Bu
+  de\u011Fi\u015Fikli\u011Fi yapmak nesne\u2019nin kaydedilme h\u0131z\u0131 yava\u015Fl\u0131\u011F\u0131na
+  ve performans kayb\u0131na neden olur."
+element_implicit_edit_question: "Bu komut ile kesin olarak de\u011Fi\u015Ftirmek istedi\u011Finize
+  eminmisiniz?"
+element_open_message: "A\xE7maya \xE7al\u0131\u015Ft\u0131\u011F\u0131n\u0131z \xF6\u011Fe
+  zaten de\u011Fi\u015Ftirilmek i\xE7in a\xE7\u0131lm\u0131\u015F drumda"
+nonownerobjects_self_selection: "sahibi olmayan \xF6\u011Feleri kendinize atayamazs\u0131n\u0131z.
+  L\xFCtfen \"sahibi olmayan\" \xF6\u011Feler i\xE7in ilk de\u011Ferlerini kullan\u0131n."
+warning: "Uyar\u0131"
+csv_object_export_warning: "L\xFCtfen dikkat edin, CSV d\u0131\u015Fa aktarma t\xFCm
+  veri tiplerini desteklememektedir. Sonu\xE7 olarak, d\u0131\u015Fa aktar\u0131lan
+  bir CSV dosyas\u0131n\u0131 tekrar pimcore'a y\xFCklemek, veri kay\u0131plar\u0131na
+  sebep olabilir. OK' a basarak d\u0131\u015Fa aktarmaya devam edin."
+navigation_exclude: Navigasyona dahil etme
+variants: Varyantlar
+variant: Varyant
+add_variant: Varyant Ekle
+delete_message_dependencies: "Ba\u011F\u0131ml\u0131l\u0131klar vard\u0131r. Yine
+  de silinsin mi ?"
+delete_message: "Bu Eleman\u0131 silmek istiyorsunuz. Emin misiniz ?"
+delete_message_advanced: Do you really want to delete %s '%s' ?
+delete_message_batch: "Bu \xF6\u011Feleri silmek istiyormusunuz?"
+delete_group_message: Do you really want to delete this group and all of its contents?
+no_further_objectbricks_allowed: "\u0130lave temel nesne olu\u015Fturmak i\xE7in yetkiniz
+  bulunmamaktad\u0131r."
+grid_current_language: "Se\xE7ilmi\u015F Dil"
+object_columns: "Nesne S\xFCtunlar"
+system_columns: "Sistem S\xFCtunlar"
+columns: "S\xFCtunlar"
+children_grid: "k\xFC\xE7\xFCk \u0131zgara"
+only_children: "Sadece do\u011Frudan alt nesneler"
+cut: Kes
+paste_cut_element: "Kesili elemanlar\u0131 yap\u0131\u015Ft\u0131r"
+memorize_tabs: "A\xE7\u0131k Sekmeleri Ezberle"
+element_history: "En son a\xE7\u0131lan elemanlar"
+dashboards: Kontrol Paneli
+portlet_customreport: "\xD6zel Rapor"
+clear_marker_or_hotspots: "\u0130\xE7aret\xE7iyi, hotspotu ve kesim bilgilerini sil."
+hotspots_cleared: "\u0130\u015Faret\xE7i, hotspot ve kesim bilgileri silindi."
+deeplink: "Derin ba\u011Flant\u0131"
+click_to_open: "(a\xE7mak i\xE7in t\u0131klay\u0131n)"
+add_metadata: Metadata Ekle
+pimcore_icon_edit_pdf_text: "Metin s\xFCr\xFCm\xFCnde d\xFCzenle"
+chapter: "B\xF6l\xFCm"
+search_and_move: "Arama & Ta\u015F\u0131"
+searching: "Aran\u0131yor..."
+predefined_asset_metadata: "\xD6nceden Tan\u0131ml\u0131 Metadata Verisi"
+add_predefined_metadata_definitions: "\xD6nceden tan\u0131mlanm\u0131\u015F tan\u0131m
+  ekle"
+scheduled: "Zamanlanm\u0131\u015F"
+naming_requirements_3chars: "\u0130sim en az 3 karakter, harf ve say\u0131dan olu\u015Fmal\u0131d\u0131r."
+there_are_more_columns: "\u015Eu anda g\xF6r\xFCnt\xFClenenden daha fazla s\xFCtun
+  var"
+merge_csv: "CSV dosyas\u0131n\u0131 i\xE7eri aktar ve birle\u015Ftir"
+translation_merger_current: "\u015Eu anki metin"
+translation_merger_csv: CSV den gelen metin
+nothing_to_merge: "Birle\u015Ftirecek bir \u015Fey yok."
+csv_seperated_options: "CSV ayr\u0131lm\u0131\u015F se\xE7enekler"
+csv_seperated_options_info: "Uygun ayarlar listesi virg\xFClle ayr\u0131lm\u0131\u015F
+  liste olarak belirlenebilir, tek-s\xFCtun de\u011Feri yada kar\u0131\u015F\u0131k
+  de\u011Ferler olabilir. Tek-s\xFCtun yolu i\xE7in, anahtar de\u011Fer ayn\u0131
+  zamanda genel de\u011Fer olarak kullan\u0131lacak."
+first_page: ilk sayfa
+previous_page: "\xF6nceki sayfa"
+next_page: sonraki sayfa
+last_page: son sayfa
+no_data_to_display: "G\xF6sterilecek bir \u015Fey yok."
+classificationstore_property: Property
+classificationstore_group: Group
+classificationstore_relation: Relation
+classificationstore_collection: Collection
+classificationstore_collection_relation: Collection relation
+classificationstore_no_groups: "Hi\xE7 bir grup yok"
+classificationstore_no_keys: "hi\xE7 bir elektar bulunamad\u0131"
+remove_group: Grubu sil
+classificationstore_no_collections: Kolleksiyon yok
+reference: "\xF6rnek"
+element_tag_configuration: "Etiket Yap\u0131land\u0131rmas\u0131"
+element_tag_all_tags: "T\xFCm etiketler"
+enter_new_name_of_the_tag: Etiketin yeni ismini girin.
+assigned_tags: Atanan etiketler
+filter_tags: "Etiketler i\xE7in filitre"
+consider_child_tags: "Alt etiketleri de g\xF6z \xF6n\xFCnde bulundurun"
+tags_assignment: "Etiket atamalar\u0131"
+tags_search: "Etiket aramalar\u0131"
+batch_applied: "Toplu uyguland\u0131"
+apply_tags: "Etiketleri alt \xF6\u011Felere ekle"
+remove_and_apply_tags: "Sil ve etiketleri alt \xF6\u011Felere ekle"
+batch_assignment: Etiket toplu atama
+batch_assignment_error: "Etiket toplu atama hatas\u0131"
+no_children_found: "Alt \xF6\u011Fe bulunamad\u0131"
+asset_search: "Varl\u0131k ara"
+document_search: Belge ara
+object_search: Nesne Ara
+more: Daha fazla
+open_translation: "A\xE7\u0131k \xE7eviri"
+link_existing_document: "Mevcut Belgeyi Ba\u011Fla"
+using_inheritance: "Kal\u0131t\u0131m\u0131 Kullan"
+new_document: Yeni Belge
+update_available: "G\xFCncelleme Mevcut"
+target_document_needs_language: "Hedef belge i\xE7in dil seti gerekli"
+tools: "Ara\xE7lar"
+perspectives: Perspektifler
+filter_active: Filtre aktif!
+reset_config: Reset to default
+reset_config_tooltip: "Bu \xF6\u011Fe i\xE7in \u0131zgara s\xFCtun yap\u0131land\u0131rmas\u0131n\u0131
+  varsay\u0131lan de\u011Ferine s\u0131f\u0131rlar (ve kaydeder)"
+error_resetting_config: "Yap\u0131land\u0131rma s\u0131f\u0131rlan\u0131rken hata
+  olu\u015Ftu"
+marketing_settings: "Pazarlama Ayarlar\u0131"
+cross_tree_moves_not_supported: "A\u011Fa\xE7 aras\u0131 hareketler hen\xFCz desteklenmiyor"
+add_printpage: "Yaz\u0131rma Sayfas\u0131 Ekle"
+add_printcontainer: PrintContainer Ekle
+web2print_preview_pdf: "PDF Olu\u015Ftur & \xD6nizle"
+web2print_cancel_pdf_creation: "PDF Olu\u015Fturma \u0130ptal"
+web2print_generate_pdf: "PDF Olu\u015Ftur"
+web2print_download_pdf: "PDF \u0130ndir"
+web2print_last-generated: "Son Olu\u015Fturulan"
+web2print_last-generate-message: "Son Olu\u015Fturma Mesaj\u0131"
+web2print: Web2Print
+web2print_prepare_pdf_generation: "PDF Verisyonunu Haz\u0131rla"
+web2print_start_html_rendering: "HTML Olu\u015Fturmaya Ba\u015Fla"
+web2print_finished_html_rendering: "HTML Olu\u015Fturma Tamamland\u0131"
+web2print_saved_html_file: "HTML Dosyas\u0131 Kaydedildi"
+web2print_pdf_conversion: "PDF D\xF6n\xFC\u015Ft\xFCrme"
+web2print_saving_pdf_document: PDF Belgesini Kaydet
+web2print_author: Yazar
+web2print_printermarks: Printermarks
+web2print_bookmarks: "Yer \u0130\u015Faretleri"
+close_tab: Sekmeyi Kapat
+web2print_only_published: "Yaln\u0131z yay\u0131nlanan belgeler ile m\xFCmk\xFCn."
+web2print_documents_changed: "Son PDF versiyonundan sonra belgeler de\u011Fi\u015Fti."
+about_pimcore: ABOUT PIMCORE
+phone: Telefon
+workflow_additional_info: "\u0130lave Bilgi"
+workflow_perform_action: "Eylemi Ger\xE7ekle\u015Ftir"
+workflow_notes_required: Notlar (Zorunlu)
+workflow_notes_optional: "Notlar (\u0130ste\u011Fe Ba\u011Fl\u0131)"
+please_enter_the_id_of_the_asset: "L\xFCtfen varl\u0131\u011F\u0131n kimli\u011Fini
+  veya yolunu (\xF6r. /Images/logo.jpg) girin"
+please_enter_the_id_of_the_object: "L\xFCtfen nesnenin ID veya Yolunu girin"
+please_enter_the_id_of_the_document: "L\xFCtfen belgenin ID, yolunu veya URL'sini
+  (http: // de dahil) girin"
+element_has_unsaved_changes: "\xD6\u011Fe kaydedilmemi\u015F de\u011Fi\u015Fiklikler
+  i\xE7eriyor"
+element_unsaved_changes_message: "T\xFCm kaydedilmemi\u015F de\u011Fi\u015Fiklikler
+  kaybolacak, ger\xE7ekten emin misin?"
+newsletter_enableTrackingParameters: Linklere Takip Parametresi Ekle
+newsletter_sendingMode: "G\xF6nderi Modu"
+newsletter_sendingmode_single: "Tek (Her postay\u0131 ayr\u0131 ayr\u0131 olu\u015Ftur)"
+newsletter_sendingmode_batch: "Toplu \u0130\u015F (Postay\u0131 yaln\u0131z bir kez
+  olu\u015Ftur)"
+newsletter_sendingPanel: "B\xFClten G\xF6nderim Paneli"
+newsletter_dirty_warning: "B\xFClten hen\xFCz kaydedilmedi. L\xFCtfen \xF6nce kaydedin."
+newsletter_sending: "B\xFClten G\xF6nderiliyor"
+newsletter_sourceAdapter: "Adres Kayna\u011F\u0131 Ba\u011Flay\u0131c\u0131"
+newsletter_default: "Varsay\u0131lan Nesne Listesi"
+newsletter_csvList: CSV Listesi
+newsletter_testsend: "B\xFClten G\xF6nderimini Test Et"
+newsletter_test_sent_message: "Test b\xFClten g\xF6nderimi ba\u015Far\u0131yla tamamland\u0131"
+add_object_mbx_title: "%s t\xFCr\xFCnde Yeni Nesne ekle"
+newsletter_choose_report: "Rapor se\xE7in"
+newsletter_email_field_name: Eposta alan ismi
+mode: Mod
+custom_download: "\xD6zel \u0130ndir"
+original_file: Orjinal Dosya
+web_format: "Web Format\u0131"
+print_format: "Yaz\u0131rma Format\u0131"
+office_format: "Office Format\u0131"
+change_password: "\u015Eifre De\u011Fi\u015Ftir"
+file_is_bigger_that_upload_limit: "Bu dosya, sunucu y\xFCkleme limitlerinden daha
+  b\xFCy\xFCk:"
+send_test_email_success: "Test e-postan\u0131z g\xF6nderildi. E-postay\u0131 tekrar
+  g\xF6ndermek i\xE7in bu pencereyi a\xE7\u0131k tutmak ister misiniz?"
+press_crtl_and_select_to_compare: "Kar\u015F\u0131la\u015Ft\u0131r: CTRL tu\u015Funa
+  bas\u0131n + S\xFCr\xFCme T\u0131klay\u0131n"
+clear_filters: Filtreleri Temizle
+tags_configuration: "Etiket Yap\u0131land\u0131rmas\u0131"
+export_csv_include_headers: "CSV'yi ba\u015Fl\u0131klarla d\u0131\u015Fa aktar"
+open_data_object: "Veri Nesnesi A\xE7"
+data_objects: Veri Nesneleri
+asset_type_change_not_allowed: "<strong>Burada yaln\u0131zca ayn\u0131 t\xFCr varl\u0131klara
+  izin verilir.</strong><br/>[ y\xFCklenen varl\u0131\u011F\u0131n t\xFCr\xFC: \"%s\"
+  | mevcut varl\u0131\u011F\u0131n t\xFCr\xFC: \"%s\" ]"
+clear_content_of_selected_target_group: "Se\xE7ili Hedef Gruba ait i\xE7eri\u011Fi
+  temizle"
+visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups: "Bu
+  sayfan\u0131n ziyaret\xE7ileri se\xE7ilen Hedef Gruplarla otomatik olarak ili\u015Fkilendirilir"
+assign_target_group: Hedef Grup Ata
+assign_target_groups: Hedef Gruplar Ata
+target_group: Target Group
+target_groups: Hedef Gruplar
+edit_content_for_target_group: "Hedef Grup i\xE7in \u0130\xE7eri\u011Fi D\xFCzenle"
+email_reply_to: Cevapla
+element_tag_filtered_tags: Filtreli Etiketler
+web2print_addOverprint: "\xDCst \xFCste Bask\u0131"
+analyze_permissions: "\u0130zinleri Analiz Et"
+unique: Benzersiz
+glue: "Yap\u0131\u015Fkan"
+date_format: "Tarih Format\u0131"
+attribute: Nitelik
+forward_attribute: "Y\xF6nlendirme Niteli\u011Fi"
+upper: "\xDCst"
+lower: Alt
+disabled: Engelli
+capitalization: "B\xFCy\xFCk Harf Kullanma"
+restrict_to_locales: "Yerel ayarlarla s\u0131n\u0131rl\u0131"
+predefined: "\xD6n tan\u0131ml\u0131"
+save_as_copy: Kopya olarak kaydet
+set_as_favourite: Favori olarak ayarla
+grid_configuration: "Grid Yap\u0131land\u0131rmas\u0131"
+shared_users: "Payla\u015F\u0131lan Kullan\u0131c\u0131lar"
+shared_roles: "Payla\u015F\u0131lan Roller"
+save_and_share: "Kaydet & Payla\u015F"
+save_copy_and_share: "Kopya Kaydet & Payla\u015F"
+locale: Yerel
+ellipses: Elips
+insensitive: "Duyars\u0131z"
+yes_value: "Evet De\u011Feri"
+no_value: "Hay\u0131r De\u011Feri"
+count_empty: "Toplam Bo\u015F"
+as_array: Dizi olarak
+metadata_field: "Metadata alan\u0131"
+only_count: "Yaln\u0131z say\u0131m"
+parameter: Parametre
+forward_parameter: "Y\xF6nlendirme Parametresi"
+is_array: "Dizi T\xFCr\xFC"
+php_class: "PHP S\u0131n\u0131f\u0131"
+additional_data: "\u0130lave Veri"
+flatten: "D\xFCzle\u015Ftir"
+return_last_result: Son sonucu getir
+skip_null: "Bo\u015Flar\u0131 Atla"
+expand_children: "Geni\u015Flet"
+collapse_children: Collapse children
+multiply: "\xC7o\u011Falt"
+divide: "B\xF6l"
+apply_to_all_objects: Hepsine Uygula
+apply_to_all_objects_msg: "Kendi favori ayarlar\u0131na sahip ba\u015Fka nesneler
+  var. Bu yap\u0131land\u0131rmay\u0131 da uygulamak ister misiniz?"
+encode: "\u015Eifrele"
+decode: "De\u015Fifre"
+serialize: "Dizi Olu\u015Ftur"
+unserialize: "Diziyi \u0130ptal Et"
+offset: "\xC7\u0131k\u0131nt\u0131"
+col_attribute: "Kolleksiyon Niteli\u011Fi"
+brick_attribute: Temel Nitelik
+csv_column_configuration: "S\xFCtun Yap\u0131land\u0131rmas\u0131"
+column: "S\xFCtun"
+resolver_strategy: "\xC7\xF6z\xFCmleyici Stratejisi"
+resolver_settings: "\xC7\xF6z\xFCmleyici Ayarlar\u0131"
+csv_settings: "CSV Ayarlar\u0131"
+skipheadrow: "Ba\u015Fl\u0131k sat\u0131r\u0131n\u0131 atla"
+csv_file_preview: "CSV Dosyas\u0131 \xD6nizleme"
+save_as: "Farkl\u0131 Kaydet"
+import_export_configuration: "\u0130\xE7 / D\u0131\u015F Aktarma Yap\u0131land\u0131rmas\u0131"
+brick_type: "Temel Nitelik T\xFCr\xFC"
+renderer: "Olu\u015Fturucu"
+getter: "\xC7a\u011F\u0131r\u0131c\u0131"
+string: Dizi
+row: "Sat\u0131r"
+import_report: "Raporu \u0130\xE7e Aktar"
+import_errors: "Baz\u0131 hatalar olu\u015Ftu. \u0130\xE7e aktarma raporunu kontrol
+  edin!"
+import_is_done: "\u0130\xE7e aktarma tamamland\u0131"
+import_file_prefix: "Yeni dosyalar i\xE7in \xF6n ek"
+create_parents: "Ebeveyn Olu\u015Ftur"
+fullpath: Tam Yol
+create_on_demand: "Talep ile olu\u015Ftur"
+get_by_resolver: "Niteli\u011Fe G\xF6re \xC7a\u011F\u0131r"
+direct: Direkt
+skip_empty_values: "Bo\u015F de\u011Ferleri ge\xE7"
+do_not_overwrite: "\xDCzerine yazma"
+never: Asla
+if_not_empty: "E\u011Fer bo\u015F de\u011Filse"
+always: Herzaman
+delimiter: "S\u0131n\u0131rlay\u0131c\u0131"
+share_globally: "Global olarak payla\u015F"
+gdpr_data_extractor: "GDPR Veri \xC7\u0131kar\u0131c\u0131"
+no_configuration: "Yap\u0131land\u0131rma Yok"
+share_configurations: "Yap\u0131land\u0131rmalar\u0131 Payla\u015F"
+enable_inheritance: "Kal\u0131t\u0131m\u0131 Etkinle\u015Ftir"
+object_settings: "\xD6\u011Fe Ayarlar\u0131"
+drop_me_here: "Bir \xF6\u011Feyi a\u011Fa\xE7tan s\xFCr\xFCkleyip buraya b\u0131rak\u0131n"
+clear_hotspots_msg: "Bu g\xF6r\xFCnt\xFC, i\u015Faret\xE7iler veya hotspot gibi ek
+  veriler i\xE7erir. Onlar\u0131 da temizlemek istiyor musunuz?"
+restore_failed: "Geri y\xFCkleme ba\u015Far\u0131s\u0131z oldu"
+subtract: "\u0130\xE7inden \xC7\u0131kart"
+batch_append_all: "Toplu i\u015Fi herkese ekle"
+batch_append_selected: "Toplu i\u015Fi se\xE7ilene ekle"
+batch_append_to: Veriyi herkese ekle
+login_token_invalid_user_error: "Ge\xE7ersiz kullan\u0131c\u0131."
+login_token_as_admin_non_admin_user_error: "Yaln\u0131zca y\xF6neticilerin, y\xF6netici
+  kullan\u0131c\u0131s\u0131 olarak giri\u015F yapmas\u0131na izin verilir."
+login_token_no_password_error: "Kullan\u0131c\u0131n\u0131n \u015Fifre seti yok."
+targeting_toolbar: "Hedefleme Ara\xE7 \xC7ubu\u011Fu"
+sort_children_by: "Alt \xD6\u011Feleri S\u0131rala"
+by_key: Anahtar (Alfabetik olarak)
+by_index: "Dizin (Manuel \xC7a\u011F\u0131r\u0131lan)"
+successful_object_change_children_sort_to_index: "Alt \xF6\u011Fe s\u0131ralamas\u0131,
+  Dizin olarak de\u011Fi\u015Ftirildi"
+successful_object_change_children_sort_to_key: "Alt \xF6\u011Fe s\u0131ralamas\u0131,
+  Anahtar olarak de\u011Fi\u015Ftirildi"
+successful_publish_document: Document successfully published
+successful_publish_object: Object successfully published
+successful_unpublish_document: Document successfully unpublished
+successful_unpublish_object: Object successfully unpublished
+error_object_change_children_sort_to_index: "Alt \xF6\u011Fe s\u0131ralamas\u0131,
+  Dizin olarak de\u011Fi\u015Ftirilemedi"
+error_object_change_children_sort_to_key: "Alt \xF6\u011Fe s\u0131ralamas\u0131, Anahtar
+  olarak de\u011Fi\u015Ftirilemedi"
+error_publish_document: Document could not be published
+error_publish_object: Object could not be published
+error_unpublish_document: Document could not be unpublished
+error_unpublish_object: Object could not be unpublished
+edit_as_html: "HTML olarak D\xFCzenle"
+edit_as_plain_text: "D\xFCz metin olarak d\xFCzenle"
+error_empty_file_upload: "Dosya bo\u015F!"
+type_column: "Giri\u015F S\xFCtunu"
+keep: sakla
+clear_version_message: "Bu \xF6\u011Fenin t\xFCm yay\u0131nlanmayan s\xFCr\xFCmlerini
+  silmek istedi\u011Finizden ger\xE7ekten emin misiniz?"
+clear_all: Hepsini Temizle
+unlink_existing_document: "Mevcut belge ba\u011Flant\u0131s\u0131n\u0131 kopar"
+grid_options: "Izgara Se\xE7enekleri"
+save_grid_options: "Izgara Se\xE7eneklerini Kaydet"
+download_selected_as_zip: "Se\xE7ili \xF6\u011Feleri ZIP olarak indir"
+please_select_items_to_download: "L\xFCtfen liste de indirmek istedi\u011Finiz \xF6\u011Feleri
+  se\xE7in"
+key_bindings: "Anahtar Ba\u011Flamalar\u0131"
+keybinding_openClassEditor: "S\u0131n\u0131f D\xFCzenleyicisini A\xE7"
+keybinding_showMetaInfo: "Meta Bilginizi G\xF6ster"
+keybinding_clearAllCaches: "T\xFCm \xD6nbellekleri Temizle"
+keybinding_clearDataCache: "T\xFCm Veri \xD6nbelle\u011Fini Temizle"
+scheduled_block_delete_all_in_past: "T\xFCm eski giri\u015Fleri sil"
+scheduled_block_really_delete_past: "Ger\xE7ekten t\xFCm zamanlanm\u0131\u015F eski
+  giri\u015Fleri silelim mi?"
+scheduled_block_delete_all: "T\xFCm giri\u015Fleri sil"
+scheduled_block_really_delete_all: "Ger\xE7ekten t\xFCm zamanlanm\u0131\u015F giri\u015Fleri,
+  ilerdeki giri\u015Fler ile silelim mi?"
+2fa_disable: "2FA'y\u0131 Devre D\u0131\u015F\u0131 B\u0131rak"
+renew_2fa_secret: "\u0130ki Fakt\xF6rl\xFC Kimlik Do\u011Frulama Anahtar\u0131n\u0131
+  Yenile"
+two_factor_authentication: "\u0130ki Fakt\xF6rl\xFC Kimlik Do\u011Frulama"
+2fa_alert_text: "L\xFCtfen QR-Kodu tarayarak Google Authenticator'e ekleyin.<br> E\u011Fer
+  Google Authenticator uygulamas\u0131na sahip de\u011Filseniz, l\xFCtfen Android
+  Play yada App Store'dan indirin.<br><br> Pimcore'u yenileyip uygulamada g\xF6sterilen
+  giri\u015F kodunu kullanmal\u0131s\u0131n\u0131z!"
+2fa_alert_submit: Pimcore'u Yenile & Kodu Gir
+setup_two_factor: "\u0130ki Fakt\xF6rl\xFC Kimlik Do\u011Frulama Kur"
+2fa_setup_message: "Hesab\u0131n\u0131z i\xE7in iki fakt\xF6rl\xFC kimlik do\u011Frulamas\u0131
+  gerekiyor! Profil ayarlar\u0131nda ayarlamal\u0131s\u0131n, aksi halde tekrar giri\u015F
+  yapamazs\u0131n."
+set_focal_point: "Odak Noktas\u0131n\u0131 Ayarla"
+quicksearch: "H\u0131zl\u0131 Arama"
+standard_preview: "Standart \xD6nizleme"
+upload_new_version: "Yeni versiyon y\xFCkle"
+360_viewer: "360\xB0 G\xF6r\xFCnt\xFC"
+invalid_name: "Ge\xE7ersiz isim"
+clone: Klon
+enter_the_name_of_the_new_item: "Yeni \xF6\u011Fenin ismini girin"
+html_tags: HTML-Etiketleri
+clear_temporary_files: "Ge\xE7ici dosyalar\u0131 temizle"
+error_pasting_item: "\xD6\u011Fe yap\u0131\u015Ft\u0131r\u0131lamad\u0131"
+modificationdate: "D\xFCzenleme Tarihi"
+blank: "Bo\u015F"
+message: Mesaj
+from: Gelen
+to: "Al\u0131c\u0131"
+html: HTML
+text: Metin
+create_folder: "Klas\xF6r Ekle"
+error_deleting_item: "\xD6\u011Fe silinemedi"
+error_renaming_item: "\xD6\u011Fe yeniden adland\u0131r\u0131l\u0131rken hata olu\u015Ftu."
+revert: "Tersine \xC7evir"
+parent: Ebeveyn
+merge_translations: "\xC7evirileri Birle\u015Ftir"
+prefix: "\xD6n ek"
+load: "Y\xFCkle"
+saving_failed: "Kaydetme ba\u015Far\u0131s\u0131z!"
+failed_to_create_new_item: "Yeni \xF6\u011Fe olu\u015Fturulamad\u0131, l\xFCtfen tekrar
+  deneyin."
+bundle: Paket
+product: "\xDCr\xFCn"
+index_field_selection_field: "Dizin Alan\u0131 Se\xE7imi"
+indexFieldSelectionField: "Dizin Alan\u0131 Se\xE7imi"
+indexFieldSelectionField_settings: "Ayarlar ( \xC7oklu Dizin Alan\u0131 Se\xE7im Alan\u0131
+  )"
+indexFieldSelectionFieldMulti: "\xC7oklu Dizin Alan\u0131 Se\xE7imi"
+index_field_selection_combo: "Dizin Alan\u0131 Combobox"
+indexFieldSelectionCombo: "Dizin Alan\u0131 Combobox"
+indexFieldSelectionCombo_settings: "Ayarlar ( Dizin Alan\u0131 Combobox )"
+specificPriceField: "\xD6zel Fiyat Alan\u0131"
+showAllFields: "T\xFCm Alanlar\u0131 G\xF6ster"
+considerTenants: "M\xFC\u015Fterileri Dikkate Al"
+bundle_ecommerce_mainmenu: "Online Ma\u011Faza"
+bundle_ecommerce_pricing_rule: Pricing Rule
+bundle_ecommerce_pricing_rules: "Fiyatland\u0131rma Kurallar\u0131"
+bundle_ecommerce_pricing_config_behavior: "Davran\u0131\u015F"
+bundle_ecommerce_pricing_config_additiv: "Katk\u0131"
+bundle_ecommerce_pricing_config_stopExecute: Son Kural
+bundle_ecommerce_pricing_config_condition_daterange: "Tarih Aral\u0131\u011F\u0131"
+bundle_ecommerce_pricing_config_condition_cart_amount: "Sepet tutar\u0131"
+bundle_ecommerce_pricing_config_condition_products: "\xDCr\xFCnler"
+category: Kategori
+bundle_ecommerce_pricing_config_condition_token: Token
+bundle_ecommerce_pricing_config_condition_sales: "Sat\u0131\u015Flar"
+bundle_ecommerce_pricing_config_condition_sold: "Sat\u0131ld\u0131"
+bundle_ecommerce_pricing_config_condition_sold_count: Toplam
+bundle_ecommerce_pricing_config_condition_sold_count_cart: "Sepet Toplam\u0131"
+bundle_ecommerce_pricing_config_condition_voucherToken: Makbuz
+bundle_ecommerce_pricing_config_condition_tenant: "M\xFC\u015Fteri"
+bundle_ecommerce_pricing_config_condition_targetgroup: Hedef Grup
+bundle_ecommerce_pricing_config_condition_targetgroup_threshold: "E\u015Fik"
+bundle_ecommerce_pricing_config_action_gift: Hediye
+bundle_ecommerce_pricing_config_action_cart_discount: "Sepet \u0130ndirimi"
+bundle_ecommerce_pricing_config_action_cart_discount_percent: '% indirim sepet'
+bundle_ecommerce_pricing_config_action_cart_discount_amount: "Net \u0130ndirim sepet"
+bundle_ecommerce_pricing_config_action_product_discount: "\xDCr\xFCn \u0130ndirimi"
+bundle_ecommerce_pricing_config_action_product_discount_percent: "% indirim \xFCr\xFCn"
+bundle_ecommerce_pricing_config_action_product_discount_amount: "Net indirim \xFCr\xFCn"
+bundle_ecommerce_pricing_config_action_free_shipping: "\xDCcretsiz kargo"
+bundle_ecommerce_pricing_rule_add: Add Pricing Rule
+bundle_ecommerce_pricing_rule_error: Error creating Pricing Rule
+ecommerce: E-ticaret
+preSelectMode: "\xD6n Se\xE7im Modu"
+remote_single: "Uzaktan Tek Se\xE7im"
+remote_multi: "Uzaktan \xC7oklu Se\xE7im"
+local_single: "\xD6ntan\u0131ml\u0131 Listeden Tek Se\xE7im"
+local_multi: "\xD6ntan\u0131ml\u0131 Listeden \xC7oklu Se\xE7im"
+indexFieldSelection: "Dizin Alan\u0131 Se\xE7imi"
+indexFieldSelection_settings: "Dizin Alan\u0131 Se\xE7im Ayarlar\u0131"
+filtergroups: "Filtre Gruplar\u0131"
+preSelect: "\xD6n Se\xE7im"
+predefined_pre_select_options: "\xD6ntan\u0131mlu \xF6n se\xE7im se\xE7enekleri"
+bundle_ecommerce_clear_config_cache: "Yap\u0131land\u0131rma \xF6nbelle\u011Fini Temizle"
+bundle_ecommerce_back-office_order: "Y\xF6netim - Sipari\u015F"
+bundle_ecommerce_vouchertoolkit_tab: "Makbuz detaylar\u0131"
+path: Yol
+thumbnail: "K\xFC\xE7\xFCk resim"
+download_thumbnail: "K\xFC\xE7\xFCk resimi indir"
+no_thumbnail_selected: "K\xFC\xE7\xFCk resim se\xE7ilmedi"
+list_thumbnail_in_download_section_on_image_detail_view: "G\xF6r\xFCnt\xFC ayr\u0131nt\u0131lar\u0131
+  b\xF6l\xFCm\xFCndeki indirme b\xF6l\xFCm\xFCnde se\xE7enek olarak listele."
+there_are_more_items: "G\xF6r\xFCnt\xFClenenden daha fazla \xF6\u011Fe var."
+workflow_actions: Eylemler
+workflow_notes_requred_field_message: "\"%s\" zorunlu aland\u0131r."
+workflow_transition_applied_successfully: "Eylem ba\u015Far\u0131yla uyguland\u0131"
+workflow_change_email_notification_subject: "%s i\xE7in '%s' ak\u0131\u015F\u0131nda
+  i\u015F ak\u0131\u015F\u0131 g\xFCncellemesi"
+workflow_change_email_notification_text: "%s i\xE7in %s ID ile \"%s\" eylemi, '%s'
+  i\u015F ak\u0131\u015F\u0131nda tetiklendi."
+workflow_change_email_notification_deeplink: "Element i\xE7in Deeplink."
+workflow_change_email_notification_note: 'Not Eklendi:'
+workflow_details: "\u0130\u015F Ak\u0131\u015F\u0131 Detaylar\u0131"
+workflow_graph: "\u0130\u015F Ak\u0131\u015F\u0131 Grafikleri"
+workflow_current_state: Mevcut Durum
+workflow_cmd_not_found: "L\xFCtfen i\u015F ak\u0131\u015F\u0131 grafi\u011Fini olu\u015Fturmak
+  i\xE7in sunucuda \xE7al\u0131\u015Ft\u0131r\u0131labilir \"%s\" konsolunu kurun."
+unit_width: "Geni\u015Flik Birimi"
+permission_missing: "Bu eylemi ger\xE7ekle\u015Ftirmek i\xE7in '%s' iznine ihtiyac\u0131n\u0131z
+  var."
+paste_as_language_variant: "Yeni dil de\u011Fi\u015Fkeni olarak yap\u0131\u015Ft\u0131r"
+select_language_for_new_document: "Yeni Belge i\xE7in Dil Se\xE7in"
+source_document_language_missing: "Kaynak Belgede Dili (\xD6zellikleri) Ayarla"
+open_preview_in_new_window: "\xD6nizlemeyi yeni pencerede a\xE7"
+data: Veri
+links: "Ba\u011Flant\u0131lar"
+notes: Notlar
+bool: Bool
+consent: "\u0130zin Ver"
+add_marker: "\u0130\u015Faretleyici Ekle"
+identifier_warning: "Benzersiz tan\u0131mlay\u0131c\u0131ya dikkat edin, \xE7\xFCnk\xFC
+  tablo adlar\u0131 yaln\u0131zca 64 karakter i\xE7erebilir."
+unique_identifier: "Benzersiz Tan\u0131mlay\u0131c\u0131"
+invalid_identifier: "Ge\xE7ersiz Tan\u0131mlay\u0131c\u0131"
+identifier_already_exists: "Tan\u0131mlay\u0131c\u0131 zaten mevcut"
+content: "\u0130\xE7erik"
+send: "G\xF6nder"
+you_can_only_drop_one_element_here: "Buraya sadece bir \xF6\u011Fe b\u0131rakabilirsiniz!"
+translation: "Terc\xFCme"
+delete_error_batch: "A\u015Fa\u011F\u0131daki \xF6\u011Feler silinemez, kalanlar\u0131
+  silmeye devam etmek ister misiniz?"
+delete_error: "\xD6\u011Fe silinemez. Sebep:"
+batch_edit_field_selected: "Se\xE7ilen alanlar\u0131 toplu d\xFCzenle"
+batch_append_selected_to: "Se\xE7ilenlere veri ekle"
+enable_batch_edit_columns: "S\xFCtunlar i\xE7in Toplu D\xFCzenlemeyi Etkinle\u015Ftir"
+delete_all: Hepsini Sil
+open_linked_element: "Ba\u011Flant\u0131l\u0131 \xD6\u011Feyi a\xE7"
+mark_as_read: "Okundu olarak i\u015Faretle"
+sender: "G\xF6nderen"
+notifications: Bildirimler
+notifications_send: "Bildirimleri G\xF6nder"
+group: Grup
+attachment: Eklenti
+notification_has_been_sent: "Bildirim g\xF6nderildi"
+recipient: Recipient
+this_field_is_required: This field is required
+paste_recursive_as_language_variant: Paste as new language variant (recursive)
+paste_no_new_language_error: "T\xFCm sistem dilleri kaynak \xF6\u011Feye zaten ba\u011Flant\u0131l\u0131."
+embedded_meta_data: Embedded Meta Info
+duration: "S\xFCre"
+custom_metadata: Custom Metadata
+group_icon_class: Group Icon Class
+custom_report_permissions: Permission
+visible_to_users: Visible To Users
+visible_to_roles: Visible To Roles
+open_url: Open URL
+document_language_overview: Document Language Overview
+language_master: Master
+create_translation_inheritance: Create Translation (Inheritance)
+create_translation: Create Translation
+document_translation_parent_not_found: Parent document has no translation. Create
+  a translation for the parent first.
+paste_recursive_as_language_variant_updating_references: Paste language (recursive),
+  updating references
+redirects_expired_cleanup: Cleanup Expired Redirects
+redirects_cleanup_warning: Do you really want to cleanup expired redirects?
+redirects_cleanup_error: An error occurred while cleanup of expired redirects
+all_translations: All Translations
+only_unreferenced: only unreferenced
+split_view_settings: Split View Settings
+enable_split_view: Enable Split View
+disable_split_view: Disable Split View
+split_view_object_dirty_title: Please confirm
+split_view_object_dirty_msg: There are unsaved modifications. You will lose all changes.
+  Are you sure?
+converter_service: Converter service
+auto_convert: Automatic conversion
+web2print_enableDebugMode: Enable debug mode
+set_to_null: Empty (set to null)
+bundles: Bundles
+target_document_invalid: Please select a target document with valid language
+metainfo_copy_id: Copy ID to clipboard
+metainfo_copy_fullpath: Copy full path to clipboard
+metainfo_copy_deeplink: Copy deeplink to clipboard
+plain_text: Plain Text
+plain_text_email_part: Email Plain Text Part
+error_message: Error Message
+bundle_ecommerce_order_tab: Order Details
+access_denied: Access Denied!
+access_denied_description: You don't have sufficient permissions to open the element
+  or perform the desired action.
+validation_failed: Validation Failed!
+export_xlsx: XLSX Export
+object_export_warning: Please note that the export does not support all data types.
+  Press OK to continue with the export.
+web2print_enableLenientHttpsMode: Enable lenient HTTPS mode
+web2print_enableLenientHttpsMode_txt: Enable this option if PDFreactor fails to connect
+  successfully via HTTPS
+paste_clipboard: Paste Clipboard
+paste_here: Paste your clipboard data here
+asset_metadata: Asset Metadata
+predefined_metadata: Predefined Metadata
+default_metadata: Default Metadata
+asset_export_warning: Please note that the export does not support some fields(e.g.
+  preview, size). Press OK to continue with the export.
+share_via_notifications: Share via Notifications
+cannot_save_metadata_please_try_to_edit_the_metadata_in_asset: <b>Cannot save Metadata!</b><br
+  />Please try to edit the metadata in Asset.
+email_log_forward: Forward email
+sum: Sum
+area_brick_assign_info_message: Please use drag & drop to assign a brick to the desired
+  block
+batch_remove_all: Batch remove from all
+batch_remove_selected: Batch remove from selected
+batch_remove_from: Remove data from all
+batch_remove_selected_from: Remove data from selected
+unit_tooltip: Alternative units tooltip
+toggle_image_features_visibility: Toggle Image Feature Visibility
+detect_image_features: Detect Image Features
+remove_image_features: Remove Image Features
+available_sites: Available Sites
+fallback: Fallback
+add_site: Add Site
+domain_label_width: Domain label width
+complete_required_fields: 'Please complete following required fields to publish the
+  document:'
+Uncategorized: Uncategorized
+skip_if_exists: Skip row if exists
+php_class_or_service: Class or service name
+redirect_performance_warning: Using this feature has very bad effects on the performance
+  of the entire application, do you really want to continue?
+test_url: Test URL
+create_redirects: Create redirects to keep URLs working (incl. children)?
+auto_create: Auto create
+methods: Methods
+batch_operation: Batch Operation
+move: Move
+property_name: Property name
+force_value: Force value
+enable_grid_locking: Enable grid locking
+export_configuration: Export Configuration As JSON
+composite_indices: Composite indices
+default_value_generator: Default value generator service / class
+no_value_set: no value set
+replace_assignments_in_all_elements: Replace assignments in all elements
+fieldlookup: Field Lookup
+show_fieldlookup: Show Field Lookup
+different_number_of_columns: Different number of columns
+brick_limit_reached: 'Limit ({bricklimit}) reached for brick: {brickname}'
+generate_type_declarations: Generate Type Declarations
+batch_change_language: Batch update language
+preview_item: Preview Item
+by_key_reverse: Key (Z to A)
+deprecated: Deprecated
+version_currently_saved_in_database: Currently saved in database (but not published)
+deprecated_feature: '<span style=''color: orange;''>Deprecated feature. Use %s instead</span>'
+edit_as_custom_text: Edit as custom text
+symfony_translation_link: 'Translation Format: https://symfony.com/doc/current/translation/message_format.html'
+no_action_available: No action available
+bricks: Bricks
+draft: Draft
+auto_save: Auto save
+save_draft: Save draft
+selected_grid_columns: Selected grid columns
+ungrouped: ungrouped
+reindex_warning: Changing it from alphabetical sort order to index will reindex all
+  items. Do you want to continue?
+filter_by_relation: Filter by relation
+filter_by_relation_field: Filter by relation field
+clear_relation_filter: Clear active relation filter
+apply_filter: Apply filter
+config_not_writeable: Not writable, this can have several reasons. For details please
+  have a look into the docs.
+sites: Sites
+file_exists: File already exists
+asset_upload_want_to_overwrite: Do you want to overwrite file %s?
+asset_upload_overwrite: Overwrite
+asset_upload_keep_both: Keep both files
+asset_upload_apply_to_all: Apply to all
+asset_upload_skip: Skip
+could_not_open_zip_file: The uploaded zip file could not be opened.
+objects_sort_method: Change data objects sort method
+link_recursion_error: The link is redirecting to itself, causing an infinite loop
+no_further_classes_allowed: No further classes allowed
+address_not_found: The entered address was not found
+possible_causes: Possible causes
+postal_code_format_error: "Postal code format, e.g. use \"5020 Salzburg, S\xF6llheimer
+  Stra\xDFe 16\" instead of \"A-5020 Salzburg, S\xF6llheimer Stra\xDFe 16\""
+delete_data_from_it: This will also delete all data from it.
+display_mode: Display Mode
+display_mode_grid: Grid view
+display_mode_combo: Tag field
+batch_confirmation: You are about to update %s dataObjects. Do you want to continue
+  ?
+...

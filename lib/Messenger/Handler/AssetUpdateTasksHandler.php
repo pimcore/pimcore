@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class AssetUpdateTasksHandler
     {
     }
 
-    public function __invoke(AssetUpdateTasksMessage $message)
+    public function __invoke(AssetUpdateTasksMessage $message): void
     {
         $asset = Asset::getById($message->getId());
         if (!$asset) {
@@ -48,7 +49,7 @@ class AssetUpdateTasksHandler
         }
     }
 
-    private function saveAsset(Asset $asset)
+    private function saveAsset(Asset $asset): void
     {
         Version::disable();
         $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
@@ -56,7 +57,7 @@ class AssetUpdateTasksHandler
         Version::enable();
     }
 
-    private function processDocument(Asset\Document $asset)
+    private function processDocument(Asset\Document $asset): void
     {
         if (!$asset->getCustomSetting('document_page_count')) {
             $asset->processPageCount();

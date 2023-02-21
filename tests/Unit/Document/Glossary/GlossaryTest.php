@@ -17,15 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Document\Glossary;
 
-use Pimcore\Model\Glossary;
-use Pimcore\Tests\Helper\Pimcore;
-use Pimcore\Tests\Test\TestCase;
-use Pimcore\Tool\Glossary\Processor;
+use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
+use Pimcore\Bundle\GlossaryBundle\Tool\Processor;
+use Pimcore\Tests\Support\Helper\Pimcore;
+use Pimcore\Tests\Support\Test\TestCase;
 
 class GlossaryTest extends TestCase
 {
-    /** @var Processor $processor */
-    protected $processor;
+    protected Processor $processor;
 
     /**
      * {@inheritdoc}
@@ -38,7 +37,7 @@ class GlossaryTest extends TestCase
         $this->processor = $pimcoreModule->grabService(Processor::class);
     }
 
-    public function testGlossary()
+    public function testGlossary(): void
     {
         $entry = new Glossary();
         $entry->setText('Glossary');
@@ -50,10 +49,10 @@ class GlossaryTest extends TestCase
 
         $expect = '<body><p>This is a Test for the <a class="pimcore_glossary" href="/test">Glossary</a></p></body>';
 
-        $this->assertSame($result, $expect);
+        $this->assertSame($expect, $result);
     }
 
-    public function testGlossaryWithHtmlEntities()
+    public function testGlossaryWithHtmlEntities(): void
     {
         $entry = new Glossary();
         $entry->setText('Entity');
@@ -71,10 +70,10 @@ class GlossaryTest extends TestCase
 
         $expect = '<body><p>This is a Test for the&nbsp;<a class="pimcore_glossary" href="/test">Entity</a> &copy;</p></body>';
 
-        $this->assertSame($result, html_entity_decode($expect));
+        $this->assertSame(html_entity_decode($expect), $result);
     }
 
-    public function testGlossaryWithHtmlEntities2()
+    public function testGlossaryWithHtmlEntities2(): void
     {
         $entry = new Glossary();
         $entry->setText('Eintrag');
@@ -86,10 +85,10 @@ class GlossaryTest extends TestCase
 
         $expect = '<body><p>Test &nbsp; <a class="pimcore_glossary" href="/test">Eintrag</a> &copy;</p></body>';
 
-        $this->assertSame($result, html_entity_decode($expect));
+        $this->assertSame(html_entity_decode($expect), $result);
     }
 
-    public function testGlossaryWithHtml()
+    public function testGlossaryWithHtml(): void
     {
         $entry = new Glossary();
         $entry->setText('HTML');
@@ -130,10 +129,10 @@ class GlossaryTest extends TestCase
         </div>
     </section>';
 
-        $this->assertSame($result, $expect);
+        $this->assertSame($expect, $result);
     }
 
-    public function testGlossaryWithAnotherHtml()
+    public function testGlossaryWithAnotherHtml(): void
     {
         $entry = new Glossary();
         $entry->setText('hans');
@@ -150,10 +149,10 @@ class GlossaryTest extends TestCase
 
         $expect = '<p><a class="pimcore_glossary" href="/hans">hans</a> &amp; gretl</p>';
 
-        $this->assertSame($result, $expect);
+        $this->assertSame($expect, $result);
     }
 
-    public function testGlossaryWithLowerThenAndGreaterThenHtml()
+    public function testGlossaryWithLowerThenAndGreaterThenHtml(): void
     {
         $entry = new Glossary();
         $entry->setText('huber');
@@ -170,6 +169,6 @@ class GlossaryTest extends TestCase
 
         $expect = '<p><a class="pimcore_glossary" href="/huber">huber</a> &lt;&gt; is the best</p>';
 
-        $this->assertSame($result, $expect);
+        $this->assertSame($expect, $result);
     }
 }

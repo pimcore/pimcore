@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,26 +31,12 @@ class NotificationEmailService extends AbstractNotificationService
 {
     const MAIL_PATH_LANGUAGE_PLACEHOLDER = '%_locale%';
 
-    /**
-     * @var EngineInterface
-     */
-    private $template;
+    private EngineInterface $template;
 
-    /**
-     * @var RouterInterface
-     */
-    private $router;
+    private RouterInterface $router;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
-    /**
-     * @param EngineInterface $template
-     * @param RouterInterface $router
-     * @param TranslatorInterface $translator
-     */
     public function __construct(EngineInterface $template, RouterInterface $router, TranslatorInterface $translator)
     {
         $this->template = $template;
@@ -69,7 +56,7 @@ class NotificationEmailService extends AbstractNotificationService
      * @param string $mailType
      * @param string $mailPath
      */
-    public function sendWorkflowEmailNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action, string $mailType, string $mailPath)
+    public function sendWorkflowEmailNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action, string $mailType, string $mailPath): void
     {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles);
@@ -144,7 +131,7 @@ class NotificationEmailService extends AbstractNotificationService
      * @param string $mailPath
      * @param string $deeplink
      */
-    protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink)
+    protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): void
     {
         $mail = new \Pimcore\Mail(['document' => $mailPath, 'params' => $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)]);
 
@@ -165,7 +152,7 @@ class NotificationEmailService extends AbstractNotificationService
      * @param string $mailPath
      * @param string $deeplink
      */
-    protected function sendTemplateMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink)
+    protected function sendTemplateMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): void
     {
         $mail = new \Pimcore\Mail();
 
@@ -182,17 +169,6 @@ class NotificationEmailService extends AbstractNotificationService
         $mail->send();
     }
 
-    /**
-     * @param string $subjectType
-     * @param ElementInterface $subject
-     * @param Workflow $workflow
-     * @param string $action
-     * @param string $language
-     * @param string $mailPath
-     * @param string $deeplink
-     *
-     * @return string
-     */
     protected function getHtmlBody(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string
     {
         // allow retrieval of inherited values
@@ -220,16 +196,6 @@ class NotificationEmailService extends AbstractNotificationService
         return $emailTemplate;
     }
 
-    /**
-     * @param string $subjectType
-     * @param ElementInterface $subject
-     * @param Workflow $workflow
-     * @param string $action
-     * @param string $deeplink
-     * @param string $language
-     *
-     * @return array
-     */
     protected function getNotificationEmailParameters(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $deeplink, string $language): array
     {
         $noteDescription = $this->getNoteInfo($subject->getId());

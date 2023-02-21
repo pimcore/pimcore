@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,23 +23,15 @@ use Pimcore\Model\DataObject\ClassDefinition;
  */
 trait ClassSavedTrait
 {
-    /**
-     * @param mixed $containerDefinition
-     * @param array $params
-     */
-    public function preSave($containerDefinition, $params = [])
+    public function preSave(mixed $containerDefinition, array $params = []): void
     {
         // nothing to do
     }
 
-    /**
-     * @param mixed $containerDefinition
-     * @param array $params
-     */
-    public function postSave($containerDefinition, $params = [])
+    public function postSave(mixed $containerDefinition, array $params = []): void
     {
         if ($containerDefinition instanceof ClassDefinition) {
-            $this->classSaved($containerDefinition);
+            $this->classSaved($containerDefinition, $params);
         }
     }
 }

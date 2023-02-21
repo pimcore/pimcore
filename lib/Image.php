@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,7 +26,7 @@ final class Image
      *
      * @throws \Exception
      */
-    public static function getInstance()
+    public static function getInstance(): Adapter\GD|Adapter\Imagick|null
     {
         //@TODO should be configured on the container
         $adapter = self::create();
@@ -40,7 +41,7 @@ final class Image
      *
      * @internal
      */
-    public static function create()
+    public static function create(): Adapter\GD|Adapter\Imagick|null
     {
         try {
             if (extension_loaded('imagick')) {

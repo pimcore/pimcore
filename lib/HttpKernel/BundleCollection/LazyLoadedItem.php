@@ -23,20 +23,11 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class LazyLoadedItem extends AbstractItem
 {
-    /**
-     * @var string
-     */
-    private $className;
+    private string $className;
 
-    /**
-     * @var BundleInterface
-     */
-    private $bundle;
+    private ?BundleInterface $bundle = null;
 
-    /**
-     * @var array
-     */
-    private static $classImplementsCache = [];
+    private static array $classImplementsCache = [];
 
     /**
      * LazyLoadedItem constructor.
@@ -61,17 +52,11 @@ class LazyLoadedItem extends AbstractItem
         parent::__construct($priority, $environments, $source);
     }
 
-    /**
-     * @return string
-     */
     public function getBundleIdentifier(): string
     {
         return $this->className;
     }
 
-    /**
-     * @return BundleInterface
-     */
     public function getBundle(): BundleInterface
     {
         if (null === $this->bundle) {
@@ -83,9 +68,6 @@ class LazyLoadedItem extends AbstractItem
         return $this->bundle;
     }
 
-    /**
-     * @return bool
-     */
     public function isPimcoreBundle(): bool
     {
         if (null !== $this->bundle) {
@@ -96,10 +78,7 @@ class LazyLoadedItem extends AbstractItem
         return self::implementsInterface($this->className, PimcoreBundleInterface::class);
     }
 
-    /**
-     * @param BundleCollection $collection
-     */
-    public function registerDependencies(BundleCollection $collection)
+    public function registerDependencies(BundleCollection $collection): void
     {
         if (self::implementsInterface($this->className, DependentBundleInterface::class)) {
             /** @var DependentBundleInterface $className */
@@ -108,12 +87,6 @@ class LazyLoadedItem extends AbstractItem
         }
     }
 
-    /**
-     * @param string $className
-     * @param string $interfaceName
-     *
-     * @return bool
-     */
     private static function implementsInterface(string $className, string $interfaceName): bool
     {
         if (!isset(self::$classImplementsCache[$className])) {

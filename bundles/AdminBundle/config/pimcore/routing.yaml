@@ -1,0 +1,17 @@
+_pimcore_admin:
+    resource: "../../src/Controller/Admin/"
+    type:     annotation
+    prefix:   /admin
+    options:
+        expose: true
+
+_pimcore_gdpr:
+    resource: "../../src/Controller/GDPR/"
+    type:     annotation
+    prefix:   /admin/gdpr
+    options:
+        expose: true
+
+pimcore_admin_page_display_preview_image:
+    path: /admin/page/display-preview-image
+    defaults: { _controller: Pimcore\Bundle\AdminBundle\Controller\Admin\Document\PageController::displayPreviewImageAction }

@@ -34,5 +34,5 @@ interface DependentBundleInterface
      *
      * @param BundleCollection $collection
      */
-    public static function registerDependentBundles(BundleCollection $collection);
+    public static function registerDependentBundles(BundleCollection $collection): void;
 }

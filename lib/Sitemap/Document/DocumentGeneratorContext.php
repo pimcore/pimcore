@@ -45,10 +45,7 @@ class DocumentGeneratorContext extends GeneratorContext
         return $this->has('site');
     }
 
-    /**
-     * @return Site|null
-     */
-    public function getSite()
+    public function getSite(): ?Site
     {
         return $this->get('site');
     }

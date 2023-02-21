@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,60 +28,39 @@ class EncryptedField implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var Data
-     */
-    protected $delegate;
+    protected Data $delegate;
+
+    protected mixed $plain = null;
+
+    protected mixed $encrypted = null;
 
     /**
-     * @var mixed
-     */
-    protected $plain;
-
-    /**
-     * @var mixed
-     */
-    protected $encrypted;
-
-    /**
-     * @param mixed $plain
      * @param Data $delegate
+     * @param mixed $plain
      */
-    public function __construct(Data $delegate, $plain)
+    public function __construct(Data $delegate, mixed $plain)
     {
         $this->plain = $plain;
         $this->delegate = $delegate;
         $this->markMeDirty();
     }
 
-    /**
-     * @return Data
-     */
     public function getDelegate(): Data
     {
         return $this->delegate;
     }
 
-    /**
-     * @param Data $delegate
-     */
-    public function setDelegate(Data $delegate)
+    public function setDelegate(Data $delegate): void
     {
         $this->delegate = $delegate;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPlain()
+    public function getPlain(): mixed
     {
         return $this->plain;
     }
 
-    /**
-     * @param mixed $plain
-     */
-    public function setPlain($plain)
+    public function setPlain(mixed $plain): void
     {
         $this->plain = $plain;
         $this->markMeDirty();
@@ -91,7 +71,7 @@ class EncryptedField implements OwnerAwareFieldInterface
      *
      * @throws \Exception
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         if ($this->plain) {
             try {
@@ -122,7 +102,7 @@ class EncryptedField implements OwnerAwareFieldInterface
     /**
      * @throws \Exception
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->encrypted) {
             try {
