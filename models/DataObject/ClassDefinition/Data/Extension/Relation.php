@@ -21,6 +21,8 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\Snippet;
+use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
+use Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader;
 
 trait Relation
 {
@@ -34,8 +36,9 @@ trait Relation
         // add documents
         if ($this->getDocumentsAllowed()) {
             if ($documentTypes = $this->getDocumentTypes()) {
+                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
                 foreach ($documentTypes as $item) {
-                    $types[] = sprintf('\Pimcore\Model\Document\%s', ucfirst($item['documentTypes']));
+                    $types[] = '\\' . $loader->getClassNameFor($item['documentTypes']);
                 }
             } else {
                 $types[] = '\\' . Page::class;
@@ -47,7 +50,9 @@ trait Relation
         // add assets
         if ($this->getAssetsAllowed()) {
             if ($assetTypes = $this->getAssetTypes()) {
+                $assetLoader = \Pimcore::getContainer()->get(AssetTypeLoader::class);
                 foreach ($assetTypes as $item) {
+                    $types[] = '\\' . $assetLoader->getClassNameFor($item['assetTypes']);
                     $types[] = sprintf('\Pimcore\Model\Asset\%s', ucfirst($item['assetTypes']));
                 }
             } else {
