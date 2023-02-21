@@ -35,7 +35,6 @@ class Transliteration
         }
 
         $value = transliterator_transliterate('Any-Latin; Latin-ASCII; [^\u001F-\u007f] remove', $value);
-        $value = trim($value);
 
         return $value;
     }
