@@ -44,64 +44,46 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     public ?string $id = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     public ?string $name = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
     public string $title = '';
 
     /**
      * @internal
-     *
-     * @var string
      */
     public string $description = '';
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     public ?int $creationDate = null;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     public ?int $modificationDate = null;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     public ?int $userOwner = null;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     public ?int $userModification = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
     public string $parentClass = '';
 
@@ -109,8 +91,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
      * Comma separated list of interfaces
      *
      * @internal
-     *
-     * @var string|null
      */
     public ?string $implementsInterfaces = null;
 
@@ -118,120 +98,86 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
      * Name of the listing parent class if set
      *
      * @internal
-     *
-     * @var string
      */
     public string $listingParentClass = '';
 
     /**
      * @internal
-     *
-     * @var string
      */
     public string $useTraits = '';
 
     /**
      * @internal
-     *
-     * @var string
      */
     public string $listingUseTraits = '';
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $encryption = false;
 
     /**
      * @internal
-     *
-     * @var array
      */
     protected array $encryptedTables = [];
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $allowInherit = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $allowVariants = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $showVariants = false;
 
     /**
      * @internal
-     *
-     * @var DataObject\ClassDefinition\Layout|null
      */
     public ?ClassDefinition\Layout $layoutDefinitions = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     public ?string $icon = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     public ?string $group = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $showAppLoggerTab = false;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public string $linkGeneratorReference;
+    public ?string $linkGeneratorReference = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     public ?string $previewGeneratorReference = null;
 
     /**
      * @internal
-     *
-     * @var array
      */
     public array $compositeIndices = [];
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $showFieldLookup = false;
 
     /**
      * @internal
-     *
-     * @var array
      */
     public array $propertyVisibility = [
         'grid' => [
@@ -252,8 +198,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $enableGridLocking = false;
 
@@ -263,11 +207,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     private array $deletedDataComponents = [];
 
     /**
-     * @param string $id
-     * @param bool $force
-     *
-     * @return null|ClassDefinition
-     *
      * @throws \Exception
      */
     public static function getById(string $id, bool $force = false): ?ClassDefinition
@@ -311,10 +250,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     }
 
     /**
-     * @param string $name
-     *
-     * @return self|null
-     *
      * @throws \Exception
      */
     public static function getByName(string $name): ?ClassDefinition
@@ -338,8 +273,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     }
 
     /**
-     * @param string $name
-     *
      * @internal
      */
     public function rename(string $name): void
@@ -352,8 +285,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     }
 
     /**
-     * @param mixed $data
-     *
      * @internal
      */
     public static function cleanupForExport(mixed &$data): void
@@ -393,8 +324,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     }
 
     /**
-     * @param bool $saveDefinitionFile
-     *
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
      */
@@ -482,8 +411,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     }
 
     /**
-     * @param bool $generateDefinitionFile
-     *
      * @throws \Exception
      *
      * @internal
@@ -521,8 +448,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     }
 
     /**
-     * @return string
-     *
      * @internal
      */
     protected function getInfoDocBlock(): string
@@ -640,10 +565,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     }
 
     /**
-     * @param string|null $name
-     *
-     * @return string
-     *
      * @internal
      */
     public function getDefinitionFile(string $name = null): string
@@ -697,6 +618,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->userModification;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(string $id): static
     {
         $this->id = $id;
@@ -704,6 +628,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -711,20 +638,29 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(?int $creationDate): static
     {
-        $this->creationDate = (int)$creationDate;
+        $this->creationDate = $creationDate;
 
         return $this;
     }
 
-    public function setModificationDate(int $modificationDate): static
+    /**
+     * @return $this
+     */
+    public function setModificationDate(?int $modificationDate): static
     {
-        $this->modificationDate = (int)$modificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserOwner(?int $userOwner): static
     {
         $this->userOwner = $userOwner;
@@ -732,6 +668,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserModification(?int $userModification): static
     {
         $this->userModification = $userModification;
@@ -757,6 +696,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->layoutDefinitions;
     }
 
+    /**
+     * @return $this
+     */
     public function setLayoutDefinitions(?ClassDefinition\Layout $layoutDefinitions): static
     {
         $oldFieldDefinitions = null;
@@ -827,9 +769,12 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->useTraits;
     }
 
+    /**
+     * @return $this
+     */
     public function setUseTraits(string $useTraits): static
     {
-        $this->useTraits = (string) $useTraits;
+        $this->useTraits = $useTraits;
 
         return $this;
     }
@@ -839,9 +784,12 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->listingUseTraits;
     }
 
+    /**
+     * @return $this
+     */
     public function setListingUseTraits(string $listingUseTraits): static
     {
-        $this->listingUseTraits = (string) $listingUseTraits;
+        $this->listingUseTraits = $listingUseTraits;
 
         return $this;
     }
@@ -856,6 +804,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->allowVariants;
     }
 
+    /**
+     * @return $this
+     */
     public function setParentClass(string $parentClass): static
     {
         $this->parentClass = $parentClass;
@@ -863,9 +814,12 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setListingParentClass(string $listingParentClass): static
     {
-        $this->listingParentClass = (string) $listingParentClass;
+        $this->listingParentClass = $listingParentClass;
 
         return $this;
     }
@@ -875,6 +829,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->encryption;
     }
 
+    /**
+     * @return $this
+     */
     public function setEncryption(bool $encryption): static
     {
         $this->encryption = $encryption;
@@ -884,8 +841,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
 
     /**
      * @internal
-     *
-     * @param array $tables
      */
     public function addEncryptedTables(array $tables): void
     {
@@ -894,8 +849,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
 
     /**
      * @internal
-     *
-     * @param array $tables
      */
     public function removeEncryptedTables(array $tables): void
     {
@@ -908,10 +861,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
 
     /**
      * @internal
-     *
-     * @param string $table
-     *
-     * @return bool
      */
     public function isEncryptedTable(string $table): bool
     {
@@ -926,8 +875,6 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
     /**
      * @internal
      *
-     * @param array $encryptedTables
-     *
      * @return $this
      */
     public function setEncryptedTables(array $encryptedTables): static
@@ -937,16 +884,22 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowInherit(bool $allowInherit): static
     {
-        $this->allowInherit = (bool)$allowInherit;
+        $this->allowInherit = $allowInherit;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowVariants(bool $allowVariants): static
     {
-        $this->allowVariants = (bool)$allowVariants;
+        $this->allowVariants = $allowVariants;
 
         return $this;
     }
@@ -956,6 +909,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->icon;
     }
 
+    /**
+     * @return $this
+     */
     public function setIcon(?string $icon): static
     {
         $this->icon = $icon;
@@ -968,6 +924,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->propertyVisibility;
     }
 
+    /**
+     * @return $this
+     */
     public function setPropertyVisibility(array $propertyVisibility): static
     {
         if (is_array($propertyVisibility)) {
@@ -982,6 +941,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->group;
     }
 
+    /**
+     * @return $this
+     */
     public function setGroup(?string $group): static
     {
         $this->group = $group;
@@ -989,6 +951,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -1001,6 +966,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->description;
     }
 
+    /**
+     * @return $this
+     */
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -1013,9 +981,12 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->title;
     }
 
+    /**
+     * @return $this
+     */
     public function setShowVariants(bool $showVariants): static
     {
-        $this->showVariants = (bool)$showVariants;
+        $this->showVariants = $showVariants;
 
         return $this;
     }
@@ -1030,9 +1001,12 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->showAppLoggerTab;
     }
 
+    /**
+     * @return $this
+     */
     public function setShowAppLoggerTab(bool $showAppLoggerTab): static
     {
-        $this->showAppLoggerTab = (bool) $showAppLoggerTab;
+        $this->showAppLoggerTab = $showAppLoggerTab;
 
         return $this;
     }
@@ -1042,19 +1016,25 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->showFieldLookup;
     }
 
+    /**
+     * @return $this
+     */
     public function setShowFieldLookup(bool $showFieldLookup): static
     {
-        $this->showFieldLookup = (bool) $showFieldLookup;
+        $this->showFieldLookup = $showFieldLookup;
 
         return $this;
     }
 
-    public function getLinkGeneratorReference(): string
+    public function getLinkGeneratorReference(): ?string
     {
         return $this->linkGeneratorReference;
     }
 
-    public function setLinkGeneratorReference(string $linkGeneratorReference): static
+    /**
+     * @return $this
+     */
+    public function setLinkGeneratorReference(?string $linkGeneratorReference): static
     {
         $this->linkGeneratorReference = $linkGeneratorReference;
 
@@ -1106,6 +1086,9 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->implementsInterfaces;
     }
 
+    /**
+     * @return $this
+     */
     public function setImplementsInterfaces(?string $implementsInterfaces): static
     {
         $this->implementsInterfaces = $implementsInterfaces;
@@ -1118,7 +1101,10 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
         return $this->compositeIndices;
     }
 
-    public function setCompositeIndices(?array $compositeIndices): static
+    /**
+     * @return $this
+     */
+    public function setCompositeIndices(array $compositeIndices): static
     {
         $class = $this->getFieldDefinitions([]);
         foreach ($compositeIndices as $indexInd => $compositeIndex) {
@@ -1130,7 +1116,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
                 }
             }
         }
-        $this->compositeIndices = $compositeIndices ?? [];
+        $this->compositeIndices = $compositeIndices;
 
         return $this;
     }
