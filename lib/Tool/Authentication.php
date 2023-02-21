@@ -30,32 +30,6 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class Authentication
 {
     /**
-     * @deprecated
-     */
-    public static function authenticatePlaintext(string $username, string $password): ?User
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s is deprecated and will be removed in Pimcore 11', __METHOD__),
-        );
-
-        /** @var User $user */
-        $user = User::getByName($username);
-
-        // user needs to be active, needs a password and an ID (do not allow system user to login, ...)
-        if (self::isValidUser($user)) {
-            if (self::verifyPassword($user, $password)) {
-                $user->setLastLoginDate(); //set user current login date
-
-                return $user;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @param Request|null $request
      *
      * @return User|null
