@@ -35,8 +35,6 @@ class Transliteration
             return transliterator_transliterate($language.'-ASCII; [^\u001F-\u007f] remove', $value);
         }
 
-        $value = transliterator_transliterate('Any-Latin; Latin-ASCII; [^\u001F-\u007f] remove', $value);
-
-        return $value;
+        return transliterator_transliterate('Any-Latin; Latin-ASCII; [^\u001F-\u007f] remove', $value);
     }
 }
