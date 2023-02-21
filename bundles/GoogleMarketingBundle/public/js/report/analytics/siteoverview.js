@@ -167,7 +167,7 @@ pimcore.bundle.googlemarketing.report.analytics.overview = Class.create(pimcore.
 });
 
 // add to report broker
-
-pimcore.bundle.googlemarketing.report.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
-pimcore.bundle.googlemarketing.report.broker.addReport(pimcore.bundle.googlemarketing.report.analytics.overview, "analytics");
-
+if (pimcore.bundle.customreports && pimcore.bundle.customreports.broker) {
+    pimcore.bundle.customreports.broker.addGroup("analytics", "google_analytics", "pimcore_icon_analytics");
+    pimcore.bundle.customreports.broker.addReport(pimcore.bundle.googlemarketing.report.analytics.overview, "analytics");
+}

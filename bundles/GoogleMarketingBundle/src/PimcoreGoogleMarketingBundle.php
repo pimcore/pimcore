@@ -17,12 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GoogleMarketingBundle;
 
+use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Installer;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
-use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 
-class PimcoreGoogleMarketingBundle extends AbstractPimcoreBundle
+class PimcoreGoogleMarketingBundle extends AbstractPimcoreBundle implements DependentBundleInterface
 {
     use PackageVersionTrait;
 
@@ -67,4 +69,9 @@ class PimcoreGoogleMarketingBundle extends AbstractPimcoreBundle
         return $installer;
     }
 
+
+    public static function registerDependentBundles(BundleCollection $collection): void
+    {
+        $collection->addBundle(PimcoreCustomReportsBundle::class, 20);
+    }
 }

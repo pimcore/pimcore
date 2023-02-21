@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.bundle.customreports.custom.definition.analytics");
+pimcore.registerNS("pimcore.bundle.googlemarketing.custom.definition.analytics");
 /**
  * @private
  */
-pimcore.bundle.customreports.custom.definition.analytics = Class.create({
+pimcore.bundle.googlemarketing.custom.definition.analytics = Class.create({
 
     element: null,
     sourceDefinitionData: null,
@@ -336,3 +336,7 @@ pimcore.bundle.customreports.custom.definition.analytics = Class.create({
 
 
 });
+
+if (pimcore.bundle.customreports && pimcore.bundle.customreports.custom.definition) {
+    pimcore.bundle.customreports.custom.definition.analytics = pimcore.bundle.googlemarketing.custom.definition.analytics;
+}

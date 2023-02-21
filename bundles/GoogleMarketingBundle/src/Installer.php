@@ -52,7 +52,17 @@ class Installer extends SettingsStoreAwareInstaller
     public function install(): void
     {
         $this->addPermissions();
+        $this->installDependentBundles();
         parent::install();
+    }
+
+    public function installDependentBundles(): void
+    {
+        //Install CustomReportsBundle
+        $customReportsInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\CustomReportsBundle\Installer::class);
+        if (!$customReportsInstaller->isInstalled()) {
+            $customReportsInstaller->install();
+        }
     }
 
     public function uninstall(): void

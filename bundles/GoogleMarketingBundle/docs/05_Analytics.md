@@ -87,7 +87,7 @@ you full control over the generated code:
 namespace App\EventListener;
 
 use Pimcore\Bundle\GoogleMarketingBundle\Model\Event\TrackingDataEvent;
-use Pimcore\Analytics\Google\Tracker;
+use Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker;
 use Pimcore\Bundle\GoogleMarketingBundle\Event\GoogleAnalyticsEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
