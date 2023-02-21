@@ -57,7 +57,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             var user = pimcore.globalmanager.get("user");
             if (user.admin) {
                 /**
-                 * @deprecated
+                 * @deprecated 10.6 Will be removed in 11.
                  */
                 this.metaDataPanel = new Ext.form.FieldSet({
                     title: t("html_tags") + " (&lt;meta .../&gt; &lt;link .../&gt; ...) (Deprecated)",
