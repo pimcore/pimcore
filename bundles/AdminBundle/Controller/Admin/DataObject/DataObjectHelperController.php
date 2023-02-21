@@ -1482,43 +1482,18 @@ class DataObjectHelperController extends AdminController
      * @Route("/download-xlsx-file", name="downloadxlsxfile", methods={"GET"})
      *
      * @param Request $request
+     * @param GridHelperService $gridHelperService
      *
      * @return BinaryFileResponse
      */
-    public function downloadXlsxFileAction(Request $request)
+    public function downloadXlsxFileAction(Request $request, GridHelperService $gridHelperService)
     {
         $storage = Storage::get('temp');
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $csvFile = $this->getCsvFile($fileHandle);
-
         try {
-            $csvStream= $storage->readStream($csvFile);
-
-            $csvReader = new Csv();
-            $csvReader->setDelimiter(';');
-            $csvReader->setSheetIndex(0);
-
-            $temp = tmpfile();
-            stream_copy_to_stream($csvStream, $temp, null, 0);
-            $tempMetaData = stream_get_meta_data($temp);
-            //TODO: use this method and storage->read() to avoid the extra temp file, is not available in the current version. See: https://github.com/PHPOffice/PhpSpreadsheet/pull/2792
-            //$spreadsheet = $csvReader->loadSpreadsheetFromString($csvData);
-            $spreadsheet = $csvReader->load($tempMetaData['uri']);
-            $writer = new Xlsx($spreadsheet);
-            $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
-            $writer->save($xlsxFilename);
-
-            $response = new BinaryFileResponse($xlsxFilename);
-            $response->headers->set('Content-Type', 'application/xlsx');
-            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.xlsx');
-            $response->deleteFileAfterSend(true);
-
-            $storage->delete($csvFile);
-
-            $storage->delete($csvFile);
-
-            return $response;
-        } catch (FilesystemException | UnableToReadFile $exception) {
+            return $gridHelperService->createXlsxExportFile($storage, $fileHandle, $csvFile);
+        } catch (\Exception | FilesystemException | UnableToReadFile $exception) {
             // handle the error
             throw $this->createNotFoundException('XLSX file not found');
         }
