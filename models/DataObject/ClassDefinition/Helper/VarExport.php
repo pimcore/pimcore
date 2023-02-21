@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data\VarExporterInterface;
+
 /**
  * @internal
  */
@@ -45,5 +47,15 @@ trait VarExport
         $obj->setValues($data);
 
         return $obj;
+    }
+
+    /**
+     * @param array $vars
+     * @return $this
+     */
+    public function setBlockedVarsForExport(array $vars): static
+    {
+        $this->blockedVarsForExport = $vars;
+        return $this;
     }
 }

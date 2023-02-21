@@ -28,7 +28,7 @@
     "docs": "https://pimcore.com/docs/latest/"
   },
   "require": {
-    "php": "^8.1",
+    "php": "~8.1.0 || ~8.2.0",
     "ext-SimpleXML": "*",
     "ext-dom": "*",
     "ext-exif": "*",
@@ -71,7 +71,7 @@
     "mpratt/embera": "^2.0.14",
     "myclabs/deep-copy": "^1.11",
     "neitanod/forceutf8": "^2.0.4",
-    "nesbot/carbon": "^2.27",
+    "nesbot/carbon": "^2.65",
     "pear/net_url2": "^2.2",
     "matomo/device-detector": "^6.0",
     "presta/sitemap-bundle": "^3.3",
