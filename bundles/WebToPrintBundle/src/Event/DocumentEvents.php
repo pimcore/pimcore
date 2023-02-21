@@ -22,7 +22,7 @@ final class DocumentEvents
      * Processor contains the processor object used to generate the PDF
      *
      * Arguments:
-     *  - processor | instance of the PDF processor Pimcore\Web2Print\Processor\{ProcessorName}
+     *  - processor | instance of the PDF processor Pimcore\Bundle\WebToPrintBundle\Processor\{ProcessorName}
      *
      * @Event("Pimcore\Event\Model\DocumentEvent")
      *
@@ -49,7 +49,7 @@ final class DocumentEvents
      * Arguments:
      *  - options | array for configuration settings
      *
-     * @Event("Pimcore\Event\Model\PrintConfigEvent")
+     * @Event("Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent")
      *
      * @var string
      */
@@ -69,7 +69,7 @@ final class DocumentEvents
      *  - params | puppeteer PDF options (see also https://pptr.dev/api/puppeteer.pdfoptions/)
      *  - html | HTML passed to puppeteer
      *
-     * @Event("Pimcore\Event\Model\PrintConfigEvent")
+     * @Event("Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent")
      *
      * @var string
      */
