@@ -21,7 +21,6 @@ namespace Pimcore\Tests\Support\Helper;
 
 use Codeception\Lib\ModuleContainer;
 use Pimcore\Bundle\GlossaryBundle\Installer;
-use Pimcore\Bundle\SeoBundle\Installer as SeoInstaller;
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Tests\Support\Util\Autoloader;
 
@@ -39,7 +38,6 @@ class Unit extends \Codeception\Module
     public function _beforeSuite(array $settings = []): void
     {
         $this->installPimcoreGlossaryBundle();
-        $this->installPimcoreSeoBundle();
     }
 
     private function installPimcoreGlossaryBundle(): void
@@ -56,20 +54,6 @@ class Unit extends \Codeception\Module
 
             //explicitly load installed classes so that the new ones are used during tests
             Autoloader::load(Glossary::class);
-        }
-    }
-
-    private function installPimcoreSeoBundle(): void
-    {
-        if ($this->config['run_installer']) {
-            /** @var Pimcore $pimcoreModule */
-            $pimcoreModule = $this->getModule('\\' . Pimcore::class);
-
-            $this->debug('[PimcoreSeoBundle] Running PimcoreSeoBundle installer');
-
-            // install ecommerce framework
-            $installer = $pimcoreModule->getContainer()->get(SeoInstaller::class);
-            $installer->install();
         }
     }
 }
