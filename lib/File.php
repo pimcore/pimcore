@@ -128,10 +128,10 @@ class File
         if (is_dir($path)) {
             return true;
         }
-
         $return = true;
 
         $oldMask = umask(0);
+        $path = Path::canonicalize($path);
 
         if ($recursive) {
             // we cannot use just mkdir() with recursive=true because of possible race conditions, see also
