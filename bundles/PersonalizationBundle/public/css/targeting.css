@@ -1,0 +1,25 @@
+.pimcore_targeting_bracket {
+    position: absolute;
+    top: 64px;
+    cursor: pointer;
+
+    color: #CCCCCC;
+    font-family: sans-serif;
+    font-size: 50px;
+}
+
+.pimcore_targeting_bracket:hover {
+    color: #B4B4B4;
+}
+
+.pimcore_targeting_bracket_active {
+    color: #000 !important;
+}
+
+.pimcore_targeting_bracket_left {
+    left: 5px;
+}
+
+.pimcore_targeting_bracket_right {
+    right: 5px;
+}

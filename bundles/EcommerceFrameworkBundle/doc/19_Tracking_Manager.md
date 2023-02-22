@@ -125,10 +125,11 @@ use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ShopController extends FrontendController
 {
-    public function listAction(Request $request, TrackingManager $trackingManager, PaginatorInterface $paginator)
+    public function listAction(Request $request, TrackingManager $trackingManager, PaginatorInterface $paginator): Response
     {       
         // ...
         $paginator = $paginator->paginate($products, $request->get('page', 1));
@@ -172,12 +173,13 @@ Define a custom item builder:
 <?php
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpressionInterface;
 
 class TrackingItemBuilder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder
 {
-    private static $impressionPosition = 0;
+    private static int $impressionPosition = 0;
     
-    public function buildProductImpressionItem(ProductInterface $product)
+    public function buildProductImpressionItem(ProductInterface $product): ProductImpression
     {
         $item = parent::buildProductImpressionItem($product);
 

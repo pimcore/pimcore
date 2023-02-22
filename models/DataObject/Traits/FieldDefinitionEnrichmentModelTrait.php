@@ -25,12 +25,12 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 trait FieldDefinitionEnrichmentModelTrait
 {
     /**
-     * @var Data[]
+     * @var array<string, Data>|null
      */
     protected ?array $fieldDefinitionsCache = null;
 
     /**
-     * @param Data[] $fieldDefinitions
+     * @param array<string, Data>|null $fieldDefinitions
      *
      * @return $this
      */
@@ -47,7 +47,7 @@ trait FieldDefinitionEnrichmentModelTrait
     }
 
     /**
-     * @return Data[]
+     * @return array<string, Data>
      */
     protected function getEnrichedFieldDefinitions(array $context = []): array
     {
@@ -63,12 +63,12 @@ trait FieldDefinitionEnrichmentModelTrait
     }
 
     /**
-     * @return Data[]|null
+     * @return array<string, Data>
      */
-    public function getFieldDefinitions(array $context = []): ?array
+    public function getFieldDefinitions(array $context = []): array
     {
         if ($this->suppressEnrichment($context)) {
-            return $this->fieldDefinitionsCache;
+            return $this->fieldDefinitionsCache ?? [];
         }
 
         return $this->getEnrichedFieldDefinitions($context);

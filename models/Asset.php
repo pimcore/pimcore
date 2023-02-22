@@ -1564,7 +1564,7 @@ class Asset extends Element\AbstractElement
         return array_merge(...$dependencies);
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->parent = null;

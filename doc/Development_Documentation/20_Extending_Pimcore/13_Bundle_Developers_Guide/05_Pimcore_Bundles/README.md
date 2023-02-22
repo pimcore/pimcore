@@ -19,38 +19,36 @@ interface PimcoreBundleInterface extends BundleInterface
 
     /**
      * If the bundle has an installation routine, an installer is responsible of handling installation related tasks
-     *
-     * @return InstallerInterface|null
      */
-    public function getInstaller();
+    public function getInstaller(): ?InstallerInterface;
 
     /**
      * Get javascripts to include in admin interface
      *
      * @return string[]|RouteReferenceInterface[]
      */
-    public function getJsPaths();
+    public function getJsPaths(): array;
 
     /**
      * Get stylesheets to include in admin interface
      *
      * @return string[]|RouteReferenceInterface[]
      */
-    public function getCssPaths();
+    public function getCssPaths(): array;
 
     /**
      * Get javascripts to include in editmode
      *
      * @return string[]|RouteReferenceInterface[]
      */
-    public function getEditmodeJsPaths();
+    public function getEditmodeJsPaths(): array;
 
     /**
      * Get stylesheets to include in editmode
      *
      * @return string[]|RouteReferenceInterface[]
      */
-    public function getEditmodeCssPaths();
+    public function getEditmodeCssPaths(): array;
 }
 ```
 

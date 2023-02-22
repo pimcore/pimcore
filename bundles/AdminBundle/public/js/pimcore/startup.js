@@ -499,27 +499,6 @@ Ext.onReady(function () {
     sitesStore.load();
     pimcore.globalmanager.add("sites", sitesStore);
 
-    // target groups
-    Ext.define('pimcore.model.target_groups', {
-        extend: 'Ext.data.Model',
-        fields: ["id", "text"]
-    });
-
-    var targetGroupStore = Ext.create('Ext.data.JsonStore', {
-        model: "pimcore.model.target_groups",
-        proxy: {
-            type: 'ajax',
-            url: Routing.generate('pimcore_admin_targeting_targetgrouplist'),
-            reader: {
-                type: 'json'
-            }
-        }
-    });
-
-    targetGroupStore.load();
-    pimcore.globalmanager.add("target_group_store", targetGroupStore);
-
-
     // check for updates
     window.setTimeout(function () {
 
