@@ -57,5 +57,6 @@ final class Version20230222075502 extends AbstractMigration
         if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', 'pimcore')) {
             SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', 'pimcore');
         }
+        $this->write('Please deactivate the Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle manually in config/bundles.php');
     }
 }

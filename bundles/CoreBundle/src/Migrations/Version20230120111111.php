@@ -29,7 +29,7 @@ final class Version20230120111111 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', 'pimcore')) {
+        if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', 'pimcore')) {
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', true, 'bool', 'pimcore');
         }
 

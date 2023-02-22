@@ -31,7 +31,7 @@ final class Version20221228101109 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\CustomReportsBundle\\PimcoreCustomReportsBundle', 'pimcore')) {
+        if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\CustomReportsBundle\\PimcoreCustomReportsBundle', 'pimcore')) {
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\CustomReportsBundle\\PimcoreCustomReportsBundle', true, 'bool', 'pimcore');
         }
 
