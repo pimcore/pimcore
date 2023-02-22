@@ -43,13 +43,6 @@ class Page extends PageSnippet
     protected string $description = '';
 
     /**
-     * @internal
-     *
-     * @var array
-     */
-    protected array $metaData = [];
-
-    /**
      * {@inheritdoc}
      */
     protected string $type = 'page';
@@ -100,11 +93,6 @@ class Page extends PageSnippet
         $this->title = $title;
 
         return $this;
-    }
-
-    public function getMetaData(): array
-    {
-        return $this->metaData;
     }
 
     public function getFullPath(bool $force = false): string
