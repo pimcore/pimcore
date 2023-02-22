@@ -21,6 +21,15 @@
 - [Asset] Deprecated VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111).
 - [Authentication] The method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been deprecated and will be removed in Pimcore 11.
 - [Authentication] The method `Pimcore\Tool\Authentication::authenticatePlaintext()` has been deprecated and will be removed in Pimcore 11.
+- [Authentication] It is now possible to configure the password algorithm and its options that Pimcore uses for its backend users and your objects that contain a password field.
+  ```yaml
+    pimcore:
+        security:
+            password:
+                algorithm: !php/const PASSWORD_BCRYPT
+                options:
+                    cost: 13
+  ```
 - [Google] Classes `Google\Cse` and `Google\Cse\Item` are deprecated and will be removed in Pimcore 11.
 - [Document] Deprecated the `HTML-Tags` field under the `SEO & Settings` panel of Document/Page, `setMetaData()` and `getMetaData()`
 - [Document] The `HTML-Tags` (document metadata) field under SEO & Settings panel is now only visible and editable by Admin users`.
@@ -35,7 +44,7 @@
 - [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
          Please use following configuration to allow more in template rendering:
   ```yaml
-  pimcore:
+    pimcore:
         templating_engine:
             twig:
               sandbox_security_policy:

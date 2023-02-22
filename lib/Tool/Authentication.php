@@ -172,20 +172,25 @@ class Authentication
      */
     public static function verifyPassword($user, $password)
     {
-        $password = self::preparePlainTextPassword($user->getName(), $password);
-
-        if ($user->getPassword()) { // do not allow logins for users without a password
-            if (password_verify($password, $user->getPassword())) {
-                if (password_needs_rehash($user->getPassword(), PASSWORD_DEFAULT)) {
-                    $user->setPassword(self::getPasswordHash($user->getName(), $password));
-                    $user->save();
-                }
-
-                return true;
-            }
+        if (!$user->getPassword()) {
+            // do not allow logins for users without a password
+            return false;
         }
 
-        return false;
+        $password = self::preparePlainTextPassword($user->getName(), $password);
+
+        if (!password_verify($password, $user->getPassword())) {
+            return false;
+        }
+
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+
+        if (password_needs_rehash($user->getPassword(), $config['algorithm'], $config['options'])) {
+            $user->setPassword(self::getPasswordHash($user->getName(), $password));
+            $user->save();
+        }
+
+        return true;
     }
 
     /**
@@ -214,12 +219,14 @@ class Authentication
      */
     public static function getPasswordHash($username, $plainTextPassword)
     {
-        $hash = password_hash(self::preparePlainTextPassword($username, $plainTextPassword), PASSWORD_DEFAULT);
-        if (!$hash) {
-            throw new \Exception('Unable to create password hash for user: ' . $username);
+        $password = self::preparePlainTextPassword($username, $plainTextPassword);
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+
+        if ($hash = password_hash($password, $config['algorithm'], $config['options'])) {
+            return $hash;
         }
 
-        return $hash;
+        throw new \Exception('Unable to create password hash for user: ' . $username);
     }
 
     /**
