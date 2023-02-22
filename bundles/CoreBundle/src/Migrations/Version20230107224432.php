@@ -57,5 +57,6 @@ final class Version20230107224432 extends AbstractMigration
         if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\XliffBundle\\PimcoreXliffBundle', 'pimcore')) {
             SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\XliffBundle\\PimcoreXliffBundle', 'pimcore');
         }
+        $this->write('Please deactivate the Pimcore\\Bundle\\XliffBundle\\PimcoreXliffBundle manually in config/bundles.php');
     }
 }

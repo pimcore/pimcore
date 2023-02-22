@@ -58,5 +58,6 @@ final class Version20230111074323 extends AbstractMigration
         if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', 'pimcore')) {
             SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle','pimcore');
         }
+        $this->write('Please deactivate the Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle manually in config/bundles.php');
     }
 }

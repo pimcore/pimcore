@@ -47,5 +47,6 @@ final class Version20230113165612 extends AbstractMigration
         if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle', 'pimcore')) {
             SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle', 'pimcore');
         }
+        $this->write('Please deactivate the Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle manually in config/bundles.php');
     }
 }

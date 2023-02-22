@@ -47,5 +47,6 @@ final class Version20221216140012 extends AbstractMigration
         if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\SeoBundle\\PimcoreSeoBundle', 'pimcore')) {
             SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\SeoBundle\\PimcoreSeoBundle', 'pimcore');
         }
+        $this->write('Please deactivate the Pimcore\\Bundle\\SeoBundle\\PimcoreSeoBundle manually in config/bundles.php');
     }
 }

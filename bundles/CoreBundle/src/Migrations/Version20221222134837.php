@@ -47,5 +47,6 @@ final class Version20221222134837 extends AbstractMigration
         if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle', 'pimcore')) {
             SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle', 'pimcore');
         }
+        $this->write('Please deactivate the Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle manually in config/bundles.php');
     }
 }
