@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreSetDataInterface;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
@@ -794,7 +795,7 @@ final class Localizedfield extends Model\AbstractModel implements
      * @return void
      * @throws \Exception
      */
-    public function setObjectOmitDirty(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object): void
+    public function setObjectOmitDirty(Localizedfield|AbstractData|Objectbrick\Data\AbstractData|Concrete $object): void
     {
         $dirtyLanguages = $this->getDirtyLanguages();
         $this->setObject($object);
