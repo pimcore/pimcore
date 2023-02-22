@@ -100,6 +100,9 @@
 
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
     <script src="{{ path('fos_js_routing_js', {'callback' : 'fos.Router.setData'}) }}" {{ pimcore_csp.getNonceHtmlAttribute()|raw }}></script>
+
+    {{ encore_entry_script_tags('admin', null, 'pimcoreAdmin') }}
+    {{ encore_entry_link_tags('admin', null, 'pimcoreAdmin') }}
 </head>
 
 <body class="pimcore_version_11" data-app-env="{{ app.environment }}">
@@ -150,8 +153,6 @@
 {% set styles = [
         path('pimcore_admin_misc_admincss'),
         "/bundles/pimcoreadmin/css/icons.css",
-        "/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css",
-        "/bundles/pimcoreadmin/js/lib/leaflet.draw/leaflet.draw.css",
         "/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_1.css",
         "/bundles/pimcoreadmin/extjs/css/PimcoreApp-all_2.css",
         "/bundles/pimcoreadmin/css/admin.css"
@@ -186,12 +187,7 @@
     "lib/ext-plugins/portlet/Portlet.js",
     "lib/ext-plugins/portlet/PortalColumn.js",
     "lib/ext-plugins/portlet/PortalPanel.js",
-    "lib/ckeditor/ckeditor.js",
-    "lib/leaflet/leaflet.js",
-    "lib/leaflet.draw/leaflet.draw.js",
-    "lib/vrview/build/vrview.min.js",
-    "lib/ace/src-min-noconflict/ace.js",
-    "lib/ace/src-min-noconflict/ext-modelist.js"
+    "lib/ckeditor/ckeditor.js"
 ] %}
 {% if pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ '/bundles/pimcoreadmin/js/lib/ext-locale/locale-' ~ language ~ '.js') %}
     {% set scriptLibs = scriptLibs|merge(['lib/ext-locale/locale-' ~ language ~ '.js']) %}
@@ -254,7 +250,6 @@
     "pimcore/settings/properties/predefined.js",
     "pimcore/settings/docTypes.js",
     "pimcore/settings/system.js",
-    "pimcore/settings/web2print.js",
     "pimcore/settings/website.js",
     "pimcore/settings/redirects.js",
 
@@ -262,15 +257,6 @@
     "pimcore/settings/maintenance.js",
     "pimcore/settings/email/log.js",
     "pimcore/settings/email/blacklist.js",
-    "pimcore/settings/targeting/condition/abstract.js",
-    "pimcore/settings/targeting/conditions.js",
-    "pimcore/settings/targeting/action/abstract.js",
-    "pimcore/settings/targeting/actions.js",
-    "pimcore/settings/targeting/rules/panel.js",
-    "pimcore/settings/targeting/rules/item.js",
-    "pimcore/settings/targeting/targetGroups/panel.js",
-    "pimcore/settings/targeting/targetGroups/item.js",
-    "pimcore/settings/targeting_toolbar.js",
 
     "pimcore/settings/gdpr/gdprPanel.js",
     "pimcore/settings/gdpr/dataproviders/assets.js",
@@ -281,7 +267,7 @@
     "pimcore/element/applicationLoggerPanelFacade.js",
     "pimcore/element/customReportsPanelFacade.js",
     "pimcore/element/selector/searchFacade.js",
-    
+
     "pimcore/element/abstract.js",
     "pimcore/element/abstractPreview.js",
     "pimcore/element/properties.js",
@@ -342,13 +328,8 @@
     "pimcore/document/email.js",
     "pimcore/document/newsletter.js",
     "pimcore/document/page.js",
-    "pimcore/document/printpages/pdf_preview.js",
-    "pimcore/document/printabstract.js",
-    "pimcore/document/printpage.js",
-    "pimcore/document/printcontainer.js",
     "pimcore/document/document_language_overview.js",
     "pimcore/document/customviews/tree.js",
-
 
     "pimcore/asset/metadata/data/data.js",
     "pimcore/asset/metadata/data/input.js",
@@ -452,8 +433,6 @@
     "pimcore/object/classes/data/gender.js",
     "pimcore/object/classes/data/newsletterActive.js",
     "pimcore/object/classes/data/newsletterConfirmed.js",
-    "pimcore/object/classes/data/targetGroup.js",
-    "pimcore/object/classes/data/targetGroupMultiselect.js",
     "pimcore/object/classes/data/quantityValue.js",
     "pimcore/object/classes/data/inputQuantityValue.js",
     "pimcore/object/classes/data/quantityValueRange.js",
@@ -578,8 +557,6 @@
     "pimcore/object/tags/gender.js",
     "pimcore/object/tags/newsletterActive.js",
     "pimcore/object/tags/newsletterConfirmed.js",
-    "pimcore/object/tags/targetGroup.js",
-    "pimcore/object/tags/targetGroupMultiselect.js",
     "pimcore/object/tags/quantityValue.js",
     "pimcore/object/tags/quantityValueRange.js",
     "pimcore/object/tags/inputQuantityValue.js",
@@ -600,21 +577,12 @@
     "pimcore/object/gridexport/csv.js",
     "pimcore/object/gridexport/xlsx.js",
 
-    "pimcore/report/settings.js",
-    "pimcore/report/analytics/settings.js",
-    "pimcore/report/analytics/elementoverview.js",
-    "pimcore/report/analytics/elementexplorer.js",
-    "pimcore/report/webmastertools/settings.js",
-    "pimcore/report/tagmanager/settings.js",
-    "pimcore/report/custom/definitions/analytics.js",
-
     "pimcore/layout/portal.js",
     "pimcore/layout/portlets/abstract.js",
     "pimcore/layout/portlets/modifiedDocuments.js",
     "pimcore/layout/portlets/modifiedObjects.js",
     "pimcore/layout/portlets/modifiedAssets.js",
     "pimcore/layout/portlets/modificationStatistic.js",
-    "pimcore/layout/portlets/analytics.js",
 
     "pimcore/layout/menu.js",
     "pimcore/layout/toolbar.js",

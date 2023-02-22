@@ -6,7 +6,8 @@ use the `OutputTimestampResolver` service and get the timestamp from it instead 
 
 ```php
 
-    public function timestampAction(OutputTimestampResolver $outputTimestampResolver) {
+    public function timestampAction(OutputTimestampResolver $outputTimestampResolver): Response
+    {
         $currentTimestamp = $outputTimestampResolver->getOutputTimestamp();
 
         $response = "

@@ -27,35 +27,6 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\DefaultValueTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'date';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'bigint(20)';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'bigint(20)';
 
     /**
      * @internal
@@ -458,5 +429,20 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         ];
 
         return array_merge($defaultBlockedVars, $this->getBlockedVarsForExport());
+    }
+
+    public function getColumnType(): string
+    {
+        return 'bigint(20)';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'date';
     }
 }

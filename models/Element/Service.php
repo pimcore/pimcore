@@ -383,27 +383,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
-     * @param string $sourceKey
-     * @param ElementInterface $target
-     *
-     * @return string
-     *
-     * @deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
-     *
-     */
-    public static function getSaveCopyName(string $type, string $sourceKey, ElementInterface $target): string
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            'The Service::getSaveCopyName() method is deprecated, use Service::getSafeCopyName() instead.'
-        );
-
-        return self::getSafeCopyName($sourceKey, $target);
-    }
-
-    /**
      * Returns a uniqe key for the element in the $target-Path (recursive)
      *
      * @return string

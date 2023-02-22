@@ -1,20 +1,32 @@
 # Rendering PDFs
 
 Instead of directly returning the HTML code of your website you could also return a PDF version. 
-You can use the built in Web2Print functionality to accomplish this.
+You can use the PimcoreWebToPrintBundle functionality to accomplish this.
 
-Please make sure that you have set up the web2print functionality correctly ("Settings" -> "Web2Print Settings").
+Please make sure that you have set up and installed the PimcoreWebToPrintBundle correctly ("Settings" -> "Web2Print Settings").
 
-You don't need to enable the Web2Print Documents in Pimcore, you 
+You need to enable and install the PimcoreWebToPrintBundle via the bundles.php, and then you 
 just have to provide the correct settings (Tool -> HeadlessChrome / PDFreactor) and the corresponding settings.
 
 In your controller you just have to return the PDF instead of the HTML. 
 
+## Uninstalling PimcoreWebToPrintBundle
+Uninstalling the bundle does not clean up `printpages` or `printcontainers`. Before uninstalling make sure to remove or archive all dependent documents.
+You can also use the following command to clean up you database. Create a backup before executing the command. All data will be lost.
+
+```bash
+ bin/console pimcore:document:cleanup printpage printcontainer
+```
+
 ## Simple example
+
 ```php
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
 class BlogController extends FrontendController
 {
-    public function indexAction(Request $request)
+    public function indexAction(Request $request): Response
     {
         //your custom code....
 
@@ -23,8 +35,8 @@ class BlogController extends FrontendController
             'document' => $this->document,
             'editmode' => $this->editmode,
         ]);
-        return new \Symfony\Component\HttpFoundation\Response(
-            \Pimcore\Web2Print\Processor::getInstance()->getPdfFromString($html),
+        return new Response(
+            \Pimcore\Bundle\WebToPrintBundle\Processor::getInstance()->getPdfFromString($html),
             200,
             array(
                 'Content-Type' => 'application/pdf',
@@ -35,54 +47,57 @@ class BlogController extends FrontendController
 ## Advanced example
 
 ```php
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
 class BlogController extends FrontendController
 {
-    public function indexAction(Request $request)
+    public function indexAction(Request $request): Response
     {
         //your custom code....
 
         //return the pdf
-            $params = [
-                  'document' => $this->document,
-                  'editmode' => $this->editmode,
-              ];
-            $params['testPlaceholder'] = ' :-)';
-            $html = $this->renderView(':Blog:index.html.php', $params);
+        $params = [
+              'document' => $this->document,
+              'editmode' => $this->editmode,
+          ];
+        $params['testPlaceholder'] = ' :-)';
+        $html = $this->renderView(':Blog:index.html.php', $params);
 
-            $adapter = \Pimcore\Web2Print\Processor::getInstance();
-            //add custom settings if necessary
-            if ($adapter instanceof \Pimcore\Web2Print\Processor\HeadlessChrome) {
-                $params['adapterConfig'] = [
-                    'landscape' => false,
-                    'printBackground' => true,
-                    'format' => 'A4',
-                    'margin' => [
-                        'top' => '16 mm',
-                        'bottom' => '30 mm',
-                        'right' => '8 mm',
-                        'left' => '8 mm',
-                    ],
-                    'displayHeaderFooter' => false,
-                ];
-            } elseif($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
-                //Config settings -> http://www.pdfreactor.com/product/doc/webservice/php.html#Configuration
-                $params['adapterConfig'] = [
-                    'author' => 'Max Mustermann',
-                    'title' => 'Custom Title',
-                    'javaScriptMode' => 0,
-                    'addLinks' => true,
-                    'appendLog' => true,
-                    'enableDebugMode' => true
-                ];
-            }
+        $adapter = \Pimcore\Bundle\WebToPrintBundle\Processor::getInstance();
+        //add custom settings if necessary
+        if ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome) {
+            $params['adapterConfig'] = [
+                'landscape' => false,
+                'printBackground' => true,
+                'format' => 'A4',
+                'margin' => [
+                    'top' => '16 mm',
+                    'bottom' => '30 mm',
+                    'right' => '8 mm',
+                    'left' => '8 mm',
+                ],
+                'displayHeaderFooter' => false,
+            ];
+        } elseif($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
+            //Config settings -> http://www.pdfreactor.com/product/doc/webservice/php.html#Configuration
+            $params['adapterConfig'] = [
+                'author' => 'Max Mustermann',
+                'title' => 'Custom Title',
+                'javaScriptMode' => 0,
+                'addLinks' => true,
+                'appendLog' => true,
+                'enableDebugMode' => true
+            ];
+        }
 
-            return new \Symfony\Component\HttpFoundation\Response(
-                $adapter->getPdfFromString($html, $params),
-                200,
-                array(
-                    'Content-Type' => 'application/pdf',
-                    // 'Content-Disposition'   => 'attachment; filename="custom-pdf.pdf"' //direct download
-                )
-            );
+        return new Response(
+            $adapter->getPdfFromString($html, $params),
+            200,
+            array(
+                'Content-Type' => 'application/pdf',
+                // 'Content-Disposition'   => 'attachment; filename="custom-pdf.pdf"' //direct download
+            )
+        );
     }
 ```

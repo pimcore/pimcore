@@ -59,14 +59,9 @@ class GeneratePagePreviews extends AbstractCommand
             );
     }
 
-    /**
-     * @param InputInterface $input
-     *
-     * @return Document\Listing|void
-     */
-    protected function fetchItems(InputInterface $input)
+    protected function fetchItems(InputInterface $input): Document\Listing
     {
-        $docs = new \Pimcore\Model\Document\Listing();
+        $docs = new Document\Listing();
         $db = Db::get();
 
         $parentIdOrPath = $input->getOption('parent');

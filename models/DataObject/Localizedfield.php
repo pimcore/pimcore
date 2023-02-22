@@ -239,10 +239,6 @@ final class Localizedfield extends Model\AbstractModel implements
 
     public function getObject(): ?Concrete
     {
-        if ($this->objectId && !$this->object) {
-            $this->setObject(Concrete::getById($this->objectId));
-        }
-
         return $this->object;
     }
 

@@ -929,7 +929,7 @@ class DataObjectHelperController extends AdminController
                     $gridConfig->setDescription($metadata['gridConfigDescription']);
                     $gridConfig->setShareGlobally($metadata['shareGlobally'] && $this->getAdminUser()->isAdmin());
                     $gridConfig->setSetAsFavourite($metadata['setAsFavourite'] && $this->getAdminUser()->isAdmin());
-                    $gridConfig->setSaveFilters($metadata['saveFilters'] && $this->getAdminUser()->isAdmin());
+                    $gridConfig->setSaveFilters($metadata['saveFilters']);
                 }
 
                 $gridConfigData = json_encode($gridConfigData);

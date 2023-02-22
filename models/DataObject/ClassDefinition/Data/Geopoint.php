@@ -29,42 +29,6 @@ class Geopoint extends AbstractGeo implements
     VarExporterInterface,
     NormalizerInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'geopoint';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'longitude' => 'double',
-        'latitude' => 'double',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = [
-        'longitude' => 'double',
-        'latitude' => 'double',
-    ];
-
     /**
      * @param mixed $data
      * @param null|DataObject\Concrete $object
@@ -319,5 +283,23 @@ class Geopoint extends AbstractGeo implements
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\GeoCoordinates::class . '|null';
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'longitude' => 'double',
+            'latitude' => 'double',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'geopoint';
     }
 }

@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
-use Pimcore\Analytics\Google\Config\SiteConfigProvider;
-use Pimcore\Analytics\Google\Tracker as AnalyticsGoogleTracker;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\DependencyInjection\ServiceCollection;
 use Pimcore\Http\Context\PimcoreContextGuesser;
@@ -29,11 +27,7 @@ use Pimcore\Model\Document\TypeDefinition\Loader\PrefixLoader as DocumentTypePre
 use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
-use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
-use Pimcore\Targeting\DataLoaderInterface;
-use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -82,8 +76,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
-        $container->setParameter('pimcore.documents.web_to_print.default_controller_print_page', $config['documents']['web_to_print']['default_controller_print_page']);
-        $container->setParameter('pimcore.documents.web_to_print.default_controller_print_container', $config['documents']['web_to_print']['default_controller_print_container']);
 
         //twig security policy whitelist config
         $container->setParameter('pimcore.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);
@@ -120,7 +112,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('templating_twig.yaml');
         $loader->load('profiler.yaml');
         $loader->load('migrations.yaml');
-        $loader->load('analytics.yaml');
         $loader->load('sitemaps.yaml');
         $loader->load('aliases.yaml');
         $loader->load('image_optimizers.yaml');
@@ -135,10 +126,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureModelFactory($container, $config);
         $this->configureRouting($container, $config['routing']);
         $this->configureTranslations($container, $config['translations']);
-        $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
-        $this->configureGoogleAnalyticsFallbackServiceLocator($container);
         $this->configureSitemaps($container, $config['sitemaps']);
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
@@ -238,69 +227,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
     }
 
-    private function configureTargeting(ContainerBuilder $container, LoaderInterface $loader, array $config): void
-    {
-        $container->setParameter('pimcore.targeting.enabled', $config['enabled']);
-        $container->setParameter('pimcore.targeting.conditions', $config['conditions']);
-        if (!$container->hasParameter('pimcore.geoip.db_file')) {
-            $container->setParameter('pimcore.geoip.db_file', '');
-        }
-
-        $loader->load('targeting.yaml');
-
-        // set TargetingStorageInterface type hint to the configured service ID
-        $container->setAlias(TargetingStorageInterface::class, $config['storage_id']);
-
-        if ($config['enabled']) {
-            // enable targeting by registering listeners
-            $loader->load('targeting/services.yaml');
-            $loader->load('targeting/listeners.yaml');
-        }
-
-        $dataProviders = [];
-        foreach ($config['data_providers'] as $dataProviderKey => $dataProviderServiceId) {
-            $dataProviders[$dataProviderKey] = new Reference($dataProviderServiceId);
-        }
-
-        $dataProviderLocator = new Definition(ServiceLocator::class, [$dataProviders]);
-        $dataProviderLocator
-            ->setPublic(false)
-            ->addTag('container.service_locator');
-
-        $container
-            ->findDefinition(DataLoaderInterface::class)
-            ->setArgument('$dataProviders', $dataProviderLocator);
-
-        $actionHandlers = [];
-        foreach ($config['action_handlers'] as $actionHandlerKey => $actionHandlerServiceId) {
-            $actionHandlers[$actionHandlerKey] = new Reference($actionHandlerServiceId);
-        }
-
-        $actionHandlerLocator = new Definition(ServiceLocator::class, [$actionHandlers]);
-        $actionHandlerLocator
-            ->setPublic(false)
-            ->addTag('container.service_locator');
-
-        $container
-            ->getDefinition(DelegatingActionHandler::class)
-            ->setArgument('$actionHandlers', $actionHandlerLocator);
-    }
-
-    /**
-     * Configures a "typed locator" (a class exposing get/has for a specific type) wrapping
-     * a standard service locator. Example: Pimcore\Targeting\DataProviderLocator
-     */
-    private function configureTypedLocator(ContainerBuilder $container, string $locatorClass, array $services): void
-    {
-        $serviceLocator = new Definition(ServiceLocator::class, [$services]);
-        $serviceLocator
-            ->setPublic(false)
-            ->addTag('container.service_locator');
-
-        $locator = $container->getDefinition($locatorClass);
-        $locator->setArgument('$locator', $serviceLocator);
-    }
-
     /**
      * Handle pimcore.security.password_hasher_factories mapping
      */
@@ -314,25 +240,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
 
         $definition->replaceArgument(1, $factoryMapping);
-    }
-
-    /**
-     * Creates service locator which is used from static Pimcore\Google\Analytics class
-     */
-    private function configureGoogleAnalyticsFallbackServiceLocator(ContainerBuilder $container): void
-    {
-        $services = [
-            AnalyticsGoogleTracker::class,
-            SiteConfigProvider::class,
-        ];
-
-        $mapping = [];
-        foreach ($services as $service) {
-            $mapping[$service] = new Reference($service);
-        }
-
-        $serviceLocator = $container->getDefinition('pimcore.analytics.google.fallback_service_locator');
-        $serviceLocator->setArguments([$mapping]);
     }
 
     private function configureSitemaps(ContainerBuilder $container, array $config): void

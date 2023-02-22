@@ -1033,7 +1033,12 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure, descri
             iconCls: 'pimcore_icon_upload'
         },
         listeners: {
-            change: function () {
+            change: function (fileUploadField) {
+                if(fileUploadField.fileInputEl.dom.files[0].size > pimcore.settings["upload_max_filesize"]) {
+                    pimcore.helpers.showNotification(t("error"), t("file_is_bigger_that_upload_limit") + " " + fileUploadField.fileInputEl.dom.files[0].name, "error");
+                    return;
+                }
+
                 uploadForm.getForm().submit({
                     url: url,
                     params: {

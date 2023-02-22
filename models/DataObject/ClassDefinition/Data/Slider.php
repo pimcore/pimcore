@@ -25,20 +25,9 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Slider extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'slider';
 
     /**
      * @internal
@@ -72,24 +61,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @var int|null
      */
     public ?int $decimalPrecision = null;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'double';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'double';
 
     public function getMinValue(): ?float
     {
@@ -334,5 +305,20 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public function getPhpdocReturnType(): ?string
     {
         return 'float|null';
+    }
+
+    public function getColumnType(): string
+    {
+        return 'double';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'slider';
     }
 }

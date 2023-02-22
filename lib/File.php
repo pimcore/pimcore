@@ -113,8 +113,8 @@ class File
     {
         $return = self::put($path, $data);
 
-        if (function_exists('opcache_reset')) {
-            opcache_reset();
+        if (\function_exists('opcache_invalidate')) {
+            opcache_invalidate($path);
         }
 
         return $return;

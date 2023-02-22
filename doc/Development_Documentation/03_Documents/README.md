@@ -69,6 +69,17 @@ As you can see there are really useful cases for properties, feel free to use th
 ## Create Your First Document 
 Working with documents is described in detail in our [Create a First Project](../01_Getting_Started/06_Create_a_First_Project.md) manual. 
 
+## Cleanup Documents Types
+Uninstalling bundles may not always clean up data or database tables in the process to avoid data loss.
+Running the following command removes type specific tables and enum types from the documents table.
+The following types are protected and cannot be cleaned up via this command: `page, link, snippet, folder,hardlink ,email, newsletter`
+
+You can clean up multiple types at once.
+```bash
+bin/console pimcore:documents:cleanup <type1> <type2> <type3>
+```
+
+
 ## Document Topics
 - [Creating editable templates](./01_Editables/README.md) 
 - [Navigation](./03_Navigation.md)

@@ -26,7 +26,6 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Property;
 use Pimcore\Model\Version;
@@ -167,7 +166,8 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     {
         if ($document instanceof Model\Document\PageSnippet) {
             // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
-            if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) {
+
+            if ($request->get('appendEditables')) {
                 // ensure editable are loaded
                 $document->getEditables();
             } else {
