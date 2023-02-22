@@ -157,7 +157,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                     $this->$setter(null);
 
                     //check if parent object has brick, and if so, create an empty brick to enable inheritance
-                    $parentBrick = DataObject\Service::useInheritedValues(function() use ($object) {
+                    $parentBrick = DataObject\Service::useInheritedValues(function() use ($object, $getter) {
                         if (DataObject::doGetInheritedValues($object)) {
                             try {
                                 $container = $object->getValueFromParent($this->fieldname);

@@ -1533,8 +1533,6 @@ class Service extends Model\Element\Service
 
                         return $calculator->getCalculatedValueForEditMode($object, $data);
 
-                        break;
-
                     case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
 
                         try {
@@ -1542,8 +1540,6 @@ class Service extends Model\Element\Service
                         } catch (SyntaxError $exception) {
                             return $exception->getMessage();
                         }
-
-                        break;
 
                     default:
                         return null;
@@ -1593,8 +1589,6 @@ class Service extends Model\Element\Service
                     }
                     return $calculator->compute($object, $data);
 
-                    break;
-
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
 
                     try {
@@ -1602,7 +1596,6 @@ class Service extends Model\Element\Service
                     } catch (SyntaxError $exception) {
                         return $exception->getMessage();
                     }
-                    break;
 
                 default:
                     return null;
@@ -2011,7 +2004,7 @@ class Service extends Model\Element\Service
         return self::getInheritedData($parent, $key, $requestedLanguage);
     }
 
-    public static function useInheritedValues(callable $fn, bool $inheritValues, array $fnArgs = [])
+    public static function useInheritedValues(callable $fn, bool $inheritValues, array $fnArgs = []): mixed
     {
         $backup = DataObject::getGetInheritedValues();
         DataObject::setGetInheritedValues($inheritValues);

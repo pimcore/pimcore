@@ -526,6 +526,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if ($this->supportsDirtyDetection()) {
+            $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
 
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(function() {' . "\n";
@@ -535,6 +537,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             else {
                 $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
             }
+
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
 
             if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
                 $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
@@ -904,6 +908,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if ($this->supportsDirtyDetection()) {
+            $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
+
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(function() use ($language) {' . "\n";
                 $code .= "\t\t" . 'return $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
@@ -912,6 +919,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             else {
                 $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
             }
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
 
             if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
                 $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
