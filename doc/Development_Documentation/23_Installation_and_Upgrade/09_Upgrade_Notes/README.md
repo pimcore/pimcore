@@ -141,7 +141,10 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - [Web2Print] has been moved into PimcoreWebToPrintBundle
       - Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
     - [Personalization and targeting] has been moved to `pimcore/personalization` package.
-       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting:` in the PimcoreStaticRoutesBundle instead.
+       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting` in the PimcorePersonalizationBundle instead.
+    - [Google Marketing] has been moved to `pimcore/google-marketing-bundle` package.
+      - Config `pimcore:services:google` has been removed, please use `pimcore_google_marketing` in the PimcoreGoogleMarketingBundle instead.
+    - [Google] Classes Google\Cse and Google\Cse\Item have been removed.
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
