@@ -23,6 +23,8 @@ pimcore.bundle.tinymce.editor = Class.create({
                 this.maxChars = e.detail.config.maxCharacters;
             }
         }
+
+        this.config = e.detail.config;
     },
 
     createWysiwyg: function (e) {
@@ -40,20 +42,27 @@ pimcore.bundle.tinymce.editor = Class.create({
         }
 
         const toolbar1 = 'undo redo | formatselect | ' +
-                'bold italic | alignleft aligncenter ' +
-                'alignright alignjustify | link';
+            'bold italic | alignleft aligncenter ' +
+            'alignright alignjustify | link';
 
         const toolbar2 = 'table | bullist numlist outdent indent | removeformat | code | help';
         let toolbar;
-        if(e.detail.context === 'translation') {
+        if (e.detail.context === 'translation') {
             toolbar = {
                 toolbar1: toolbar1,
                 toolbar2: toolbar2
             };
         } else {
             toolbar = {
-              toolbar: `${toolbar1} | ${toolbar2}`
+                toolbar1: `${toolbar1} | ${toolbar2}`
             };
+        }
+
+        let subSpace = '';
+        if (e.detail.context === 'document') {
+            subSpace = 'editables';
+        } else if (e.detail.context === 'object') {
+            subSpace = 'tags';
         }
 
 
@@ -74,7 +83,7 @@ pimcore.bundle.tinymce.editor = Class.create({
             init_instance_callback: function (editor) {
                 editor.on('input', function (eChange) {
                     const charCount = tinymce.activeEditor.plugins.wordcount.body.getCharacterCount();
-                    if(this.maxChars !== -1 && charCount > this.maxChars) {
+                    if (this.maxChars !== -1 && charCount > this.maxChars) {
                         pimcore.helpers.showNotification(t('error'), t('char_count_limit_reached'), 'error');
                     }
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
@@ -87,7 +96,7 @@ pimcore.bundle.tinymce.editor = Class.create({
                 }.bind(this));
             }.bind(this)
 
-        }, language, toolbar));
+        }, language, toolbar, parent.pimcore[e.detail.context][subSpace].wysiwyg.defaultEditorConfig, this.config));
 
     },
 
