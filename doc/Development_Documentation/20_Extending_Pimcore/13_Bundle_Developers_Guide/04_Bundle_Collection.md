@@ -24,7 +24,7 @@ use Pimcore\Kernel as PimcoreKernel;
 
 class Kernel extends PimcoreKernel
 {
-    public function registerBundlesToCollection(BundleCollection $collection)
+    public function registerBundlesToCollection(BundleCollection $collection): void
     {
         // add a bundle
         $collection->addBundle(new BundleA());
@@ -140,7 +140,7 @@ use Pimcore\Kernel as PimcoreKernel;
 
 class Kernel extends PimcoreKernel
 {
-    public function registerBundlesToCollection(BundleCollection $collection)
+    public function registerBundlesToCollection(BundleCollection $collection): void
     {
         // register FooBundle manually
         $collection->addBundle(FooBundle::class, 25);

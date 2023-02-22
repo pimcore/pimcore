@@ -16,18 +16,17 @@ in the desired format.
 namespace App\Controller;
 
 use Pimcore\Model\DataObject;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use \Pimcore\Controller\FrontendController;
-
 
 class CustomRestController extends FrontendController
 {
     /**
      * @Route("/custom-pimcore-webservice/rest/get-products")
      */
-    public function defaultAction(Request $request)
+    public function defaultAction(Request $request): JsonResponse
     {
         // do some authorization here ...
 

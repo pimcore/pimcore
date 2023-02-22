@@ -46,4 +46,16 @@ trait VarExport
 
         return $obj;
     }
+
+    /**
+     * @param array $vars
+     *
+     * @return $this
+     */
+    public function setBlockedVarsForExport(array $vars): static
+    {
+        $this->blockedVarsForExport = $vars;
+
+        return $this;
+    }
 }

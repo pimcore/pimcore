@@ -49,6 +49,18 @@ the attributes directly, you will not get the inherited values.
 > **Bear in mind**
 > The complex data type field collections does not support inheritance.
 
+Getting values from an object without inheritance
+```php
+$inheritanceModeBackup = DataObject::getGetInheritedValues();
+\Pimcore\Model\DataObject\AbstractObject::setGetInheritedValues(false); // default = true
+
+// ... your code goes here
+// ...
+// ...
+
+// set status back to the original value 
+DataObject::setGetInheritedValues($inheritanceModeBackup);
+```
 
 ## Parent Class - Class Inheritance
 
@@ -82,14 +94,17 @@ For using a hook you need to implement a certain interface in your custom parent
 namespace Website\DataObject;
 
 use \Pimcore\Model\DataObject;
-  
-class Special extends DataObject\Concrete implements DataObject\PreGetValueHookInterface {
- 
-   public function preGetValue(string $key) {
-      if($key == "myCustomProperty") {
-         return strtolower($object->myCustomProperty);
-      }
-   }
+
+class Special extends DataObject\Concrete implements DataObject\PreGetValueHookInterface
+{
+    public function preGetValue(string $key): ?string
+    {
+        if ($key == "myCustomProperty") {
+            return strtolower($object->myCustomProperty);
+        }
+
+        return null;
+    }
 }
 ```
 

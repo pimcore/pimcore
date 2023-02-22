@@ -30,36 +30,6 @@ class Geopolyline extends AbstractGeo implements
     VarExporterInterface,
     NormalizerInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'geopolyline';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
-
     /**
      * @param mixed $data
      * @param null|DataObject\Concrete $object
@@ -333,5 +303,20 @@ class Geopolyline extends AbstractGeo implements
         }
 
         return null;
+    }
+
+    public function getColumnType(): string
+    {
+        return 'longtext';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'geopolyline';
     }
 }

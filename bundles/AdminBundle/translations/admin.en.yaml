@@ -28,9 +28,6 @@ clear_content_of_current_view: 'Clear content of current view'
 highlight_editable_elements: 'Highlight editable elements'
 continue: Continue
 you_have_unsaved_changes: 'You have unsaved changes.'
-global_targeting_rule: 'Global Targeting Rule'
-global_targeting_rules: 'Global Targeting Rules'
-personalization: Personalization
 shared_translations: 'Shared Translations'
 textfield: Textfield
 add_data: 'Add data'
@@ -63,7 +60,6 @@ tablet: Tablet
 hardlink: Hardlink
 convert_to: 'Convert to'
 replace: Replace
-targeting: Targeting
 paste_inheritance: 'Paste (inheritance)'
 are_you_sure: 'Are you sure?'
 all_content_will_be_lost: 'All content will be lost'
@@ -588,7 +584,6 @@ visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_
 assign_target_group: 'Assign Target Group'
 assign_target_groups: 'Assign Target Groups'
 target_group: 'Target Group'
-target_groups: 'Target Groups'
 edit_content_for_target_group: 'Edit Content for Target Group'
 email_reply_to: 'Reply To'
 element_tag_filtered_tags: 'Filtered Tags'
@@ -687,7 +682,6 @@ batch_append_to: 'Append data to all'
 login_token_invalid_user_error: 'Invalid user.'
 login_token_as_admin_non_admin_user_error: 'Only admin users are allowed to login as an admin user.'
 login_token_no_password_error: 'User has no password set.'
-targeting_toolbar: 'Targeting Toolbar'
 sort_children_by: 'Sort Children By'
 by_key: 'Key (A to Z)'
 by_index: 'Index (Manual)'

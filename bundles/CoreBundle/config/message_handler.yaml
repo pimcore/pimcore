@@ -45,12 +45,6 @@ services:
         tags:
             - { name: messenger.message_handler }
 
-    Pimcore\Messenger\Handler\GenerateWeb2PrintPdfHandler:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: messenger.message_handler }
-
     Pimcore\Messenger\Handler\VersionDeleteHandler:
         tags:
             - { name: messenger.message_handler }
