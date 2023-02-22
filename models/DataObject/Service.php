@@ -2022,4 +2022,16 @@ class Service extends Model\Element\Service
 
         return self::getInheritedData($parent, $key, $requestedLanguage);
     }
+
+    public static function useInheritedValues(callable $fn, bool $inheritValues, array $fnArgs = [])
+    {
+        $backup = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues($inheritValues);
+
+        try {
+            return $fn(...$fnArgs);
+        } finally {
+            DataObject::setGetInheritedValues($backup);
+        }
+    }
 }
