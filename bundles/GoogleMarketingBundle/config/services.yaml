@@ -34,3 +34,8 @@ services:
     Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker:
         calls:
             - [ setLogger, [ '@logger' ] ]
+
+    pimcore.custom_report.adapter.factory.analytics:
+        class: Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\DefaultCustomReportAdapterFactory
+        arguments:
+            - 'Pimcore\Bundle\GoogleMarketingBundle\CustomReport\Adapter\Analytics'
