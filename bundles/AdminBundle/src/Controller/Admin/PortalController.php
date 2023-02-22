@@ -16,18 +16,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Pimcore\Analytics\Google\Config\SiteConfigProvider;
+
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/portal")
@@ -374,38 +372,6 @@ class PortalController extends AdminController implements KernelControllerEventI
         }
 
         $data = array_reverse($data);
-
-        return $this->adminJson(['data' => $data]);
-    }
-
-    /**
-     * @Route("/portlet-analytics-sites", name="pimcore_admin_portal_portletanalyticssites", methods={"GET"})
-     *
-     * @param TranslatorInterface $translator
-     * @param SiteConfigProvider $siteConfigProvider
-     *
-     * @return JsonResponse
-     */
-    public function portletAnalyticsSitesAction(
-        TranslatorInterface $translator,
-        SiteConfigProvider $siteConfigProvider
-    ): JsonResponse {
-        $sites = new Site\Listing();
-        $data = [
-            [
-                'id' => 0,
-                'site' => $translator->trans('main_site', [], 'admin'),
-            ],
-        ];
-
-        foreach ($sites->load() as $site) {
-            if ($siteConfigProvider->isSiteReportingConfigured($site)) {
-                $data[] = [
-                    'id' => $site->getId(),
-                    'site' => $site->getMainDomain(),
-                ];
-            }
-        }
 
         return $this->adminJson(['data' => $data]);
     }

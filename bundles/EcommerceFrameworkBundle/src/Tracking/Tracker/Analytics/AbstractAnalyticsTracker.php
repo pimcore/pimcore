@@ -17,14 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
-use Pimcore\Analytics\Google\Tracker;
+use Pimcore\Bundle\GoogleMarketingBundle\Tracker\TrackerInterface;
+
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker as EcommerceTracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilderInterface;
 use Twig\Environment;
 
 abstract class AbstractAnalyticsTracker extends EcommerceTracker
 {
-    protected Tracker $tracker;
+    protected TrackerInterface $tracker;
 
     /**
      * @internal
@@ -33,7 +34,7 @@ abstract class AbstractAnalyticsTracker extends EcommerceTracker
     public function __construct(
         TrackingItemBuilderInterface $trackingItemBuilder,
         Environment $twig,
-        Tracker $tracker,
+        TrackerInterface $tracker,
         array $options = [],
         array $assortmentTenants = [],
         array $checkoutTenants = []
