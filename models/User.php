@@ -132,6 +132,8 @@ final class User extends User\UserRole
      */
     protected $twoFactorAuthentication;
 
+    protected ?string $provider = null;
+
     /**
      * @return string|null
      */
@@ -1062,6 +1064,16 @@ final class User extends User\UserRole
 
             $this->twoFactorAuthentication[$key] = $value;
         }
+    }
+
+    public function getProvider(): ?string
+    {
+        return $this->provider;
+    }
+
+    public function setProvider(?string $provider): void
+    {
+        $this->provider = $provider;
     }
 
     public function hasImage()
