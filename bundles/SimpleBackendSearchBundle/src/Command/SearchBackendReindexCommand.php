@@ -78,7 +78,8 @@ class SearchBackendReindexCommand extends AbstractCommand
                 foreach ($elements as $element) {
                     try {
                         //process page count, if not exists
-                        if ($element instanceof Asset\Document && $element->getCustomSetting('document_page_count')) {
+                        $pageCount = $element->getCustomSetting('document_page_count');
+                        if ($element instanceof Asset\Document && (!$pageCount || $pageCount === 'failed')) {
                             $element->processPageCount();
                         }
 
