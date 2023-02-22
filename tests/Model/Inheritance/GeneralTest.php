@@ -109,7 +109,7 @@ class GeneralTest extends ModelTestCase
         }, false);
 
         // enable inheritance
-        DataObject\Service::useInheritedValues(function() {
+        DataObject\Service::useInheritedValues(function() use ($id2) {
             $two = DataObject::getById($id2);
             $this->assertEquals('parenttext', $two->getNormalInput());
 
@@ -176,27 +176,28 @@ class GeneralTest extends ModelTestCase
 
         $two->setNormalInput('parenttext');
         $two->save();
+        $twoId = $two->getId();
 
-        DataObject\Service::useInheritedValues(function() {
+        DataObject\Service::useInheritedValues(function() use ($two, $target) {
             $fetchedTarget = $two->getRelation();
             $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
         }, true);
 
-        DataObject\Service::useInheritedValues(function() {
+        DataObject\Service::useInheritedValues(function() use ($two) {
             $fetchedTarget = $two->getRelation();
             $this->assertNull($fetchedTarget, 'target should not be inherited');
         }, false);
 
         // enable inheritance and set the target
-        DataObject\Service::useInheritedValues(function() {
-            $two = Concrete::getById($two->getId(), ['force' => true]);
+        DataObject\Service::useInheritedValues(function() use ($twoId, $target) {
+            $two = Concrete::getById($twoId, ['force' => true]);
             $two->setRelation($target);
             $two->save();
         }, true);
 
         // disable inheritance and check that the relation has been set on "two"
-        DataObject\Service::useInheritedValues(function() {
-            $two = Concrete::getById($two->getId(), ['force' => true]);
+        DataObject\Service::useInheritedValues(function() use ($twoId, $target) {
+            $two = Concrete::getById($twoId, ['force' => true]);
             $fetchedTarget = $two->getRelation();
             $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
         }, false);
