@@ -23,10 +23,7 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
 {
     use SimpleNormalizerTrait;
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return get_class($this);
     }

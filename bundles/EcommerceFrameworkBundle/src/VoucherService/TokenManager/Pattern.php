@@ -302,10 +302,8 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
 
     /**
      * Calculates the max possible amount of tokens for the specified character pool.
-     *
-     * @return number
      */
-    protected function getMaxCount()
+    protected function getMaxCount(): int|float
     {
         $count = strlen($this->getCharacterPool());
 
@@ -532,14 +530,22 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
         }
 
+        $page = (int)($params['page'] ?? 1);
+        $perPage = (int)($params['tokensPerPage'] ?? 25);
+
+        $total = count($tokens);
+
+        $availablePages = (int) ceil($total / $perPage);
+        $page = min($page, $availablePages);
+
         $paginator = $this->paginator->paginate(
             $tokens,
-            (int)($params['page'] ?? 1),
-            (int)($params['tokensPerPage'] ?? 25)
+            $page ?: 1,
+            $perPage
         );
 
         $viewParamsBag['paginator'] = $paginator;
-        $viewParamsBag['count'] = count($tokens);
+        $viewParamsBag['count'] = $total;
 
         $viewParamsBag['msg']['error'] = $params['error'] ?? null;
         $viewParamsBag['msg']['success'] = $params['success'] ?? null;

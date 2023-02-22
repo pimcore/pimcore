@@ -199,10 +199,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
         return $this->getImage()->getThumbnail($thumbConfig, $deferred);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         if ($this->image) {
             return $this->image->__toString();

@@ -178,10 +178,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getObject()->__toString();
     }

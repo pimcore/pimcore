@@ -35,13 +35,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     use DataObject\Traits\FieldDefinitionEnrichmentDataTrait;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     */
-    public string $fieldtype = 'localizedfields';
-
-    /**
      * @internal
      */
     public array $children = [];
@@ -444,7 +437,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $object = $object->getObject();
             }
 
-            $localizedFields->setObject($object, false);
+            $dirtyLanguages = $localizedFields->getDirtyLanguages();
+            $localizedFields->setObject($object);
+            if (is_array($dirtyLanguages)) {
+                $localizedFields->markLanguagesAsDirty($dirtyLanguages);
+            } else {
+                $localizedFields->resetLanguageDirtyMap();
+            }
+
             $context = isset($params['context']) ? $params['context'] : null;
             $localizedFields->setContext($context);
             $localizedFields->loadLazyData();
@@ -1127,5 +1127,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $obj->setValues($data);
 
         return $obj;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'localizedfields';
     }
 }

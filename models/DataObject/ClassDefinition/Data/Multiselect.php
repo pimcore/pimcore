@@ -37,21 +37,10 @@ class Multiselect extends Data implements
     DataContainerAwareInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'multiselect';
 
     /**
      * Available options to select
@@ -93,24 +82,6 @@ class Multiselect extends Data implements
      * @var string|null
      */
     public ?string $optionsProviderData = null;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'text';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'text';
 
     /**
      * @internal
@@ -516,13 +487,13 @@ class Multiselect extends Data implements
         return $this->isEqualArray($oldValue, $newValue);
     }
 
-    public function jsonSerialize(): static
+    public function jsonSerialize(): mixed
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;
         }
 
-        return $this;
+        return parent::jsonSerialize();
     }
 
     /**
@@ -617,5 +588,20 @@ class Multiselect extends Data implements
             'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT, $context);
 
         return $this;
+    }
+
+    public function getColumnType(): string
+    {
+        return 'text';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'multiselect';
     }
 }

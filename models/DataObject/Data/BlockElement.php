@@ -146,10 +146,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         $this->data = $copier->copy($this->data);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name . '; ' . $this->type;
     }

@@ -230,7 +230,8 @@ pimcore.object.classes.klass = Class.create({
 
         var listeners = {
             "itemclick" : this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
+            "beforeitemmove": this.onTreeNodeBeforeMove.bind(this)
         };
         return listeners;
     },
@@ -504,6 +505,10 @@ pimcore.object.classes.klass = Class.create({
         }
 
         return null;
+    },
+
+    onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
+        return pimcore.helpers.treeDragDropValidate(node, oldParent, newParent);
     },
 
     cloneNode:  function(tree, node) {

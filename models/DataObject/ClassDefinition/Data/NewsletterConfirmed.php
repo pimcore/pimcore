@@ -20,12 +20,8 @@ use Pimcore\Model;
 
 class NewsletterConfirmed extends Model\DataObject\ClassDefinition\Data\Checkbox
 {
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'newsletterConfirmed';
+    public function getFieldType(): string
+    {
+        return 'newsletterConfirmed';
+    }
 }

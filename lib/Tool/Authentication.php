@@ -21,7 +21,6 @@ use Defuse\Crypto\Exception\CryptoException;
 use Pimcore\Bundle\AdminBundle\Security\User\UserProvider;
 use Pimcore\Logger;
 use Pimcore\Model\User;
-use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -30,23 +29,6 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class Authentication
 {
-    public static function authenticatePlaintext(string $username, string $password): ?User
-    {
-        /** @var User $user */
-        $user = User::getByName($username);
-
-        // user needs to be active, needs a password and an ID (do not allow system user to login, ...)
-        if (self::isValidUser($user)) {
-            if (self::verifyPassword($user, $password)) {
-                $user->setLastLoginDate(); //set user current login date
-
-                return $user;
-            }
-        }
-
-        return null;
-    }
-
     /**
      * @param Request|null $request
      *
@@ -87,7 +69,7 @@ class Authentication
     {
         $token = null;
         $prevUnserializeHandler = ini_set('unserialize_callback_func', __CLASS__.'::handleUnserializeCallback');
-        $prevErrorHandler = set_error_handler(function ($type, $msg, $file, $line, $context = []) use (&$prevErrorHandler) {
+        $prevErrorHandler = set_error_handler(static function (int $type, string $msg, string $file, int $line, array $context = []) use (&$prevErrorHandler) {
             if (__FILE__ === $file) {
                 throw new \ErrorException($msg, 0x37313BC, $type, $file, $line);
             }
@@ -108,6 +90,14 @@ class Authentication
         }
 
         return $token;
+    }
+
+    /**
+     * @internal
+     */
+    public static function handleUnserializeCallback(string $class): never
+    {
+        throw new \ErrorException('Class not found: '.$class, 0x37313BC);
     }
 
     protected static function refreshUser(TokenInterface $token, UserProvider $provider): ?TokenInterface
@@ -145,34 +135,6 @@ class Authentication
         }
 
         throw new \RuntimeException(sprintf('There is no user provider for user "%s". Shouldn\'t the "supportsClass()" method of your user provider return true for this classname?', $userClass));
-    }
-
-    /**
-     * @throws \Exception
-     *
-     * @return User
-     */
-    public static function authenticateHttpBasic(): User
-    {
-        // we're using Sabre\HTTP for basic auth
-        $request = \Sabre\HTTP\Sapi::getRequest();
-        $response = new \Sabre\HTTP\Response();
-        $auth = new \Sabre\HTTP\Auth\Basic(Tool::getHostname(), $request, $response);
-        $result = $auth->getCredentials();
-
-        if (is_array($result)) {
-            list($username, $password) = $result;
-            $user = self::authenticatePlaintext($username, $password);
-            if ($user) {
-                return $user;
-            }
-        }
-
-        $auth->requireLogin();
-        $response->setBody('Authentication required');
-        Logger::error('Authentication Basic (WebDAV) required');
-        \Sabre\HTTP\Sapi::sendResponse($response);
-        die();
     }
 
     public static function authenticateToken(string $token, bool $adminRequired = false): ?User
