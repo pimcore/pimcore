@@ -139,12 +139,10 @@ class Bootstrap
 
     private static function prepareEnvVariables(): void
     {
-        if (!($_SERVER['PIMCORE_SKIP_DOTENV_FILE'] ?? false)) {
-            if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
-                (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
-            } else {
-                $_SERVER += $_ENV;
-            }
+        if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
+            (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
+        } else {
+            $_SERVER += $_ENV;
         }
     }
 
@@ -204,7 +202,6 @@ class Bootstrap
         $resolveConstant('PIMCORE_SYSTEM_TEMP_DIRECTORY', PIMCORE_PRIVATE_VAR . '/tmp');
 
         // configure PHP's error logging
-        $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
     }
 

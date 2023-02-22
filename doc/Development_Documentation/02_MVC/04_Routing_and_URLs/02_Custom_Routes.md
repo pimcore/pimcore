@@ -11,7 +11,7 @@ All things where Documents are not practical. Here Custom Routes come into actio
 Custom Routes come fourth in the route processing priority.
 
 Custom routes are an alternative to Symfony's routing functionalities and give you a bit more flexibility, but you can 
-still use [Symfony's routing capabilities](https://symfony.com/doc/current/routing.html) (eg. @Route() annotation,
+still use [Symfony's routing capabilities](https://symfony.com/doc/current/routing.html) (eg. #[Route] attribute,
  `routing.yaml`, ...) in parallel to Pimcore Custom Routes.
  
 ## Configuring Custom Routes
@@ -47,10 +47,11 @@ namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class NewsController extends FrontendController
 {
-    public function detailAction(Request $request)
+    public function detailAction(Request $request): Response
     {
         $id = $request->get('id');
         $text = $request->get('text');
@@ -63,35 +64,36 @@ class NewsController extends FrontendController
 
 The default variables can be accessed the same way.
 
-## Using Param Converter to convert request ID to Data Object
-Pimcore has a built-in [param converter](https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html)
-for converting data object IDs in the request parameters to actual objects. 
+## Using Param Resolver to convert request ID to Data Object
+Pimcore has a built-in [param resolver](https://symfony.com/doc/current/controller/value_resolver.html#built-in-value-resolvers)
+for converting data object IDs in the request parameters to actual objects.
 
-To use the param converter, simply type hint the argument (Symfony routing example): 
+To use the param resolver, simply type hint the argument (Symfony routing example):
 
 ```php
-    /**
-     * @Template
-     * @Route("/news/{news}")
-     */
-    public function testAction(DataObject\News $news) {
+    use Symfony\Component\HttpFoundation\Request;
+    use Symfony\Component\Routing\Annotation\Route;
+    ....
+
+     #[Template('/news/test')]
+     #[Route('/news/{news}')]
+    public function detailAction(DataObject\News $news): array
+    {
         return [
             'news' => $news
         ];
     }
 ```
 
-Param converters work with Pimcore Custom Routes as well as with Symfony Routes. 
-Of course, you can also configure the param converter using the `@ParamConverter`, for details please have a look at
-the official documentation for [param converters](https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html).
+Param resolvers work with Pimcore Custom Routes as well as with Symfony Routes.
 
-By taking advantage of the options that we can pass further on to the object, we can also work with unpublished objects.
+By taking advantage of `#[DataObjectParam]` attribute, we can pass further options on to the object, e.g. working with unpublished objects.
 ````php
-/**
-
-@route("/blog/{post}")
-@ParamConverter( "post", options={ "unpublished" = true } )
-*/
+public function detailAction(
+    #[DataObjectParam(unpublished: true)] DataObject\News $news
+): Response {
+    ...
+}
 ````
 
 ## Building URLs based on Custom Routes
@@ -270,10 +272,13 @@ use \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 // ...
 
-public function testAction(Request $request) {
+public function testAction(Request $request): Response
+{
     $object = DataObject::getById((int) $request->get('id')); 
     if( !$object || ( !$object->isPublished() && !$this->editmode) ) {
         throw new NotFoundHttpException('Not found');
     }
+    
+    // ...
 }
 ```

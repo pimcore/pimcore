@@ -26,11 +26,7 @@ https://github.com/Leaflet/Leaflet/blob/master/LICENSE
 
 ### miniPaint
 License: MIT  
-https://github.com/viliusle/miniPaint/blob/master/MIT-LICENSE.txt 
-
-### VR View
-License: Apache License 2.0  
-https://github.com/googlevr/vrview/blob/master/LICENSE 
+https://github.com/viliusle/miniPaint/blob/master/MIT-LICENSE.txt
 
 ### moment.js
 License: MIT  

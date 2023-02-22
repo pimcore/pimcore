@@ -26,17 +26,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
 {
     use DataObject\Traits\DefaultValueTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'checkbox';
 
     /**
      * @internal
@@ -44,24 +33,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var int|null
      */
     public ?int $defaultValue = null;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'tinyint(1)';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'tinyint(1)';
 
     public function getDefaultValue(): ?int
     {
@@ -301,5 +272,20 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getPhpdocReturnType(): ?string
     {
         return 'bool|null';
+    }
+
+    public function getColumnType(): string
+    {
+        return 'tinyint(1)';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'checkbox';
     }
 }

@@ -34,40 +34,6 @@ class RgbaColor extends Data implements
     AfterDecryptionUnmarshallerInterface
 {
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'rgbaColor';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
-        'a' => 'VARCHAR(2) NULL DEFAULT NULL',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = ['rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
-        'a' => 'VARCHAR(2) NULL DEFAULT NULL',
-    ];
 
     /**
      * @param mixed $data
@@ -402,5 +368,23 @@ class RgbaColor extends Data implements
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
+            'a' => 'VARCHAR(2) NULL DEFAULT NULL',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'rgbaColor';
     }
 }

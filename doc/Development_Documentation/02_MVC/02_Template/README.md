@@ -11,7 +11,7 @@ Pimcore uses the Twig templating engine, you can use Twig exactly as documented 
 * [Symfony Templating Documentation](https://symfony.com/doc/current/templating.html)
 * Check also our [Demo](https://github.com/pimcore/demo) as starting point
 
-Just use annotations or render the view directly to use Twig:
+Just use attributes or render the view directly to use Twig:
 
 ```php
 <?php
@@ -19,20 +19,20 @@ Just use annotations or render the view directly to use Twig:
 namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
+use Symfony\Component\HttpFoundation\Response;
 
 class MyController extends FrontendController
 {
     /**
-     * The annotation will automatically resolve the view to MyController/myAnnotatedAction.html.twig
-     * 
-     * @Template() 
+     * The attribute will resolve the defined view
      */
-    public function myAnnotatedAction()
+    #[Template('content/default.html.twig', vars: ['param1' => 'value1'])]
+    public function attributeAction(): void
     {   
     }
     
-    public function directRenderAction()
+    public function directRenderAction(): Response
     {
         return $this->render('my/custom/action.html.twig', ['param1' => 'value1']);
     }

@@ -191,12 +191,9 @@ class Hardlink extends Document
         return $this->children[$cacheKey];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasChildren(bool $includingUnpublished = false): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
-        return count($this->getChildren($includingUnpublished)) > 0;
+        return count($this->getChildren((bool)$includingUnpublished)) > 0;
     }
 
     /**

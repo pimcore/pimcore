@@ -321,13 +321,8 @@ class Dao extends Model\Element\Dao
 
     /**
      * Quick check if there are children.
-     *
-     * @param bool|null $includingUnpublished
-     * @param Model\User|null $user
-     *
-     * @return bool
      */
-    public function hasChildren(bool $includingUnpublished = null, User $user = null): bool
+    public function hasChildren(?bool $includingUnpublished = null, ?User $user = null): bool
     {
         if (!$this->model->getId()) {
             return false;
@@ -367,7 +362,7 @@ class Dao extends Model\Element\Dao
      *
      * @return int
      */
-    public function getChildAmount(User $user = null): int
+    public function getChildAmount(?User $user = null): int
     {
         if (!$this->model->getId()) {
             return 0;
@@ -397,7 +392,7 @@ class Dao extends Model\Element\Dao
      *
      * @return bool
      */
-    public function hasSiblings(bool $includingUnpublished = null): bool
+    public function hasSiblings(?bool $includingUnpublished = null): bool
     {
         if (!$this->model->getParentId()) {
             return false;

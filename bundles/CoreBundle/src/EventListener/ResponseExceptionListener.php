@@ -155,14 +155,17 @@ class ResponseExceptionListener implements EventSubscriberInterface
             }
         }
 
+        $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'];
+        $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'];
+
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
-            $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments() ?: [];
+            $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments();
             $defaultErrorDocumentPath = $site->getErrorDocument();
-        } else {
-            $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'] ?? [];
-            $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'] ?? '';
         }
+
+        $localizedErrorDocumentsPaths = $localizedErrorDocumentsPaths ?: [];
+        $defaultErrorDocumentPath = $defaultErrorDocumentPath ?: '';
 
         if (!empty($locale) && array_key_exists($locale, $localizedErrorDocumentsPaths)) {
             $errorPath = $localizedErrorDocumentsPaths[$locale];
@@ -170,7 +173,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             // If locale can't be determined check if error page is defined for any of user-agent preferences
             foreach ($request->getLanguages() as $requestLocale) {
                 if (!empty($localizedErrorDocumentsPaths[$requestLocale])) {
-                    $errorPath = $this->config['documents']['error_pages']['localized'][$requestLocale];
+                    $errorPath = $localizedErrorDocumentsPaths[$requestLocale];
 
                     break;
                 }

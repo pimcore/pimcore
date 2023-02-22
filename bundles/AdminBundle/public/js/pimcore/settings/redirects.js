@@ -553,13 +553,14 @@ pimcore.settings.redirects = Class.create({
         this.grid.on("viewready", this.updateRows.bind(this));
         this.grid.on('validateedit', function (editor, context) {
 
-            if(context["field"] == 'priority' && context['value'] == 99) {
+            if(context["field"] == 'priority' && context['newValues']['priority'] == 99) {
                 Ext.MessageBox.show({
                     title: t("warning"),
                     msg: t("redirect_performance_warning"),
                     buttons: Ext.MessageBox.YESNO,
                     fn: function (result) {
                         if (result === 'yes') {
+                            editor.cancelEdit();
                             context['record'].set('priority', 99);
                         }
                     }

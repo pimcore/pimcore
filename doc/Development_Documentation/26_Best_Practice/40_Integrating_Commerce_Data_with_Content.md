@@ -17,6 +17,7 @@ Follow the steps to create a Product teaser similar to the one in our [demo](htt
 **MyProductTeaser Implementation** 
 ```php
 <?php
+
 namespace App\Document\Areabrick;
 
 class MyProductTeaser extends AbstractAreabrick
@@ -24,7 +25,7 @@ class MyProductTeaser extends AbstractAreabrick
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'My Product Teaser';
     }
@@ -53,7 +54,7 @@ class MyProductTeaser extends AbstractAreabrick
 
 **Controller Action** 
 ```php
-    public function productCellAction(Request $request)
+    public function productCellAction(Request $request): Response
     {
         $id = $request->attribute->getInt('id');
         $type = $request->attribute->get('type');

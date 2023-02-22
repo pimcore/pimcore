@@ -72,7 +72,7 @@ use Pimcore\Event\BundleManager\PathsEvent;
 
 class PimcoreAdminListener
 {
-    public function addJSFiles(PathsEvent $event)
+    public function addJSFiles(PathsEvent $event): void
     {
         $event->setPaths(
             array_merge(

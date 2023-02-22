@@ -145,6 +145,21 @@ class Installer extends AbstractInstaller
         parent::__construct();
     }
 
+    public function installDependentBundles(): void
+    {
+        //Install ApplicationLoggerBundle Bundle
+        $appLoggerInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\ApplicationLoggerBundle\Installer::class);
+        if (!$appLoggerInstaller->isInstalled()) {
+            $appLoggerInstaller->install();
+        }
+
+        //Install PersonalizationBundle
+        $personalizationInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\PersonalizationBundle\Installer::class);
+        if (!$personalizationInstaller->isInstalled()) {
+            $personalizationInstaller->install();
+        }
+    }
+
     public function install(): void
     {
         $this->installFieldCollections();
@@ -152,6 +167,7 @@ class Installer extends AbstractInstaller
         $this->installTables();
         $this->installTranslations();
         $this->installPermissions();
+        $this->installDependentBundles();
     }
 
     public function uninstall(): void

@@ -28,15 +28,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @var string
-     */
-    public string $fieldtype = 'structuredTable';
 
     /**
      * @internal
@@ -350,7 +341,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function getColumnType(): array|string|null
+    public function getColumnType(): array
     {
         $columns = [];
         foreach ($this->calculateDbColumns() as $c) {
@@ -363,14 +354,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType(): array|string|null
+    public function getQueryColumnType(): array
     {
-        $columns = [];
-        foreach ($this->calculateDbColumns() as $c) {
-            $columns[$c->name] = $c->type;
-        }
-
-        return $columns;
+        return $this->getColumnType();
     }
 
     protected function calculateDbColumns(): array
@@ -511,5 +497,10 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         }
 
         return null;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'structuredTable';
     }
 }
