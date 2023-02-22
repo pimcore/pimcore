@@ -69,7 +69,7 @@ class Authentication
     {
         $token = null;
         $prevUnserializeHandler = ini_set('unserialize_callback_func', __CLASS__.'::handleUnserializeCallback');
-        $prevErrorHandler = set_error_handler(function ($type, $msg, $file, $line, $context = []) use (&$prevErrorHandler) {
+        $prevErrorHandler = set_error_handler(static function (int $type, string $msg, string $file, int $line, array $context = []) use (&$prevErrorHandler) {
             if (__FILE__ === $file) {
                 throw new \ErrorException($msg, 0x37313BC, $type, $file, $line);
             }
@@ -90,6 +90,14 @@ class Authentication
         }
 
         return $token;
+    }
+
+    /**
+     * @internal
+     */
+    public static function handleUnserializeCallback(string $class): never
+    {
+        throw new \ErrorException('Class not found: '.$class, 0x37313BC);
     }
 
     protected static function refreshUser(TokenInterface $token, UserProvider $provider): ?TokenInterface
