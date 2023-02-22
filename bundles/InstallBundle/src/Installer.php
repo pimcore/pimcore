@@ -22,6 +22,8 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
 use PDO;
+use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
+use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
 use Pimcore\Bundle\GlossaryBundle\PimcoreGlossaryBundle;
 use Pimcore\Bundle\InstallBundle\BundleConfig\BundleWriter;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
@@ -58,6 +60,8 @@ class Installer
     const EVENT_NAME_STEP = 'pimcore.installer.step';
 
     public const INSTALLABLE_BUNDLES = [
+        'PimcoreApplicationLoggerBundle' => PimcoreApplicationLoggerBundle::class,
+        'PimcoreCustomReportsBundle' => PimcoreCustomReportsBundle::class,
         'PimcoreGlossaryBundle' => PimcoreGlossaryBundle::class,
         'PimcoreSeoBundle' => PimcoreSeoBundle::class,
         'PimcoreSimpleBackendSearchBundle' => PimcoreSimpleBackendSearchBundle::class,
