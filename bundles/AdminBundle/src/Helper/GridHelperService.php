@@ -595,7 +595,6 @@ class GridHelperService
                 $featureJoins = array_merge($featureJoins, $featureAndSlugFilters['featureJoins']);
                 $slugJoins = array_merge($slugJoins, $featureAndSlugFilters['slugJoins']);
             }
-
         }
         if (!empty($requestParams['condition']) && $adminUser->isAdmin()) {
             $conditionFilters[] = '(' . $requestParams['condition'] . ')';
