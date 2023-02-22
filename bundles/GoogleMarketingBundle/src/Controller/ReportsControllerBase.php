@@ -19,7 +19,6 @@ namespace  Pimcore\Bundle\GoogleMarketingBundle\Controller;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
 
-
 /**
  * @internal
  */

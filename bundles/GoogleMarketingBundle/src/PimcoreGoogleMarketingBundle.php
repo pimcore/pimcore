@@ -64,9 +64,9 @@ class PimcoreGoogleMarketingBundle extends AbstractPimcoreBundle implements Depe
     {
         /** @var \Pimcore\Bundle\GoogleMarketingBundle\Installer $installer */
         $installer = $this->container->get(\Pimcore\Bundle\GoogleMarketingBundle\Installer::class);
+
         return $installer;
     }
-
 
     public static function registerDependentBundles(BundleCollection $collection): void
     {

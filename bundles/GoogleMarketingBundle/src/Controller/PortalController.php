@@ -20,8 +20,8 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\GoogleMarketingBundle\Config\SiteConfigProvider;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/portal")
@@ -30,7 +30,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PortalController extends AdminController
 {
-
     /**
      * @Route("/portlet-analytics-sites", name="pimcore_bundle_googlemarketing_portal_portletanalyticssites", methods={"GET"})
      *

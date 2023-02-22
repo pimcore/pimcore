@@ -16,11 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
-use Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker as GoogleTracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutCompleteInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
+use Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker as GoogleTracker;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Ecommerce extends AbstractAnalyticsTracker implements CheckoutCompleteInterface

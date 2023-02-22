@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
-
-use Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker as GoogleTracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -35,6 +33,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackEventInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingCodeAwareInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker as GoogleTracker;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EnhancedEcommerce extends AbstractAnalyticsTracker implements

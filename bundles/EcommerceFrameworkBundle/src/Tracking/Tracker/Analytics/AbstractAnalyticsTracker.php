@@ -17,10 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
-use Pimcore\Bundle\GoogleMarketingBundle\Tracker\TrackerInterface;
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker as EcommerceTracker;
+
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilderInterface;
+use Pimcore\Bundle\GoogleMarketingBundle\Tracker\TrackerInterface;
 use Twig\Environment;
 
 abstract class AbstractAnalyticsTracker extends EcommerceTracker

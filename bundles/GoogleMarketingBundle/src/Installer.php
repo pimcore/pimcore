@@ -26,6 +26,7 @@ class Installer extends SettingsStoreAwareInstaller
     const USER_PERMISSIONS = [
         'google_marketing',
     ];
+
     protected function addPermissions(): void
     {
         $db = \Pimcore\Db::get();
@@ -70,5 +71,4 @@ class Installer extends SettingsStoreAwareInstaller
         $this->removePermissions();
         parent::uninstall();
     }
-
 }
