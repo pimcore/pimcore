@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use League\Flysystem\FilesystemOperator;
+use Symfony\Component\Filesystem\Path;
 
 class File
 {
@@ -91,11 +92,13 @@ class File
      */
     public static function put(string $path, mixed $data): bool|int
     {
+        $path = Path::canonicalize($path);
+
         if (!is_dir(dirname($path))) {
             self::mkdir(dirname($path));
         }
 
-        $return = file_put_contents(realpath($path), $data, self::$defaultFlags, self::getContext());
+        $return = file_put_contents($path, $data, self::$defaultFlags, self::getContext());
         @chmod($path, self::$defaultMode);
 
         return $return;
@@ -157,7 +160,7 @@ class File
                 $currentPath .= '/';
             }
         } else {
-            $return = @mkdir(realpath($path), $mode, false, self::getContext());
+            $return = @mkdir($path, $mode, false, self::getContext());
         }
 
         umask($oldMask);
