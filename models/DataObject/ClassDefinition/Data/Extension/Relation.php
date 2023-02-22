@@ -39,7 +39,9 @@ trait Relation
             if ($documentTypes = $this->getDocumentTypes()) {
                 $loader = \Pimcore::getContainer()->get(TypeLoader::class);
                 foreach ($documentTypes as $item) {
-                    $types[] = $this->resolveClassName($loader, 'document', $item['documentTypes']);
+                    if ($className = $this->resolveClassName($loader, 'document', $item['documentTypes'])) {
+                        $types[] = $className;
+                    }
                 }
             } else {
                 $types[] = '\\' . Page::class;
@@ -53,7 +55,9 @@ trait Relation
             if ($assetTypes = $this->getAssetTypes()) {
                 $assetLoader = \Pimcore::getContainer()->get(AssetTypeLoader::class);
                 foreach ($assetTypes as $item) {
-                    $types[] = $this->resolveClassName($assetLoader, 'asset', $item['assetTypes']);
+                    if ($className = $this->resolveClassName($assetLoader, 'asset', $item['assetTypes'])) {
+                        $types[] = $className;
+                    }
                 }
             } else {
                 $types[] = '\\' . Asset::class;
@@ -120,7 +124,7 @@ trait Relation
     /**
      * @param 'asset'|'document'|'object' $type
      */
-    private function resolveClassName(TypeLoader|AssetTypeLoader $loader, string $type, string $shortName): string
+    private function resolveClassName(TypeLoader|AssetTypeLoader $loader, string $type, string $shortName): ?string
     {
         $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
         $className = match ($type) {
@@ -132,7 +136,11 @@ trait Relation
         try {
             return $factory->getClassNameFor($className);
         } catch (UnsupportedException) {
-            return '\\' . $loader->getClassNameFor($shortName);
+            try {
+                return '\\' . $loader->getClassNameFor($shortName);
+            } catch (UnsupportedException) {
+                return null;
+            }
         }
     }
 }
