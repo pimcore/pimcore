@@ -35,12 +35,22 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
             empty($version->getBinaryFileId()) === true) {
             $contents = stream_get_contents($binaryDataStream);
         }
+        
+        $query = 'INSERT INTO ' . self::versionsTableName . '(`id`, `cid`, `ctype`, `metaData`, `binaryData`) VALUES (?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE `metaData` = ?, `binaryData` = ?';
 
-        $this->databaseConnection->insert(self::versionsTableName, ['id' => $version->getId(),
-                                    'cid' => $version->getCid(),
-                                    'ctype' => $version->getCtype(),
-                                    'metaData' => $metaData,
-                                    'binaryData' => $contents ?? null, ]);
+        $this->databaseConnection->executeQuery(
+            $query,
+            [
+                $version->getId(),
+                $version->getCid(),
+                $version->getCtype(),
+                $metaData,
+                $contents ?? null,
+                $metaData,
+                $contents ?? null,
+            ]
+        );
     }
 
     /**
