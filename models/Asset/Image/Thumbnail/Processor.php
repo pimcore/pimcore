@@ -164,7 +164,15 @@ class Processor
             $fileExtension = 'jpg';
         }
 
-        $filename .= '.' . $fileExtension;
+        $configHash = hash("crc32b", serialize([
+            $config->getPreserveAnimation(),
+            $config->getQuality(),
+            $config->isPreserveColor(),
+            $config->isPreserveMetaData(),
+            $config->getItems(),
+        ]));
+
+        $filename .= '.' . $configHash . '.'. $fileExtension;
 
         $storagePath = $thumbDir . '/' . $filename;
         $storage = Storage::get('thumbnail');
