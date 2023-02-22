@@ -50,8 +50,6 @@ class PimcoreGoogleMarketingBundle extends AbstractPimcoreBundle implements Depe
         return [
             '/bundles/pimcoregooglemarketing/js/startup.js',
             '/bundles/pimcoregooglemarketing/js/settings.js',
-            '/bundles/pimcoregooglemarketing/js/report/abstract.js',
-            '/bundles/pimcoregooglemarketing/js/report/broker.js',
             '/bundles/pimcoregooglemarketing/js/report/analytics/elementexplorer.js',
             '/bundles/pimcoregooglemarketing/js/report/analytics/elementoverview.js',
             '/bundles/pimcoregooglemarketing/js/report/analytics/settings.js',

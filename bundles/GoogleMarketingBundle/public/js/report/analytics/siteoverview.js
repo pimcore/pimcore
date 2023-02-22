@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.bundle.googlemarketing.report.analytics.overview");
 /**
  * @private
  */
-pimcore.bundle.googlemarketing.report.analytics.overview = Class.create(pimcore.bundle.googlemarketing.report.abstract, {
+pimcore.bundle.googlemarketing.report.analytics.overview = Class.create(pimcore.bundle.customreports.abstract, {
 
     matchType: function (type) {
 
@@ -24,7 +24,7 @@ pimcore.bundle.googlemarketing.report.analytics.overview = Class.create(pimcore.
 // // commented this out, otherwise JSLint would complain
 //
 //        var types = ["global"];
-//        if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)
+//        if (pimcore.bundle.customreports.abstract.prototype.matchTypeValidate(type, types)
 //                                                            && pimcore.settings.google_analytics_enabled) {
 //            return true;
 //        }

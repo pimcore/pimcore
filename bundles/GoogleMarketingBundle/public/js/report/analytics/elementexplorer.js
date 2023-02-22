@@ -15,11 +15,11 @@ pimcore.registerNS("pimcore.bundle.googlemarketing.report.analytics.elementexplo
 /**
  * @private
  */
-pimcore.bundle.googlemarketing.report.analytics.elementexplorer = Class.create(pimcore.bundle.googlemarketing.report.abstract, {
+pimcore.bundle.googlemarketing.report.analytics.elementexplorer = Class.create(pimcore.bundle.customreports.abstract, {
 
     matchType: function (type) {
         var types = ["document_page","global"];
-        if (pimcore.bundle.googlemarketing.report.abstract.prototype.matchTypeValidate(type, types)
+        if (pimcore.bundle.customreports.abstract.prototype.matchTypeValidate(type, types)
             && pimcore.settings.google_analytics_enabled) {
             return true;
         }
