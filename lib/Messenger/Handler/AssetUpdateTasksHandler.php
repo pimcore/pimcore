@@ -51,6 +51,7 @@ class AssetUpdateTasksHandler
     private function saveAsset(Asset $asset)
     {
         Version::disable();
+        $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
         $asset->save();
         Version::enable();
     }

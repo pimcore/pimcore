@@ -137,13 +137,15 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             }
         }
 
-        $tablesLen = array_map('strlen', $tables);
-        array_multisort($tablesLen, $tables);
-        $longestTablename = end($tables);
+        if ($tables) {
+            $tablesLen = array_map('strlen', $tables);
+            array_multisort($tablesLen, $tables);
+            $longestTablename = end($tables);
 
-        $length = strlen($longestTablename);
-        if ($length > 64) {
-            throw new \Exception('table name ' . $longestTablename . ' would be too long. Max length is 64. Current length would be ' .  $length . '.');
+            $length = strlen($longestTablename);
+            if ($length > 64) {
+                throw new \Exception('table name ' . $longestTablename . ' would be too long. Max length is 64. Current length would be ' .  $length . '.');
+            }
         }
     }
 

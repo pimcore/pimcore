@@ -245,7 +245,7 @@ class Select extends Data implements
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string|null
+     * @return null|string|int
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -261,7 +261,7 @@ class Select extends Data implements
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string|null
+     * @return null|string|int
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -289,7 +289,7 @@ class Select extends Data implements
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return null|string|int
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -303,7 +303,7 @@ class Select extends Data implements
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return null|string|int
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
