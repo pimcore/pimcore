@@ -122,7 +122,6 @@ final class Version20220120162621 extends AbstractMigration
     public function down(Schema $schema): void
     {
         foreach(['asset', 'document', 'object'] as $elementType) {
-            $this->addSql('ALTER TABLE `users_workspaces_'.$elementType.'` CHANGE `userId` `userId` int(11) NOT NULL DEFAULT \'0\'');
             if ($schema->getTable('users_workspaces_'.$elementType)->hasForeignKey('fk_users_workspaces_'.$elementType.'_'.$elementType.'s')) {
                 $this->addSql('ALTER TABLE `users_workspaces_'.$elementType.'` DROP FOREIGN KEY IF EXISTS `fk_users_workspaces_'.$elementType.'_'.$elementType.'s`');
             }
@@ -130,6 +129,8 @@ final class Version20220120162621 extends AbstractMigration
             if ($schema->getTable('users_workspaces_'.$elementType)->hasForeignKey('fk_users_workspaces_'.$elementType.'_users')) {
                 $this->addSql('ALTER TABLE `users_workspaces_'.$elementType.'` DROP FOREIGN KEY IF EXISTS `fk_users_workspaces_'.$elementType.'_users`');
             }
+
+            $this->addSql('ALTER TABLE `users_workspaces_'.$elementType.'` CHANGE `userId` `userId` int(11) NOT NULL DEFAULT \'0\'');
         }
     }
 }
