@@ -33,6 +33,9 @@ final class Version20230120111111 extends AbstractMigration
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', true, 'bool', 'pimcore');
         }
 
+        // updating description  of permissions
+        $this->addSql("UPDATE `users_permission_definitions` SET `category` = 'Application Logger Bundle' WHERE `key` = 'application_logging'");
+
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', 'pimcore'),
             'Please make sure to enable the Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle manually in config/bundles.php',
@@ -44,6 +47,10 @@ final class Version20230120111111 extends AbstractMigration
         if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', 'pimcore')) {
             SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', 'pimcore');
         }
+
+        // restoring the permission
+        $this->addSql("UPDATE `users_permission_definitions` SET `category` = '' WHERE `key` = 'application_logging'");
+
         $this->write('Please deactivate the Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle manually in config/bundles.php');
     }
 }

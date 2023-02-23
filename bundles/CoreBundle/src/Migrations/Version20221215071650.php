@@ -37,6 +37,10 @@ final class Version20221215071650 extends AbstractMigration
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle', true, 'bool', 'pimcore');
         }
 
+        // updating description  of permissions
+        $this->addSql("UPDATE `users_permission_definitions` SET `category` = 'Pimcore Glossary Bundle' WHERE `key` = 'glossary'");
+
+
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle', 'pimcore'),
             'Please make sure to enable the Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle manually in config/bundles.php'
@@ -48,6 +52,10 @@ final class Version20221215071650 extends AbstractMigration
         if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle', 'pimcore')) {
             SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle', 'pimcore');
         }
+
+        // restoring the permission
+        $this->addSql("UPDATE `users_permission_definitions` SET `category` = '' WHERE `key` = 'glossary'");
+
         $this->write('Please deactivate the Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle manually in config/bundles.php');
     }
 }

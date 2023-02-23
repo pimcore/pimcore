@@ -47,8 +47,8 @@ final class Version20221220152444 extends AbstractMigration
                     SettingsStore::set('web_to_print', $data, 'string', 'pimcore_web_to_print');
                 }
             }
-            // updating description  of permissions
 
+            // updating description  of permissions
             $this->addSql("UPDATE `users_permission_definitions` SET `category` = 'Pimcore Web2Print Bundle' WHERE `key` = 'web2print_settings'");
 
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle', $enableBundle, 'bool', 'pimcore');
