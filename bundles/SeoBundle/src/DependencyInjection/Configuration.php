@@ -36,7 +36,7 @@ class Configuration implements ConfigurationInterface
         $rootNode->addDefaultsIfNotSet();
 
         $this->addSitemapGenerators($rootNode);
-        $this->addRedirectsStatusCodes($rootNode);
+        $this->addRedirectsConfig($rootNode);
 
         return $treeBuilder;
     }
@@ -78,7 +78,7 @@ class Configuration implements ConfigurationInterface
         ->end();
     }
 
-    private function addRedirectsStatusCodes(ArrayNodeDefinition $rootNode): void
+    private function addRedirectsConfig(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -87,9 +87,13 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->arrayNode('status_codes')
                             ->info('List all redirect status codes.')
-                        ->prototype('scalar')
+                                ->prototype('scalar')
+                            ->end()
+                        ->end()
+                        ->booleanNode('create_redirect_on_document_move')
+                            ->defaultFalse()
+                        ->end()
                     ->end()
-                ->end()
-            ->end();
+                ->end();
     }
 }

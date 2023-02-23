@@ -195,6 +195,12 @@ pimcore:
   Replace other annotations provided by [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers)
 - [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
 - [DataObjects][CSV Export] Changed encoding of table data-types to `json_encode` from `base64_encoded`.
+- [Documents] The Message-Box whether a redirect should be created when a document is moved in the tree has been removed. This can now be set with the following configuration:
+```yaml
+pimcore_seo:
+    redirects:
+        create_redirect_on_document_move: true
+```
 
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
