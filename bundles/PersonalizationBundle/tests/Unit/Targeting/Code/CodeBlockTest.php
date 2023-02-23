@@ -15,12 +15,12 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Unit\Analytics\Code;
+namespace Pimcore\Bundle\PersonalizationBundle\Tests\Unit\Targeting\Code;
 
-use Pimcore\Analytics\Code\CodeBlock;
-use Pimcore\Tests\Support\Test\TestCase;
+use Codeception\Test\Unit;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Code\CodeBlock;
 
-class CodeBlockTest extends TestCase
+class CodeBlockTest extends Unit
 {
     private array $defaultParts = [
         'foo;',
