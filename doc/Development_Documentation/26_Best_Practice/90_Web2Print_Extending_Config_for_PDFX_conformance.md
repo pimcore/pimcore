@@ -39,13 +39,13 @@ namespace App\EventListener;
 
 class PDFConfigListener
 {
-    public function modifyProcessingOptions(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event) {
-
+    public function modifyProcessingOptions(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event): void
+    {
         $arguments = $event->getArguments();
         $options = $arguments['options'];
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
+        if ($processor instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
             
             //add option to append log into generated PDF (pdf reactor functionality) 
             $options[] = ['name' => 'appendLog', 'type' => 'bool', 'default' => false];
@@ -55,15 +55,15 @@ class PDFConfigListener
         $event->setArguments($arguments);
     }
 
-    public function modifyConfig(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event) {
-
+    public function modifyConfig(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event): void
+    {
         $arguments = $event->getArguments();
 
         $processor = $event->getProcessor();
-        if($processor instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
+        if ($processor instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
             
             //check if option for appending log to PDF is set in configuration and apply it to reactor config accordingly  
-            if($arguments['config']->appendLog == 'true'){
+            if ($arguments['config']->appendLog == 'true'){
                 $arguments['reactorConfig']['appendLog'] = true;
             }
         }
@@ -87,12 +87,13 @@ namespace App\EventListener;
 
 class PDFConfigListener
 {
-    public function modifyProcessingOptions(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event) {
+    public function modifyProcessingOptions(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event): void
+    {
         //optionally add some configuration options for user interface here - e.g. some select options for user
     }
 
-    public function modifyConfig(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event){
-
+    public function modifyConfig(\Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent $event): void
+    {
         $arguments = $event->getArguments();
 
         $processor = $event->getProcessor();

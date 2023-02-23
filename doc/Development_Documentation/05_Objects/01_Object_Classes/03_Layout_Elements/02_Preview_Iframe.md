@@ -20,13 +20,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IFrameController extends \Pimcore\Controller\FrontendController
 {
-
     /**
      * @Route("/iframe/summary")
-     *
-     * @param Request $request
      */
-    public function summaryAction(Request $request) {
+    public function summaryAction(Request $request): Response
+    {
         $context = json_decode($request->get("context"), true);
         $objectId = $context["objectId"];
         $language = $context["language"];

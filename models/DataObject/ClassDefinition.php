@@ -301,8 +301,8 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
                 }
             }
 
-            if (isset($data->blockedVarsForExport)) {
-                unset($data->blockedVarsForExport);
+            if (!empty($data->getBlockedVarsForExport())) {
+                $data->setBlockedVarsForExport([]);
             }
         }
 

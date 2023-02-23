@@ -111,7 +111,6 @@ final class Configuration implements ConfigurationInterface
 
         $this->addGeneralNode($rootNode);
         $this->addMaintenanceNode($rootNode);
-        $this->addServicesNode($rootNode);
         $this->addObjectsNode($rootNode);
         $this->addAssetNode($rootNode);
         $this->addDocumentsNode($rootNode);
@@ -241,38 +240,6 @@ final class Configuration implements ConfigurationInterface
                         })
                     ->end()
                     ->defaultFalse()
-                ->end()
-            ->end();
-    }
-
-    private function addServicesNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-            ->arrayNode('services')
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('google')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('client_id')
-                            ->info('This is required for the Google API integrations. Only use a `Service Account´ from the Google Cloud Console.')
-                            ->defaultNull()
-                        ->end()
-                        ->scalarNode('email')
-                            ->info('Email address of the Google service account')
-                            ->defaultNull()
-                        ->end()
-                        ->scalarNode('simple_api_key')
-                            ->info('Server API key')
-                            ->defaultNull()
-                        ->end()
-                        ->scalarNode('browser_api_key')
-                            ->info('Browser API key')
-                            ->defaultNull()
-                        ->end()
-                    ->end()
-                    ->end()
                 ->end()
             ->end();
     }

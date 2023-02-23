@@ -73,17 +73,14 @@ use PHPUnit\Framework\TestCase;
 
 class CalculatorTest extends TestCase
 {
-    /**
-     * @var Calculator
-     */
-    private $calculator;
+    private Calculator $calculator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->calculator = new Calculator();
     }
 
-    public function testAdd()
+    public function testAdd(): void
     {
         $this->assertEquals(15, $this->calculator->add(10, 5));
     }
@@ -91,7 +88,7 @@ class CalculatorTest extends TestCase
     /**
      * @dataProvider addDataProvider
      */
-    public function testAddWithProvider(int $a, int $b, int $expected)
+    public function testAddWithProvider(int $a, int $b, int $expected): void
     {
         $this->assertEquals($expected, $this->calculator->add($a, $b));
     }
@@ -194,7 +191,7 @@ use Pimcore\Test\WebTestCase;
 
 class ContentControllerTest extends WebTestCase
 {
-    public function testRedirectFromEn()
+    public function testRedirectFromEn(): void
     {
         $client = static::createClient();
         $client->request('GET', '/en');
@@ -206,7 +203,7 @@ class ContentControllerTest extends WebTestCase
         $this->assertEquals('/', $client->getRequest()->getPathInfo());
     }
 
-    public function testPortal()
+    public function testPortal(): void
     {
         $client = static::createClient();
 
@@ -391,12 +388,10 @@ class ExampleTest extends Unit
 {
     /**
      * Tester actor exposing methods added by helpers
-     *
-     * @var \Tests\UnitTester
      */
-    protected $tester;
+    protected \Tests\UnitTester $tester;
 
-    public function testPhpCanCalculate()
+    public function testPhpCanCalculate(): void
     {
         $this->assertEquals(15, 10 + 5);
         $this->assertEquals(100, pow(10, 2));
@@ -404,17 +399,13 @@ class ExampleTest extends Unit
 
     /**
      * @dataProvider addDataProvider
-     *
-     * @param int $a
-     * @param int $b
-     * @param int $expected
      */
-    public function testPhpCanAddWithProvider(int $a, int $b, int $expected)
+    public function testPhpCanAddWithProvider(int $a, int $b, int $expected): void
     {
         $this->assertEquals($expected, $a + $b, sprintf('%d + %d = %d', $a, $b, $expected));
     }
 
-    public function testSomethingElse()
+    public function testSomethingElse(): void
     {
         $obj1 = new \stdClass();
         $obj2 = new \stdClass();
@@ -433,7 +424,7 @@ class ExampleTest extends Unit
         $this->assertSame($obj3, $obj2->obj);
     }
 
-    public function testException()
+    public function testException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('This test is about to fail');
@@ -470,7 +461,7 @@ use Tests\FunctionalTester;
 
 class IndexPageCest
 {
-    public function testFrontpage(FunctionalTester $I)
+    public function testFrontpage(FunctionalTester $I): void
     {
         $I->amOnPage('/');
         $I->canSeeResponseCodeIs(200);

@@ -111,10 +111,11 @@ namespace App\Controller;
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Document;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
+use Symfony\Component\HttpFoundation\Response;
 
 class ContentController extends FrontendController
 {
-    public function pageAction(DocumentTargetingConfigurator $targetingConfigurator)
+    public function pageAction(DocumentTargetingConfigurator $targetingConfigurator): Response
     {
         // load any document
         $document = Document::getByPath('/my/page');

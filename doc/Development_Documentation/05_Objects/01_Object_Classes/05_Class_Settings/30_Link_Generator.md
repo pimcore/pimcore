@@ -45,12 +45,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 
 class ProductLinkGenerator extends AbstractProductLinkGenerator implements LinkGeneratorInterface
 {
-    /**
-     * @param Concrete $object
-     * @param array $params
-     *
-     * @return string
-     */
     public function generate(Concrete $object, array $params = []): string
     {
         if (!($object instanceof Car || $object instanceof AccessoryPart)) {
@@ -60,21 +54,12 @@ class ProductLinkGenerator extends AbstractProductLinkGenerator implements LinkG
         return $this->doGenerate($object, $params);
     }
 
-    /**
-     * @param ProductInterface $object
-     * @param array $params
-     * @return string
-     */
-    public function generateWithMockup(ProductInterface $object, array $params = []): string {
+    public function generateWithMockup(ProductInterface $object, array $params = []): string
+    {
         return $this->doGenerate($object, $params);
     }
 
-    /**
-     * @param ProductInterface $object
-     * @param array $params
-     * @return string
-     */
-    protected function doGenerate($object, $params): string
+    protected function doGenerate(ProductInterface $object, array $params): string
     {
         return ForceInheritance::run(function () use ($object, $params) {
             return $this->pimcoreUrl->__invoke(
@@ -94,12 +79,6 @@ class ProductLinkGenerator extends AbstractProductLinkGenerator implements LinkG
 
 Note: If you want to support mockups or arbitrary objects you can change the typehint to:
 ```php
-    /**
-     * @param object $object
-     * @param array $params
-     *
-     * @return string
-     */
     public function generate(object $object, array $params = []): string
     {
         //...
@@ -117,7 +96,7 @@ Example:
 ```php
 public function generate(Concrete $object, array $params = []): string
 {
-    if(isset($params['document']) && $params['document'] instanceof Document) {
+    if (isset($params['document']) && $params['document'] instanceof Document) {
         // param contains context information
         $documentPath = $params['document']->getFullPath();
     }

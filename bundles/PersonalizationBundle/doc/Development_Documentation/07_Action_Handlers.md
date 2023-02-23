@@ -39,17 +39,14 @@ use Psr\Log\LoggerInterface;
 
 class Log implements ActionHandlerInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
-    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
+    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null): void
     {
         $level = $action['level'] ?? 'info';
 

@@ -59,16 +59,9 @@ use Symfony\Component\Workflow\Workflow;
 
 class SupportStrategy implements SupportStrategyInterface
 {
-
-    /**
-     * @param Workflow $workflow
-     * @param object   $subject
-     *
-     * @return bool
-     */
-    public function supports(Workflow $workflow, $subject)
+    public function supports(Workflow $workflow, object $subject): bool
     {
-        if($subject instanceof \Pimcore\Model\DataObject\Test) {
+        if ($subject instanceof \Pimcore\Model\DataObject\Test) {
             return true;
         }
 

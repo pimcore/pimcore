@@ -33,7 +33,7 @@ class AdminAssetsListener implements EventSubscriberInterface
         ];
     }
 
-    public function onJsPaths(PathsEvent $event)
+    public function onJsPaths(PathsEvent $event): void
     {
         $event->setPaths(array_merge($event->getPaths(), [
             '/bundles/app/js/admin.js'
