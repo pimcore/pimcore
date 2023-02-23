@@ -40,7 +40,7 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
     },
 
     getTypeName: function () {
-        return t("classification_store");
+        return t("classificationstore");
     },
 
     getGroup: function () {
