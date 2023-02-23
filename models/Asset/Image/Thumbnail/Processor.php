@@ -406,6 +406,12 @@ class Processor
 
                             ksort($arguments);
                             if (!is_string($transformation['method']) && is_callable($transformation['method'])) {
+                                trigger_deprecation(
+                                    'pimcore/pimcore',
+                                    '10.6',
+                                    'Using Callable in thumbnail transformations is deprecated and will not work on Pimcore 11.'
+                                );
+
                                 $transformation['method']($image);
                             } elseif (method_exists($image, $transformation['method'])) {
                                 call_user_func_array([$image, $transformation['method']], $arguments);

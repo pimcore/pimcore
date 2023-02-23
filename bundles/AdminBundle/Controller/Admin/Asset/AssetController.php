@@ -1408,8 +1408,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 'x' => $request->get('cropLeft'),
             ]);
 
-            $hash = md5(Tool\Serialize::serialize(array_merge($request->request->all(), $request->query->all())));
-            $thumbnailConfig->setName($thumbnailConfig->getName() . '_auto_' . $hash);
+            $thumbnailConfig->generateAutoName();
         }
 
         $thumbnail = $image->getThumbnail($thumbnailConfig);

@@ -310,7 +310,7 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param string $name
+     * @param string|callable $name
      * @param array $parameters
      * @param string|null $media
      *
@@ -338,7 +338,7 @@ final class Config extends Model\AbstractModel
      * @internal
      *
      * @param int $position
-     * @param string $name
+     * @param string|callable $name
      * @param array $parameters
      * @param string|null $media
      *
@@ -580,8 +580,7 @@ final class Config extends Model\AbstractModel
         }
 
         // set name
-        $hash = md5(Serialize::serialize($pipe));
-        $pipe->setName('auto_' . $hash);
+        $pipe->generateAutoName();
 
         return $pipe;
     }
@@ -667,8 +666,7 @@ final class Config extends Model\AbstractModel
             $pipe->setHighResolution($config['highResolution']);
         }
 
-        $hash = md5(Serialize::serialize($pipe));
-        $pipe->setName('auto_' . $hash);
+        $pipe->generateAutoName();
 
         return $pipe;
     }
@@ -964,5 +962,15 @@ final class Config extends Model\AbstractModel
         }
 
         return $autoFormatThumbnails;
+    }
+
+    /**
+     * @internal
+     */
+    public function generateAutoName(): void
+    {
+        $serialized = Serialize::serialize($this->getItems());
+
+        $this->setName($this->getName() . '_auto_' . md5($serialized));
     }
 }
