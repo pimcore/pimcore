@@ -2004,7 +2004,7 @@ class Service extends Model\Element\Service
         return self::getInheritedData($parent, $key, $requestedLanguage);
     }
 
-    public static function useInheritedValues(callable $fn, bool $inheritValues, array $fnArgs = []): mixed
+    public static function useInheritedValues(bool $inheritValues, callable $fn, array $fnArgs = []): mixed
     {
         $backup = DataObject::getGetInheritedValues();
         DataObject::setGetInheritedValues($inheritValues);
