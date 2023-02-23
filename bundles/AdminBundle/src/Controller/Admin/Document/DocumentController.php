@@ -27,7 +27,7 @@ use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Image\Gotenberg;
+use Pimcore\Image;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\DocType;
@@ -1123,7 +1123,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function diffVersionsAction(Request $request, int $from, int $to): Response
     {
         // return with error if prerequisites do not match
-        if (!Gotenberg::isSupported() || !class_exists('Imagick')) {
+        if (
+            (!Image\Gotenberg::isSupported() && !Image\Chromium::isSupported()) ||
+            !class_exists('Imagick')
+        ) {
             return $this->render('@PimcoreAdmin/admin/document/document/diff_versions_unsupported.html.twig');
         }
 
@@ -1155,12 +1158,21 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $session = $request->getSession();
 
-        Gotenberg::convert($fromUrl, $fromFile, $session->getName(), $session->getId());
-        Gotenberg::convert($toUrl, $toFile, $session->getName(), $session->getId());
+        if (Image\Gotenberg::isSupported()){
+            Image\Gotenberg::convert($fromUrl, $fromFile, $session->getName(), $session->getId());
+            Image\Gotenberg::convert($toUrl, $toFile, $session->getName(), $session->getId());
 
-        // TODO: remove once this is merged and released https://github.com/gotenberg/gotenberg/pull/504
-        $image1 = new Imagick(str_replace('.png','.pdf[0]',$fromFile));
-        $image2 = new Imagick(str_replace('.png','.pdf[0]',$toFile));
+            // TODO: remove once this is merged and released https://github.com/gotenberg/gotenberg/pull/504
+            $fromFile = str_replace('.png', '.pdf[0]', $fromFile);
+            $toFile = str_replace('.png', '.pdf[0]', $toFile);
+
+        }elseif (Image\Chromium::isSupported()){
+            Image\Chromium::convert($fromUrl, $fromFile, $session->getName(), $session->getId());
+            Image\Chromium::convert($toUrl, $toFile, $session->getName(), $session->getId());
+        }
+
+        $image1 = new Imagick($fromFile);
+        $image2 = new Imagick($toFile);
 
         if ($image1->getImageWidth() == $image2->getImageWidth() && $image1->getImageHeight() == $image2->getImageHeight()) {
             $result = $image1->compareImages($image2, Imagick::METRIC_MEANSQUAREERROR);
