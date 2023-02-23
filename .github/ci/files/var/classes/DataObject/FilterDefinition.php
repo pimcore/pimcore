@@ -598,9 +598,9 @@ class FilterDefinition extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\Ab
         $fd = $this->getClass()->getFieldDefinition("crossSellingCategory");
         $hideUnpublished = \Pimcore\Model\DataObject\Concrete::getHideUnpublished();
         \Pimcore\Model\DataObject\Concrete::setHideUnpublished(false);
-        $currentData = \Pimcore\Model\DataObject\Service::useInheritedValues(function() {
+        $currentData = \Pimcore\Model\DataObject\Service::useInheritedValues(false, function() {
             return $this->getCrossSellingCategory();
-        }, false);
+        });
         \Pimcore\Model\DataObject\Concrete::setHideUnpublished($hideUnpublished);
         $isEqual = $fd->isEqual($currentData, $crossSellingCategory);
         if (!$isEqual) {

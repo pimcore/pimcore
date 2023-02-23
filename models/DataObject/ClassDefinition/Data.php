@@ -530,9 +530,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
 
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
-                $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(function() {' . "\n";
+                $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(false, function() {' . "\n";
                 $code .= "\t\t" . 'return $this->get' . ucfirst($this->getName()) . '();' . "\n";
-                $code .= "\t" . '}, false);' . "\n";
+                $code .= "\t" . '});' . "\n";
             }
             else {
                 $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
@@ -666,9 +666,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
 
             $code .= "\t" . 'if ($class && $class->getAllowInherit()) {' . "\n";
-            $code .= "\t\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(function() {' . "\n";
+            $code .= "\t\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(false, function() {' . "\n";
             $code .= "\t\t\t" . 'return $this->get' . ucfirst($this->getName()) . '();' . "\n";
-            $code .= "\t\t" . '}, false);' . "\n";
+            $code .= "\t\t" . '});' . "\n";
             $code .= "\t" . '}'."\n";
             $code .= "\t" . 'else {' . "\n";
             $code .= "\t\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
@@ -912,9 +912,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
 
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
-                $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(function() use ($language) {' . "\n";
+                $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(false, function() use ($language) {' . "\n";
                 $code .= "\t\t" . 'return $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
-                $code .= "\t" . '}, false);' . "\n";
+                $code .= "\t" . '});' . "\n";
             }
             else {
                 $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";

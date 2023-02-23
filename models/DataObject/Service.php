@@ -542,7 +542,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        return self::useInheritedValues(function() use ($object, $config) {
+        return self::useInheritedValues(true, function() use ($object, $config) {
                 $result = $config->getLabeledValue($object);
                 if (isset($result->value)) {
                     $result = $result->value;
@@ -559,7 +559,7 @@ class Service extends Model\Element\Service
                     return $result;
                 }
                 return null;
-        }, true);
+        });
     }
 
     public static function getHelperDefinitions(): array
@@ -1520,7 +1520,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        return DataObject\Service::useInheritedValues(function () use ($fd, $object, $data) {
+        return DataObject\Service::useInheritedValues(true, function () use ($fd, $object, $data) {
                 switch ($fd->getCalculatorType()) {
                     case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
                         $className = $fd->getCalculatorClass();
@@ -1544,7 +1544,7 @@ class Service extends Model\Element\Service
                     default:
                         return null;
                 }
-        }, true);
+        });
     }
 
     public static function getCalculatedFieldValue(Fieldcollection\Data\AbstractData|Objectbrick\Data\AbstractData|Concrete $object, ?Data\CalculatedValue $data): mixed
@@ -1570,7 +1570,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        return DataObject\Service::useInheritedValues(function() use ($object, $fd, $data) {
+        return DataObject\Service::useInheritedValues(true, function() use ($object, $fd, $data) {
             if (
                 $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
                 $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
@@ -1600,7 +1600,7 @@ class Service extends Model\Element\Service
                 default:
                     return null;
             }
-        }, true);
+        });
     }
 
     public static function getSystemFields(): array

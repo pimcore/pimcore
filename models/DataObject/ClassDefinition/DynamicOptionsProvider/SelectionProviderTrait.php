@@ -41,9 +41,8 @@ trait SelectionProviderTrait
                 $context['purpose'] = $purpose;
             }
 
-            $options = DataObject\Service::useInheritedValues(
+            $options = DataObject\Service::useInheritedValues(true,
                 fn () => $optionsProvider->getOptions($context, $this),
-                true,
             );
 
             $this->setOptions($options);

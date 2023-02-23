@@ -131,7 +131,7 @@ class ClassificationstoreTest extends ModelTestCase
      */
     public function testInheritance(): void
     {
-        DataObject\Service::useInheritedValues(function () {
+        DataObject\Service::useInheritedValues(true, function () {
             $group = Classificationstore\GroupConfig::getByName('group1');
             $key1 = Classificationstore\KeyConfig::getByName('field1');
             $key2 = Classificationstore\KeyConfig::getByName('field2');
@@ -166,6 +166,6 @@ class ClassificationstoreTest extends ModelTestCase
             $this->assertEquals('oneinput1', $oneStore->getLocalizedKeyValue($group->getId(), $key1->getId()));
             $this->assertEquals('oneinput2', $oneStore->getLocalizedKeyValue($group->getId(), $key2->getId()));
 
-        }, true);
+        });
     }
 }

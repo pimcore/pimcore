@@ -157,7 +157,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                     $this->$setter(null);
 
                     //check if parent object has brick, and if so, create an empty brick to enable inheritance
-                    $parentBrick = DataObject\Service::useInheritedValues(function() use ($object, $getter) {
+                    $parentBrick = DataObject\Service::useInheritedValues(true, function() use ($object, $getter) {
                         if (DataObject::doGetInheritedValues($object)) {
                             try {
                                 $container = $object->getValueFromParent($this->fieldname);
@@ -170,7 +170,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                             }
                         }
                         return null;
-                    }, true);
+                    });
 
                     if (!empty($parentBrick)) {
                         $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
@@ -185,7 +185,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                 }
             } else {
                 if ($brick == null) {
-                    $parentBrick = DataObject\Service::useInheritedValues(function () use ($object, $getter) {
+                    $parentBrick = DataObject\Service::useInheritedValues(true, function () use ($object, $getter) {
                         if (DataObject::doGetInheritedValues($object)) {
                             try {
                                 $container = $object->getValueFromParent($this->fieldname);
@@ -198,7 +198,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                             }
                         }
                         return null;
-                    }, true);
+                    });
 
                     if (!empty($parentBrick)) {
                         $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());

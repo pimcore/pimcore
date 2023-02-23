@@ -115,13 +115,13 @@ trait DefaultValueTrait
                     $params = [];
                     try {
                         // make sure we get the inherited value of the parent
-                        $data = DataObject\Service::useInheritedValues(function() use ($owner, $params) {
+                        $data = DataObject\Service::useInheritedValues(true, function() use ($owner, $params) {
                             $data = $owner->getValueFromParent($this->getName(), $params);
                             if (!$this->isEmpty($data)) {
                                 return null;
                             }
                             return $data;
-                        }, true);
+                        });
                     } catch (InheritanceParentNotFoundException $e) {
                         // no data from parent available, use the default value
                     }
