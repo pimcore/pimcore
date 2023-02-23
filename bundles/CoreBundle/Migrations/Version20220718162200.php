@@ -29,7 +29,7 @@ final class Version20220718162200 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if(!$schema->getTable('object_url_slugs')->hasIndex('fieldname_ownertype_position_objectId')) {
+        if (!$schema->getTable('object_url_slugs')->hasIndex('fieldname_ownertype_position_objectId')) {
             $this->addSql('ALTER TABLE `object_url_slugs` ADD INDEX `fieldname_ownertype_position_objectId` (`fieldname`,`ownertype`,`position`,`objectId`)');
         }
     }

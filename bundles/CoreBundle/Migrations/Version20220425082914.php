@@ -29,7 +29,7 @@ final class Version20220425082914 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if($schema->getTable('objects')->hasIndex('type')) {
+        if ($schema->getTable('objects')->hasIndex('type')) {
             $this->addSql('ALTER TABLE `objects` DROP INDEX `type`');
         }
 

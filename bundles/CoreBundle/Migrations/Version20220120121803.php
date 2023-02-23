@@ -32,7 +32,7 @@ final class Version20220120121803 extends AbstractMigration
         //disable foreign key checks
         $this->addSql('SET foreign_key_checks = 0');
 
-        foreach(['documents_hardlink', 'documents_link', 'documents_page', 'documents_snippet', 'documents_printpage', 'documents_email', 'documents_newsletter', 'documents_translations'] as $table) {
+        foreach (['documents_hardlink', 'documents_link', 'documents_page', 'documents_snippet', 'documents_printpage', 'documents_email', 'documents_newsletter', 'documents_translations'] as $table) {
             if (!$schema->getTable($table)->hasForeignKey('fk_'.$table.'_documents')) {
                 $this->addSql(
                     'ALTER TABLE `'.$table.'`

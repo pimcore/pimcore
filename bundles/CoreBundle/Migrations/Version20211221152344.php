@@ -34,7 +34,7 @@ final class Version20211221152344 extends AbstractMigration
 
         $this->addSql('ALTER TABLE `assets_metadata` CHANGE `cid` `cid` int(11) unsigned NOT NULL;');
 
-        if(!$schema->getTable('assets_metadata')->hasForeignKey('fk_assets_metadata_assets')) {
+        if (!$schema->getTable('assets_metadata')->hasForeignKey('fk_assets_metadata_assets')) {
             $this->addSql(
                 'ALTER TABLE `assets_metadata`
                 ADD CONSTRAINT `fk_assets_metadata_assets`

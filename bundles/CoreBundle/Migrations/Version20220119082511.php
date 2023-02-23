@@ -34,7 +34,7 @@ final class Version20220119082511 extends AbstractMigration
 
         $this->addSql('ALTER TABLE `gridconfig_favourites` CHANGE `gridConfigId` `gridConfigId` int(11) NOT NULL;');
 
-        if(!$schema->getTable('gridconfig_favourites')->hasIndex('grid_config_id')) {
+        if (!$schema->getTable('gridconfig_favourites')->hasIndex('grid_config_id')) {
             $this->addSql('ALTER TABLE `gridconfig_favourites` ADD INDEX `grid_config_id` (`gridConfigId`);');
         }
 

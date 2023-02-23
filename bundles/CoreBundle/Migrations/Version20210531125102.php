@@ -32,7 +32,7 @@ final class Version20210531125102 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        if(!$schema->getTable('sites')->hasColumn('localizedErrorDocuments')) {
+        if (!$schema->getTable('sites')->hasColumn('localizedErrorDocuments')) {
             $this->addSql('ALTER TABLE `sites` ADD COLUMN `localizedErrorDocuments` text;');
         }
     }
