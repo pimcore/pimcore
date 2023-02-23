@@ -104,7 +104,7 @@ final class Version20220120162621 extends AbstractMigration
             'ALTER TABLE `users_workspaces_object`
             CHANGE `userId` `userId` int(11) unsigned NOT NULL DEFAULT \'0\';');
 
-        if (!$schema->getTable('users_workspaces_document')->hasForeignKey('fk_users_workspaces_object_users')) {
+        if (!$schema->getTable('users_workspaces_object')->hasForeignKey('fk_users_workspaces_object_users')) {
             $this->addSql(
                 'ALTER TABLE `users_workspaces_object`
                 ADD CONSTRAINT `fk_users_workspaces_object_users`
