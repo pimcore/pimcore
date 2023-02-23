@@ -32,7 +32,7 @@ final class Version20220120121803 extends AbstractMigration
         //disable foreign key checks
         $this->addSql('SET foreign_key_checks = 0');
 
-        foreach(['documents_hardlink', 'documents_link', 'documents_page', 'documents_snippet', 'documents_printpage', 'documents_email', 'documents_newsletter', 'documents_editables', 'documents_translations'] as $table) {
+        foreach(['documents_hardlink', 'documents_link', 'documents_page', 'documents_snippet', 'documents_printpage', 'documents_email', 'documents_newsletter', 'documents_translations'] as $table) {
             if (!$schema->getTable($table)->hasForeignKey('fk_'.$table.'_documents')) {
                 $this->addSql(
                     'ALTER TABLE `'.$table.'`
@@ -43,6 +43,17 @@ final class Version20220120121803 extends AbstractMigration
                     ON DELETE CASCADE;'
                 );
             }
+        }
+
+        if (!$schema->getTable($table)->hasForeignKey('fk_documents_editables_documents')) {
+            $this->addSql(
+                'ALTER TABLE `documents_editables`
+                ADD CONSTRAINT `fk_documents_editables_documents`
+                FOREIGN KEY (`documentId`)
+                REFERENCES `documents` (`id`)
+                ON UPDATE NO ACTION
+                ON DELETE CASCADE;'
+            );
         }
 
         $this->addSql('ALTER TABLE `email_log` CHANGE `documentId` `documentId` int(11) unsigned NULL;');
