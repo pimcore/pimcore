@@ -17,7 +17,6 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Cache;
 use Pimcore\Logger;
-use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model;
 
 /**
