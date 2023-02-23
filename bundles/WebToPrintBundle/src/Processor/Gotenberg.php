@@ -22,10 +22,10 @@ use Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
 use Pimcore\Logger;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
-use Gotenberg\Gotenberg;
+use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
 
-class Chromium extends Processor
+class Gotenberg extends Processor
 {
     /**
      * @internal
@@ -100,7 +100,7 @@ class Chromium extends Processor
 
         $tempFileName = uniqid('web2print_');
 
-        $chromium = Gotenberg::chromium(\Pimcore\Config::getSystemConfiguration('gotenberg')['base_url']);
+        $chromium = GotenbergAPI::chromium(\Pimcore\Config::getSystemConfiguration('gotenberg')['base_url']);
 
         $options = [
             'printBackground', 'landscape', 'preferCssPageSize', 'omitBackground', 'emulatePrintMediaType',
@@ -157,10 +157,10 @@ class Chromium extends Processor
         $request = $chromium->outputFilename($tempFileName)->html(Stream::string('processor.html', $html));
 
         if ($returnFilePath) {
-            $filename = Gotenberg::save($request, PIMCORE_SYSTEM_TEMP_DIRECTORY);
+            $filename = GotenbergAPI::save($request, PIMCORE_SYSTEM_TEMP_DIRECTORY);
             return PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . $filename;
         }
-        $response = Gotenberg::send($request);
+        $response = GotenbergAPI::send($request);
         return $response->getBody()->getContents();
     }
 

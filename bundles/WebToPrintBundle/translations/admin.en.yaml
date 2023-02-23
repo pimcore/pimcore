@@ -54,5 +54,6 @@ web2print_wkhtmltopdf_settings: Wkhtmltopdf Settings
 web2print_wkhtmltopdf_binary: wkhtmltopdf Binary
 web2print_wkhtmltopdf_options: Options
 web2print_wkhtmltopdf_options_txt: One per line with '--' and whitespace between key and value (e.g. --key value)
+web2print_gotenberg_settings: Gotenberg Settings
 web2print_hostname: Hostname
 web2print_protocol: Protocol

@@ -220,12 +220,12 @@ pimcore.bundle.web2print.settings = Class.create({
                 ]
             });
             
-            this.chromiumSettings = Ext.create("Ext.form.FieldSet", {
-                title: t('web2print_chromium_settings'),
+            this.gotenbergSettings = Ext.create("Ext.form.FieldSet", {
+                title: t('web2print_gotenberg_settings'),
                 collapsible: true,
                 collapsed: false,
                 autoHeight: true,
-                hidden: this.getValue("generalTool") != 'chromium',
+                hidden: this.getValue("generalTool") != 'gotenberg',
                 defaultType: 'textfield',
                 defaults: {width: 450},
                 items: [
@@ -233,15 +233,15 @@ pimcore.bundle.web2print.settings = Class.create({
                         xtype: 'textarea',
                         width: 850,
                         height: 200,
-                        fieldLabel: t("web2print_chromium_settings"),
-                        name: 'chromiumSettings',
-                        value: this.getValue("chromiumSettings")
+                        fieldLabel: t("web2print_gotenberg_settings"),
+                        name: 'gotenbergSettings',
+                        value: this.getValue("gotenbergSettings")
                     },{
                         xtype: "displayfield",
-                        fieldLabel: t("web2print_chromium_documentation"),
+                        fieldLabel: t("web2print_gotenberg_documentation"),
                         name: 'documentation',
                         width: 600,
-                        value: t('web2print_chromium_options_documentation'),
+                        value: t('web2print_gotenberg_options_documentation'),
                         autoEl:{
                             tag: 'a',
                             target: '_blank',
@@ -249,16 +249,16 @@ pimcore.bundle.web2print.settings = Class.create({
                         }
                     },{
                         xtype: "displayfield",
-                        fieldLabel: t("web2print_chromium_documentation_additions"),
+                        fieldLabel: t("web2print_gotenberg_documentation_additions"),
                         name: 'additions',
                         width: 850,
-                        value: t('web2print_chromium_documentation_additions_text'),
+                        value: t('web2print_gotenberg_documentation_additions_text'),
                     },{
                         xtype: "displayfield",
-                        fieldLabel: t("web2print_chromium_json_converter"),
+                        fieldLabel: t("web2print_gotenberg_json_converter"),
                         name: 'json_converter',
                         width: 600,
-                        value: t('web2print_chromium_json_converter_link'),
+                        value: t('web2print_gotenberg_json_converter_link'),
                         autoEl:{
                             tag: 'a',
                             target: '_blank',
@@ -311,7 +311,7 @@ pimcore.bundle.web2print.settings = Class.create({
                                 store: [
                                     ["pdfreactor", "PDFreactor"],
                                     ["headlesschrome", "Headless Chrome"],
-                                    ["chromium", "Chromium (Gotenberg)"],
+                                    ["gotenberg", "Gotenberg Chromium"],
                                 ],
                                 mode: "local",
                                 triggerAction: "all",
@@ -319,14 +319,14 @@ pimcore.bundle.web2print.settings = Class.create({
                                     select: function(combo, record) {
                                         this.pdfReactorSettings.hide();
                                         this.headlessChromeSettings.hide();
-                                        this.chromiumSettings.hide();
+                                        this.gotenbergSettings.hide();
 
                                         if(combo.getValue() == "pdfreactor") {
                                             this.pdfReactorSettings.show();
                                         } else if(combo.getValue() == "headlesschrome") {
                                             this.headlessChromeSettings.show();
-                                        } else if(combo.getValue() == "chromium") {
-                                            this.chromiumSettings.show();
+                                        } else if(combo.getValue() == "gotenberg") {
+                                            this.gotenbergSettings.show();
                                         }
 
                                     }.bind(this)
@@ -355,7 +355,7 @@ pimcore.bundle.web2print.settings = Class.create({
                             }
                         ]
                     }
-                    , this.pdfReactorSettings, this.headlessChromeSettings, this.chromiumSettings
+                    , this.pdfReactorSettings, this.headlessChromeSettings, this.gotenbergSettings
                 ]
             });
 
