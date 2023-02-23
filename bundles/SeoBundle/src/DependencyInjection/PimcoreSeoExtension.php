@@ -38,6 +38,8 @@ final class PimcoreSeoExtension extends ConfigurableExtension
         $loader->load('services.yaml');
         $loader->load('maintenance.yaml');
         $loader->load('event_listeners.yaml');
+        $loader->load('redirect_services.yaml');
+        $loader->load('sitemap_services.yaml');
         $this->configureSitemaps($container, $config['sitemaps']);
         $container->setParameter('pimcore_seo.sitemaps', $config['sitemaps']);
         $container->setParameter('pimcore_seo.redirects', $config['redirects']);
