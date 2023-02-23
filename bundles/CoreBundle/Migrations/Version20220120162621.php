@@ -89,7 +89,7 @@ final class Version20220120162621 extends AbstractMigration
         }
 
 
-        if (!$schema->getTable('users_workspaces_document')->hasForeignKey('fk_users_workspaces_object_objects')) {
+        if (!$schema->getTable('users_workspaces_object')->hasForeignKey('fk_users_workspaces_object_objects')) {
             $this->addSql(
                 'ALTER TABLE `users_workspaces_object`
                 ADD CONSTRAINT `fk_users_workspaces_object_objects`
