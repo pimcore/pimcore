@@ -32,22 +32,33 @@ final class Version20220119082511 extends AbstractMigration
         //disable foreign key checks
         $this->addSql('SET foreign_key_checks = 0');
 
-        $this->addSql('ALTER TABLE `gridconfig_favourites` CHANGE `gridConfigId` `gridConfigId` int(11) NOT NULL');
-        $this->addSql('ALTER TABLE `gridconfig_favourites`
-            ADD INDEX `grid_config_id` (`gridConfigId`),
-            ADD CONSTRAINT `fk_gridconfig_favourites_gridconfigs`
-            FOREIGN KEY (`gridConfigId`)
-            REFERENCES `gridconfigs` (`id`)
-            ON UPDATE NO ACTION
-            ON DELETE CASCADE;');
+        $this->addSql('ALTER TABLE `gridconfig_favourites` CHANGE `gridConfigId` `gridConfigId` int(11) NOT NULL;');
 
-        $this->addSql('ALTER TABLE `gridconfig_shares`
-            ADD INDEX `grid_config_id` (`gridConfigId`),
-            ADD CONSTRAINT `fk_gridconfig_shares_gridconfigs`
+        if(!$schema->getTable('gridconfig_favourites')->hasIndex('grid_config_id')) {
+            $this->addSql('ALTER TABLE `gridconfig_favourites` ADD INDEX `grid_config_id` (`gridConfigId`);');
+        }
+
+        if (!$schema->getTable('gridconfig_favourites')->hasForeignKey('fk_gridconfig_favourites_gridconfigs')) {
+            $this->addSql('ALTER TABLE `gridconfig_favourites` ADD CONSTRAINT `fk_gridconfig_favourites_gridconfigs`
             FOREIGN KEY (`gridConfigId`)
             REFERENCES `gridconfigs` (`id`)
             ON UPDATE NO ACTION
             ON DELETE CASCADE;');
+        }
+
+        if (!$schema->getTable('gridconfig_shares')->hasIndex('grid_config_id')) {
+            $this->addSql('ALTER TABLE `gridconfig_shares` ADD INDEX `grid_config_id` (`gridConfigId`)');
+        }
+
+        if (!$schema->getTable('gridconfig_shares')->hasForeignKey('fk_gridconfig_shares_gridconfigs')) {
+            $this->addSql(
+                'ALTER TABLE `gridconfig_shares` ADD CONSTRAINT `fk_gridconfig_shares_gridconfigs`
+                FOREIGN KEY (`gridConfigId`)
+                REFERENCES `gridconfigs` (`id`)
+                ON UPDATE NO ACTION
+                ON DELETE CASCADE;'
+            );
+        }
 
         //enable foreign key checks
         $this->addSql('SET foreign_key_checks = 1');
@@ -55,13 +66,22 @@ final class Version20220119082511 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `gridconfig_favourites`
-            DROP INDEX IF EXISTS `grid_config_id`,
-            DROP FOREIGN KEY IF EXISTS `fk_gridconfig_favourites_gridconfigs`,
-            CHANGE `gridConfigId` `gridConfigId` int(11) NULL;');
+        if ($schema->getTable('gridconfig_favourites')->hasIndex('grid_config_id')) {
+            $this->addSql('ALTER TABLE `gridconfig_favourites` DROP INDEX IF EXISTS `grid_config_id`;');
+        }
 
-        $this->addSql('ALTER TABLE `gridconfig_shares`
-            DROP INDEX IF EXISTS `grid_config_id`,
-            DROP FOREIGN KEY IF EXISTS `fk_gridconfig_shares_gridconfigs`;');
+        if ($schema->getTable('gridconfig_favourites')->hasForeignKey('fk_gridconfig_favourites_gridconfigs')) {
+            $this->addSql('ALTER TABLE `gridconfig_favourites` DROP FOREIGN KEY IF EXISTS `fk_gridconfig_favourites_gridconfigs`;');
+        }
+
+        $this->addSql('ALTER TABLE `gridconfig_favourites` CHANGE `gridConfigId` `gridConfigId` int(11) NULL;');
+
+        if ($schema->getTable('gridconfig_shares')->hasIndex('grid_config_id')) {
+            $this->addSql('ALTER TABLE `gridconfig_shares` DROP INDEX IF EXISTS `grid_config_id`;');
+        }
+
+        if ($schema->getTable('gridconfig_shares')->hasForeignKey('fk_gridconfig_favourites_gridconfigs')) {
+            $this->addSql('ALTER TABLE `gridconfig_shares` DROP FOREIGN KEY IF EXISTS `fk_gridconfig_shares_gridconfigs`;');
+        }
     }
 }
