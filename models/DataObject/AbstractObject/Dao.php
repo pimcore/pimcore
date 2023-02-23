@@ -120,7 +120,7 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'objects', $data);
+        Helper::upsert($this->db, 'objects', $data, $this->getPrimaryKey('objects'));
 
         // tree_locks
         $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'object']);

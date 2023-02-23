@@ -27,6 +27,8 @@ abstract class AbstractDao implements DaoInterface
 
     const CACHEKEY = 'system_resource_columns_';
 
+    const CACHE_KEY_PRIMARY_KEY = 'system_resource_primary_key_columns_';
+
     /**
      * @var Connection
      */
@@ -55,25 +57,55 @@ abstract class AbstractDao implements DaoInterface
     /**
      * @return string[]
      */
+    public function getPrimaryKey(string $table, bool $cache = true): array
+    {
+        $cacheKeyPrimaryKey = self::CACHE_KEY_PRIMARY_KEY . $table;
+
+        if (RuntimeCache::isRegistered($cacheKeyPrimaryKey)) {
+            $primaryKeyColumns = RuntimeCache::get($cacheKeyPrimaryKey);
+        } else {
+            $primaryKeyColumns = Cache::load($cacheKeyPrimaryKey);
+
+            if (!$primaryKeyColumns || !$cache) {
+                $this->getValidTableColumns($table, $cache);
+                $primaryKeyColumns = RuntimeCache::get($cacheKeyPrimaryKey);
+            }
+        }
+
+        return $primaryKeyColumns;
+    }
+
+    /**
+     * @return string[]
+     */
     public function getValidTableColumns(string $table, bool $cache = true): array
     {
         $cacheKey = self::CACHEKEY . $table;
+        $cacheKeyPrimaryKey = self::CACHE_KEY_PRIMARY_KEY . $table;
 
         if (RuntimeCache::isRegistered($cacheKey)) {
             $columns = RuntimeCache::get($cacheKey);
         } else {
             $columns = Cache::load($cacheKey);
+            $primaryKeyColumns = Cache::load($cacheKeyPrimaryKey);
 
-            if (!$columns || !$cache) {
+            if (!$columns || !$cache || !$primaryKeyColumns) {
                 $columns = [];
+                $primaryKeyColumns = [];
                 $data = $this->db->fetchAllAssociative('SHOW COLUMNS FROM ' . $table);
                 foreach ($data as $d) {
-                    $columns[] = $d['Field'];
+                    $fieldName = $d['Field'];
+                    $columns[] = $fieldName;
+                    if($d['Key'] === 'PRI') {
+                        $primaryKeyColumns[] = $fieldName;
+                    }
                 }
                 Cache::save($columns, $cacheKey, ['system', 'resource'], null, 997);
+                Cache::save($primaryKeyColumns, $cacheKeyPrimaryKey, ['system', 'resource'], null, 997);
             }
 
             RuntimeCache::set($cacheKey, $columns);
+            RuntimeCache::set($cacheKeyPrimaryKey, $primaryKeyColumns);
         }
 
         return $columns;
