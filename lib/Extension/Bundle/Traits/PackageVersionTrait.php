@@ -21,8 +21,6 @@ use Composer\InstalledVersions;
 use Pimcore\Composer\PackageInfo;
 
 /**
- * @internal
- *
  * Exposes a simple getVersion() and getComposerPackageName() implementation by looking up the installed versions
  * via composer's version info which is generated on composer install.
  */
@@ -30,8 +28,6 @@ trait PackageVersionTrait
 {
     /**
      * Returns the composer package name used to resolve the version
-     *
-     * @return string
      */
     public function getComposerPackageName(): string
     {
