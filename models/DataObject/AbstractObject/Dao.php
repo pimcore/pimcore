@@ -657,7 +657,7 @@ class Dao extends Model\Element\Dao
     public function saveIndex(int $index): void
     {
         $this->db->update('objects', [
-            'index' => $index,
+            $this->db->quoteIdentifier('index') => $index,
         ], [
             'id' => $this->model->getId(),
         ]);

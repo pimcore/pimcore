@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Analytics\Code;
+namespace Pimcore\Bundle\PersonalizationBundle\Targeting\Code;
 
 /**
  * Represents a single template block. Parts are represented as array and concatenated
