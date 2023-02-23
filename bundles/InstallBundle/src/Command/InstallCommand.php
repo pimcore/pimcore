@@ -111,6 +111,11 @@ class InstallCommand extends Command
                 'default' => '',
                 'group' => 'db_credentials',
             ],
+            'install-bundles' => [
+                'description' => sprintf('Installable bundles: %s', $this->generateBundleDescription()),
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'group' => 'bundles'
+            ],
         ];
 
         foreach (array_keys($options) as $name) {
@@ -206,6 +211,10 @@ class InstallCommand extends Command
         if ($input->getOption('skip-database-data-dump')) {
             $this->installer->setImportDatabaseDataDump(false);
         }
+        if ($input->getOption('install-bundles')) {
+           $this->installer->setBundlesToInstall(explode(',', $input->getOption('install-bundles')));
+        }
+
 
         $this->io = new PimcoreStyle($input, $output);
 
@@ -296,6 +305,10 @@ class InstallCommand extends Command
             return false;
         }
 
+        if('bundles' === ($config['group'] ?? null)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -304,6 +317,11 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if (!$input->getOption('install-bundles') && $input->isInteractive() && $this->io->confirm('Do you want to install bundles?', false)) {
+            $bundles = $this->io->choice('Which bundle(s) do you want to install? You can choose multiple e.g. 0,1,2,3', array_keys(Installer::INSTALLABLE_BUNDLES), null, true);
+            $this->installer->setBundlesToInstall($bundles);
+        }
+
         if ($input->isInteractive() && !$this->io->confirm('This will install Pimcore with the given settings. Do you want to continue?')) {
             return 0;
         }
@@ -407,5 +425,10 @@ class InstallCommand extends Command
             $this->io->getErrorStyle()->write($errorResults);
             $this->io->getErrorStyle()->newLine(2);
         }
+    }
+
+    private function generateBundleDescription(): string
+    {
+        return implode(',', array_keys(Installer::INSTALLABLE_BUNDLES));
     }
 }
