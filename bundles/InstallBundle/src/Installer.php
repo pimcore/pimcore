@@ -115,6 +115,7 @@ class Installer
 
     /**
      * Bundles that will be installed
+     *
      * @var array
      */
     private array $bundlesToInstall =  [];
@@ -179,8 +180,8 @@ class Installer
     public function setBundlesToInstall(array $bundlesToInstall): void
     {
         // map and filter the bundles
-        $bundlesToInstall = array_filter(array_map(static function(string $bundle) {
-           return self::INSTALLABLE_BUNDLES[$bundle] ?? null;
+        $bundlesToInstall = array_filter(array_map(static function (string $bundle) {
+            return self::INSTALLABLE_BUNDLES[$bundle] ?? null;
         }, $bundlesToInstall));
         $this->bundlesToInstall = $bundlesToInstall;
     }
@@ -426,7 +427,7 @@ class Installer
         $this->dispatchStepEvent('install_classes');
         $this->installClasses();
 
-        if(!empty($this->bundlesToInstall)) {
+        if (!empty($this->bundlesToInstall)) {
             $this->dispatchStepEvent('install_bundles');
             $this->installBundles();
         }
@@ -510,8 +511,8 @@ class Installer
     {
         $writer = new BundleWriter();
         $writer->addBundlesToConfig($this->bundlesToInstall);
-        foreach($this->bundlesToInstall as $bundle) {
-            if(in_array($bundle, self::INSTALLABLE_BUNDLES) && !$this->isBundleInstalled($bundle)) {
+        foreach ($this->bundlesToInstall as $bundle) {
+            if (in_array($bundle, self::INSTALLABLE_BUNDLES) && !$this->isBundleInstalled($bundle)) {
                 $this->runCommand([
                     'pimcore:bundle:install',
                     $bundle,

@@ -114,7 +114,7 @@ class InstallCommand extends Command
             'install-bundles' => [
                 'description' => sprintf('Installable bundles: %s', $this->generateBundleDescription()),
                 'mode' => InputOption::VALUE_OPTIONAL,
-                'group' => 'bundles'
+                'group' => 'bundles',
             ],
         ];
 
@@ -212,9 +212,8 @@ class InstallCommand extends Command
             $this->installer->setImportDatabaseDataDump(false);
         }
         if ($input->getOption('install-bundles')) {
-           $this->installer->setBundlesToInstall(explode(',', $input->getOption('install-bundles')));
+            $this->installer->setBundlesToInstall(explode(',', $input->getOption('install-bundles')));
         }
-
 
         $this->io = new PimcoreStyle($input, $output);
 
@@ -305,7 +304,7 @@ class InstallCommand extends Command
             return false;
         }
 
-        if('bundles' === ($config['group'] ?? null)) {
+        if ('bundles' === ($config['group'] ?? null)) {
             return false;
         }
 

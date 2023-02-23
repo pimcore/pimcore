@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Bundle\InstallBundle\BundleConfig;
 
 use Pimcore\Bundle\InstallBundle\Installer;
@@ -16,7 +29,7 @@ class BundleWriter
             throw new FileNotFoundException("File \"$bundlesPhpFile\" not found!");
         }
         $bundlesToInstall = [];
-        foreach($bundles as $bundle) {
+        foreach ($bundles as $bundle) {
             if (in_array($bundle, Installer::INSTALLABLE_BUNDLES)) {
                 $bundlesToInstall[$bundle] = ['all' => true];
             }
@@ -25,7 +38,7 @@ class BundleWriter
         // get installed bundles, they have to stay in the bundles.php, but won't be installed a second time
         $enabledBundles = include $bundlesPhpFile;
 
-        if(is_array($enabledBundles) && !empty($enabledBundles)) {
+        if (is_array($enabledBundles) && !empty($enabledBundles)) {
             $bundlesToInstall = array_merge($bundlesToInstall, $enabledBundles);
         }
 
@@ -47,5 +60,4 @@ class BundleWriter
 
         return $contents;
     }
-
 }
