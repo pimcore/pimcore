@@ -483,7 +483,7 @@ pimcore.layout.toolbar = Class.create({
                      handler: this.websiteSettings
                  });
              }
- 
+
              if (user.isAllowed("users") && perspectiveCfg.inToolbar("settings.users")) {
                  var userItems = [];
  
@@ -1161,17 +1161,6 @@ pimcore.layout.toolbar = Class.create({
              pimcore.globalmanager.add("settings_website", new pimcore.settings.website());
          }
      },
- 
-     reportSettings: function () {
- 
-         try {
-             pimcore.globalmanager.get("reports_settings").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("reports_settings", new pimcore.report.settings());
-         }
-     },
- 
      editClassificationStoreConfig: function () {
          try {
              pimcore.globalmanager.get("classificationstore_config").activate();

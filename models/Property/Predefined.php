@@ -225,7 +225,7 @@ final class Predefined extends Model\AbstractModel
         return $this->modificationDate;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;

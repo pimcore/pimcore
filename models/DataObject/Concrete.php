@@ -772,7 +772,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * load lazy loaded fields before cloning
      */
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->class = null;

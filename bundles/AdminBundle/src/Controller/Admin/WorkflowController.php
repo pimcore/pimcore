@@ -365,7 +365,7 @@ class WorkflowController extends AdminController implements KernelControllerEven
      *
      * @return T
      */
-    protected function getLatestVersion(mixed $element)
+    protected function getLatestVersion(mixed $element): mixed
     {
         if (
             $element instanceof Document\Folder

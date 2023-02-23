@@ -56,9 +56,6 @@ regex_validation: Regular Expression Validation
 test_string: Test string
 regex: RegEx
 regex_flags: RegEx Flags
-code_before_init: Code before init
-code_after_pageview: Code after pageview
-code_before_pageview: Code before pageview
 select_presetting: Select a presetting
 good: Good
 best: Best
@@ -79,7 +76,6 @@ login_as_this_user_description: >-
 login_as_this_user: Login as this user in a different browser
 allowed_types_to_create: Allowed types to create
 defaults_to_all: Defaults to all
-analytics_universal_configuration: 'Universal/GTag Analytics Configuration eg. {''cookieDomain'': ''example.com''}'
 use_different_email_delivery_settings: Use different email delivery settings for newsletters
 action_scope: Action Scope
 hit: Hit
@@ -91,8 +87,6 @@ add_language: Add Language
 default_language: Default language
 wildcards_are_supported: Wildcards are supported
 localization_and_internationalization: Localization &amp; Internationalization
-code_settings: Code Settings
-advanced_integration: Advanced Integration
 assign_target_group_weight: Weight
 target_group: Target Group
 target_group_multiselect: Target Group Multiselect
@@ -114,9 +108,6 @@ redirects_import_updated: Updated
 redirects_import_errored: Errored
 redirects_import_errors: Errors
 redirects_import_error_line: Line
-analytics_gtag_code: Use the gtag code for analytics
-analytics_retargeting_code: Use the retargeting-code for analytics (dc.js)
-analytics_asynchronous_code: Use the asynchronous code for analytics (ga.js)
 newsletter_active: Newsletter Active
 newsletter_confirmed: Newsletter Confirmed
 gender: Gender
@@ -161,10 +152,6 @@ setframerate: Set Framerate
 source_site: Source-Site
 target_site: Target-Site
 source_entire_url: Entire URL as Source
-analytics_internalid: GA Internal ID
-analytics_settings_description: >-
-    To use the complete Google Analytics integration, please configure the Google
-    API Service Account in System Settings
 upload_path: Upload Path
 selection_options: Selection Options
 expiry: Expiry
@@ -181,10 +168,6 @@ beginning: Beginning
 element_css_selector: Element (CSS Selector)
 insert_position: Insert Position
 robots_txt_exists_on_filesystem: The robots.txt exists already in the document-root on the filesystem
-only_required_for_reporting_in_pimcore_but_not_for_code_integration: >-
-    The following is only required if you want to use the reporting
-    functionalities in pimcore, but this is not required for the code
-    integration.
 save_error: Cannot save data
 all_roles: All Roles
 add_role: Add Role
@@ -275,12 +258,6 @@ geopolygon: Geographic Polygon
 geopolyline: Geographic Polyline
 geobounds: Geographic Bounds
 sure_to_install_unstable_update: Are you sure that you want to install a potential not working version?
-analytics_accountid: Account-ID (eg. 1234567)
-verification_filename_text: Verification Filename<br /><small>required for verification</small>
-analytics_notice: >-
-    Please read the documentation about the Google Analytics integration first,
-    for the advanced mode you have to modify the Google Analytics settings.
-analytics_trackid_code: Track-ID (eg. UA-XXXXX-X)<br /><small>required for code integration</small>
 multiselect: Multiselection
 handler: Handler
 invisible: Invisible
@@ -474,9 +451,6 @@ preview_width: Preview Width
 preview_height: Preview Height
 url_width: URL Width
 externalImage: External Image
-search_console_settings_description: >-
-    To use the Google Search Console integration, please configure the Google API
-    Service Account in System Settings
 fieldcontainer: Field Container
 store: Store
 edit_configuration: Edit Store Configuration

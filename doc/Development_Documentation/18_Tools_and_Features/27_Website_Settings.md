@@ -37,11 +37,16 @@ Usage in a controller:
 
 ```php
 <?php
+
+use Symfony\Component\HttpFoundation\Response;
+
 class TestController
 {
-    public function testAction(array $websiteConfig)
+    public function testAction(array $websiteConfig): Response
     {
         $recaptchaKeyPublic = $websiteConfig['recaptchaPublic'];
+        
+        // ...
     }    
 }
 ```
@@ -52,9 +57,12 @@ If you want to change the value of a website setting from your PHP script, for e
 
 ```php
 <?php
+
+use Symfony\Component\HttpFoundation\Response;
+
 class TestController
 {
-    public function testAction()
+    public function testAction(): Response
     {
         // get the "somenumber" setting for "de"
         // if the property does not exist you will get the setting with not language provided
@@ -65,6 +73,8 @@ class TestController
         $newnumber = $currentnumber + 1;
         $somesetting->setData($newnumber);
         $somesetting->save();
+        
+        // ...
     }
 }
 ```

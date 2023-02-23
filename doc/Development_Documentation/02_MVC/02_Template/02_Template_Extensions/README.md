@@ -214,14 +214,16 @@ index.html.twig
 
 IndexController.php (whatever controller / method is designated for /some/other/document in the document tree)
 ```php
-public function otherDocumentAction(Request $request) {
+public function otherDocumentAction(Request $request): array
+{
     return ['parameterToPass' => $request->get('parameterToPass')];
 }
 ```
 
 more Convenient way
 ```php
-public function otherDocumentAction(Request $request) {
+public function otherDocumentAction(Request $request): Response
+{
     return $this->render(":Default:someOtherDocument.html.twig", ['parameterToPass' => $request->get('parameterToPass')]);
 }
 ```
