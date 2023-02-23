@@ -30,12 +30,9 @@ class CustomRenderer implements DynamicTextLabelInterface
 {
     /**
      * @param string $data as provided in the class definition
-     * @param Concrete|null $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function renderLayoutText($data, $object, $params) {
+    public function renderLayoutText(string $data, ?Concrete $object, array $params): string
+    {
         $text = '<h1 style="color: #F00;">Last reload: ' . date('c') . '</h1>' .
             '<h2>Additional Data: ' . $data . '</h2>';
 

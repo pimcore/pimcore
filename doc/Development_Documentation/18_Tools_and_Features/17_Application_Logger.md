@@ -37,14 +37,14 @@ use Pimcore\Controller\FrontendController;
 class TestController extends FrontendController
 {
     // injected as action argument (controller needs to be registered as service)
-    public function testAction(ApplicationLogger $logger)
+    public function testAction(ApplicationLogger $logger): void
     {
         $logger->error('Your error message');
         $logger->alert('Your alert');
         $logger->debug('Your debug message', ['foo' => 'bar']); // additional context information
     }
     
-    public function anotherAction()
+    public function anotherAction(): void
     {
         // fetched from container
         $logger = $this->get(ApplicationLogger::class);
@@ -158,17 +158,14 @@ use Psr\Log\LoggerInterface;
 // via DI
 class TestController
 {
-    /**
-     * @var LoggerInterface 
-     */
-    private $logger;
+    private LoggerInterface $logger;
     
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;   
     }   
     
-    public function testAction()
+    public function testAction(): void
     {
         $this->logger->error('Your error message');
     }   
@@ -211,10 +208,11 @@ namespace App\Controller;
 use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
 use Pimcore\Bundle\ApplicationLoggerBundle\FileObject;
 use Pimcore\Model\DataObject\AbstractObject;
+use Symfony\Component\HttpFoundation\Response;
 
 class TestController
 {
-    public function testAction(ApplicationLogger $logger)
+    public function testAction(ApplicationLogger $logger): Response
     {
         $fileObject = new FileObject('some interesting data');
         $myObject   = DataObject::getById(73);
@@ -225,6 +223,8 @@ class TestController
             'component'     => 'different component',
             'source'        => 'Stack trace or context-relevant information' // optional, if empty, gets automatically filled with class:method:line from where the log got executed
         ]);
+        
+        // ...
     }
 }
 ```

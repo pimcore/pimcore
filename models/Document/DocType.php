@@ -269,7 +269,7 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;

@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
-use Pimcore\Analytics\Google\Config\SiteConfigProvider;
-use Pimcore\Analytics\Google\Tracker as AnalyticsGoogleTracker;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
@@ -112,7 +110,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('templating_twig.yaml');
         $loader->load('profiler.yaml');
         $loader->load('migrations.yaml');
-        $loader->load('analytics.yaml');
         $loader->load('aliases.yaml');
         $loader->load('image_optimizers.yaml');
         $loader->load('maintenance.yaml');
@@ -128,7 +125,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureTranslations($container, $config['translations']);
         $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
-        $this->configureGoogleAnalyticsFallbackServiceLocator($container);
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
@@ -240,25 +236,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
 
         $definition->replaceArgument(1, $factoryMapping);
-    }
-
-    /**
-     * Creates service locator which is used from static Pimcore\Google\Analytics class
-     */
-    private function configureGoogleAnalyticsFallbackServiceLocator(ContainerBuilder $container): void
-    {
-        $services = [
-            AnalyticsGoogleTracker::class,
-            SiteConfigProvider::class,
-        ];
-
-        $mapping = [];
-        foreach ($services as $service) {
-            $mapping[$service] = new Reference($service);
-        }
-
-        $serviceLocator = $container->getDefinition('pimcore.analytics.google.fallback_service_locator');
-        $serviceLocator->setArguments([$mapping]);
     }
 
     /**

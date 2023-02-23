@@ -47,30 +47,19 @@ namespace App\Model;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
 
-class Vote extends AbstractModel {
+class Vote extends AbstractModel
+{
+    public ?int $id = null;
 
-    /**
-     * @var int
-     */
-    public $id;
+    public ?string $username = null;
 
-    /**
-     * @var string
-     */
-    public $username;
-
-    /**
-     * @var int
-     */
-    public $score;
+    public ?int $score = null;
 
     /**
      * get score by id
-     *
-     * @param int $id
-     * @return null|self
      */
-    public static function getById($id) {
+    public static function getById(int $id): ?self
+    {
         try {
             $obj = new self;
             $obj->getDao()->getById($id);
@@ -83,45 +72,33 @@ class Vote extends AbstractModel {
         return null;
     }
 
-    /**
-     * @param int $score
-     */
-    public function setScore($score) {
+    public function setScore(?int $score): void
+    {
         $this->score = $score;
     }
 
-    /**
-     * @return int
-     */
-    public function getScore() {
+    public function getScore(): ?int
+    {
         return $this->score;
     }
 
-    /**
-     * @param string $username
-     */
-    public function setUsername($username) {
+    public function setUsername(?string $username): void
+    {
         $this->username = $username;
     }
 
-    /**
-     * @return string
-     */
-    public function getUsername() {
+    public function getUsername(): ?string
+    {
         return $this->username;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id) {
+    public function setId(?int $id): void
+    {
         $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
-    public function getId() {
+    public function getId(): ?int
+    {
         return $this->id;
     }
 }
@@ -150,25 +127,24 @@ namespace App\Model\Vote;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Exception\NotFoundException;
 
-class Dao extends AbstractDao {
-
-    protected $tableName = 'votes';
+class Dao extends AbstractDao
+{
+    protected string $tableName = 'votes';
 
     /**
      * get vote by id
      *
-     * @param int|null $id
      * @throws \Exception
      */
-    public function getById($id = null) {
-
-        if ($id != null)  {
+    public function getById(?int $id = null): void
+    {
+        if ($id !== null)  {
             $this->model->setId($id);
         }
 
         $data = $this->db->fetchAssociative('SELECT * FROM '.$this->tableName.' WHERE id = ?', [$this->model->getId()]);
 
-        if(!$data["id"]) {
+        if(!$data) {
             throw new NotFoundException("Object with the ID " . $this->model->getId() . " doesn't exists");
         }
 
@@ -178,33 +154,37 @@ class Dao extends AbstractDao {
     /**
      * save vote
      */
-    public function save() {
+    public function save(): void
+    {
         $vars = get_object_vars($this->model);
 
         $buffer = [];
 
         $validColumns = $this->getValidTableColumns($this->tableName);
 
-        if(count($vars))
+        if (count($vars)) {
             foreach ($vars as $k => $v) {
-
-                if(!in_array($k, $validColumns))
+                if (!in_array($k, $validColumns)) {
                     continue;
+                }
 
                 $getter = "get" . ucfirst($k);
 
-                if(!is_callable([$this->model, $getter]))
+                if (!is_callable([$this->model, $getter])) {
                     continue;
+                }
 
                 $value = $this->model->$getter();
 
-                if(is_bool($value))
+                if (is_bool($value)) {
                     $value = (int)$value;
+                }
 
                 $buffer[$k] = $value;
             }
+        }
 
-        if($this->model->getId() !== null) {
+        if ($this->model->getId() !== null) {
             $this->db->update($this->tableName, $buffer, ["id" => $this->model->getId()]);
             return;
         }
@@ -216,7 +196,8 @@ class Dao extends AbstractDao {
     /**
      * delete vote
      */
-    public function delete() {
+    public function delete(): void
+    {
         $this->db->delete($this->tableName, ["id" => $this->model->getId()]);
     }
 
@@ -256,20 +237,13 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 {
     /**
      * List of Votes.
-     *
-     * @var array
      */
-    public $data = null;
+    public ?array $data = null;
 
-    /**
-     * @var string
-     */
-    public $locale;
+    public ?string $locale = null;
 
     /**
      * get total count.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -278,13 +252,8 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * get all items.
-     *
-     * @param int $offset
-     * @param int $itemCountPerPage
-     *
-     * @return mixed
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
@@ -297,27 +266,23 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return $this
      */
-    public function getPaginatorAdapter()
+    public function getPaginatorAdapter(): static
     {
         return $this;
     }
 
     /**
      * Set Locale.
-     *
-     * @param string $locale
      */
-    public function setLocale($locale): void
+    public function setLocale(?string $locale): void
     {
         $this->locale = $locale;
     }
 
     /**
      * Get Locale.
-     *
-     * @return string
      */
-    public function getLocale(): string
+    public function getLocale(): ?string
     {
         return $this->locale;
     }
@@ -337,8 +302,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * current.
-     *
-     * @return mixed
      */
     public function current(): mixed
     {
@@ -349,8 +312,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * key.
-     *
-     * @return mixed
      */
     public function key(): mixed
     {
@@ -361,8 +322,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * next.
-     *
-     * @return void
      */
     public function next(): void
     {
@@ -372,8 +331,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
 
     /**
      * valid.
-     *
-     * @return bool
      */
     public function valid(): bool
     {
@@ -403,15 +360,10 @@ class Dao extends Listing\Dao\AbstractDao
 {
     use QueryBuilderHelperTrait;
 
-    /**
-     * @var string
-     */
-    protected $tableName = 'votes';
+    protected string $tableName = 'votes';
 
     /**
      * Get tableName, either for localized or non-localized data.
-     *
-     * @return string
      *
      * @throws \Exception
      */
@@ -420,10 +372,7 @@ class Dao extends Listing\Dao\AbstractDao
         return $this->tableName;
     }
 
-    /**
-     * @return DoctrineQueryBuilder
-     */
-    public function getQueryBuilder()
+    public function getQueryBuilder(): DoctrineQueryBuilder
     {
         $queryBuilder = $this->db->createQueryBuilder();
         $field = $this->getTableName().'.id';
@@ -440,7 +389,7 @@ class Dao extends Listing\Dao\AbstractDao
      *
      * @return Model\Vote[]
      */
-    public function load()
+    public function load(): array
     {
         // load id's
         $list = $this->loadIdList();
@@ -463,7 +412,7 @@ class Dao extends Listing\Dao\AbstractDao
      * @return int[]
      * @throws \Exception
      */
-    public function loadIdList()
+    public function loadIdList(): array
     {
         $query = $this->getQueryBuilder();
         $objectIds = $this->db->fetchFirstColumn((string) $query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
@@ -475,11 +424,9 @@ class Dao extends Listing\Dao\AbstractDao
     /**
      * Get Count.
      *
-     * @return int
-     *
      * @throws \Exception
      */
-    public function getCount()
+    public function getCount(): int
     {
         if ($this->model->isLoaded()) {
             return count($this->model->getData());
@@ -493,11 +440,9 @@ class Dao extends Listing\Dao\AbstractDao
     /**
      * Get Total Count.
      *
-     * @return int
-     *
      * @throws \Exception
      */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.id');

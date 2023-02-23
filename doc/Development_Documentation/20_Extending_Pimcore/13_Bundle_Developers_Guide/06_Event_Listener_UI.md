@@ -27,7 +27,7 @@ use Pimcore\Event\BundleManager\PathsEvent;
 
 class PimcoreAdminListener
 {
-    public function addCSSFiles(PathsEvent $event)
+    public function addCSSFiles(PathsEvent $event): void
     {
         $event->setPaths(
             array_merge(
@@ -39,7 +39,7 @@ class PimcoreAdminListener
         );
     }
 
-    public function addJSFiles(PathsEvent $event)
+    public function addJSFiles(PathsEvent $event): void
     {
         $event->setPaths(
             array_merge(

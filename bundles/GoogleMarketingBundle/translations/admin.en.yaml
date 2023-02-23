@@ -1,0 +1,28 @@
+search_console_settings_description: >-
+    To use the Google Search Console integration, please configure the Google API
+    Service Account in System Settings
+verification_filename_text: Verification Filename<br /><small>required for verification</small>
+data_explorer: Data Explorer
+visitor_overview: Visitor Overview
+analytics_notice: >-
+    Please read the documentation about the Google Analytics integration first,
+    for the advanced mode you have to modify the Google Analytics settings.
+analytics_settings_description: >-
+    To use the complete Google Analytics integration, please configure the Google
+    API Service Account in System Settings
+only_required_for_reporting_in_pimcore_but_not_for_code_integration: >-
+    The following is only required if you want to use the reporting
+    functionalities in pimcore, but this is not required for the code
+    integration.
+analytics_trackid_code: Track-ID (eg. UA-XXXXX-X)<br /><small>required for code integration</small>
+code_settings: Code Settings
+analytics_universal_configuration: 'Universal/GTag Analytics Configuration eg. {''cookieDomain'': ''example.com''}'
+code_before_init: Code before init
+code_after_pageview: Code after pageview
+code_before_pageview: Code before pageview
+analytics_gtag_code: Use the gtag code for analytics
+analytics_retargeting_code: Use the retargeting-code for analytics (dc.js)
+analytics_asynchronous_code: Use the asynchronous code for analytics (ga.js)
+advanced_integration: Advanced Integration
+analytics_accountid: Account-ID (eg. 1234567)
+analytics_internalid: GA Internal ID

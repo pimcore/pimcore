@@ -15,6 +15,7 @@
   "require": {
     "pimcore/pimcore": "^11.0",
     "pimcore/personalization-bundle": "^1.0",
+    "pimcore/google-marketing-bundle": "dev-main",
     "knplabs/knp-paginator-bundle": "^6.0.0"
   },
   "require-dev": {

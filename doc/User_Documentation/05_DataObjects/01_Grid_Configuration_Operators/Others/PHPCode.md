@@ -27,7 +27,7 @@ class OperatorSample extends AbstractOperator
         $this->additionalData = $config->additionalData;
     }
 
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): ResultContainer
     {
         $children = $this->getChildren();
 
