@@ -77,11 +77,11 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         } elseif (isset($this->config['format']) && $this->config['format']) {
             $format = $this->config['format'];
         } else {
-            $format = 'Y-m-d\TH:i:sO'; // ISO8601
+            $format = \DateTimeInterface::ATOM;
         }
 
         if ($this->date instanceof \DateTimeInterface) {
-            return $this->date->formatLocalized($format);
+            return $this->date->isoFormat($format);
         }
     }
 
