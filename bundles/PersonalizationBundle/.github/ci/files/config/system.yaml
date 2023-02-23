@@ -31,12 +31,6 @@ pimcore:
         icc_cmyk_profile: ''
         hide_edit_image: false
         disable_tree_preview: false
-    services:
-        google:
-            client_id: ''
-            email: ''
-            simple_api_key: ''
-            browser_api_key: ''
     full_page_cache:
         enabled: false
         lifetime: null
