@@ -33,7 +33,7 @@ class Gotenberg extends Processor
     protected function buildPdf(PrintAbstract $document, object $config): string
     {
         $web2printConfig = Config::getWeb2PrintConfig();
-        $web2printConfig = $web2printConfig['chromiumSettings'];
+        $web2printConfig = $web2printConfig['gotenbergSettings'];
         $web2printConfig = json_decode($web2printConfig, true);
 
         $params = ['document' => $document];
