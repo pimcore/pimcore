@@ -87,7 +87,7 @@ final class Version20220120121803 extends AbstractMigration
     {
         foreach (['documents_hardlink', 'documents_link', 'documents_page', 'documents_snippet', 'documents_printpage', 'documents_email', 'email_log', 'documents_newsletter', 'documents_editables', 'documents_translations'] as $table) {
             if ($schema->getTable($table)->hasForeignKey('fk_'.$table.'_documents')) {
-                $this->addSql('ALTER TABLE `documents_hardlink` DROP FOREIGN KEY IF EXISTS `fk_'.$table.'_documents`;');
+                $this->addSql('ALTER TABLE `'.$table.'` DROP FOREIGN KEY IF EXISTS `fk_'.$table.'_documents`;');
             }
         }
 
