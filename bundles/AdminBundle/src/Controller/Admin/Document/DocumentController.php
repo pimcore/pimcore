@@ -564,7 +564,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         return $this->adminJson(['success' => $success]);
     }
 
-    private function firePostMoveEvent(Document $document, Document $oldDocument, string $oldPath)
+    private function firePostMoveEvent(Document $document, Document $oldDocument, string $oldPath) : void
     {
         $arguments = [
             'oldPath' => $oldPath,
