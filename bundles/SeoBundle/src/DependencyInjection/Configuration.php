@@ -90,7 +90,7 @@ class Configuration implements ConfigurationInterface
                                 ->prototype('scalar')
                             ->end()
                         ->end()
-                        ->booleanNode('create_redirect_on_document_move')
+                        ->booleanNode('create_redirect')
                             ->defaultFalse()
                         ->end()
                     ->end()

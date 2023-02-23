@@ -200,11 +200,11 @@ pimcore:
 - [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
 - [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticatePlaintext()` has been removed.
 - [DataObjects][CSV Export] Changed encoding of table data-types to `json_encode` from `base64_encoded`.
-- [Documents] The Message-Box whether a redirect should be created when a document is moved in the tree has been removed. This can now be set with the following configuration:
+- [Documents] The Message-Box whether a redirect should be created when a document is moved in the tree has been removed. This can now be set with the following configuration. This also counts for URLSlugs and pretty URLs
 ```yaml
 pimcore_seo:
     redirects:
-        create_redirect_on_document_move: true
+        create_redirect: true
 ```
 
 ## 10.6.0
