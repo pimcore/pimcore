@@ -25,11 +25,6 @@ final class Config
     /**
      * @deprecated Will be removed in Pimcore 11
      */
-    private const STORAGE_DIR = 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS';
-
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
     private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_CUSTOM_VIEWS';
 
     private const CONFIG_ID = 'custom_views';
@@ -62,7 +57,7 @@ final class Config
                 return null;
             };
 
-            $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($containerConfig, self::CONFIG_ID, self::STORAGE_DIR);
+            $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($containerConfig, self::CONFIG_ID, 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS');
             $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($containerConfig, self::CONFIG_ID, self::WRITE_TARGET);
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
@@ -72,10 +67,11 @@ final class Config
                 self::WRITE_TARGET,
                 null,
                 self::LEGACY_FILE,
-                $loadLegacyConfigCallback,
-                $writeTarget,
-                $containerConfig['storage'][self::CONFIG_ID]['options']
+                $loadLegacyConfigCallback
             );
+
+            self::$locationAwareConfigRepository->setWriteTarget($writeTarget);
+            self::$locationAwareConfigRepository->setOptions($containerConfig['storage'][self::CONFIG_ID]['options']);
         }
 
         return self::$locationAwareConfigRepository;

@@ -2325,31 +2325,31 @@ final class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children();
 
-        $this->addStorageNode($storageNode, 'image_thumbnails');
-        $this->addStorageNode($storageNode, 'custom_reports');
-        $this->addStorageNode($storageNode, 'video_thumbnails');
-        $this->addStorageNode($storageNode, 'document_types');
-        $this->addStorageNode($storageNode, 'web_to_print');
-        $this->addStorageNode($storageNode, 'predefined_properties');
-        $this->addStorageNode($storageNode, 'predefined_asset_metadata');
-        $this->addStorageNode($storageNode, 'staticroutes');
-        $this->addStorageNode($storageNode, 'perspectives');
-        $this->addStorageNode($storageNode, 'custom_views');
-        $this->addStorageNode($storageNode, 'data_hub');
-        $this->addStorageNode($storageNode, 'object_custom_layouts');
-
+        $this->addStorageNode($storageNode, 'image_thumbnails', '/var/config/image-thumbnails');
+        $this->addStorageNode($storageNode, 'custom_reports', '/var/config/custom_reports');
+        $this->addStorageNode($storageNode, 'video_thumbnails', '/var/config/video-thumbnails');
+        $this->addStorageNode($storageNode, 'document_types', '/var/config/document_types');
+        $this->addStorageNode($storageNode, 'web_to_print', '/var/config/web_to_print');
+        $this->addStorageNode($storageNode, 'predefined_properties', '/var/config/predefined_properties');
+        $this->addStorageNode($storageNode, 'predefined_asset_metadata', '/var/config/predefined_asset_metadata');
+        $this->addStorageNode($storageNode, 'staticroutes', '/var/config/staticroutes');
+        $this->addStorageNode($storageNode, 'perspectives', '/var/config/perspectives');
+        $this->addStorageNode($storageNode, 'custom_views', '/var/config/custom_views');
+        $this->addStorageNode($storageNode, 'data_hub', '/var/config/data_hub');
+        $this->addStorageNode($storageNode, 'object_custom_layouts', '/var/config/object_custom_layouts');
     }
 
-    private function addStorageNode(NodeBuilder $node, string $name): void
+    private function addStorageNode(NodeBuilder $node, string $name, string $folder): void
     {
         $node->
             arrayNode($name)
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->variableNode('target')
+                        ->defaultValue('symfony-config')
                     ->end()
                     ->arrayNode('options')
-                    ->defaultValue([])
+                    ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
                         ->variablePrototype()
                         ->end()
                     ->end()

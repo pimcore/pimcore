@@ -29,11 +29,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * @deprecated Will be removed in Pimcore 11
      */
-    private const STORAGE_DIR = 'PIMCORE_CONFIG_STORAGE_DIR_DOCUMENT_TYPES';
-
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
     private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_DOCUMENT_TYPES';
 
     private const CONFIG_KEY = 'document_types';
@@ -42,7 +37,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
-        $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($config, self::CONFIG_KEY, self::STORAGE_DIR);
+        $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($config, self::CONFIG_KEY, 'PIMCORE_CONFIG_STORAGE_DIR_DOCUMENT_TYPES');
         $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($config, self::CONFIG_KEY, self::WRITE_TARGET);
 
         parent::configure([
