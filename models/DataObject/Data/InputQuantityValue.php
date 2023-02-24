@@ -25,7 +25,7 @@ class InputQuantityValue extends AbstractQuantityValue
     public function __construct(?string $value = null, Unit|string $unit = null)
     {
         $this->value = $value;
-        parent::__construct($value, $unit);
+        parent::__construct($unit);
     }
 
     public function setValue(string|null $value): void

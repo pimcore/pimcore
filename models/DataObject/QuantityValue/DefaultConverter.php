@@ -17,11 +17,15 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\QuantityValue;
 
 use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
+use Pimcore\Model\DataObject\Data\QuantityValue;
 
 class DefaultConverter implements QuantityValueConverterInterface
 {
     public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit): AbstractQuantityValue
     {
+        if (!$quantityValue instanceof QuantityValue) {
+            throw new UnsupportedException('Only QuantityValue is supported.');
+        }
         $fromUnit = $quantityValue->getUnit();
         if (!$fromUnit instanceof Unit) {
             throw new \Exception('Quantity value has no unit');
