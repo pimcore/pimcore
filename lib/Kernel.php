@@ -241,7 +241,6 @@ abstract class Kernel extends SymfonyKernel
             }
 
             foreach ($configArray as $config) {
-//                $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
                 $configKey = str_replace('-', '_', $config['defaultStorageDirectoryName']);
                 if(!isset($containerConfig['storage'][$configKey])){
                     continue;
