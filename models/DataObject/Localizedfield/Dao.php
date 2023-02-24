@@ -163,11 +163,9 @@ class Dao extends Model\Dao\AbstractDao
                 'language' => $language,
             ];
 
-            if ($container instanceof DataObject\Objectbrick\Definition) {
+            if ($container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
                 $insertData['fieldname'] = $context['fieldname'];
-            } elseif ($container instanceof DataObject\Fieldcollection\Definition) {
-                $insertData['fieldname'] = $context['fieldname'];
-                $insertData['index'] = $context['index'];
+                $insertData['index'] = $context['index'] ?? 0;
             }
 
             foreach ($fieldDefinitions as $fieldName => $fd) {

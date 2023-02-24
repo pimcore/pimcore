@@ -23,18 +23,53 @@ use Pimcore\Model\Element\ValidationException;
 
 class Helper
 {
-    public static function upsert(Connection $connection, string $table, array $data, array $keys): int|string
+    public static function upsert(Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
     {
         try {
+            $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
             return $connection->insert($table, $data);
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
             $critera = [];
             foreach ($keys as $key) {
+                $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
                 $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%1$s" passed for upsert not found in data', $key));
             }
 
             return $connection->update($table, $data, $critera);
         }
+    }
+
+    public static function insertOrUpdate(Connection $connection, string $table, array $data): int|string
+    {
+        // extract and quote col names from the array keys
+        $i = 0;
+        $bind = [];
+        $cols = [];
+        $vals = [];
+        foreach ($data as $col => $val) {
+            $cols[] = $connection->quoteIdentifier($col);
+            $bind['col' . $i] = $val;
+            $vals[] = ':col' . $i;
+            $i++;
+        }
+
+        // build the statement
+        $set = [];
+        foreach ($cols as $i => $col) {
+            $set[] = sprintf('%s = %s', $col, $vals[$i]);
+        }
+
+        $sql = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s;',
+            $connection->quoteIdentifier($table),
+            implode(', ', $cols),
+            implode(', ', $vals),
+            implode(', ', $set)
+        );
+
+        $bind = array_merge($bind, $bind);
+
+        return $connection->executeStatement($sql, $bind);
     }
 
     public static function fetchPairs(Connection $db, string $sql, array $params = [], array $types = []): array

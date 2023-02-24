@@ -27,8 +27,6 @@ abstract class AbstractDao implements DaoInterface
 
     const CACHEKEY = 'system_resource_columns_';
 
-    const CACHE_KEY_PRIMARY_KEY = 'system_resource_primary_key_columns_';
-
     /**
      * @var Connection
      */
@@ -59,37 +57,22 @@ abstract class AbstractDao implements DaoInterface
      */
     public function getPrimaryKey(string $table, bool $cache = true): array
     {
-        $cacheKeyPrimaryKey = self::CACHE_KEY_PRIMARY_KEY . $table;
-
-        if (RuntimeCache::isRegistered($cacheKeyPrimaryKey)) {
-            $primaryKeyColumns = RuntimeCache::get($cacheKeyPrimaryKey);
-        } else {
-            $primaryKeyColumns = Cache::load($cacheKeyPrimaryKey);
-
-            if (!$primaryKeyColumns || !$cache) {
-                $this->getValidTableColumns($table, $cache);
-                $primaryKeyColumns = RuntimeCache::get($cacheKeyPrimaryKey);
-            }
-        }
-
-        return $primaryKeyColumns;
+        return $this->getValidTableColumns($table, $cache, true);
     }
 
     /**
      * @return string[]
      */
-    public function getValidTableColumns(string $table, bool $cache = true): array
+    public function getValidTableColumns(string $table, bool $cache = true, bool $primaryKeyColumnsOnly = false): array
     {
         $cacheKey = self::CACHEKEY . $table;
-        $cacheKeyPrimaryKey = self::CACHE_KEY_PRIMARY_KEY . $table;
 
         if (RuntimeCache::isRegistered($cacheKey)) {
-            $columns = RuntimeCache::get($cacheKey);
+            $allColumns = RuntimeCache::get($cacheKey);
         } else {
-            $columns = Cache::load($cacheKey);
-            $primaryKeyColumns = Cache::load($cacheKeyPrimaryKey);
+            $allColumns = Cache::load($cacheKey);
 
-            if (!$columns || !$cache || !$primaryKeyColumns) {
+            if (!$allColumns || !$cache) {
                 $columns = [];
                 $primaryKeyColumns = [];
                 $data = $this->db->fetchAllAssociative('SHOW COLUMNS FROM ' . $table);
@@ -100,15 +83,14 @@ abstract class AbstractDao implements DaoInterface
                         $primaryKeyColumns[] = $fieldName;
                     }
                 }
-                Cache::save($columns, $cacheKey, ['system', 'resource'], null, 997);
-                Cache::save($primaryKeyColumns, $cacheKeyPrimaryKey, ['system', 'resource'], null, 997);
+                $allColumns = ['columns' => $columns,  'primaryKeyColumns' => $primaryKeyColumns];
+                Cache::save($allColumns, $cacheKey, ['system', 'resource'], null, 997);
             }
 
-            RuntimeCache::set($cacheKey, $columns);
-            RuntimeCache::set($cacheKeyPrimaryKey, $primaryKeyColumns);
+            RuntimeCache::set($cacheKey, $allColumns);
         }
 
-        return $columns;
+        return $primaryKeyColumnsOnly ? $allColumns['primaryKeyColumns'] : $allColumns['columns'];
     }
 
     /**
