@@ -31,27 +31,27 @@ use Pimcore\Model;
  */
 final class Predefined extends Model\AbstractModel
 {
-    private ?string $id = null;
+    protected ?string $id = null;
 
-    private ?string $name = null;
+    protected ?string $name = null;
 
-    private ?string $description = null;
+    protected ?string $description = null;
 
-    private ?string $type = null;
+    protected ?string $type = null;
 
-    private ?string $targetSubtype = null;
+    protected ?string $targetSubtype = null;
 
-    private mixed $data = null;
+    protected mixed $data = null;
 
-    private ?string $config = null;
+    protected ?string $config = null;
 
-    private ?string $language = null;
+    protected ?string $language = null;
 
-    private ?string $group = null;
+    protected ?string $group = null;
 
-    private ?int $creationDate = null;
+    protected ?int $creationDate = null;
 
-    private ?int $modificationDate = null;
+    protected ?int $modificationDate = null;
 
     public static function getById(string $id): ?Predefined
     {
