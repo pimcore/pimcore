@@ -36,11 +36,14 @@ class Chromium extends Processor
         $web2printConfig = $web2printConfig['chromiumSettings'];
         $web2printConfig = json_decode($web2printConfig, true);
 
-        $params = ['document' => $document];
+        $params = ['document' => $document, 'hostUrl' => 'http://nginx:80'];
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
 
-        $params = ['hostUrl' => 'http://nginx:80'];
+        if (isset($web2printConfig['hostUrl'])) {
+            $params['hostUrl'] = $web2printConfig['hostUrl'];
+        }
+
         $html = $this->processHtml($html, $params);
         $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
 
@@ -56,7 +59,7 @@ class Chromium extends Processor
 
         try {
             $this->updateStatus($document->getId(), 50, 'pdf_conversion');
-            $pdf = $this->getPdfFromString($html, []);
+            $pdf = $this->getPdfFromString($html, $web2printConfig);
             $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         } catch (\Exception $e) {
             Logger::error((string) $e);
