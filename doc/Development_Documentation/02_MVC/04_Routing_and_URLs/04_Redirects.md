@@ -1,5 +1,7 @@
 # URLs based on Redirects
 
+To use this feature please enable the `SEOBundle` in your bundles.php file.
+
 ## Introduction
 Redirects are a useful feature of Pimcore for directing the user to the correct pages - may it be for marketing URLs, 
  for redirects after a website relaunch or redirects for moved Documents. 
