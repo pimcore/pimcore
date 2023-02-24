@@ -18,27 +18,24 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
-use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
 class QuantityValue extends AbstractQuantityValue
 {
-    use ObjectVarTrait;
+    protected float|int|string|null $value = null;
 
-    protected float|int|null $value = null;
-
-    public function __construct(float|int|null $value = null, Unit|string $unit = null)
+    public function __construct(float|int|string|null $value = null, Unit|string $unit = null)
     {
         $this->value = $value;
         parent::__construct($unit);
     }
 
-    public function setValue(float|int|null $value): void
+    public function setValue(float|int|string|null $value): void
     {
         $this->value = $value;
         $this->markMeDirty();
     }
 
-    public function getValue(): float|int|null
+    public function getValue(): float|int|string|null
     {
         return $this->value;
     }
