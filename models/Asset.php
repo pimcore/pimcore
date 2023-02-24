@@ -324,7 +324,7 @@ class Asset extends Element\AbstractElement
 
             $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
             // only check maxpixels if it is an image
-            if($type === 'image' && $mimeTypeGuessData) {
+            if ($type === 'image' && $mimeTypeGuessData) {
                 self::checkMaxPixels($mimeTypeGuessData, $data);
             }
 
