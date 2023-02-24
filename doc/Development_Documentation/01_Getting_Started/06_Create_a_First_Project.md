@@ -19,14 +19,13 @@ You have to put the file into the `/src/Controller` directory.
 namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\HttpFoundation\Request;
 
 class ContentController extends FrontendController
 {
-    /**
-     * @Template
-     */
-    public function defaultAction(Request $request)
+    #[Template('content/default.html.twig')]
+    public function defaultAction(Request $request): array
     {
         return [];
     }
@@ -297,16 +296,17 @@ namespace App\Controller;
 use Pimcore\Controller\FrontendController;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ContentController extends FrontendController
 {
     #[Template('content/default.html.twig')]
-    public function defaultAction (Request $request)
+    public function defaultAction (Request $request): array
     {
         return [];
     }
     
-    public function productAction(Request $request)
+    public function productAction(Request $request): Response
     {
         return $this->render('content/product.html.twig');
     }

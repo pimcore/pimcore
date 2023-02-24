@@ -241,3 +241,9 @@
  */
 pimcore.events.preMenuBuild = "pimcore.menu.preBuild";
 
+/**
+ * after settings tab of page is opened
+ * layout and document are passed as parameter
+ */
+pimcore.events.prepareDocumentPageSettingsLayout = "pimcore.documentPageSettingsLayout.prepare";
+

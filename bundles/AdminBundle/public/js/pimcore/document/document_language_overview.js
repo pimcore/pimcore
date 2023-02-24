@@ -192,7 +192,7 @@ pimcore.document.document_language_overview = Class.create({
         parameters.id = id;
 
         Ext.Ajax.request({
-            url: '/admin/' + type + '/save?task=' + task,
+            url: Routing.generate('pimcore_admin_document_' + type + '_save', {task: task}),
             method: "PUT",
             params: parameters,
             success: function (task, response) {

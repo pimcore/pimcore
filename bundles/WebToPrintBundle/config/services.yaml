@@ -1,0 +1,46 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # INSTALLER
+    #
+    Pimcore\Bundle\WebToPrintBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreWebToPrintBundle')"
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\WebToPrintBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+
+    # TWIG TEMPLATING
+    Pimcore\Bundle\WebToPrintBundle\Twig\Extension\DocumentHelperExtensions:
+        tags: [ 'twig.extension' ]
+
+    Pimcore\Bundle\WebToPrintBundle\Twig\Extension\PrintCatalogExtension:
+        tags: [ 'twig.extension' ]
+
+    #
+    # Event Listeners
+    #
+
+    Pimcore\Bundle\WebToPrintBundle\EventListener\IndexSettingsListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }
+
+
+    Pimcore\Bundle\WebToPrintBundle\Messenger\Handler\GenerateWeb2PrintPdfHandler:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: messenger.message_handler }
