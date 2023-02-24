@@ -30,7 +30,6 @@ pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 
     treeDataUrl: null,
-    nodesToMove: [],
 
     initialize: function(config, perspectiveCfg) {
         this.treeDataUrl = Routing.generate('pimcore_admin_document_document_treegetchildrenbyid');
@@ -146,10 +145,7 @@ pimcore.document.tree = Class.create({
                     ddGroup: "element"
                 },
                 listeners: {
-                    nodedragover: this.onTreeNodeOver.bind(this),
-                    beforedrop: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
-                        this.nodesToMove = [];
-                    }.bind(this)
+                    nodedragover: this.onTreeNodeOver.bind(this)
                 },
                 xtype: 'pimcoretreeview'
             },
