@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SeoBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -51,6 +52,10 @@ class RoutingListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
+        if(!PimcoreSeoBundle::isInstalled()) {
+            return;
+        }
+
         $request = $event->getRequest();
         $response = $this->redirectHandler->checkForRedirect($request, true);
         if ($response) {
@@ -60,6 +65,10 @@ class RoutingListener implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event): void
     {
+        if(!PimcoreSeoBundle::isInstalled()) {
+            return;
+        }
+
         // in case routing didn't find a matching route, check for redirects without override
         $exception = $event->getThrowable();
         if ($exception instanceof NotFoundHttpException) {

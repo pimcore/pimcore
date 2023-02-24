@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\EventListener;
 
+use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Bundle\SeoBundle\Sitemap\GeneratorInterface;
 use Presta\SitemapBundle\Event\SitemapPopulateEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -45,6 +46,10 @@ class SitemapGeneratorListener implements EventSubscriberInterface
 
     public function onPopulateSitemap(SitemapPopulateEvent $event): void
     {
+        if(!PimcoreSeoBundle::isInstalled()) {
+            return;
+        }
+
         $container = $event->getUrlContainer();
         $section = $event->getSection();
 

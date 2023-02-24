@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\SeoBundle\EventListener;
 
 use Pimcore;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Db;
 use Pimcore\Event\Model\DataObject\ClassDefinition\UrlSlugEvent;
 use Pimcore\Event\UrlSlugEvents;
@@ -40,6 +41,10 @@ class UrlSlugUpdateListener implements EventSubscriberInterface
 
     public function onURLSlugUpdate(UrlSlugEvent $event): void
     {
+        if(!PimcoreSeoBundle::isInstalled()) {
+            return;
+        }
+
         $pimcore_seo_redirects = Pimcore::getContainer()->getParameter('pimcore_seo.redirects');
         $data = $event->getData();
         // check for previous slugs and create redirects

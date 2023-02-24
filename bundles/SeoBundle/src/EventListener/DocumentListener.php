@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\SeoBundle\EventListener;
 
 use Pimcore;
+use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model\Document;
@@ -45,6 +46,10 @@ class DocumentListener implements EventSubscriberInterface
 
     public function onDocumentDelete(DocumentEvent $event) : void
     {
+        if(!PimcoreSeoBundle::isInstalled()) {
+            return;
+        }
+
         $document = $event->getDocument();
         if ($document instanceof Page || $document instanceof Hardlink) {
             // check for redirects pointing to this document, and delete them too
@@ -60,6 +65,10 @@ class DocumentListener implements EventSubscriberInterface
 
     public function onPagePostSaveAction(DocumentEvent $event) : void
     {
+        if(!PimcoreSeoBundle::isInstalled()) {
+            return;
+        }
+
         $page = $event->getDocument();
         $pimcore_seo_redirects = Pimcore::getContainer()->getParameter('pimcore_seo.redirects');
         if ($page instanceof Page && $pimcore_seo_redirects['create_redirects']) {
@@ -84,6 +93,10 @@ class DocumentListener implements EventSubscriberInterface
 
     public function onPostMoveAction(DocumentEvent $event) : void
     {
+        if(!PimcoreSeoBundle::isInstalled()) {
+            return;
+        }
+
         $document = $event->getDocument();
         $oldDocument = $event->getArgument('oldDocument');
         $oldPath = $event->getArgument('oldPath');
