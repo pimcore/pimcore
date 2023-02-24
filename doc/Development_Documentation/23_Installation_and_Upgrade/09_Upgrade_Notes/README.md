@@ -200,7 +200,7 @@ pimcore:
 - [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
 - [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticatePlaintext()` has been removed.
 - [DataObjects][CSV Export] Changed encoding of table data-types to `json_encode` from `base64_encoded`.
-- [Documents] Moving a document in the tree no longer opens the redirect prompt asking to create redirects. Creating a redirect is now configurable with `pimcore:redirects:create_redirects`. This config includes URLSlugs and Pretty URLs.
+- [Documents] Moving a document in the tree no longer opens the redirect prompt asking to create redirects. Creating a redirect is now configurable with `pimcore:redirects:auto_create_redirects`. This config includes URLSlugs and Pretty URLs.
 ```yaml
 pimcore_seo:
     redirects:

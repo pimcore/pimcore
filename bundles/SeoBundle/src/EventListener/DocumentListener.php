@@ -71,7 +71,7 @@ class DocumentListener implements EventSubscriberInterface
 
         $page = $event->getDocument();
         $pimcore_seo_redirects = Pimcore::getContainer()->getParameter('pimcore_seo.redirects');
-        if ($page instanceof Page && $pimcore_seo_redirects['create_redirects']) {
+        if ($page instanceof Page && $pimcore_seo_redirects['auto_create_redirects']) {
             $oldPage = $event->getArgument('oldPage');
             $task = $event->getArgument('task');
             if ($task === 'publish' || $task === 'unpublish') {
@@ -107,7 +107,7 @@ class DocumentListener implements EventSubscriberInterface
     {
         $pimcore_seo_redirects = Pimcore::getContainer()->getParameter('pimcore_seo.redirects');
         if ($document instanceof Document\Page || $document instanceof Document\Hardlink) {
-            if (Pimcore\Tool\Admin::getCurrentUser()->isAllowed('redirects') && $pimcore_seo_redirects['create_redirects']) {
+            if (Pimcore\Tool\Admin::getCurrentUser()->isAllowed('redirects') && $pimcore_seo_redirects['auto_create_redirects']) {
                 $sourceSite = Frontend::getSiteForDocument($oldDocument);
                 if ($sourceSite) {
                     $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);

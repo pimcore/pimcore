@@ -48,7 +48,7 @@ class UrlSlugUpdateListener implements EventSubscriberInterface
         $pimcore_seo_redirects = Pimcore::getContainer()->getParameter('pimcore_seo.redirects');
         $data = $event->getData();
         // check for previous slugs and create redirects
-        if (!is_array($data) || !$pimcore_seo_redirects['create_redirects']) {
+        if (!is_array($data) || !$pimcore_seo_redirects['auto_create_redirects']) {
             return;
         }
 
