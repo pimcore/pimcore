@@ -37,6 +37,7 @@ class Date extends Data
         if (!$value) {
             return '';
         }
+
         return date('m/d/Y', (int) $value);
     }
 }
