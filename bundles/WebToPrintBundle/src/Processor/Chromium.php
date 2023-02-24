@@ -1,0 +1,139 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
+namespace Pimcore\Bundle\WebToPrintBundle\Processor;
+
+use HeadlessChromium\BrowserFactory;
+use Pimcore\Bundle\WebToPrintBundle\Config;
+use Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent;
+use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
+use Pimcore\Bundle\WebToPrintBundle\Processor;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Logger;
+use Pimcore\Image\Chromium as ChromiumLib;
+
+class Chromium extends Processor
+{
+    /**
+     * @internal
+     */
+    protected function buildPdf(PrintAbstract $document, object $config): string
+    {
+        $web2printConfig = Config::getWeb2PrintConfig();
+        $web2printConfig = $web2printConfig['chromiumSettings'];
+        $web2printConfig = json_decode($web2printConfig, true);
+
+        $params = ['document' => $document];
+        $this->updateStatus($document->getId(), 10, 'start_html_rendering');
+        $html = $document->renderDocument($params);
+
+        $params = ['hostUrl' => 'http://nginx:80'];
+        $html = $this->processHtml($html, $params);
+        $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
+
+        if ($web2printConfig) {
+            foreach (['header', 'footer'] as $item) {
+                if (key_exists($item, $web2printConfig) && $web2printConfig[$item] &&
+                    $content = file_get_contents($web2printConfig[$item])) {
+                    $web2printConfig[$item . 'Template'] = $content;
+                }
+                unset($web2printConfig[$item]);
+            }
+        }
+
+        try {
+            $this->updateStatus($document->getId(), 50, 'pdf_conversion');
+            $pdf = $this->getPdfFromString($html, []);
+            $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
+        } catch (\Exception $e) {
+            Logger::error((string) $e);
+            $document->setLastGenerateMessage($e->getMessage());
+
+            throw new \Exception('Error during PDF-Generation:' . $e->getMessage());
+        }
+
+        $document->setLastGenerateMessage('');
+
+        return $pdf;
+    }
+
+    /**
+     * @internal
+     */
+    public function getProcessingOptions(): array
+    {
+        $event = new PrintConfigEvent($this, [
+            'options' => [],
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS);
+
+        return (array)$event->getArgument('options');
+    }
+
+    /**
+     * @internal
+     */
+    public function getPdfFromString(string $html, array $params = [], bool $returnFilePath = false): string
+    {
+        $params = $params ?: $this->getDefaultOptions();
+
+        $event = new PrintConfigEvent($this, [
+            'params' => $params,
+            'html' => $html,
+        ]);
+
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG);
+
+        ['html' => $html, 'params' => $params] = $event->getArguments();
+
+        $browserFactory = new BrowserFactory(ChromiumLib::getChromiumBinary());
+
+        // starts headless chrome
+        $browser = $browserFactory->createBrowser([
+            'noSandbox' => true,
+            'startupTimeout' => 120,
+            'enableImages' => true,
+            'ignoreCertificateErrors' => true
+        ]);
+
+        try {
+            $page = $browser->createPage();
+            $page->setHtml($html, 30000);
+
+            $pdf = $page->pdf($params);
+
+            if ($returnFilePath) {
+                $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
+                $pdf->saveToFile($path);
+                return $path;
+            }
+            return base64_decode($pdf->getBase64());
+
+        } catch (\Throwable $e) {
+            Logger::debug('Could not create pdf with chromium: '. print_r($e, true));
+        } finally {
+            $browser->close();
+        }
+    }
+
+    private function getDefaultOptions(): array
+    {
+        return [
+
+        ];
+    }
+
+}

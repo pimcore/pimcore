@@ -220,6 +220,67 @@ pimcore.bundle.web2print.settings = Class.create({
                 ]
             });
 
+            this.chromiumSettings = Ext.create("Ext.form.FieldSet", {
+                title: t('web2print_chromium_settings'),
+                collapsible: true,
+                collapsed: false,
+                autoHeight: true,
+                hidden: this.getValue("generalTool") != 'chromium',
+                defaultType: 'textfield',
+                defaults: {width: 450},
+                items: [
+                    {
+                        xtype: 'textarea',
+                        width: 850,
+                        height: 200,
+                        fieldLabel: t("web2print_chromium_settings"),
+                        name: 'chromiumSettings',
+                        value: this.getValue("chromiumSettings")
+                    },
+                    {
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_chromium_requirements"),
+                        name: 'requirements',
+                        width: 600,
+                        value: t('web2print_chromium_requirements_documentation'),
+                        autoEl:{
+                            tag: 'a',
+                            target: '_blank',
+                            href: "https://github.com/spiritix/php-chrome-html2pdf#requirements",
+                        }
+                    },
+                    {
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_chromium_documentation"),
+                        name: 'documentation',
+                        width: 600,
+                        value: t('web2print_chromium_options_documentation'),
+                        autoEl:{
+                            tag: 'a',
+                            target: '_blank',
+                            href: "https://github.com/spiritix/php-chrome-html2pdf#options",
+                        }
+                    },{
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_chromium_documentation_additions"),
+                        name: 'additions',
+                        width: 850,
+                        value: t('web2print_chromium_documentation_additions_text'),
+                    },{
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_chromium_json_converter"),
+                        name: 'json_converter',
+                        width: 600,
+                        value: t('web2print_chromium_json_converter_link'),
+                        autoEl:{
+                            tag: 'a',
+                            target: '_blank',
+                            href: "https://jsonformatter.org/",
+                        }
+                    }
+                ]
+            });
+
             this.layout = Ext.create('Ext.form.Panel', {
                 bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,
@@ -263,6 +324,7 @@ pimcore.bundle.web2print.settings = Class.create({
                                 store: [
                                     ["pdfreactor", "PDFreactor"],
                                     ["headlesschrome", "Headless Chrome"],
+                                    ["chromium", "Chromium"],
                                 ],
                                 mode: "local",
                                 triggerAction: "all",
@@ -303,7 +365,7 @@ pimcore.bundle.web2print.settings = Class.create({
                             }
                         ]
                     }
-                    , this.pdfReactorSettings, this.headlessChromeSettings
+                    , this.pdfReactorSettings, this.headlessChromeSettings, this.chromiumSettings
                 ]
             });
 
