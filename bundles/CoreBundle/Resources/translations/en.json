@@ -1001,5 +1001,7 @@
     "possible_causes": "Possible causes",
     "postal_code_format_error": "Postal code format, e.g. use \"5020 Salzburg, Söllheimer Straße 16\" instead of \"A-5020 Salzburg, Söllheimer Straße 16\"",
     "url-slug-invalid-chars": "Provided invalid character in URL slug",
-    "delete_data_from_it": "This will also delete all data from it."
+    "delete_data_from_it": "This will also delete all data from it.",
+    "preview_generator_site": "Site",
+    "preview_generator_locale": "Locale"
 }

@@ -69,3 +69,10 @@ services:
     # Grid Helper Service
     #
     Pimcore\Bundle\AdminBundle\Helper\GridHelperService: ~
+
+
+    #
+    # Default Preview Generator
+    #
+    Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface:
+        class: Pimcore\Bundle\AdminBundle\Service\PreviewGenerator
