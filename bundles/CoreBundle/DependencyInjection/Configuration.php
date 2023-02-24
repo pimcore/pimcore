@@ -201,7 +201,7 @@ final class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->integerNode('cleanup_tmp_files_atime_older_than')
-                        ->defaultValue(7776000) // 90 days
+                        ->defaultValue(7_776_000) // 90 days
                     ->end()
                     ->integerNode('cleanup_profiler_files_atime_older_than')
                         ->defaultValue(1800)
