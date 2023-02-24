@@ -473,7 +473,7 @@ final class Configuration implements ConfigurationInterface
                         ->children()
                             ->integerNode('max_pixels')
                                 ->info("Maximum number of pixels an image can have when added (width × height).")
-                                ->defaultValue(40000000)
+                                ->defaultValue(40_000_000)
                             ->end()
                             ->arrayNode('low_quality_image_preview')
                                 ->addDefaultsIfNotSet()
