@@ -33,14 +33,14 @@ final class Version20230111074323 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', 'pimcore')) {
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', true, 'bool', 'pimcore');
+        }
+
         // Append to the comma separated list whenever the permissions text field has 'translation' but not already word_export
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('word_export', 'Pimcore Word Export Bundle')");
 
         $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',word_export\') WHERE `permissions` REGEXP \'(?:^|,)translations(?:$|,)\'');
-
-        if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', 'pimcore')) {
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', true, 'bool', 'pimcore');
-        }
 
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', 'pimcore'),
@@ -50,9 +50,15 @@ final class Version20230111074323 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
+        if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', 'pimcore')) {
+            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle','pimcore');
+        }
+
         // Replace to remove permission when the comma is suffixed (eg. first of the list or any order)
         $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)word_export(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)word_export(?:$|,)\'');
 
         $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'word_export'");
+
+        $this->write('Please deactivate the Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle manually in config/bundles.php');
     }
 }
