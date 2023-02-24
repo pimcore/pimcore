@@ -35,7 +35,6 @@ class UnitConversionService
      *
      * @return T
      *
-     * @throws UnsupportedException If $quantityValue is no QuantityValue
      * @throws \Exception
      */
     public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit): AbstractQuantityValue
