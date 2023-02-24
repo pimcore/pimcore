@@ -24,25 +24,21 @@ class QuantityValue extends AbstractQuantityValue
 {
     use ObjectVarTrait;
 
-    protected int|string|null|float $value = null;
+    protected float|int|null $value = null;
 
-    /**
-     * @param float|int|string|null $value
-     * @param string|Unit|null $unit
-     */
-    public function __construct(float|int|string|null $value = null, Unit|string $unit = null)
+    public function __construct(float|int|null $value = null, Unit|string $unit = null)
     {
         $this->value = $value;
         parent::__construct($unit);
     }
 
-    public function setValue(float|int|string|null $value): void
+    public function setValue(float|int|null $value): void
     {
         $this->value = $value;
         $this->markMeDirty();
     }
 
-    public function getValue(): float|int|string|null
+    public function getValue(): float|int|null
     {
         return $this->value;
     }
