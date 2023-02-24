@@ -249,7 +249,7 @@ abstract class Processor
      *
      * @throws \Exception
      */
-    public function processHtml(string $html, array $params): string
+    protected function processHtml(string $html, array $params): string
     {
         $document = $params['document'] ?? null;
         $hostUrl = $params['hostUrl'] ?? null;
