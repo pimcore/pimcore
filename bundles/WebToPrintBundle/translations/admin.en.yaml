@@ -58,9 +58,9 @@ web2print_gotenberg_settings: Gotenberg Settings
 web2print_gotenberg_documentation: Option Documentation
 web2print_gotenberg_documentation_additions: Warning
 web2print_gotenberg_documentation_additions_text: >-
-    Since Gotenberg is Docker-powered, to make it work across with Pimcore, it would be required to set
-    base url in the print templates and the value should be the same as the web server service<br>
-    eg. <b>&lt;base href=&quot;http://nginx:80/&quot; target=&quot;_blank&quot;&gt;</b>
+    Since Gotenberg is Docker-powered service, it requires absolute urls to work.
+    By default, it works within the same container by using `nginx:80` as base url.
+    Please override this configuration accordingly by defining `hostUrl` option into the settings below.
 web2print_headlesschrome_json_converter:
 web2print_hostname: Hostname
 web2print_protocol: Protocol
