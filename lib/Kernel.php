@@ -229,6 +229,7 @@ abstract class Kernel extends SymfonyKernel
             $containerConfig = array_merge(...$containerConfig);
 
             $processor = new Processor();
+            // @phpstan-ignore-next-line
             $configuration = $container->getExtension('pimcore')->getConfiguration($containerConfig, $container);
             $containerConfig = $processor->processConfiguration($configuration, ['pimcore' => $containerConfig]);
 
