@@ -472,6 +472,7 @@ final class Configuration implements ConfigurationInterface
                         ->addDefaultsIfNotSet()
                         ->children()
                             ->integerNode('max_pixels')
+                                ->info("Maximum number of pixels an image can have when added (width × height).")
                                 ->defaultValue(40000000)
                             ->end()
                             ->arrayNode('low_quality_image_preview')
@@ -530,6 +531,7 @@ final class Configuration implements ConfigurationInterface
                                         ->end()
                                     ->end()
                                     ->booleanNode('clip_auto_support')
+                                        ->info("Try to detect and use clipping paths and masks in images.")
                                         ->beforeNormalization()
                                             ->ifString()
                                             ->then(function ($v) {
@@ -561,9 +563,11 @@ final class Configuration implements ConfigurationInterface
                                         ])
                                     ->end()
                                     ->booleanNode('status_cache')
+                                        ->info("Store image metadata in a cache")
                                         ->defaultTrue()
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
+                                        ->info("Automatically delete all thumbnail files any time an image or its metadata is updated.")
                                         ->beforeNormalization()
                                             ->ifString()
                                             ->then(function ($v) {
