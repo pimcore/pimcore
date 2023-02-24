@@ -201,9 +201,11 @@ final class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->integerNode('cleanup_tmp_files_atime_older_than')
+                        ->info("Integer value in seconds.")
                         ->defaultValue(7_776_000) // 90 days
                     ->end()
                     ->integerNode('cleanup_profiler_files_atime_older_than')
+                        ->info("Integer value in seconds.")
                         ->defaultValue(1800)
                     ->end()
         ;
@@ -288,7 +290,7 @@ final class Configuration implements ConfigurationInterface
                     ->defaultFalse()
                 ->end()
                 ->booleanNode('debug_admin_translations')
-                    ->info('Debug Admin-Translations (displayed wrapped in +)')
+                    ->info('Debug Admin-Translations (text in UI will be displayed wrapped in +)')
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
@@ -476,6 +478,7 @@ final class Configuration implements ConfigurationInterface
                                 ->defaultValue(40_000_000)
                             ->end()
                             ->arrayNode('low_quality_image_preview')
+                                ->info("Allow a LQIP SVG image to be generated alongside any other thumbnails.")
                                 ->addDefaultsIfNotSet()
                                 ->canBeDisabled()
                             ->end()
@@ -531,7 +534,7 @@ final class Configuration implements ConfigurationInterface
                                         ->end()
                                     ->end()
                                     ->booleanNode('clip_auto_support')
-                                        ->info("Try to detect and use clipping paths and masks in images.")
+                                        ->info("Try to detect and use clipping paths and masks in images when generating thumbnails.")
                                         ->beforeNormalization()
                                             ->ifString()
                                             ->then(function ($v) {
@@ -567,7 +570,7 @@ final class Configuration implements ConfigurationInterface
                                         ->defaultTrue()
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
-                                        ->info("Automatically delete all thumbnail files any time an image or its metadata is updated.")
+                                        ->info("Automatically delete all image thumbnail files any time an image or its metadata is updated.")
                                         ->beforeNormalization()
                                             ->ifString()
                                             ->then(function ($v) {
@@ -627,7 +630,8 @@ final class Configuration implements ConfigurationInterface
                                     ->end()
 
                                     ->booleanNode('auto_clear_temp_files')
-                                    ->defaultTrue()
+                                        ->info("Automatically delete all video thumbnail files any time an image or its metadata is updated.")
+                                        ->defaultTrue()
                                     ->end()
                                 ->end()
                             ->end()
@@ -1883,7 +1887,7 @@ final class Configuration implements ConfigurationInterface
                                                             ->end()
                                                         ->end()
                                                     ->end()
-                                                    ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
+                                                    ->scalarNode('iconClass')->info('CSS class to define the icon which will be used in the actions button in the backend.')->end()
                                                     ->scalarNode('objectLayout')->defaultValue(false)->info('Forces an object layout after the transition was performed. This objectLayout setting overrules all objectLayout settings within the places configs.')->end()
 
                                                     ->arrayNode('notificationSettings')
@@ -1974,7 +1978,7 @@ final class Configuration implements ConfigurationInterface
                                     ->prototype('array')
                                         ->children()
                                             ->scalarNode('label')->info('Nice name for the Pimcore backend.')->end()
-                                            ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
+                                            ->scalarNode('iconClass')->info('CSS class to define the icon which will be used in the actions button in the backend.')->end()
                                             ->scalarNode('objectLayout')->defaultValue(false)->info('Forces an object layout after the global action was performed. This objectLayout setting overrules all objectLayout settings within the places configs.')->end()
                                             ->scalarNode('guard')
                                                 ->cannotBeEmpty()
