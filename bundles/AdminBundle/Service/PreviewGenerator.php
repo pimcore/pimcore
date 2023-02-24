@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Bundle\AdminBundle\Service;
 
 use Pimcore\Model\DataObject\ClassDefinition\LinkGeneratorInterface;
@@ -19,6 +32,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
     /**
      * @param Concrete $object
      * @param array $params
+     *
      * @return string
      */
     public function generatePreviewUrl(Concrete $object, array $params): string
@@ -33,7 +47,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
 
             return $linkGenerator->generate($object, [
                 PreviewGeneratorInterface::PARAMETER_LOCALE => $locale,
-                PreviewGeneratorInterface::PARAMETER_SITE => $site
+                PreviewGeneratorInterface::PARAMETER_SITE => $site,
             ]);
         }
 
@@ -43,6 +57,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
     /**
      * @param Concrete $object
      * @param array $parameters
+     *
      * @return array only parameters that are part of the preview generator config and are not empty
      */
     protected function filterParameters(Concrete $object, array $parameters): array
@@ -75,6 +90,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
 
     /**
      * @param Concrete $object
+     *
      * @return array
      */
     protected function getLocalePreviewConfig(Concrete $object): array
@@ -92,18 +108,19 @@ class PreviewGenerator implements PreviewGeneratorInterface
             'name' => PreviewGeneratorInterface::PARAMETER_LOCALE,
             'label' => $this->translator->trans('preview_generator_locale', [], Translation::DOMAIN_ADMIN),
             'values' => $locales,
-            'defaultValue' => in_array($userLocale, Tool::getValidLanguages()) ? $userLocale : Tool::getDefaultLanguage()
+            'defaultValue' => in_array($userLocale, Tool::getValidLanguages()) ? $userLocale : Tool::getDefaultLanguage(),
         ];
     }
 
     /**
      * @param Concrete $object
+     *
      * @return array
      */
     protected function getSitePreviewConfig(Concrete $object): array
     {
         $sites = new Site\Listing();
-        $sites->setOrderKey("mainDomain")->setOrder("ASC");
+        $sites->setOrderKey('mainDomain')->setOrder('ASC');
 
         $sitesOptions = [];
 
@@ -120,7 +137,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
             'name' => PreviewGeneratorInterface::PARAMETER_SITE,
             'label' => $this->translator->trans('preview_generator_site', [], Translation::DOMAIN_ADMIN),
             'values' => $sitesOptions,
-            'defaultValue' => current($sitesOptions)
+            'defaultValue' => current($sitesOptions),
         ];
     }
 

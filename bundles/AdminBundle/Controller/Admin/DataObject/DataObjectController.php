@@ -2007,14 +2007,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             } elseif ($object->getClass()->getLinkGenerator()) {
                 $parameters = [
                     'preview' => true,
-                    'context' => $this
+                    'context' => $this,
                 ];
 
                 $url = $defaultPreviewGenerator->generatePreviewUrl($object, array_merge($parameters, $request->query->all()));
             }
 
             if (!$url) {
-                throw new NotFoundHttpException("Cannot render preview due to empty URL");
+                throw new NotFoundHttpException('Cannot render preview due to empty URL');
             }
 
             // replace all remaining % signs

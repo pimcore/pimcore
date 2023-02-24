@@ -178,6 +178,7 @@ class RequestHelper
      * Can be used to check if a user is trying to access the object preview and is allowed to do so.
      *
      * @param Request|null $request
+     *
      * @return bool
      */
     public function isObjectPreviewRequestByAdmin(Request $request = null): bool

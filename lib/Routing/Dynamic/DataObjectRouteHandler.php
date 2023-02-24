@@ -93,7 +93,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
             if ($object instanceof DataObject\Concrete) {
                 $doBuildRoute = $object->isPublished() || $this->requestHelper->isObjectPreviewRequestByAdmin($context->getRequest());
 
-                if($doBuildRoute) {
+                if ($doBuildRoute) {
                     $route = $this->buildRouteForFromSlug($slug, $object);
                     $collection->add($route->getRouteKey(), $route);
                 }
