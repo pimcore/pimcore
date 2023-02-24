@@ -179,8 +179,6 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Gotenberg] Introducing support for [Gotenberg](https://gotenberg.dev/) as PDF generation, conversion, merge etc.. tool
     - [Asset] Added adapter (as alternative to LibreOffice) for preview generation of supported document type assets and set it as default adapter.
     - [Web2Print] Added settings option, configuration and processor for PDF preview and generation
-    - [Documents] Replaced default preview generator handler with Gotenberg. 
-    - [Version Diff] Added as alternative to Chromium page clip.
 - [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Asset] Removed VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111)
 - [Translations] Translations Domains needs to be registered in order to be considered as valid. If you are using custom domains

@@ -22,7 +22,7 @@ use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\File;
-use Pimcore\Image\Gotenberg;
+use Pimcore\Image\Chromium;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\IdRewriterInterface;
@@ -601,7 +601,7 @@ class Service extends Model\Element\Service
 
         File::mkdir(dirname($file));
 
-        if (Gotenberg::convert($url, $tmpFile)) {
+        if (Chromium::convert($url, $tmpFile)) {
             $im = \Pimcore\Image::getInstance();
             $im->load($tmpFile);
             $im->scaleByWidth(800);
