@@ -207,10 +207,10 @@ pimcore.bundle.web2print.settings = Class.create({
                         value: t('web2print_headlesschrome_documentation_additions_text'),
                     },{
                         xtype: "displayfield",
-                        fieldLabel: t("web2print_headlesschrome_json_converter"),
+                        fieldLabel: t("web2print_json_converter"),
                         name: 'json_converter',
                         width: 600,
-                        value: t('web2print_headlesschrome_json_converter_link'),
+                        value: t('web2print_json_converter_link'),
                         autoEl:{
                             tag: 'a',
                             target: '_blank',
@@ -230,6 +230,12 @@ pimcore.bundle.web2print.settings = Class.create({
                 defaults: {width: 450},
                 items: [
                     {
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_gotenberg_documentation_additions"),
+                        name: 'additions',
+                        width: 850,
+                        value: t('web2print_gotenberg_documentation_additions_text'),
+                    },{
                         xtype: 'textarea',
                         width: 850,
                         height: 200,
@@ -249,16 +255,10 @@ pimcore.bundle.web2print.settings = Class.create({
                         }
                     },{
                         xtype: "displayfield",
-                        fieldLabel: t("web2print_gotenberg_documentation_additions"),
-                        name: 'additions',
-                        width: 850,
-                        value: t('web2print_gotenberg_documentation_additions_text'),
-                    },{
-                        xtype: "displayfield",
-                        fieldLabel: t("web2print_gotenberg_json_converter"),
+                        fieldLabel: t("web2print_json_converter"),
                         name: 'json_converter',
                         width: 600,
-                        value: t('web2print_gotenberg_json_converter_link'),
+                        value: t('web2print_json_converter_link'),
                         autoEl:{
                             tag: 'a',
                             target: '_blank',
