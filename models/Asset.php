@@ -300,7 +300,7 @@ class Asset extends Element\AbstractElement
                         $isRewindable = @rewind($data['stream']);
                         $dest = fopen($tmpFile, 'w+', false, File::getContext());
                         stream_copy_to_stream($data['stream'], $dest);
-                        $mimeTypeGuessData = MimeTypes::getDefault()->guessMimeType($tmpFile);
+                        $mimeTypeGuessData = $tmpFile;
 
                         if (!$isRewindable) {
                             $data['stream'] = $dest;
