@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Db;
 use Pimcore\Model\Tool\SettingsStore;
 
 final class Version20221228101109 extends AbstractMigration
@@ -37,7 +36,6 @@ final class Version20221228101109 extends AbstractMigration
 
         // updating description  of permissions
         $this->addSql("UPDATE `users_permission_definitions` SET `category` = 'Pimcore Custom Reports Bundle' WHERE `key` IN('reports', 'reports_config')");
-
 
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\CustomReportsBundle\\PimcoreCustomReportsBundle', 'pimcore'),

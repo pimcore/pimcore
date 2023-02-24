@@ -40,7 +40,6 @@ final class Version20221215071650 extends AbstractMigration
         // updating description  of permissions
         $this->addSql("UPDATE `users_permission_definitions` SET `category` = 'Pimcore Glossary Bundle' WHERE `key` = 'glossary'");
 
-
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle', 'pimcore'),
             'Please make sure to enable the Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle manually in config/bundles.php'

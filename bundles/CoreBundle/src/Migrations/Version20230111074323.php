@@ -51,7 +51,7 @@ final class Version20230111074323 extends AbstractMigration
     public function down(Schema $schema): void
     {
         if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', 'pimcore')) {
-            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle','pimcore');
+            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', 'pimcore');
         }
 
         // Replace to remove permission when the comma is suffixed (eg. first of the list or any order)
