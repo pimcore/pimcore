@@ -36,7 +36,10 @@ class Chromium extends Processor
         $web2printConfig = $web2printConfig['chromiumSettings'];
         $web2printConfig = json_decode($web2printConfig, true);
 
-        $params = ['document' => $document, 'hostUrl' => 'http://nginx:80'];
+        $params = [
+            'document' => $document,
+            'hostUrl' => 'http://nginx:80'
+        ];
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
 
@@ -59,7 +62,7 @@ class Chromium extends Processor
 
         try {
             $this->updateStatus($document->getId(), 50, 'pdf_conversion');
-            $pdf = $this->getPdfFromString($html, $web2printConfig);
+            $pdf = $this->getPdfFromString($html, []);
             $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         } catch (\Exception $e) {
             Logger::error((string) $e);
@@ -97,11 +100,9 @@ class Chromium extends Processor
             'params' => $params,
             'html' => $html,
         ]);
-
         \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG);
 
         ['html' => $html, 'params' => $params] = $event->getArguments();
-
         $browserFactory = new BrowserFactory(ChromiumLib::getChromiumBinary());
 
         // starts headless chrome
@@ -117,19 +118,21 @@ class Chromium extends Processor
             $page->setHtml($html, 30000);
 
             $pdf = $page->pdf($params);
-
             if ($returnFilePath) {
                 $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
                 $pdf->saveToFile($path);
-                return $path;
+                $output = $path;
+            }else {
+                $output = base64_decode($pdf->getBase64());
             }
-            return base64_decode($pdf->getBase64());
-
         } catch (\Throwable $e) {
             Logger::debug('Could not create pdf with chromium: '. print_r($e, true));
+            $output = (string) $e;
         } finally {
             $browser->close();
         }
+
+        return $output;
     }
 
     private function getDefaultOptions(): array
