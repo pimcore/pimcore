@@ -44,9 +44,9 @@ trait Relation
                     $types[] = $this->getClassName('document', $item['documentTypes']);
                 }
             } else {
-                $types[] = Page::class;
-                $types[] = Snippet::class;
-                $types[] = Document::class;
+                $types[] = '\\' . Page::class;
+                $types[] = '\\' . Snippet::class;
+                $types[] = '\\' . Document::class;
             }
         }
 
@@ -57,7 +57,7 @@ trait Relation
                     $types[] = $this->getClassName('asset', $item['assetTypes']);
                 }
             } else {
-                $types[] = Asset::class;
+                $types[] = '\\' . Asset::class;
             }
         }
 
@@ -68,11 +68,9 @@ trait Relation
                     $types[] = $this->getClassName('object', $item['classes']);
                 }
             } else {
-                $types[] = AbstractObject::class;
+                $types[] = '\\' . AbstractObject::class;
             }
         }
-
-        $types = array_map(static fn (string $type): string => u($type)->ensureStart('\\')->toString(), $types);
 
         if ($asArray) {
             $types = array_map(static fn (string $type): string => $type . '[]', $types);
@@ -93,13 +91,13 @@ trait Relation
 
         if ($typeLoader) {
             try {
-                return $typeLoader->getClassNameFor($shortName);
+                return u($typeLoader->getClassNameFor($shortName))->ensureStart('\\');
             } catch (UnsupportedException) {
                 // try next
             }
 
             try {
-                return $typeLoader->build($shortName)::class;
+                return u($typeLoader->build($shortName)::class)->ensureStart('\\');
             } catch (UnsupportedException) {
                 // try next
             }
@@ -107,13 +105,13 @@ trait Relation
 
         $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
         $className = match ($type) {
-            'asset' => 'Pimcore\Model\Asset\\' . ucfirst($shortName),
-            'document' => 'Pimcore\Model\Document\\' . ucfirst($shortName),
-            'object' => 'Pimcore\Model\DataObject\\' . ucfirst($shortName),
+            'asset' => '\Pimcore\Model\Asset\\' . ucfirst($shortName),
+            'document' => '\Pimcore\Model\Document\\' . ucfirst($shortName),
+            'object' => '\Pimcore\Model\DataObject\\' . ucfirst($shortName),
         };
 
         try {
-            return $factory->getClassNameFor($className);
+            return u($factory->getClassNameFor($className))->ensureStart('\\');
         } catch (UnsupportedException) {
             return $className;
         }
