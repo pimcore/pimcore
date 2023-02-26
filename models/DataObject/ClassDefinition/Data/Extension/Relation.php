@@ -16,11 +16,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
-use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\Document;
-use Pimcore\Model\Document\Page;
-use Pimcore\Model\Document\Snippet;
 use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader as DocumentTypeLoader;
 use function Symfony\Component\String\u;
 
@@ -35,48 +30,49 @@ trait Relation
      */
     protected function getPhpDocClassString($asArray = false)
     {
-        $types = [];
+        // init
+        $class = [];
+        $strArray = $asArray ? '[]' : '';
 
         // add documents
         if ($this->getDocumentsAllowed()) {
-            if ($documentTypes = $this->getDocumentTypes()) {
+            $documentTypes = $this->getDocumentTypes();
+            if (count($documentTypes) == 0) {
+                $class[] = '\Pimcore\Model\Document\Page' . $strArray;
+                $class[] = '\Pimcore\Model\Document\Snippet' . $strArray;
+                $class[] = '\Pimcore\Model\Document' . $strArray;
+            } elseif (is_array($documentTypes)) {
                 foreach ($documentTypes as $item) {
-                    $types[] = $this->getClassName('document', $item['documentTypes']);
+                    $class[] = $this->getClassName('document', $item['documentTypes']) . $strArray;
                 }
-            } else {
-                $types[] = '\\' . Page::class;
-                $types[] = '\\' . Snippet::class;
-                $types[] = '\\' . Document::class;
             }
         }
 
-        // add assets
+        // add asset
         if ($this->getAssetsAllowed()) {
-            if ($assetTypes = $this->getAssetTypes()) {
+            $assetTypes = $this->getAssetTypes();
+            if (count($assetTypes) == 0) {
+                $class[] = '\Pimcore\Model\Asset' . $strArray;
+            } elseif (is_array($assetTypes)) {
                 foreach ($assetTypes as $item) {
-                    $types[] = $this->getClassName('asset', $item['assetTypes']);
+                    $class[] = $this->getClassName('asset', $item['assetTypes']) . $strArray;
                 }
-            } else {
-                $types[] = '\\' . Asset::class;
             }
         }
 
         // add objects
         if ($this->getObjectsAllowed()) {
-            if ($classes = $this->getClasses()) {
+            $classes = $this->getClasses();
+            if (count($classes) === 0) {
+                $class[] = '\Pimcore\Model\DataObject\AbstractObject' . $strArray;
+            } elseif (is_array($classes)) {
                 foreach ($classes as $item) {
-                    $types[] = $this->getClassName('object', $item['classes']);
+                    $class[] = $this->getClassName('object', $item['classes']) . $strArray;
                 }
-            } else {
-                $types[] = '\\' . AbstractObject::class;
             }
         }
 
-        if ($asArray) {
-            $types = array_map(static fn (string $type): string => $type . '[]', $types);
-        }
-
-        return $types;
+        return $class;
     }
 
     /**
