@@ -91,12 +91,6 @@ trait Relation
             } catch (UnsupportedException) {
                 // try next
             }
-
-            try {
-                return u($typeLoader->build($shortName)::class)->ensureStart('\\');
-            } catch (UnsupportedException) {
-                // try next
-            }
         }
 
         $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
