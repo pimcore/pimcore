@@ -460,7 +460,7 @@ class EmailController extends AdminController
             if (is_array($data)) {
                 foreach ($data as $key => &$value) {
                     if (is_string($value)) {
-                        if($key === 'address'){
+                        if ($key === 'address') {
                             $value = filter_var($value, FILTER_SANITIZE_EMAIL);
                         }
 
