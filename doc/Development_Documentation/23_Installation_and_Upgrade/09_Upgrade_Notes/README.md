@@ -209,7 +209,7 @@ pimcore:
 ```yaml
 pimcore_seo:
     redirects:
-        auto_create_redirect: true
+        auto_create_redirects: true
 ```
 
 ## 10.6.0
