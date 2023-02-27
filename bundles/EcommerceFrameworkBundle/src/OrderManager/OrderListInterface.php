@@ -54,6 +54,9 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
 
     public function getItemClassName(): string;
 
+    /**
+     * @return $this
+     */
     public function setItemClassName(string $className): static;
 
     /**
@@ -108,11 +111,20 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
      */
     public function addCondition(string $condition, string $value = null): static;
 
+    /**
+     * @return $this
+     */
     public function addSelectField(string $field): static;
 
+    /**
+     * @return $this
+     */
     public function addFilter(OrderListFilterInterface $filter): static;
 
     public function useSubItems(): bool;
 
+    /**
+     * @return $this
+     */
     public function setUseSubItems(bool $useSubItems): static;
 }
