@@ -237,6 +237,10 @@ pimcore:
                 tags: ['set']
                 filters: ['escape', 'trans', 'default']
                 functions: ['path', 'asset']
+
+    gotenberg:
+        base_url: 'gotenberg:3000'
+
 presta_sitemap:
     # do not add properties by default
     defaults:
