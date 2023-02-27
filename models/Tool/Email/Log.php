@@ -369,10 +369,8 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the content of the html log file
-     *
-     * @return string | false
      */
-    public function getHtmlLog(): bool|string
+    public function getHtmlLog(): string|false
     {
         if ($this->getEmailLogExistsHtml()) {
             $storage = Storage::get('email_log');
@@ -385,10 +383,8 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the content of the text log file
-     *
-     * @return string | false
      */
-    public function getTextLog(): bool|string
+    public function getTextLog(): string|false
     {
         if ($this->getEmailLogExistsText()) {
             $storage = Storage::get('email_log');
