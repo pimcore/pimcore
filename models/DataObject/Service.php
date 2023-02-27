@@ -1418,10 +1418,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data $layout
-     * @param null|array $allowedView
-     * @param null|array $allowedEdit
-     *
      * @internal
      */
     public static function enrichLayoutPermissions(ClassDefinition\Data &$layout, ?array $allowedView, ?array $allowedEdit): void
