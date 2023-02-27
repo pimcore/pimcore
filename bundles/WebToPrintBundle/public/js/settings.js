@@ -207,10 +207,10 @@ pimcore.bundle.web2print.settings = Class.create({
                         value: t('web2print_headlesschrome_documentation_additions_text'),
                     },{
                         xtype: "displayfield",
-                        fieldLabel: t("web2print_headlesschrome_json_converter"),
+                        fieldLabel: t("web2print_json_converter"),
                         name: 'json_converter',
                         width: 600,
-                        value: t('web2print_headlesschrome_json_converter_link'),
+                        value: t('web2print_json_converter_link'),
                         autoEl:{
                             tag: 'a',
                             target: '_blank',
@@ -246,7 +246,7 @@ pimcore.bundle.web2print.settings = Class.create({
                         autoEl:{
                             tag: 'a',
                             target: '_blank',
-                            href: "https://github.com/spiritix/php-chrome-html2pdf#requirements",
+                            href: "https://github.com/chrome-php/chrome#requirements",
                         }
                     },
                     {
@@ -258,7 +258,7 @@ pimcore.bundle.web2print.settings = Class.create({
                         autoEl:{
                             tag: 'a',
                             target: '_blank',
-                            href: "https://github.com/spiritix/php-chrome-html2pdf#options",
+                            href: "https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-printToPDF", // suggesting the link mentioned in https://github.com/chrome-php/chrome/blob/6bc3ad7de6d17a3beedd5c114850ac6fcf24f28b/src/PageUtils/PagePdf.php#L24-L43
                         }
                     },{
                         xtype: "displayfield",
@@ -268,10 +268,10 @@ pimcore.bundle.web2print.settings = Class.create({
                         value: t('web2print_chromium_documentation_additions_text'),
                     },{
                         xtype: "displayfield",
-                        fieldLabel: t("web2print_chromium_json_converter"),
+                        fieldLabel: t("web2print_json_converter"),
                         name: 'json_converter',
                         width: 600,
-                        value: t('web2print_chromium_json_converter_link'),
+                        value: t('web2print_json_converter_link'),
                         autoEl:{
                             tag: 'a',
                             target: '_blank',
@@ -331,12 +331,16 @@ pimcore.bundle.web2print.settings = Class.create({
                                 listeners: {
                                     select: function(combo, record) {
 
+                                        this.pdfReactorSettings.hide();
+                                        this.headlessChromeSettings.hide();
+                                        this.chromiumSettings.hide();
+
                                         if(combo.getValue() == "pdfreactor") {
                                             this.pdfReactorSettings.show();
-                                            this.headlessChromeSettings.hide();
                                         } else if(combo.getValue() == "headlesschrome") {
-                                            this.pdfReactorSettings.hide();
                                             this.headlessChromeSettings.show();
+                                        } else if(combo.getValue() == "chromium") {
+                                            this.chromiumSettings.show();
                                         }
 
                                     }.bind(this)

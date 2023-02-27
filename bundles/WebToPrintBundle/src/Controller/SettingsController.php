@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\WebToPrintBundle\Controller;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\WebToPrintBundle\Config;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
+use Pimcore\Bundle\WebToPrintBundle\Processor\Chromium;
 use Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome;
 use Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -103,6 +104,15 @@ class SettingsController extends AdminController
             $params = Config::getWeb2PrintConfig();
 
             $params = $params['headlessChromeSettings'];
+            $params = json_decode($params, true);
+
+            if (!is_array($params)) {
+                $params = [];
+            }
+        }elseif ($adapter instanceof Chromium) {
+            $params = Config::getWeb2PrintConfig();
+
+            $params = $params['chromiumSettings'];
             $params = json_decode($params, true);
 
             if (!is_array($params)) {

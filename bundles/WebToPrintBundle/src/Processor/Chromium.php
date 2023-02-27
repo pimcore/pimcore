@@ -62,7 +62,7 @@ class Chromium extends Processor
 
         try {
             $this->updateStatus($document->getId(), 50, 'pdf_conversion');
-            $pdf = $this->getPdfFromString($html, []);
+            $pdf = $this->getPdfFromString($html, $web2printConfig);
             $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         } catch (\Exception $e) {
             Logger::error((string) $e);
@@ -138,7 +138,21 @@ class Chromium extends Processor
     private function getDefaultOptions(): array
     {
         return [
-
+            'landscape' => false,
+            'printBackground' => false,
+            'displayHeaderFooter' => false,
+            'preferCSSPageSize' => false,
+            'marginTop' => 0.4, //must be a float, value in inches
+            'marginBottom' => 0.4,//must be a float, value in inches
+            'marginLeft' => 0.4,//must be a float, value in inches
+            'marginRight' => 0.4,//must be a float, value in inches
+            'paperWidth' => 8.5, //must be a float, value in inches
+            'paperHeight' => 11,//must be a float, value in inches
+            'headerTemplate' => '',
+            'footerTemplate' => '',
+            'scale' => 1.0, // must be a float
+            //'pageRanges'
+            //'ignoreInvalidPageRanges'
         ];
     }
 
