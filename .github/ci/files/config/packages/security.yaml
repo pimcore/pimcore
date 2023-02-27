@@ -36,6 +36,7 @@ security:
                 password_parameter: password
             custom_authenticators:
                 - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminTokenAuthenticator
+                - Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminSessionAuthenticator
             two_factor:
                 auth_form_path: /admin/login/2fa                   # Path or route name of the two-factor form
                 check_path: /admin/login/2fa-verify                # Path or route name of the two-factor code check

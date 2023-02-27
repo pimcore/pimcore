@@ -50,16 +50,25 @@ class Authentication
             return null;
         }
 
-        $token = $session->get('_security_pimcore_admin');
-        $token = $token ? static::safelyUnserialize($token) : null;
+        $adminSession = $session->getBag('pimcore_admin');
+        $user = $adminSession->get('user');
 
-        if ($token instanceof TokenInterface) {
-            $token = static::refreshUser($token, \Pimcore::getContainer()->get(UserProvider::class));
-            $user = $token->getUser();
+        if (!$user) {
+            $token = $session->get('_security_pimcore_admin');
+            $token = $token ? static::safelyUnserialize($token) : null;
 
-            if ($user instanceof \Pimcore\Bundle\AdminBundle\Security\User\User && self::isValidUser($user->getUser())) {
-                return $user->getUser();
+            if ($token instanceof TokenInterface) {
+                $token = static::refreshUser($token, \Pimcore::getContainer()->get(UserProvider::class));
+                $user = $token->getUser();
             }
+        }
+
+        if ($user instanceof \Pimcore\Bundle\AdminBundle\Security\User\User) {
+            $user = $user->getUser();
+        }
+
+        if ($user && self::isValidUser($user)) {
+            return $user;
         }
 
         return null;
