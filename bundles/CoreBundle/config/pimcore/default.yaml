@@ -217,19 +217,6 @@ pimcore:
         domains:
             - messages
             - admin
-    sitemaps:
-        generators:
-            pimcore_documents:
-                enabled: true
-                priority: 100
-                generator_id: Pimcore\Sitemap\Document\DocumentTreeGenerator
-    redirects:
-        status_codes:
-            300: Multiple Choices
-            301: Moved Permanently
-            302: Found
-            303: See Other
-            307: Temporary Redirect
 
     templating_engine:
         twig:
@@ -240,10 +227,3 @@ pimcore:
 
     gotenberg:
         base_url: 'gotenberg:3000'
-
-presta_sitemap:
-    # do not add properties by default
-    defaults:
-        lastmod: ~
-        priority: ~
-        changefreq: ~

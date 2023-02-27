@@ -292,15 +292,6 @@ pimcore.layout.toolbar = Class.create({
  
              var extrasItems = [];
 
-             if (user.isAllowed("redirects") && perspectiveCfg.inToolbar("extras.redirects")) {
-                 extrasItems.push({
-                     text: t("redirects"),
-                     iconCls: "pimcore_nav_icon_redirects",
-                     itemId: 'pimcore_menu_extras_redirects',
-                     handler: this.editRedirects
-                 });
-             }
-
              let translationItems = [];
 
              if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
@@ -1093,16 +1084,6 @@ pimcore.layout.toolbar = Class.create({
          }
          catch (e) {
              pimcore.globalmanager.add("translationdomainmanager", new pimcore.settings.translation.domain(domain));
-         }
-     },
-
-     editRedirects: function () {
- 
-         try {
-             pimcore.globalmanager.get("redirects").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("redirects", new pimcore.settings.redirects());
          }
      },
  

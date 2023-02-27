@@ -131,7 +131,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - [CustomReports] have been moved into PimcoreCustomReportsBundle
       - Config `pimcore:custom_reports` has been removed, please use `pimcore_custom_reports:` in the PimcoreCustomReportsBundle insteand.
     - [Search] has been moved into PimcoreSimpleBackendSearchBundle
-    - [SEO] Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
+    - [SEO] Document Editor, Redirects, Sitemaps, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
     - [WordExport] has been moved into PimcoreWordExportBundle
     - [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
     - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
@@ -205,6 +205,12 @@ pimcore:
 - [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
 - [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticatePlaintext()` has been removed.
 - [DataObjects][CSV Export] Changed encoding of table data-types to `json_encode` from `base64_encoded`.
+- [Documents] Moving a document in the tree no longer opens the redirect prompt asking to create redirects. Creating a redirect is now configurable with `pimcore:redirects:auto_create_redirects`. This config includes URLSlugs and Pretty URLs.
+```yaml
+pimcore_seo:
+    redirects:
+        auto_create_redirects: true
+```
 
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.

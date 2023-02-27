@@ -22,15 +22,12 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Site;
-use Pimcore\Routing\RedirectHandler;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -44,7 +41,6 @@ class RoutingListener implements EventSubscriberInterface
 
     public function __construct(
         protected RequestHelper $requestHelper,
-        protected RedirectHandler $redirectHandler,
         protected SiteResolver $siteResolver,
         protected Config $config
     ) {
@@ -58,9 +54,6 @@ class RoutingListener implements EventSubscriberInterface
         return [
             // run with high priority as we need to set the site early
             KernelEvents::REQUEST => ['onKernelRequest', 512],
-
-            // run with high priority before handling real errors
-            KernelEvents::EXCEPTION => ['onKernelException', 64],
         ];
     }
 
@@ -88,13 +81,6 @@ class RoutingListener implements EventSubscriberInterface
         // resolve current site from request
         $this->resolveSite($request, $path);
 
-        // check for override redirects
-        $response = $this->redirectHandler->checkForRedirect($request, true);
-        if ($response) {
-            $event->setResponse($response);
-
-            return;
-        }
 
         // check for app.php in URL and remove it for SEO puroposes
         $this->handleFrontControllerRedirect($event, $path);
@@ -106,18 +92,6 @@ class RoutingListener implements EventSubscriberInterface
         $this->handleMainDomainRedirect($event);
         if ($event->hasResponse()) {
             return;
-        }
-    }
-
-    public function onKernelException(ExceptionEvent $event): void
-    {
-        // in case routing didn't find a matching route, check for redirects without override
-        $exception = $event->getThrowable();
-        if ($exception instanceof NotFoundHttpException) {
-            $response = $this->redirectHandler->checkForRedirect($event->getRequest(), false);
-            if ($response) {
-                $event->setResponse($response);
-            }
         }
     }
 

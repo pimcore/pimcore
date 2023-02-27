@@ -123,14 +123,12 @@ final class Configuration implements ConfigurationInterface
         $this->addSecurityNode($rootNode);
         $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
-        $this->addSitemapsNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
-        $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
 
@@ -157,21 +155,6 @@ final class Configuration implements ConfigurationInterface
                         ->defaultValue(1800)
                     ->end()
         ;
-    }
-
-    private function buildRedirectsStatusCodes(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-            ->arrayNode('redirects')
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('status_codes')
-                        ->info('List all redirect status codes.')
-                        ->prototype('scalar')
-                    ->end()
-                ->end()
-            ->end();
     }
 
     /**
@@ -1145,44 +1128,6 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
-    }
-
-    private function addSitemapsNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('sitemaps')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('generators')
-                            ->useAttributeAsKey('name')
-                            ->prototype('array')
-                                ->beforeNormalization()
-                                    ->ifString()
-                                    ->then(function ($v) {
-                                        return [
-                                            'enabled' => true,
-                                            'generator_id' => $v,
-                                            'priority' => 0,
-                                        ];
-                                    })
-                                ->end()
-                                ->addDefaultsIfNotSet()
-                                ->canBeDisabled()
-                                ->children()
-                                    ->scalarNode('generator_id')
-                                        ->cannotBeEmpty()
-                                    ->end()
-                                    ->integerNode('priority')
-                                        ->defaultValue(0)
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
     }
 
     private function addWorkflowNode(ArrayNodeDefinition $rootNode): void
