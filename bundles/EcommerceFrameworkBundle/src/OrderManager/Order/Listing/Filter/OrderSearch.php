@@ -23,7 +23,7 @@ class OrderSearch implements OrderListFilterInterface
 {
     protected string $keyword;
 
-    public function apply(OrderListInterface $orderList): OrderListFilterInterface
+    public function apply(OrderListInterface $orderList): static
     {
         // init
         $queryBuilder = $orderList->getQueryBuilder();
