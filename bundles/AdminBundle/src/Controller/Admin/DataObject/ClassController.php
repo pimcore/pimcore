@@ -1726,7 +1726,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     {
         $result = [];
 
-        if($this->getAdminUser()->isAllowed('fieldcollections')) {
+        if ($this->getAdminUser()->isAllowed('fieldcollections')) {
             $fieldCollections = new DataObject\Fieldcollection\Definition\Listing();
             $fieldCollections = $fieldCollections->load();
 
@@ -1741,7 +1741,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             }
         }
 
-        if($this->getAdminUser()->isAllowed('classes')) {
+        if ($this->getAdminUser()->isAllowed('classes')) {
             $classes = new DataObject\ClassDefinition\Listing();
             $classes->setOrder('ASC');
             $classes->setOrderKey('id');
@@ -1856,11 +1856,12 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $unrestrictedActions = [
             'getTreeAction', 'fieldcollectionListAction', 'fieldcollectionTreeAction', 'fieldcollectionGetAction',
             'getClassDefinitionForColumnConfigAction', 'objectbrickListAction', 'objectbrickTreeAction', 'objectbrickGetAction',
-            'objectbrickDeleteAction', 'objectbrickUpdateAction', 'importObjectbrickAction', 'exportObjectbrickAction', 'bulkCommitAction', 'doBulkExportAction', 'bulkExportAction', 'importFieldcollectionAction', 'exportFieldcollectionAction' // permissions for listed write operations handled separately in action methods
+            'objectbrickDeleteAction', 'objectbrickUpdateAction', 'importObjectbrickAction', 'exportObjectbrickAction', 'bulkCommitAction', 'doBulkExportAction', 'bulkExportAction', 'importFieldcollectionAction', 'exportFieldcollectionAction', // permissions for listed write operations handled separately in action methods
         ];
 
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);
     }
+
     /**
      * @Route("/get-fieldcollection-usages", name="getfieldcollectionusages", methods={"GET"})
      *

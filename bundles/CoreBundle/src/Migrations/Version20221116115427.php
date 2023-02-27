@@ -2,13 +2,23 @@
 
 declare(strict_types=1);
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Model\User;
-use Pimcore\Model\User\Listing;
-
 
 final class Version20221116115427 extends AbstractMigration
 {
@@ -21,15 +31,11 @@ final class Version20221116115427 extends AbstractMigration
     {
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('objectbricks', 'Data Objects')");
 
-
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('fieldcollections', 'Data Objects')");
-
 
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('quantityValueUnits', 'Data Objects')");
 
-
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('classificationstore', 'Data Objects')");
-
 
         $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',objectbricks,fieldcollections,quantityValueUnits,classificationstore\') WHERE `permissions` REGEXP \'(?:^|,)classes(?:$|,)\'');
     }
