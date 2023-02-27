@@ -11,10 +11,9 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace Pimcore\Bundle\SeoBundle\DependencyInjection;
 
@@ -24,7 +23,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-
     /**
      * @inheritDoc
      */
@@ -41,7 +39,8 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function addSitemapGenerators(ArrayNodeDefinition $rootNode):void {
+    private function addSitemapGenerators(ArrayNodeDefinition $rootNode): void
+    {
         $rootNode
             ->children()
                 ->arrayNode('sitemaps')

@@ -564,11 +564,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
         return $this->adminJson(['success' => $success]);
     }
 
-    private function firePostMoveEvent(Document $document, Document $oldDocument, string $oldPath) : void
+    private function firePostMoveEvent(Document $document, Document $oldDocument, string $oldPath): void
     {
         $arguments = [
             'oldPath' => $oldPath,
-            'oldDocument' => $oldDocument
+            'oldDocument' => $oldDocument,
         ];
         $documentEvent = new Pimcore\Event\Model\DocumentEvent($document, $arguments);
         $this->dispatchEvent($documentEvent, Pimcore\Event\DocumentEvents::POST_MOVE_ACTION);

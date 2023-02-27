@@ -391,6 +391,7 @@ final class Redirect extends AbstractModel
     public static function getStatusCodes(): array
     {
         $pimcore_seo_redirects = Pimcore::getContainer()->getParameter('pimcore_seo.redirects');
+
         return $pimcore_seo_redirects['status_codes'];
     }
 }

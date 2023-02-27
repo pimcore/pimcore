@@ -81,7 +81,6 @@ class RoutingListener implements EventSubscriberInterface
         // resolve current site from request
         $this->resolveSite($request, $path);
 
-
         // check for app.php in URL and remove it for SEO puroposes
         $this->handleFrontControllerRedirect($event, $path);
         if ($event->hasResponse()) {

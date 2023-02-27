@@ -30,7 +30,6 @@ use Pimcore\Localization\LocaleService;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool\Frontend;
@@ -50,6 +49,7 @@ use Twig\Environment;
 class PageController extends DocumentControllerBase
 {
     use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @Route("/get-data-by-id", name="getdatabyid", methods={"GET"})
      *
@@ -162,7 +162,7 @@ class PageController extends DocumentControllerBase
         list($task, $page, $version) = $this->saveDocument($page, $request);
         $arguments = [
             'oldPage' => $oldPage,
-            'task' => $task
+            'task' => $task,
         ];
         $documentEvent = new DocumentEvent($page, $arguments);
         $this->dispatchEvent($documentEvent, DocumentEvents::PAGE_POST_SAVE_ACTION);

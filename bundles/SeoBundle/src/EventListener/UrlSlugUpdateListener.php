@@ -11,10 +11,9 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace Pimcore\Bundle\SeoBundle\EventListener;
 
@@ -28,7 +27,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class UrlSlugUpdateListener implements EventSubscriberInterface
 {
-
     /**
      * @inheritDoc
      */
@@ -41,7 +39,7 @@ class UrlSlugUpdateListener implements EventSubscriberInterface
 
     public function onURLSlugUpdate(UrlSlugEvent $event): void
     {
-        if(!PimcoreSeoBundle::isInstalled()) {
+        if (!PimcoreSeoBundle::isInstalled()) {
             return;
         }
 

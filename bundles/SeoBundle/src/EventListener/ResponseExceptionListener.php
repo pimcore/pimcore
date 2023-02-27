@@ -52,7 +52,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event): void
     {
-        if(!PimcoreSeoBundle::isInstalled()) {
+        if (!PimcoreSeoBundle::isInstalled()) {
             return;
         }
 

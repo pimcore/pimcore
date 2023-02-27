@@ -11,21 +11,20 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace Pimcore\Bundle\SeoBundle\EventListener;
 
 use Pimcore;
+use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Bundle\SeoBundle\PimcoreSeoBundle;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Page;
-use Pimcore\Bundle\SeoBundle\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Tool\Frontend;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -40,13 +39,13 @@ class DocumentListener implements EventSubscriberInterface
         return [
             DocumentEvents::POST_DELETE => 'onDocumentDelete',
             DocumentEvents::PAGE_POST_SAVE_ACTION => 'onPagePostSaveAction',
-            DocumentEvents::POST_MOVE_ACTION => 'onPostMoveAction'
+            DocumentEvents::POST_MOVE_ACTION => 'onPostMoveAction',
         ];
     }
 
-    public function onDocumentDelete(DocumentEvent $event) : void
+    public function onDocumentDelete(DocumentEvent $event): void
     {
-        if(!PimcoreSeoBundle::isInstalled()) {
+        if (!PimcoreSeoBundle::isInstalled()) {
             return;
         }
 
@@ -63,9 +62,9 @@ class DocumentListener implements EventSubscriberInterface
         }
     }
 
-    public function onPagePostSaveAction(DocumentEvent $event) : void
+    public function onPagePostSaveAction(DocumentEvent $event): void
     {
-        if(!PimcoreSeoBundle::isInstalled()) {
+        if (!PimcoreSeoBundle::isInstalled()) {
             return;
         }
 
@@ -91,9 +90,9 @@ class DocumentListener implements EventSubscriberInterface
         }
     }
 
-    public function onPostMoveAction(DocumentEvent $event) : void
+    public function onPostMoveAction(DocumentEvent $event): void
     {
-        if(!PimcoreSeoBundle::isInstalled()) {
+        if (!PimcoreSeoBundle::isInstalled()) {
             return;
         }
 
