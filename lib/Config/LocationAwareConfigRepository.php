@@ -49,18 +49,21 @@ class LocationAwareConfigRepository
 
     /**
      * @var string|null
+     *
      * @deprecated Will be removed in Pimcore 11
      */
     protected ?string $storageDirectory = null;
 
     /**
      * @var string|null
+     *
      * @deprecated Will be removed in Pimcore 11
      */
     protected ?string $writeTargetEnvVariableName = null;
 
     /**
      * @var string|null
+     *
      * @deprecated Will be removed in Pimcore 11
      */
     protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
@@ -102,15 +105,14 @@ class LocationAwareConfigRepository
      * @param mixed $loadLegacyConfigCallback
      */
     public function __construct(
-        array   $containerConfig,
+        array $containerConfig,
         ?string $settingsStoreScope,
         ?string $storageDirectory,
         ?string $writeTargetEnvVariableName,
         ?string $defaultWriteLocation = null,
         ?string $legacyConfigFile = null,
-        mixed   $loadLegacyConfigCallback = null
-    )
-    {
+        mixed $loadLegacyConfigCallback = null
+    ) {
         $this->containerConfig = $containerConfig;
         $this->settingsStoreScope = $settingsStoreScope;
         $this->storageDirectory = rtrim($storageDirectory, '/\\');
@@ -409,6 +411,7 @@ class LocationAwareConfigRepository
         if (isset($_SERVER[$storageDir])) {
             trigger_deprecation('pimcore/pimcore', '10.6',
                 sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storageDir));
+
             return $_SERVER[$storageDir];
         }
 
@@ -420,6 +423,7 @@ class LocationAwareConfigRepository
         if (isset($_SERVER[$writeTarget])) {
             trigger_deprecation('pimcore/pimcore', '10.6',
                 sprintf('Setting write targets (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $writeTarget));
+
             return $_SERVER[$writeTarget];
         } elseif (isset($config['storage'][$configKey]['target'])) {
             return $config['storage'][$configKey]['target'];
@@ -428,17 +432,13 @@ class LocationAwareConfigRepository
         return null;
     }
 
-
     public function setWriteTarget(?string $writeTarget): void
     {
         $this->writeTarget = $writeTarget;
     }
 
-
     public function setOptions(?array $options): void
     {
         $this->options = $options;
     }
-
-
 }

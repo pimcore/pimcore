@@ -46,7 +46,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             'legacyConfigFile' => 'custom-reports.php',
             'writeTargetEnvVariableName' => self::WRITE_TARGET,
             'writeTarget' => $writeTarget,
-            'options' => $config['storage'][self::CONFIG_KEY]['options']
+            'options' => $config['storage'][self::CONFIG_KEY]['options'],
         ]);
     }
 

@@ -236,14 +236,13 @@ abstract class Kernel extends SymfonyKernel
             $resolvingBag = $container->getParameterBag();
             $containerConfig = $resolvingBag->resolveValue($containerConfig);
 
-
-            if(!array_key_exists('storage', $containerConfig)) {
+            if (!array_key_exists('storage', $containerConfig)) {
                 return;
             }
 
             foreach ($configArray as $config) {
                 $configKey = str_replace('-', '_', $config['defaultStorageDirectoryName']);
-                if(!isset($containerConfig['storage'][$configKey])){
+                if (!isset($containerConfig['storage'][$configKey])) {
                     continue;
                 }
                 $options = $containerConfig['storage'][$configKey]['options'];
