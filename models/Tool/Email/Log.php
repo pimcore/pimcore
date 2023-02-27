@@ -387,7 +387,7 @@ class Log extends Model\AbstractModel
      *
      * @return string | false
      */
-    public function getHtmlLog(): string|false
+    public function getHtmlLog(): bool|string
     {
         if ($this->getEmailLogExistsHtml()) {
             $storage = Storage::get('email_log');
@@ -403,7 +403,7 @@ class Log extends Model\AbstractModel
      *
      * @return string | false
      */
-    public function getTextLog(): string|false
+    public function getTextLog(): bool|string
     {
         if ($this->getEmailLogExistsText()) {
             $storage = Storage::get('email_log');

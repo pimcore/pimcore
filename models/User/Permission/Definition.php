@@ -56,10 +56,7 @@ class Definition extends Model\AbstractModel
         return $this->category;
     }
 
-    /**
-     * @return $this
-     */
-    public function setCategory(string $category): static
+    public function setCategory(string $category): Definition
     {
         $this->category = $category;
 
