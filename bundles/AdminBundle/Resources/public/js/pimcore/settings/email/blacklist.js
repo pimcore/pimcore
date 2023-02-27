@@ -123,7 +123,7 @@ pimcore.settings.email.blacklist = Class.create({
                         icon:"/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                         handler:function (grid, rowIndex) {
                             let data = grid.getStore().getAt(rowIndex);
-                            const sanitizedEmail = pimcore.helpers.sanitizeEmail(data);
+                            const sanitizedEmail = pimcore.helpers.sanitizeEmail(data.data.address);
 
                             pimcore.helpers.deleteConfirm(
                                 t('email_blacklist'),
