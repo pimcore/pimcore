@@ -22,6 +22,7 @@ use Pimcore\Bundle\WebToPrintBundle\Exception\NotPreparedException;
 use Pimcore\Bundle\WebToPrintBundle\Messenger\GenerateWeb2PrintPdfMessage;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor\Chromium;
+use Pimcore\Bundle\WebToPrintBundle\Processor\Gotenberg;
 use Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome;
 use Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor;
 use Pimcore\Event\Model\DocumentEvent;
@@ -44,6 +45,7 @@ abstract class Processor
             'pdfreactor' => new PdfReactor(),
             'headlesschrome' => new HeadlessChrome(),
             'chromium' => new Chromium(),
+            'gotenberg' => new Gotenberg(),
             default => throw new \Exception('Invalid Configuration - ' . $config['generalTool'])
         };
     }
