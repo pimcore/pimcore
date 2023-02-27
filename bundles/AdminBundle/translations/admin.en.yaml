@@ -172,7 +172,8 @@ unknown: Unknown
 class: Class
 page: Page
 objectbrick: Objectbrick
-field_collection: Field-Collection
+field_collection: Field Collection
+field_collections: Field Collections
 snippet: Snippet
 folder: Folder
 your_selection: 'Your Selection'
