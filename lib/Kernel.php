@@ -23,6 +23,7 @@ use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
@@ -39,6 +40,7 @@ use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
@@ -222,14 +224,38 @@ abstract class Kernel extends SymfonyKernel
             ],
         ];
 
-        foreach ($configArray as $config) {
-            $configDir = rtrim($_SERVER[$config['storageDirectoryEnvVariableName']] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/' . $config['defaultStorageDirectoryName'], '/\\');
-            $configDir = "$configDir/";
-            if (is_dir($configDir)) {
-                // @phpstan-ignore-next-line
-                $loader->import($configDir);
+        $loader->load(function (ContainerBuilder $container) use ($loader, $configArray) {
+            $containerConfig = $container->getExtensionConfig('pimcore');
+            $containerConfig = array_merge(...$containerConfig);
+
+            $processor = new Processor();
+            // @phpstan-ignore-next-line
+            $configuration = $container->getExtension('pimcore')->getConfiguration($containerConfig, $container);
+            $containerConfig = $processor->processConfiguration($configuration, ['pimcore' => $containerConfig]);
+
+            $resolvingBag = $container->getParameterBag();
+            $containerConfig = $resolvingBag->resolveValue($containerConfig);
+
+
+            if(!array_key_exists('storage', $containerConfig)) {
+                return;
             }
-        }
+
+            foreach ($configArray as $config) {
+                $configKey = str_replace('-', '_', $config['defaultStorageDirectoryName']);
+                if(!isset($containerConfig['storage'][$configKey])){
+                    continue;
+                }
+                $options = $containerConfig['storage'][$configKey]['options'];
+
+                $configDir = rtrim($options['directory'] ?? LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
+                $configDir = "$configDir/";
+                if (is_dir($configDir)) {
+                    // @phpstan-ignore-next-line
+                    $loader->import($configDir);
+                }
+            }
+        });
     }
 
     /**

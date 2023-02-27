@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Staticroute;
 
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\Uid\Uuid as Uid;
@@ -26,16 +27,28 @@ use Symfony\Component\Uid\Uuid as Uid;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
+    /**
+     * @deprecated Will be removed in Pimcore 11
+     */
+    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_STATICROUTES';
+
+    private const CONFIG_KEY = 'staticroutes';
+
     public function configure()
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
+        $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($config, self::CONFIG_KEY, 'PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES');
+        $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($config, self::CONFIG_KEY, self::WRITE_TARGET);
+
         parent::configure([
             'containerConfig' => $config['staticroutes']['definitions'],
             'settingsStoreScope' => 'pimcore_staticroutes',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/staticroutes',
+            'storageDirectory' => $storageDirectory,
             'legacyConfigFile' => 'staticroutes.php',
-            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_STATICROUTES',
+            'writeTargetEnvVariableName' => self::WRITE_TARGET,
+            'writeTarget' => $writeTarget,
+            'options' => $config['storage'][self::CONFIG_KEY]['options']
         ]);
     }
 

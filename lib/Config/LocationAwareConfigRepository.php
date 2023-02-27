@@ -49,16 +49,19 @@ class LocationAwareConfigRepository
 
     /**
      * @var string|null
+     * @deprecated Will be removed in Pimcore 11
      */
     protected ?string $storageDirectory = null;
 
     /**
      * @var string|null
+     * @deprecated Will be removed in Pimcore 11
      */
     protected ?string $writeTargetEnvVariableName = null;
 
     /**
      * @var string|null
+     * @deprecated Will be removed in Pimcore 11
      */
     protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
 
@@ -75,6 +78,16 @@ class LocationAwareConfigRepository
     protected ?string $legacyConfigFile = null;
 
     /**
+     * @var string|null
+     */
+    protected ?string $writeTarget = null;
+
+    /**
+     * @var array|null
+     */
+    protected ?array $options = null;
+
+    /**
      * @deprecated Will be removed in Pimcore 11
      */
     private ?PhpArrayFileTable $legacyStore = null;
@@ -89,14 +102,15 @@ class LocationAwareConfigRepository
      * @param mixed $loadLegacyConfigCallback
      */
     public function __construct(
-        array $containerConfig,
+        array   $containerConfig,
         ?string $settingsStoreScope,
         ?string $storageDirectory,
         ?string $writeTargetEnvVariableName,
         ?string $defaultWriteLocation = null,
         ?string $legacyConfigFile = null,
-        mixed $loadLegacyConfigCallback = null
-    ) {
+        mixed   $loadLegacyConfigCallback = null
+    )
+    {
         $this->containerConfig = $containerConfig;
         $this->settingsStoreScope = $settingsStoreScope;
         $this->storageDirectory = rtrim($storageDirectory, '/\\');
@@ -227,12 +241,7 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $env = $this->writeTargetEnvVariableName ? $_SERVER[$this->writeTargetEnvVariableName] ?? null : null;
-        if ($env) {
-            $writeLocation = $env;
-        } else {
-            $writeLocation = $this->defaultWriteLocation;
-        }
+        $writeLocation = $this->writeTarget ?? $this->defaultWriteLocation;
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
             throw new \Exception(sprintf('Invalid write location: %s', $writeLocation));
@@ -330,7 +339,9 @@ class LocationAwareConfigRepository
      */
     private function getVarConfigFile(string $key): string
     {
-        return $this->storageDirectory . '/' . $key . '.yaml';
+        $directory = rtrim($this->options['directory'] ?? $this->storageDirectory, '/\\');
+
+        return $directory . '/' . $key . '.yaml';
     }
 
     /**
@@ -392,4 +403,42 @@ class LocationAwareConfigRepository
             touch($systemConfigFile);
         }
     }
+
+    public static function getStorageDirectoryFromSymfonyConfig(array $config, string $configKey, string $storageDir): string
+    {
+        if (isset($_SERVER[$storageDir])) {
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storageDir));
+            return $_SERVER[$storageDir];
+        }
+
+        return PIMCORE_CONFIGURATION_DIRECTORY . '/' . str_replace('_', '-', $configKey);
+    }
+
+    public static function getWriteTargetFromSymfonyConfig(array $config, string $configKey, string $writeTarget): ?string
+    {
+        if (isset($_SERVER[$writeTarget])) {
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                sprintf('Setting write targets (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $writeTarget));
+            return $_SERVER[$writeTarget];
+        } elseif (isset($config['storage'][$configKey]['target'])) {
+            return $config['storage'][$configKey]['target'];
+        }
+
+        return null;
+    }
+
+
+    public function setWriteTarget(?string $writeTarget): void
+    {
+        $this->writeTarget = $writeTarget;
+    }
+
+
+    public function setOptions(?array $options): void
+    {
+        $this->options = $options;
+    }
+
+
 }

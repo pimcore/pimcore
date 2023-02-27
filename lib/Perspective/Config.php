@@ -29,6 +29,11 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 final class Config
 {
+    /**
+     * @deprecated Will be removed in Pimcore 11
+     */
+    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_PERSPECTIVES';
+
     private const CONFIG_ID = 'perspectives';
 
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
@@ -47,14 +52,20 @@ final class Config
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
             $config = $containerConfig[self::CONFIG_ID]['definitions'];
 
+            $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($containerConfig, self::CONFIG_ID, 'PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES');
+            $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($containerConfig, self::CONFIG_ID, self::WRITE_TARGET);
+
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_perspectives',
-                $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
-                'PIMCORE_WRITE_TARGET_PERSPECTIVES',
+                $storageDirectory,
+                self::WRITE_TARGET,
                 null,
-                self::LEGACY_FILE,
+                self::LEGACY_FILE
             );
+
+            self::$locationAwareConfigRepository->setWriteTarget($writeTarget);
+            self::$locationAwareConfigRepository->setOptions($containerConfig['storage'][self::CONFIG_ID]['options']);
         }
 
         return self::$locationAwareConfigRepository;
