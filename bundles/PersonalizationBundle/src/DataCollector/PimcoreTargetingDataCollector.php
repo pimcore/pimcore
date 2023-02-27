@@ -72,12 +72,12 @@ class PimcoreTargetingDataCollector extends DataCollector implements ResetInterf
         $this->data = [];
     }
 
-    public function getVisitorInfo(): array
+    public function getVisitorInfo(): array|Data
     {
         return $this->data['visitor_info'];
     }
 
-    public function getStorage(): array
+    public function getStorage(): array|Data
     {
         return $this->data['storage'];
     }
@@ -92,12 +92,12 @@ class PimcoreTargetingDataCollector extends DataCollector implements ResetInterf
         return $this->data['target_groups'];
     }
 
-    public function getDocumentTargetGroup(): ?array
+    public function getDocumentTargetGroup(): null|array|Data
     {
         return $this->data['document_target_group'];
     }
 
-    public function getDocumentTargetGroups(): array
+    public function getDocumentTargetGroups(): array|Data
     {
         return $this->data['document_target_groups'];
     }

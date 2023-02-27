@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Event\Targeting;
 
-use Pimcore\Analytics\Code\CodeBlock;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Code\CodeBlock;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class TargetingCodeEvent extends Event

@@ -267,7 +267,6 @@ pimcore.document.tree = Class.create({
                     } else {
                         delete node.data.cls;
                     }
-                    pimcore.elementservice.nodeMoved("document", oldParent, newParent);
                     this.updateOpenDocumentPaths(node);
 
                 }

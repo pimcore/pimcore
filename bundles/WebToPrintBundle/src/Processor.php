@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WebToPrintBundle;
 
+use Pimcore\Bundle\WebToPrintBundle\Event\DocumentEvents;
 use Pimcore\Bundle\WebToPrintBundle\Exception\CancelException;
 use Pimcore\Bundle\WebToPrintBundle\Exception\NotPreparedException;
 use Pimcore\Bundle\WebToPrintBundle\Messenger\GenerateWeb2PrintPdfMessage;
@@ -23,7 +24,6 @@ use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor\Gotenberg;
 use Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome;
 use Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor;
-use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Helper\Mail;
 use Pimcore\Logger;

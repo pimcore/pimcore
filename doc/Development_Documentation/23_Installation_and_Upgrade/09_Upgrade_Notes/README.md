@@ -140,8 +140,12 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`
     - [Web2Print] has been moved into PimcoreWebToPrintBundle
       - Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
+      - Print related Events have been moved from into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
     - [Personalization and targeting] has been moved to `pimcore/personalization` package.
-       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting:` in the PimcoreStaticRoutesBundle instead.
+       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting` in the PimcorePersonalizationBundle instead.
+    - [Google Marketing] has been moved to `pimcore/google-marketing-bundle` package.
+      - Config `pimcore:services:google` has been removed, please use `pimcore_google_marketing` in the PimcoreGoogleMarketingBundle instead.
+    - [Google] Classes Google\Cse and Google\Cse\Item have been removed.
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
@@ -181,6 +185,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - [Web2Print] Added settings option, configuration and processor for PDF preview and generation
 - [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Asset] Removed VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111)
+- [Permissions] Permission for DataObjects Classes has been structured in a more granular way to have more control. Field collections, objects bricks, classification stores and quantity value units now have their own permission.
 - [Translations] Translations Domains needs to be registered in order to be considered as valid. If you are using custom domains
   for translations (other than `messages` and `admin`), then it is required to register the domain in config below:
 ```yaml
