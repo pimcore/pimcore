@@ -28,5 +28,4 @@ class Dao extends Model\Document\Page\Dao implements TargetingDocumentDaoInterfa
 {
     use TargetingDocumentDaoTrait;
 
-
 }

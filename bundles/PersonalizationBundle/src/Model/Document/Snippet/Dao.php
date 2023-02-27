@@ -27,5 +27,4 @@ use Pimcore\Model;
 class Dao extends Model\Document\Snippet\Dao implements TargetingDocumentDaoInterface
 {
     use TargetingDocumentDaoTrait;
-
 }
