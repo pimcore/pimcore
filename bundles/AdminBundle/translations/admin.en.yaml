@@ -1011,4 +1011,6 @@ batch_export_confirmation: You are about to export %s dataObjects. Do you want t
 header: Header
 no_header: No Header
 url-slug-invalid-chars: Provided invalid character in URL slug
-delete_entire_folder_question: Do you really want to delete the folder and its contents?
+delete_entire_folder_question: This operation will delete the entire parent/folder. You may not be able to fully undo this operation.
+allow_to_clear_relation: Allow to clear all relations of this field
+allow_asset_inline_download: Allow inline download
