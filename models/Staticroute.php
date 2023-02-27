@@ -49,7 +49,7 @@ final class Staticroute extends AbstractModel
     protected $reverse;
 
     /**
-     * @var string
+     * @var null|string
      */
     protected $controller;
 
@@ -298,7 +298,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @param string $controller
+     * @param null|string $controller
      *
      * @return $this
      */
