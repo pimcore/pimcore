@@ -31,11 +31,6 @@ class OutputTimestampResolver extends AbstractRequestResolver
 
     protected bool $timestampWasQueried = false;
 
-    public function __construct(RequestStack $requestStack)
-    {
-        parent::__construct($requestStack);
-    }
-
     /**
      * Gets timestamp for with the output should be rendered to
      *
