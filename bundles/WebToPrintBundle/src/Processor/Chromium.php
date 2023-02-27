@@ -21,7 +21,7 @@ use Pimcore\Bundle\WebToPrintBundle\Config;
 use Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
-use Pimcore\Event\DocumentEvents;
+use Pimcore\Bundle\WebToPrintBundle\Event\DocumentEvents;
 use Pimcore\Logger;
 use Pimcore\Image\Chromium as ChromiumLib;
 
