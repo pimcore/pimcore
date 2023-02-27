@@ -116,7 +116,6 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                     }
                                 }
                             },
-                            this.metaDataPanel,
                             {
                                 xtype: "container",
                                 itemId: "serpPreview",
