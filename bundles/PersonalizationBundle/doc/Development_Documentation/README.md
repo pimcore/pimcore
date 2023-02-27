@@ -156,7 +156,10 @@ bar):
 
 * <a href="javascript:(function()%7Bdocument.cookie %3D 'pimcore_targeting_debug%3D1%3B path%3D%2F'%7D)()">Enable Pimcore Targeting Toolbar</a> 
 
-## Opt-out from targeting
-You can give the user the possibility to opt-out from targeting at any time, by setting the following cookie: `pimcore_targeting_disabled=1`. 
+## Opt-in for Targeting
+
+<div class="alert alert-warning">
+Targeting will not be enabled by default. So, it should be enabled by setting the following cookie: `pimcore_targeting_enabled=1`. 
+</div> 
 
 > Since privacy laws vary from country to country, we recommend that you consult with your legal team or company to check what needs to be done before using this features. 

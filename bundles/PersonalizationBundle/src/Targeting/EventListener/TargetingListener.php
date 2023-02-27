@@ -89,10 +89,8 @@ class TargetingListener implements EventSubscriberInterface
             return;
         }
 
-        if ($event->getRequest()->cookies->has('pimcore_targeting_disabled')) {
-            $this->disable();
-
-            return;
+        if ($event->getRequest()->cookies->has('pimcore_targeting_enabled')) {
+            $this->enable();
         }
 
         $request = $event->getRequest();

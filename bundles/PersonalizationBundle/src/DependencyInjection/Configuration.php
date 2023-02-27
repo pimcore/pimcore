@@ -36,7 +36,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('targeting')
-                    ->canBeDisabled()
+                    ->canBeEnabled()
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('storage_id')
