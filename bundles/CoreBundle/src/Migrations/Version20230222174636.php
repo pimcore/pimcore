@@ -24,7 +24,7 @@ final class Version20230222174636 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE documents_page ADD COLUMN `metaData` TEXT');
+        $this->addSql('ALTER TABLE documents_page ADD COLUMN `metaData` TEXT AFTER `description`');
 
     }
 }
