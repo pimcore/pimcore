@@ -62,7 +62,7 @@ class Chromium extends Processor
 
         try {
             $this->updateStatus($document->getId(), 50, 'pdf_conversion');
-            $pdf = $this->getPdfFromString($html, $web2printConfig);
+            $pdf = $this->getPdfFromString($html, $web2printConfig ?? []);
             $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         } catch (\Exception $e) {
             Logger::error((string) $e);
