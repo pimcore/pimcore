@@ -790,10 +790,6 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @internal
-     *
-     * @param Localizedfield|AbstractData|Objectbrick\Data\AbstractData|Concrete $object
-     * @return void
-     * @throws \Exception
      */
     public function setObjectOmitDirty(Localizedfield|AbstractData|Objectbrick\Data\AbstractData|Concrete $object): void
     {
