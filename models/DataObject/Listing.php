@@ -73,15 +73,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     }
 
     /**
-     *
-     * Methods for AdapterInterface
-     */
-    public function count(): int
-    {
-        return $this->getDao()->getTotalCount();
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getItems(int $offset, int $itemCountPerPage): array
