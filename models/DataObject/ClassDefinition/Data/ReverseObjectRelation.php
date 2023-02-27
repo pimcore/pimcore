@@ -89,7 +89,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
     {
         if (empty($this->ownerClassId)) {
             try {
-                $class = DataObject\ClassDefinition::getByName($this->ownerClassName);
+                $class = $this->ownerClassName ? DataObject\ClassDefinition::getByName($this->ownerClassName) : null;
                 if (!$class instanceof DataObject\ClassDefinition) {
                     Logger::error('Reverse relation '.$this->getName().' has no owner class assigned');
 
