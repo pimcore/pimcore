@@ -130,6 +130,7 @@ final class Configuration implements ConfigurationInterface
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
         $this->addTemplatingEngineNode($rootNode);
+        $this->addGotenbergNode($rootNode);
 
         return $treeBuilder;
     }
@@ -1821,6 +1822,20 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    private function addGotenbergNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('gotenberg')
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('base_url')
+                ->defaultValue('gotenberg:3000')
                 ->end()
             ->end()
         ->end();

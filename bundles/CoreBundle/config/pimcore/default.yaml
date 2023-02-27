@@ -224,3 +224,6 @@ pimcore:
                 tags: ['set']
                 filters: ['escape', 'trans', 'default']
                 functions: ['path', 'asset']
+
+    gotenberg:
+        base_url: 'gotenberg:3000'
