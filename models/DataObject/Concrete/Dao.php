@@ -279,7 +279,12 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
         }
         $tableName = 'object_store_' . $this->model->getClassId();
-        Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+        if ($isUpdate) {
+            Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
+        }
+        else {
+            $this->db->insert('object_store_' . $this->model->getClassId(), Helper::quoteDataIdentifiers($this->db, $data));
+        }
 
         // get data for query table
         $data = [];
