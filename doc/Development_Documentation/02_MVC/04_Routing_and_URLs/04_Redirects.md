@@ -1,6 +1,9 @@
 # URLs based on Redirects
 
-To use this feature please enable the `PimcoreSeoBundle` in your bundles.php file.
+To use this feature please enable the `PimcoreSeoBundle` in your bundles.php file and install it accordingly. 
+ ```console
+bin/console  pimcore:bundle:install PimcoreSeoBundle
+```
 
 ## Introduction
 Redirects are a useful feature of Pimcore for directing the user to the correct pages - may it be for marketing URLs, 
