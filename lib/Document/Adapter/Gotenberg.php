@@ -16,15 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Adapter;
 
-use Pimcore\Config;
-use Pimcore\File;
-use Pimcore\Logger;
-use Pimcore\Model\Asset;
-use Pimcore\Tool\Console;
-use Pimcore\Tool\Storage;
 use Gotenberg\Exceptions\GotenbergApiErroed;
 use Gotenberg\Gotenberg as GotenbergAPI;
 use Gotenberg\Stream;
+use Pimcore\Config;
+use Pimcore\Logger;
+use Pimcore\Model\Asset;
+use Pimcore\Tool\Storage;
 
 /**
  * @internal
@@ -62,12 +60,15 @@ class Gotenberg extends Ghostscript
      */
     public static function checkGotenberg(): bool
     {
-        if (!class_exists(GotenbergAPI::class, false)){ return false;}
+        if (!class_exists(GotenbergAPI::class, false)) {
+            return false;
+        }
         $request = GotenbergAPI::chromium(Config::getSystemConfiguration('gotenberg')['base_url'])
             ->html(Stream::string('dummy.html', '<body></body>'));
 
         try {
             GotenbergAPI::send($request);
+
             return true;
         } catch (GotenbergApiErroed $e) {
             return false;
@@ -132,27 +133,25 @@ class Gotenberg extends Ghostscript
         );
 
         if (!$storage->fileExists($storagePath)) {
-
             $localAssetTmpPath = $asset->getLocalFile();
 
             try {
-            $request = GotenbergAPI::libreOffice(Config::getSystemConfiguration('gotenberg')['base_url'])
-                ->convert(
-                    Stream::path($localAssetTmpPath)
-                );
+                $request = GotenbergAPI::libreOffice(Config::getSystemConfiguration('gotenberg')['base_url'])
+                    ->convert(
+                        Stream::path($localAssetTmpPath)
+                    );
 
                 $response = GotenbergAPI::send($request);
                 $fileContent = $response->getBody()->getContents();
                 $storage->write($storagePath, $fileContent);
 
-                $stream = fopen('php://memory','r+');
+                $stream = fopen('php://memory', 'r+');
                 fwrite($stream, $fileContent);
                 rewind($stream);
 
                 return $stream;
-
             } catch (GotenbergApiErroed $e) {
-                $message = "Couldn't convert document to PDF: " . $asset->getRealFullPath() . " with Gotenberg: ";
+                $message = "Couldn't convert document to PDF: " . $asset->getRealFullPath() . ' with Gotenberg: ';
                 Logger::error($message. $e->getMessage());
 
                 throw $e;
@@ -192,10 +191,11 @@ class Gotenberg extends Ghostscript
 
             if (!$storage->fileExists($storagePath)) {
                 stream_copy_to_stream($this->getPdf($asset), $temp);
-            }else{
+            } else {
                 $data = $storage->readStream($storagePath);
                 stream_copy_to_stream($storage->readStream($storagePath), $temp);
             }
+
             return parent::convertPdfToText($page, stream_get_meta_data($temp)['uri']);
         }
 

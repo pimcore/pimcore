@@ -201,8 +201,8 @@ class Ghostscript extends Adapter
             }
 
             $path = $asset->getLocalFile();
-            return $this->convertPdfToText($page, $path);
 
+            return $this->convertPdfToText($page, $path);
         } catch (\Exception $e) {
             Logger::error((string) $e);
 
@@ -215,7 +215,6 @@ class Ghostscript extends Adapter
      */
     protected function convertPdfToText(?int $page, string $assetPath): string
     {
-
         try {
             $pdftotextBin = self::getPdftotextCli();
         } catch (\Exception $e) {
@@ -267,5 +266,4 @@ class Ghostscript extends Adapter
 
         return $text;
     }
-
 }

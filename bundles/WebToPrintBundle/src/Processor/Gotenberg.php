@@ -16,14 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WebToPrintBundle\Processor;
 
+use Gotenberg\Gotenberg as GotenbergAPI;
+use Gotenberg\Stream;
 use Pimcore\Bundle\WebToPrintBundle\Config;
 use Pimcore\Bundle\WebToPrintBundle\Event\DocumentEvents;
 use Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent;
+use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
 use Pimcore\Logger;
-use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
-use Gotenberg\Gotenberg as GotenbergAPI;
-use Gotenberg\Stream;
 
 class Gotenberg extends Processor
 {
@@ -109,16 +109,16 @@ class Gotenberg extends Processor
 
         $options = [
             'printBackground', 'landscape', 'preferCssPageSize', 'omitBackground', 'emulatePrintMediaType',
-            'emulateScreenMediaType'
+            'emulateScreenMediaType',
         ];
 
-        foreach ($options as $option){
+        foreach ($options as $option) {
             if (isset($params[$option]) && $params[$option] != false) {
                 $chromium->$option();
             }
         }
 
-        if ($params['marginTop'] ?? $params['marginBottom'] ?? $params['marginLeft'] ?? isset($params['marginRight']) ) {
+        if ($params['marginTop'] ?? $params['marginBottom'] ?? $params['marginLeft'] ?? isset($params['marginRight'])) {
             $chromium->margins(
                 $params['marginTop'] ?? 0.39,
                 $params['marginBottom'] ?? 0.39,
@@ -141,11 +141,9 @@ class Gotenberg extends Processor
             }
         }
 
-        if ($params['paperWidth'] ?? isset($params['paperHeight'])){
+        if ($params['paperWidth'] ?? isset($params['paperHeight'])) {
             $chromium->paperSize($params['paperWidth'] ?? 8.5, $params['paperHeight'] ?? 11);
         }
-
-
 
         if (isset($params['userAgent'])) {
             $chromium->userAgent($params['userAgent']);
@@ -163,9 +161,11 @@ class Gotenberg extends Processor
 
         if ($returnFilePath) {
             $filename = GotenbergAPI::save($request, PIMCORE_SYSTEM_TEMP_DIRECTORY);
+
             return PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . $filename;
         }
         $response = GotenbergAPI::send($request);
+
         return $response->getBody()->getContents();
     }
 
