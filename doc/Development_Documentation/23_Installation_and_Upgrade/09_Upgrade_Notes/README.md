@@ -140,6 +140,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`
     - [Web2Print] has been moved into PimcoreWebToPrintBundle
       - Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
+      - Print related Events have been moved from into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
     - [Personalization and targeting] has been moved to `pimcore/personalization` package.
        - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting` in the PimcorePersonalizationBundle instead.
     - [Google Marketing] has been moved to `pimcore/google-marketing-bundle` package.
@@ -181,6 +182,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
   Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
 - [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Asset] Removed VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111)
+- [Permissions] Permission for DataObjects Classes has been structured in a more granular way to have more control. Field collections, objects bricks, classification stores and quantity value units now have their own permission.
 - [Translations] Translations Domains needs to be registered in order to be considered as valid. If you are using custom domains
   for translations (other than `messages` and `admin`), then it is required to register the domain in config below:
 ```yaml
