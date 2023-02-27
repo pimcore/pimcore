@@ -115,7 +115,7 @@ class Chromium extends Processor
 
         try {
             $page = $browser->createPage();
-            $page->setHtml($html, 30000);
+            $page->setHtml($html, 5000);
 
             $pdf = $page->pdf($params);
             if ($returnFilePath) {
@@ -147,7 +147,7 @@ class Chromium extends Processor
             'marginLeft' => 0.4,//must be a float, value in inches
             'marginRight' => 0.4,//must be a float, value in inches
             'paperWidth' => 8.5, //must be a float, value in inches
-            'paperHeight' => 11,//must be a float, value in inches
+            'paperHeight' => 11.0,//must be a float, value in inches
             'headerTemplate' => '',
             'footerTemplate' => '',
             'scale' => 1.0, // must be a float
