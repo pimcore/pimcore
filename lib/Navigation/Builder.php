@@ -303,6 +303,9 @@ class Builder
         $page->setClass($page->getClass() . $classes);
     }
 
+    /**
+     * @return $this
+     */
     public function setPageClass(string $pageClass): static
     {
         $this->pageClass = $pageClass;
