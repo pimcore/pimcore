@@ -27,13 +27,13 @@ use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Image\Chromium;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
-use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
@@ -59,6 +59,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 {
     use DocumentTreeConfigTrait;
     use UserNameTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     protected Document\Service $_documentService;
 
@@ -530,8 +531,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
                     }
 
                     $success = true;
-
-                    $this->createRedirectForFormerPath($request, $document, $oldPath, $oldDocument);
+                    if ($oldPath && $oldPath != $document->getRealFullPath()) {
+                        $this->firePostMoveEvent($document, $oldDocument, $oldPath);
+                    }
                 } catch (Exception $e) {
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
@@ -549,7 +551,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $document->save();
                 $success = true;
 
-                $this->createRedirectForFormerPath($request, $document, $oldPath, $oldDocument);
+                if ($oldPath && $oldPath != $document->getRealFullPath()) {
+                    $this->firePostMoveEvent($document, $oldDocument, $oldPath);
+                }
             } catch (Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
@@ -560,70 +564,14 @@ class DocumentController extends ElementControllerBase implements KernelControll
         return $this->adminJson(['success' => $success]);
     }
 
-    private function createRedirectForFormerPath(Request $request, Document $document, string $oldPath, Document $oldDocument): void
+    private function firePostMoveEvent(Document $document, Document $oldDocument, string $oldPath) : void
     {
-        if ($document instanceof Document\Page || $document instanceof Document\Hardlink) {
-            if ($request->get('create_redirects') === 'true' && $this->getAdminUser()->isAllowed('redirects')) {
-                if ($oldPath && $oldPath != $document->getRealFullPath()) {
-                    $sourceSite = Frontend::getSiteForDocument($oldDocument);
-                    if ($sourceSite) {
-                        $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);
-                    }
-
-                    $targetSite = Frontend::getSiteForDocument($document);
-
-                    $this->doCreateRedirectForFormerPath($oldPath, $document->getId(), $sourceSite, $targetSite);
-
-                    if ($document->hasChildren()) {
-                        $list = new Document\Listing();
-                        $list->setCondition('`path` LIKE :path', [
-                            'path' => $list->escapeLike($document->getRealFullPath()) . '/%',
-                        ]);
-
-                        $childrenList = $list->loadIdPathList();
-
-                        $count = 0;
-
-                        foreach ($childrenList as $child) {
-                            $source = preg_replace('@^' . preg_quote($document->getRealFullPath(), '@') . '@', $oldDocument->getRealFullPath(), $child['path']);
-                            if ($sourceSite) {
-                                $source = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $source);
-                            }
-
-                            $target = $child['id'];
-
-                            $this->doCreateRedirectForFormerPath($source, $target, $sourceSite, $targetSite);
-
-                            $count++;
-                            if ($count % 10 === 0) {
-                                Pimcore::collectGarbage();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private function doCreateRedirectForFormerPath(string $source, int $targetId, ?Site $sourceSite, ?Site $targetSite): void
-    {
-        $redirect = new Redirect();
-        $redirect->setType(Redirect::TYPE_AUTO_CREATE);
-        $redirect->setRegex(false);
-        $redirect->setTarget((string) $targetId);
-        $redirect->setSource($source);
-        $redirect->setStatusCode(301);
-        $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
-
-        if ($sourceSite) {
-            $redirect->setSourceSite($sourceSite->getId());
-        }
-
-        if ($targetSite) {
-            $redirect->setTargetSite($targetSite->getId());
-        }
-
-        $redirect->save();
+        $arguments = [
+            'oldPath' => $oldPath,
+            'oldDocument' => $oldDocument
+        ];
+        $documentEvent = new Pimcore\Event\Model\DocumentEvent($document, $arguments);
+        $this->dispatchEvent($documentEvent, Pimcore\Event\DocumentEvents::POST_MOVE_ACTION);
     }
 
     protected function updateIndexesOfDocumentSiblings(Document $document, int $newIndex): void

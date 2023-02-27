@@ -320,7 +320,6 @@ abstract class Kernel extends SymfonyKernel
             new DoctrineBundle(),
             new DoctrineMigrationsBundle(),
             new CmfRoutingBundle(),
-            new PrestaSitemapBundle(),
             new SchebTwoFactorBundle(),
             new FOSJsRoutingBundle(),
             new FlysystemBundle(),

@@ -16,13 +16,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle\DependencyInjection;
 
+use Pimcore\Bundle\SeoBundle\EventListener\SitemapGeneratorListener;
+use Pimcore\DependencyInjection\ServiceCollection;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class PimcoreSeoExtension extends Extension
+final class PimcoreSeoExtension extends ConfigurableExtension
 {
-    public function load(array $configs, \Symfony\Component\DependencyInjection\ContainerBuilder $container): void
+    public function loadInternal(array $config, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(
             $container,
@@ -30,5 +36,49 @@ class PimcoreSeoExtension extends Extension
         );
 
         $loader->load('services.yaml');
+        $loader->load('maintenance.yaml');
+        $loader->load('event_listeners.yaml');
+        $loader->load('redirect_services.yaml');
+        $loader->load('sitemap_services.yaml');
+        $this->configureSitemaps($container, $config['sitemaps']);
+        $container->setParameter('pimcore_seo.sitemaps', $config['sitemaps']);
+        $container->setParameter('pimcore_seo.redirects', $config['redirects']);
+    }
+
+    private function configureSitemaps(ContainerBuilder $container, array $config): void
+    {
+        $listener = $container->getDefinition(SitemapGeneratorListener::class);
+
+        $generators = [];
+        if (isset($config['generators']) && !empty($config['generators'])) {
+            $generators = $config['generators'];
+        }
+
+        uasort($generators, function (array $a, array $b) {
+            if ($a['priority'] === $b['priority']) {
+                return 0;
+            }
+
+            return $a['priority'] < $b['priority'] ? 1 : -1;
+        });
+
+        $mapping = [];
+        foreach ($generators as $generatorName => $generatorConfig) {
+            if (!$generatorConfig['enabled']) {
+                continue;
+            }
+
+            $mapping[$generatorName] = new Reference($generatorConfig['generator_id']);
+        }
+
+        // the locator is a symfony core service locator containing every generator
+        $locator = new Definition(ServiceLocator::class, [$mapping]);
+        $locator->setPublic(false);
+        $locator->addTag('container.service_locator');
+
+        // the collection decorates the locator as iterable in the defined key order
+        $collection = new Definition(ServiceCollection::class, [$locator, array_keys($mapping)]);
+        $collection->setPublic(false);
+        $listener->setArgument('$generators', $collection);
     }
 }
