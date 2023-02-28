@@ -96,6 +96,6 @@ class Dao extends AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, self::TABLE_NAME_RELATIONS, $data);
+        Helper::upsert($this->db, self::TABLE_NAME_RELATIONS, $data, $this->getPrimaryKey(self::TABLE_NAME_RELATIONS));
     }
 }

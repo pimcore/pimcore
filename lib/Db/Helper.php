@@ -23,13 +23,15 @@ use Pimcore\Model\Element\ValidationException;
 
 class Helper
 {
-    public static function upsert(Connection $connection, string $table, array $data, array $keys): int|string
+    public static function upsert(Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
     {
         try {
+            $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
             return $connection->insert($table, $data);
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
             $critera = [];
             foreach ($keys as $key) {
+                $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
                 $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%1$s" passed for upsert not found in data', $key));
             }
 

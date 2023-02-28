@@ -71,7 +71,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'gridconfig_favourites', $data);
+        Helper::upsert($this->db, 'gridconfig_favourites', $data, $this->getPrimaryKey('gridconfig_favourites'));
 
         return $this->model;
     }

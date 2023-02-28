@@ -55,28 +55,42 @@ abstract class AbstractDao implements DaoInterface
     /**
      * @return string[]
      */
-    public function getValidTableColumns(string $table, bool $cache = true): array
+    public function getPrimaryKey(string $table, bool $cache = true): array
+    {
+        return $this->getValidTableColumns($table, $cache, true);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getValidTableColumns(string $table, bool $cache = true, bool $primaryKeyColumnsOnly = false): array
     {
         $cacheKey = self::CACHEKEY . $table;
 
         if (RuntimeCache::isRegistered($cacheKey)) {
-            $columns = RuntimeCache::get($cacheKey);
+            $allColumns = RuntimeCache::get($cacheKey);
         } else {
-            $columns = Cache::load($cacheKey);
+            $allColumns = Cache::load($cacheKey);
 
-            if (!$columns || !$cache) {
+            if (!$allColumns || !$cache) {
                 $columns = [];
+                $primaryKeyColumns = [];
                 $data = $this->db->fetchAllAssociative('SHOW COLUMNS FROM ' . $table);
                 foreach ($data as $d) {
-                    $columns[] = $d['Field'];
+                    $fieldName = $d['Field'];
+                    $columns[] = $fieldName;
+                    if($d['Key'] === 'PRI') {
+                        $primaryKeyColumns[] = $fieldName;
+                    }
                 }
-                Cache::save($columns, $cacheKey, ['system', 'resource'], null, 997);
+                $allColumns = ['columns' => $columns,  'primaryKeyColumns' => $primaryKeyColumns];
+                Cache::save($allColumns, $cacheKey, ['system', 'resource'], null, 997);
             }
 
-            RuntimeCache::set($cacheKey, $columns);
+            RuntimeCache::set($cacheKey, $allColumns);
         }
 
-        return $columns;
+        return $primaryKeyColumnsOnly ? $allColumns['primaryKeyColumns'] : $allColumns['columns'];
     }
 
     /**
