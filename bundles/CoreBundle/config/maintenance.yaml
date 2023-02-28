@@ -13,7 +13,7 @@ services:
         arguments:
             - '@logger'
         tags:
-            - { name: pimcore.maintenance.task, type: scheduledtasks }
+            - { name: pimcore.maintenance.task, type: scheduledtasks, messengerMessageClass: '\Pimcore\Messenger\ScheduledTaskMessage' }
 
     Pimcore\Maintenance\Tasks\LogCleanupTask:
         tags:
