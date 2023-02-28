@@ -27,6 +27,7 @@ class Helper
     {
         try {
             $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
+
             return $connection->insert($table, $data);
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
             $critera = [];

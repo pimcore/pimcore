@@ -79,7 +79,7 @@ abstract class AbstractDao implements DaoInterface
                 foreach ($data as $d) {
                     $fieldName = $d['Field'];
                     $columns[] = $fieldName;
-                    if($d['Key'] === 'PRI') {
+                    if ($d['Key'] === 'PRI') {
                         $primaryKeyColumns[] = $fieldName;
                     }
                 }
