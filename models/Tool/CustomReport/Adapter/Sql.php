@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
 
 /**
@@ -27,26 +28,24 @@ class Sql extends AbstractAdapter
      */
     public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null)
     {
-        $db = Db::get();
-
         $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
         $data = [];
         $total = 0;
 
         if ($baseQuery) {
-            $total = $db->fetchOne($baseQuery['count']);
+            $total = $baseQuery['count']->execute()->fetchOne();
 
-            $order = '';
+            $sql = $baseQuery['data'];
             if ($sort && $dir) {
-                $order = ' ORDER BY ' . $db->quoteIdentifier($sort) . ' ' . $dir;
+                $sql->orderBy($sort, $dir);
             }
 
-            $sql = $baseQuery['data'] . $order;
             if ($offset !== null && $limit) {
-                $sql .= " LIMIT $offset,$limit";
+                $sql->setFirstResult($offset);
+                $sql->setMaxResults($limit);
             }
 
-            $data = $db->fetchAllAssociative($sql);
+            $data = $sql->execute()->fetchAllAssociative();
         }
 
         return ['data' => $data, 'total' => $total];
@@ -62,12 +61,12 @@ class Sql extends AbstractAdapter
             $sql = $this->buildQueryString($configuration);
         }
 
-        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
-            $sql .= ' LIMIT 0,1';
-            $db = Db::get();
-            $res = $db->fetchAssociative($sql);
-            if ($res) {
-                return array_keys($res);
+        if ($sql instanceof QueryBuilder &&
+            !preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql->getSQL(), $matches)) {
+            $sql->setMaxResults(1);
+            $res = $sql->execute()->fetchAllAssociative();
+            if (array_key_exists(0, $res)) {
+                return array_keys($res[0]);
             }
 
             return [];
@@ -82,59 +81,54 @@ class Sql extends AbstractAdapter
      * @param array|null $drillDownFilters
      * @param string|null $selectField
      *
-     * @return string
+     * @return QueryBuilder
      */
     protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null)
     {
         $config = (array)$config;
-        $sql = '';
+        $db = DB::get();
+        $queryBuilder = $db->createQueryBuilder();
+
         if (!empty($config['sql']) && !$ignoreSelectAndGroupBy) {
-            if (strpos(strtoupper(trim($config['sql'])), 'SELECT') !== 0) {
-                $sql .= 'SELECT ';
-            }
-            $sql .= str_replace("\n", ' ', $config['sql']);
+            $queryBuilder
+                ->select(str_replace("\n", ' ', $config['sql']));
         } elseif ($selectField) {
-            $db = Db::get();
-            $sql .= 'SELECT ' . $db->quoteIdentifier($selectField);
+            $queryBuilder
+                ->select($db->quoteIdentifier($selectField));
         } else {
-            $sql .= 'SELECT *';
+            $queryBuilder
+                ->select('*');
         }
         if (!empty($config['from'])) {
-            if (strpos(strtoupper(trim($config['from'])), 'FROM') !== 0) {
-                $sql .= ' FROM ';
-            }
-            $sql .= ' ' . str_replace("\n", ' ', $config['from']);
+            $queryBuilder
+                ->from(str_replace("\n", ' ', $config['from']));
         }
 
         if (!empty($config['where'])) {
             if (str_starts_with(strtoupper(trim($config['where'])), 'WHERE')) {
                 $config['where'] = preg_replace('/^\s*WHERE\s*/', '', $config['where']);
             }
-            $sql .= ' WHERE (' . str_replace("\n", ' ', $config['where']) . ')';
+            $queryBuilder
+                ->where(str_replace("\n", ' ', $config['where']));
         }
 
         if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
-            if (strpos(strtoupper(trim($config['groupby'])), 'GROUP BY') !== 0) {
-                $sql .= ' GROUP BY ';
-            }
-            $sql .= ' ' . str_replace("\n", ' ', $config['groupby']);
+            $queryBuilder
+                ->groupBy(str_replace("\n", ' ', $config['groupby']));
         }
 
         if ($drillDownFilters) {
-            $havingParts = [];
-            $db = Db::get();
             foreach ($drillDownFilters as $field => $value) {
                 if ($value !== '' && $value !== null) {
-                    $havingParts[] = "$field = " . $db->quote($value);
+                    $queryBuilder
+                        ->having(
+                            $queryBuilder->expr()->eq($field, $db->quote($value))
+                        );
                 }
-            }
-
-            if ($havingParts) {
-                $sql .= ' HAVING ' . implode(' AND ', $havingParts);
             }
         }
 
-        return $sql;
+        return $queryBuilder;
     }
 
     /**
@@ -149,11 +143,11 @@ class Sql extends AbstractAdapter
     protected function getBaseQuery($filters, $fields, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null)
     {
         $db = Db::get();
-        $condition = ['1 = 1'];
-
+        $queryBuilder = $db->createQueryBuilder();
+        $conditions = [];
+        $conditions[] = $queryBuilder->expr()->eq(1, 1);
         $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
 
-        $data = '';
         $extractAllFields = empty($fields);
         if ($filters) {
             if (is_array($filters)) {
@@ -172,32 +166,27 @@ class Sql extends AbstractAdapter
                     switch ($operator) {
                         case 'like':
                             $fields[] = $filter['property'];
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
+                            $conditions[] = $queryBuilder->expr()->like($filter['property'], $value);
 
                             break;
                         case 'lt':
                         case 'gt':
                         case 'eq':
-                            $compMapping = [
-                                'lt' => '<',
-                                'gt' => '>',
-                                'eq' => '=',
-                            ];
-
                             if ($type == 'date') {
                                 if ($operator == 'eq') {
-                                    $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
+                                    $conditions[] = $queryBuilder->expr()->gte($filter['property'], $value);
+                                    $conditions[] = $queryBuilder->expr()->lte($filter['property'], $maxValue);
 
                                     break;
                                 }
                             }
                             $fields[] = $filter['property'];
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
+                            $conditions[] = $queryBuilder->expr()->{$operator}($filter['property'], $value);
 
                             break;
                         case '=':
                             $fields[] = $filter['property'];
-                            $condition[] = $db->quoteIdentifier($filter['property']) . ' = ' . $db->quote($value);
+                            $conditions[] = $queryBuilder->expr()->eq($filter['property'], $value);
 
                             break;
                     }
@@ -205,19 +194,41 @@ class Sql extends AbstractAdapter
             }
         }
 
-        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
-            $condition = implode(' AND ', $condition);
+        if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql->getSQL(), $matches)) {
+            $totalQueryBuilder = $db->createQueryBuilder();
+            $total = $totalQueryBuilder
+                ->select('count(*)')
+                ->from(('(' .$sql .') AS somerandxyz'));
 
-            $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+            foreach ($conditions as $condition) {
+                $total->where($condition);
+            }
 
             if ($fields && !$extractAllFields) {
-                $data = 'SELECT `' . implode('`,`', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+                $data = $queryBuilder
+                    ->select('`' .implode('`, `', $fields) . '`')
+                    ->from(('(' .$sql .') AS somerandxyz'));
+
+                foreach ($conditions as $condition) {
+                    $data->where($condition);
+                }
+
+
             } else {
-                $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+                $data = $queryBuilder
+                    ->select('*')
+                    ->from(('(' .$sql .') AS somerandxyz'));
+
+                foreach ($conditions as $condition) {
+                    $data->where($condition);
+                }
             }
         } else {
             return null;
         }
+
+        $total->setParameters($sql->getParameters());
+        $data->setParameters($sql->getParameters());
 
         return [
             'data' => $data,
@@ -230,12 +241,11 @@ class Sql extends AbstractAdapter
      */
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {
-        $db = Db::get();
         $baseQuery = $this->getBaseQuery($filters, [$field], false, $drillDownFilters);
         $data = [];
         if ($baseQuery) {
-            $sql = $baseQuery['data'] . ' GROUP BY ' . $db->quoteIdentifier($field);
-            $data = $db->fetchAllAssociative($sql);
+            $baseQuery['data']->groupBy($field);
+            $data = $baseQuery['data']->execute()->fetchAllAssociative();
         }
 
         $filteredData = [];
