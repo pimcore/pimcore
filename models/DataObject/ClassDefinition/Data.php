@@ -526,19 +526,20 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if ($this->supportsDirtyDetection()) {
-            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
-                $code .= "\t" . '$inheritValues = self::getGetInheritedValues();'."\n";
-                $code .= "\t" . 'self::setGetInheritedValues(false);'."\n";
-            }
-
             $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
-            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
-            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
 
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
-                $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
+                $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(false, function() {' . "\n";
+                $code .= "\t\t" . 'return $this->get' . ucfirst($this->getName()) . '();' . "\n";
+                $code .= "\t" . '});' . "\n";
             }
+            else {
+                $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            }
+
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
+
             if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
                 $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
                 $code .= "\t" . 'if (!$isEqual) {' . "\n";
@@ -659,20 +660,23 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if ($this->supportsDirtyDetection()) {
-            $code .= "\t" . '$class = $this->getObject() ? $this->getObject()->getClass() : null;' . "\n";
-            $code .= "\t" . 'if ($class && $class->getAllowInherit()) {' . "\n";
-            $code .= "\t\t" . '$inheritValues = $this->getObject()::getGetInheritedValues();'."\n";
-            $code .= "\t\t" . '$this->getObject()::setGetInheritedValues(false);'."\n";
-            $code .= "\t" . '}'."\n";
 
+            $code .= "\t" . '$class = $this->getObject() ? $this->getObject()->getClass() : null;' . "\n";
             $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
-            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+
+            $code .= "\t" . 'if ($class && $class->getAllowInherit()) {' . "\n";
+            $code .= "\t\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(false, function() {' . "\n";
+            $code .= "\t\t\t" . 'return $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t\t" . '});' . "\n";
+            $code .= "\t" . '}'."\n";
+            $code .= "\t" . 'else {' . "\n";
+            $code .= "\t\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '}';
+            $code .= "\t" . '' . "\n";
+
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
 
-            $code .= "\t" . 'if($class && $class->getAllowInherit()) {' . "\n";
-            $code .= "\t\t" . '$this->getObject()::setGetInheritedValues($inheritValues);'."\n";
-            $code .= "\t" . '}' . "\n";
             if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
                 $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
                 $code .= "\t" . 'if (!$isEqual) {' . "\n";
@@ -904,19 +908,19 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if ($this->supportsDirtyDetection()) {
-            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
-                $code .= "\t" . '$inheritValues = self::getGetInheritedValues();'."\n";
-                $code .= "\t" . 'self::setGetInheritedValues(false);'."\n";
-            }
-
             $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
-            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
-            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
 
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
-                $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
+                $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(false, function() use ($language) {' . "\n";
+                $code .= "\t\t" . 'return $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
+                $code .= "\t" . '});' . "\n";
             }
+            else {
+                $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            }
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
+
             if ($this instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
                 $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
             } else {

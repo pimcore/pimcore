@@ -103,16 +103,17 @@ class GeneralTest extends ModelTestCase
         $this->assertEquals('parenttext', $two->getNormalInput());
 
         // disable inheritance
-        $getInheritedValues = DataObject::getGetInheritedValues();
-        DataObject::setGetInheritedValues(false);
-
-        $two = DataObject::getById($id2);
-        $this->assertEquals(null, $two->getNormalInput());
+        DataObject\Service::useInheritedValues(false, function() use ($id2) {
+            $two = DataObject::getById($id2);
+            $this->assertEquals(null, $two->getNormalInput());
+        });
 
         // enable inheritance
-        DataObject::setGetInheritedValues($getInheritedValues);
-        $two = DataObject::getById($id2);
-        $this->assertEquals('parenttext', $two->getNormalInput());
+        DataObject\Service::useInheritedValues(true, function() use ($id2) {
+            $two = DataObject::getById($id2);
+            $this->assertEquals('parenttext', $two->getNormalInput());
+
+        });
 
         // now move it out
 
@@ -175,30 +176,31 @@ class GeneralTest extends ModelTestCase
 
         $two->setNormalInput('parenttext');
         $two->save();
+        $twoId = $two->getId();
 
-        $inheritanceEnabled = DataObject::getGetInheritedValues();
+        DataObject\Service::useInheritedValues(true, function() use ($two, $target) {
+            $fetchedTarget = $two->getRelation();
+            $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
+        });
 
-        DataObject::setGetInheritedValues(true);
-        $fetchedTarget = $two->getRelation();
-        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
-
-        DataObject::setGetInheritedValues(false);
-        $fetchedTarget = $two->getRelation();
-        $this->assertNull($fetchedTarget, 'target should not be inherited');
+        DataObject\Service::useInheritedValues(false, function() use ($two) {
+            $fetchedTarget = $two->getRelation();
+            $this->assertNull($fetchedTarget, 'target should not be inherited');
+        });
 
         // enable inheritance and set the target
-        DataObject::setGetInheritedValues(true);
-        $two = Concrete::getById($two->getId(), ['force' => true]);
-        $two->setRelation($target);
-        $two->save();
+        DataObject\Service::useInheritedValues(true, function() use ($twoId, $target) {
+            $two = Concrete::getById($twoId, ['force' => true]);
+            $two->setRelation($target);
+            $two->save();
+        });
 
         // disable inheritance and check that the relation has been set on "two"
-        DataObject::setGetInheritedValues(false);
-        $two = Concrete::getById($two->getId(), ['force' => true]);
-        $fetchedTarget = $two->getRelation();
-        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
-
-        DataObject::setGetInheritedValues($inheritanceEnabled);
+        DataObject\Service::useInheritedValues(false, function() use ($twoId, $target) {
+            $two = Concrete::getById($twoId, ['force' => true]);
+            $fetchedTarget = $two->getRelation();
+            $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
+        });
     }
 
     /**

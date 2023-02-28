@@ -542,26 +542,24 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        $inheritanceEnabled = AbstractObject::getGetInheritedValues();
-        AbstractObject::setGetInheritedValues(true);
-        $result = $config->getLabeledValue($object);
-        if (isset($result->value)) {
-            $result = $result->value;
+        return self::useInheritedValues(true, function() use ($object, $config) {
+                $result = $config->getLabeledValue($object);
+                if (isset($result->value)) {
+                    $result = $result->value;
 
-            if (!empty($config->getRenderer())) {
-                $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->getRenderer());
-                /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
-                $rendererImpl = new $classname();
-                if (method_exists($rendererImpl, 'getDataForGrid')) {
-                    $result = $rendererImpl->getDataForGrid($result, $object, []);
+                    if (!empty($config->getRenderer())) {
+                        $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->getRenderer());
+                        /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
+                        $rendererImpl = new $classname();
+                        if (method_exists($rendererImpl, 'getDataForGrid')) {
+                            $result = $rendererImpl->getDataForGrid($result, $object, []);
+                        }
+                    }
+
+                    return $result;
                 }
-            }
-
-            return $result;
-        }
-        AbstractObject::setGetInheritedValues($inheritanceEnabled);
-
-        return null;
+                return null;
+        });
     }
 
     public static function getHelperDefinitions(): array
@@ -1518,39 +1516,31 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
-        Model\DataObject\Concrete::setGetInheritedValues(true);
-        switch ($fd->getCalculatorType()) {
-            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
-                $className = $fd->getCalculatorClass();
-                $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-                if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
-                    Logger::error('Class does not exist or is not valid: ' . $className);
+        return DataObject\Service::useInheritedValues(true, function () use ($fd, $object, $data) {
+                switch ($fd->getCalculatorType()) {
+                    case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
+                        $className = $fd->getCalculatorClass();
+                        $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
+                        if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+                            Logger::error('Class does not exist or is not valid: ' . $className);
 
-                    return null;
+                            return null;
+                        }
+
+                        return $calculator->getCalculatedValueForEditMode($object, $data);
+
+                    case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
+
+                        try {
+                            return self::evaluateExpression($fd, $object, $data);
+                        } catch (SyntaxError $exception) {
+                            return $exception->getMessage();
+                        }
+
+                    default:
+                        return null;
                 }
-
-                $result = $calculator->getCalculatedValueForEditMode($object, $data);
-
-                break;
-
-            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
-
-                try {
-                    $result = self::evaluateExpression($fd, $object, $data);
-                } catch (SyntaxError $exception) {
-                    return $exception->getMessage();
-                }
-
-                break;
-
-            default:
-                return null;
-        }
-
-        Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
-
-        return $result;
+        });
     }
 
     public static function getCalculatedFieldValue(Fieldcollection\Data\AbstractData|Objectbrick\Data\AbstractData|Concrete $object, ?Data\CalculatedValue $data): mixed
@@ -1576,46 +1566,37 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
-        Model\DataObject\Concrete::setGetInheritedValues(true);
+        return DataObject\Service::useInheritedValues(true, function() use ($object, $fd, $data) {
+            if (
+                $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
+                $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
+            ) {
+                $object = $object->getObject();
+            }
 
-        if (
-            $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
-            $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
-        ) {
-            $object = $object->getObject();
-        }
+            switch ($fd->getCalculatorType()) {
+                case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
+                    $className = $fd->getCalculatorClass();
+                    $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
+                    if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+                        Logger::error('Class does not exist or is not valid: ' . $className);
 
-        switch ($fd->getCalculatorType()) {
-            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
-                $className = $fd->getCalculatorClass();
-                $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-                if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
-                    Logger::error('Class does not exist or is not valid: ' . $className);
+                        return null;
+                    }
+                    return $calculator->compute($object, $data);
 
+                case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
+
+                    try {
+                        return self::evaluateExpression($fd, $object, $data);
+                    } catch (SyntaxError $exception) {
+                        return $exception->getMessage();
+                    }
+
+                default:
                     return null;
-                }
-                $result = $calculator->compute($object, $data);
-
-                break;
-
-            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
-
-                try {
-                    $result = self::evaluateExpression($fd, $object, $data);
-                } catch (SyntaxError $exception) {
-                    return $exception->getMessage();
-                }
-
-                break;
-
-            default:
-                return null;
-        }
-
-        Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
-
-        return $result;
+            }
+        });
     }
 
     public static function getSystemFields(): array
@@ -2017,5 +1998,17 @@ class Service extends Model\Element\Service
         }
 
         return self::getInheritedData($parent, $key, $requestedLanguage);
+    }
+
+    public static function useInheritedValues(bool $inheritValues, callable $fn, array $fnArgs = []): mixed
+    {
+        $backup = DataObject::getGetInheritedValues();
+        DataObject::setGetInheritedValues($inheritValues);
+
+        try {
+            return $fn(...$fnArgs);
+        } finally {
+            DataObject::setGetInheritedValues($backup);
+        }
     }
 }

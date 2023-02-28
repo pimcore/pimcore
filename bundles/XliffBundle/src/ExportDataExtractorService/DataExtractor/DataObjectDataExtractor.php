@@ -74,29 +74,26 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
      */
     private function extractRawAttributeSet(TranslationItem $translationItem, string $sourceLanguage, array $targetLanguages, array $exportAttributes = null, bool $inherited): AttributeSet
     {
-        $inheritedBackup = DataObject::getGetInheritedValues();
-        DataObject::setGetInheritedValues($inherited);
+        $result = DataObject\Service::useInheritedValues($inherited, function() use ($translationItem, $sourceLanguage, $targetLanguages, $exportAttributes) {
+            $result = parent::extract($translationItem, $sourceLanguage, $targetLanguages);
 
-        $result = parent::extract($translationItem, $sourceLanguage, $targetLanguages);
+            $object = $translationItem->getElement();
 
-        $object = $translationItem->getElement();
+            if ($object instanceof DataObject\Folder) {
+                return $result;
+            }
 
-        if ($object instanceof DataObject\Folder) {
-            DataObject::setGetInheritedValues($inheritedBackup);
+            if (!$object instanceof DataObject\Concrete) {
+                throw new \Exception('only data objects allowed');
+            }
+
+            $this->addLocalizedFields($object, $result, $exportAttributes)
+                ->addLocalizedFieldsInBricks($object, $result, $exportAttributes)
+                ->addBlocks($object, $result, $exportAttributes)
+                ->addLocalizedFieldsInFieldCollections($object, $result, $exportAttributes);
 
             return $result;
-        }
-
-        if (!$object instanceof DataObject\Concrete) {
-            throw new \Exception('only data objects allowed');
-        }
-
-        $this->addLocalizedFields($object, $result, $exportAttributes)
-            ->addLocalizedFieldsInBricks($object, $result, $exportAttributes)
-            ->addBlocks($object, $result, $exportAttributes)
-            ->addLocalizedFieldsInFieldCollections($object, $result, $exportAttributes);
-
-        DataObject::setGetInheritedValues($inheritedBackup);
+        });
 
         return $result;
     }

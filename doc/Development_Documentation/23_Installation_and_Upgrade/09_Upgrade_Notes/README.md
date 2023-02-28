@@ -211,6 +211,7 @@ pimcore_seo:
     redirects:
         auto_create_redirects: true
 ```
+- [DataObject] Added new helper inheritance helper function `DataObject\Serivce::useInheritedValues`
 
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.

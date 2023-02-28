@@ -172,21 +172,19 @@ class NotificationEmailService extends AbstractNotificationService
     protected function getHtmlBody(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string
     {
         // allow retrieval of inherited values
-        $inheritanceBackup = DataObject::getGetInheritedValues();
-        DataObject::setGetInheritedValues(true);
+        list($emailTemplate, $translatorLocaleBackup) = DataObject\Service::useInheritedValues(true, function() use ($subjectType, $subject, $workflow, $action, $deeplink, $language, $mailPath) {
+            $translatorLocaleBackup = null;
+            if ($this->translator instanceof LocaleAwareInterface) {
+                $translatorLocaleBackup = $this->translator->getLocale();
+                $this->translator->setLocale($language);
+            }
 
-        $translatorLocaleBackup = null;
-        if ($this->translator instanceof LocaleAwareInterface) {
-            $translatorLocaleBackup = $this->translator->getLocale();
-            $this->translator->setLocale($language);
-        }
+            $emailTemplate = $this->template->render(
+                $mailPath, $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)
+            );
 
-        $emailTemplate = $this->template->render(
-            $mailPath, $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)
-        );
-
-        //reset inheritance
-        DataObject::setGetInheritedValues($inheritanceBackup);
+            return [$emailTemplate, $translatorLocaleBackup];
+        });
 
         if ($this->translator instanceof LocaleAwareInterface) {
             //reset translation locale

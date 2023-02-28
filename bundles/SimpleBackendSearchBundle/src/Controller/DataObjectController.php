@@ -73,25 +73,27 @@ class DataObjectController extends AdminController
                 if (isset($objectData[$visibleField])) {
                     $visibleFieldValues[] = $objectData[$visibleField];
                 } else {
-                    $inheritValues = DataObject\Concrete::getGetInheritedValues();
                     $fallbackValues = DataObject\Localizedfield::getGetFallbackValues();
-
-                    DataObject\Concrete::setGetInheritedValues(true);
                     DataObject\Localizedfield::setGetFallbackValues(true);
 
-                    $object = DataObject\Concrete::getById($objectData['id']);
-                    if (!$object instanceof DataObject\Concrete) {
-                        continue;
-                    }
+                    $visibleFieldValue = DataObject\Service::useInheritedValues(true, function() use ($objectData, $visibleField, $classes) {
+                        $object = DataObject\Concrete::getById($objectData['id']);
+                        if (!$object instanceof DataObject\Concrete) {
+                            return null;
+                        }
 
-                    $getter = 'get'.ucfirst($visibleField);
-                    $visibleFieldValue = $object->$getter();
-                    if (count($classes) > 1 && $visibleField == 'key') {
-                        $visibleFieldValue .= ' ('.$object->getClassName().')';
+                        $getter = 'get'.ucfirst($visibleField);
+                        $visibleFieldValue = $object->$getter();
+                        if (count($classes) > 1 && $visibleField == 'key') {
+                            $visibleFieldValue .= ' ('.$object->getClassName().')';
+                        }
+                        return $visibleFieldValue;
+                    });
+                    if(!$visibleFieldValue) {
+                        continue;
                     }
                     $visibleFieldValues[] = $visibleFieldValue;
 
-                    DataObject\Concrete::setGetInheritedValues($inheritValues);
                     DataObject\Localizedfield::setGetFallbackValues($fallbackValues);
                 }
             }

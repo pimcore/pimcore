@@ -157,20 +157,20 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                     $this->$setter(null);
 
                     //check if parent object has brick, and if so, create an empty brick to enable inheritance
-                    $parentBrick = null;
-                    $inheritanceModeBackup = DataObject::getGetInheritedValues();
-                    DataObject::setGetInheritedValues(true);
-                    if (DataObject::doGetInheritedValues($object)) {
-                        try {
-                            $container = $object->getValueFromParent($this->fieldname);
-                            if (!empty($container)) {
-                                $parentBrick = $container->$getter();
+                    $parentBrick = DataObject\Service::useInheritedValues(true, function() use ($object, $getter) {
+                        if (DataObject::doGetInheritedValues($object)) {
+                            try {
+                                $container = $object->getValueFromParent($this->fieldname);
+                                if (!empty($container)) {
+                                    return $container->$getter();
+                                }
+                            } catch (InheritanceParentNotFoundException $e) {
+                                // no data from parent available, continue ...
+                                return null;
                             }
-                        } catch (InheritanceParentNotFoundException $e) {
-                            // no data from parent available, continue ...
                         }
-                    }
-                    DataObject::setGetInheritedValues($inheritanceModeBackup);
+                        return null;
+                    });
 
                     if (!empty($parentBrick)) {
                         $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
@@ -185,20 +185,20 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                 }
             } else {
                 if ($brick == null) {
-                    $parentBrick = null;
-                    $inheritanceModeBackup = DataObject::getGetInheritedValues();
-                    DataObject::setGetInheritedValues(true);
-                    if (DataObject::doGetInheritedValues($object)) {
-                        try {
-                            $container = $object->getValueFromParent($this->fieldname);
-                            if (!empty($container)) {
-                                $parentBrick = $container->$getter();
+                    $parentBrick = DataObject\Service::useInheritedValues(true, function () use ($object, $getter) {
+                        if (DataObject::doGetInheritedValues($object)) {
+                            try {
+                                $container = $object->getValueFromParent($this->fieldname);
+                                if (!empty($container)) {
+                                    return $container->$getter();
+                                }
+                            } catch (InheritanceParentNotFoundException $e) {
+                                // no data from parent available, continue ...
+                                return null;
                             }
-                        } catch (InheritanceParentNotFoundException $e) {
-                            // no data from parent available, continue ...
                         }
-                    }
-                    DataObject::setGetInheritedValues($inheritanceModeBackup);
+                        return null;
+                    });
 
                     if (!empty($parentBrick)) {
                         $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());

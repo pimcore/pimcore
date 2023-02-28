@@ -168,14 +168,11 @@ class LocalizedFieldTest extends ModelTestCase
         $listItems = $list->load();
         $this->assertEquals(1, count($listItems), 'Expected one list item for de');
 
-        $getInheritedValues = DataObject::getGetInheritedValues();
-        DataObject::setGetInheritedValues(false);
-
-        $two = DataObject::getById($id2);
-        $this->assertEquals(null, $two->getInput('en'));
-        $this->assertEquals('childtextDE', $two->getInput('de'));
-
-        DataObject::setGetInheritedValues($getInheritedValues);
+        DataObject\Service::useInheritedValues(false, function() use ($id2) {
+            $two = DataObject::getById($id2);
+            $this->assertEquals(null, $two->getInput('en'));
+            $this->assertEquals('childtextDE', $two->getInput('de'));
+        });
 
         // now move it out
 
