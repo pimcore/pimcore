@@ -14,6 +14,7 @@
  */
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
+
 use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -52,5 +53,4 @@ class WebDavController extends Controller
 
         exit;
     }
-
 }
