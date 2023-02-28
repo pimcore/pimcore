@@ -836,4 +836,18 @@ final class Config extends Model\AbstractModel
 
         return $autoFormatThumbnails;
     }
+
+    /**
+     * @internal
+     */
+    public function getHash(): string
+    {
+        return hash("xxh32", serialize([
+            $this->getPreserveAnimation(),
+            $this->getQuality(),
+            $this->isPreserveColor(),
+            $this->isPreserveMetaData(),
+            $this->getItems(),
+        ]));
+    }
 }
