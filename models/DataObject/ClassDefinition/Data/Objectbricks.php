@@ -226,10 +226,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject, $params);
 
             if ($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
-                $backup = DataObject::getGetInheritedValues();
-                DataObject::setGetInheritedValues(true);
-                $parentItem = $parent->{'get' . ucfirst($this->getName())}()->$getter();
-                DataObject::setGetInheritedValues($backup);
+                $parentItem = DataObject\Service::useInheritedValues(true,
+                    fn () => $parent->{'get' . ucfirst($this->getName())}()->$getter()
+                );
+
                 if (!empty($parentItem)) {
                     return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $params);
                 }

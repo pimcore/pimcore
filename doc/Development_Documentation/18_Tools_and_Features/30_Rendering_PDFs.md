@@ -21,9 +21,12 @@ You can also use the following command to clean up you database. Create a backup
 ## Simple example
 
 ```php
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
 class BlogController extends FrontendController
 {
-    public function indexAction(Request $request)
+    public function indexAction(Request $request): Response
     {
         //your custom code....
 
@@ -32,7 +35,7 @@ class BlogController extends FrontendController
             'document' => $this->document,
             'editmode' => $this->editmode,
         ]);
-        return new \Symfony\Component\HttpFoundation\Response(
+        return new Response(
             \Pimcore\Bundle\WebToPrintBundle\Processor::getInstance()->getPdfFromString($html),
             200,
             array(
@@ -44,54 +47,57 @@ class BlogController extends FrontendController
 ## Advanced example
 
 ```php
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
 class BlogController extends FrontendController
 {
-    public function indexAction(Request $request)
+    public function indexAction(Request $request): Response
     {
         //your custom code....
 
         //return the pdf
-            $params = [
-                  'document' => $this->document,
-                  'editmode' => $this->editmode,
-              ];
-            $params['testPlaceholder'] = ' :-)';
-            $html = $this->renderView(':Blog:index.html.php', $params);
+        $params = [
+              'document' => $this->document,
+              'editmode' => $this->editmode,
+          ];
+        $params['testPlaceholder'] = ' :-)';
+        $html = $this->renderView(':Blog:index.html.php', $params);
 
-            $adapter = \Pimcore\Bundle\WebToPrintBundle\Processor::getInstance();
-            //add custom settings if necessary
-            if ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome) {
-                $params['adapterConfig'] = [
-                    'landscape' => false,
-                    'printBackground' => true,
-                    'format' => 'A4',
-                    'margin' => [
-                        'top' => '16 mm',
-                        'bottom' => '30 mm',
-                        'right' => '8 mm',
-                        'left' => '8 mm',
-                    ],
-                    'displayHeaderFooter' => false,
-                ];
-            } elseif($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
-                //Config settings -> http://www.pdfreactor.com/product/doc/webservice/php.html#Configuration
-                $params['adapterConfig'] = [
-                    'author' => 'Max Mustermann',
-                    'title' => 'Custom Title',
-                    'javaScriptMode' => 0,
-                    'addLinks' => true,
-                    'appendLog' => true,
-                    'enableDebugMode' => true
-                ];
-            }
+        $adapter = \Pimcore\Bundle\WebToPrintBundle\Processor::getInstance();
+        //add custom settings if necessary
+        if ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome) {
+            $params['adapterConfig'] = [
+                'landscape' => false,
+                'printBackground' => true,
+                'format' => 'A4',
+                'margin' => [
+                    'top' => '16 mm',
+                    'bottom' => '30 mm',
+                    'right' => '8 mm',
+                    'left' => '8 mm',
+                ],
+                'displayHeaderFooter' => false,
+            ];
+        } elseif($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
+            //Config settings -> http://www.pdfreactor.com/product/doc/webservice/php.html#Configuration
+            $params['adapterConfig'] = [
+                'author' => 'Max Mustermann',
+                'title' => 'Custom Title',
+                'javaScriptMode' => 0,
+                'addLinks' => true,
+                'appendLog' => true,
+                'enableDebugMode' => true
+            ];
+        }
 
-            return new \Symfony\Component\HttpFoundation\Response(
-                $adapter->getPdfFromString($html, $params),
-                200,
-                array(
-                    'Content-Type' => 'application/pdf',
-                    // 'Content-Disposition'   => 'attachment; filename="custom-pdf.pdf"' //direct download
-                )
-            );
+        return new Response(
+            $adapter->getPdfFromString($html, $params),
+            200,
+            array(
+                'Content-Type' => 'application/pdf',
+                // 'Content-Disposition'   => 'attachment; filename="custom-pdf.pdf"' //direct download
+            )
+        );
     }
 ```

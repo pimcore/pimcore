@@ -64,6 +64,7 @@ services:
 in your listener class `src/EventListener/TestListener`
 ```php
 <?php
+
 namespace App\EventListener;
   
 use Pimcore\Event\Model\ElementEventInterface;
@@ -71,11 +72,11 @@ use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\Model\DocumentEvent;
 
-class TestListener {
-     
-    public function onPreUpdate (ElementEventInterface $e) {
-       
-        if($e instanceof AssetEvent) {
+class TestListener
+{
+    public function onPreUpdate(ElementEventInterface $e): void
+    {
+        if ($e instanceof AssetEvent) {
             // do something with the asset
             $foo = $e->getAsset(); 
         } else if ($e instanceof DocumentEvent) {

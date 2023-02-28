@@ -104,7 +104,7 @@ Important to know:
 
 ```php
 <?php
-    public function filterForTags(Asset\Listing $listing, Request $request)
+    public function filterForTags(Asset\Listing $listing, Request $request): Asset\Listing
     {
         // get tags IDs to filter for - e.g. from request param
         $values = $request->get('tags-filter');

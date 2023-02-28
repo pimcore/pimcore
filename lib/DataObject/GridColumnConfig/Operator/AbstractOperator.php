@@ -77,4 +77,9 @@ abstract class AbstractOperator implements OperatorInterface
     {
         return Tool::getValidLanguages();
     }
+
+    public function getRenderer(): ?string
+    {
+        return null;
+    }
 }

@@ -54,6 +54,6 @@ class Dao extends Model\Dao\AbstractDao
             'data' => $data,
         ];
 
-        Helper::insertOrUpdate($this->db, 'properties', $saveData);
+        Helper::upsert($this->db, 'properties', $saveData, $this->getPrimaryKey('properties'));
     }
 }

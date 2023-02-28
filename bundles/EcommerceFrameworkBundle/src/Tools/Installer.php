@@ -158,6 +158,12 @@ class Installer extends AbstractInstaller
         if (!$personalizationInstaller->isInstalled()) {
             $personalizationInstaller->install();
         }
+
+        //Install GoogleMarketingBundle
+        $googleMarketingInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\GoogleMarketingBundle\Installer::class);
+        if (!$googleMarketingInstaller->isInstalled()) {
+            $googleMarketingInstaller->install();
+        }
     }
 
     public function install(): void

@@ -23,7 +23,10 @@ class Document extends Data
 {
     public function normalize(mixed $value, array $params = []): mixed
     {
-        $element = Service::getElementByPath('document', $value);
+        $element = null;
+        if ($value) {
+            $element = Service::getElementByPath('document', $value);
+        }
         if ($element) {
             return $element->getId();
         }
@@ -61,7 +64,10 @@ class Document extends Data
 
     public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
-        $element = Service::getElementByPath('document', $data);
+        $element = null;
+        if ($data) {
+            $element = Service::getElementByPath('document', $data);
+        }
         if ($element) {
             return $element->getId();
         }

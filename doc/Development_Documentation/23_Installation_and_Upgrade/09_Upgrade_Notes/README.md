@@ -4,6 +4,7 @@
 - [Logging] Removed constant `PIMCORE_PHP_ERROR_LOG`
 - [General] **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. 
  This results in **various bc breaks**. Please make sure to add the corresponding types to your implementation.
+- [PHP] The minimum supported PHP version is now 8.1 and added support for 8.2 
 - [UrlSlug] Removed `index` column and `index` index from `object_url_slugs` table as it was not being used anywhere.
 - Bumped Symfony packages to "^6.2". Pimcore 11 will only support Symfony 6.
 - `FrontendController::renderTemplate()`: Changed the visibility to `protected`.
@@ -130,7 +131,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - [CustomReports] have been moved into PimcoreCustomReportsBundle
       - Config `pimcore:custom_reports` has been removed, please use `pimcore_custom_reports:` in the PimcoreCustomReportsBundle insteand.
     - [Search] has been moved into PimcoreSimpleBackendSearchBundle
-    - [SEO] Document Editor, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
+    - [SEO] Document Editor, Redirects, Sitemaps, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
     - [WordExport] has been moved into PimcoreWordExportBundle
     - [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
     - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
@@ -139,8 +140,12 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`
     - [Web2Print] has been moved into PimcoreWebToPrintBundle
       - Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
+      - Print related Events have been moved from into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
     - [Personalization and targeting] has been moved to `pimcore/personalization` package.
-       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting:` in the PimcoreStaticRoutesBundle instead.
+       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting` in the PimcorePersonalizationBundle instead.
+    - [Google Marketing] has been moved to `pimcore/google-marketing-bundle` package.
+      - Config `pimcore:services:google` has been removed, please use `pimcore_google_marketing` in the PimcoreGoogleMarketingBundle instead.
+    - [Google] Classes Google\Cse and Google\Cse\Item have been removed.
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
@@ -175,8 +180,12 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Asset] Asset/Asset Thumbnail Update messages are now routed to different queue
   instead of `pimcore_core`. please add option `pimcore_asset_update` to command `bin/console messenger:consume pimcore_core... pimcore_asset_update` to post process assets on update.
   Also run command `bin/console messenger:consume pimcore_core` before the upgrade, so that `AssetUpdateTasksMessage` on the queue gets consumed.
+- [Gotenberg] Introducing support for [Gotenberg](https://gotenberg.dev/) as PDF generation, conversion, merge etc.. tool
+    - [Asset] Added adapter (as alternative to LibreOffice) for preview generation of supported document type assets and set it as default adapter.
+    - [Web2Print] Added settings option, configuration and processor for PDF preview and generation
 - [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Asset] Removed VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111)
+- [Permissions] Permission for DataObjects Classes has been structured in a more granular way to have more control. Field collections, objects bricks, classification stores and quantity value units now have their own permission.
 - [Translations] Translations Domains needs to be registered in order to be considered as valid. If you are using custom domains
   for translations (other than `messages` and `admin`), then it is required to register the domain in config below:
 ```yaml
@@ -194,7 +203,15 @@ pimcore:
   - `@ParamConverter` annotation must be replaced with `#[DataObjectParam]` attribute.
   Replace other annotations provided by [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers)
 - [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
+- [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticatePlaintext()` has been removed.
 - [DataObjects][CSV Export] Changed encoding of table data-types to `json_encode` from `base64_encoded`.
+- [Documents] Moving a document in the tree no longer opens the redirect prompt asking to create redirects. Creating a redirect is now configurable with `pimcore:redirects:auto_create_redirects`. This config includes URLSlugs and Pretty URLs.
+```yaml
+pimcore_seo:
+    redirects:
+        auto_create_redirects: true
+```
+- [DataObject] Added new helper inheritance helper function `DataObject\Serivce::useInheritedValues`
 
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.

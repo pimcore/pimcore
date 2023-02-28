@@ -854,14 +854,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/candle_sticks.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_analytics {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/pie_chart.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_analytics_explorer {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/line_chart.svg) center center no-repeat !important;
-}
-
 .pimcore_icon_recyclebin {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/trash.svg) center center no-repeat !important;
 }
