@@ -23,6 +23,7 @@ use Codeception\TestInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Bundle\InstallBundle\Installer;
+use Pimcore\Bundle\SeoBundle\Installer as SeoInstaller;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Event\TestEvents;
@@ -212,6 +213,7 @@ class Pimcore extends Module\Symfony
         }
 
         $this->debug(sprintf('[DB] Initialized the test DB %s', $dbName));
+        $this->installPimcoreSeoBundle();
 
         return true;
     }
@@ -324,5 +326,17 @@ class Pimcore extends Module\Symfony
     public function getGroups(): array
     {
         return $this->groups;
+    }
+
+    private function installPimcoreSeoBundle(): void
+    {
+        /** @var Pimcore $pimcoreModule */
+        $pimcoreModule = $this->getModule('\\' . Pimcore::class);
+
+        $this->debug('[PimcoreSeoBundle] Running PimcoreSeoBundle installer');
+
+        // install ecommerce framework
+        $installer = $pimcoreModule->getContainer()->get(SeoInstaller::class);
+        $installer->install();
     }
 }

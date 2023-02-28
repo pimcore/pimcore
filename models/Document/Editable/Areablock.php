@@ -381,6 +381,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         }
 
         $this->outputEditmode($html);
+
+        return $this;
     }
 
     /**
