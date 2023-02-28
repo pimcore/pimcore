@@ -29,6 +29,13 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
+    Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminSessionAuthenticator:
+        public: false
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: security }
+
     Pimcore\Bundle\AdminBundle\Security\Event\LogoutListener:
         tags:
             - { name: 'kernel.event_subscriber', dispatcher: 'security.event_dispatcher.pimcore_admin'}
