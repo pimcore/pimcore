@@ -9,19 +9,18 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tests\Model\Document;
 
-use Pimcore\Model\Document\Editable\Input;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Tests\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
+
 /**
  * @group model.document.target.document
  */
@@ -82,7 +81,8 @@ class TargetGroupEditableTest extends ModelTestCase
     }
 
     // Save the editable using the target specific prefix
-    protected function saveTargetGroupEditable(TargetGroup $targetGroup, string $editableName, string $targetGroupData) {
+    protected function saveTargetGroupEditable(TargetGroup $targetGroup, string $editableName, string $targetGroupData)
+    {
         $targetGroupData = 'content' . $targetGroupData;
         $this->testPage->setUseTargetGroup($targetGroup->getId());
         $targetGroupEditableName = $this->testPage->getTargetGroupEditableName($editableName);
