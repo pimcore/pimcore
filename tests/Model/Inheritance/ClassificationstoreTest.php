@@ -165,7 +165,6 @@ class ClassificationstoreTest extends ModelTestCase
             //check inherited & overriden value from parent
             $this->assertEquals('oneinput1', $oneStore->getLocalizedKeyValue($group->getId(), $key1->getId()));
             $this->assertEquals('oneinput2', $oneStore->getLocalizedKeyValue($group->getId(), $key2->getId()));
-
         });
     }
 }

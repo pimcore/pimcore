@@ -533,8 +533,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                 $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(false, function() {' . "\n";
                 $code .= "\t\t" . 'return $this->get' . ucfirst($this->getName()) . '();' . "\n";
                 $code .= "\t" . '});' . "\n";
-            }
-            else {
+            } else {
                 $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
             }
 
@@ -660,7 +659,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if ($this->supportsDirtyDetection()) {
-
             $code .= "\t" . '$class = $this->getObject() ? $this->getObject()->getClass() : null;' . "\n";
             $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
@@ -915,8 +913,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                 $code .= "\t" . '$currentData = \\Pimcore\\Model\\DataObject\\Service::useInheritedValues(false, function() use ($language) {' . "\n";
                 $code .= "\t\t" . 'return $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
                 $code .= "\t" . '});' . "\n";
-            }
-            else {
+            } else {
                 $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
             }
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";

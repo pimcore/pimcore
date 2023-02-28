@@ -172,7 +172,7 @@ class NotificationEmailService extends AbstractNotificationService
     protected function getHtmlBody(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string
     {
         // allow retrieval of inherited values
-        list($emailTemplate, $translatorLocaleBackup) = DataObject\Service::useInheritedValues(true, function() use ($subjectType, $subject, $workflow, $action, $deeplink, $language, $mailPath) {
+        list($emailTemplate, $translatorLocaleBackup) = DataObject\Service::useInheritedValues(true, function () use ($subjectType, $subject, $workflow, $action, $deeplink, $language, $mailPath) {
             $translatorLocaleBackup = null;
             if ($this->translator instanceof LocaleAwareInterface) {
                 $translatorLocaleBackup = $this->translator->getLocale();
