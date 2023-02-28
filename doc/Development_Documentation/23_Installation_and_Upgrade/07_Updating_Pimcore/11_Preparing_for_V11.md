@@ -83,3 +83,11 @@
 
 - [Deprecations] Constant `PIMCORE_PHP_ERROR_LOG` is deprecated and will be removed in Pimcore 11
 
+- [Config] Valid languages in `system.yaml` are now stored as an array, for example:
+```yaml
+pimcore:
+    general:
+        valid_languages:
+            - en
+            - de
+```

@@ -28,7 +28,6 @@ pimcore.settings.system = Class.create({
             success: function (response) {
 
                 this.data = Ext.decode(response.responseText);
-
                 //valid languages
                 try {
                     this.languagesStore = new Ext.data.JsonStore({
@@ -329,7 +328,7 @@ pimcore.settings.system = Class.create({
                                 xtype: "hidden",
                                 id: "system_settings_general_validLanguages",
                                 name: 'general.validLanguages',
-                                value: this.getValue("general.valid_languages")
+                                value: this.getValue("general.valid_languages", true)
                             }, {
                                 xtype: "hidden",
                                 id: "system_settings_general_defaultLanguage",
@@ -344,7 +343,7 @@ pimcore.settings.system = Class.create({
                                 listeners: {
                                     beforerender: function () {
                                         // add existing language entries
-                                        var locales = this.getValue("general.valid_languages").split(",");
+                                        var locales = this.getValue("general.valid_languages", true);
                                         if (locales && locales.length > 0) {
                                             Ext.each(locales, this.addLanguage.bind(this));
                                         }
@@ -443,7 +442,7 @@ pimcore.settings.system = Class.create({
                                 listeners: {
                                     beforerender: function () {
                                         // add existing language entries
-                                        var locales = this.getValue("general.valid_languages").split(",");
+                                        var locales = this.getValue("general.valid_languages", true);
                                         if (locales && locales.length > 0) {
                                             Ext.each(locales, this.addErrorPage.bind(this));
                                         }

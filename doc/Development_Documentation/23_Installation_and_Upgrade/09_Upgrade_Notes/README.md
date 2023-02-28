@@ -212,6 +212,14 @@ pimcore_seo:
         auto_create_redirects: true
 ```
 - [DataObject] Added new helper inheritance helper function `DataObject\Serivce::useInheritedValues`
+- [Config] Valid languages in `system.yaml` are now stored as an array, for example:
+```yaml
+pimcore:
+    general:
+        valid_languages:
+            - en
+            - de
+```
 
 ## 10.6.0
 - [Session] The `getHandler`, `setHandler`, `useSession`, `getSessionId`, `getSessionName`, `invalidate`, `regenerateId`, `requestHasSessionId`, `getSessionIdFromRequest`, `get`, `getReadOnly` and `writeClose` methods of `Pimcore\Tool\Session` and class `PreAuthenticatedAdminSessionFactory` are deprecated and get removed with Pimcore 11. Session Management will be handled by Symfony in Pimcore 11.
