@@ -1,4 +1,7 @@
 # Pimcore
+parameters:
+    usagelog_path: "%kernel.logs_dir%/usage.log"
+
 pimcore_admin:
 
     session:
@@ -176,3 +179,11 @@ twig:
     globals:
         pimcore_csrf: '@Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler'
         pimcore_csp: '@Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler'
+
+monolog:
+    handlers:
+        usage:
+            type: stream
+            path: "%usagelog_path%"
+            level: debug
+            channels: ['admin_statistics']

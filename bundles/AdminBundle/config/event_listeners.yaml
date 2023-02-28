@@ -44,6 +44,10 @@ services:
         tags:
             - { name: monolog.logger, channel: admin }
 
-    Pimcore\Bundle\AdminBundle\EventListener\UsageStatisticsListener: ~
+    Pimcore\Bundle\AdminBundle\EventListener\UsageStatisticsListener:
+        calls:
+            - [setLogger, [ '@logger' ]]
+        tags:
+            - { name: monolog.logger, channel: admin_statistics }
 
     Pimcore\Bundle\AdminBundle\EventListener\EnablePreviewTimeSliderListener: ~
