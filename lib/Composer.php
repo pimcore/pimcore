@@ -216,7 +216,7 @@ class Composer
             $arguments = $phpFinder->findArguments();
         }
 
-        if ($env = getenv('COMPOSER_ORIGINAL_INIS')) {
+        if ($env = $_SERVER['COMPOSER_ORIGINAL_INIS']) {
             $paths = explode(PATH_SEPARATOR, $env);
             $ini = array_shift($paths);
         } else {
@@ -234,8 +234,8 @@ class Composer
     {
         $options = array_merge(static::$options, $event->getComposer()->getPackage()->getExtra());
 
-        $options['symfony-assets-install'] = getenv('SYMFONY_ASSETS_INSTALL') ?: $options['symfony-assets-install'];
-        $options['symfony-cache-warmup'] = getenv('SYMFONY_CACHE_WARMUP') ?: $options['symfony-cache-warmup'];
+        $options['symfony-assets-install'] = $_SERVER['SYMFONY_ASSETS_INSTALL'] ?: $options['symfony-assets-install'];
+        $options['symfony-cache-warmup'] = $_SERVER['SYMFONY_CACHE_WARMUP'] ?: $options['symfony-cache-warmup'];
 
         $options['process-timeout'] = $event->getComposer()->getConfig()->get('process-timeout');
         $options['vendor-dir'] = $event->getComposer()->getConfig()->get('vendor-dir');
