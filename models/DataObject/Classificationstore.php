@@ -470,7 +470,14 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $groupCollectionMapping = $this->groupCollectionMapping;
         $object = $this->getObject();
         while (null !== ($parent = Service::hasInheritableParentObject($object))) {
-            $groupCollectionMapping = $groupCollectionMapping + $parent->getClassificationStore()->groupCollectionMapping;
+            $fieldDefintions = $parent->getClass()->getFieldDefinitions();
+            foreach ($fieldDefintions as $key => $fd) {
+                if($fd instanceof Model\DataObject\ClassDefinition\Data\Classificationstore){
+                    $getter = 'get' . ucfirst($key);
+                    $groupCollectionMapping = $groupCollectionMapping + $parent->$getter()->groupCollectionMapping;
+                }
+            }
+
             $object = $parent;
         }
 
@@ -515,7 +522,13 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
         $object = $this->getObject();
         while (null !== ($parent = Service::hasInheritableParentObject($object))) {
-            $groups = array_merge(Classificationstore::getActiveGroupsWithConfig($parent->getClassificationStore()), $groups);
+            $fieldDefintions = $parent->getClass()->getFieldDefinitions();
+            foreach ($fieldDefintions as $key => $fd) {
+                if ($fd instanceof Model\DataObject\ClassDefinition\Data\Classificationstore) {
+                    $getter = 'get' . ucfirst($key);
+                    $groups = array_merge(Classificationstore::getActiveGroupsWithConfig($parent->$getter()), $groups);
+                }
+            }
             $object = $parent;
         }
 
