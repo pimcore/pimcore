@@ -28,9 +28,6 @@ use Pimcore\Model\DataObject\Service;
 
 class ManyToManyRelationTest extends AbstractLazyLoadingTest
 {
-    /**
-     * @group testunpublished
-     */
     public function testUnpublished(): void
     {
         $preservedState = Concrete::getHideUnpublished();
