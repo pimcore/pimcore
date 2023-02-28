@@ -93,7 +93,16 @@ pimcore.bundle.tinymce.editor = Class.create({
                     document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
                         detail: {
                             e: eChange,
-                            data: eChange.target.innerHTML,
+                            data: tinymce.activeEditor.contentAreaContainer.innerHTML,
+                            context: e.detail.context
+                        }
+                    }));
+                }.bind(this));
+                editor.on('blur', function (eChange) {
+                    document.dispatchEvent(new CustomEvent(pimcore.events.changeWysiwyg, {
+                        detail: {
+                            e: eChange,
+                            data: tinymce.activeEditor.contentAreaContainer.innerHTML,
                             context: e.detail.context
                         }
                     }));
