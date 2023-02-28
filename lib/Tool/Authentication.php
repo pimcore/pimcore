@@ -22,6 +22,7 @@ use Pimcore\Bundle\AdminBundle\Security\User\UserProvider;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -50,6 +51,7 @@ class Authentication
             return null;
         }
 
+        /** @var AttributeBagInterface $adminSession */
         $adminSession = $session->getBag('pimcore_admin');
         $user = $adminSession->get('user');
 
