@@ -54,7 +54,7 @@ For this purpose, you can create a [Pimcore Bundle](https://pimcore.com/docs/pim
 configuration in a file in the `Resources/public` directory  of your bundle (e.g. `Resources/public/js/editmode.js`).
 
 ```
-pimcore.document.editables.wysiwyg.defaultEditorConfig = pimcore.document.editables.wysiwyg.defaultEditorConfig || {};
+pimcore.document.editables.wysiwyg = pimcore.document.editables.wysiwyg || {};
 pimcore.document.editables.wysiwyg.defaultEditorConfig = { menubar: true };
 ```
 

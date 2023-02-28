@@ -65,6 +65,10 @@ pimcore.bundle.tinymce.editor = Class.create({
             subSpace = 'tags';
         }
 
+        let defaultConfig = {};
+        if('' !== subSpace) {
+            defaultConfig = parent.pimcore[e.detail.context][subSpace].wysiwyg ? parent.pimcore[e.detail.context][subSpace].wysiwyg.defaultEditorConfig : {};
+        }
 
         tinymce.init(Object.assign({
             selector: `#${this.textareaId}`,
@@ -96,7 +100,7 @@ pimcore.bundle.tinymce.editor = Class.create({
                 }.bind(this));
             }.bind(this)
 
-        }, language, toolbar, parent.pimcore[e.detail.context][subSpace].wysiwyg.defaultEditorConfig, this.config));
+        }, language, toolbar, defaultConfig, this.config));
 
     },
 
