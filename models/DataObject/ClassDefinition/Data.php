@@ -551,11 +551,13 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         if ($this instanceof DataObject\ClassDefinition\Data\PreSetDataInterface) {
             $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
-        } else {
+        } elseif (!$this instanceof DataObject\ClassDefinition\Data\Classificationstore) {
             $code .= "\t" . 'if ($this->get' . ucfirst($this->getName()) . '() !== $' . $key . ') {' . "\n";
             $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n\n";
             $code .= "\t\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n";
             $code .= "\t" . '}' . "\n";
+        } else {
+            $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n\n";
         }
 
         $code .= "\t" . 'return $this;' . "\n";
