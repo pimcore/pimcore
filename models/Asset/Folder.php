@@ -206,7 +206,6 @@ class Folder extends Model\Asset
                 if (filesize($localFile) > 0) {
                     $storage->write($cacheFilePath, file_get_contents($localFile));
                 }
-                unlink($localFile);
 
                 return $storage->readStream($cacheFilePath);
             }

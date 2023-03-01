@@ -150,13 +150,16 @@ class Authentication
                 return null;
             }
 
-            $timeZone = date_default_timezone_get();
-            date_default_timezone_set('UTC');
+            try {
+                $timeZone = date_default_timezone_get();
+                date_default_timezone_set('UTC');
 
-            if ($timestamp > time() || $timestamp < (time() - (60 * 60 * 24))) {
-                return null;
+                if ($timestamp > time() || $timestamp < (time() - (60 * 60 * 24))) {
+                    return null;
+                }
+            } finally {
+                date_default_timezone_set($timeZone);
             }
-            date_default_timezone_set($timeZone);
 
             return $user;
         }

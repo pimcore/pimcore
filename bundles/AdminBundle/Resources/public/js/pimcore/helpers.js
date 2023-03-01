@@ -14,6 +14,10 @@
 /*global localStorage */
 pimcore.registerNS("pimcore.helpers.x");
 
+pimcore.helpers.sanitizeEmail = function (email) {
+    return email.replace(/[^a-zA-Z0-9_\-@.+]/g,'');
+};
+
 pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
 
     if (!ExtJS) {
