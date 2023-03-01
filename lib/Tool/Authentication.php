@@ -155,13 +155,16 @@ class Authentication
                 return null;
             }
 
-            $timeZone = date_default_timezone_get();
-            date_default_timezone_set('UTC');
+            try {
+                $timeZone = date_default_timezone_get();
+                date_default_timezone_set('UTC');
 
-            if ($timestamp > time() || $timestamp < (time() - (60 * 60 * 24))) {
-                return null;
+                if ($timestamp > time() || $timestamp < (time() - (60 * 60 * 24))) {
+                    return null;
+                }
+            } finally {
+                date_default_timezone_set($timeZone);
             }
-            date_default_timezone_set($timeZone);
 
             return $user;
         }
@@ -171,20 +174,25 @@ class Authentication
 
     public static function verifyPassword(User $user, string $password): bool
     {
-        $password = self::preparePlainTextPassword($user->getName(), $password);
-
-        if ($user->getPassword()) { // do not allow logins for users without a password
-            if (password_verify($password, $user->getPassword())) {
-                if (password_needs_rehash($user->getPassword(), PASSWORD_DEFAULT)) {
-                    $user->setPassword(self::getPasswordHash($user->getName(), $password));
-                    $user->save();
-                }
-
-                return true;
-            }
+        if (!$user->getPassword()) {
+            // do not allow logins for users without a password
+            return false;
         }
 
-        return false;
+        $password = self::preparePlainTextPassword($user->getName(), $password);
+
+        if (!password_verify($password, $user->getPassword())) {
+            return false;
+        }
+
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+
+        if (password_needs_rehash($user->getPassword(), $config['algorithm'], $config['options'])) {
+            $user->setPassword(self::getPasswordHash($user->getName(), $password));
+            $user->save();
+        }
+
+        return true;
     }
 
     public static function isValidUser(?User $user): bool
@@ -204,12 +212,14 @@ class Authentication
      */
     public static function getPasswordHash(string $username, string $plainTextPassword): string
     {
-        $hash = password_hash(self::preparePlainTextPassword($username, $plainTextPassword), PASSWORD_DEFAULT);
-        if (!$hash) {
-            throw new \Exception('Unable to create password hash for user: ' . $username);
+        $password = self::preparePlainTextPassword($username, $plainTextPassword);
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['security']['password'];
+
+        if ($hash = password_hash($password, $config['algorithm'], $config['options'])) {
+            return $hash;
         }
 
-        return $hash;
+        throw new \Exception('Unable to create password hash for user: ' . $username);
     }
 
     private static function preparePlainTextPassword(string $username, string $plainTextPassword): string

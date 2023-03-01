@@ -20,6 +20,10 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface PreviewGeneratorInterface
 {
+    public const PARAMETER_SITE = 'site';
+
+    public const PARAMETER_LOCALE = 'locale';
+
     public function generatePreviewUrl(Concrete $object, array $params): string;
 
     /**

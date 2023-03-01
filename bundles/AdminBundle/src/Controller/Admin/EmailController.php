@@ -457,8 +457,12 @@ class EmailController extends AdminController
             $data = $this->decodeJson($request->get('data'));
 
             if (is_array($data)) {
-                foreach ($data as &$value) {
+                foreach ($data as $key => &$value) {
                     if (is_string($value)) {
+                        if ($key === 'address') {
+                            $value = filter_var($value, FILTER_SANITIZE_EMAIL);
+                        }
+
                         $value = trim($value);
                     }
                 }

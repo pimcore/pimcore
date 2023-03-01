@@ -260,8 +260,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
                 // autogenerate a name for the thumbnail because it's different from the original
                 if ($autoName) {
-                    $hash = md5(Serialize::serialize($thumbConfig->getItems()));
-                    $thumbConfig->setName($thumbConfig->getName() . '_auto_' . $hash);
+                    $thumbConfig->generateAutoName();
                 }
 
                 $deferred = true;
@@ -460,8 +459,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             $thumbConfig = $image->getThumbnailConfig($conf);
             if ($thumbConfig && $this->cropPercent) {
                 $this->applyCustomCropping($thumbConfig);
-                $hash = md5(Serialize::serialize($thumbConfig->getItems()));
-                $thumbConfig->setName($thumbConfig->getName() . '_auto_' . $hash);
+                $thumbConfig->generateAutoName();
             }
 
             return $image->getThumbnail($thumbConfig, $deferred);
