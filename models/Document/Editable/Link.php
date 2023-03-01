@@ -299,6 +299,11 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             }
         }
 
+        // sanitize attributes
+        if(isset($this->data['attributes']))  {
+            $this->data['attributes'] = filter_var($this->data['attributes'], FILTER_SANITIZE_FULL_SPECIAL_CHARS, ['flags' => FILTER_FLAG_NO_ENCODE_QUOTES]);
+        }
+
         // deletes unnecessary attribute, which was set by mistake in earlier versions, see also
         // https://github.com/pimcore/pimcore/issues/7394
         if (isset($this->data['type'])) {
