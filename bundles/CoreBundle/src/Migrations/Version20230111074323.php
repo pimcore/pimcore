@@ -34,7 +34,7 @@ final class Version20230111074323 extends AbstractMigration
     public function up(Schema $schema): void
     {
         if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', 'pimcore')) {
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', true, 'bool', 'pimcore');
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\WordExportBundle\\PimcoreWordExportBundle', true, SettingsStore::TYPE_BOOLEAN, 'pimcore');
         }
 
         // Append to the comma separated list whenever the permissions text field has 'translation' but not already word_export

@@ -24,7 +24,17 @@ use Pimcore\Model\Tool\SettingsStore\Dao;
  */
 final class SettingsStore extends Model\AbstractModel
 {
-    protected static array $allowedTypes = ['bool', 'int', 'float', 'string'];
+    public const TYPE_BOOLEAN = 'bool';
+    public const TYPE_FLOAT = 'float';
+    public const TYPE_INTEGER = 'int';
+    public const TYPE_STRING = 'string';
+
+    protected static $allowedTypes = [
+        self::TYPE_BOOLEAN,
+        self::TYPE_FLOAT,
+        self::TYPE_INTEGER,
+        self::TYPE_STRING,
+    ];
 
     /**
      * @internal
