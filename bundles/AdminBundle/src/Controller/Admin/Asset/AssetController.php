@@ -924,39 +924,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     }
 
     /**
-     * @Route("/webdav{path}", name="pimcore_admin_webdav", requirements={"path"=".*"})
-     */
-    public function webdavAction(): void
-    {
-        $homeDir = Asset::getById(1);
-
-        try {
-            $publicDir = new Asset\WebDAV\Folder($homeDir);
-            $objectTree = new Asset\WebDAV\Tree($publicDir);
-            $server = new \Sabre\DAV\Server($objectTree);
-            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
-
-            // lock plugin
-            /** @var \PDO $pdo */
-            $pdo = \Pimcore\Db::get()->getNativeConnection();
-            $lockBackend = new \Sabre\DAV\Locks\Backend\PDO($pdo);
-            $lockBackend->tableName = 'webdav_locks';
-
-            $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
-            $server->addPlugin($lockPlugin);
-
-            // browser plugin
-            $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
-
-            $server->start();
-        } catch (\Exception $e) {
-            Logger::error((string) $e);
-        }
-
-        exit;
-    }
-
-    /**
      * @Route("/save", name="pimcore_admin_asset_save", methods={"PUT","POST"})
      *
      * @param Request $request

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document;
 
 use Pimcore\Messenger\GeneratePagePreviewMessage;
-use Pimcore\Model\Redirect;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
@@ -60,23 +59,6 @@ class Page extends PageSnippet
      * @var string|null
      */
     protected ?string $prettyUrl = null;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doDelete(): void
-    {
-        // check for redirects pointing to this document, and delete them too
-        $redirects = new Redirect\Listing();
-        $redirects->setCondition('target = ?', $this->getId());
-        $redirects->load();
-
-        foreach ($redirects->getRedirects() as $redirect) {
-            $redirect->delete();
-        }
-
-        parent::doDelete();
-    }
 
     public function getDescription(): string
     {

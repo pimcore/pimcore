@@ -33,14 +33,14 @@ final class Version20230222075502 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', 'pimcore')) {
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', true, 'bool', 'pimcore');
+        }
+
         $this->addSql("INSERT IGNORE INTO `users_permission_definitions` (`key`, `category`) VALUES ('google_marketing', 'Pimcore Google Marketing Bundle')");
 
         // Append to the comma separated list whenever the permissions text field has 'system_settings' but not already google_marketing
         $this->addSql('UPDATE users SET permissions = CONCAT(permissions, \',google_marketing\') WHERE `permissions` REGEXP \'(?:^|,)system_settings(?:$|,)\'');
-
-        if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', 'pimcore')) {
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', true, 'bool', 'pimcore');
-        }
 
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', 'pimcore'),
@@ -50,12 +50,14 @@ final class Version20230222075502 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
+        if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', 'pimcore')) {
+            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', 'pimcore');
+        }
+
         $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)google_marketing(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)google_marketing(?:$|,)\'');
 
         $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'google_marketing'");
 
-        if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', 'pimcore')) {
-            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', 'pimcore');
-        }
+        $this->write('Please deactivate the Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle manually in config/bundles.php');
     }
 }

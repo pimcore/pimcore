@@ -112,8 +112,8 @@ class Dao extends Document\PageSnippet\Dao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'documents', $dataDocument);
-        Helper::insertOrUpdate($this->db, 'documents_printpage', $dataPage);
+        Helper::upsert($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
+        Helper::upsert($this->db, 'documents_printpage', $dataPage, $this->getPrimaryKey('documents_printpage'));
 
         $this->updateLocks();
     }
