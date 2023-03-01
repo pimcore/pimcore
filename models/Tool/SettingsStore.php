@@ -29,7 +29,7 @@ final class SettingsStore extends Model\AbstractModel
     public const TYPE_INTEGER = 'int';
     public const TYPE_STRING = 'string';
 
-    protected static array $allowedTypes = [
+    protected const ALLOWED_TYPES = [
         self::TYPE_BOOLEAN,
         self::TYPE_FLOAT,
         self::TYPE_INTEGER,
@@ -85,8 +85,8 @@ final class SettingsStore extends Model\AbstractModel
      */
     private static function validateType(string $type): bool
     {
-        if (!in_array($type, self::$allowedTypes)) {
-            throw new \Exception(sprintf('Invalid type `%s`, allowed types are %s', $type, implode(',', self::$allowedTypes)));
+        if (!in_array($type, self::ALLOWED_TYPES)) {
+            throw new \Exception(sprintf('Invalid type `%s`, allowed types are %s', $type, implode(',', self::ALLOWED_TYPES)));
         }
 
         return true;
