@@ -72,7 +72,7 @@ class Sql extends AbstractAdapter
             return [];
         }
 
-        throw new \Exception("Only 'SELECT' statements are allowed! You've used '" . $matches[0] . "'");
+        throw new \Exception("Only 'SELECT' statements are allowed!");
     }
 
     /**
