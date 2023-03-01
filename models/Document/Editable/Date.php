@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document\Editable;
 
+use Carbon\Carbon;
 use Pimcore\Model;
 
 /**
@@ -27,7 +28,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @internal
      *
-     * @var \Carbon\Carbon|null
+     * @var Carbon|null
      */
     protected $date;
 
@@ -48,7 +49,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     }
 
     /**
-     * @return \Carbon\Carbon|null
+     * @return Carbon|null
      */
     public function getDate()
     {
@@ -72,7 +73,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      */
     public function frontend()
     {
-        if ($this->date instanceof \DateTimeInterface) {
+        if ($this->date instanceof Carbon) {
             if (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
                 return $this->date->formatLocalized($this->config['outputFormat']);
             } else {
@@ -141,7 +142,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      */
     private function setDateFromTimestamp($timestamp)
     {
-        $this->date = new \Carbon\Carbon();
+        $this->date = new Carbon();
         $this->date->setTimestamp($timestamp);
     }
 }
