@@ -19,6 +19,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Dao\DaoInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
+use Pimcore\Resolver\ClassResolver;
 
 /**
  * @method void beginTransaction()
