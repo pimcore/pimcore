@@ -221,8 +221,6 @@ class Bootstrap
         if ($debug) {
             umask(0000);
             Debug::enable();
-        } else {
-            ErrorHandler::register(new ErrorHandler(new BufferingLogger(), false));
         }
 
         if (defined('PIMCORE_KERNEL_CLASS')) {
