@@ -73,8 +73,8 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      */
     public function frontend()
     {
-        if ($this->date instanceof \DateTimeInterface) {
-            if (isset($this->config['outputFormat']) && $this->config['outputFormat'] && $this->date instanceof Carbon) {
+        if ($this->date instanceof Carbon) {
+            if (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
                 return $this->date->formatLocalized($this->config['outputFormat']);
             } else {
                 if (isset($this->config['format']) && $this->config['format']) {
