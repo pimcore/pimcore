@@ -2347,7 +2347,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             for ($i = $offset; $i < ($offset + $limit); $i++) {
                 $path = $zip->getNameIndex($i);
 
-                if (str_starts_with($path, '__MACOSX/')) {
+                if (str_starts_with($path, '__MACOSX/') || str_ends_with($path, '/Thumbs.db')) {
                     continue;
                 }
 

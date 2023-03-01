@@ -235,6 +235,7 @@ If you require to change the config on production environments we recommend to c
 - [Glossary] `pimcoreglossary()` tag has been deprecated in favor of `pimcore_glossary` Twig filter and will be removed in Pimcore 11.
 - Bumped `google/apiclient` to 2.10 version - Use proper namespaces for API references.
 - Bumped `endroid/qr-code` to version 4.
+- The `\Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method is deprecated, use `pimcore.routing.direct_route_document_types` config instead.
 - [[Ecommerce][TrackingManager] event name in method `trackCheckoutComplete()` changed from `checkout` to `purchase` for `GoogleTagManager` implementation](https://github.com/pimcore/pimcore/pull/9366/files)
 - [Password encoding] Pimcore Password Encoder factory has been deprecated in favor of new Password Hasher factory, to align with Symfony authentication system. The default factory is used as default and to switch to new Password hasher factory, please enable through config `factory_type` as follows:
 ```yaml
@@ -335,6 +336,7 @@ framework:
 - Removed `\Pimcore\Tool::getValidCacheKey/()`, use `preg_replace('/[^a-zA-Z0-9]/', '_', $key)` instead.
 - Removed `\Pimcore\Tool::isValidPath/()`, use `\Pimcore\Model\Element\Service::isValidPath()` instead.
 - Deprecated `\Pimcore\Model\Element\Service::getSaveCopyName()`, use `getSafeCopyName()` instead.
+- Deprecated methods `getObject()` and `setObject()` on the classes `\Pimcore\Model\Document\Link` and `\Pimcore\Model\DataObject\Data\Link`, use `getElement()` and `setElement()` instead.
 - Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) does not work anymore.
 - Removed `\Pimcore\Controller\Config\ConfigNormalizer`.
 - Removed `pimcore_action()` Twig extension. Use Twig `render()` instead.

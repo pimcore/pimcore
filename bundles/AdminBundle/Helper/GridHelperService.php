@@ -18,12 +18,19 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Helper;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Writer\Exception;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
  * @internal
@@ -839,6 +846,35 @@ class GridHelperService
         $list->setOrderKey($orderKey, $orderKeyQuote);
 
         return $list;
+    }
+
+    /**
+     * @throws FilesystemException
+     * @throws Exception|\PhpOffice\PhpSpreadsheet\Reader\Exception
+     */
+    public function createXlsxExportFile(FilesystemOperator $storage, string $fileHandle, string $csvFile): BinaryFileResponse
+    {
+        $csvReader = new Csv();
+        $csvReader->setDelimiter(';');
+        $csvReader->setSheetIndex(0);
+
+        $csvStream= $storage->readStream($csvFile);
+        $tempMetaData = stream_get_meta_data($csvStream);
+        //TODO: use this method and storage->read() to avoid the extra temp file, is not available in the current version. See: https://github.com/PHPOffice/PhpSpreadsheet/pull/2792
+        //$spreadsheet = $csvReader->loadSpreadsheetFromString($storage->read($csvFile));
+        $spreadsheet = $csvReader->load($tempMetaData['uri']);
+        $writer = new Xlsx($spreadsheet);
+        $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
+        $writer->save($xlsxFilename);
+
+        $response = new BinaryFileResponse($xlsxFilename);
+        $response->headers->set('Content-Type', 'application/xlsx');
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.xlsx');
+        $response->deleteFileAfterSend(true);
+
+        $storage->delete($csvFile);
+
+        return $response;
     }
 
     /**

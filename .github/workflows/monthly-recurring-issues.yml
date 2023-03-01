@@ -1,0 +1,26 @@
+name: Monthly Recurring Issues
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: 0 4 1 * *
+
+jobs:
+    monthly_recurring_issues:
+        name: Monthly Recurring Issues
+        runs-on: ubuntu-latest
+        if: ${{ github.repository == 'pimcore/pimcore' }}
+        steps:
+
+            - name: Get current month
+              run: echo "MONTH=$(date '+%B')" >> $GITHUB_ENV
+
+            - name: PhpStan Version Upgrade
+              uses: imjohnbo/issue-bot@v3
+              with:
+                  labels: "Task"
+                  title: PhpStan Version Upgrade ${{ env.MONTH }}
+                  body: |-
+                      Please check for a newer PhpStan version. 
+                      Create a PR with the latest version and fix all occurring issues :-)
+                  project-v2-path: orgs/pimcore/projects/10
+                  token: ${{ secrets.ISSUE_CREATION_TOKEN }}

@@ -366,7 +366,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
             cls: 'pimcore_main_toolbar',
             items: [
                 {
-                    text: t("gdpr_dataSource_sentMail_only_email") + ": " + this.searchParams.email,
+                    text: t("gdpr_dataSource_sentMail_only_email") + ": " + Ext.util.Format.htmlEncode(this.searchParams.email),
                     xtype: "tbtext",
                     style: "margin: 0 10px 0 0;"
                 }
