@@ -51,8 +51,11 @@ trait DirtyIndicatorTrait
         $this->dirtyFields = [];
     }
 
+    /**
+     * @return string[]
+     */
     public function getDirtyFields(): array
     {
-        return $this->dirtyFields;
+        return array_keys($this->dirtyFields);
     }
 }
