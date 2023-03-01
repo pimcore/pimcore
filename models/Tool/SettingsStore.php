@@ -29,7 +29,7 @@ final class SettingsStore extends Model\AbstractModel
     public const TYPE_INTEGER = 'int';
     public const TYPE_STRING = 'string';
 
-    protected static $allowedTypes = [
+    protected static array $allowedTypes = [
         self::TYPE_BOOLEAN,
         self::TYPE_FLOAT,
         self::TYPE_INTEGER,
