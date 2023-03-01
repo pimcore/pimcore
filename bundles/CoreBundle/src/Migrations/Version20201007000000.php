@@ -28,7 +28,6 @@ final class Version20201007000000 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-        /** @var \Doctrine\DBAL\Connection $db */
         $db = Db::get();
         $cacheAdapter = new DoctrineDbalAdapter($db);
 
