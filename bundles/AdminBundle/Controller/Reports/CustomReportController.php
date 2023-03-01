@@ -411,11 +411,13 @@ class CustomReportController extends ReportsControllerBase
         ]);
     }
 
-    protected function getTemporaryFileFromFileName(string $exportFileName): string {
+    protected function getTemporaryFileFromFileName(string $exportFileName): string
+    {
         $exportFileName = basename($exportFileName);
-        if(!str_ends_with($exportFileName, ".csv")) {
-            throw new InvalidArgumentException($exportFileName . " is not a valid csv file.");
+        if (!str_ends_with($exportFileName, '.csv')) {
+            throw new InvalidArgumentException($exportFileName . ' is not a valid csv file.');
         }
+
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportFileName;
     }
 
