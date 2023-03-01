@@ -253,16 +253,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->getDataForResource($data, $object, $params);
     }
 
-    /**
-     * @param mixed $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     *
-     * @see Data::getDataForEditmode
-     *
-     */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
