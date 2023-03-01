@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 
 /**
  * @Route("/custom-report")
@@ -459,6 +460,10 @@ class CustomReportController extends ReportsControllerBase
             $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
             @unlink($exportFile);
         } else {
+            $exportFile = basename($exportFile);
+            if(!str_ends_with($exportFile, ".csv")) {
+                throw new InvalidArgumentException($exportFile . " is not a valid csv file.");
+            }
             $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$exportFile;
         }
 
@@ -497,7 +502,11 @@ class CustomReportController extends ReportsControllerBase
     {
         $this->checkPermission('reports');
         if ($exportFile = $request->get('exportFile')) {
-            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . basename($exportFile);
+            $exportFile = basename($exportFile);
+            if(!str_ends_with($exportFile, ".csv")) {
+                throw new InvalidArgumentException($exportFile . " is not a valid csv file.");
+            }
+            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportFile;
             $response = new BinaryFileResponse($exportFile);
             $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');
