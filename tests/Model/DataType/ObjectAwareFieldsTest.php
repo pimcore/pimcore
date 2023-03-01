@@ -18,7 +18,6 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
-use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Model\LazyLoading\AbstractLazyLoadingTest;
