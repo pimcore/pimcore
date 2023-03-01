@@ -18,6 +18,7 @@ namespace Pimcore\Model;
 use Pimcore\Logger;
 use Pimcore\Model\Dao\DaoInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
+use Pimcore\Resolver\ClassResolver;
 
 /**
  * @method void beginTransaction()
@@ -280,6 +281,14 @@ abstract class AbstractModel implements ModelInterface
     protected static function getModelFactory()
     {
         return \Pimcore::getContainer()->get('pimcore.model.factory');
+    }
+
+    /**
+     * @return ClassResolver
+     */
+    protected static function getClassResolver(): ClassResolver
+    {
+        return \Pimcore::getContainer()->get('pimcore.class.resolver');
     }
 
     /**
