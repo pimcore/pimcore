@@ -212,7 +212,7 @@ pimcore_seo:
         auto_create_redirects: true
 ```
 - [DataObject] Added new helper inheritance helper function `DataObject\Serivce::useInheritedValues`
-- [Config] Valid languages in `system.yaml` are now stored as an array, for example:
+- [Config] Recommended and default format for storing the valid languages in `system.yaml` is now an array, for example:
 ```yaml
 pimcore:
     general:

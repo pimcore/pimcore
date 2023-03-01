@@ -190,8 +190,15 @@ final class Configuration implements ConfigurationInterface
                     ->defaultValue('en')
                 ->end()
                 ->arrayNode('valid_languages')
-                    ->prototype('scalar')->end()
+                    ->info("String or array format are supported.")
+                    ->beforeNormalization()
+                    ->ifString()
+                        ->then(function ($v) {
+                            return explode(',', $v);
+                        })
+                    ->end()
                     ->defaultValue(array('en'))
+                    ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('fallback_languages')
                     ->performNoDeepMerging()

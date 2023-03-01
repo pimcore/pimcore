@@ -82,12 +82,3 @@
   - Require `symfony/dotenv` package in your projct to keep using `.env` files and stop using `PIMCORE_SKIP_DOTENV_FILE` env var as by default it is skipped. You  still could use environment specific file like `.env.test` or `.env.prod` for environment specific environment variables. 
 
 - [Deprecations] Constant `PIMCORE_PHP_ERROR_LOG` is deprecated and will be removed in Pimcore 11
-
-- [Config] Valid languages in `system.yaml` are now stored as an array, for example:
-```yaml
-pimcore:
-    general:
-        valid_languages:
-            - en
-            - de
-```
