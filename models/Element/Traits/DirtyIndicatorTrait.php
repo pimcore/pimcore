@@ -50,4 +50,9 @@ trait DirtyIndicatorTrait
     {
         $this->dirtyFields = [];
     }
+
+    public function getDirtyFields(): array
+    {
+        return $this->dirtyFields;
+    }
 }
