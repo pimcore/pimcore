@@ -1247,7 +1247,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         SELECT @n := @n +1 AS newIndex, id
                         FROM '.$list->getDao()->getTableName().',
                                 (SELECT @n := -1) variable
-                                 WHERE parentId = ? ORDER BY key ' . $currentSortOrder
+                                 WHERE parentId = ? ORDER BY `key` ' . $currentSortOrder
                                .') tmp
                     ) order_table
                     SET o.index = order_table.newIndex
