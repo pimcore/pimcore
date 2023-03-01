@@ -122,7 +122,7 @@ class Sql extends AbstractAdapter
                 if ($value !== '' && $value !== null) {
                     $queryBuilder
                         ->having(
-                            $queryBuilder->expr()->eq($field, $db->quote($value))
+                            $queryBuilder->expr()->eq($db->quoteIdentifier($field), $db->quote($value))
                         );
                 }
             }
@@ -166,7 +166,10 @@ class Sql extends AbstractAdapter
                     switch ($operator) {
                         case 'like':
                             $fields[] = $filter['property'];
-                            $conditions[] = $queryBuilder->expr()->like($filter['property'], $value);
+                            $conditions[] = $queryBuilder->expr()->like(
+                                $db->quoteIdentifier($filter['property']),
+                                $db->quote($value)
+                            );
 
                             break;
                         case 'lt':
@@ -174,19 +177,31 @@ class Sql extends AbstractAdapter
                         case 'eq':
                             if ($type == 'date') {
                                 if ($operator == 'eq') {
-                                    $conditions[] = $queryBuilder->expr()->gte($filter['property'], $value);
-                                    $conditions[] = $queryBuilder->expr()->lte($filter['property'], $maxValue);
+                                    $conditions[] = $queryBuilder->expr()->gte(
+                                        $db->quoteIdentifier($filter['property']),
+                                        $db->quote($value)
+                                    );
+                                    $conditions[] = $queryBuilder->expr()->lte(
+                                        $db->quoteIdentifier($filter['property']),
+                                        $db->quote($maxValue)
+                                    );
 
                                     break;
                                 }
                             }
                             $fields[] = $filter['property'];
-                            $conditions[] = $queryBuilder->expr()->{$operator}($filter['property'], $value);
+                            $conditions[] = $queryBuilder->expr()->{$operator}(
+                                $db->quoteIdentifier($filter['property']),
+                                $db->quote($value)
+                            );
 
                             break;
                         case '=':
                             $fields[] = $filter['property'];
-                            $conditions[] = $queryBuilder->expr()->eq($filter['property'], $value);
+                            $conditions[] = $queryBuilder->expr()->eq(
+                                $db->quoteIdentifier($filter['property']),
+                                $db->quote($value)
+                            );
 
                             break;
                     }
@@ -212,8 +227,6 @@ class Sql extends AbstractAdapter
                 foreach ($conditions as $condition) {
                     $data->where($condition);
                 }
-
-
             } else {
                 $data = $queryBuilder
                     ->select('*')
