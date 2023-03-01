@@ -24,13 +24,14 @@ final class EncoreHelper
     public static function getBuildPathsFromEntrypoints(string $entrypointsFile, string $type = 'js'): array
     {
         $entrypointsContent = file_get_contents($entrypointsFile);
-        $entrypointsJson = json_decode($entrypointsContent,true)['entrypoints'];
+        $entrypointsJson = json_decode($entrypointsContent, true)['entrypoints'];
         $entrypoints = array_keys($entrypointsJson);
 
         $paths = [];
-        foreach($entrypoints as $entrypoint) {
+        foreach ($entrypoints as $entrypoint) {
             $paths = array_merge($paths, $entrypointsJson[$entrypoint][$type] ?? []);
         }
+
         return $paths;
     }
 }

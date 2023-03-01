@@ -23,5 +23,4 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
  */
 class Installer extends SettingsStoreAwareInstaller
 {
-
 }

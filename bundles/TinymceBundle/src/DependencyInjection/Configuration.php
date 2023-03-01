@@ -32,6 +32,6 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
 
-          return $treeBuilder;
+        return $treeBuilder;
     }
 }

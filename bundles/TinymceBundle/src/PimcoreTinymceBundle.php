@@ -20,7 +20,6 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Pimcore\Helper\EncoreHelper;
 
-
 class PimcoreTinymceBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
@@ -28,14 +27,14 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle
     public function getCssPaths(): array
     {
         return [
-            '/bundles/pimcoretinymce/css/editor.css'
+            '/bundles/pimcoretinymce/css/editor.css',
         ];
     }
 
     public function getEditmodeCssPaths(): array
     {
         return [
-            '/bundles/pimcoretinymce/css/editor.css'
+            '/bundles/pimcoretinymce/css/editor.css',
         ];
     }
 
@@ -65,7 +64,8 @@ class PimcoreTinymceBundle extends AbstractPimcoreBundle
     private function getAllJsPaths(): array
     {
         $paths = EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/tinymce/entrypoints.json');
-        $paths []= '/bundles/pimcoretinymce/js/editor.js';
+        $paths[]= '/bundles/pimcoretinymce/js/editor.js';
+
         return $paths;
     }
 }
