@@ -24,10 +24,10 @@ use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
-use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Resolver\ClassResolver;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -207,9 +207,11 @@ class Document extends Element\AbstractElement
                 return null;
             }
 
-            // Getting Typeloader from container
-            $loader = \Pimcore::getContainer()->get(TypeLoader::class);
-            $newDocument = $loader->build($document->getType());
+            // getting class for document type
+            $class = self::getClassResolver()->resolve($document->getType(), ClassResolver::TYPE_DOCUMENTS);
+
+            // check for overrides and load corresponding document
+            $newDocument = self::getModelFactory()->build($class);
 
             if (get_class($document) !== get_class($newDocument)) {
                 $document = $newDocument;

@@ -23,9 +23,10 @@ use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Model\Factory;
 use Pimcore\Model\Schedule\Task;
+use Pimcore\Resolver\ClassResolver;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -184,8 +185,9 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
                     $createValues['contentMasterDocumentId'] = $request->get('inheritanceSource');
                 }
 
-                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
-                $document = $loader->build($request->get('type'));
+
+                $class = self::getClassResolver()->resolve($request->get('type'), ClassResolver::TYPE_DOCUMENTS);
+                $document = self::getModelFactory()->build($class);
 
                 $document = $document::create($parentDocument->getId(), $createValues);
 
@@ -428,5 +430,15 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         Processor::getInstance()->cancelGeneration((int)$request->get('id'));
 
         return $this->adminJson(['success' => true]);
+    }
+
+    protected static function getModelFactory(): Factory
+    {
+        return \Pimcore::getContainer()->get('pimcore.model.factory');
+    }
+
+    protected static function getClassResolver(): ClassResolver
+    {
+        return \Pimcore::getContainer()->get('pimcore.class.resolver');
     }
 }
