@@ -81,6 +81,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
                 } else {
                     $format = 'Y-m-d\TH:i:sO'; // ISO8601
                 }
+
                 return $this->date->format($format);
             }
         }
