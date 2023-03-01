@@ -16,9 +16,9 @@ License: GPLv3
 pimcore includes the GPLv3 version of the ExtJS JavaScript framework.  
 http://www.sencha.com/license/  
 
-### CKEditor by Frederico Knabben
-License: LGPL / GPLv2 / MPL  
-http://ckeditor.com/license
+### TinyMCE
+License: MIT
+https://github.com/tinymce/tinymce/blob/develop/LICENSE.TXT
 
 ### Leaflet 
 License: BSD  

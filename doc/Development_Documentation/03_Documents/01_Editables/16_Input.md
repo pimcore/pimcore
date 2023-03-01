@@ -3,7 +3,7 @@
 ## General
 
 The input editable is a single line unformatted text placeholder (just as HTMLs `<input>` is), which is useful for text headlines, paragraphs and other values. 
-For a multi-line alternative have a look at the [textarea editable](./36_Textarea.md), for rich-text [WYSIWYG](./40_WYSIWYG.md). 
+For a multi-line alternative have a look at the [textarea editable](./36_Textarea.md). 
 
 ## Configuration
 

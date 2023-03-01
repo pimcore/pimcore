@@ -39,8 +39,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      * The ALT text of the image
      *
      * @internal
-     *
-     * @var string
      */
     protected ?string $alt = null;
 
@@ -106,8 +104,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      * The Thumbnail config of the image
      *
      * @internal
-     *
-     * @var string
      */
     protected ?string $thumbnail = null;
 

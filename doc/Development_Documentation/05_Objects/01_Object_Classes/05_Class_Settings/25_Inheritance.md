@@ -51,15 +51,11 @@ the attributes directly, you will not get the inherited values.
 
 Getting values from an object without inheritance
 ```php
-$inheritanceModeBackup = DataObject::getGetInheritedValues();
-\Pimcore\Model\DataObject\AbstractObject::setGetInheritedValues(false); // default = true
-
-// ... your code goes here
-// ...
-// ...
-
-// set status back to the original value 
-DataObject::setGetInheritedValues($inheritanceModeBackup);
+DataObject\Service::userInheritedValues(function() {
+    // ... your code goes here
+    // ...
+    // ...
+}, false) // set second argument to false, to not inherit values
 ```
 
 ## Parent Class - Class Inheritance
