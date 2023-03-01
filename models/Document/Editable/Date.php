@@ -72,18 +72,17 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      */
     public function frontend()
     {
-        $format = null;
-
-        if (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
-            $format = $this->config['outputFormat'];
-        } elseif (isset($this->config['format']) && $this->config['format']) {
-            $format = $this->config['format'];
-        } else {
-            $format = 'Y-m-d\TH:i:sO'; // ISO8601
-        }
-
         if ($this->date instanceof \DateTimeInterface) {
-            return $this->date->formatLocalized($format);
+            if (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
+                return $this->date->formatLocalized($this->config['outputFormat']);
+            } else {
+                if (isset($this->config['format']) && $this->config['format']) {
+                    $format = $this->config['format'];
+                } else {
+                    $format = 'Y-m-d\TH:i:sO'; // ISO8601
+                }
+                return $this->date->format($format);
+            }
         }
     }
 
