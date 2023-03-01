@@ -193,9 +193,7 @@ final class Configuration implements ConfigurationInterface
                     ->info("String or array format are supported.")
                     ->beforeNormalization()
                     ->ifString()
-                        ->then(function ($v) {
-                            return explode(',', $v);
-                        })
+                        ->then(fn ($v) => explode(',', $v))
                     ->end()
                     ->defaultValue(array('en'))
                     ->prototype('scalar')->end()
