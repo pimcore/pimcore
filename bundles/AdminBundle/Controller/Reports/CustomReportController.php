@@ -411,6 +411,14 @@ class CustomReportController extends ReportsControllerBase
         ]);
     }
 
+    protected function getTemporaryFileFromFileName(string $exportFileName): string {
+        $exportFileName = basename($exportFileName);
+        if(!str_ends_with($exportFileName, ".csv")) {
+            throw new InvalidArgumentException($exportFileName . " is not a valid csv file.");
+        }
+        return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportFileName;
+    }
+
     /**
      * @Route("/create-csv", name="pimcore_admin_reports_customreport_createcsv", methods={"GET"})
      *
@@ -460,11 +468,7 @@ class CustomReportController extends ReportsControllerBase
             $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
             @unlink($exportFile);
         } else {
-            $exportFile = basename($exportFile);
-            if(!str_ends_with($exportFile, ".csv")) {
-                throw new InvalidArgumentException($exportFile . " is not a valid csv file.");
-            }
-            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$exportFile;
+            $exportFile = $this->getTemporaryFileFromFileName($exportFile);
         }
 
         $fp = fopen($exportFile, 'a');
@@ -502,11 +506,7 @@ class CustomReportController extends ReportsControllerBase
     {
         $this->checkPermission('reports');
         if ($exportFile = $request->get('exportFile')) {
-            $exportFile = basename($exportFile);
-            if(!str_ends_with($exportFile, ".csv")) {
-                throw new InvalidArgumentException($exportFile . " is not a valid csv file.");
-            }
-            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportFile;
+            $exportFile = $this->getTemporaryFileFromFileName($exportFile);
             $response = new BinaryFileResponse($exportFile);
             $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');
