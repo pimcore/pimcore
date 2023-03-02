@@ -51,14 +51,14 @@ class TargetGroupEditableTest extends ModelTestCase
         $this->createTargetGroup($targetGroup2);
 
         $targetGroup1 = TargetGroup::getByName($targetGroup1);
-        $targetGroup1EditableData = $this->seed+1;
-        $targetGroupEditableName1 = $this->saveTargetGroupEditable($targetGroup1, $defaultEditableName, $targetGroup1EditableData);
+        $targetGroup1EditableData = $this->seed + 1;
+        $targetGroupEditableName1 = $this->saveTargetGroupEditable($targetGroup1, $defaultEditableName, (string) $targetGroup1EditableData);
 
         $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName1, $targetGroup1EditableData);
 
         $targetGroup2 = TargetGroup::getByName($targetGroup2);
-        $targetGroup2EditableData = $this->seed+ 2;
-        $targetGroupEditableName2 = $this->saveTargetGroupEditable($targetGroup2, $defaultEditableName, $targetGroup2EditableData);
+        $targetGroup2EditableData = $this->seed + 2;
+        $targetGroupEditableName2 = $this->saveTargetGroupEditable($targetGroup2, $defaultEditableName, (string) $targetGroup2EditableData);
 
         $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName2, $targetGroup2EditableData);
 
