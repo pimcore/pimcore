@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\UuidBundle\EventListener;
 
 use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
+use Pimcore\Bundle\UuidBundle\PimcoreUuidBundle;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\DataObjectEvents;
@@ -76,6 +77,10 @@ class UUIDListener implements EventSubscriberInterface
 
     protected function isEnabled(): bool
     {
+        if (!PimcoreUuidBundle::isInstalled()) {
+            return false;
+        }
+
         $config = \Pimcore::getKernel()->getContainer()->getParameter('pimcore_uuid.instance_identifier');
         if (!empty($config)) {
             return true;

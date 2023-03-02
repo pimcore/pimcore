@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\Code;
 
-use Pimcore\Analytics\Code\CodeBlock;
 use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingCodeEvent;
 use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;

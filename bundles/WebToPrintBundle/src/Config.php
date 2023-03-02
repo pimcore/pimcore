@@ -25,6 +25,11 @@ use Pimcore\Model\Exception\ConfigWriteException;
  */
 final class Config
 {
+    /**
+     * @deprecated Will be removed in Pimcore 11
+     */
+    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_WEB_TO_PRINT';
+
     private const CONFIG_ID = 'web_to_print';
 
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
@@ -34,18 +39,25 @@ final class Config
         if (!self::$locationAwareConfigRepository) {
             $config = [];
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore_web_to_print');
+            $pimcoreContainerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
             if ($containerConfig['generalTool']) {
                 $config = [
                     self::CONFIG_ID => $containerConfig,
                 ];
             }
 
+            $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($containerConfig, self::CONFIG_ID, 'PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT');
+            $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($containerConfig, self::CONFIG_ID, 'PIMCORE_WRITE_TARGET_WEB_TO_PRINT');
+
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_web_to_print',
-                $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/web-to-print',
-                'PIMCORE_WRITE_TARGET_WEB_TO_PRINT'
+                $storageDirectory,
+                self::WRITE_TARGET
             );
+
+            self::$locationAwareConfigRepository->setWriteTarget($writeTarget);
+            self::$locationAwareConfigRepository->setOptions($pimcoreContainerConfig['storage'][self::CONFIG_ID]['options']);
         }
 
         return self::$locationAwareConfigRepository;

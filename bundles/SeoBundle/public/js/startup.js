@@ -74,6 +74,17 @@ pimcore.bundle.seo.startup = Class.create({
                 });
             }
         }
+
+        if (menu.extras && user.isAllowed("redirects") && perspectiveCfg.inToolbar("extras.redirects")) {
+            menu.extras.items.push({
+                text: t("redirects"),
+                iconCls: "pimcore_nav_icon_redirects",
+                priority: 5,
+                itemId: 'pimcore_menu_extras_redirects',
+                handler: this.editRedirects
+            });
+        }
+
     },
 
     showDocumentSeo: function () {
@@ -124,7 +135,17 @@ pimcore.bundle.seo.startup = Class.create({
             }
         }
 
-    }
+    },
+
+    editRedirects: function () {
+
+        try {
+            pimcore.globalmanager.get("redirects").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("redirects", new pimcore.settings.redirects());
+        }
+    },
 })
 
 const pimcoreBundleSeo = new pimcore.bundle.seo.startup();

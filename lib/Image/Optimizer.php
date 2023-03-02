@@ -49,9 +49,6 @@ class Optimizer implements ImageOptimizerInterface
                         'optimizer' => $optimizer,
                     ];
                 } catch (ImageOptimizationFailedException $ex) {
-                    if (file_exists($tmpFilePath)) {
-                        unlink($tmpFilePath);
-                    }
                 }
             }
         }
@@ -73,10 +70,6 @@ class Optimizer implements ImageOptimizerInterface
         // cleanup
         foreach ($optimizedImages as $tmpFile) {
             unlink($tmpFile['path']);
-        }
-
-        if (is_file($workingPath)) {
-            unlink($workingPath);
         }
     }
 
