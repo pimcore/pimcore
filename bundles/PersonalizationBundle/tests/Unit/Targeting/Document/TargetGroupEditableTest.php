@@ -15,11 +15,11 @@
 
 namespace Pimcore\Bundle\PersonalizationBundle\Tests\Model\Document;
 
-use Pimcore\Model\Document\Page;
-use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Bundle\PersonalizationBundle\Model\Document\Page;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Tests\Support\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
-use Pimcore\Tests\Support\Util\TestHelper;
+use Pimcore\Bundle\PersonalizationBundle\Tests\Util\TestHelper;
 
 class TargetGroupEditableTest extends ModelTestCase
 {
@@ -29,12 +29,12 @@ class TargetGroupEditableTest extends ModelTestCase
 
     protected TestDataHelper $testDataHelper;
 
-    public function _inject(TestDataHelper $testData)
+    public function _inject(TestDataHelper $testData): void
     {
         $this->testDataHelper = $testData;
     }
 
-    public function testTargetGroupsEditable()
+    public function testTargetGroupsEditable(): void
     {
         $defaultEditableName = 'inputEditable';
         $defaultEditableData = $this->seed;
@@ -72,13 +72,13 @@ class TargetGroupEditableTest extends ModelTestCase
         $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName2, $targetGroup2EditableData);
     }
 
-    protected function createTestPage()
+    protected function createTestPage(): void
     {
-        $this->testPage = TestHelper::createEmptyDocumentPage();
+        $this->testPage = TestHelper::createEmptyPage();
     }
 
     // Save the editable using the target specific prefix
-    protected function saveTargetGroupEditable(TargetGroup $targetGroup, string $editableName, string $targetGroupData)
+    protected function saveTargetGroupEditable(TargetGroup $targetGroup, string $editableName, int $targetGroupData): string
     {
         $targetGroupData = 'content' . $targetGroupData;
         $this->testPage->setUseTargetGroup($targetGroup->getId());
@@ -90,13 +90,13 @@ class TargetGroupEditableTest extends ModelTestCase
         return $targetGroupEditableName;
     }
 
-    public function reloadPage()
+    public function reloadPage(): void
     {
         $this->testPage = Page::getById($this->testPage->getId(), ['force' => true]);
     }
 
     // Create Target Group
-    public function createTargetGroup(string $name)
+    public function createTargetGroup(string $name): void
     {
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = new TargetGroup();
