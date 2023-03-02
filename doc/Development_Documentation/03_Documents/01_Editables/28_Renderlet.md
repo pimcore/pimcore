@@ -67,10 +67,8 @@ Now editors are able to put elements onto the renderlet in the editmode.
 ### Specify the Controller Action
 
 ```php
-/**
- * @Template
- */
-public function myGalleryAction(Request $request)
+#[Template('my-gallery.html.twig')]
+public function myGalleryAction(Request $request): array
 {
     if ('asset' === $request->get('type')) {
         $asset = Asset::getById((int) $request->get('id'));

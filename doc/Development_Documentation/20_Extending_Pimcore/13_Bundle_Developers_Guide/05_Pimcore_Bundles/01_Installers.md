@@ -37,7 +37,7 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 
 class App extends AbstractPimcoreBundle
 {
-    public function getInstaller()
+    public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);
     }
@@ -109,6 +109,7 @@ This is useful, when install routine already does all the necessary things that 
 
 ```php 
 <?php
+
 namespace Pimcore\Bundle\DummyBundle;
 
 use Pimcore\Bundle\DummyBundle\Migrations\Version20210304111225;
@@ -116,14 +117,13 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 
 class Installer extends SettingsStoreAwareInstaller
 {
-
     public function getLastMigrationVersionClassName(): ?string
     {
         // return fully qualified classname of last migration that should be marked as migrated during install
         return Version20210304111225::class;
     }
 
-    public function install()
+    public function install(): void
     {
         //do your install stuff   
 
@@ -131,7 +131,7 @@ class Installer extends SettingsStoreAwareInstaller
         //or call parent::install();     
     }
 
-    public function uninstall()
+    public function uninstall(): void
     {
         //do your uninstall stuff
 

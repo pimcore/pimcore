@@ -30,7 +30,6 @@ pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 
     treeDataUrl: null,
-    nodesToMove: [],
 
     initialize: function(config, perspectiveCfg) {
         this.treeDataUrl = Routing.generate('pimcore_admin_document_document_treegetchildrenbyid');
@@ -146,10 +145,7 @@ pimcore.document.tree = Class.create({
                     ddGroup: "element"
                 },
                 listeners: {
-                    nodedragover: this.onTreeNodeOver.bind(this),
-                    beforedrop: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
-                        this.nodesToMove = [];
-                    }.bind(this)
+                    nodedragover: this.onTreeNodeOver.bind(this)
                 },
                 xtype: 'pimcoretreeview'
             },
@@ -267,7 +263,6 @@ pimcore.document.tree = Class.create({
                     } else {
                         delete node.data.cls;
                     }
-                    pimcore.elementservice.nodeMoved("document", oldParent, newParent);
                     this.updateOpenDocumentPaths(node);
 
                 }
@@ -301,27 +296,7 @@ pimcore.document.tree = Class.create({
             index: index
         };
 
-        if(
-            newParent.data.id !== oldParent.data.id &&
-            (node.data.type === 'page' || node.data.type === 'hardlink') &&
-            pimcore.globalmanager.get("user").isAllowed('redirects')
-        ) {
-            this.nodesToMove.push({
-                "id": node.data.id,
-                "params": params,
-                "moveCallback": moveCallback,
-            });
-
-            // ask the user if redirects should be created, if node was moved to a new parent
-            Ext.MessageBox.confirm("", t("create_redirects"), function (buttonValue) {
-                for (let nodeIdx in this.nodesToMove) {
-                    this.nodesToMove[nodeIdx]['params']['create_redirects'] = (buttonValue == "yes");
-                    pimcore.elementservice.updateDocument(this.nodesToMove[nodeIdx].id, this.nodesToMove[nodeIdx].params, this.nodesToMove[nodeIdx].moveCallback);
-                }
-            }.bind(this));
-        } else {
-            pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
-        }
+        pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
     },
 
 
@@ -385,34 +360,28 @@ pimcore.document.tree = Class.create({
             var pasteMenu = [];
             var pasteInheritanceMenu = [];
             var childSupportedDocument = (record.data.type == "page" || record.data.type == "folder"
-                || record.data.type == "link" || record.data.type == "hardlink"
-                || record.data.type == "printcontainer");
+                || record.data.type == "link" || record.data.type == "hardlink");
 
             if (childSupportedDocument && record.data.permissions.create) {
 
 
                 var addDocuments = perspectiveCfg.inTreeContextMenu("document.add");
-                var addPrintDocuments = perspectiveCfg.inTreeContextMenu("document.addPrintPage");
                 var addEmail = perspectiveCfg.inTreeContextMenu("document.addEmail");
                 var addSnippet = perspectiveCfg.inTreeContextMenu("document.addSnippet");
                 var addLink = perspectiveCfg.inTreeContextMenu("document.addLink");
                 var addNewsletter = perspectiveCfg.inTreeContextMenu("document.addNewsletter");
                 var addHardlink = perspectiveCfg.inTreeContextMenu("document.addHardlink");
-
                 var addBlankDocument = perspectiveCfg.inTreeContextMenu("document.addBlankDocument");
-                var addBlankPrintDocuments = perspectiveCfg.inTreeContextMenu("document.addBlankPrintPage");
                 var addBlankEmail = perspectiveCfg.inTreeContextMenu("document.addBlankEmail");
                 var addBlankSnippet = perspectiveCfg.inTreeContextMenu("document.addBlankSnippet");
                 var addBlankNewsletter = perspectiveCfg.inTreeContextMenu("document.addBlankNewsletter");
 
-                if (addDocuments || addPrintDocuments) {
-
+                if (addDocuments) {
                     var documentMenu = {
                         page: [],
                         snippet: [],
                         email: [],
                         newsletter: [],
-                        printPage: [],
                         ref: this
                     };
 
@@ -424,20 +393,6 @@ pimcore.document.tree = Class.create({
                             text: "&gt; " + t("blank"),
                             iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
                             handler: this.addDocument.bind(this, tree, record, "page")
-                        });
-                    }
-
-                    if (addBlankPrintDocuments) {
-                        // empty print pages
-                        documentMenu.printPage.push({
-                            text: "&gt; " + t("add_printpage"),
-                            iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
-                            handler: this.addDocument.bind(this, tree, record, "printpage")
-                        });
-                        documentMenu.printPage.push({
-                            text: "&gt; " + t("add_printcontainer"),
-                            iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
-                            handler: this.addDocument.bind(this, tree, record, "printcontainer")
                         });
                     }
 
@@ -476,16 +431,6 @@ pimcore.document.tree = Class.create({
                             menu: documentMenu.page,
                             hideOnClick: false
                         }));
-                    }
-
-                    if (addPrintDocuments && record.data.type != "email" && record.data.type != "newsletter" && record.data.type != "link") {
-                        menu.add(new Ext.menu.Item({
-                            text: t('add_printpage'),
-                            iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
-                            menu: documentMenu.printPage,
-                            hideOnClick: false
-                        }));
-
                     }
 
                     if (addSnippet) {
@@ -943,7 +888,7 @@ pimcore.document.tree = Class.create({
         }
 
         pimcore.helpers.hideRedundantSeparators(menu);
-        
+
         const prepareDocumentTreeContextMenu = new CustomEvent(pimcore.events.prepareDocumentTreeContextMenu, {
             detail: {
                 menu: menu,
@@ -1043,7 +988,6 @@ pimcore.document.tree = Class.create({
             snippet: {},
             email: {},
             newsletter: {},
-            printPage: {}
         };
 
         document_types.sort([
@@ -1083,20 +1027,6 @@ pimcore.document.tree = Class.create({
                     handler: this.addDocument.bind(this, tree, record, "newsletter", typeRecord.get("id"))
                 };
                 menuOption = "newsletter";
-            } else if (typeRecord.get("type") == "printpage") {
-                docTypeMenu = {
-                    text: text,
-                    iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
-                    handler: this.addDocument.bind(this, tree, record, "printpage", typeRecord.get("id"))
-                };
-                menuOption = "printPage";
-            } else if (typeRecord.get("type") == "printcontainer") {
-                docTypeMenu = {
-                    text: text,
-                    iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
-                    handler: this.addDocument.bind(this, tree, record, "printcontainer", typeRecord.get("id"))
-                };
-                menuOption = "printPage";
             }
 
             // check if the class is within a group
@@ -1529,7 +1459,7 @@ pimcore.document.tree = Class.create({
         parameters.id = id;
 
         Ext.Ajax.request({
-            url: '/admin/' + type + '/save?task=' + task,
+            url: Routing.generate('pimcore_admin_document_' + type + '_save', {task: task}),
             method: "PUT",
             params: parameters,
             success: function (task, response) {

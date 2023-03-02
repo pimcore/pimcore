@@ -59,7 +59,8 @@ class AssetUpdateTasksHandler
 
     private function processDocument(Asset\Document $asset): void
     {
-        if (!$asset->getCustomSetting('document_page_count')) {
+        $pageCount = $asset->getCustomSetting('document_page_count');
+        if (!$pageCount || $pageCount === 'failed') {
             $asset->processPageCount();
             $this->saveAsset($asset);
         }

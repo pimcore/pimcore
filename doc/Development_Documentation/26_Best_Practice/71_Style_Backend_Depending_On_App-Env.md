@@ -40,7 +40,7 @@ class AdminAssetsSubscriber implements \Symfony\Component\EventDispatcher\EventS
         ];
     }
 
-    public function onCssPaths(\Pimcore\Event\BundleManager\PathsEvent $event)
+    public function onCssPaths(\Pimcore\Event\BundleManager\PathsEvent $event): void
     {
         $event->setPaths(array_merge($event->getPaths(), ['/css/env.css']));
     }

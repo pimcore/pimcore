@@ -7,11 +7,9 @@ configurations including a fallback mechanism.
 Pimcore is relying on Symfony's environments, with some extras, however all the essential 
 information can be found in the [Symfony Docs](https://symfony.com/doc/current/configuration.html#configuration-environments)
 
-> Note: While Pimcore uses Symfony's DotEnv component to allow you to 
+> Note: Require `symfony/dotenv` in your project to use Symfony's DotEnv component to allow you to 
 [configure environment variables in `.env` files](https://symfony.com/doc/current/configuration.html#configuring-environment-variables-in-env-files), 
-sometimes (e.g. in *prod* environments) you may want to configure everything via real 
-environment variables instead. In this case, you can disable loading of `.env` files 
-by setting the `PIMCORE_SKIP_DOTENV_FILE` environment variable to a truthy value.
+or (e.g. in *prod* environments) you can configure everything via real environment variables.
 
 In addition to Symfony configurations, Pimcore also supports environment specific configs for: 
 
@@ -53,37 +51,62 @@ The following options are available:
 - `disabled` 
   - do not allow to edit/write configs at all
 
-Available environment variables are: 
-```bash
-PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS=settings-store
-PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=settings-store
-PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS=settings-store
-PIMCORE_WRITE_TARGET_DOCUMENT_TYPES=settings-store
-PIMCORE_WRITE_TARGET_WEB_TO_PRINT=settings-store
-PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES=settings-store
-PIMCORE_WRITE_TARGET_PREDEFINED_ASSET_METADATA=settings-store
-PIMCORE_WRITE_TARGET_STATICROUTES=settings-store
-PIMCORE_WRITE_TARGET_PERSPECTIVES=settings-store
-PIMCORE_WRITE_TARGET_CUSTOM_VIEWS=settings-store
-PIMCORE_WRITE_TARGET_OBJECT_CUSTOM_LAYOUTS=settings-store
-```
 #### Storage directory for symfony Config files
 
-The default storage directory for Symfony Config files is `/var/config/...`. However you can change
-the directory to any other directory using the corresponding environment variable:
+The default storage directory for Symfony Config files is `/var/config/...`.
 
-```bash
-PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS=/var/www/html/var/config/image-thumbnails
-PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS=/var/www/html/var/config/custom-reports
-PIMCORE_CONFIG_STORAGE_DIR_VIDEO_THUMBNAILS=/var/www/html/var/config/video-thumbnails
-PIMCORE_CONFIG_STORAGE_DIR_DOCUMENT_TYPES=/var/www/html/var/config/document-types
-PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT=/var/www/html/var/config/web-to-print
-PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES=/var/www/html/var/config/predefined-properties
-PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_ASSET_METADATA=/var/www/html/var/config/predefined-asset-metadata
-PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES=/var/www/html/var/config/staticroutes
-PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES=/var/www/html/var/config/perspectives
-PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS=/var/www/html/var/config/custom-views
-PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS=/var/www/html/var/config/custom-layouts
+Available options for write targets and directory for Symfony Config files are: 
+```yaml
+pimcore:
+    storage:
+        image_thumbnails:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/image-thumbnails'
+        custom_reports:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/custom_reports'
+        video_thumbnails:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/video-thumbnails'
+        document_types:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/document_types'
+        web_to_print:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/web_to_print'
+        predefined_properties:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/predefined_properties'
+        predefined_asset_metadata:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/predefined_asset_metadata'
+        staticroutes:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/staticroutes'
+        perspectives:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/perspectives'
+        custom_views:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/custom_views'
+        data_hub:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/data_hub'
+        object_custom_layouts:
+            target: 'symfony-config'
+            options:
+              directory: '/var/www/html/var/config/object_custom_layouts'
 ```
 
 #### Production environment with `symfony-config`
@@ -91,9 +114,12 @@ When using `symfony-config` write target, configs are written to Symfony Config 
 changing configs in production you won't see any update, because these configs are read only.
 
 If you'd like to allow changes in production, switch to the alternate `settings-store` config storage. 
-You can do so by adding the following to your `.env` or just set the env variable accordingly, e.g.:
-```
-PIMCORE_WRITE_TARGET_CUSTOM_REPORTS=settings-store
+You can do so by adding the following to your `symfony-config`. e.g.:
+```yaml
+pimcore:
+    storage:
+        custom_reports:
+            target: 'settings-store'
 ```
 
 #### Revalidate existing configuration on production

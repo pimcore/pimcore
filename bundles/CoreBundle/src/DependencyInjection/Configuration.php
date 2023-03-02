@@ -17,13 +17,12 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
-use Pimcore\Targeting\Storage\CookieStorage;
-use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -113,7 +112,6 @@ final class Configuration implements ConfigurationInterface
 
         $this->addGeneralNode($rootNode);
         $this->addMaintenanceNode($rootNode);
-        $this->addServicesNode($rootNode);
         $this->addObjectsNode($rootNode);
         $this->addAssetNode($rootNode);
         $this->addDocumentsNode($rootNode);
@@ -126,16 +124,15 @@ final class Configuration implements ConfigurationInterface
         $this->addSecurityNode($rootNode);
         $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
-        $this->addTargetingNode($rootNode);
-        $this->addSitemapsNode($rootNode);
         $this->addWorkflowNode($rootNode);
         $this->addHttpClientNode($rootNode);
         $this->addApplicationLogNode($rootNode);
         $this->addPredefinedPropertiesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
-        $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
+        $this->addGotenbergNode($rootNode);
+        $this->addWriteTargetNodes($rootNode);
 
         return $treeBuilder;
     }
@@ -154,27 +151,14 @@ final class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->integerNode('cleanup_tmp_files_atime_older_than')
-                        ->defaultValue(7776000) // 90 days
+                        ->info('Integer value in seconds.')
+                        ->defaultValue(7_776_000) // 90 days
                     ->end()
                     ->integerNode('cleanup_profiler_files_atime_older_than')
+                        ->info('Integer value in seconds.')
                         ->defaultValue(1800)
                     ->end()
         ;
-    }
-
-    private function buildRedirectsStatusCodes(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-            ->arrayNode('redirects')
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('status_codes')
-                        ->info('List all redirect status codes.')
-                        ->prototype('scalar')
-                    ->end()
-                ->end()
-            ->end();
     }
 
     /**
@@ -236,7 +220,7 @@ final class Configuration implements ConfigurationInterface
                     ->defaultFalse()
                 ->end()
                 ->booleanNode('debug_admin_translations')
-                    ->info('Debug Admin-Translations (displayed wrapped in +)')
+                    ->info('Debug Admin-Translations (text in UI will be displayed wrapped in +)')
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
@@ -244,38 +228,6 @@ final class Configuration implements ConfigurationInterface
                         })
                     ->end()
                     ->defaultFalse()
-                ->end()
-            ->end();
-    }
-
-    private function addServicesNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-            ->arrayNode('services')
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('google')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('client_id')
-                            ->info('This is required for the Google API integrations. Only use a `Service Account´ from the Google Cloud Console.')
-                            ->defaultNull()
-                        ->end()
-                        ->scalarNode('email')
-                            ->info('Email address of the Google service account')
-                            ->defaultNull()
-                        ->end()
-                        ->scalarNode('simple_api_key')
-                            ->info('Server API key')
-                            ->defaultNull()
-                        ->end()
-                        ->scalarNode('browser_api_key')
-                            ->info('Browser API key')
-                            ->defaultNull()
-                        ->end()
-                    ->end()
-                    ->end()
                 ->end()
             ->end();
     }
@@ -401,9 +353,11 @@ final class Configuration implements ConfigurationInterface
                         ->addDefaultsIfNotSet()
                         ->children()
                             ->integerNode('max_pixels')
-                                ->defaultValue(40000000)
+                                ->info('Maximum number of pixels an image can have when added (width × height).')
+                                ->defaultValue(40_000_000)
                             ->end()
                             ->arrayNode('low_quality_image_preview')
+                                ->info('Allow a LQIP SVG image to be generated alongside any other thumbnails.')
                                 ->addDefaultsIfNotSet()
                                 ->canBeDisabled()
                             ->end()
@@ -459,6 +413,7 @@ final class Configuration implements ConfigurationInterface
                                         ->end()
                                     ->end()
                                     ->booleanNode('clip_auto_support')
+                                        ->info('Try to detect and use clipping paths and masks in images when generating thumbnails.')
                                         ->beforeNormalization()
                                             ->ifString()
                                             ->then(function ($v) {
@@ -490,9 +445,11 @@ final class Configuration implements ConfigurationInterface
                                         ])
                                     ->end()
                                     ->booleanNode('status_cache')
+                                        ->info('Store image metadata such as filename and modification date in assets_image_thumbnail_cache, this is helpful when using remote object storage for thumbnails.')
                                         ->defaultTrue()
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
+                                        ->info('Automatically delete all image thumbnail files any time an image or its metadata is updated.')
                                         ->beforeNormalization()
                                             ->ifString()
                                             ->then(function ($v) {
@@ -552,7 +509,8 @@ final class Configuration implements ConfigurationInterface
                                     ->end()
 
                                     ->booleanNode('auto_clear_temp_files')
-                                    ->defaultTrue()
+                                        ->info('Automatically delete all video thumbnail files any time an image or its metadata is updated.')
+                                        ->defaultTrue()
                                     ->end()
                                 ->end()
                             ->end()
@@ -887,37 +845,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('web_to_print')
-                    ->addDefaultsIfNotSet()
-                        ->children()
-                            ->scalarNode('pdf_creation_php_memory_limit')
-                                ->defaultValue('2048M')
-                            ->end()
-                            ->scalarNode('default_controller_print_page')
-                                ->defaultValue('App\\Controller\\Web2printController::defaultAction')
-                            ->end()
-                            ->scalarNode('default_controller_print_container')
-                                ->defaultValue('App\\Controller\\Web2printController::containerAction')
-                            ->end()
-                            ->booleanNode('enableInDefaultView')
-                                ->defaultValue(false)
-                            ->end()
-                            ->scalarNode('generalTool')
-                                ->defaultValue('')
-                            ->end()
-                            ->scalarNode('generalDocumentSaveMode')->end()
-                            ->scalarNode('pdfreactorVersion')->end()
-                            ->scalarNode('pdfreactorProtocol')->end()
-                            ->scalarNode('pdfreactorServer')->end()
-                            ->scalarNode('pdfreactorServerPort')->end()
-                            ->scalarNode('pdfreactorBaseUrl')->end()
-                            ->scalarNode('pdfreactorApiKey')->end()
-                            ->scalarNode('pdfreactorLicence')->end()
-                            ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
-                            ->booleanNode('pdfreactorEnableDebugMode')->end()
-                            ->scalarNode('headlessChromeSettings')->end()
-                        ->end()
-                ->end()
                 ->integerNode('auto_save_interval')
                     ->defaultValue(60)
                 ->end()
@@ -932,6 +859,20 @@ final class Configuration implements ConfigurationInterface
                             ->defaultNull()
                             ->info('Optionally define route patterns to lookup static pages. Regular Expressions like: /^\/en\/Magazine/')
                         ->end()
+                ->end()
+            ->end()
+            ->arrayNode('class_definitions')
+                ->children()
+                    ->arrayNode('data')
+                        ->children()
+                            ->arrayNode('map')
+                                ->useAttributeAsKey('name')
+                                ->prototype('scalar')->end()
+                            ->end()
+                            ->arrayNode('prefixes')
+                                ->prototype('scalar')->end()
+                        ->end()
+                    ->end()
                 ->end()
             ->end();
 
@@ -1006,6 +947,46 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('security')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('password')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->enumNode('algorithm')
+                                    ->info('The hashing algorithm to use for backend users and objects containing a "password" field.')
+                                    ->example('!php/const PASSWORD_BCRYPT')
+                                    ->values([PASSWORD_DEFAULT, PASSWORD_BCRYPT, PASSWORD_ARGON2I, PASSWORD_ARGON2ID])
+                                    ->defaultValue(PASSWORD_DEFAULT)
+                                ->end()
+                                ->arrayNode('options')
+                                    ->info('See: https://www.php.net/manual/de/password.constants.php')
+                                    ->example(['cost' => 13])
+                                    ->defaultValue([])
+                                    ->normalizeKeys(false)
+                                    ->variablePrototype()->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->enumNode('factory_type')
+                            ->values(['encoder', 'password_hasher'])
+                            ->defaultValue('encoder')
+                        ->end()
+                        ->arrayNode('encoder_factories')
+                            ->info('Encoder factories to use as className => factory service ID mapping')
+                            ->example([
+                                'App\Model\DataObject\User1' => [
+                                    'id' => 'website_demo.security.encoder_factory2',
+                                ],
+                                'App\Model\DataObject\User2' => 'website_demo.security.encoder_factory2',
+                            ])
+                            ->useAttributeAsKey('class')
+                            ->prototype('array')
+                            ->beforeNormalization()->ifString()->then(function ($v) {
+                                return ['id' => $v];
+                            })->end()
+                            ->children()
+                                ->scalarNode('id')->end()
+                            ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('password_hasher_factories')
                             ->info('Password hasher factories to use as className => factory service ID mapping')
                             ->example([
@@ -1197,81 +1178,6 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
-    }
-
-    private function addTargetingNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('targeting')
-                    ->canBeDisabled()
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('storage_id')
-                            ->info('Service ID of the targeting storage which should be used. This ID will be aliased to ' . TargetingStorageInterface::class)
-                            ->defaultValue(CookieStorage::class)
-                            ->cannotBeEmpty()
-                        ->end()
-                        ->arrayNode('session')
-                            ->info('Enables HTTP session support by configuring session bags and the full page cache')
-                            ->canBeEnabled()
-                        ->end()
-                        ->arrayNode('data_providers')
-                            ->useAttributeAsKey('key')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                        ->arrayNode('conditions')
-                            ->useAttributeAsKey('key')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                        ->arrayNode('action_handlers')
-                            ->useAttributeAsKey('name')
-                                ->prototype('scalar')
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    private function addSitemapsNode(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('sitemaps')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('generators')
-                            ->useAttributeAsKey('name')
-                            ->prototype('array')
-                                ->beforeNormalization()
-                                    ->ifString()
-                                    ->then(function ($v) {
-                                        return [
-                                            'enabled' => true,
-                                            'generator_id' => $v,
-                                            'priority' => 0,
-                                        ];
-                                    })
-                                ->end()
-                                ->addDefaultsIfNotSet()
-                                ->canBeDisabled()
-                                ->children()
-                                    ->scalarNode('generator_id')
-                                        ->cannotBeEmpty()
-                                    ->end()
-                                    ->integerNode('priority')
-                                        ->defaultValue(0)
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ->end();
     }
 
     private function addWorkflowNode(ArrayNodeDefinition $rootNode): void
@@ -1596,7 +1502,7 @@ final class Configuration implements ConfigurationInterface
                                                             ->end()
                                                         ->end()
                                                     ->end()
-                                                    ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
+                                                    ->scalarNode('iconClass')->info('CSS class to define the icon which will be used in the actions button in the backend.')->end()
                                                     ->scalarNode('objectLayout')->defaultValue(false)->info('Forces an object layout after the transition was performed. This objectLayout setting overrules all objectLayout settings within the places configs.')->end()
 
                                                     ->arrayNode('notificationSettings')
@@ -1694,7 +1600,7 @@ final class Configuration implements ConfigurationInterface
                                     ->prototype('array')
                                         ->children()
                                             ->scalarNode('label')->info('Nice name for the Pimcore backend.')->end()
-                                            ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
+                                            ->scalarNode('iconClass')->info('CSS class to define the icon which will be used in the actions button in the backend.')->end()
                                             ->scalarNode('objectLayout')->defaultValue(false)->info('Forces an object layout after the global action was performed. This objectLayout setting overrules all objectLayout settings within the places configs.')->end()
                                             ->scalarNode('guard')
                                                 ->cannotBeEmpty()
@@ -1966,6 +1872,61 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    private function addWriteTargetNodes(ArrayNodeDefinition $rootNode): void
+    {
+        $storageNode = $rootNode
+            ->children()
+            ->arrayNode('storage')
+            ->addDefaultsIfNotSet()
+            ->children();
+
+        $this->addStorageNode($storageNode, 'image_thumbnails', '/var/config/image-thumbnails');
+        $this->addStorageNode($storageNode, 'custom_reports', '/var/config/custom_reports');
+        $this->addStorageNode($storageNode, 'video_thumbnails', '/var/config/video-thumbnails');
+        $this->addStorageNode($storageNode, 'document_types', '/var/config/document_types');
+        $this->addStorageNode($storageNode, 'web_to_print', '/var/config/web_to_print');
+        $this->addStorageNode($storageNode, 'predefined_properties', '/var/config/predefined_properties');
+        $this->addStorageNode($storageNode, 'predefined_asset_metadata', '/var/config/predefined_asset_metadata');
+        $this->addStorageNode($storageNode, 'staticroutes', '/var/config/staticroutes');
+        $this->addStorageNode($storageNode, 'perspectives', '/var/config/perspectives');
+        $this->addStorageNode($storageNode, 'custom_views', '/var/config/custom_views');
+        $this->addStorageNode($storageNode, 'data_hub', '/var/config/data_hub');
+        $this->addStorageNode($storageNode, 'object_custom_layouts', '/var/config/object_custom_layouts');
+    }
+
+    private function addStorageNode(NodeBuilder $node, string $name, string $folder): void
+    {
+        $node->
+            arrayNode($name)
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->enumNode('target')
+                        ->values(['symfony-config', 'settings-store'])
+                        ->defaultValue('symfony-config')
+                    ->end()
+                    ->arrayNode('options')
+                    ->defaultValue(['directory' => '%kernel.project_dir%' . $folder])
+                        ->variablePrototype()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    private function addGotenbergNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('gotenberg')
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('base_url')
+                ->defaultValue('gotenberg:3000')
                 ->end()
             ->end()
         ->end();

@@ -577,9 +577,6 @@
     object-fit: contain;
 }
 
-.pimcore_analytics_filter_form_item {
-    margin: 0 30px 0 0;
-}
 
 .pimcore_extra_label {
     font-size: 10px;
@@ -813,24 +810,6 @@ span.warning {
     color: #830000;
 }
 
-
-/* REPORTS */
-
-.pimcore_analytics_gridvalue {
-    font-size: 26px;
-    line-height: 40px;
-    display: block;
-    text-align: right;
-}
-
-.pimcore_analytics_gridlabel {
-    font-size: 20px;
-    line-height: 40px;
-    padding: 0 0 0 5px;
-}
-
-
-
 .CodeMirror-line-numbers {
     width: 2.2em;
     color: #aaa;
@@ -867,32 +846,6 @@ span.warning {
 
 .pimcore_document_seo_warning {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/high_priority.svg) 2px 2px/16px no-repeat #ffdbdb;
-}
-
-.pimcore_targeting_bracket {
-    position: absolute;
-    top: 64px;
-    cursor: pointer;
-
-    color: #CCCCCC;
-    font-family: sans-serif;
-    font-size: 50px;
-}
-
-.pimcore_targeting_bracket:hover {
-    color: #B4B4B4;
-}
-
-.pimcore_targeting_bracket_active {
-    color: #000 !important;
-}
-
-.pimcore_targeting_bracket_left {
-    left: 5px;
-}
-
-.pimcore_targeting_bracket_right {
-    right: 5px;
 }
 
 #pimcore_tree_preview {

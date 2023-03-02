@@ -28,35 +28,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 {
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'imageGallery';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $queryColumnType = ['images' => 'text', 'hotspots' => 'longtext'];
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var array
-     */
-    public $columnType = ['images' => 'text', 'hotspots' => 'longtext'];
 
     /**
      * @internal
@@ -67,15 +38,11 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
     /**
      * @internal
-     *
-     * @var int
      */
     public ?int $ratioX = null;
 
     /**
      * @internal
-     *
-     * @var int
      */
     public ?int $ratioY = null;
 
@@ -510,5 +477,23 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return null;
+    }
+
+    public function getColumnType(): array
+    {
+        return [
+            'images' => 'text',
+            'hotspots' => 'longtext',
+        ];
+    }
+
+    public function getQueryColumnType(): array
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'imageGallery';
     }
 }

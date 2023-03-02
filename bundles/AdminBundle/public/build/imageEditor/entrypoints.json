@@ -1,0 +1,10 @@
+{
+  "entrypoints": {
+    "imageEditor": {
+      "js": [
+        "/bundles/pimcoreadmin/build/imageEditor/runtime.js",
+        "/bundles/pimcoreadmin/build/imageEditor/imageEditor.js"
+      ]
+    }
+  }
+}

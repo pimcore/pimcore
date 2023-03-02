@@ -240,7 +240,7 @@ use Pimcore\Model\DataObject\Product;
 
 class DataObjectListener 
 {
-    public function onObjectPostUpdate (DataObjectEvent $e) 
+    public function onObjectPostUpdate(DataObjectEvent $e): void
     {
         $obj = $e->getObject();
     
