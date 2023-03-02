@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\WebToPrintBundle\Processor;
 
 use HeadlessChromium\BrowserFactory;
+use HeadlessChromium\Exception\BrowserConnectionFailed;
 use Pimcore\Bundle\WebToPrintBundle\Config;
 use Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
@@ -105,18 +106,17 @@ class Chromium extends Processor
         ['html' => $html, 'params' => $params] = $event->getArguments();
 
         try {
-            $browserFactory = BrowserFactory::connectToBrowser(Pimcore\Config::getSystemConfiguration('chromium')['base_url']);
+            $browser = BrowserFactory::connectToBrowser(\Pimcore\Config::getSystemConfiguration('chromium')['base_url']);
         } catch (BrowserConnectionFailed $e) {
             $browserFactory = new BrowserFactory(ChromiumLib::getChromiumBinary());
+            // starts headless chrome
+            $browser = $browserFactory->createBrowser([
+                'noSandbox' => true,
+                'startupTimeout' => 120,
+                'enableImages' => true,
+                'ignoreCertificateErrors' => true
+            ]);
         }
-
-        // starts headless chrome
-        $browser = $browserFactory->createBrowser([
-            'noSandbox' => true,
-            'startupTimeout' => 120,
-            'enableImages' => true,
-            'ignoreCertificateErrors' => true
-        ]);
 
         try {
             $page = $browser->createPage();
