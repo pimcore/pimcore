@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\PersonalizationBundle\Tests\Model\Document;
+namespace Pimcore\Bundle\PersonalizationBundle\Tests\Unit\Targeting\Document;
 
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Page;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
@@ -23,7 +23,7 @@ use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class TargetGroupEditableTest extends ModelTestCase
 {
-    protected int $seed=1;
+    protected int $seed = 1;
 
     protected Page $testPage;
 
@@ -51,14 +51,14 @@ class TargetGroupEditableTest extends ModelTestCase
         $this->createTargetGroup($targetGroup2);
 
         $targetGroup1 = TargetGroup::getByName($targetGroup1);
-        $targetGroup1EditableData = $this->seed+1;
-        $targetGroupEditableName1 = $this->saveTargetGroupEditable($targetGroup1, $defaultEditableName, $targetGroup1EditableData);
+        $targetGroup1EditableData = $this->seed + 1;
+        $targetGroupEditableName1 = $this->saveTargetGroupEditable($targetGroup1, $defaultEditableName, (string) $targetGroup1EditableData);
 
         $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName1, $targetGroup1EditableData);
 
         $targetGroup2 = TargetGroup::getByName($targetGroup2);
-        $targetGroup2EditableData = $this->seed+ 2;
-        $targetGroupEditableName2 = $this->saveTargetGroupEditable($targetGroup2, $defaultEditableName, $targetGroup2EditableData);
+        $targetGroup2EditableData = $this->seed + 2;
+        $targetGroupEditableName2 = $this->saveTargetGroupEditable($targetGroup2, $defaultEditableName, (string) $targetGroup2EditableData);
 
         $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName2, $targetGroup2EditableData);
 
@@ -74,11 +74,11 @@ class TargetGroupEditableTest extends ModelTestCase
 
     protected function createTestPage(): void
     {
-        $this->testPage = TestHelper::createEmptyPage();
+        $this->testPage = TestHelper::createEmptyDocument(type: Page::class);
     }
 
     // Save the editable using the target specific prefix
-    protected function saveTargetGroupEditable(TargetGroup $targetGroup, string $editableName, int $targetGroupData): string
+    protected function saveTargetGroupEditable(TargetGroup $targetGroup, string $editableName, string $targetGroupData): string
     {
         $targetGroupData = 'content' . $targetGroupData;
         $this->testPage->setUseTargetGroup($targetGroup->getId());
