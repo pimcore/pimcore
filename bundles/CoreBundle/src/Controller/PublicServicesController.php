@@ -45,7 +45,7 @@ class PublicServicesController extends Controller
         $filename = $request->get('filename');
         $requestedFileExtension = strtolower(File::getFileExtension($filename));
 
-        $assetInfo = [
+        $config = [
             'prefix' => $request->get('prefix', ''),
             'type' => $request->get('type'),
             'asset_id' => (int) $request->get('assetId'),
@@ -55,11 +55,11 @@ class PublicServicesController extends Controller
         ];
 
         try {
-            $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($assetInfo);
+            $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
             if ($thumbnail) {
                 $storage = Storage::get('thumbnail');
 
-                if ($assetInfo['type'] === 'image') {
+                if ($config['type'] === 'image') {
                     $thumbnailStream = $thumbnail->getStream();
 
                     $mime = $thumbnail->getMimeType();
@@ -81,7 +81,7 @@ class PublicServicesController extends Controller
                         //Stream can be closed by writeStream and needs to be reloaded.
                         $thumbnailStream = $storage->readStream($requestedFile);
                     }
-                } elseif ($assetInfo['type'] === 'video') {
+                } elseif ($config['type'] === 'video') {
                     $storagePath = urldecode($thumbnail['formats'][$requestedFileExtension]);
 
                     if ($storage->fileExists($storagePath)) {
@@ -90,7 +90,7 @@ class PublicServicesController extends Controller
                     $mime = $storage->mimeType($storagePath);
                     $fileSize = $storage->fileSize($storagePath);
                 } else {
-                    throw new \Exception('Cannot determine mime type and file size of ' . $assetInfo['type'] . ' thumbnail, see logs for details.');
+                    throw new \Exception('Cannot determine mime type and file size of ' . $config['type'] . ' thumbnail, see logs for details.');
                 }
                 // set appropriate caching headers
                 // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
@@ -109,7 +109,7 @@ class PublicServicesController extends Controller
                     fpassthru($thumbnailStream);
                 }, 200, $headers);
             }
-            throw new \Exception('Unable to generate '.$assetInfo['type'].' thumbnail, see logs for details.');
+            throw new \Exception('Unable to generate '.$config['type'].' thumbnail, see logs for details.');
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
             return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');

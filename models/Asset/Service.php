@@ -503,29 +503,29 @@ class Service extends Model\Element\Service
     /**
      * @throws \Exception
      */
-    public static function getImageThumbnailByArrayConfig(array $config): null|ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array
+    public static function getImageThumbnailByArrayConfig(array $assetInfo): null|ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array
     {
-        $asset = Asset::getById($config['asset_id']);
+        $asset = Asset::getById($assetInfo['asset_id']);
 
         if (!$asset) {
             return null;
         }
 
-        $config['file_extension'] ??= strtolower(File::getFileExtension($config['filename']));
+        $assetInfo['file_extension'] ??= strtolower(File::getFileExtension($assetInfo['filename']));
 
-        $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $config['prefix']);
+        $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $assetInfo['prefix']);
         $prefix = preg_replace('@' . $asset->getId() . '/$@', '', $prefix);
 
         if ($asset->getPath() === ('/' . $prefix)) {
             // just check if the thumbnail exists -> throws exception otherwise
-            $thumbnailConfigClass = 'Pimcore\\Model\\Asset\\' . ucfirst($config['type']) . '\\Thumbnail\Config';
-            $thumbnailConfig = $thumbnailConfigClass::getByName($config['thumbnail_name']);
+            $thumbnailConfigClass = 'Pimcore\\Model\\Asset\\' . ucfirst($assetInfo['type']) . '\\Thumbnail\Config';
+            $thumbnailConfig = $thumbnailConfigClass::getByName($assetInfo['thumbnail_name']);
 
             if (!$thumbnailConfig) {
                 // check if there's an item in the TmpStore
                 // remove an eventually existing cache-buster prefix first (eg. when using with a CDN)
-                $pathInfo = preg_replace('@^/cache-buster\-[\d]+@', '', $config['prefix']);
-                $deferredConfigId = 'thumb_' . $config['asset_id'] . '__' . md5(urldecode($pathInfo));
+                $pathInfo = preg_replace('@^/cache-buster\-[\d]+@', '', $assetInfo['prefix']);
+                $deferredConfigId = 'thumb_' . $assetInfo['asset_id'] . '__' . md5(urldecode($pathInfo));
 
                 if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
                     $thumbnailConfig = $thumbnailConfigItem->getData();
@@ -534,9 +534,9 @@ class Service extends Model\Element\Service
                     if (!$thumbnailConfig instanceof $thumbnailConfigClass) {
                         throw new \Exception('Deferred thumbnail config file doesn\'t contain a valid '.$thumbnailConfigClass.' object');
                     }
-                } elseif (Config::getSystemConfiguration()['assets'][$config['type']]['thumbnails']['status_cache']) {
+                } elseif (Config::getSystemConfiguration()['assets'][$assetInfo['type']]['thumbnails']['status_cache']) {
                     // Delete Thumbnail Name from Cache so the next call can generate a new TmpStore entry
-                    $asset->getDao()->deleteFromThumbnailCache($config['thumbnail_name']);
+                    $asset->getDao()->deleteFromThumbnailCache($assetInfo['thumbnail_name']);
                 }
             }
 
@@ -544,21 +544,21 @@ class Service extends Model\Element\Service
                 return null;
             }
 
-            if ($config['type'] === 'image' && strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
-                $formatOverride = $config['file_extension'];
-                if (in_array($config['file_extension'], ['jpg', 'jpeg'])) {
+            if ($assetInfo['type'] === 'image' && strcasecmp($thumbnailConfig->getFormat(), 'SOURCE') === 0) {
+                $formatOverride = $assetInfo['file_extension'];
+                if (in_array($assetInfo['file_extension'], ['jpg', 'jpeg'])) {
                     $formatOverride = 'pjpeg';
                 }
                 $thumbnailConfig->setFormat($formatOverride);
             }
 
             if ($asset instanceof Asset\Video) {
-                if ($config['type'] === 'video') {
+                if ($assetInfo['type'] === 'video') {
                     //for video thumbnails of videos, it returns an array
-                    return $asset->getThumbnail($config['thumbnail_name'], [$assetInfo['file_extension']]);
+                    return $asset->getThumbnail($assetInfo['thumbnail_name'], [$assetInfo['file_extension']]);
                 } else {
                     $time = 1;
-                    if (preg_match("|~\-~time\-(\d+)\.|", $config['filename'], $matchesThumbs)) {
+                    if (preg_match("|~\-~time\-(\d+)\.|", $assetInfo['filename'], $matchesThumbs)) {
                         $time = (int)$matchesThumbs[1];
                     }
 
@@ -566,7 +566,7 @@ class Service extends Model\Element\Service
                 }
             } elseif ($asset instanceof Asset\Document) {
                 $page = 1;
-                if (preg_match("|~\-~page\-(\d+)\.|", $config['filename'], $matchesThumbs)) {
+                if (preg_match("|~\-~page\-(\d+)\.|", $assetInfo['filename'], $matchesThumbs)) {
                     $page = (int)$matchesThumbs[1];
                 }
 
@@ -577,7 +577,7 @@ class Service extends Model\Element\Service
             } elseif ($asset instanceof Asset\Image) {
                 //check if high res image is called
 
-                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
+                preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $assetInfo['filename'], $matches);
 
                 if (empty($matches) || !isset($matches[1])) {
                     return null;
@@ -604,8 +604,8 @@ class Service extends Model\Element\Service
      */
     public static function getImageThumbnailByUri(string $uri): null|ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array
     {
-        $config = self::extractThumbnailInfoFromUri($uri);
-        return self::getImageThumbnailByArrayConfig($config);
+        $assetInfo = self::extractThumbnailInfoFromUri($uri);
+        return self::getImageThumbnailByArrayConfig($assetInfo);
     }
 
     /**
