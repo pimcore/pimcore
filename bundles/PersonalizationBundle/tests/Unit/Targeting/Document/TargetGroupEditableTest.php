@@ -51,25 +51,25 @@ class TargetGroupEditableTest extends ModelTestCase
         $this->createTargetGroup($targetGroup2);
 
         $targetGroup1 = TargetGroup::getByName($targetGroup1);
-        $targetGroup1EditableData = $this->seed + 1;
-        $targetGroupEditableName1 = $this->saveTargetGroupEditable($targetGroup1, $defaultEditableName, (string) $targetGroup1EditableData);
+        $targetGroup1EditableSeed = $this->seed + 1;
+        $targetGroupEditableName1 = $this->saveTargetGroupEditable($targetGroup1, $defaultEditableName, $targetGroup1EditableSeed);
 
-        $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName1, $targetGroup1EditableData);
+        $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName1, $targetGroup1EditableSeed);
 
         $targetGroup2 = TargetGroup::getByName($targetGroup2);
-        $targetGroup2EditableData = $this->seed + 2;
-        $targetGroupEditableName2 = $this->saveTargetGroupEditable($targetGroup2, $defaultEditableName, (string) $targetGroup2EditableData);
+        $targetGroup2EditableSeed = $this->seed + 2;
+        $targetGroupEditableName2 = $this->saveTargetGroupEditable($targetGroup2, $defaultEditableName, $targetGroup2EditableSeed);
 
-        $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName2, $targetGroup2EditableData);
+        $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName2, $targetGroup2EditableSeed);
 
         //Test the value of first target group editable again
-        $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName1, $targetGroup1EditableData);
+        $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName1, $targetGroup1EditableSeed);
 
         $this->reloadPage();
 
         // Test after reloading
-        $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName1, $targetGroup1EditableData);
-        $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName2, $targetGroup2EditableData);
+        $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName1, $targetGroup1EditableSeed);
+        $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName2, $targetGroup2EditableSeed);
     }
 
     protected function createTestPage(): void
@@ -80,9 +80,9 @@ class TargetGroupEditableTest extends ModelTestCase
     }
 
     // Save the editable using the target specific prefix
-    protected function saveTargetGroupEditable(TargetGroup $targetGroup, string $editableName, string $targetGroupData): string
+    protected function saveTargetGroupEditable(TargetGroup $targetGroup, string $editableName, int $targetGroupSeed): string
     {
-        $targetGroupData = 'content' . $targetGroupData;
+        $targetGroupData = 'content' . $targetGroupSeed;
         $this->testPage->setUseTargetGroup($targetGroup->getId());
         $targetGroupEditableName = $this->testPage->getTargetGroupEditableName($editableName);
 
