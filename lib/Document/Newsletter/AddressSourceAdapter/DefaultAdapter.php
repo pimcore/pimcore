@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Listing;
 /**
  * @internal
  */
-final class DefaultAdapter implements AddressSourceAdapterInterface
+class DefaultAdapter implements AddressSourceAdapterInterface
 {
     /**
      * @var string
@@ -36,11 +36,6 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
      */
     protected mixed $condition = null;
 
-    /**
-     * @var int[]
-     */
-    protected mixed $targetGroups = [];
-
     protected int $elementsTotal;
 
     protected ?Listing $list = null;
@@ -49,7 +44,6 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
     {
         $this->class = $params['class'];
         $this->condition = empty($params['condition']) ? $params['objectFilterSQL'] : $params['condition'];
-        $this->targetGroups = $params['target_groups'] ?? [];
     }
 
     protected function getListing(): ?Listing
@@ -63,14 +57,6 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
                 $conditions[] = '(' . $this->condition . ')';
             }
 
-            if ($this->targetGroups) {
-                $class = ClassDefinition::getByName($this->class);
-
-                if ($class) {
-                    $conditions = $this->addTargetGroupConditions($class, $conditions);
-                }
-            }
-
             $this->list->setCondition(implode(' AND ', $conditions));
             $this->list->setOrderKey('email');
             $this->list->setOrder('ASC');
@@ -79,42 +65,6 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
         }
 
         return $this->list;
-    }
-
-    /**
-     * Handle target group filters
-     *
-     * @param ClassDefinition $class
-     * @param array $conditions
-     *
-     * @return array
-     */
-    protected function addTargetGroupConditions(ClassDefinition $class, array $conditions): array
-    {
-        if (!$class->getFieldDefinition('targetGroup')) {
-            return $conditions;
-        }
-
-        $fieldDefinition = $class->getFieldDefinition('targetGroup');
-        if ($fieldDefinition instanceof ClassDefinition\Data\TargetGroup) {
-            $targetGroups = [];
-            foreach ($this->targetGroups as $value) {
-                if (!empty($value)) {
-                    $targetGroups[] = $this->list->quote($value);
-                }
-            }
-
-            $conditions[] = 'targetGroup IN (' . implode(',', $targetGroups) . ')';
-        } elseif ($fieldDefinition instanceof ClassDefinition\Data\TargetGroupMultiselect) {
-            $targetGroupsCondition = [];
-            foreach ($this->targetGroups as $value) {
-                $targetGroupsCondition[] = 'targetGroup LIKE ' . $this->list->quote('%,' . $value . ',%');
-            }
-
-            $conditions[] = '(' . implode(' OR ', $targetGroupsCondition) . ')';
-        }
-
-        return $conditions;
     }
 
     /**

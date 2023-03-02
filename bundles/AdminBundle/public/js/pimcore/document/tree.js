@@ -30,7 +30,6 @@ pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 
     treeDataUrl: null,
-    nodesToMove: [],
 
     initialize: function(config, perspectiveCfg) {
         this.treeDataUrl = Routing.generate('pimcore_admin_document_document_treegetchildrenbyid');
@@ -146,10 +145,7 @@ pimcore.document.tree = Class.create({
                     ddGroup: "element"
                 },
                 listeners: {
-                    nodedragover: this.onTreeNodeOver.bind(this),
-                    beforedrop: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
-                        this.nodesToMove = [];
-                    }.bind(this)
+                    nodedragover: this.onTreeNodeOver.bind(this)
                 },
                 xtype: 'pimcoretreeview'
             },
@@ -267,7 +263,6 @@ pimcore.document.tree = Class.create({
                     } else {
                         delete node.data.cls;
                     }
-                    pimcore.elementservice.nodeMoved("document", oldParent, newParent);
                     this.updateOpenDocumentPaths(node);
 
                 }
@@ -301,27 +296,7 @@ pimcore.document.tree = Class.create({
             index: index
         };
 
-        if(
-            newParent.data.id !== oldParent.data.id &&
-            (node.data.type === 'page' || node.data.type === 'hardlink') &&
-            pimcore.globalmanager.get("user").isAllowed('redirects')
-        ) {
-            this.nodesToMove.push({
-                "id": node.data.id,
-                "params": params,
-                "moveCallback": moveCallback,
-            });
-
-            // ask the user if redirects should be created, if node was moved to a new parent
-            Ext.MessageBox.confirm("", t("create_redirects"), function (buttonValue) {
-                for (let nodeIdx in this.nodesToMove) {
-                    this.nodesToMove[nodeIdx]['params']['create_redirects'] = (buttonValue == "yes");
-                    pimcore.elementservice.updateDocument(this.nodesToMove[nodeIdx].id, this.nodesToMove[nodeIdx].params, this.nodesToMove[nodeIdx].moveCallback);
-                }
-            }.bind(this));
-        } else {
-            pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
-        }
+        pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
     },
 
 
@@ -1484,7 +1459,7 @@ pimcore.document.tree = Class.create({
         parameters.id = id;
 
         Ext.Ajax.request({
-            url: '/admin/' + type + '/save?task=' + task,
+            url: Routing.generate('pimcore_admin_document_' + type + '_save', {task: task}),
             method: "PUT",
             params: parameters,
             success: function (task, response) {

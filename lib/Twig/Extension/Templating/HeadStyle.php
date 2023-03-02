@@ -90,7 +90,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @var bool
      */
-    protected bool $_captureLock;
+    protected bool $_captureLock = false;
 
     /**
      * Capture type (append, prepend, set)

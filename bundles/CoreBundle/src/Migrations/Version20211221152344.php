@@ -32,13 +32,18 @@ final class Version20211221152344 extends AbstractMigration
         //disable foreign key checks
         $this->addSql('SET foreign_key_checks = 0');
 
-        $this->addSql('ALTER TABLE `assets_metadata`
-            CHANGE `cid` `cid` int(11) unsigned NOT NULL,
-            ADD CONSTRAINT `fk_assets_metadata_assets`
-            FOREIGN KEY (`cid`)
-            REFERENCES `assets` (`id`)
-            ON UPDATE NO ACTION
-            ON DELETE CASCADE;');
+        $this->addSql('ALTER TABLE `assets_metadata` CHANGE `cid` `cid` int(11) unsigned NOT NULL;');
+
+        if (!$schema->getTable('assets_metadata')->hasForeignKey('fk_assets_metadata_assets')) {
+            $this->addSql(
+                'ALTER TABLE `assets_metadata`
+                ADD CONSTRAINT `fk_assets_metadata_assets`
+                FOREIGN KEY (`cid`)
+                REFERENCES `assets` (`id`)
+                ON UPDATE NO ACTION
+                ON DELETE CASCADE;'
+            );
+        }
 
         //enable foreign key checks
         $this->addSql('SET foreign_key_checks = 1');
@@ -46,8 +51,10 @@ final class Version20211221152344 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `assets_metadata`
-            DROP FOREIGN KEY `fk_assets_metadata_assets`,
-            CHANGE `cid` `cid` int(11) NOT NULL;');
+        if ($schema->getTable('assets_metadata')->hasForeignKey('fk_assets_metadata_assets')) {
+            $this->addSql('ALTER TABLE `assets_metadata` DROP FOREIGN KEY `fk_assets_metadata_assets`;');
+        }
+
+        $this->addSql('ALTER TABLE `assets_metadata` CHANGE `cid` `cid` int(11) NOT NULL;');
     }
 }

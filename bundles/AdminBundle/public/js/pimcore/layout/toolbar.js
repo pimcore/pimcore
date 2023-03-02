@@ -292,15 +292,6 @@ pimcore.layout.toolbar = Class.create({
  
              var extrasItems = [];
 
-             if (user.isAllowed("redirects") && perspectiveCfg.inToolbar("extras.redirects")) {
-                 extrasItems.push({
-                     text: t("redirects"),
-                     iconCls: "pimcore_nav_icon_redirects",
-                     itemId: 'pimcore_menu_extras_redirects',
-                     handler: this.editRedirects
-                 });
-             }
-
              let translationItems = [];
 
              if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
@@ -422,41 +413,10 @@ pimcore.layout.toolbar = Class.create({
                  cls: "pimcore_navigation_flyout"
              };
          }
- 
+
          if (perspectiveCfg.inToolbar("marketing")) {
              // marketing menu
              var marketingItems = [];
-
-             if (user.isAllowed("targeting") && perspectiveCfg.inToolbar("marketing.targeting")) {
-                 marketingItems.push({
-                     text: t("personalization") + " / " + t("targeting"),
-                     iconCls: "pimcore_nav_icon_usergroup",
-                     itemId: 'pimcore_menu_marketing_personalization',
-                     hideOnClick: false,
-                     menu: {
-                         cls: "pimcore_navigation_flyout",
-                         shadow: false,
-                         items: [
-                             {
-                                 text: t("global_targeting_rules"),
-                                 iconCls: "pimcore_nav_icon_targeting",
-                                 itemId: 'pimcore_menu_marketing_personalization_global_targeting_rules',
-                                 handler: this.showTargetingRules
-                             }, {
-                                 text: t('target_groups'),
-                                 iconCls: "pimcore_nav_icon_target_groups",
-                                 itemId: 'pimcore_menu_marketing_personalization_target_groups',
-                                 handler: this.showTargetGroups
-                             }, {
-                                 text: t("targeting_toolbar"),
-                                 iconCls: "pimcore_nav_icon_targeting_toolbar",
-                                 itemId: 'pimcore_menu_marketing_personalization_targeting_toolbar',
-                                 handler: this.showTargetingToolbarSettings
-                             }
-                         ]
-                     }
-                 });
-             }
 
              menu.marketing = {
                  label: t('marketing'),
@@ -514,7 +474,7 @@ pimcore.layout.toolbar = Class.create({
                      handler: this.websiteSettings
                  });
              }
- 
+
              if (user.isAllowed("users") && perspectiveCfg.inToolbar("settings.users")) {
                  var userItems = [];
  
@@ -606,83 +566,81 @@ pimcore.layout.toolbar = Class.create({
                          items: []
                      }
                  };
- 
-                 if (user.isAllowed("classes")) {
-                     if (perspectiveCfg.inToolbar("settings.objects.classes")) {
-                         objectMenu.menu.items.push({
-                             text: t("classes"),
-                             iconCls: "pimcore_nav_icon_class",
-                             itemId: 'pimcore_menu_settings_data_objects_classes',
-                             handler: this.editClasses
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.fieldcollections")) {
-                         objectMenu.menu.items.push({
-                             text: t("field_collections"),
-                             iconCls: "pimcore_nav_icon_fieldcollection",
-                             itemId: 'pimcore_menu_settings_data_objects_fieldcollections',
-                             handler: this.editFieldcollections
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.objectbricks")) {
-                         objectMenu.menu.items.push({
-                             text: t("objectbricks"),
-                             iconCls: "pimcore_nav_icon_objectbricks",
-                             itemId: 'pimcore_menu_settings_data_objects_objectbricks',
-                             handler: this.editObjectBricks
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.quantityValue")) {
-                         objectMenu.menu.items.push({
-                             text: t("quantityValue_field"),
-                             iconCls: "pimcore_nav_icon_quantityValue",
-                             itemId: 'pimcore_menu_settings_data_objects_quantity_value',
-                             cls: "pimcore_main_menu",
-                             handler: function () {
-                                 try {
-                                     pimcore.globalmanager.get("quantityValue_units").activate();
-                                 }
-                                 catch (e) {
-                                     pimcore.globalmanager.add("quantityValue_units", new pimcore.object.quantityValue.unitsettings());
-                                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.classes") && user.isAllowed("classes")) {
+                     objectMenu.menu.items.push({
+                         text: t("classes"),
+                         iconCls: "pimcore_nav_icon_class",
+                         itemId: 'pimcore_menu_settings_data_objects_classes',
+                         handler: this.editClasses
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.fieldcollections") && user.isAllowed("fieldcollections")) {
+                     objectMenu.menu.items.push({
+                         text: t("field_collections"),
+                         iconCls: "pimcore_nav_icon_fieldcollection",
+                         itemId: 'pimcore_menu_settings_data_objects_fieldcollections',
+                         handler: this.editFieldcollections
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.objectbricks") && user.isAllowed("objectbricks")) {
+                     objectMenu.menu.items.push({
+                         text: t("objectbricks"),
+                         iconCls: "pimcore_nav_icon_objectbricks",
+                         itemId: 'pimcore_menu_settings_data_objects_objectbricks',
+                         handler: this.editObjectBricks
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.quantityValue") && user.isAllowed("quantityValueUnits")) {
+                     objectMenu.menu.items.push({
+                         text: t("quantityValue_field"),
+                         iconCls: "pimcore_nav_icon_quantityValue",
+                         itemId: 'pimcore_menu_settings_data_objects_quantity_value',
+                         cls: "pimcore_main_menu",
+                         handler: function () {
+                             try {
+                                 pimcore.globalmanager.get("quantityValue_units").activate();
                              }
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.classificationstore")) {
-                         objectMenu.menu.items.push({
-                             text: t("classification_store"),
-                             iconCls: "pimcore_nav_icon_classificationstore",
-                             itemId: 'pimcore_menu_settings_data_objects_classificationstore',
-                             handler: this.editClassificationStoreConfig
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.bulkExport")) {
-                         objectMenu.menu.items.push({
-                             text: t("bulk_export"),
-                             iconCls: "pimcore_nav_icon_export",
-                             itemId: 'pimcore_menu_settings_data_objects_bulk_export',
-                             handler: this.bulkExport
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.bulkImport")) {
-                         objectMenu.menu.items.push({
-                             text: t("bulk_import"),
-                             iconCls: "pimcore_nav_icon_import",
-                             itemId: 'pimcore_menu_settings_data_objects_bulk_import',
-                             handler: this.bulkImport.bind(this)
-                         });
-                     }
- 
- 
-                     if (objectMenu.menu.items.length > 0) {
-                         settingsItems.push(objectMenu);
-                     }
+                             catch (e) {
+                                 pimcore.globalmanager.add("quantityValue_units", new pimcore.object.quantityValue.unitsettings());
+                             }
+                         }
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.classificationstore") && user.isAllowed("classificationstore")) {
+                     objectMenu.menu.items.push({
+                         text: t("classification_store"),
+                         iconCls: "pimcore_nav_icon_classificationstore",
+                         itemId: 'pimcore_menu_settings_data_objects_classificationstore',
+                         handler: this.editClassificationStoreConfig
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.bulkExport") && user.isAllowed("classes")) {
+                     objectMenu.menu.items.push({
+                         text: t("bulk_export"),
+                         iconCls: "pimcore_nav_icon_export",
+                         itemId: 'pimcore_menu_settings_data_objects_bulk_export',
+                         handler: this.bulkExport
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.bulkImport") && user.isAllowed("classes")) {
+                     objectMenu.menu.items.push({
+                         text: t("bulk_import"),
+                         iconCls: "pimcore_nav_icon_import",
+                         itemId: 'pimcore_menu_settings_data_objects_bulk_import',
+                         handler: this.bulkImport.bind(this)
+                     });
+                 }
+
+
+                 if (objectMenu.menu.items.length > 0) {
+                     settingsItems.push(objectMenu);
                  }
              }
 
@@ -769,7 +727,7 @@ pimcore.layout.toolbar = Class.create({
                  }
  
                  if (perspectiveCfg.inToolbar("settings.cache.generatePreviews")) {
-                     if (pimcore.settings.document_generatepreviews && (pimcore.settings.chromium || pimcore.settings.htmltoimage)) {
+                     if (pimcore.settings.document_generatepreviews && (pimcore.settings.chromium || pimcore.settings.gotenberg)) {
                          cacheItems.push({
                              text: t("generate_page_previews"),
                              iconCls: "pimcore_nav_icon_page_previews",
@@ -1128,16 +1086,6 @@ pimcore.layout.toolbar = Class.create({
              pimcore.globalmanager.add("translationdomainmanager", new pimcore.settings.translation.domain(domain));
          }
      },
-
-     editRedirects: function () {
- 
-         try {
-             pimcore.globalmanager.get("redirects").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("redirects", new pimcore.settings.redirects());
-         }
-     },
  
      openPerspective: function(name) {
          location.href = Routing.generate('pimcore_admin_index', {perspective: name});
@@ -1162,50 +1110,6 @@ pimcore.layout.toolbar = Class.create({
          pimcore.helpers.sendTestEmail(pimcore.settings.mailDefaultAddress);
      },
 
-     showTargetingRules: function () {
-         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-         try {
-             tabPanel.setActiveTab(pimcore.globalmanager.get("targeting").getLayout());
-         }
-         catch (e) {
-             var targeting = new pimcore.settings.targeting.rules.panel();
-             pimcore.globalmanager.add("targeting", targeting);
- 
-             tabPanel.add(targeting.getLayout());
-             tabPanel.setActiveTab(targeting.getLayout());
- 
-             targeting.getLayout().on("destroy", function () {
-                 pimcore.globalmanager.remove("targeting");
-             }.bind(this));
- 
-             pimcore.layout.refresh();
-         }
-     },
- 
-     showTargetGroups: function () {
-         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-         try {
-             tabPanel.setActiveTab(pimcore.globalmanager.get("targetGroupsPanel").getLayout());
-         }
-         catch (e) {
-             var targetGroups = new pimcore.settings.targeting.targetGroups.panel();
-             pimcore.globalmanager.add("targetGroupsPanel", targetGroups);
- 
-             tabPanel.add(targetGroups.getLayout());
-             tabPanel.setActiveTab(targetGroups.getLayout());
- 
-             targetGroups.getLayout().on("destroy", function () {
-                 pimcore.globalmanager.remove("targetGroupsPanel");
-             }.bind(this));
- 
-             pimcore.layout.refresh();
-         }
-     },
- 
-     showTargetingToolbarSettings: function () {
-         new pimcore.settings.targetingToolbar();
-     },
- 
      notes: function () {
          try {
              pimcore.globalmanager.get("notes").activate();
@@ -1236,17 +1140,6 @@ pimcore.layout.toolbar = Class.create({
              pimcore.globalmanager.add("settings_website", new pimcore.settings.website());
          }
      },
- 
-     reportSettings: function () {
- 
-         try {
-             pimcore.globalmanager.get("reports_settings").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("reports_settings", new pimcore.report.settings());
-         }
-     },
- 
      editClassificationStoreConfig: function () {
          try {
              pimcore.globalmanager.get("classificationstore_config").activate();

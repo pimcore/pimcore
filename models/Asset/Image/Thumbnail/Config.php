@@ -502,8 +502,7 @@ final class Config extends Model\AbstractModel
         }
 
         // set name
-        $hash = md5(Serialize::serialize($pipe));
-        $pipe->setName('auto_' . $hash);
+        $pipe->generateAutoName();
 
         return $pipe;
     }
@@ -589,8 +588,7 @@ final class Config extends Model\AbstractModel
             $pipe->setHighResolution($config['highResolution']);
         }
 
-        $hash = md5(Serialize::serialize($pipe));
-        $pipe->setName('auto_' . $hash);
+        $pipe->generateAutoName();
 
         return $pipe;
     }
@@ -783,7 +781,7 @@ final class Config extends Model\AbstractModel
         $this->downloadable = $downloadable;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;
@@ -835,5 +833,15 @@ final class Config extends Model\AbstractModel
         }
 
         return $autoFormatThumbnails;
+    }
+
+    /**
+     * @internal
+     */
+    public function generateAutoName(): void
+    {
+        $serialized = Serialize::serialize($this->getItems());
+
+        $this->setName($this->getName() . '_auto_' . md5($serialized));
     }
 }
