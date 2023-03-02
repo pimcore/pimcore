@@ -23,9 +23,7 @@ use Pimcore\Logger;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class Authentication
 {
@@ -104,37 +102,19 @@ class Authentication
     {
         $user = $token->getUser();
 
-        $userNotFoundByProvider = false;
-        $userClass = $user::class;
-
-        if (!$provider instanceof UserProviderInterface) {
-            throw new \InvalidArgumentException(sprintf('User provider "%s" must implement "%s".', get_debug_type($provider), UserProviderInterface::class));
-        }
-
-        if (!$provider->supportsClass($userClass)) {
+        if (!$provider->supportsClass($user::class)) {
             return null;
         }
 
         try {
-            $refreshedUser = $provider->refreshUser($user);
-            $newToken = clone $token;
-            $newToken->setUser($refreshedUser);
-            $token->setUser($refreshedUser);
+            $token->setUser($provider->refreshUser($user));
 
             return $token;
-        } catch (UnsupportedUserException) {
-            // let's try the next user provider
         } catch (UserNotFoundException $e) {
             Logger::warning('Username could not be found in the selected user provider.', ['username' => $e->getUserIdentifier(), 'provider' => $provider::class]);
 
-            $userNotFoundByProvider = true;
-        }
-
-        if ($userNotFoundByProvider) {
             return null;
         }
-
-        throw new \RuntimeException(sprintf('There is no user provider for user "%s". Shouldn\'t the "supportsClass()" method of your user provider return true for this classname?', $userClass));
     }
 
     public static function authenticateToken(string $token, bool $adminRequired = false): ?User
