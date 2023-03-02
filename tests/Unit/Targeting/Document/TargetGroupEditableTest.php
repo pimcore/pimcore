@@ -18,13 +18,13 @@ namespace Pimcore\Tests\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Tests\Helper\Document\TestDataHelper;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Util\TestHelper;
 
 /**
  * @group model.document.target.document
  */
-class TargetGroupEditableTest extends ModelTestCase
+class TargetGroupEditableTest extends TestCase
 {
     protected int $seed = 1;
 
