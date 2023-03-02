@@ -503,7 +503,7 @@ class Service extends Model\Element\Service
     /**
      * @throws \Exception
      */
-    public static function getImageThumbnailByParsedArray(array $assetInfo): null|ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array
+    public static function getImageThumbnailByArrayConfig(array $assetInfo): null|ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array
     {
         $asset = Asset::getById($assetInfo['asset_id']);
 
@@ -605,7 +605,7 @@ class Service extends Model\Element\Service
     public static function getImageThumbnailByUri(string $uri): null|ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array
     {
         $assetInfo = self::extractThumbnailInfoFromUri($uri);
-        return self::getImageThumbnailByParsedArray($assetInfo);
+        return self::getImageThumbnailByArrayConfig($assetInfo);
     }
 
     /**

@@ -42,7 +42,6 @@ class PublicServicesController extends Controller
     {
         $thumbnailStream = null;
 
-
         $filename = $request->get('filename');
         $requestedFileExtension = strtolower(File::getFileExtension($filename));
 
@@ -55,10 +54,8 @@ class PublicServicesController extends Controller
             'file_extension' => $requestedFileExtension
         ];
 
-
-
         try {
-            $thumbnail = Asset\Service::getImageThumbnailByParsedArray($assetInfo);
+            $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($assetInfo);
             if ($thumbnail) {
                 $storage = Storage::get('thumbnail');
 
