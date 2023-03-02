@@ -206,4 +206,20 @@ final class DocumentEvents
      * @var string
      */
     const EDITABLE_RENDERLET_PRE_RENDER = 'pimcore.document.editable.renderlet.pre_render';
+
+    /**
+     *
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const PAGE_POST_SAVE_ACTION = 'pimcore.document.page.post_save_action';
+
+    /**
+     *
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const POST_MOVE_ACTION = 'pimcore.document.post_move_action';
 }

@@ -93,3 +93,32 @@ An example of a `composer.json` defining a Pimcore bundle:
     }
 }
 ```
+
+### Encore
+If you use Encore to build the assets of your bundle you can use the methods from `Pimcore\Helper\EncoreHelper`. 
+
+`EncoreHelper::getBuildPathsFromEntrypoints` accept the path to `entrypoints.json`, file ending as string and returns an array with paths to the build files.
+
+```php
+class PimcoreExampleBundle extends AbstractPimcoreBundle
+{
+    use PackageVersionTrait;
+
+    public function getCssPaths(): array
+    {
+        return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/example/entrypoints.json', 'css');
+    }
+
+    public function getJsPaths(): array
+    {
+        return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/example/entrypoints.json');
+    }
+
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
+    
+    ...
+}
+```
