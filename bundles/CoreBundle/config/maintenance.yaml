@@ -49,12 +49,6 @@ services:
         tags:
             - { name: pimcore.maintenance.task, type: VersionsCleanupStackTraceDb }
 
-    Pimcore\Maintenance\Tasks\RedirectCleanupTask:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: pimcore.maintenance.task, type: redirectcleanup }
-
     Pimcore\Maintenance\Tasks\DbCleanupBrokenViewsTask:
         arguments:
             - '@doctrine.dbal.default_connection'

@@ -69,8 +69,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Contains the reply to email addresses (multiple recipients are separated by a ",")
-     *
-     * @var ?string
      */
     protected ?string $replyTo = null;
 
@@ -139,8 +137,6 @@ class Log extends Model\AbstractModel
 
     /**
      * Error log, when mail send resulted in failure - empty if successfully sent
-     *
-     * @var ?string
      */
     protected ?string $error = null;
 
