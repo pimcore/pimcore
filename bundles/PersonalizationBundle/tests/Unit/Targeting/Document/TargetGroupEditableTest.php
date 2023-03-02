@@ -74,7 +74,7 @@ class TargetGroupEditableTest extends ModelTestCase
 
     protected function createTestPage(): void
     {
-        $this->testPage = TestHelper::createEmptyDocumentPage();
+        $this->testPage = TestHelper::createEmptyDocument(type: Page::class);
     }
 
     // Save the editable using the target specific prefix
