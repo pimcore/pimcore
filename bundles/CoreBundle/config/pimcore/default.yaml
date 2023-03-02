@@ -241,6 +241,9 @@ pimcore:
     gotenberg:
         base_url: 'gotenberg:3000'
 
+    chromium:
+        base_url: 'chrome:3000'
+
 presta_sitemap:
     # do not add properties by default
     defaults:

@@ -103,7 +103,12 @@ class Chromium extends Processor
         \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG);
 
         ['html' => $html, 'params' => $params] = $event->getArguments();
-        $browserFactory = new BrowserFactory(ChromiumLib::getChromiumBinary());
+
+        try {
+            $browserFactory = BrowserFactory::connectToBrowser(Pimcore\Config::getSystemConfiguration('chromium')['base_url']);
+        } catch (BrowserConnectionFailed $e) {
+            $browserFactory = new BrowserFactory(ChromiumLib::getChromiumBinary());
+        }
 
         // starts headless chrome
         $browser = $browserFactory->createBrowser([
