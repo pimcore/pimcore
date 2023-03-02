@@ -38,6 +38,7 @@
 - TargetingSessionBagListener - changed the signature of `__construct`.
 - Removed deprecated methods `getObject()` and `setObject()` on the classes `Pimcore\Model\Document\Link` and `Pimcore\Model\DataObject\Data\Link`, please use `getElement()` and `setElement()` instead.
 - Removed deprecated `Pimcore\Db\ConnectionInterface` interface, `Pimcore\Db\Connection` class and `Pimcore\Db\PimcoreExtensionsTrait` trait.
+- Removed deprecated `Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method, please use the `pimcore.routing.direct_route_document_types` config instead.
 - Removed deprecated `Pimcore\Model\Element\Service::getSaveCopyName()` method, please use the `Pimcore\Model\Element\Service::getSafeCopyName()` method instead.
   Column identifiers for the `insert()` and `update()` method data must be self quoted now. You can use the `Pimcore\Db\Helper::quoteDataIdentifiers()` method for that.
 - [Config] `Pimcore\Config\Config` has been removed, see [#12477](https://github.com/pimcore/pimcore/issues/12477). Please use the returned array instead, e.g.
