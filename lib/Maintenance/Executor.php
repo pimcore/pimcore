@@ -90,7 +90,7 @@ final class Executor implements ExecutorInterface
                 continue;
             }
 
-            $className = $task['messengerMessageClass'] ?? '\\Pimcore\\Messenger\\MaintenanceTaskMessage';
+            $className = $task['messengerMessageClass'] ?? MaintenanceTaskMessage::class;
             $this->messengerBusPimcoreCore->dispatch(
                 new $className($name)
             );
