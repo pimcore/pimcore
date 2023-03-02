@@ -298,7 +298,7 @@ final class Config extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param string|callable $name
+     * @param string $name
      * @param array $parameters
      * @param string|null $media
      *
@@ -326,7 +326,7 @@ final class Config extends Model\AbstractModel
      * @internal
      *
      * @param int $position
-     * @param string|callable $name
+     * @param string $name
      * @param array $parameters
      * @param string|null $media
      *

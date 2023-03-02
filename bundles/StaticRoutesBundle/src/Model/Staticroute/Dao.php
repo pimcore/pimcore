@@ -37,6 +37,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     public function configure(): void
     {
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
         $definitions = \Pimcore::getContainer()->getParameter('pimcore_static_routes.definitions');
 
         $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($config, self::CONFIG_KEY, 'PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES');

@@ -32,11 +32,18 @@ final class Config
 
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
+    protected ?string $writeTarget = null;
+
+    protected ?array $options = null;
+
     private static function getRepository(): LocationAwareConfigRepository
     {
         if (!self::$locationAwareConfigRepository) {
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
             $config = $containerConfig[self::CONFIG_ID]['definitions'];
+
+            $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($containerConfig, self::CONFIG_ID, 'PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT');
+            $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($containerConfig, self::CONFIG_ID, 'PIMCORE_WRITE_TARGET_WEB_TO_PRINT');
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,

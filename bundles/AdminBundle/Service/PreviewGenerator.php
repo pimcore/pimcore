@@ -22,7 +22,6 @@ use Pimcore\Model\Site;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Pimcore\Translation\Translator;
-use Symfony\Component\Intl\Languages;
 use Symfony\Contracts\Service\Attribute\Required;
 
 class PreviewGenerator implements PreviewGeneratorInterface
@@ -100,7 +99,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
 
         $locales = [];
         foreach (Tool::getValidLanguages() as $locale) {
-            $label = Languages::getName($locale, $userLocale);
+            $label = \Locale::getDisplayLanguage($locale, $userLocale);
             $locales[$label] = $locale;
         }
 

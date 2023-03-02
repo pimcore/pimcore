@@ -46,6 +46,7 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 abstract class Kernel extends SymfonyKernel
 {

@@ -39,6 +39,7 @@ final class Config
         if (!self::$locationAwareConfigRepository) {
             $config = [];
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore_web_to_print');
+            $pimcoreContainerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
             if ($containerConfig['generalTool']) {
                 $config = [
                     self::CONFIG_ID => $containerConfig,
@@ -56,7 +57,7 @@ final class Config
             );
 
             self::$locationAwareConfigRepository->setWriteTarget($writeTarget);
-            self::$locationAwareConfigRepository->setOptions($containerConfig['storage'][self::CONFIG_ID]['options']);
+            self::$locationAwareConfigRepository->setOptions($pimcoreContainerConfig['storage'][self::CONFIG_ID]['options']);
         }
 
         return self::$locationAwareConfigRepository;

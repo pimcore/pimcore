@@ -51,6 +51,10 @@ class LocationAwareConfigRepository
      */
     protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
 
+    protected ?string $writeTarget = null;
+
+    protected ?array $options = null;
+
     public function __construct(
         array $containerConfig,
         ?string $settingsStoreScope,
