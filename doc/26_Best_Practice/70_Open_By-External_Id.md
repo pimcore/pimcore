@@ -13,7 +13,7 @@ There are 2 different approaches:
 
 
 Create a bundle with a Pimcore Backend Interface java script extension as described 
-[here](../../Development_Documentation/20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md). 
+[here](../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md). 
 
 ```javascript
 document.addEventListener(pimcore.events.pimcoreReady, (e) => {

@@ -1,4 +1,8 @@
-# Pimcore Development Documentation
+---
+title: Core Framework
+---
+
+# Pimcore Core Framework Documentation
 
 ## Getting Started
 * [Overview](./00_Overview/README.md) 
