@@ -39,7 +39,7 @@ final class Staticroute extends AbstractModel
 
     protected string $reverse;
 
-    protected string $controller;
+    protected ?string $controller;
 
     protected string $variables;
 
@@ -234,7 +234,7 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    public function setController(string $controller): static
+    public function setController(?string $controller): static
     {
         $this->controller = $controller;
 

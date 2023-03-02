@@ -29,12 +29,6 @@ services:
     Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator: ~
 
     #
-    # REDIRECTS
-    #
-
-    Pimcore\Routing\Redirect\Csv: ~
-
-    #
     # GDPR Services
     #
 

@@ -24,7 +24,7 @@ interface BlockInterface
     /**
      * Is executed at the beginning of the loop and setup some general settings
      *
-     * @return void|string
+     * @return void|string|$this
      */
     public function start();
 

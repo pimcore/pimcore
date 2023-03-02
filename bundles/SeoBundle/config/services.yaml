@@ -21,22 +21,3 @@ services:
         resource: '../src/Controller'
         public: true
         tags: ['controller.service_arguments']
-
-
-    #
-    # EVENTLISTENER
-    #
-
-    Pimcore\Bundle\SeoBundle\EventListener\ResponseExceptionListener: ~
-
-
-    #
-    # MAINTENANCE TASK
-    #
-
-    Pimcore\Bundle\SeoBundle\Maintenance\LogErrorCleanupTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: httperrorlog }
-

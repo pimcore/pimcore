@@ -428,6 +428,7 @@ inputQuantityValue_field: Input Quantity Value
 abbreviation: Abbreviation
 longname: Longname
 baseunit: Base Unit
+quantityValueUnits: Quantity Value Units
 quantityValue_units: QuantityValue Unit Definition
 valid_quantityValue_units: Valid units
 calculatedValue_calculatorclass: Calculator class
