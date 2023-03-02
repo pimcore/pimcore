@@ -13,10 +13,10 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Model\Document;
+namespace Pimcore\Bundle\PersonalizationBundle\Tests\Unit\Targeting\Document;
 
 use Pimcore\Model\Document\Page;
-use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Tests\Support\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
