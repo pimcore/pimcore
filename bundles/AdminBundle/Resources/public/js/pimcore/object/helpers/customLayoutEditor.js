@@ -713,9 +713,13 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     addDataChild: function (record, type, initData, attributePrefix, showFieldname, addListener) {
 
-        var isLeaf = true;
-        var draggable = true;
-        var expanded = false;
+        let isLeaf = true;
+        const draggable = true;
+        let expanded = false;
+
+        if(initData.fieldtype === 'select'){
+            initData.options = [];
+        }
 
         // localizedfields can be a drop target
         if(type == "localizedfields") {
@@ -723,16 +727,16 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             expanded = true;
         }
 
-        var key = initData.name;
+        let key = initData.name;
         if(attributePrefix) {
             key = attributePrefix + "~" + key;
         }
 
-        var text = t(initData.title);
+        let text = t(initData.title);
         if(showFieldname) {
             text = text + " (" + key.replace("~", ".") + ")";
         }
-        var newNode = {
+        let newNode = {
             text: text,
             key: key,
             type: "data",

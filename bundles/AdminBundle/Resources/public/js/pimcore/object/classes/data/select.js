@@ -252,39 +252,41 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             });
         }
 
-        items.push({
-            xtype: "textfield",
-            fieldLabel: t("default_value"),
-            name: "defaultValue",
-            value: datax.defaultValue
-        });
+        if (!this.isInCustomLayoutEditor()) {
+            items.push({
+                xtype: "textfield",
+                fieldLabel: t("default_value"),
+                name: "defaultValue",
+                value: datax.defaultValue
+            });
 
-        items.push({
-            xtype: 'textfield',
-            width: 600,
-            fieldLabel: t("default_value_generator"),
-            labelWidth: 140,
-            name: 'defaultValueGenerator',
-            value: datax.defaultValueGenerator
-        });
+            items.push({
+                xtype: 'textfield',
+                width: 600,
+                fieldLabel: t("default_value_generator"),
+                labelWidth: 140,
+                name: 'defaultValueGenerator',
+                value: datax.defaultValueGenerator
+            });
 
-        items.push({
-            xtype: "textfield",
-            fieldLabel: t("options_provider_class"),
-            width: 600,
-            name: "optionsProviderClass",
-            value: datax.optionsProviderClass
-        });
+            items.push({
+                xtype: "textfield",
+                fieldLabel: t("options_provider_class"),
+                width: 600,
+                name: "optionsProviderClass",
+                value: datax.optionsProviderClass
+            });
 
-        items.push({
-            xtype: "textfield",
-            fieldLabel: t("options_provider_data"),
-            width: 600,
-            value: datax.optionsProviderData,
-            name: "optionsProviderData"
-        });
+            items.push({
+                xtype: "textfield",
+                fieldLabel: t("options_provider_data"),
+                width: 600,
+                value: datax.optionsProviderData,
+                name: "optionsProviderData"
+            });
 
-        items.push(valueGrid);
+            items.push(valueGrid);
+        }
         return items;
     },
 
@@ -292,17 +294,19 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
         $super();
 
-        var options = [];
+        let options = [];
 
-        var valueStore = this.specificPanel.getComponent("valueeditor").getStore();
-        valueStore.commitChanges();
-        valueStore.each(function (rec) {
-            options.push({
-                key: rec.get("key"),
-                value: rec.get("value")
+        let valueEditor = this.specificPanel.getComponent("valueeditor") ?? null;
+        if(valueEditor) {
+            let valueStore = valueEditor.getStore();
+            valueStore.commitChanges();
+            valueStore.each(function (rec) {
+                options.push({
+                    key: rec.get("key"),
+                    value: rec.get("value")
+                });
             });
-        });
-
+        }
         this.datax.options = options;
     },
 
