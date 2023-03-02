@@ -31,7 +31,3 @@ You need to implemented both, the message and the handler class.
 After that you can route your message to the corresponding transport.
 
 For a full example you can have a look at the `\Pimcore\Messenger\ScheduledTaskMessage` class and its usage.
-
-
-Pimcore will then call your maintenance task on the maintenance cron job you have to configure. You will have to take care about timing operations inside the Task yourself.
-
