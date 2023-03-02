@@ -131,7 +131,7 @@ There you will find all class definitions used for testing.
 
 ### Perform PHPStan Analysis
 
-First, get a copy of this [sample configuration file](../../../Samples/phpstan.neon) and place it in your root directory.
+First, get a copy of this [sample configuration file](https://github.com/pimcore/pimcore/blob/11.x/doc/Samples/phpstan.neon) and place it in your root directory.
 
 Add dependencies:
 ```sh
