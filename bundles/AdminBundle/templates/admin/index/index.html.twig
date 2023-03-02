@@ -186,8 +186,7 @@
     "lib/ext-plugins/portlet/PortalDropZone.js",
     "lib/ext-plugins/portlet/Portlet.js",
     "lib/ext-plugins/portlet/PortalColumn.js",
-    "lib/ext-plugins/portlet/PortalPanel.js",
-    "lib/ckeditor/ckeditor.js"
+    "lib/ext-plugins/portlet/PortalPanel.js"
 ] %}
 {% if pimcore_file_exists(constant('PIMCORE_WEB_ROOT') ~ '/bundles/pimcoreadmin/js/lib/ext-locale/locale-' ~ language ~ '.js') %}
     {% set scriptLibs = scriptLibs|merge(['lib/ext-locale/locale-' ~ language ~ '.js']) %}
@@ -251,7 +250,6 @@
     "pimcore/settings/docTypes.js",
     "pimcore/settings/system.js",
     "pimcore/settings/website.js",
-    "pimcore/settings/redirects.js",
 
     "pimcore/settings/recyclebin.js",
     "pimcore/settings/maintenance.js",
@@ -577,21 +575,12 @@
     "pimcore/object/gridexport/csv.js",
     "pimcore/object/gridexport/xlsx.js",
 
-    "pimcore/report/settings.js",
-    "pimcore/report/analytics/settings.js",
-    "pimcore/report/analytics/elementoverview.js",
-    "pimcore/report/analytics/elementexplorer.js",
-    "pimcore/report/webmastertools/settings.js",
-    "pimcore/report/tagmanager/settings.js",
-    "pimcore/report/custom/definitions/analytics.js",
-
     "pimcore/layout/portal.js",
     "pimcore/layout/portlets/abstract.js",
     "pimcore/layout/portlets/modifiedDocuments.js",
     "pimcore/layout/portlets/modifiedObjects.js",
     "pimcore/layout/portlets/modifiedAssets.js",
     "pimcore/layout/portlets/modificationStatistic.js",
-    "pimcore/layout/portlets/analytics.js",
 
     "pimcore/layout/menu.js",
     "pimcore/layout/toolbar.js",

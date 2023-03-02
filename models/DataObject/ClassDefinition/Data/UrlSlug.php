@@ -18,6 +18,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Db;
+use Pimcore\Event\Model\DataObject\ClassDefinition\UrlSlugEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
+use Pimcore\Event\UrlSlugEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -25,13 +28,13 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
-use Pimcore\Model\Redirect;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface
 {
     use DataObject\Traits\DataWidthTrait;
     use Model\DataObject\Traits\ContextPersistenceTrait;
+    use RecursionBlockingEventDispatchHelperTrait;
 
     /**
      * @internal
@@ -245,46 +248,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 }
             }
         }
-
-        // check for previous slugs and create redirects
-        if (!is_array($data)) {
-            return;
-        }
-
-        foreach ($data as $slug) {
-            if ($previousSlug = $slug->getPreviousSlug()) {
-                if ($previousSlug === $slug->getSlug() || !$slug->getSlug()) {
-                    continue;
-                }
-
-                $checkSql = 'SELECT id FROM redirects WHERE source = :sourcePath AND `type` = :typeAuto';
-                if ($slug->getSiteId()) {
-                    $checkSql .= ' AND sourceSite = ' . $db->quote($slug->getSiteId());
-                } else {
-                    $checkSql .= ' AND sourceSite IS NULL';
-                }
-
-                $existingCheck = $db->fetchOne($checkSql, ['sourcePath' => $previousSlug, 'typeAuto' => Redirect::TYPE_AUTO_CREATE]);
-                if (!$existingCheck) {
-                    $redirect = new Redirect();
-                    $redirect->setType(Redirect::TYPE_AUTO_CREATE);
-                    $redirect->setRegex(false);
-                    $redirect->setTarget($slug->getSlug());
-                    $redirect->setSource($previousSlug);
-                    $redirect->setStatusCode(301);
-                    $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
-
-                    if ($slug->getSiteId()) {
-                        $redirect->setSourceSite($slug->getSiteId());
-                        $redirect->setTargetSite($slug->getSiteId());
-                    }
-
-                    $redirect->save();
-                }
-
-                $slug->setPreviousSlug(null);
-            }
-        }
+        $event = new UrlSlugEvent($this, $data);
+        $this->dispatchEvent($event, UrlSlugEvents::POST_SAVE);
     }
 
     /**

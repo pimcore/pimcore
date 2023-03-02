@@ -1300,7 +1300,7 @@ class SettingsController extends AdminController
                 $type = $item['type'];
                 unset($item['type']);
 
-                $pipe->addItem($type, $item, $mediaName);
+                $pipe->addItem($type, $item, htmlspecialchars($mediaName));
             }
         }
 

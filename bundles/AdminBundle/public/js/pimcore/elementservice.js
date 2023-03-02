@@ -409,8 +409,7 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
         pimcore.elementservice.applyNewKey(affectedNodes, elementType, id, value);
 
         pimcore.elementservice.updateDocument(id, {
-            key: value,
-            create_redirects: options['create_redirects']
+            key: value
         }, function (response) {
             var record, index;
             var rdata = Ext.decode(response.responseText);
@@ -622,7 +621,6 @@ pimcore.elementservice.editElementKey = function(options) {
         var messageBox = null;
         completeCallback = pimcore.elementservice.editDocumentKeyComplete.bind(this);
         var submitFunction = function () {
-            options['create_redirects'] = messageBox.getComponent('create_redirects').getValue()
             completeCallback(options, 'ok', messageBox.getComponent('key').getValue());
             messageBox.close();
         };
@@ -647,12 +645,6 @@ pimcore.elementservice.editElementKey = function(options) {
                         }.bind(this), 100);
                     }
                 }
-            },{
-                xtype: "checkbox",
-                boxLabel: t('create_redirects'),
-                name: 'create_redirects',
-                itemId: 'create_redirects',
-                checked: true
             }],
             bodyStyle: 'padding: 10px 10px 0px 10px',
             buttonAlign: 'center',

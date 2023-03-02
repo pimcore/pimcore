@@ -38,15 +38,11 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
     /**
      * @internal
-     *
-     * @var int
      */
     public ?int $ratioX = null;
 
     /**
      * @internal
-     *
-     * @var int
      */
     public ?int $ratioY = null;
 

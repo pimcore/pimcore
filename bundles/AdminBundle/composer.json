@@ -1,0 +1,41 @@
+{
+  "name": "pimcore/admin-classic-bundle",
+  "license": "GPL-3.0+",
+  "type": "pimcore-bundle",
+  "config": {
+    "sort-packages": true,
+    "preferred-install": {
+      "pimcore/pimcore": "source",
+      "*": "dist"
+    }
+  },
+  "require": {
+    "pimcore/pimcore": "^11.0",
+    "symfony/webpack-encore-bundle": "^1.7"
+  },
+  "require-dev": {
+    "codeception/codeception": "^4.1.12 || ^5.0.3",
+    "codeception/module-asserts": "^2",
+    "codeception/module-symfony": "^1.6.0 || ^3.1.0",
+    "codeception/phpunit-wrapper": "^9",
+    "phpstan/phpstan": "^1.2",
+    "phpunit/phpunit": "^9.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pimcore\\Bundle\\AdminBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Pimcore\\Bundle\\AdminBundle\\Tests\\": "tests"
+    }
+  },
+  "extra": {
+    "pimcore": {
+      "bundles": [
+        "Pimcore\\Bundle\\AdminBundle\\PimcoreAdminBundle"
+      ]
+    }
+  }
+}

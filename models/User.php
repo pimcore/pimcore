@@ -448,7 +448,6 @@ final class User extends User\UserRole
                 $image->save($targetFile, 'png');
 
                 $storage->write($this->getThumbnailImageStoragePath(), file_get_contents($targetFile));
-                unlink($targetFile);
             }
 
             return $storage->readStream($this->getThumbnailImageStoragePath());

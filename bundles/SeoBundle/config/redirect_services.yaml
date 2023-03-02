@@ -1,0 +1,17 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    # redirect handler used to handle redirects before/after routing
+    Pimcore\Bundle\SeoBundle\Redirect\RedirectHandler:
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: routing }
+
+    #
+    # REDIRECTS Export
+    #
+    Pimcore\Bundle\SeoBundle\Redirect\Csv: ~
