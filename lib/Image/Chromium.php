@@ -34,11 +34,12 @@ class Chromium
         if (class_exists(BrowserFactory::class)) {
             try {
                 return (new Connection(\Pimcore\Config::getSystemConfiguration('chromium')['base_url']))->connect();
-            } catch (Exception) {
+            } catch (BrowserConnectionFailed $e) {
                 //websocket fails, then we check binary
                 return (bool) self::getChromiumBinary();
             }
         }
+        return false;
     }
 
     public static function getChromiumBinary(): ?string
