@@ -17,9 +17,9 @@ namespace Pimcore\Bundle\PersonalizationBundle\Tests\Model\Document;
 
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Page;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Bundle\PersonalizationBundle\Tests\Util\TestHelper;
 use Pimcore\Tests\Support\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Support\Test\ModelTestCase;
-use Pimcore\Bundle\PersonalizationBundle\Tests\Util\TestHelper;
 
 class TargetGroupEditableTest extends ModelTestCase
 {
