@@ -19,7 +19,7 @@ use Pimcore\Model\Document\Page;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Tests\Support\Helper\Document\TestDataHelper;
 use Pimcore\Tests\Support\Test\TestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * @group model.document.target.document
