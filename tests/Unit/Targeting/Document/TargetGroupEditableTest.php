@@ -26,18 +26,18 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class TargetGroupEditableTest extends ModelTestCase
 {
-    protected int $seed=1;
+    protected int $seed = 1;
 
     protected Page $testPage;
 
     protected TestDataHelper $testDataHelper;
 
-    public function _inject(TestDataHelper $testData)
+    public function _inject(TestDataHelper $testData): void
     {
         $this->testDataHelper = $testData;
     }
 
-    public function testTargetGroupsEditable()
+    public function testTargetGroupsEditable(): void
     {
         $defaultEditableName = 'inputEditable';
         $defaultEditableData = $this->seed;
@@ -75,13 +75,13 @@ class TargetGroupEditableTest extends ModelTestCase
         $this->testDataHelper->assertInput($this->testPage, $targetGroupEditableName2, $targetGroup2EditableData);
     }
 
-    protected function createTestPage()
+    protected function createTestPage(): void
     {
         $this->testPage = TestHelper::createEmptyDocumentPage();
     }
 
     // Save the editable using the target specific prefix
-    protected function saveTargetGroupEditable(TargetGroup $targetGroup, string $editableName, string $targetGroupData)
+    protected function saveTargetGroupEditable(TargetGroup $targetGroup, string $editableName, string $targetGroupData): string
     {
         $targetGroupData = 'content' . $targetGroupData;
         $this->testPage->setUseTargetGroup($targetGroup->getId());
@@ -93,13 +93,13 @@ class TargetGroupEditableTest extends ModelTestCase
         return $targetGroupEditableName;
     }
 
-    public function reloadPage()
+    public function reloadPage(): void
     {
         $this->testPage = Page::getById($this->testPage->getId(), ['force' => true]);
     }
 
     // Create Target Group
-    public function createTargetGroup(string $name)
+    public function createTargetGroup(string $name): void
     {
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = new TargetGroup();
