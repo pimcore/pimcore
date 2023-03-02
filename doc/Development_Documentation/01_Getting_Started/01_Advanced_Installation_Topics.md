@@ -4,7 +4,7 @@ To fully automate the installation process, options can be passed in the CLI as 
 
 The `--no-interaction` flag will prevent any interactive prompts:
 
-```
+```bash
 ./vendor/bin/pimcore-install --admin-username=admin --admin-password=admin \
   --mysql-username=username --mysql-password=password --mysql-database=pimcore \
   --mysql-host-socket=127.0.0.1 --mysql-port=3306 \
@@ -14,12 +14,40 @@ The `--no-interaction` flag will prevent any interactive prompts:
 To avoid having to pass sensitive data (e.g. DB password) as command line option, you can also set each parameter as env
 variable. See `./vendor/bin/pimcore-install` for details. Example:
 
-```
+```bash
 $ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=password ./vendor/bin/pimcore-install \
   --admin-username=admin --admin-password=admin \
   --mysql-database=pimcore \
   --no-interaction
 ```
+
+### Installing bundles
+
+The `--install-bundles` flag will install and enable the specified bundles.  
+Attention: The bundles will be added to `config/bundles.php` automatically.
+
+```bash
+./vendor/bin/pimcore-install --admin-username=admin --admin-password=admin \
+--mysql-username=username --mysql-password=password --mysql-database=pimcore \
+--mysql-host-socket=127.0.0.1 --mysql-port=3306 \
+--install-bundles=PimcoreApplicationLoggerBundle,PimcoreCustomReportsBundle \
+--no-interaction
+```
+
+Available bundles for installation: 
+
+```
+PimcoreApplicationLoggerBundle
+PimcoreCustomReportsBundle
+PimcoreGlossaryBundle
+PimcoreSeoBundle
+PimcoreSimpleBackendSearchBundle
+PimcoreStaticRoutesBundle
+PimcoreUuidBundle
+PimcoreWordExportBundle
+PimcoreXliffBundle
+```
+
 
 ### Preconfiguring the installer
 

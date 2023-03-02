@@ -33,10 +33,8 @@ final class TmpStore extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected string $tag;
+    protected ?string $tag = null;
 
     /**
      * @internal
@@ -126,7 +124,7 @@ final class TmpStore extends Model\AbstractModel
             $lifetime = self::getDefaultLifetime();
         }
 
-        return $instance->getDao()->add($id, $data, $tag ?? '', $lifetime);
+        return $instance->getDao()->add($id, $data, $tag, $lifetime);
     }
 
     public static function delete(string $id): void
@@ -167,12 +165,12 @@ final class TmpStore extends Model\AbstractModel
         $this->id = $id;
     }
 
-    public function getTag(): string
+    public function getTag(): ?string
     {
         return $this->tag;
     }
 
-    public function setTag(string $tag): void
+    public function setTag(?string $tag): void
     {
         $this->tag = $tag;
     }

@@ -20,9 +20,13 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
     getLayout: function () {
 
         if (this.layout == null) {
+
+            /**
+             * @deprecated 10.6 Will be removed in 11.
+             */
             // meta-data
             var addMetaData = function (value) {
-
+                console.warn('Setting/Editing the `HTML-tags` field is deprecated');
                 if(typeof value != "string") {
                     value = "";
                 }
@@ -53,30 +57,37 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                 this.metaDataPanel.updateLayout();
             }.bind(this);
 
-            this.metaDataPanel = new Ext.form.FieldSet({
-                title: t("html_tags") + " (&lt;meta .../&gt; &lt;link .../&gt; ...)",
-                collapsible: false,
-                autoHeight:true,
-                width: 700,
-                style: "margin-top: 20px;",
-                items: [{
-                    xtype: "toolbar",
-                    style: "margin-bottom: 10px;",
-                    items: ["->", {
-                        xtype: 'button',
-                        iconCls: "pimcore_icon_add",
-                        handler: addMetaData
+            var user = pimcore.globalmanager.get("user");
+            if (user.admin) {
+                /**
+                 * @deprecated 10.6 Will be removed in 11.
+                 */
+                this.metaDataPanel = new Ext.form.FieldSet({
+                    title: t("html_tags") + " (&lt;meta .../&gt; &lt;link .../&gt; ...) (Deprecated)",
+                    collapsible: false,
+                    autoHeight: true,
+                    width: 700,
+                    style: "margin-top: 20px;",
+                    items: [{
+                        xtype: "toolbar",
+                        style: "margin-bottom: 10px;",
+                        items: ["->", {
+                            xtype: 'button',
+                            iconCls: "pimcore_icon_add",
+                            handler: addMetaData
+                        }]
                     }]
-                }]
-            });
+                });
 
-            try {
-                if(typeof this.document.data.metaData == "object" && this.document.data.metaData.length > 0) {
-                    for(var r=0; r<this.document.data.metaData.length; r++) {
-                        addMetaData(this.document.data.metaData[r]);
+                try {
+                    if (typeof this.document.data.metaData == "object" && this.document.data.metaData.length > 0) {
+                        for (var r = 0; r < this.document.data.metaData.length; r++) {
+                            addMetaData(this.document.data.metaData[r]);
+                        }
                     }
+                } catch (e) {
                 }
-            } catch (e) {}
+            }
 
 
             var updateSerpPreview = function () {

@@ -204,11 +204,7 @@ abstract class AbstractRenderer implements RendererInterface
     // Public methods:
 
     /**
-     * @param Container $container
-     * @param int|null $minDepth
-     * @param int $maxDepth
-     *
-     * @return array
+     * @return array{page?: Page, depth?: int}
      */
     public function findActive(Container $container, int $minDepth = null, int $maxDepth = null): array
     {

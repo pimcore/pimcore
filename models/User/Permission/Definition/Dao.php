@@ -29,10 +29,10 @@ class Dao extends Model\Dao\AbstractDao
     public function save(): void
     {
         try {
-            Helper::insertOrUpdate($this->db, 'users_permission_definitions', [
+            Helper::upsert($this->db, 'users_permission_definitions', [
                 'key' => $this->model->getKey(),
                 'category' => $this->model->getCategory() ? $this->model->getCategory() : '',
-            ]);
+            ], $this->getPrimaryKey('users_permission_definitions'));
         } catch (\Exception $e) {
             Logger::warn((string) $e);
         }

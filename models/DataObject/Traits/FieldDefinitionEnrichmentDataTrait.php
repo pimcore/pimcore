@@ -26,6 +26,11 @@ trait FieldDefinitionEnrichmentDataTrait
 {
     use FieldDefinitionEnrichmentModelTrait;
 
+    /**
+     * @params array<string, Data> $fields
+     *
+     * @return array<string, Data>
+     */
     protected function doGetFieldDefinitions(mixed $def = null, array $fields = []): array
     {
         if ($def === null) {
@@ -62,11 +67,11 @@ trait FieldDefinitionEnrichmentDataTrait
     }
 
     /**
-     * @return Data[]|null
+     * @return array<string, Data>
      */
-    public function getFieldDefinitions(array $context = []): ?array
+    public function getFieldDefinitions(array $context = []): array
     {
-        if (empty($this->fieldDefinitionsCache)) {
+        if (null === $this->fieldDefinitionsCache) {
             $definitions = $this->doGetFieldDefinitions();
             foreach ($this->getReferencedFields() as $rf) {
                 if ($rf instanceof ClassDefinition\Data\Localizedfields) {

@@ -11,26 +11,27 @@ You should now be able to select the permission in the users/roles tabs:
 ```php
 namespace App\Controller;
 
-
 use Pimcore\Bundle\AdminBundle\Controller\AdminController as PimcoreAdminController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends PimcoreAdminController
 {
     /**
      * @Route("/admin/my-admin-action")
-     * @param Request $request
      */
-    public function myAdminAction(Request $request) {
-
+    public function myAdminAction(Request $request): Response
+    {
         /** @var \Pimcore\Bundle\AdminBundle\Security\User\User $user */
         $user = $this->getUser();
         $pimcoreUser = $user->getUser();
 
-        if($pimcoreUser->isAllowed('my_permission')) {
-            ...
+        if ($pimcoreUser->isAllowed('my_permission')) {
+            // ...
         }
+        
+        // ...
     }
 }
 ```

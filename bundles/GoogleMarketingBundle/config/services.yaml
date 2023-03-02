@@ -1,0 +1,41 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+    #
+    # Installer
+    #
+    Pimcore\Bundle\GoogleMarketingBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreGoogleMarketingBundle')"
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\GoogleMarketingBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: [ 'controller.service_arguments' ]
+
+
+    Pimcore\Bundle\GoogleMarketingBundle\SiteId\SiteIdProvider: ~
+    Pimcore\Bundle\GoogleMarketingBundle\Config\ConfigProvider: ~
+    Pimcore\Bundle\GoogleMarketingBundle\Config\Config:
+        factory: [ '@Pimcore\Bundle\GoogleMarketingBundle\Config\ConfigProvider', 'getConfig' ]
+
+    Pimcore\Bundle\GoogleMarketingBundle\Config\SiteConfigProvider: ~
+
+    Pimcore\Bundle\GoogleMarketingBundle\Tracker\TrackerInterface: '@Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker'
+
+    Pimcore\Bundle\GoogleMarketingBundle\Tracker\Tracker:
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+
+    pimcore.custom_report.adapter.factory.analytics:
+        class: Pimcore\Bundle\CustomReportsBundle\Tool\Adapter\DefaultCustomReportAdapterFactory
+        arguments:
+            - 'Pimcore\Bundle\GoogleMarketingBundle\CustomReport\Adapter\Analytics'

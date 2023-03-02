@@ -8,6 +8,11 @@ parameters:
 		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
+			path: bundles/EcommerceFrameworkBundle/src/CoreExtensions/ClassDefinition/IndexFieldSelectionCombo.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/CartManager/CartPriceModificator/Discount.php
 
 		-
@@ -19,11 +24,6 @@ parameters:
 			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\TokenManager\\\\TokenManagerInterface\\:\\:cleanUpReservations\\(\\) invoked with 2 parameters, 0\\-1 required\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/Controller/VoucherController.php
-
-		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/CoreExtensions/ClassDefinition/IndexFieldSelectionCombo.php
 
 		-
 			message: "#^Parameter \\#1 \\$fieldname of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:getGroupByValues\\(\\) expects string, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ObjectData\\\\IndexFieldSelection\\|null given\\.$#"
