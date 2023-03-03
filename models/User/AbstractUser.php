@@ -23,6 +23,8 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
  * @method void setLastLoginDate()
+ *
+ * @abstract Will be natively abstract in Pimcore 11
  */
 class AbstractUser extends Model\AbstractModel
 {
