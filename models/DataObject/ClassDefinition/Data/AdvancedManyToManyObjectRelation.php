@@ -875,13 +875,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
     /**
      * @internal
-     *
-     * @param mixed $originalData
-     * @param mixed $data
-     * @param Concrete $object
-     * @param array $params
-     *
-     * @return array
      */
     protected function processDiffDataForEditMode(mixed $originalData, mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {

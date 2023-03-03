@@ -220,7 +220,7 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
         Ext.get(this.id).addCls("pimcore_block_limitnotreached pimcore_block_buttons");
     },
 
-    addBlock : function (element, amountbox) {
+    addBlock : function (element, amountbox, reload = true) {
 
         var index = this.getElementIndex(element) + 1;
         var amount = 1;
@@ -259,7 +259,9 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
             this.elements.splice.apply(this.elements, args);
 
             editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + firstNewKey + '"]';
-            this.reloadDocument();
+            if(reload) {
+                this.reloadDocument();
+            }
         } else {
             let template = this.config['template']['html'];
             let elements;
@@ -311,6 +313,10 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
 
         var index = this.getElementIndex(element);
 
+        // Add a new default block before removing last block.
+        if(is_numeric(this.config['default']) && this.elements.length === this.config['default']) {
+            this.addBlock(element, null, false); // do not reload document, will happen later here.
+        }
         this.elements.splice(index, 1);
         Ext.get(element).remove();
 
