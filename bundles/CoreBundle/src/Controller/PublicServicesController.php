@@ -48,8 +48,8 @@ class PublicServicesController extends Controller
         $config = [
             'prefix' => $request->get('prefix', ''),
             'type' => $request->get('type'),
-            'asset_id' => (int) $request->get('assetId'),
-            'thumbnail_name' => $request->get('thumbnailName'),
+            'asset_id' => (int) ($request->get('assetId') ?? $request->get('asset_id')),
+            'thumbnail_name' => $request->get('thumbnailName') ?? $request->get('thumbnail_name'),
             'filename' => $filename,
             'file_extension' => $requestedFileExtension
         ];

@@ -515,8 +515,7 @@ class Service extends Model\Element\Service
 
         $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $config['prefix']);
         $prefix = preg_replace('@' . $asset->getId() . '/$@', '', $prefix);
-
-        if ($asset->getPath() === ('/' . $prefix)) {
+        if (ltrim($asset->getPath(), '/') === ltrim($prefix,'/')) {
             // just check if the thumbnail exists -> throws exception otherwise
             $thumbnailConfigClass = 'Pimcore\\Model\\Asset\\' . ucfirst($config['type']) . '\\Thumbnail\Config';
             $thumbnailConfig = $thumbnailConfigClass::getByName($config['thumbnail_name']);
