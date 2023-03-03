@@ -75,7 +75,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                 items: [
                     {
                         xtype:'fieldset',
-                        title: t('title') + ", " + t("description") + " & " + t('metadata'),
+                        title: t('title') + " & " + t("description"),
                         itemId: "metaDataPanel",
                         collapsible: true,
                         autoHeight:true,
