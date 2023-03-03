@@ -8,6 +8,7 @@ jobs:
     monthly_recurring_issues:
         name: Monthly Recurring Issues
         runs-on: ubuntu-latest
+        if: ${{ github.repository == 'pimcore/pimcore' }}
         steps:
 
             - name: Get current month

@@ -30,11 +30,6 @@ class DefaultClassificationAttributeGetter implements GetterInterface
      * ** group_id  - id of the group related to the id | key can occur multiple times in classification store field through multiple groups
      * ** fieldname - name of the field upon which the classification store is saved on the specific object [defaults to attributes]
      * note that this getter does not support localization at the moment
-     *
-     * @param object $object
-     * @param array $config
-     *
-     * @return mixed
      */
     public function get(object $object, array $config = null): mixed
     {

@@ -132,7 +132,7 @@ class Video extends Model\Asset
 
     private function enrichThumbnailPath(string $path): string
     {
-        $fullPath = rtrim($this->getRealPath(), '/') . $path;
+        $fullPath = rtrim($this->getRealPath(), '/') . '/' . ltrim($path, '/');
 
         if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($fullPath);
