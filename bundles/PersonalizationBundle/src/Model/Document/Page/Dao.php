@@ -27,5 +27,4 @@ use Pimcore\Model;
 class Dao extends Model\Document\Page\Dao implements TargetingDocumentDaoInterface
 {
     use TargetingDocumentDaoTrait;
-
 }

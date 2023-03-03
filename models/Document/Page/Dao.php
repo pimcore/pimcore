@@ -43,7 +43,6 @@ class Dao extends Model\Document\PageSnippet\Dao
                 WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
-
             $this->assignVariablesToModel($data);
         } else {
             throw new Model\Exception\NotFoundException('Page with the ID ' . $this->model->getId() . " doesn't exists");
