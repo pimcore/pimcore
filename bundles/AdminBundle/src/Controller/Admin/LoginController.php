@@ -169,10 +169,17 @@ class LoginController extends AdminController implements KernelControllerEventIn
      *
      * @Route("/login/login", name="pimcore_admin_login_check")
      */
-    public function loginCheckAction(): RedirectResponse
+    public function loginCheckAction(Request $request, EventDispatcherInterface $dispatcher): RedirectResponse
     {
+        $event = new LoginRedirectEvent('pimcore_admin_login', [
+            'perspective' => strip_tags($request->get('perspective', ''))
+        ]);
+        $dispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
+
+        $url = $this->generateUrl($event->getRouteName(), $event->getRouteParams());
+
         // just in case the authenticator didn't redirect
-        return new RedirectResponse($this->generateUrl('pimcore_admin_login'));
+        return new RedirectResponse($url);
     }
 
     /**
