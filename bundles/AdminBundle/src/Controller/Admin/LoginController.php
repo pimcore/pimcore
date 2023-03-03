@@ -172,7 +172,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     public function loginCheckAction(Request $request, EventDispatcherInterface $dispatcher): RedirectResponse
     {
         $event = new LoginRedirectEvent('pimcore_admin_login', [
-            'perspective' => strip_tags($request->get('perspective', ''))
+            'perspective' => strip_tags($request->get('perspective', '')),
         ]);
         $dispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
 
