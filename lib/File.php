@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use League\Flysystem\FilesystemOperator;
-use Symfony\Component\Filesystem\Path;
 use Pimcore;
 use Pimcore\Helper\LongRunningHelper;
+use Symfony\Component\Filesystem\Path;
 
 class File
 {

@@ -201,7 +201,6 @@ class DeviceDetector
         }
 
         if ($typeForced) {
-
             if (in_array($typeForced, $this->validDeviceTypes)) {
                 /**
                  * @psalm-taint-escape cookie
