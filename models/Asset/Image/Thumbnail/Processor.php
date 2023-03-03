@@ -342,69 +342,60 @@ class Processor
                         if (!empty($transformation) && !isset($transformation['isApplied'])) {
                             $arguments = [];
 
-                            if (is_string($transformation['method'])) {
-                                $mapping = self::$argumentMapping[$transformation['method']];
+                            $mapping = self::$argumentMapping[$transformation['method']];
 
-                                if (is_array($transformation['arguments'])) {
-                                    foreach ($transformation['arguments'] as $key => $value) {
-                                        $position = array_search($key, $mapping);
-                                        if ($position !== false) {
-                                            // high res calculations if enabled
-                                            if (!in_array($transformation['method'], ['cropPercent']) && in_array($key,
+                            if (is_array($transformation['arguments'])) {
+                                foreach ($transformation['arguments'] as $key => $value) {
+                                    $position = array_search($key, $mapping);
+                                    if ($position !== false) {
+                                        // high res calculations if enabled
+                                        if (!in_array($transformation['method'], ['cropPercent']) && in_array($key,
                                                 ['width', 'height', 'x', 'y'])) {
-                                                if ($highResFactor && $highResFactor > 1) {
-                                                    $value *= $highResFactor;
-                                                    $value = (int)ceil($value);
+                                            if ($highResFactor && $highResFactor > 1) {
+                                                $value *= $highResFactor;
+                                                $value = (int)ceil($value);
 
-                                                    if (!isset($transformation['arguments']['forceResize']) || !$transformation['arguments']['forceResize']) {
-                                                        // check if source image is big enough otherwise adjust the high-res factor
-                                                        if (in_array($key, ['width', 'x'])) {
-                                                            if ($sourceImageWidth < $value) {
-                                                                $highResFactor = $calculateMaxFactor(
-                                                                    $highResFactor,
-                                                                    $sourceImageWidth,
-                                                                    $value
-                                                                );
-                                                                goto prepareTransformations;
-                                                            }
-                                                        } elseif (in_array($key, ['height', 'y'])) {
-                                                            if ($sourceImageHeight < $value) {
-                                                                $highResFactor = $calculateMaxFactor(
-                                                                    $highResFactor,
-                                                                    $sourceImageHeight,
-                                                                    $value
-                                                                );
-                                                                goto prepareTransformations;
-                                                            }
+                                                if (!isset($transformation['arguments']['forceResize']) || !$transformation['arguments']['forceResize']) {
+                                                    // check if source image is big enough otherwise adjust the high-res factor
+                                                    if (in_array($key, ['width', 'x'])) {
+                                                        if ($sourceImageWidth < $value) {
+                                                            $highResFactor = $calculateMaxFactor(
+                                                                $highResFactor,
+                                                                $sourceImageWidth,
+                                                                $value
+                                                            );
+                                                            goto prepareTransformations;
+                                                        }
+                                                    } elseif (in_array($key, ['height', 'y'])) {
+                                                        if ($sourceImageHeight < $value) {
+                                                            $highResFactor = $calculateMaxFactor(
+                                                                $highResFactor,
+                                                                $sourceImageHeight,
+                                                                $value
+                                                            );
+                                                            goto prepareTransformations;
                                                         }
                                                     }
                                                 }
                                             }
-
-                                            // inject the focal point
-                                            if ($transformation['method'] == 'cover' && $key == 'positioning' && $asset->getCustomSetting('focalPointX')) {
-                                                $value = [
-                                                    'x' => $asset->getCustomSetting('focalPointX'),
-                                                    'y' => $asset->getCustomSetting('focalPointY'),
-                                                ];
-                                            }
-
-                                            $arguments[$position] = $value;
                                         }
+
+                                        // inject the focal point
+                                        if ($transformation['method'] == 'cover' && $key == 'positioning' && $asset->getCustomSetting('focalPointX')) {
+                                            $value = [
+                                                'x' => $asset->getCustomSetting('focalPointX'),
+                                                'y' => $asset->getCustomSetting('focalPointY'),
+                                            ];
+                                        }
+
+                                        $arguments[$position] = $value;
                                     }
                                 }
                             }
 
                             ksort($arguments);
-                            if (!is_string($transformation['method']) && is_callable($transformation['method'])) {
-                                trigger_deprecation(
-                                    'pimcore/pimcore',
-                                    '10.6',
-                                    'Using Callable in thumbnail transformations is deprecated and will not work on Pimcore 11.'
-                                );
 
-                                $transformation['method']($image);
-                            } elseif (method_exists($image, $transformation['method'])) {
+                            if (method_exists($image, $transformation['method'])) {
                                 call_user_func_array([$image, $transformation['method']], $arguments);
                             }
 
