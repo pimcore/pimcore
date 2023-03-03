@@ -77,22 +77,21 @@ Nevertheless you can use inheritance for field collections for data maintenance 
 // custom getter for field collection field named 'fieldCollection'
 public function getFieldCollection(): mixed
 {
-	$data = parent::getFieldCollection();
-
-    $inheritanceEnabled = DataObject::getGetInheritedValues();
-    DataObject::setGetInheritedValues(true);
+    $data = parent::getFieldCollection();
     
-	if (\Pimcore\Model\DataObject::doGetInheritedValues($this) && $this->getClass()->getFieldDefinition("fieldCollection")->isEmpty($data)) {
-		try {
-			return $this->getValueFromParent("fieldCollection");
-		} catch (\Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
-		}
-	}
-    
-    DataObject::setGetInheritedValues($inheritanceEnabled);
+    $inheritedData = DataObject\Service::useInheritedValues(function() {
+        if (\Pimcore\Model\DataObject::doGetInheritedValues($this) && $this->getClass()->getFieldDefinition("fieldCollection")->isEmpty($data)) {
+            try {
+                return $this->getValueFromParent("fieldCollection");
+            } catch (\Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException $e) {
+                // no data from parent available, continue ... 
+                return null;
+            }
+        }
+        return null;
+    }, true);	
 
-	return $data;
+    return $inheritedData ?? $data;
 }
 ```
 

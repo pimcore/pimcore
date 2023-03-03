@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document;
 
 use Pimcore\Messenger\GeneratePagePreviewMessage;
-use Pimcore\Model\Redirect;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
@@ -61,23 +60,6 @@ class Page extends PageSnippet
      */
     protected ?string $prettyUrl = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function doDelete(): void
-    {
-        // check for redirects pointing to this document, and delete them too
-        $redirects = new Redirect\Listing();
-        $redirects->setCondition('target = ?', $this->getId());
-        $redirects->load();
-
-        foreach ($redirects->getRedirects() as $redirect) {
-            $redirect->delete();
-        }
-
-        parent::doDelete();
-    }
-
     public function getDescription(): string
     {
         return $this->description;
@@ -102,15 +84,35 @@ class Page extends PageSnippet
         return $this;
     }
 
+    /**
+     * @deprecated
+     *
+     * @return $this
+     */
     public function setMetaData(array $metaData): static
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11.', __METHOD__)
+        );
+
         $this->metaData = $metaData;
 
         return $this;
     }
 
+    /**
+     * @deprecated
+     */
     public function getMetaData(): array
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11.', __METHOD__)
+        );
+
         return $this->metaData;
     }
 

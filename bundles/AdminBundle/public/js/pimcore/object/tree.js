@@ -317,7 +317,6 @@ pimcore.registerNS("pimcore.object.tree");
                          node.data.basePath = newBasePath;
                          node.data.path = node.data.basePath + "/" + node.data.text;
                      });
-                     pimcore.elementservice.nodeMoved("object", oldParent, newParent);
                  } else {
                      tree.loadMask.hide();
                      pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),

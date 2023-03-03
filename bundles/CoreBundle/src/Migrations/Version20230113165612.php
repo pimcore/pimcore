@@ -44,6 +44,9 @@ final class Version20230113165612 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // do nothing
+        if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle', 'pimcore')) {
+            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle', 'pimcore');
+        }
+        $this->write('Please deactivate the Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle manually in config/bundles.php');
     }
 }

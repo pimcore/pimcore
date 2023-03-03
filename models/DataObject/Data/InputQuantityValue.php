@@ -18,27 +18,23 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 
-class InputQuantityValue extends QuantityValue
+class InputQuantityValue extends AbstractQuantityValue
 {
-    protected float|int|string|null $value = null;
+    protected string|null $value = null;
 
-    /**
-     * @param string|null $value
-     * @param string|Unit|null $unit
-     */
     public function __construct(?string $value = null, Unit|string $unit = null)
     {
         $this->value = $value;
-        parent::__construct($value, $unit);
+        parent::__construct($unit);
     }
 
-    public function setValue(float|int|string|null $value): void
+    public function setValue(string|null $value): void
     {
         $this->value = $value;
         $this->markMeDirty();
     }
 
-    public function getValue(): float|int|string|null
+    public function getValue(): string|null
     {
         return $this->value;
     }

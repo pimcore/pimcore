@@ -228,6 +228,8 @@ class Block extends Model\Document\Editable implements BlockInterface
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
+
+        return $this;
     }
 
     /**

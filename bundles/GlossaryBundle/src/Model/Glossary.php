@@ -167,7 +167,7 @@ class Glossary extends AbstractModel
         return $this->abbr;
     }
 
-    public function setLanguage(string $language): static
+    public function setLanguage(?string $language): static
     {
         $this->language = $language;
 
@@ -203,12 +203,12 @@ class Glossary extends AbstractModel
         return $this->exactmatch;
     }
 
-    public function setSite(Site|int $site): static
+    public function setSite(null|int|Site $site): static
     {
         if ($site instanceof Site) {
             $site = $site->getId();
         }
-        $this->site = (int) $site;
+        $this->site = $site;
 
         return $this;
     }
