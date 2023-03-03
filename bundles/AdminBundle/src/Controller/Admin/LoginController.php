@@ -38,6 +38,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -185,12 +186,18 @@ class LoginController extends AdminController implements KernelControllerEventIn
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      */
-    public function lostpasswordAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher): Response
+    public function lostpasswordAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher, RateLimiterFactory $resetPasswordLimiter): Response
     {
         $params = $this->buildLoginPageViewParams($config);
         $error = null;
 
         if ($request->getMethod() === 'POST' && $username = $request->get('username')) {
+
+            $limiter = $resetPasswordLimiter->create($request->getClientIp());
+            if (false === $limiter->consume(1)->isAccepted()) {
+                $error = 'user_reset_password_too_many_attempts';
+            }
+
             $user = User::getByName($username);
 
             if ($user instanceof User) {
@@ -199,7 +206,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
                 }
 
                 if (!$user->getEmail()) {
-                    $error = 'user_no_email_address';
+//                    $error = 'user_no_email_address';
                 }
 
                 if (!$user->getPassword()) {
@@ -245,6 +252,8 @@ class LoginController extends AdminController implements KernelControllerEventIn
         }
 
         $csrfProtection->regenerateCsrfToken($request->getSession());
+
+        $params['error'] = $error;
 
         return $this->render('@PimcoreAdmin/admin/login/lost_password.html.twig', $params);
     }
