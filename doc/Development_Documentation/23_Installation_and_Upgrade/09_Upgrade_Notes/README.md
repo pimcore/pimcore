@@ -262,7 +262,8 @@ pimcore_seo:
 - [Google] Classes `Google\Cse` and `Google\Cse\Item` are deprecated and will be removed in Pimcore 11.
 - [Document] Deprecated the `HTML-Tags` field under the `SEO & Settings` panel of Document/Page, `setMetaData()` and `getMetaData()`
 - [Document] The `HTML-Tags` (document metadata) field under SEO & Settings panel is now only visible and editable by Admin users`.
-- [Thumbnails] Using Callable in Asset thumbnail transformations is deprecated and will not work on Pimcore 11.
+- [Thumbnails] Using Callable in Asset thumbnail transformations is deprecated and will not work in Pimcore 11.
+- Marked `Pimcore\Model\User\AbstractUser` and `Pimcore\Model\User\UserRole` classes as abstract via php doc. It will be natively abstract in Pimcore 11.
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
