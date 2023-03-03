@@ -201,7 +201,11 @@ class DeviceDetector
         }
 
         if ($typeForced) {
+
             if (in_array($typeForced, $this->validDeviceTypes)) {
+                /**
+                 * @psalm-taint-escape cookie
+                 */
                 $type = $typeForced;
 
                 // we don't set a cookie if we're in preview mode, or if a cookie is set already
