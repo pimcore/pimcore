@@ -38,7 +38,7 @@ class Sql extends AbstractAdapter
 
             $order = '';
             if ($sort && $dir) {
-                $dir = ((strtolower($dir) == 'ASC') ? 'ASC' : 'DESC');
+                $dir = ((strtoupper($dir) === 'ASC') ? 'ASC' : 'DESC');
                 $order = ' ORDER BY ' . $db->quoteIdentifier($sort) . ' ' .$dir;
             }
 
