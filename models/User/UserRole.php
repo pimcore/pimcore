@@ -22,7 +22,7 @@ use Pimcore\Model\User\Workspace\Document;
 /**
  * @method \Pimcore\Model\User\UserRole\Dao getDao()
  *
- * @abstract Will be abstract in Pimcore 11
+ * @abstract Will be natively abstract in Pimcore 11
  */
 class UserRole extends AbstractUser
 {
