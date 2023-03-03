@@ -223,6 +223,7 @@ pimcore_seo:
         auto_create_redirects: true
 ```
 - [DataObject] Added new helper inheritance helper function `DataObject\Serivce::useInheritedValues`
+- [Page] Removed the functionality to input `metadata` html tags in Settings section of the document.
 
 
 ## 10.6.0
