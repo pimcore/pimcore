@@ -924,39 +924,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     }
 
     /**
-     * @Route("/webdav{path}", name="pimcore_admin_webdav", requirements={"path"=".*"})
-     */
-    public function webdavAction(): void
-    {
-        $homeDir = Asset::getById(1);
-
-        try {
-            $publicDir = new Asset\WebDAV\Folder($homeDir);
-            $objectTree = new Asset\WebDAV\Tree($publicDir);
-            $server = new \Sabre\DAV\Server($objectTree);
-            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
-
-            // lock plugin
-            /** @var \PDO $pdo */
-            $pdo = \Pimcore\Db::get()->getNativeConnection();
-            $lockBackend = new \Sabre\DAV\Locks\Backend\PDO($pdo);
-            $lockBackend->tableName = 'webdav_locks';
-
-            $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
-            $server->addPlugin($lockPlugin);
-
-            // browser plugin
-            $server->addPlugin(new \Sabre\DAV\Browser\Plugin());
-
-            $server->start();
-        } catch (\Exception $e) {
-            Logger::error((string) $e);
-        }
-
-        exit;
-    }
-
-    /**
      * @Route("/save", name="pimcore_admin_asset_save", methods={"PUT","POST"})
      *
      * @param Request $request
@@ -1388,8 +1355,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 'x' => $request->get('cropLeft'),
             ]);
 
-            $hash = md5(Tool\Serialize::serialize(array_merge($request->request->all(), $request->query->all())));
-            $thumbnailConfig->setName($thumbnailConfig->getName() . '_auto_' . $hash);
+            $thumbnailConfig->generateAutoName();
         }
 
         $thumbnail = $image->getThumbnail($thumbnailConfig);
@@ -2333,7 +2299,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             for ($i = $offset; $i < ($offset + $limit); $i++) {
                 $path = $zip->getNameIndex($i);
 
-                if (str_starts_with($path, '__MACOSX/') || $path === 'Thumbs.db') {
+                if (str_starts_with($path, '__MACOSX/') || str_ends_with($path, '/Thumbs.db')) {
                     continue;
                 }
 

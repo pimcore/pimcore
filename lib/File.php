@@ -17,6 +17,9 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use League\Flysystem\FilesystemOperator;
+use Pimcore;
+use Pimcore\Helper\LongRunningHelper;
+use Symfony\Component\Filesystem\Path;
 
 class File
 {
@@ -91,6 +94,8 @@ class File
      */
     public static function put(string $path, mixed $data): bool|int
     {
+        $path = Path::canonicalize($path);
+
         if (!is_dir(dirname($path))) {
             self::mkdir(dirname($path));
         }
@@ -125,10 +130,10 @@ class File
         if (is_dir($path)) {
             return true;
         }
-
         $return = true;
 
         $oldMask = umask(0);
+        $path = Path::canonicalize($path);
 
         if ($recursive) {
             // we cannot use just mkdir() with recursive=true because of possible race conditions, see also
@@ -200,13 +205,26 @@ class File
         self::$context = $context;
     }
 
-    public static function getLocalTempFilePath(?string $fileExtension = null): string
+    public static function getLocalTempFilePath(?string $fileExtension = null, bool $keep = false): string
     {
-        return sprintf('%s/temp-file-%s.%s',
+        $filePath = sprintf('%s/temp-file-%s.%s',
             PIMCORE_SYSTEM_TEMP_DIRECTORY,
             uniqid() . '-' .  bin2hex(random_bytes(15)),
             $fileExtension ?: 'tmp'
         );
+
+        if (!$keep) {
+            register_shutdown_function(static function () use ($filePath) {
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+            });
+
+            $longRunningHelper = Pimcore::getContainer()->get(LongRunningHelper::class);
+            $longRunningHelper->addTmpFilePath($filePath);
+        }
+
+        return $filePath;
     }
 
     /**

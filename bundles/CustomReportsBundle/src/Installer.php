@@ -20,6 +20,8 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 
 class Installer extends SettingsStoreAwareInstaller
 {
+    protected const USER_PERMISSIONS_CATEGORY = 'Pimcore Custom Reports Bundle';
+
     protected const USER_PERMISSIONS = [
         'reports',
         'reports_config',
@@ -44,6 +46,7 @@ class Installer extends SettingsStoreAwareInstaller
         foreach (self::USER_PERMISSIONS as $permission) {
             $db->insert('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
+                $db->quoteIdentifier('category') => self::USER_PERMISSIONS_CATEGORY,
             ]);
         }
     }

@@ -25,7 +25,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
  * @method void setLastLoginDate()
  */
-class AbstractUser extends Model\AbstractModel
+abstract class AbstractUser extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
@@ -94,9 +94,12 @@ class AbstractUser extends Model\AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -106,9 +109,12 @@ class AbstractUser extends Model\AbstractModel
         return $this->parentId;
     }
 
+    /**
+     * @return $this
+     */
     public function setParentId(int $parentId): static
     {
-        $this->parentId = (int)$parentId;
+        $this->parentId = $parentId;
 
         return $this;
     }
@@ -118,6 +124,9 @@ class AbstractUser extends Model\AbstractModel
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -231,6 +240,9 @@ class AbstractUser extends Model\AbstractModel
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -248,10 +260,6 @@ class AbstractUser extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @param AbstractUser $user
-     *
-     * @return bool
      */
     protected static function typeMatch(AbstractUser $user): bool
     {

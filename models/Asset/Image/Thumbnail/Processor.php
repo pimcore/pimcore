@@ -422,8 +422,6 @@ class Processor
                     }
                 }
 
-                unlink($tmpFsPath);
-
                 $generated = true;
 
                 $isImageOptimizersEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['image_optimizers']['enabled'];

@@ -18,8 +18,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
-use Pimcore\Db;
 use Pimcore\Model\Tool\SettingsStore;
 
 final class Version20230120111111 extends AbstractMigration
@@ -29,31 +27,30 @@ final class Version20230120111111 extends AbstractMigration
         return 'In case the application logger permissions already exists, mark the ApplicationLoggerBundle as installed';
     }
 
-    public function isInstalled(): bool
-    {
-        $db = Db::get();
-        $cnt = $db->fetchAllAssociative("SELECT count(`key`) as permission_count from users_permission_definitions WHERE `key` = 'application_logging'");
-        if ($cnt[0]['permission_count'] === 1) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function up(Schema $schema): void
     {
-        if ($this->isInstalled()) {
+        if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', 'pimcore')) {
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', true, 'bool', 'pimcore');
         }
 
+        // updating description  of permissions
+        $this->addSql("UPDATE `users_permission_definitions` SET `category` = 'Application Logger Bundle' WHERE `key` = 'application_logging'");
+
         $this->warnIf(
-            $this->isInstalled(),
-            sprintf('Please make sure to enable the %s manually in config/bundles.php', PimcoreApplicationLoggerBundle::class)
+            null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', 'pimcore'),
+            'Please make sure to enable the Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle manually in config/bundles.php',
         );
     }
 
     public function down(Schema $schema): void
     {
-        $this->write(sprintf('Please deactivate the %s manually in config/bundles.php', PimcoreApplicationLoggerBundle::class));
+        if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', 'pimcore')) {
+            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle', 'pimcore');
+        }
+
+        // restoring the permission
+        $this->addSql("UPDATE `users_permission_definitions` SET `category` = '' WHERE `key` = 'application_logging'");
+
+        $this->write('Please deactivate the Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle manually in config/bundles.php');
     }
 }

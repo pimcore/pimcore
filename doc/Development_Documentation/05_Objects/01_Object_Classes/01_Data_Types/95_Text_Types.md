@@ -66,42 +66,6 @@ on selected text in the WYSIWYG widget. The text is stored as HTML.
 
 ![WYSIWYG Field](../../../img/classes-datatypes-text6.jpg)
 
-### Editor - Configuration
-It's possible to pass a custom CKEditor config object to the wysiwyg editor. 
-
-```
-{
-  toolbarGroups: [{ "name": "links" }],
-  enterMode: CKEDITOR.ENTER_BR
-}
-```
-
-While most configuration parameters define which features shall be available when using the wysiwyg editor the `enterMode` defines the following behaviour:
-* `CKEDITOR.ENTER_P` (default)
-  * Pressing `enter` key adds a paragraph `<p></p>` tag at the cursor position
-  * content gets always wrapped in `<p>` tags, even if you just enter one line
-  * When setting the field's content via its setter method, the `<p>` tags do not get automatically added. When you later open the object in the admin panel and save the object, the `<p>` tags get added. This can be misleading because the content of the field changed although the field has not been touched.
-* `CKEDITOR.ENTER_BR`
-  * Pressing `enter` key adds a `<br>` tag at the cursor position
-* `CKEDITOR.ENTER_DIV`
-  * same as `CKEDITOR.ENTER_P` but paragraphs get wrapped in `<div>` tags
-
-More examples and config options for the toolbar and toolbarGroups can be found in
-[CKeditor toolbar documentation](http://docs.ckeditor.com/#!/guide/dev_toolbar) or you can use the [CKeditor configurator](https://ckeditor.com/latest/samples/toolbarconfigurator) to create a custom toolbar configuration. 
-
-Please refer to the [CKeditor 4.0 Documentation](http://docs.ckeditor.com/).
-
-  
-### Global Configuration
-You can add a Global Configuration for all WYSIWYG Editors for all objects by setting `pimcore.object.tags.wysiwyg.defaultEditorConfig`
-
-For this purpose, you can create a bundle and add the configuration in the new created file `/Resources/public/js/pimcore/startup.js` like this:
-
-```
-pimcore.object.tags.wysiwyg.defaultEditorConfig = {
-    allowedContent: true
-};
-```
 
 ## Input Quantity Value
 

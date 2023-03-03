@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
 
@@ -25,15 +26,27 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
+    /**
+     * @deprecated Will be removed in Pimcore 11
+     */
+    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS';
+
+    private const CONFIG_KEY = 'video_thumbnails';
+
     public function configure(): void
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
+        $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($config, self::CONFIG_KEY, 'PIMCORE_CONFIG_STORAGE_DIR_VIDEO_THUMBNAILS');
+        $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($config, self::CONFIG_KEY, self::WRITE_TARGET);
+
         parent::configure([
             'containerConfig' => $config['assets']['video']['thumbnails']['definitions'],
             'settingsStoreScope' => 'pimcore_video_thumbnails',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_VIDEO_THUMBNAILS'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/video-thumbnails',
-            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS',
+            'storageDirectory' => $storageDirectory,
+            'writeTargetEnvVariableName' => self::WRITE_TARGET,
+            'writeTarget' => $writeTarget,
+            'options' => $config['storage'][self::CONFIG_KEY]['options'],
         ]);
     }
 
