@@ -422,7 +422,7 @@ Working example of a WebP encode delegate (defined in `/etc/ImageMagick-6/delega
 <delegate decode="png" encode="webp" command="&quot;cwebp&quot; -quiet -q %Q &quot;%i&quot; -o &quot;%o&quot;"/>
 ``` 
 
-## Adding Custom Callbacks / Transformations / Filters
+## Adding Custom Callbacks / Transformations / Filters (Deprecated)
 
 It is also possible to add some custom code to your thumbnail configurations, 
 this is especially useful for situations when very specific image operations are needed to be applied to the
