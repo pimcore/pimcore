@@ -42,13 +42,6 @@ class Page extends PageSnippet
     protected string $description = '';
 
     /**
-     * @internal
-     *
-     * @var array
-     */
-    protected array $metaData = [];
-
-    /**
      * {@inheritdoc}
      */
     protected string $type = 'page';
@@ -82,38 +75,6 @@ class Page extends PageSnippet
         $this->title = $title;
 
         return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return $this
-     */
-    public function setMetaData(array $metaData): static
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6.0',
-            sprintf('%s is deprecated and will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        $this->metaData = $metaData;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     */
-    public function getMetaData(): array
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6.0',
-            sprintf('%s is deprecated and will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        return $this->metaData;
     }
 
     public function getFullPath(bool $force = false): string
