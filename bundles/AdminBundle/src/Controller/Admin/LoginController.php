@@ -206,7 +206,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
                 }
 
                 if (!$user->getEmail()) {
-//                    $error = 'user_no_email_address';
+                    $error = 'user_no_email_address';
                 }
 
                 if (!$user->getPassword()) {
