@@ -55,8 +55,8 @@ framework:
     rate_limiter:
         reset_password:
             policy: 'fixed_window'
-            limit: 3
-            interval: '60 minutes'
+            limit: 5
+            interval: '5 minutes'
 
 # Twig Configuration
 twig:
