@@ -537,29 +537,25 @@ class Service extends Model\Element\Service
 
     public static function calculateCellValue(AbstractObject $object, array $helperDefinitions, string $key, array $context = []): mixed
     {
-        $config = static::getConfigForHelperDefinition($helperDefinitions, $key, $context);
-        if (!$config) {
+        if (!$config = static::getConfigForHelperDefinition($helperDefinitions, $key, $context)) {
             return null;
         }
 
-        return self::useInheritedValues(true, function () use ($object, $config) {
-            $result = $config->getLabeledValue($object);
-            if (isset($result->value)) {
-                $result = $result->value;
-
-                if (!empty($config->getRenderer())) {
-                    $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->getRenderer());
-                    /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
-                    $rendererImpl = new $classname();
-                    if (method_exists($rendererImpl, 'getDataForGrid')) {
-                        $result = $rendererImpl->getDataForGrid($result, $object, []);
-                    }
-                }
-
-                return $result;
+        return self::useInheritedValues(true, static function () use ($object, $config) {
+            if (!$result = $config->getLabeledValue($object)?->value) {
+                return null;
             }
 
-            return null;
+            if (!empty($config->getRenderer())) {
+                $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->getRenderer());
+                /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
+                $rendererImpl = new $classname();
+                if (method_exists($rendererImpl, 'getDataForGrid')) {
+                    $result = $rendererImpl->getDataForGrid($result, $object, []);
+                }
+            }
+
+            return $result;
         });
     }
 
