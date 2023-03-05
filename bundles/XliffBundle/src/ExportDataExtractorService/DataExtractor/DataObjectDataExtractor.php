@@ -72,9 +72,9 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
      *
      * @throws \Exception
      */
-    private function extractRawAttributeSet(TranslationItem $translationItem, string $sourceLanguage, array $targetLanguages, array $exportAttributes = null, bool $inherited): AttributeSet
+    private function extractRawAttributeSet(TranslationItem $translationItem, string $sourceLanguage, array $targetLanguages, array $exportAttributes, bool $inherited): AttributeSet
     {
-        $result = DataObject\Service::useInheritedValues($inherited, function () use ($translationItem, $sourceLanguage, $targetLanguages, $exportAttributes) {
+        return DataObject\Service::useInheritedValues($inherited, function () use ($translationItem, $sourceLanguage, $targetLanguages, $exportAttributes) {
             $result = parent::extract($translationItem, $sourceLanguage, $targetLanguages);
 
             $object = $translationItem->getElement();
@@ -94,8 +94,6 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
             return $result;
         });
-
-        return $result;
     }
 
     private function isAttributeIncluded(AttributeSet $attributeSet, Attribute $attribute): bool
