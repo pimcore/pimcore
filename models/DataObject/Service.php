@@ -1517,7 +1517,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        return DataObject\Service::useInheritedValues(true, function () use ($fd, $object, $data) {
+        return DataObject\Service::useInheritedValues(true, static function () use ($fd, $object, $data) {
             switch ($fd->getCalculatorType()) {
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
                     $className = $fd->getCalculatorClass();
@@ -1567,14 +1567,14 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        return DataObject\Service::useInheritedValues(true, function () use ($object, $fd, $data) {
-            if (
-                $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
-                $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
-            ) {
-                $object = $object->getObject();
-            }
+        if (
+            $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
+            $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
+        ) {
+            $object = $object->getObject();
+        }
 
+        return DataObject\Service::useInheritedValues(true, static function () use ($object, $fd, $data) {
             switch ($fd->getCalculatorType()) {
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
                     $className = $fd->getCalculatorClass();
