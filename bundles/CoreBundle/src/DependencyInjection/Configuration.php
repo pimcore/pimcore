@@ -1936,13 +1936,13 @@ final class Configuration implements ConfigurationInterface
     {
         $rootNode
             ->children()
-            ->arrayNode('chromium')
-            ->addDefaultsIfNotSet()
-            ->children()
-                ->scalarNode('uri')
-                ->defaultNull()
+                ->arrayNode('chromium')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('uri')
+                        ->defaultNull()
+                    ->end()
                 ->end()
-            ->end()
-        ->end();
+            ->end();
     }
 }
