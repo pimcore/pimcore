@@ -35,6 +35,7 @@ framework:
         transports:
             pimcore_core: "doctrine://default?queue_name=pimcore_core"
             pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
+            pimcore_scheduled_tasks: "doctrine://default?queue_name=pimcore_scheduled_tasks"
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
             pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
         routing:
@@ -48,6 +49,7 @@ framework:
             'Pimcore\Messenger\VersionDeleteMessage': pimcore_core
             'Pimcore\Messenger\OptimizeImageMessage': pimcore_image_optimize
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
+            'Pimcore\Messenger\ScheduledTaskMessage': pimcore_scheduled_tasks
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:

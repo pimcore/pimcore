@@ -130,8 +130,7 @@ class PdfReactor extends Processor
         $html = $document->renderDocument($params);
         $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
 
-        ini_set('default_socket_timeout', 3000);
-        ini_set('max_input_time', -1);
+        ini_set('default_socket_timeout', '3000');
 
         $pdfreactor = $this->getClient();
 

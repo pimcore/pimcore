@@ -68,11 +68,6 @@ class Bootstrap
         DataObject::setGetInheritedValues(true);
         DataObject\Localizedfield::setGetFallbackValues(true);
 
-        // CLI has no memory/time limits
-        @ini_set('memory_limit', '-1');
-        @ini_set('max_execution_time', '-1');
-        @ini_set('max_input_time', '-1');
-
         // Pimcore\Console handles maintenance mode through the AbstractCommand
         $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
         if (!$pimcoreConsole) {
@@ -116,8 +111,6 @@ class Bootstrap
         /** @var \Composer\Autoload\ClassLoader $loader */
         \Pimcore::setAutoloader($loader);
         self::autoload();
-
-        ini_set('log_errors', '1');
 
         // load a startup file if it exists - this is a good place to preconfigure the system
         // before the kernel is loaded - e.g. to set trusted proxies on the request object
@@ -226,7 +219,6 @@ class Bootstrap
         if ($debug) {
             umask(0000);
             Debug::enable();
-            @ini_set('display_errors', 'On');
         }
 
         if (defined('PIMCORE_KERNEL_CLASS')) {

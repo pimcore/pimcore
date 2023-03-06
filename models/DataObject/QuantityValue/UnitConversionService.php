@@ -18,8 +18,6 @@ namespace Pimcore\Model\DataObject\QuantityValue;
 
 use Pimcore\Model\DataObject\ClassDefinition\Helper\UnitConverterResolver;
 use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
-use Pimcore\Model\DataObject\Data\QuantityValue;
-use Pimcore\Model\Exception\UnsupportedException;
 
 class UnitConversionService
 {

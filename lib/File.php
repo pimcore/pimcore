@@ -19,7 +19,11 @@ namespace Pimcore;
 use League\Flysystem\FilesystemOperator;
 use Pimcore;
 use Pimcore\Helper\LongRunningHelper;
+use Symfony\Component\Filesystem\Path;
 
+/**
+ * @internal
+ */
 class File
 {
     public static int $defaultMode = 0664;
@@ -93,6 +97,8 @@ class File
      */
     public static function put(string $path, mixed $data): bool|int
     {
+        $path = Path::canonicalize($path);
+
         if (!is_dir(dirname($path))) {
             self::mkdir(dirname($path));
         }
@@ -127,10 +133,10 @@ class File
         if (is_dir($path)) {
             return true;
         }
-
         $return = true;
 
         $oldMask = umask(0);
+        $path = Path::canonicalize($path);
 
         if ($recursive) {
             // we cannot use just mkdir() with recursive=true because of possible race conditions, see also
