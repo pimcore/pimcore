@@ -21,6 +21,9 @@ use Pimcore;
 use Pimcore\Helper\LongRunningHelper;
 use Symfony\Component\Filesystem\Path;
 
+/**
+ * @internal
+ */
 class File
 {
     public static int $defaultMode = 0664;
