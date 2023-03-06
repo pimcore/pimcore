@@ -77,9 +77,9 @@ class SearchController extends AdminController
 
         $query = $this->filterQueryParam($allParams['query'] ?? '');
 
-        $types = explode(',', $allParams['type'] ?? '');
-        $subtypes = explode(',', $allParams['subtype'] ?? '');
-        $classnames = explode(',', $allParams['class'] ?? '');
+        $types = explode(',', preg_replace("/[^a-zA-Z,]/", '', $allParams['type'] ?? ''));
+        $subtypes = explode(',', preg_replace("/[^a-zA-Z,]/", '', $allParams['subtype'] ?? ''));
+        $classnames = explode(',', preg_replace("/[^a-zA-Z,]/", '', $allParams['class'] ?? ''));
 
         $offset = (int)$allParams['start'];
         $limit = (int)$allParams['limit'];
