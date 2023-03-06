@@ -554,6 +554,7 @@ class Service extends Model\Element\Service
 
         $inheritanceEnabled = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
+
         try {
             $result = $config->getLabeledValue($object);
             if (isset($result->value)) {
@@ -575,7 +576,6 @@ class Service extends Model\Element\Service
         } finally {
             AbstractObject::setGetInheritedValues($inheritanceEnabled);
         }
-
     }
 
     /**
@@ -1617,6 +1617,7 @@ class Service extends Model\Element\Service
 
         $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
         Model\DataObject\Concrete::setGetInheritedValues(true);
+
         try {
             switch ($fd->getCalculatorType()) {
                 case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
