@@ -66,7 +66,7 @@ interface PimcoreBundleInterface extends BundleInterface
      *
      * @return string[]|RouteReferenceInterface[]
      *
-     * @deprecated
+     * @deprecated Will be removed in Pimcore 11
      */
     public function getJsPaths();
 
@@ -78,7 +78,7 @@ interface PimcoreBundleInterface extends BundleInterface
      *
      * @return string[]|RouteReferenceInterface[]
      *
-     * @deprecated
+     * @deprecated Will be removed in Pimcore 11
      */
     public function getCssPaths();
 
@@ -90,7 +90,7 @@ interface PimcoreBundleInterface extends BundleInterface
      *
      * @return string[]|RouteReferenceInterface[]
      *
-     * @deprecated
+     * @deprecated Will be removed in Pimcore 11
      */
     public function getEditmodeJsPaths();
 
@@ -102,7 +102,7 @@ interface PimcoreBundleInterface extends BundleInterface
      *
      * @return string[]|RouteReferenceInterface[]
      *
-     * @deprecated
+     * @deprecated Will be removed in Pimcore 11
      */
     public function getEditmodeCssPaths();
 }
