@@ -126,7 +126,7 @@ class Sql extends AbstractAdapter
             $db = Db::get();
             foreach ($drillDownFilters as $field => $value) {
                 if ($value !== '' && $value !== null) {
-                    $havingParts[] = ($db->quoteIdentifier($field) ." = " . $db->quote($value));
+                    $havingParts[] = ($db->quoteIdentifier($field) .' = ' . $db->quote($value));
                 }
             }
 
