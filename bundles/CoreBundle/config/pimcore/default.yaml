@@ -35,6 +35,7 @@ framework:
         transports:
             pimcore_core: "doctrine://default?queue_name=pimcore_core"
             pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
+            pimcore_scheduled_tasks: "doctrine://default?queue_name=pimcore_scheduled_tasks"
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
             pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
         routing:
@@ -48,6 +49,7 @@ framework:
             'Pimcore\Messenger\VersionDeleteMessage': pimcore_core
             'Pimcore\Messenger\OptimizeImageMessage': pimcore_image_optimize
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
+            'Pimcore\Messenger\ScheduledTaskMessage': pimcore_scheduled_tasks
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
@@ -217,19 +219,6 @@ pimcore:
         domains:
             - messages
             - admin
-    sitemaps:
-        generators:
-            pimcore_documents:
-                enabled: true
-                priority: 100
-                generator_id: Pimcore\Sitemap\Document\DocumentTreeGenerator
-    redirects:
-        status_codes:
-            300: Multiple Choices
-            301: Moved Permanently
-            302: Found
-            303: See Other
-            307: Temporary Redirect
 
     templating_engine:
         twig:
@@ -237,9 +226,6 @@ pimcore:
                 tags: ['set']
                 filters: ['escape', 'trans', 'default']
                 functions: ['path', 'asset']
-presta_sitemap:
-    # do not add properties by default
-    defaults:
-        lastmod: ~
-        priority: ~
-        changefreq: ~
+
+    gotenberg:
+        base_url: 'gotenberg:3000'

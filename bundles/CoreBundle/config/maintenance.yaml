@@ -13,7 +13,7 @@ services:
         arguments:
             - '@logger'
         tags:
-            - { name: pimcore.maintenance.task, type: scheduledtasks }
+            - { name: pimcore.maintenance.task, type: scheduledtasks, messengerMessageClass: '\Pimcore\Messenger\ScheduledTaskMessage' }
 
     Pimcore\Maintenance\Tasks\LogCleanupTask:
         tags:
@@ -48,12 +48,6 @@ services:
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: VersionsCleanupStackTraceDb }
-
-    Pimcore\Maintenance\Tasks\RedirectCleanupTask:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: pimcore.maintenance.task, type: redirectcleanup }
 
     Pimcore\Maintenance\Tasks\DbCleanupBrokenViewsTask:
         arguments:

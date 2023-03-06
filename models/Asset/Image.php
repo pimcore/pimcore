@@ -195,7 +195,6 @@ class Image extends Model\Asset
             $imagick->writeImage($tmpFile);
             $imageBase64 = base64_encode(file_get_contents($tmpFile));
             $imagick->destroy();
-            unlink($tmpFile);
 
             $svg = <<<EOT
 <?xml version="1.0" encoding="utf-8"?>
@@ -280,11 +279,6 @@ EOT;
 
     /**
      * Returns a path to a given thumbnail or a thumbnail configuration.
-     *
-     * @param null|string|array|Image\Thumbnail\Config|null $config
-     * @param bool $deferred
-     *
-     * @return Image\Thumbnail
      */
     public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\Thumbnail
     {

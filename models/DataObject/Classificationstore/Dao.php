@@ -83,7 +83,7 @@ class Dao extends Model\Dao\AbstractDao
                         'groupId' => $activeGroupId,
                         'fieldname' => $fieldname,
                     ];
-                    Helper::insertOrUpdate($this->db, $groupsTable, $data);
+                    Helper::upsert($this->db, $groupsTable, $data, $this->getPrimaryKey($groupsTable));
                 }
             }
         }
@@ -131,7 +131,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data['value'] = $encodedData['value'] ?? null;
                     $data['value2'] = $encodedData['value2'] ?? null;
 
-                    Helper::insertOrUpdate($this->db, $dataTable, $data);
+                    Helper::upsert($this->db, $dataTable, $data, $this->getPrimaryKey($dataTable));
                 }
             }
         }
