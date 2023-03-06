@@ -1923,14 +1923,15 @@ final class Configuration implements ConfigurationInterface
     {
         $rootNode
             ->children()
-            ->arrayNode('gotenberg')
-            ->addDefaultsIfNotSet()
-            ->children()
-                ->scalarNode('base_url')
-                ->defaultValue('gotenberg:3000')
+                ->arrayNode('gotenberg')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('base_url')
+                            ->defaultValue('gotenberg:3000')
+                        ->end()
+                    ->end()
                 ->end()
-            ->end()
-        ->end();
+            ->end();
     }
     private function addChromiumNode(ArrayNodeDefinition $rootNode): void
     {
@@ -1940,7 +1941,8 @@ final class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('uri')
-                        ->defaultNull()
+                            ->defaultNull()
+                        ->end()
                     ->end()
                 ->end()
             ->end();
