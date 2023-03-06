@@ -163,11 +163,9 @@ class Dao extends Model\Dao\AbstractDao
                 'language' => $language,
             ];
 
-            if ($container instanceof DataObject\Objectbrick\Definition) {
+            if ($container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
                 $insertData['fieldname'] = $context['fieldname'];
-            } elseif ($container instanceof DataObject\Fieldcollection\Definition) {
-                $insertData['fieldname'] = $context['fieldname'];
-                $insertData['index'] = $context['index'];
+                $insertData['index'] = $context['index'] ?? 0;
             }
 
             foreach ($fieldDefinitions as $fieldName => $fd) {
@@ -226,7 +224,7 @@ class Dao extends Model\Dao\AbstractDao
                 if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
                     $language
                 )) {
-                    Helper::insertOrUpdate($this->db, $storeTable, $insertData);
+                    Helper::upsert($this->db, $storeTable, $insertData, $this->getPrimaryKey($storeTable));
                 }
             } catch (TableNotFoundException $e) {
                 // if the table doesn't exist -> create it! deferred creation for object bricks ...
@@ -409,7 +407,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 $queryTable = $this->getQueryTableName().'_'.$language;
-                Helper::insertOrUpdate($this->db, $queryTable, $data);
+                Helper::upsert($this->db, $queryTable, $data, $this->getPrimaryKey($queryTable));
                 if ($inheritanceEnabled) {
                     $context = isset($params['context']) ? $params['context'] : [];
                     if ($context['containerType'] === 'objectbrick') {
