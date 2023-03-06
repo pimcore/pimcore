@@ -70,6 +70,7 @@ class Chromium
                 $browser = BrowserFactory::connectToBrowser($chromiumUri);
             } catch (\Exception $e) {
                 Logger::debug((string) $e);
+                return false;
             }
         }else{
             $binary = self::getChromiumBinary();
