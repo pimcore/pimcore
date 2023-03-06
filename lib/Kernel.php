@@ -391,15 +391,6 @@ abstract class Kernel extends SymfonyKernel
      */
     protected function setSystemRequirements(): void
     {
-        // try to set system-internal variables
-        $maxExecutionTime = 240;
-        if (php_sapi_name() === 'cli') {
-            $maxExecutionTime = 0;
-        }
-
-        //@ini_set("memory_limit", "1024M");
-        @ini_set('max_execution_time', (string) $maxExecutionTime);
-        @set_time_limit($maxExecutionTime);
         ini_set('default_charset', 'UTF-8');
 
         // set internal character encoding to UTF-8

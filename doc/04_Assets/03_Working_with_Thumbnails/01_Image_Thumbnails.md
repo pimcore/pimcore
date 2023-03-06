@@ -420,31 +420,6 @@ setting on thumbnails will not be considered and the default value of `75` is be
 Working example of a WebP encode delegate (defined in `/etc/ImageMagick-6/delegates.xml`): 
 ```xml
 <delegate decode="png" encode="webp" command="&quot;cwebp&quot; -quiet -q %Q &quot;%i&quot; -o &quot;%o&quot;"/>
-``` 
-
-## Adding Custom Callbacks / Transformations / Filters
-
-It is also possible to add some custom code to your thumbnail configurations, 
-this is especially useful for situations when very specific image operations are needed to be applied to the
-resulting thumbnail.
-
-#### Example
-
-```php
-$thumbnailConfig = Asset\Image\Thumbnail\Config::getByName('content');
-$thumbnailConfig->addItemAt(0, function (Imagick $imagick) {
-	/**
-	 * @var \Imagick $i
-	 */
-	$i = $imagick->getResource();
-	$i->sepiaToneImage(80);
-}, []);
-
-
-$asset = Asset::getById(39);
-$asset->clearThumbnails(true);
-$thumb = $asset->getThumbnail($thumbnailConfig);
-$file = $thumb->getPath();
 ```
 
 ## Downloading Asset Thumbnails
