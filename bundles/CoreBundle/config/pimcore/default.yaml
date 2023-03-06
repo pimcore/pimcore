@@ -227,6 +227,3 @@ pimcore:
 
     gotenberg:
         base_url: 'gotenberg:3000'
-
-    chromium:
-        base_url: 'ws://chrome:3000/'

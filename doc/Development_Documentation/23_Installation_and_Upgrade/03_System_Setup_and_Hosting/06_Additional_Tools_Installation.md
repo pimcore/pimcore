@@ -46,7 +46,9 @@ Add a new service as
         ports:
             - "3000:3000"
 ```
-and set `pimcore.chromium.base_url` accordingly, eg. `ws://chrome:3000/` 
+and set accordingly
+- config `pimcore.chromium.uri` value , eg. `ws://chrome:3000/` 
+- web2print settings hostUrl as the Docker web server service eg. `http://nginx:80` 
 
 
 ### Gotenberg

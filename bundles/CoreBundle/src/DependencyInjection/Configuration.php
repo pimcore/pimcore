@@ -1939,8 +1939,8 @@ final class Configuration implements ConfigurationInterface
             ->arrayNode('chromium')
             ->addDefaultsIfNotSet()
             ->children()
-                ->scalarNode('base_url')
-                ->defaultValue('chromium:3000')
+                ->scalarNode('uri')
+                ->defaultNull()
                 ->end()
             ->end()
         ->end();

@@ -31,18 +31,17 @@ class Chromium
 {
     public static function isSupported(): bool
     {
-        $return = false;
-        if (class_exists(BrowserFactory::class)) {
-            $return = (bool) self::getChromiumBinary();
-            if (!$return){
-                try {
-                    $return = (new Connection(\Pimcore\Config::getSystemConfiguration('chromium')['base_url']))->connect();
-                } catch (BrowserConnectionFailed $e) {
-                    //websocket fails, then is still false
-                }
+        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
+
+        if (!empty($chromiumUri)){
+            try {
+                return (new Connection($chromiumUri))->connect();
+            } catch (\Exception $e) {
+                Logger::debug((string) $e);
+                return false;
             }
         }
-        return $return;
+        return (bool) self::getChromiumBinary();
     }
 
     public static function getChromiumBinary(): ?string

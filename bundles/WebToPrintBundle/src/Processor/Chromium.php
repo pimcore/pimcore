@@ -38,9 +38,13 @@ class Chromium extends Processor
         $web2printConfig = json_decode($web2printConfig, true);
 
         $params = [
-            'document' => $document,
-            'hostUrl' => 'http://nginx:80'
+            'document' => $document
         ];
+
+        if (isset($web2printConfig['hostUrl'])) {
+            $params['hostUrl'] = $web2printConfig['hostUrl'];
+        }
+
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
 
@@ -105,9 +109,12 @@ class Chromium extends Processor
 
         ['html' => $html, 'params' => $params] = $event->getArguments();
 
-        try {
-            $browser = BrowserFactory::connectToBrowser(\Pimcore\Config::getSystemConfiguration('chromium')['base_url']);
-        } catch (BrowserConnectionFailed $e) {
+
+        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
+
+        if (!empty($chromiumUri)){
+            $browser = BrowserFactory::connectToBrowser($chromiumUri);
+        }else{
             $browserFactory = new BrowserFactory(ChromiumLib::getChromiumBinary());
             // starts headless chrome
             $browser = $browserFactory->createBrowser([
@@ -117,6 +124,7 @@ class Chromium extends Processor
                 'ignoreCertificateErrors' => true
             ]);
         }
+
 
         try {
             $page = $browser->createPage();
