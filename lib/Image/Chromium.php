@@ -31,8 +31,11 @@ class Chromium
 {
     public static function isSupported(): bool
     {
-        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
+        if (!class_exists(BrowserFactory::class)){
+            return false;
+        }
 
+        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
         if (!empty($chromiumUri)){
             try {
                 return (new Connection($chromiumUri))->connect();
@@ -61,9 +64,14 @@ class Chromium
      */
     public static function convert(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
-        try {
-            $browser = BrowserFactory::connectToBrowser(\Pimcore\Config::getSystemConfiguration('chromium')['base_url']);
-        } catch (BrowserConnectionFailed $e) {
+        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
+        if (!empty($chromiumUri)) {
+            try {
+                $browser = BrowserFactory::connectToBrowser($chromiumUri);
+            } catch (\Exception $e) {
+                Logger::debug((string) $e);
+            }
+        }else{
             $binary = self::getChromiumBinary();
             if (!$binary) {
                 return false;
