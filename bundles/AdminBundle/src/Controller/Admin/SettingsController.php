@@ -221,7 +221,7 @@ class SettingsController extends AdminController
             if ($filter = $request->get('filter')) {
                 $list->setFilter(function (Metadata\Predefined $predefined) use ($filter) {
                     foreach ($predefined->getObjectVars() as $value) {
-                        if (stripos($value, $filter) !== false) {
+                        if (stripos((string)$value, $filter) !== false) {
                             return true;
                         }
                     }
@@ -341,7 +341,7 @@ class SettingsController extends AdminController
                             $cellValues = is_array($value) ? $value : [$value];
 
                             foreach ($cellValues as $cellValue) {
-                                if (stripos($cellValue, $filter) !== false) {
+                                if (stripos((string)$cellValue, $filter) !== false) {
                                     return true;
                                 }
                             }
