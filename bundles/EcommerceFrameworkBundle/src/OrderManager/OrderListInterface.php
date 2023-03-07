@@ -42,13 +42,22 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
 
     public function getOffset(): int;
 
-    public function setOrder(string $order): OrderListInterface;
+    /**
+     * @return $this
+     */
+    public function setOrder(string $order): static;
 
-    public function setOrderState(string $state): OrderListInterface;
+    /**
+     * @return $this
+     */
+    public function setOrderState(string $state): static;
 
     public function getOrderState(): string;
 
-    public function setListType(string $type): OrderListInterface;
+    /**
+     * @return $this
+     */
+    public function setListType(string $type): static;
 
     public function getListType(): string;
 

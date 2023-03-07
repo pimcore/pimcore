@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Routing\Dynamic;
 
 use Pimcore\Http\Request\Resolver\SiteResolver;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject;
 use Pimcore\Routing\DataObjectRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -30,10 +31,14 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
     private SiteResolver $siteResolver;
 
+    private RequestHelper $requestHelper;
+
     public function __construct(
-        SiteResolver $siteResolver
+        SiteResolver $siteResolver,
+        RequestHelper $requestHelper
     ) {
         $this->siteResolver = $siteResolver;
+        $this->requestHelper = $requestHelper;
     }
 
     /**
@@ -64,9 +69,14 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         $slug = DataObject\Data\UrlSlug::resolveSlug($context->getOriginalPath(), $site ? $site->getId() : 0);
         if ($slug) {
             $object = DataObject::getById($slug->getObjectId());
-            if ($object instanceof DataObject\Concrete && $object->isPublished()) {
-                $route = $this->buildRouteForFromSlug($slug, $object);
-                $collection->add($route->getRouteKey(), $route);
+
+            if ($object instanceof DataObject\Concrete) {
+                $doBuildRoute = $object->isPublished() || $this->requestHelper->isObjectPreviewRequestByAdmin($context->getRequest());
+
+                if ($doBuildRoute) {
+                    $route = $this->buildRouteForFromSlug($slug, $object);
+                    $collection->add($route->getRouteKey(), $route);
+                }
             }
         }
     }

@@ -31,7 +31,7 @@ interface ExecutorInterface
      */
     public function executeMaintenance(array $validJobs = [], array $excludedJobs = []): void;
 
-    public function registerTask(string $name, TaskInterface $task): void;
+    public function registerTask(string $name, TaskInterface $task, ?string $messengerMessageClass = null): void;
 
     public function getTaskNames(): array;
 

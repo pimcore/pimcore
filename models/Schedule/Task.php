@@ -28,13 +28,13 @@ class Task extends Model\AbstractModel
 {
     protected ?int $id = null;
 
-    protected int $cid;
+    protected ?int $cid = null;
 
-    protected string $ctype;
+    protected ?string $ctype = null;
 
-    protected int $date;
+    protected ?int $date = null;
 
-    protected string $action;
+    protected ?string $action = null;
 
     protected ?int $version = null;
 
@@ -83,22 +83,22 @@ class Task extends Model\AbstractModel
         return $this->id;
     }
 
-    public function getCid(): int
+    public function getCid(): ?int
     {
         return $this->cid;
     }
 
-    public function getCtype(): string
+    public function getCtype(): ?string
     {
         return $this->ctype;
     }
 
-    public function getDate(): int
+    public function getDate(): ?int
     {
         return $this->date;
     }
 
-    public function getAction(): string
+    public function getAction(): ?string
     {
         return $this->action;
     }

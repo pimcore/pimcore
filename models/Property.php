@@ -25,17 +25,17 @@ use Pimcore\Model\Element\Service;
  */
 final class Property extends AbstractModel
 {
-    protected string $name;
+    protected ?string $name = null;
 
     protected mixed $data = null;
 
-    protected string $type;
+    protected ?string $type = null;
 
-    protected string $ctype;
+    protected ?string $ctype = null;
 
     protected ?string $cpath = null;
 
-    protected int $cid;
+    protected ?int $cid = null;
 
     protected bool $inheritable = false;
 
@@ -97,17 +97,15 @@ final class Property extends AbstractModel
         return $this;
     }
 
-    public function getCid(): int
+    public function getCid(): ?int
     {
         return $this->cid;
     }
 
     /**
      * enum('document','asset','object')
-     *
-     * @return string
      */
-    public function getCtype(): string
+    public function getCtype(): ?string
     {
         return $this->ctype;
     }
@@ -122,17 +120,15 @@ final class Property extends AbstractModel
         return $this->data;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
      * enum('text','document','asset','object','bool','select')
-     *
-     * @return string
      */
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }

@@ -31,19 +31,19 @@ final class Predefined extends Model\AbstractModel
 {
     protected ?string $id = null;
 
-    protected string $name;
+    protected ?string $name = null;
 
     protected ?string $description = null;
 
     protected ?string $key = null;
 
-    protected string $type;
+    protected ?string $type = null;
 
-    protected string $data;
+    protected ?string $data = null;
 
     protected ?string $config = null;
 
-    protected string $ctype;
+    protected ?string $ctype = null;
 
     protected bool $inheritable = false;
 
@@ -98,17 +98,17 @@ final class Predefined extends Model\AbstractModel
         return $this->key;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    public function getData(): string
+    public function getData(): ?string
     {
         return $this->data;
     }
@@ -134,7 +134,10 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    public function setData(string $data): static
+    /**
+     * @return $this
+     */
+    public function setData(?string $data): static
     {
         $this->data = $data;
 
@@ -189,7 +192,10 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    public function setDescription(string $description): static
+    /**
+     * @return $this
+     */
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
 
