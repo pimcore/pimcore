@@ -21,6 +21,14 @@ use Pimcore\Model\Element\ValidationException;
 
 class Helper
 {
+    /**
+     *
+     * @param array{dbColumName: string, dbColumnValue: mixed} $data The actual data to be inserted or updated into the database table.
+     *
+     * @param string[] $keys If the table needs to be updated, the columns listed in this parameter will be used as criteria/condition for the where clause.
+     * Typically, these are the primary key columns.
+     * The values for the specified keys are read from the $data parameter.
+     */
     public static function upsert(ConnectionInterface|\Doctrine\DBAL\Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
     {
         try {
