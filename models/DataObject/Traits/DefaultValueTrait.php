@@ -42,25 +42,19 @@ trait DefaultValueTrait
      */
     protected function handleDefaultValue(mixed $data, Concrete $object = null, array $params = []): mixed
     {
-        /*
-         * 1. only for create, not on update. otherwise there is no way to null it out anymore.
-         */
+        // 1. only for create, not on update. otherwise there is no way to null it out anymore.
         if ($params['isUpdate'] ?? true) {
             return $data;
         }
 
-        /*
-         * 2. we already have a value, no need to look for a default value.
-         */
+        // 2. we already have a value, no need to look for a default value.
         if (!$this->isEmpty($data)) {
             return $data;
         }
 
         $owner = $params['owner'] ?? null;
 
-        /*
-         * 3. if we have an object and a default value generator, use this to create a default value.
-         */
+        // 3. if we have an object and a default value generator, use this to create a default value.
         if ($object !== null && !empty($this->defaultValueGenerator)) {
             $defaultValueGenerator = DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
 
@@ -97,9 +91,7 @@ trait DefaultValueTrait
 
         $configuredDefaultValue = $this->doGetDefaultValue($object, $params['context'] ?? []);
 
-        /*
-         * 4. we check first if we even want to work with default values.
-         */
+        // 4. we check first if we even want to work with default values.
         if ($this->isEmpty($configuredDefaultValue)) {
             return $configuredDefaultValue;
         }
