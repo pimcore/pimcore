@@ -23,7 +23,7 @@ class ProductType implements OrderListFilterInterface
 {
     protected array $types = [];
 
-    public function apply(OrderListInterface $orderList): OrderListFilterInterface
+    public function apply(OrderListInterface $orderList): static
     {
         $types = [];
         $orderList->joinOrderItemObjects();

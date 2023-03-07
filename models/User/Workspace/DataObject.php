@@ -77,7 +77,7 @@ class DataObject extends AbstractWorkspace
         return $this->unpublish;
     }
 
-    public function setLEdit(string $lEdit): void
+    public function setLEdit(?string $lEdit): void
     {
         //@TODO - at the moment disallowing all languages is not possible - the empty lEdit value means that every language is allowed to edit...
         $this->lEdit = $lEdit;
@@ -88,7 +88,7 @@ class DataObject extends AbstractWorkspace
         return $this->lEdit;
     }
 
-    public function setLView(string $lView): void
+    public function setLView(?string $lView): void
     {
         $this->lView = $lView;
     }
@@ -98,7 +98,7 @@ class DataObject extends AbstractWorkspace
         return $this->lView;
     }
 
-    public function setLayouts(string $layouts): void
+    public function setLayouts(?string $layouts): void
     {
         $this->layouts = $layouts;
     }

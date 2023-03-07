@@ -221,7 +221,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $result->metaData['objectid'] = $baseObject->getId();
             $result->metaData['inherited'] = $level != 0;
         } else {
-            $fieldValue = null;
             $fieldValue = $item->$valueGetter();
             $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject, $params);
 

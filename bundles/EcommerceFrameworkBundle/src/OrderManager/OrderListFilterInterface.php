@@ -18,5 +18,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 interface OrderListFilterInterface
 {
-    public function apply(OrderListInterface $orderList): OrderListFilterInterface;
+    /**
+     * @return $this
+     */
+    public function apply(OrderListInterface $orderList): static;
 }

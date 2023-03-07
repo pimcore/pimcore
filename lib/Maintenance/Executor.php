@@ -132,6 +132,6 @@ final class Executor implements ExecutorInterface
             throw new \InvalidArgumentException(sprintf('Task with name %s has already been registered', $name));
         }
 
-        $this->tasks[$name] = ["taskClass" => $task, "messengerMessageClass" => $messengerMessageClass];
+        $this->tasks[$name] = ['taskClass' => $task, 'messengerMessageClass' => $messengerMessageClass];
     }
 }

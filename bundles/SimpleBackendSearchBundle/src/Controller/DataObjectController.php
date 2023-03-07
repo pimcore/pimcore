@@ -76,7 +76,7 @@ class DataObjectController extends AdminController
                     $fallbackValues = DataObject\Localizedfield::getGetFallbackValues();
                     DataObject\Localizedfield::setGetFallbackValues(true);
 
-                    $visibleFieldValue = DataObject\Service::useInheritedValues(true, function () use ($objectData, $visibleField, $classes) {
+                    $visibleFieldValue = DataObject\Service::useInheritedValues(true, static function () use ($objectData, $visibleField, $classes) {
                         $object = DataObject\Concrete::getById($objectData['id']);
                         if (!$object instanceof DataObject\Concrete) {
                             return null;
