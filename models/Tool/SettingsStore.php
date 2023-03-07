@@ -25,8 +25,11 @@ use Pimcore\Model\Tool\SettingsStore\Dao;
 final class SettingsStore extends Model\AbstractModel
 {
     public const TYPE_BOOLEAN = 'bool';
+
     public const TYPE_FLOAT = 'float';
+
     public const TYPE_INTEGER = 'int';
+
     public const TYPE_STRING = 'string';
 
     protected const ALLOWED_TYPES = [
