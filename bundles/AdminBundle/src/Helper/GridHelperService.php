@@ -341,7 +341,7 @@ class GridHelperService
                             }
                         }
                     }
-                } else {
+                } elseif ($filter['property'] !== 'fullpath') {
                     $conditionPartsFilters[] = $filter['property'] . " IS NULL OR " . $filter['property'] . " = ''";
                 }
             }
