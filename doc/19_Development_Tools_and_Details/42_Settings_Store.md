@@ -10,11 +10,11 @@ Sample use cases for settings store are:
 - ...
 
 The stored settings can be namespaced/grouped with a `scope` attribute and can be of following scalar data
-types:
-- `string`
-- `bool`
-- `int`
-- `float`
+types usable with `SettingsStore::TYPE_*` constants:
+- `SettingsStore::TYPE_STRING` (`string`)
+- `SettingsStore::TYPE_BOOLEAN` (`bool`)
+- `SettingsStore::TYPE_INTEGER` (`int`)
+- `SettingsStore::TYPE_FLOAT` (`float`)
 
 We highly recommend to use the `scope` attribute when using the settings store for a bundle (e.g. the bundles name),
 while you can omit it when using the settings store for your app.
@@ -26,7 +26,7 @@ Recommended
 ```php
 
 // store or update setting (id, data, type, scope)
-SettingsStore::set('my-setting-id', 'this is some setting value', 'string', 'bundle-settings-1');
+SettingsStore::set('my-setting-id', 'this is some setting value', SettingsStore::TYPE_STRING, 'bundle-settings-1');
 
 // load setting by id (id, scope)
 $setting = SettingsStore::get('my-setting-id', 'bundle-settings-1');

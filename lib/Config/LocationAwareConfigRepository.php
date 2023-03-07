@@ -167,7 +167,7 @@ class LocationAwareConfigRepository
             $this->writeYaml($key, $data);
         } elseif ($writeLocation === self::LOCATION_SETTINGS_STORE) {
             $settingsStoreData = json_encode($data);
-            SettingsStore::set($key, $settingsStoreData, 'string', $this->settingsStoreScope);
+            SettingsStore::set($key, $settingsStoreData, SettingsStore::TYPE_STRING, $this->settingsStoreScope);
         }
 
         $this->stopMessengerWorkers();

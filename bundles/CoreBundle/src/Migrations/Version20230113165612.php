@@ -33,7 +33,7 @@ final class Version20230113165612 extends AbstractMigration
     public function up(Schema $schema): void
     {
         if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle', 'pimcore')) {
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle', true, 'bool', 'pimcore');
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\UuidBundle\\PimcoreUuidBundle', true, SettingsStore::TYPE_BOOLEAN, 'pimcore');
         }
 
         $this->warnIf(
