@@ -326,6 +326,7 @@ pimcore.object.helpers.edit = {
                     applyDefaults = true;
                 }
                 field.setObject(this.object);
+                field.setToolbar(this.toolbar);
                 field.updateContext(context);
 
                 field.setName(l.name);
