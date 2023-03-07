@@ -23,6 +23,8 @@ use Pimcore\Model\DataObject\Concrete\Dao\InheritanceHelper;
 
 final class Version20230307135459 extends AbstractMigration
 {
+    protected string $fieldname = 'fieldname';
+
     public function getDescription(): string
     {
         return 'Add fieldname index to object_relations_ tables';
@@ -31,8 +33,8 @@ final class Version20230307135459 extends AbstractMigration
     public function up(Schema $schema): void
     {
         foreach ($schema->getTables() as $table) {
-            if (str_starts_with($table->getName(), InheritanceHelper::RELATION_TABLE) && !$table->hasIndex('fieldname')) {
-                $this->addSql("'ALTER TABLE `{$table->getName()}` ADD INDEX `fieldname` (`fieldname`);'");
+            if (str_starts_with($table->getName(), InheritanceHelper::RELATION_TABLE) && !$table->hasIndex($this->fieldname)) {
+                $table->addIndex([$this->fieldname], $this->fieldname);
             }
         }
     }
@@ -40,8 +42,8 @@ final class Version20230307135459 extends AbstractMigration
     public function down(Schema $schema): void
     {
         foreach ($schema->getTables() as $table) {
-            if (str_starts_with($table->getName(), InheritanceHelper::RELATION_TABLE) && $table->hasIndex('fieldname')) {
-                $this->addSql("'ALTER TABLE `{$table->getName()}` DROP INDEX `fieldname` (`fieldname`);'");
+            if (str_starts_with($table->getName(), InheritanceHelper::RELATION_TABLE) && $table->hasIndex($this->fieldname)) {
+                $table->dropIndex($this->fieldname);
             }
         }
     }
