@@ -24,18 +24,12 @@ namespace Pimcore\Resolver;
  */
 class ClassResolver implements ResolverInterface
 {
-    public const TYPE_DOCUMENTS = 'documents';
-    public const TYPE_ASSETS = 'assets';
-
-    private array $map;
-
-    public function __construct(array $classes = [])
+    public function __construct(protected array $map)
     {
-        $this->map = $classes;
     }
 
-    public function resolve(string $name, string $type): ?string
+    public function resolve(string $name): ?string
     {
-        return $this->map[$type][$name] ?? null;
+        return $this->map[$name] ?? null;
     }
 }

@@ -286,9 +286,9 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @return ClassResolver
      */
-    protected static function getClassResolver(): ClassResolver
+    protected static function getDocumentClassResolver(): ClassResolver
     {
-        return \Pimcore::getContainer()->get('pimcore.class.resolver');
+        return \Pimcore::getContainer()->get('pimcore.class.resolver.document');
     }
 
     /**

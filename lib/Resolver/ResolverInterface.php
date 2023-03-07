@@ -21,5 +21,5 @@ interface ResolverInterface
     /**
      * Returns FQCN of class
      */
-    public function resolve(string $name, string $type): ?string;
+    public function resolve(string $name): ?string;
 }

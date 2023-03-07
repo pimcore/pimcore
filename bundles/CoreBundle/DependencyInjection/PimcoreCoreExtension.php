@@ -235,12 +235,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     private function configureClassResolvers(ContainerBuilder $container, array $config): void
     {
-        $classTypes = [
-            ClassResolver::TYPE_DOCUMENTS => $config['documents']['type_definitions']['map']
-        ];
-
-        $service = $container->getDefinition(ClassResolver::class);
-        $service->setArguments([$classTypes]);
+        $container->setParameter('pimcore.documents.classes.map', $config['documents']['type_definitions']['map']);
     }
 
     private function configureRouting(ContainerBuilder $container, array $config)
