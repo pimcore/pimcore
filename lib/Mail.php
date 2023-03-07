@@ -403,31 +403,23 @@ class Mail extends Email
         if ($document instanceof Model\Document\Email) {
             if (!$this->recipientsCleared) {
                 $to = \Pimcore\Helper\Mail::parseEmailAddressField($document->getTo());
-                if (!empty($to)) {
-                    foreach ($to as $toEntry) {
-                        $this->addTo(new Address($toEntry['email'], $toEntry['name'] ?? ''));
-                    }
+                foreach ($to as $toEntry) {
+                    $this->addTo(new Address($toEntry['email'], $toEntry['name']));
                 }
 
                 $cc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getCc());
-                if (!empty($cc)) {
-                    foreach ($cc as $ccEntry) {
-                        $this->addCc(new Address($ccEntry['email'], $ccEntry['name'] ?? ''));
-                    }
+                foreach ($cc as $ccEntry) {
+                    $this->addCc(new Address($ccEntry['email'], $ccEntry['name']));
                 }
 
                 $bcc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getBcc());
-                if (!empty($bcc)) {
-                    foreach ($bcc as $bccEntry) {
-                        $this->addBcc(new Address($bccEntry['email'], $bccEntry['name'] ?? ''));
-                    }
+                foreach ($bcc as $bccEntry) {
+                    $this->addBcc(new Address($bccEntry['email'], $bccEntry['name']));
                 }
 
                 $replyTo = \Pimcore\Helper\Mail::parseEmailAddressField($document->getReplyTo());
-                if (!empty($replyTo)) {
-                    foreach ($replyTo as $replyToEntry) {
-                        $this->addReplyTo(new Address($replyToEntry['email'], $replyToEntry['name'] ?? ''));
-                    }
+                foreach ($replyTo as $replyToEntry) {
+                    $this->addReplyTo(new Address($replyToEntry['email'], $replyToEntry['name']));
                 }
             }
         }
@@ -435,11 +427,9 @@ class Mail extends Email
         if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
             //if more than one "from" email address is defined -> we set the first one
             $fromArray = \Pimcore\Helper\Mail::parseEmailAddressField($document->getFrom());
-            if (!empty($fromArray)) {
-                list($from) = $fromArray;
-                if ($from) {
-                    $this->from(new Address($from['email'], $from['name']));
-                }
+            if ($fromArray) {
+                [$from] = $fromArray;
+                $this->from(new Address($from['email'], $from['name']));
             }
         }
 

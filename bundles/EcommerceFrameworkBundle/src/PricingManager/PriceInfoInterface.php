@@ -25,7 +25,10 @@ interface PriceInfoInterface extends PriceSystemPriceInfoInterface
 {
     public function __construct(PriceSystemPriceInfoInterface $priceInfo, EnvironmentInterface $environment);
 
-    public function addRule(RuleInterface $rule): PriceSystemPriceInfoInterface;
+    /**
+     * @return $this
+     */
+    public function addRule(RuleInterface $rule): static;
 
     /**
      * Returns all valid rules, if forceRecalc, recalculation of valid rules is forced
@@ -36,7 +39,10 @@ interface PriceInfoInterface extends PriceSystemPriceInfoInterface
      */
     public function getRules(bool $forceRecalc = false): array;
 
-    public function setAmount(Decimal $amount): PriceInfoInterface;
+    /**
+     * @return $this
+     */
+    public function setAmount(Decimal $amount): static;
 
     public function getAmount(): Decimal;
 
@@ -46,7 +52,10 @@ interface PriceInfoInterface extends PriceSystemPriceInfoInterface
 
     public function getEnvironment(): EnvironmentInterface;
 
-    public function setEnvironment(EnvironmentInterface $environment): PriceInfoInterface;
+    /**
+     * @return $this
+     */
+    public function setEnvironment(EnvironmentInterface $environment): static;
 
     public function hasDiscount(): bool;
 

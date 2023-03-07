@@ -40,7 +40,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     protected ?array $availableFilterValues = null;
 
-    public function setListType(string $type): OrderListInterface
+    public function setListType(string $type): static
     {
         $this->listType = $type;
 

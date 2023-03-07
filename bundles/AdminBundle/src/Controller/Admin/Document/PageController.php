@@ -148,17 +148,6 @@ class PageController extends DocumentControllerBase
             }
         }
 
-        // check if settings exist, before saving meta data
-        if ($request->get('settings') && is_array($settings)) {
-            $metaData = [];
-            for ($i = 1; $i < 30; $i++) {
-                if (array_key_exists('metadata_' . $i, $settings)) {
-                    $metaData[] = $settings['metadata_' . $i];
-                }
-            }
-            $page->setMetaData($metaData);
-        }
-
         list($task, $page, $version) = $this->saveDocument($page, $request);
         $arguments = [
             'oldPage' => $oldPage,
