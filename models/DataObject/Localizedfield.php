@@ -716,10 +716,12 @@ final class Localizedfield extends Model\AbstractModel implements
             $lazyLoadedFields = $this->getLazyLoadedFieldNames();
             foreach ($lazyLoadedFields as $fieldName) {
                 foreach (Tool::getValidLanguages() as $language) {
-                    unset($this->items[$language][$fieldName]);
+                    if (!$this->isLanguageDirty($language)) {
+                        unset($this->items[$language][$fieldName]);
 
-                    $lazyKey = $this->buildLazyKey($fieldName, $language);
-                    $this->unmarkLazyKeyAsLoaded($lazyKey);
+                        $lazyKey = $this->buildLazyKey($fieldName, $language);
+                        $this->unmarkLazyKeyAsLoaded($lazyKey);
+                    }
                 }
             }
         }
