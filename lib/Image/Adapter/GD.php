@@ -30,7 +30,7 @@ class GD extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function load(string $imagePath, array $options = []): bool|static
+    public function load(string $imagePath, array $options = []): static|false
     {
         $this->path = $imagePath;
         if (!$this->resource = @imagecreatefromstring(file_get_contents($this->path))) {
@@ -359,12 +359,15 @@ class GD extends Adapter
         return $this;
     }
 
+    /**
+     * @var array<string, bool>
+     */
     protected static array $supportedFormatsCache = [];
 
     /**
      * {@inheritdoc}
      */
-    public function supportsFormat(string $format, bool $force = false): mixed
+    public function supportsFormat(string $format, bool $force = false): bool
     {
         if (!isset(self::$supportedFormatsCache[$format]) || $force) {
             $info = gd_info();

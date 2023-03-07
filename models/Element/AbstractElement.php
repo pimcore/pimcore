@@ -357,12 +357,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->versionCount ? $this->versionCount : 0;
     }
 
-    /**
-     * @return $this
-     */
-    public function setVersionCount(?int $versionCount): static
+    public function setVersionCount(int $versionCount): static
     {
-        $this->versionCount = (int) $versionCount;
+        $this->versionCount = $versionCount;
 
         return $this;
     }

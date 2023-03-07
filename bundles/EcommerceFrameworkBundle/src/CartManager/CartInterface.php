@@ -242,9 +242,9 @@ interface CartInterface
      *
      * @param callable $value_compare_func
      *
-     * @return CartInterface
+     * @return $this
      */
-    public function sortItems(callable $value_compare_func): CartInterface;
+    public function sortItems(callable $value_compare_func): static;
 
     /**
      * saves cart
