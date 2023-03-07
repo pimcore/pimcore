@@ -296,6 +296,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
+     * @deprecated Will be removed with Pimcore 11
+     *
      * @param Model\DataObject\ClassDefinition\Data\EncryptedField $masterDefinition
      */
     public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
