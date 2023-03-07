@@ -31,7 +31,7 @@ class Helper
             $critera = [];
             foreach ($keys as $key) {
                 $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
-                $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%1$s" passed for upsert not found in data', $key));
+                $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
             }
 
             return $connection->update($table, $data, $critera);
