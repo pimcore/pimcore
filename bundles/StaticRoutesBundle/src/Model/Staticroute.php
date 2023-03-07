@@ -234,6 +234,9 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setController(?string $controller): static
     {
         $this->controller = $controller;

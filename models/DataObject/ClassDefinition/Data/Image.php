@@ -102,13 +102,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return null;
     }
 
-    /**
-     * @param Asset\Image $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
     public function getDataForGrid(?Asset\Image $data, Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);

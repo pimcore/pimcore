@@ -1446,27 +1446,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
         ]);
     }
 
-    private function getSeoNodeConfig(Document $document): array
-    {
-        $nodeConfig = $this->getTreeNodeConfig($document);
-
-        if ($document instanceof Document\Page) {
-            // analyze content
-            $nodeConfig['prettyUrl'] = $document->getPrettyUrl();
-
-            $title = $document->getTitle();
-            $description = $document->getDescription();
-
-            $nodeConfig['title'] = $title;
-            $nodeConfig['description'] = $description;
-
-            $nodeConfig['title_length'] = mb_strlen($title);
-            $nodeConfig['description_length'] = mb_strlen($description);
-        }
-
-        return $nodeConfig;
-    }
-
     public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {

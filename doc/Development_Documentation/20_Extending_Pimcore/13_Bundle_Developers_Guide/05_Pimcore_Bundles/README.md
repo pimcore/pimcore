@@ -93,3 +93,63 @@ An example of a `composer.json` defining a Pimcore bundle:
     }
 }
 ```
+
+#### Returning the composer package version
+
+Pimcore provides a `Pimcore\Extension\Bundle\Traits\PackageVersionTrait` which you can include in your bundle. The trait
+includes a `getComposerPackageName` method which will return the name defined in your `composer.json` file.
+
+If you want to change the default behavior, all you need to do is to override the `getComposerPackageName` method returning
+the name of your composer package (e.g. `company/foo-bundle`):
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Company\FooBundle;
+
+use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+
+class FooBundle extends AbstractPimcoreBundle
+{
+    use PackageVersionTrait;
+
+    protected function getComposerPackageName(): string
+    {
+        // getVersion() will use this name to read the version from
+        // PackageVersions and return a normalized value
+        return 'company/foo-bundle';
+    }
+}
+```
+
+### Encore
+If you use Encore to build the assets of your bundle you can use the methods from `Pimcore\Helper\EncoreHelper`. 
+
+`EncoreHelper::getBuildPathsFromEntrypoints` accept the path to `entrypoints.json`, file ending as string and returns an array with paths to the build files.
+
+```php
+class PimcoreExampleBundle extends AbstractPimcoreBundle
+{
+    use PackageVersionTrait;
+
+    public function getCssPaths(): array
+    {
+        return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/example/entrypoints.json', 'css');
+    }
+
+    public function getJsPaths(): array
+    {
+        return EncoreHelper::getBuildPathsFromEntrypoints($this->getPath() . '/public/build/example/entrypoints.json');
+    }
+
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
+    
+    ...
+}
+```

@@ -26,6 +26,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
         this.fieldConfig = fieldConfig;
         this.editableDivId = "object_wysiwyg_" + uniqid();
+        this.dirty = false;
     },
 
     /**
@@ -126,24 +127,26 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutEdit: function () {
         this.getLayout();
-        this.component.on("afterlayout", this.initCkEditor.bind(this));
+        this.component.on("afterlayout", this.startWysiwygEditor.bind(this));
         this.component.on("beforedestroy", function() {
-            if(this.ckeditor) {
-                this.ckeditor.destroy();
-                this.ckeditor = null;
-            }
+            const beforeDestroyWysiwyg = new CustomEvent(pimcore.events.beforeDestroyWysiwyg, {
+                detail: {
+                    context: "object",
+                },
+            });
+            document.dispatchEvent(beforeDestroyWysiwyg);
         }.bind(this));
         return this.component;
     },
 
-    initCkEditor: function () {
+    startWysiwygEditor: function () {
 
-        if (this.ckeditor) {
+        if(this.ddWysiwyg) {
             return;
         }
 
         // add drop zone, use the parent panel here (container), otherwise this can cause problems when specifying a fixed height on the wysiwyg
-        var dd = new Ext.dd.DropZone(Ext.get(this.editableDivId).parent(), {
+        this.ddWysiwyg = new Ext.dd.DropZone(Ext.get(this.editableDivId).parent(), {
             ddGroup: "element",
 
             getTargetFromEvent: function(e) {
@@ -159,199 +162,43 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             onNodeDrop : this.onNodeDrop.bind(this)
         });
 
-        var eConfig = {
-            width: this.fieldConfig.width,
-            height: this.fieldConfig.height,
-            language: pimcore.settings["language"],
-            resize_enabled: false,
-            entities: false,
-            entities_greek: false,
-            entities_latin: false,
-            extraAllowedContent: "*[pimcore_type,pimcore_id,pimcore_disable_thumbnail]",
-            baseFloatZIndex: 40000 // prevent that the editor gets displayed behind the grid cell editor window
-        };
-
-        eConfig.toolbarGroups = [
-            { name: 'basicstyles', groups: [ 'undo', 'find', 'basicstyles', 'list'] },
-            '/',
-            { name: 'paragraph', groups: [ 'align', 'indent'] },
-            { name: 'blocks' },
-            { name: 'links' },
-            { name: 'insert' },
-            '/',
-            { name: 'styles' },
-            { name: 'tools', groups: ['colors', 'tools', 'cleanup', 'mode', 'others'] }
-        ];
-
-        if(eConfig.hasOwnProperty('removePlugins'))
-            eConfig.removePlugins += ",tableresize";
-        else
-            eConfig.removePlugins = "tableresize";
-
-        if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
-            eConfig = mergeObject(eConfig, pimcore.object.tags.wysiwyg.defaultEditorConfig);
-        }
-
-        if(this.fieldConfig.toolbarConfig) {
-            const useNativeJson = Ext.USE_NATIVE_JSON;
-            Ext.USE_NATIVE_JSON = false;
-            var elementCustomConfig = Ext.decode(this.fieldConfig.toolbarConfig);
-            Ext.USE_NATIVE_JSON = useNativeJson;
-            eConfig = mergeObject(eConfig, elementCustomConfig);
-        }
-
-        if(!isNaN(this.fieldConfig.maxCharacters) && this.fieldConfig.maxCharacters > 0) {
-            var maxChars = this.fieldConfig.maxCharacters;
-            eConfig.wordcount = {
-                showParagraphs: false,
-                showWordCount: false,
-                showCharCount: true,
-                maxCharCount: maxChars
+        const initializeWysiwyg = new CustomEvent(pimcore.events.initializeWysiwyg, {
+            detail: {
+                config: this.fieldConfig,
+                context: "object"
             }
-        } else {
-            eConfig.wordcount = {
-                showParagraphs: false,
-                showWordCount: false,
-                showCharCount: true,
-                maxCharCount: -1
-            }
-        }
+        });
+        document.dispatchEvent(initializeWysiwyg);
 
-        try {
-            this.ckeditor = CKEDITOR.inline(this.editableDivId, eConfig);
+        const createWysiwyg = new CustomEvent(pimcore.events.createWysiwyg, {
+            detail: {
+                textarea: this.editableDivId,
+                context: "object",
+            },
+        });
+        document.dispatchEvent(createWysiwyg);
 
-            // disable URL field in image dialog
-            this.ckeditor.on("dialogShow", function (e) {
-                var urlField = e.data.getElement().findOne("input");
-                if(urlField && urlField.getValue()) {
-                    if(urlField.getValue().indexOf("/image-thumbnails/") > 1) {
-                        urlField.getParent().getParent().getParent().hide();
-                    }
-                } else if (urlField) {
-                    urlField.getParent().getParent().getParent().show();
-                }
-            });
-
-            // force paste dialog to prevent security message on various browsers
-            this.ckeditor.on('beforeCommandExec', function(event) {
-                if (event.data.name === 'paste') {
-                    event.editor._.forcePasteDialog = true;
-                }
-
-                if (event.data.name === 'pastetext' && event.data.commandData.from === 'keystrokeHandler') {
-                    event.cancel();
-                }
-            });
-
-        } catch (e) {
-            console.log(e);
-        }
+        document.addEventListener(pimcore.events.changeWysiwyg, function (e) {
+            this.setValue(e.detail.data);
+        }.bind(this));
     },
 
     onNodeDrop: function (target, dd, e, data) {
-
-        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+        if (!pimcore.helpers.dragAndDropValidateSingleItem(data) || !this.dndAllowed(data.records[0].data) || this.inherited) {
             return false;
         }
 
-        if (!this.ckeditor) {
-            return;
-        }
-
-        this.ckeditor.focus();
-
-        var node = data.records[0];
-
-        if (!this.ckeditor ||!this.dndAllowed(node.data)) {
-            return;
-        }
-
-        var wrappedText = node.data.text;
-        var textIsSelected = false;
-
-        try {
-            var selection = this.ckeditor.getSelection();
-            var bookmarks = selection.createBookmarks();
-            var range = selection.getRanges()[ 0 ];
-            var fragment = range.clone().cloneContents();
-
-            selection.selectBookmarks(bookmarks);
-            var retval = "";
-            var childList = fragment.getChildren();
-            var childCount = childList.count();
-
-            for (var i = 0; i < childCount; i++) {
-                var child = childList.getItem(i);
-                retval += ( child.getOuterHtml ?
-                        child.getOuterHtml() : child.getText() );
-            }
-
-            if (retval.length > 0) {
-                wrappedText = retval;
-                textIsSelected = true;
-            }
-        }
-        catch (e2) {
-        }
-
-
-        // remove existing links out of the wrapped text
-        wrappedText = wrappedText.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, function ($0, $1) {
-            if($1.toLowerCase() == "a") {
-                return "";
-            }
-            return $0;
+        const onDropWysiwyg = new CustomEvent(pimcore.events.onDropWysiwyg, {
+            detail: {
+                target: target,
+                dd: dd,
+                e: e,
+                data: data,
+                context: "object",
+            },
         });
 
-        var id = node.data.id;
-        var uri = node.data.path;
-        var browserPossibleExtensions = ["jpg","jpeg","gif","png"];
-
-        if (node.data.elementType == "asset") {
-            if (node.data.type == "image" && textIsSelected == false) {
-                // images bigger than 600px or formats which cannot be displayed by the browser directly will be
-                // converted by the pimcore thumbnailing service so that they can be displayed in the editor
-                var defaultWidth = 600;
-                var additionalAttributes = "";
-                uri = Routing.generate('pimcore_admin_asset_getimagethumbnail', {id: id, width: defaultWidth, aspectratio: true});
-
-                if(typeof node.data.imageWidth != "undefined") {
-                    if(node.data.imageWidth < defaultWidth
-                                && in_arrayi(pimcore.helpers.getFileExtension(node.data.text),
-                                                                        browserPossibleExtensions)) {
-                        uri = node.data.path;
-                        additionalAttributes += ' pimcore_disable_thumbnail="true"';
-                    }
-
-                    if(node.data.imageWidth < defaultWidth) {
-                        defaultWidth = node.data.imageWidth;
-                    }
-                }
-
-                this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id
-                                + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
-                return true;
-            }
-            else {
-                this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="asset" pimcore_id="'
-                                + id + '">' + wrappedText + '</a>');
-                return true;
-            }
-        }
-
-        if (node.data.elementType == "document" && (node.data.type=="page"
-                                || node.data.type=="hardlink" || node.data.type=="link")){
-            this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
-                                + id + '">' + wrappedText + '</a>');
-            return true;
-        }
-
-        if (node.data.elementType == "object"){
-            this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="object" pimcore_id="'
-                + id + '">' + wrappedText + '</a>');
-            return true;
-        }
-
+        document.dispatchEvent(onDropWysiwyg);
     },
 
     dndAllowed: function(data) {
@@ -369,19 +216,12 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     },
 
     getValue: function () {
-
-        var data = this.data;
-        try {
-            if (this.ckeditor) {
-                data = this.ckeditor.getData();
-            }
-        }
-        catch (e) {
-        }
-
-        this.data = data;
-
         return this.data;
+    },
+
+    setValue: function (value) {
+        this.dirty = true;
+        this.data = value;
     },
 
     getName: function () {
@@ -393,21 +233,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             return false;
         }
 
-        if(this.dirty) {
-            return this.dirty;
-        }
-
-        if(this.ckeditor) {
-            var ckeditorDirty = this.ckeditor.checkDirty();
-            if(ckeditorDirty) {
-                // once dirty, always dirty
-                // this is due the way checkDirty() is implemented in CKEditor, because it relies on the initial content
-                this.dirty = ckeditorDirty;
-            }
-            return ckeditorDirty;
-        }
-
-        return false;
+        return this.dirty;
     },
 
     getWindowCellEditor: function (field, record) {
@@ -423,4 +249,3 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     }
 });
 
-CKEDITOR.disableAutoInline = true;

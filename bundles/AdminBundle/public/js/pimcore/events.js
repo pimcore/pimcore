@@ -239,7 +239,40 @@
  * before building menu
  * for adding menu entries with priorities to be sorted
  */
-pimcore.events.preMenuBuild = "pimcore.menu.preBuild";
+ pimcore.events.preMenuBuild = "pimcore.menu.preBuild";
+
+/**
+ *  start event for the editor to create the config
+ *  config and context are passed as parameters
+ */
+pimcore.events.initializeWysiwyg = "pimcore.wysiwyg.initialize";
+
+/**
+ *  event for binding the editor to a field
+ *  change event is registered here
+ *  textarea and context are passed as parameters
+ */
+pimcore.events.createWysiwyg = "pimcore.wysiwyg.create";
+
+/**
+ *  change event needs to be fired by the editor implementation
+ *  e, data and context are passed as parameters
+ */
+pimcore.events.changeWysiwyg = "pimcore.wysiwyg.change";
+
+/**
+ *  fired when an element is dropped
+ *  create a link for documents, objects and assets
+ *  target, dd, e, data and context are passed as parameters
+ */
+pimcore.events.onDropWysiwyg = "pimcore.wysiwyg.onDrop";
+
+/**
+ *  before the field of the editor is destroyed
+ *  editor is destroyed here
+ *  context is passed as parameters
+ */
+pimcore.events.beforeDestroyWysiwyg = "pimcore.wysiwyg.beforeDestroy";
 
 /**
  * after settings tab of page is opened

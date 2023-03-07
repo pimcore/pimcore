@@ -1355,8 +1355,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 'x' => $request->get('cropLeft'),
             ]);
 
-            $hash = md5(Tool\Serialize::serialize(array_merge($request->request->all(), $request->query->all())));
-            $thumbnailConfig->setName($thumbnailConfig->getName() . '_auto_' . $hash);
+            $thumbnailConfig->generateAutoName();
         }
 
         $thumbnail = $image->getThumbnail($thumbnailConfig);
@@ -2300,7 +2299,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             for ($i = $offset; $i < ($offset + $limit); $i++) {
                 $path = $zip->getNameIndex($i);
 
-                if (str_starts_with($path, '__MACOSX/') || $path === 'Thumbs.db') {
+                if (str_starts_with($path, '__MACOSX/') || str_ends_with($path, '/Thumbs.db')) {
                     continue;
                 }
 

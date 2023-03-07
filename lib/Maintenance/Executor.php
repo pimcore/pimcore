@@ -47,7 +47,7 @@ final class Executor implements ExecutorInterface
             throw new \Exception(sprintf('Task with name "%s" not found', $name));
         }
 
-        $task = $this->tasks[$name];
+        $task = $this->tasks[$name]['taskClass'];
 
         try {
             $this->logger->info('Starting job with ID {id}', [
@@ -90,8 +90,9 @@ final class Executor implements ExecutorInterface
                 continue;
             }
 
+            $className = $task['messengerMessageClass'] ?? MaintenanceTaskMessage::class;
             $this->messengerBusPimcoreCore->dispatch(
-                new MaintenanceTaskMessage($name)
+                new $className($name)
             );
         }
     }
@@ -125,12 +126,12 @@ final class Executor implements ExecutorInterface
         return 0;
     }
 
-    public function registerTask(string $name, TaskInterface $task): void
+    public function registerTask(string $name, TaskInterface $task, ?string $messengerMessageClass = null): void
     {
         if (array_key_exists($name, $this->tasks)) {
             throw new \InvalidArgumentException(sprintf('Task with name %s has already been registered', $name));
         }
 
-        $this->tasks[$name] = $task;
+        $this->tasks[$name] = ["taskClass" => $task, "messengerMessageClass" => $messengerMessageClass];
     }
 }
