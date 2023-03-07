@@ -859,6 +859,7 @@ final class Configuration implements ConfigurationInterface
                             ->defaultNull()
                             ->info('Optionally define route patterns to lookup static pages. Regular Expressions like: /^\/en\/Magazine/')
                         ->end()
+                    ->end()
                 ->end()
             ->end();
 
