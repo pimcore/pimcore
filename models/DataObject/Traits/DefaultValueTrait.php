@@ -42,97 +42,94 @@ trait DefaultValueTrait
      */
     protected function handleDefaultValue(mixed $data, Concrete $object = null, array $params = []): mixed
     {
-        $context = isset($params['context']) ? $params['context'] : [];
-        $isUpdate = isset($params['isUpdate']) ? $params['isUpdate'] : true;
-
-        /**
+        /*
          * 1. only for create, not on update. otherwise there is no way to null it out anymore.
          */
-        if ($isUpdate) {
+        if ($params['isUpdate'] ?? true) {
             return $data;
         }
 
-        /**
-         * 2. if inheritance is enabled and there is no parent value then take the default value.
-         * 3. if inheritance is disabled, take the default value.
+        /*
+         * 2. we already have a value, no need to look for a default value.
          */
-        if ($this->isEmpty($data)) {
-            $class = null;
-            $owner = isset($params['owner']) ? $params['owner'] : null;
-            if ($owner instanceof Concrete) {
-                $class = $owner->getClass();
-            } elseif ($owner instanceof AbstractData) {
-                $class = $owner->getObject()->getClass();
-            }
-
-            if ($object !== null && !empty($this->defaultValueGenerator)) {
-                $defaultValueGenerator = DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
-
-                if ($defaultValueGenerator instanceof DefaultValueGeneratorInterface) {
-                    if (!isset($params['context'])) {
-                        $params['context'] = [];
-                    }
-
-                    if ($owner instanceof Concrete) {
-                        $params['context'] = array_merge($params['context'], [
-                            'ownerType' => 'object',
-                            'fieldname' => $this->getName(),
-                        ]);
-                    } elseif ($owner instanceof Localizedfield) {
-                        $params['context'] = array_merge($params['context'], [
-                            'ownerType' => 'localizedfield',
-                            'ownerName' => 'localizedfields',
-                            'position' => $params['language'],
-                            'fieldname' => $this->getName(),
-                        ]);
-                    } elseif ($owner instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData) {
-                        $params['context'] = array_merge($params['context'], [
-                            'ownerType' => 'fieldcollection',
-                            'ownerName' => $owner->getFieldname(),
-                            'fieldname' => $this->getName(),
-                            'index' => $owner->getIndex(),
-                        ]);
-                    } elseif ($owner instanceof AbstractData) {
-                        $params['context'] = array_merge($params['context'], [
-                            'ownerType' => 'objectbrick',
-                            'ownerName' => $owner->getFieldname(),
-                            'fieldname' => $this->getName(),
-                            'index' => $owner->getType(),
-                        ]);
-                    }
-
-                    return $defaultValueGenerator->getValue($object, $this, $params['context']);
-                }
-            }
-
-            // we check first if we even want to work with default values. if this is not the case then
-            // we are also not allowed to inspect the parent value.
-
-            // if the parent doesn't have a value then we take the configured value as fallback
-            $configuredDefaultValue = $this->doGetDefaultValue($object, $context);
-            if (!$this->isEmpty($configuredDefaultValue)) {
-                if ($class && $class->getAllowInherit()) {
-                    $params = [];
-
-                    try {
-                        // make sure we get the inherited value of the parent
-                        $data = DataObject\Service::useInheritedValues(true, function () use ($owner, $params) {
-                            $data = $owner->getValueFromParent($this->getName(), $params);
-                            if (!$this->isEmpty($data)) {
-                                return null;
-                            }
-
-                            return $data;
-                        });
-                    } catch (InheritanceParentNotFoundException $e) {
-                        // no data from parent available, use the default value
-                    }
-                }
-            }
-            $data = $configuredDefaultValue;
+        if (!$this->isEmpty($data)) {
+            return $data;
         }
 
-        return $data;
+        $owner = $params['owner'] ?? null;
+
+        /*
+         * 3. if we have an object and a default value generator, use this to create a default value.
+         */
+        if ($object !== null && !empty($this->defaultValueGenerator)) {
+            $defaultValueGenerator = DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
+
+            if ($defaultValueGenerator instanceof DefaultValueGeneratorInterface) {
+                $context = array_merge($params['context'] ?? [], match (true) {
+                    $owner instanceof Concrete => [
+                        'ownerType' => 'object',
+                        'fieldname' => $this->getName(),
+                    ],
+                    $owner instanceof Localizedfield => [
+                        'ownerType' => 'localizedfield',
+                        'ownerName' => 'localizedfields',
+                        'position' => $params['language'],
+                        'fieldname' => $this->getName(),
+                    ],
+                    $owner instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData => [
+                        'ownerType' => 'fieldcollection',
+                        'ownerName' => $owner->getFieldname(),
+                        'fieldname' => $this->getName(),
+                        'index' => $owner->getIndex(),
+                    ],
+                    $owner instanceof AbstractData => [
+                        'ownerType' => 'objectbrick',
+                        'ownerName' => $owner->getFieldname(),
+                        'fieldname' => $this->getName(),
+                        'index' => $owner->getType(),
+                    ],
+                    default => [],
+                });
+
+                return $defaultValueGenerator->getValue($object, $this, $context);
+            }
+        }
+
+        $configuredDefaultValue = $this->doGetDefaultValue($object, $params['context'] ?? []);
+
+        /*
+         * 4. we check first if we even want to work with default values.
+         */
+        if ($this->isEmpty($configuredDefaultValue)) {
+            return $configuredDefaultValue;
+        }
+
+        $class = match (true) {
+            $owner instanceof Concrete => $owner->getClass(),
+            $owner instanceof AbstractData => $owner->getObject()?->getClass(),
+            default => null,
+        };
+
+        /*
+         * 5. if inheritance is enabled and there is no parent value then take the default value.
+         * 6. if inheritance is disabled, take the default value.
+         */
+        if ($class?->getAllowInherit()) {
+            try {
+                // make sure we get the inherited value of the parent
+                $parentValue = DataObject\Service::useInheritedValues(true,
+                    fn () => $owner?->getValueFromParent($this->getName(), []),
+                );
+
+                if (!$this->isEmpty($parentValue)) {
+                    return null;
+                }
+            } catch (InheritanceParentNotFoundException) {
+                // no data from parent available, use the default value
+            }
+        }
+
+        return $configuredDefaultValue;
     }
 
     public function getDefaultValueGenerator(): string

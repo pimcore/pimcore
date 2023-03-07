@@ -144,71 +144,44 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
         $this->setObject($object);
 
-        $getters = $this->getBrickGetters();
-
-        foreach ($getters as $getter) {
+        foreach ($this->getBrickGetters() as $getter) {
             $brick = $this->$getter(true);
+            $createParentBrick = function () use ($object, $getter, $params) {
+                //check if parent object has brick, and if so, create an empty brick to enable inheritance
+                $parentBrick = DataObject\Service::useInheritedValues(true, function () use ($object, $getter) {
+                    if (DataObject::doGetInheritedValues($object)) {
+                        try {
+                            return $object->getValueFromParent($this->fieldname)?->$getter();
+                        } catch (InheritanceParentNotFoundException) {
+                            return null;
+                        }
+                    }
+
+                    return null;
+                });
+
+                if (!empty($parentBrick)) {
+                    $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
+                    $brick = new $brickType($object);
+                    $brick->setFieldname($this->getFieldname());
+                    $brick->save($object, $params);
+                }
+
+                return $parentBrick;
+            };
 
             if ($brick instanceof Objectbrick\Data\AbstractData) {
                 if ($brick->getDoDelete()) {
                     $brick->delete($object);
 
                     $setter = 's' . substr($getter, 1);
-                    $this->$setter(null);
-
-                    //check if parent object has brick, and if so, create an empty brick to enable inheritance
-                    $parentBrick = DataObject\Service::useInheritedValues(true, function () use ($object, $getter) {
-                        if (DataObject::doGetInheritedValues($object)) {
-                            try {
-                                $container = $object->getValueFromParent($this->fieldname);
-                                if (!empty($container)) {
-                                    return $container->$getter();
-                                }
-                            } catch (InheritanceParentNotFoundException $e) {
-                                // no data from parent available, continue ...
-                                return null;
-                            }
-                        }
-
-                        return null;
-                    });
-
-                    if (!empty($parentBrick)) {
-                        $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
-                        $brick = new $brickType($object);
-                        $brick->setFieldname($this->getFieldname());
-                        $brick->save($object, $params);
-                        $this->$setter($brick);
-                    }
+                    $this->$setter($createParentBrick());
                 } else {
                     $brick->setFieldname($this->getFieldname());
                     $brick->save($object, $params);
                 }
-            } else {
-                if ($brick == null) {
-                    $parentBrick = DataObject\Service::useInheritedValues(true, function () use ($object, $getter) {
-                        if (DataObject::doGetInheritedValues($object)) {
-                            try {
-                                $container = $object->getValueFromParent($this->fieldname);
-                                if (!empty($container)) {
-                                    return $container->$getter();
-                                }
-                            } catch (InheritanceParentNotFoundException $e) {
-                                // no data from parent available, continue ...
-                                return null;
-                            }
-                        }
-
-                        return null;
-                    });
-
-                    if (!empty($parentBrick)) {
-                        $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
-                        $brick = new $brickType($object);
-                        $brick->setFieldname($this->getFieldname());
-                        $brick->save($object, $params);
-                    }
-                }
+            } elseif ($brick === null) {
+                $createParentBrick();
             }
         }
     }
