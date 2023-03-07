@@ -341,6 +341,8 @@ class GridHelperService
                             }
                         }
                     }
+                } elseif ($filter['property'] !== 'fullpath') {
+                    $conditionPartsFilters[] = $filter['property'] . " IS NULL OR " . $filter['property'] . " = ''";
                 }
             }
         }
@@ -601,7 +603,6 @@ class GridHelperService
                 $slugJoins = array_merge($slugJoins, $featureAndSlugFilters['slugJoins']);
             }
         }
-
         if (!empty($requestParams['condition']) && $adminUser->isAdmin()) {
             $conditionFilters[] = '(' . $requestParams['condition'] . ')';
         }
