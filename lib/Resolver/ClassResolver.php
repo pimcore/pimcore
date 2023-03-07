@@ -34,8 +34,8 @@ class ClassResolver implements ResolverInterface
         $this->map = $classes;
     }
 
-    public function resolve(string $class, string $type): ?string
+    public function resolve(string $name, string $type): ?string
     {
-        return $this->map[$type][$class] ?? null;
+        return $this->map[$type][$name] ?? null;
     }
 }
