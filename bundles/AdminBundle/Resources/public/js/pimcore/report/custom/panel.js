@@ -159,14 +159,14 @@ pimcore.report.custom.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item') + ".<br>" + t("naming_requirements_3chars") + " (a-zA-Z0-9_-)",
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item') + " (a-zA-Z-_)",
                                                 this.addFieldComplete.bind(this), null, null, "");
     },
 
     addFieldComplete: function (button, value, object) {
 
-        var regresult = value.match(/[a-zA-Z0-9_\-]+/);
-        if (button == "ok" && value.length > 2 && regresult == value) {
+        var regresult = value.match(/[a-zA-Z\-_]+/);
+        if (button == "ok" && regresult == value) {
 
             var codes = this.tree.getRootNode().childNodes;
             for (var i = 0; i < codes.length; i++) {
