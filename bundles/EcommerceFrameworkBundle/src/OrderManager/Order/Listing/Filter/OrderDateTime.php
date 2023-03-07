@@ -27,7 +27,7 @@ class OrderDateTime implements OrderListFilterInterface
 
     protected string $column = 'order.orderDate';
 
-    public function apply(OrderListInterface $orderList): OrderListFilterInterface
+    public function apply(OrderListInterface $orderList): static
     {
         // init
         $queryBuilder = $orderList->getQueryBuilder();

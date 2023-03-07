@@ -79,7 +79,14 @@ pimcore.settings.gdpr.gdprPanel = Class.create({
                             xtype: 'textfield',
                             name: 'email',
                             fieldLabel: t("gdpr_data_extractor_label_email"),
-                            width: 650
+                            width: 650,
+                            validator: function (value) {
+                                if(value !== value.replace(/[^a-zA-Z0-9_\-@.]/g,'')){
+                                    this.setValue(value.replace(/[^a-zA-Z0-9_\-@.]/g,''));
+                                }
+
+                                return true;
+                            }
                         },
                         {
                             xtype: "button",

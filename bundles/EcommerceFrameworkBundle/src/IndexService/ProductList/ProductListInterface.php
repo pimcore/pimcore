@@ -132,8 +132,6 @@ interface ProductListInterface extends PaginateListingInterface
 
     /**
      * gets order direction
-     *
-     * @return ?string
      */
     public function getOrder(): ?string;
 

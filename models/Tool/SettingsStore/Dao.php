@@ -31,12 +31,12 @@ class Dao extends Model\Dao\AbstractDao
     public function set(string $id, float|bool|int|string $data, string $type = 'string', ?string $scope = null): bool
     {
         try {
-            Helper::insertOrUpdate($this->db, self::TABLE_NAME, [
+            Helper::upsert($this->db, self::TABLE_NAME, [
                 'id' => $id,
                 'data' => $data,
                 'scope' => (string) $scope,
                 'type' => $type,
-            ]);
+            ], $this->getPrimaryKey(self::TABLE_NAME));
 
             return true;
         } catch (\Exception $e) {

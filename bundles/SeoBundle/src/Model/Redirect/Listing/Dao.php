@@ -15,8 +15,8 @@
 
 namespace Pimcore\Bundle\SeoBundle\Model\Redirect\Listing;
 
-use Pimcore\Bundle\SeoBundle\Model\Redirect\Listing;
 use Pimcore\Bundle\SeoBundle\Model\Redirect;
+use Pimcore\Bundle\SeoBundle\Model\Redirect\Listing;
 use Pimcore\Model;
 
 /**

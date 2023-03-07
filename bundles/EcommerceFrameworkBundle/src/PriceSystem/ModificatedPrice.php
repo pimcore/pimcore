@@ -39,6 +39,9 @@ class ModificatedPrice extends Price implements ModificatedPriceInterface
         return $this->rule;
     }
 
+    /**
+     * @return $this
+     */
     public function setRule(?RuleInterface $rule): static
     {
         $this->rule = $rule;
@@ -51,8 +54,13 @@ class ModificatedPrice extends Price implements ModificatedPriceInterface
         return $this->description ?? '';
     }
 
-    public function setDescription(?string $description = null): void
+    /**
+     * @return $this
+     */
+    public function setDescription(?string $description = null): static
     {
         $this->description = $description;
+
+        return $this;
     }
 }

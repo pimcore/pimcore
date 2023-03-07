@@ -564,11 +564,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
         return $this->adminJson(['success' => $success]);
     }
 
-    private function firePostMoveEvent(Document $document, Document $oldDocument, string $oldPath) : void
+    private function firePostMoveEvent(Document $document, Document $oldDocument, string $oldPath): void
     {
         $arguments = [
             'oldPath' => $oldPath,
-            'oldDocument' => $oldDocument
+            'oldDocument' => $oldDocument,
         ];
         $documentEvent = new Pimcore\Event\Model\DocumentEvent($document, $arguments);
         $this->dispatchEvent($documentEvent, Pimcore\Event\DocumentEvents::POST_MOVE_ACTION);
@@ -1444,27 +1444,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
             'language' => $language,
             'translationLinks' => $translationLinks,
         ]);
-    }
-
-    private function getSeoNodeConfig(Document $document): array
-    {
-        $nodeConfig = $this->getTreeNodeConfig($document);
-
-        if ($document instanceof Document\Page) {
-            // analyze content
-            $nodeConfig['prettyUrl'] = $document->getPrettyUrl();
-
-            $title = $document->getTitle();
-            $description = $document->getDescription();
-
-            $nodeConfig['title'] = $title;
-            $nodeConfig['description'] = $description;
-
-            $nodeConfig['title_length'] = mb_strlen($title);
-            $nodeConfig['description_length'] = mb_strlen($description);
-        }
-
-        return $nodeConfig;
     }
 
     public function onKernelControllerEvent(ControllerEvent $event): void

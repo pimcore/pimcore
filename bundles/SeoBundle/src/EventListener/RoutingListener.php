@@ -11,10 +11,9 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace Pimcore\Bundle\SeoBundle\EventListener;
 
@@ -33,13 +32,12 @@ class RoutingListener implements EventSubscriberInterface
 
     public function __construct(protected RedirectHandler $redirectHandler)
     {
-
     }
 
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents() : array
+    public static function getSubscribedEvents(): array
     {
         return [
             // run with high priority as we need to set the site early
@@ -52,7 +50,7 @@ class RoutingListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if(!PimcoreSeoBundle::isInstalled()) {
+        if (!PimcoreSeoBundle::isInstalled()) {
             return;
         }
 
@@ -65,7 +63,7 @@ class RoutingListener implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event): void
     {
-        if(!PimcoreSeoBundle::isInstalled()) {
+        if (!PimcoreSeoBundle::isInstalled()) {
             return;
         }
 

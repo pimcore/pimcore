@@ -32,4 +32,7 @@ return [
     "Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\TinymceBundle\\PimcoreTinymceBundle" => [
+        "all" => TRUE
+    ],
 ];

@@ -46,7 +46,7 @@ class SitemapGeneratorListener implements EventSubscriberInterface
 
     public function onPopulateSitemap(SitemapPopulateEvent $event): void
     {
-        if(!PimcoreSeoBundle::isInstalled()) {
+        if (!PimcoreSeoBundle::isInstalled()) {
             return;
         }
 
