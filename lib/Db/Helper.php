@@ -23,7 +23,7 @@ class Helper
 {
     /**
      *
-     * @param array{dbColumName: string, dbColumnValue: mixed} $data The actual data to be inserted or updated into the database table.
+     * @param array<string, mixed> $data The actual data to be inserted or updated into the database table.
      *
      * @param string[] $keys If the table needs to be updated, the columns listed in this parameter will be used as criteria/condition for the where clause.
      * Typically, these are the primary key columns.
