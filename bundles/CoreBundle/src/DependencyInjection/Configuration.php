@@ -860,20 +860,6 @@ final class Configuration implements ConfigurationInterface
                             ->info('Optionally define route patterns to lookup static pages. Regular Expressions like: /^\/en\/Magazine/')
                         ->end()
                 ->end()
-            ->end()
-            ->arrayNode('class_definitions')
-                ->children()
-                    ->arrayNode('data')
-                        ->children()
-                            ->arrayNode('map')
-                                ->useAttributeAsKey('name')
-                                ->prototype('scalar')->end()
-                            ->end()
-                            ->arrayNode('prefixes')
-                                ->prototype('scalar')->end()
-                        ->end()
-                    ->end()
-                ->end()
             ->end();
 
         $this->addImplementationLoaderNode($documentsNode, 'type_definitions');
