@@ -70,10 +70,10 @@ pimcore.object.classes.data.newsletterConfirmed = Class.create(pimcore.object.cl
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
+        const nameField = this.layout.getComponent("standardSettings").getComponent("name");
         nameField.disable();
 
-        var noteditable  = this.layout.getComponent("standardSettings").getComponent("noteditable");
+        const noteditable  = this.layout.getComponent("standardSettings").getComponent("noteditable");
         noteditable.disable();
         return [];
     }

@@ -67,14 +67,41 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             datax.options = [];
         }
 
-        var valueStore = new Ext.data.JsonStore({
+        const stylingItems = [
+            {
+                xtype: "textfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            {
+                xtype: "textfield",
+                fieldLabel: t("height"),
+                name: "height",
+                value: datax.height
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('height_explanation')
+            }
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            return stylingItems;
+        }
+
+        const valueStore = new Ext.data.JsonStore({
             fields: ["key", {name: "value", allowBlank: false}],
             data: datax.options
         });
 
-        var valueGrid;
-
-        valueGrid = Ext.create('Ext.grid.Panel', {
+        let valueGrid = Ext.create('Ext.grid.Panel', {
             itemId: "valueeditor",
             viewConfig: {
                 plugins: [
@@ -91,13 +118,13 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 xtype: "button",
                 iconCls: "pimcore_icon_add",
                 handler: function () {
-                    var u = {
+                    let u = {
                         key: "",
                         value: ""
                     };
 
                     let selection = this.selectionModel.getSelection();
-                    var idx;
+                    let idx;
                     if (selection.length > 0) {
                         let selectedRow = selection[0];
                         idx = valueStore.indexOf(selectedRow) + 1;
@@ -114,7 +141,6 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     handler: this.showoptioneditor.bind(this, valueStore)
 
                 }],
-            disabled: this.isInCustomLayoutEditor(),
             style: "margin-top: 10px",
             store: valueStore,
             selModel: Ext.create('Ext.selection.RowModel', {}),
@@ -169,7 +195,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                             icon: "/bundles/pimcoreadmin/img/flat-color-icons/down.svg",
                             handler: function (grid, rowIndex) {
                                 if (rowIndex < (grid.getStore().getCount() - 1)) {
-                                    var rec = grid.getStore().getAt(rowIndex);
+                                    const rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(++rowIndex, [rec]);
                                     this.selectionModel.select(rowIndex);
@@ -215,8 +241,8 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                             }
 
                             // Iterate to all store data
-                            for(var i=0; i < valueStore.data.length; i++) {
-                                var existingRecord = valueStore.getAt(i);
+                            for(let i=0; i < valueStore.data.length; i++) {
+                                const existingRecord = valueStore.getAt(i);
                                 if(i != e.rowIdx && existingRecord.get('value') === e.value) {
                                     return false;
                                 }
@@ -230,29 +256,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
 
         this.selectionModel = valueGrid.getSelectionModel();
 
-        var specificItems = [
-            {
-                xtype: "textfield",
-                fieldLabel: t("width"),
-                name: "width",
-                value: datax.width
-            },
-            {
-                xtype: "displayfield",
-                hideLabel: true,
-                value: t('width_explanation')
-            },
-            {
-                xtype: "textfield",
-                fieldLabel: t("height"),
-                name: "height",
-                value: datax.height
-            },
-            {
-                xtype: "displayfield",
-                hideLabel: true,
-                value: t('height_explanation')
-            },
+        return stylingItems.concat([
             {
                 xtype: "numberfield",
                 fieldLabel: t("maximum_items"),
@@ -290,9 +294,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 name: "optionsProviderData"
             },
             valueGrid
-        ];
-
-        return specificItems;
+        ]);
     },
 
     applyData: function ($super) {

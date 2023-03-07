@@ -83,140 +83,144 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('height_explanation')
-            },
-            {
-                xtype: "numberfield",
-                fieldLabel: t("maximum_items"),
-                name: "maxItems",
-                value: this.datax.maxItems,
-                disabled: this.isInCustomLayoutEditor(),
-                minValue: 0
-            },
-            {
-                xtype: 'textfield',
-                width: 600,
-                fieldLabel: t("path_formatter_service"),
-                name: 'pathFormatterClass',
-                value: this.datax.pathFormatterClass
             }
         ]);
 
-        var classes = [];
-        if(typeof this.datax.classes == "object") {
-            // this is when it comes from the server
-            for(var i=0; i<this.datax.classes.length; i++) {
-                classes.push(this.datax.classes[i]);
-            }
-        } else if(typeof this.datax.classes == "string") {
-            // this is when it comes from the local store
-            classes = this.datax.classes.split(",");
-        }
-
-        var classesStore = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_class_gettree')
-            },
-            autoDestroy: true,
-            fields: ["text"]
-        });
-        classesStore.load({
-            "callback": function (classes, success) {
-                if (success) {
-                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(classes.join(","));
-                }
-            }.bind(this, classes)
-        });
-
-
-        this.specificPanel.add(new Ext.ux.form.MultiSelect({
-            fieldLabel: t("allowed_classes"),
-            id: "class_allowed_object_classes_" + this.uniqeFieldId,
-            name: "classes",
-            value: classes.join(","),
-            displayField: "text",
-            valueField: "text",
-            store: classesStore,
-            width: 600,
-            disabled: this.isInCustomLayoutEditor(),
-            listeners: {
-                change: function(field, classNameValue, oldValue) {
-                    this.datax.allowedClassId = classNameValue;
-                    if (classNameValue != null) {
-                        var submitValue = classNameValue.join(',');
-                        this.fieldStore.load({params:{classes:submitValue}});
-                    }
-                }.bind(this)
-            }
-        }));
-
-        this.fieldStore = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_getavailablevisiblefields'),
-                extraParams: {
-                    // no_brick_columns: "true",
-                    // gridtype: 'all',
-                    classes: classes
+        if (!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add([
+                {
+                    xtype: "numberfield",
+                    fieldLabel: t("maximum_items"),
+                    name: "maxItems",
+                    value: this.datax.maxItems,
+                    minValue: 0
                 },
-                reader: {
-                    type: 'json',
-                    rootProperty: "availableFields"
+                {
+                    xtype: 'textfield',
+                    width: 600,
+                    fieldLabel: t("path_formatter_service"),
+                    name: 'pathFormatterClass',
+                    value: this.datax.pathFormatterClass
                 }
-            },
-            fields: ['key', 'label'],
-            autoLoad: false,
-            forceSelection:true,
-            listeners: {
-                load: function() {
-                    this.fieldSelect.setValue(this.datax.visibleFields);
-                }.bind(this)
+            ]);
 
+            let classes = [];
+            let classesStore;
+            if (typeof this.datax.classes == "object") {
+                // this is when it comes from the server
+                for (let i = 0; i < this.datax.classes.length; i++) {
+                    classes.push(this.datax.classes[i]);
+                }
+            } else if (typeof this.datax.classes == "string") {
+                // this is when it comes from the local store
+                classes = this.datax.classes.split(",");
             }
-        });
-        this.fieldStore.load();
 
-        this.fieldSelect = new Ext.ux.form.MultiSelect({
-            name: "visibleFields",
-            triggerAction: "all",
-            editable: false,
-            fieldLabel: t("objectsMetadata_visible_fields"),
-            store: this.fieldStore,
-            value: this.datax.visibleFields,
-            displayField: "key",
-            valueField: "key",
-            width: 400,
-            height: 300
-        });
-        this.specificPanel.add(this.fieldSelect);
+            classesStore = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_dataobject_class_gettree')
+                },
+                autoDestroy: true,
+                fields: ["text"]
+            });
+            classesStore.load({
+                "callback": function (classes, success) {
+                    if (success) {
+                        Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(classes.join(","));
+                    }
+                }.bind(this, classes)
+            });
 
-        this.specificPanel.add({
-            xtype: "checkbox",
-            boxLabel: t("enable_text_selection"),
-            name: "enableTextSelection",
-            value: this.datax.enableTextSelection
-        });
 
-        this.specificPanel.add({
-            xtype: "checkbox",
-            boxLabel: t("allow_to_create_new_object"),
-            name: "allowToCreateNewObject",
-            value: this.datax.allowToCreateNewObject
-        });
+            this.specificPanel.add(new Ext.ux.form.MultiSelect({
+                fieldLabel: t("allowed_classes"),
+                id: "class_allowed_object_classes_" + this.uniqeFieldId,
+                name: "classes",
+                value: classes.join(","),
+                displayField: "text",
+                valueField: "text",
+                store: classesStore,
+                width: 600,
+                listeners: {
+                    change: function (field, classNameValue, oldValue) {
+                        this.datax.allowedClassId = classNameValue;
+                        if (classNameValue != null) {
+                            var submitValue = classNameValue.join(',');
+                            this.fieldStore.load({params: {classes: submitValue}});
+                        }
+                    }.bind(this)
+                }
+            }));
 
-        if(this.context == 'class') {
+            this.fieldStore = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_getavailablevisiblefields'),
+                    extraParams: {
+                        // no_brick_columns: "true",
+                        // gridtype: 'all',
+                        classes: classes
+                    },
+                    reader: {
+                        type: 'json',
+                        rootProperty: "availableFields"
+                    }
+                },
+                fields: ['key', 'label'],
+                autoLoad: false,
+                forceSelection: true,
+                listeners: {
+                    load: function () {
+                        this.fieldSelect.setValue(this.datax.visibleFields);
+                    }.bind(this)
+
+                }
+            });
+            this.fieldStore.load();
+
+            this.fieldSelect = new Ext.ux.form.MultiSelect({
+                name: "visibleFields",
+                triggerAction: "all",
+                editable: false,
+                fieldLabel: t("objectsMetadata_visible_fields"),
+                store: this.fieldStore,
+                value: this.datax.visibleFields,
+                displayField: "key",
+                valueField: "key",
+                width: 400,
+                height: 300
+            });
+            this.specificPanel.add(this.fieldSelect);
+
             this.specificPanel.add({
                 xtype: "checkbox",
-                boxLabel: t("enable_admin_async_load"),
-                name: "optimizedAdminLoading",
-                value: this.datax.optimizedAdminLoading
+                boxLabel: t("enable_text_selection"),
+                name: "enableTextSelection",
+                value: this.datax.enableTextSelection
             });
+
             this.specificPanel.add({
-                xtype: "displayfield",
-                hideLabel: true,
-                value: t('async_loading_warning_block'),
-                cls: "pimcore_extra_label_bottom"
+                xtype: "checkbox",
+                boxLabel: t("allow_to_create_new_object"),
+                name: "allowToCreateNewObject",
+                value: this.datax.allowToCreateNewObject
             });
+
+            if (this.context == 'class') {
+                this.specificPanel.add({
+                    xtype: "checkbox",
+                    boxLabel: t("enable_admin_async_load"),
+                    name: "optimizedAdminLoading",
+                    value: this.datax.optimizedAdminLoading
+                });
+                this.specificPanel.add({
+                    xtype: "displayfield",
+                    hideLabel: true,
+                    value: t('async_loading_warning_block'),
+                    cls: "pimcore_extra_label_bottom"
+                });
+            }
         }
 
         return this.layout;

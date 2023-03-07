@@ -55,14 +55,13 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
 
-        specificItems = [];
+        let specificItems = [];
 
         if (!this.isInCustomLayoutEditor()) {
+            let minmaxSet;
+            const onMinMaxValueChange = function() {
 
-            var minmaxSet;
-            var onMinMaxValueChange = function() {
-
-                var minValueSelector = minmaxSet.getComponent('minTime'),
+                const minValueSelector = minmaxSet.getComponent('minTime'),
                     maxValueSelector = minmaxSet.getComponent('maxTime'),
                     minValue = (minValueSelector.getValue()) ? pimcore.object.classes.data.time.prototype.formatTime(minValueSelector.getValue()) : null,
                     maxValue = (maxValueSelector.getValue()) ? pimcore.object.classes.data.time.prototype.formatTime(maxValueSelector.getValue()) : null;

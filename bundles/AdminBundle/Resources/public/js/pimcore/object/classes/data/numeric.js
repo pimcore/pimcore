@@ -61,7 +61,7 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
 
-        var specificItems = [
+        const stylingItems = [
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -72,7 +72,14 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('width_explanation')
-            },
+            }
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            return stylingItems;
+        }
+
+        return stylingItems.concat([
             {
                 xtype: "numberfield",
                 fieldLabel: t("default_value"),
@@ -91,58 +98,52 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                 xtype: "panel",
                 bodyStyle: "padding-top: 3px",
                 style: "margin-bottom: 10px",
-                html:'<span class="object_field_setting_warning">' +t('inherited_default_value_warning')+'</span>'
+                html: '<span class="object_field_setting_warning">' + t('inherited_default_value_warning') + '</span>'
+            },
+            {
+                xtype: "numberfield",
+                fieldLabel: t("decimal_size"),
+                name: "decimalSize",
+                maxValue: 65,
+                value: datax.decimalSize
+            }, {
+                xtype: "numberfield",
+                fieldLabel: t("decimal_precision"),
+                name: "decimalPrecision",
+                maxValue: 30,
+                value: datax.decimalPrecision
+            }, {
+                xtype: "panel",
+                bodyStyle: "padding-top: 3px",
+                style: "margin-bottom: 10px",
+                html: t('decimal_mysql_type_info')
+            }, {
+                xtype: "panel",
+                bodyStyle: "padding-top: 3px",
+                style: "margin-bottom: 10px",
+                html: '<span class="object_field_setting_warning">' + t('decimal_mysql_type_naming_warning') + '</span>'
+            }, {
+                xtype: "checkbox",
+                fieldLabel: t("integer"),
+                name: "integer",
+                checked: datax.integer
+            }, {
+                xtype: "checkbox",
+                fieldLabel: t("only_unsigned"),
+                name: "unsigned",
+                checked: datax["unsigned"]
+            }, {
+                xtype: "numberfield",
+                fieldLabel: t("min_value"),
+                name: "minValue",
+                value: datax.minValue
+            }, {
+                xtype: "numberfield",
+                fieldLabel: t("max_value"),
+                name: "maxValue",
+                value: datax.maxValue
             }
-        ];
-
-        if (!this.isInCustomLayoutEditor()) {
-            specificItems = specificItems.concat([
-                {
-                    xtype: "numberfield",
-                    fieldLabel: t("decimal_size"),
-                    name: "decimalSize",
-                    maxValue: 65,
-                    value: datax.decimalSize
-                }, {
-                    xtype: "numberfield",
-                    fieldLabel: t("decimal_precision"),
-                    name: "decimalPrecision",
-                    maxValue: 30,
-                    value: datax.decimalPrecision
-                }, {
-                    xtype: "panel",
-                    bodyStyle: "padding-top: 3px",
-                    style: "margin-bottom: 10px",
-                    html: t('decimal_mysql_type_info')
-                }, {
-                    xtype: "panel",
-                    bodyStyle: "padding-top: 3px",
-                    style: "margin-bottom: 10px",
-                    html:'<span class="object_field_setting_warning">' +t('decimal_mysql_type_naming_warning')+'</span>'
-                }, {
-                    xtype: "checkbox",
-                    fieldLabel: t("integer"),
-                    name: "integer",
-                    checked: datax.integer
-                }, {
-                    xtype: "checkbox",
-                    fieldLabel: t("only_unsigned"),
-                    name: "unsigned",
-                    checked: datax["unsigned"]
-                }, {
-                    xtype: "numberfield",
-                    fieldLabel: t("min_value"),
-                    name: "minValue",
-                    value: datax.minValue
-                },{
-                    xtype: "numberfield",
-                    fieldLabel: t("max_value"),
-                    name: "maxValue",
-                    value: datax.maxValue
-                }
-            ]);
-        }
-        return specificItems;
+        ]);
     },
 
     applySpecialData: function(source) {

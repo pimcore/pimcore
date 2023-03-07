@@ -129,43 +129,7 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-
-        var headerGrid = this.buildHeaderGrid(datax);
-        var headerGridContainer = Ext.create('Ext.Panel', {
-            layout: "border",
-            border: false,
-            hidden: !datax.columnConfigActivated,
-            height: 150,
-            style: "margin-bottom: 20px",
-            items: [
-                {
-                    xtype: "label",
-                    style: "width: 145px",
-                    html: t("table_column_configuration"),
-                    region: 'west',
-                    width: 145
-                },
-                headerGrid,
-            ]
-        });
-        var activateColumnConfigCheckbox = Ext.create('Ext.form.field.Checkbox', {
-            fieldLabel: t("activate_column_configuration"),
-            name: "columnConfigActivated",
-            checked: datax.columnConfigActivated,
-            hidden: !datax.colsFixed,
-            disabled: this.isInCustomLayoutEditor(),
-            listeners: {
-                change: function(headerGridContainer, checkbox, newValue, oldValue) {
-                    if(newValue) {
-                        headerGridContainer.show();
-                    } else {
-                        headerGridContainer.hide();
-                    }
-                }. bind(this, headerGridContainer)
-            },
-        });
-
-        return [
+        const stylingItems = [
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -187,21 +151,61 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('height_explanation')
+            }
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            return stylingItems;
+        }
+
+        const headerGrid = this.buildHeaderGrid(datax);
+        const headerGridContainer = Ext.create('Ext.Panel', {
+            layout: "border",
+            border: false,
+            hidden: !datax.columnConfigActivated,
+            height: 150,
+            style: "margin-bottom: 20px",
+            items: [
+                {
+                    xtype: "label",
+                    style: "width: 145px",
+                    html: t("table_column_configuration"),
+                    region: 'west',
+                    width: 145
+                },
+                headerGrid,
+            ]
+        });
+        const activateColumnConfigCheckbox = Ext.create('Ext.form.field.Checkbox', {
+            fieldLabel: t("activate_column_configuration"),
+            name: "columnConfigActivated",
+            checked: datax.columnConfigActivated,
+            hidden: !datax.colsFixed,
+            disabled: this.isInCustomLayoutEditor(),
+            listeners: {
+                change: function (headerGridContainer, checkbox, newValue, oldValue) {
+                    if (newValue) {
+                        headerGridContainer.show();
+                    } else {
+                        headerGridContainer.hide();
+                    }
+                }.bind(this, headerGridContainer)
             },
+        });
+
+        return stylingItems.concat([
             {
                 xtype: "numberfield",
                 fieldLabel: t("rows"),
                 name: "rows",
                 value: datax.rows,
                 minValue: 0,
-                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "checkbox",
                 fieldLabel: t("rows_fixed"),
                 name: "rowsFixed",
                 checked: datax.rowsFixed,
-                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "numberfield",
@@ -210,24 +214,23 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
                 value: datax.cols,
                 minValue: 0,
                 listeners: {
-                    blur: function(headerGrid, field) {
+                    blur: function (headerGrid, field) {
                         var store = headerGrid.getStore();
                         var countDiff = field.getValue() - store.getCount();
 
-                        if(countDiff > 0) {
-                            for(var i = 0; i < countDiff; i++) {
+                        if (countDiff > 0) {
+                            for (var i = 0; i < countDiff; i++) {
                                 store.add({
                                     key: store.getCount(),
                                     label: store.getCount()
                                 });
                             }
-                        } else if(countDiff < 0) {
+                        } else if (countDiff < 0) {
                             store.removeAt((field.getValue()), (countDiff * -1));
                         }
 
-                    }. bind(this, headerGrid)
+                    }.bind(this, headerGrid)
                 },
-                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "checkbox",
@@ -235,16 +238,15 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
                 name: "colsFixed",
                 checked: datax.colsFixed,
                 listeners: {
-                    change: function(activateColumnConfigCheckbox, headerGridContainer, checkbox, newValue, oldValue) {
-                        if(newValue) {
+                    change: function (activateColumnConfigCheckbox, headerGridContainer, checkbox, newValue, oldValue) {
+                        if (newValue) {
                             activateColumnConfigCheckbox.show();
                         } else {
                             activateColumnConfigCheckbox.hide();
                             headerGridContainer.hide();
                         }
-                    }. bind(this, activateColumnConfigCheckbox, headerGridContainer)
+                    }.bind(this, activateColumnConfigCheckbox, headerGridContainer)
                 },
-                disabled: this.isInCustomLayoutEditor()
             },
             activateColumnConfigCheckbox,
             headerGridContainer,
@@ -255,9 +257,8 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
                 width: 500,
                 height: 300,
                 value: datax.data,
-                disabled: this.isInCustomLayoutEditor()
             }
-        ];
+        ]);
     },
 
     applyData: function ($super) {
