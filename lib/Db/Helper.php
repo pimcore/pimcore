@@ -21,7 +21,26 @@ use Pimcore\Model\Element\ValidationException;
 
 class Helper
 {
+    public static function upsert(ConnectionInterface|\Doctrine\DBAL\Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
+    {
+        try {
+            $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
+
+            return $connection->insert($table, $data);
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
+            $critera = [];
+            foreach ($keys as $key) {
+                $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
+                $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%1$s" passed for upsert not found in data', $key));
+            }
+
+            return $connection->update($table, $data, $critera);
+        }
+    }
+
     /**
+     * @deprecated will be removed in Pimcore 11. Use Pimcore\Db\Helper::upsert instead.
+     *
      * @param ConnectionInterface|\Doctrine\DBAL\Connection $connection
      * @param string $table
      * @param array $data
@@ -30,6 +49,12 @@ class Helper
      */
     public static function insertOrUpdate(ConnectionInterface|\Doctrine\DBAL\Connection $connection, $table, array $data)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::upsert() instead.', __METHOD__)
+        );
+
         // extract and quote col names from the array keys
         $i = 0;
         $bind = [];
@@ -155,5 +180,15 @@ class Helper
     public static function escapeLike(string $like): string
     {
         return str_replace(['_', '%'], ['\\_', '\\%'], $like);
+    }
+
+    public static function quoteDataIdentifiers(ConnectionInterface|\Doctrine\DBAL\Connection $db, array $data): array
+    {
+        $newData = [];
+        foreach ($data as $key => $value) {
+            $newData[$db->quoteIdentifier($key)] = $value;
+        }
+
+        return $newData;
     }
 }
