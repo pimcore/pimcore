@@ -93,6 +93,13 @@ a, a:hover, a:visited, a:active {
     border-radius: 2px;
 }
 
+#content .text.success {
+    color: #008000;
+    padding: 10px;
+    background: #fff;
+    border-radius: 2px;
+}
+
 #content .browserinfo img {
     width: 60px;
     margin-right: 12px;
