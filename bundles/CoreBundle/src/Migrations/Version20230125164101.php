@@ -34,6 +34,9 @@ final class Version20230125164101 extends AbstractMigration
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\PersonalizationBundle\\PimcorePersonalizationBundle', true, 'bool', 'pimcore');
         }
 
+        // updating description  of permissions
+        $this->addSql("UPDATE `users_permission_definitions` SET `category` = 'Pimcore Personalization Bundle' WHERE `key` = 'targeting'");
+
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\PersonalizationBundle\\PimcorePersonalizationBundle', 'pimcore'),
             'Please make sure to enable the Pimcore\\Bundle\\PersonalizationBundle\\PimcorePersonalizationBundle manually in config/bundles.php'
@@ -42,5 +45,13 @@ final class Version20230125164101 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
+        if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\PersonalizationBundle\\PimcorePersonalizationBundle', 'pimcore')) {
+            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\PersonalizationBundle\\PimcorePersonalizationBundle', 'pimcore');
+        }
+
+        // restoring the permission
+        $this->addSql("UPDATE `users_permission_definitions` SET `category` = '' WHERE `key` = 'targeting'");
+
+        $this->write('Please deactivate the Pimcore\\Bundle\\PersonalizationBundle\\PimcorePersonalizationBundle manually in config/bundles.php');
     }
 }

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Model\Document;
 
 use Pimcore\Messenger\GeneratePagePreviewMessage;
-use Pimcore\Model\Redirect;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
@@ -43,13 +42,6 @@ class Page extends PageSnippet
     protected string $description = '';
 
     /**
-     * @internal
-     *
-     * @var array
-     */
-    protected array $metaData = [];
-
-    /**
      * {@inheritdoc}
      */
     protected string $type = 'page';
@@ -60,23 +52,6 @@ class Page extends PageSnippet
      * @var string|null
      */
     protected ?string $prettyUrl = null;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doDelete(): void
-    {
-        // check for redirects pointing to this document, and delete them too
-        $redirects = new Redirect\Listing();
-        $redirects->setCondition('target = ?', $this->getId());
-        $redirects->load();
-
-        foreach ($redirects->getRedirects() as $redirect) {
-            $redirect->delete();
-        }
-
-        parent::doDelete();
-    }
 
     public function getDescription(): string
     {
@@ -100,18 +75,6 @@ class Page extends PageSnippet
         $this->title = $title;
 
         return $this;
-    }
-
-    public function setMetaData(array $metaData): static
-    {
-        $this->metaData = $metaData;
-
-        return $this;
-    }
-
-    public function getMetaData(): array
-    {
-        return $this->metaData;
     }
 
     public function getFullPath(bool $force = false): string

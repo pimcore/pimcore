@@ -53,9 +53,6 @@ services:
         calls:
             - [setLogger, ['@logger']]
 
-    # Adds Meta Data entries of document to HeadMeta view helper
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentMetaDataListener: ~
-
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentRendererListener: ~
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\StaticPageGeneratorListener: ~
 

@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 
 /**
  * @Route("/custom-report")
@@ -412,6 +413,16 @@ class CustomReportController extends AdminController
         ]);
     }
 
+    protected function getTemporaryFileFromFileName(string $exportFileName): string
+    {
+        $exportFileName = basename($exportFileName);
+        if (!str_ends_with($exportFileName, '.csv')) {
+            throw new InvalidArgumentException($exportFileName . ' is not a valid csv file.');
+        }
+
+        return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportFileName;
+    }
+
     /**
      * @Route("/create-csv", name="pimcore_bundle_customreports_customreport_createcsv", methods={"GET"})
      *
@@ -461,7 +472,7 @@ class CustomReportController extends AdminController
             $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
             @unlink($exportFile);
         } else {
-            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$exportFile;
+            $exportFile = $this->getTemporaryFileFromFileName($exportFile);
         }
 
         $fp = fopen($exportFile, 'a');
@@ -499,7 +510,7 @@ class CustomReportController extends AdminController
     {
         $this->checkPermission('reports');
         if ($exportFile = $request->get('exportFile')) {
-            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . basename($exportFile);
+            $exportFile = $this->getTemporaryFileFromFileName($exportFile);
             $response = new BinaryFileResponse($exportFile);
             $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');

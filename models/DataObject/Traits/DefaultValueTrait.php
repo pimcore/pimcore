@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\DefaultValueGeneratorInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Helper\DefaultValueGeneratorResolver;
 use Pimcore\Model\DataObject\Concrete;
@@ -113,20 +114,18 @@ trait DefaultValueTrait
                 if ($class && $class->getAllowInherit()) {
                     $params = [];
 
-                    $inheritanceEnabled = Concrete::getGetInheritedValues();
-
                     try {
                         // make sure we get the inherited value of the parent
-                        Concrete::setGetInheritedValues(true);
+                        $data = DataObject\Service::useInheritedValues(true, function () use ($owner, $params) {
+                            $data = $owner->getValueFromParent($this->getName(), $params);
+                            if (!$this->isEmpty($data)) {
+                                return null;
+                            }
 
-                        $data = $owner->getValueFromParent($this->getName(), $params);
-                        if (!$this->isEmpty($data)) {
-                            return null;
-                        }
+                            return $data;
+                        });
                     } catch (InheritanceParentNotFoundException $e) {
                         // no data from parent available, use the default value
-                    } finally {
-                        Concrete::setGetInheritedValues($inheritanceEnabled);
                     }
                 }
             }

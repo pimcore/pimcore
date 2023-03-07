@@ -1,31 +1,3 @@
-# CKEDITOR (use builder: http://ckeditor.com/builder);
-upload build-config.js
-
-OR:
-
-+ select "full" distribution
-
-Add plugins:
-+ plugin sourcedialog
-+ plugin tableresize
-
-Remove plugins:
-- About CKEditor
-- Content Templates
-- File Browser
-- Flash Dialog
-- Form Elements
-- Insert Smiley
-- Magic Line
-- Maximize
-- New Page
-- Preview
-- Print
-- Save
-- SpellCheckAsYouType (SCAYT)
-
-Delete: samples/
-
 # EXT JS
 
 current version: 7.0.0

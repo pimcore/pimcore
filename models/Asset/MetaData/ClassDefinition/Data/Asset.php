@@ -23,7 +23,10 @@ class Asset extends Data
 {
     public function normalize(mixed $value, array $params = []): mixed
     {
-        $element = Service::getElementByPath('asset', $value);
+        $element = null;
+        if ($value) {
+            $element = Service::getElementByPath('asset', $value);
+        }
         if ($element) {
             return $element->getId();
         }
@@ -61,7 +64,10 @@ class Asset extends Data
 
     public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
-        $element = Service::getElementByPath('asset', $data);
+        $element = null;
+        if ($data) {
+            $element = Service::getElementByPath('asset', $data);
+        }
         if ($element) {
             return $element->getId();
         }
