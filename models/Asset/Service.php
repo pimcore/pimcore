@@ -604,7 +604,7 @@ class Service extends Model\Element\Service
     /**
      * @throws \League\Flysystem\FilesystemException
      */
-    public static function getStreamedResponseFromImageThumbnail(ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail $thumbnail, array $config): StreamedResponse
+    public static function getStreamedResponseFromImageThumbnail(ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array $thumbnail, array $config): StreamedResponse
     {
         $storage = Storage::get('thumbnail');
         $config['file_extension'] ??= strtolower(File::getFileExtension($config['filename']));
