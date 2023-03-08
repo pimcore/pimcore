@@ -52,9 +52,12 @@ it's not possible to define an exclude-regex, or for similar reasons.
 In this case you can use obtain the pull page cache service from the container and disable it, eg. in an Controller via DI:
 ```php
 <?php
-    public function portalAction(Request $request , \Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener $FullPageCacheListener)
+
+    use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
+    
+    public function portalAction(Request $request , FullPageCacheListener $FullPageCacheListener)
     {
-        $FullPageCacheListener->disable("Your disable reason");
+       $FullPageCacheListener->disable("Your disable reason");
        return $this->redirect('de');
     }
 ```
