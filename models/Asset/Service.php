@@ -663,10 +663,31 @@ class Service extends Model\Element\Service
     /**
      * @throws \Exception
      */
-    public static function getImageThumbnailByUri(string $uri): null|ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array
+    public static function getStreamByUri(string $uri): ?StreamedResponse
     {
         $config = self::extractThumbnailInfoFromUri($uri);
-        return self::getImageThumbnailByArrayConfig($config);
+
+        if ($config) {
+            $storage = Storage::get('thumbnail');
+            $storagePath = urldecode($uri);
+            if ($storage->fileExists($storagePath)) {
+                $stream = $storage->readStream($storagePath);
+                
+                return new StreamedResponse(function () use ($stream) {
+                    fpassthru($stream);
+                }, 200, [
+                    'Content-Type' => $storage->mimeType($storagePath),
+                    'Content-Length' => $storage->fileSize($storagePath),
+                ]);
+
+            } else {
+                $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
+                if ($thumbnail) {
+                    return Asset\Service::getStreamFromImageThumbnail($thumbnail, $config);
+                }
+            }
+        }
+        return null;
     }
 
     /**

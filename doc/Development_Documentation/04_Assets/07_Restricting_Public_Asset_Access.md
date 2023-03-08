@@ -151,16 +151,7 @@ class MyAssetController extends FrontendController
                 'Content-Type' => 'application/pdf',
             ]);
         } else {
-        
-            $config = Service::extractThumbnailInfoFromUri($pathInfo);
-            if ($config){
-                $thumbnail = Service::getImageThumbnailByArrayConfig($config);
-                if ($thumbnail) {
-                    return Asset\Service::getStreamFromImageThumbnail($thumbnail, $config);
-                }
-            }
-
-            throw new \Exception('Could not generate thumbnail.');
+            return Asset\Service::getStreamByUri($pathInfo);
         }
 
         throw new AccessDeniedHttpException('Access denied.');
