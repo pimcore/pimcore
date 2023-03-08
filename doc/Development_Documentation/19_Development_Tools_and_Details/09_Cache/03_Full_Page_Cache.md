@@ -57,7 +57,7 @@ In this case you can use obtain the pull page cache service from the container a
     
     public function portalAction(Request $request, FullPageCacheListener $fullPageCacheListener)
     {
-       $FullPageCacheListener->disable("Your disable reason");
+       $fullPageCacheListener->disable("Your disable reason");
        return $this->redirect('de');
     }
 ```
