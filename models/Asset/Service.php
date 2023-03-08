@@ -607,6 +607,7 @@ class Service extends Model\Element\Service
     public static function getStreamedResponseFromImageThumbnail(ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail $thumbnail, array $config): StreamedResponse
     {
         $storage = Storage::get('thumbnail');
+        $config['file_extension'] ??= strtolower(File::getFileExtension($config['filename']));
 
         if ($config['type'] === 'image') {
             $thumbnailStream = $thumbnail->getStream();
@@ -657,7 +658,6 @@ class Service extends Model\Element\Service
         return new StreamedResponse(function () use ($thumbnailStream) {
             fpassthru($thumbnailStream);
         }, 200, $headers);
-
     }
 
     /**
