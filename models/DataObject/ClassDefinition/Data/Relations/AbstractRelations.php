@@ -179,12 +179,8 @@ abstract class AbstractRelations extends Data implements
 
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
         // filesort in MySQL which is extremely slow especially when there are millions of relations in the database
-        usort($relations, function ($a, $b) {
-            if ($a['index'] == $b['index']) {
-                return 0;
-            }
-
-            return ($a['index'] < $b['index']) ? -1 : 1;
+        usort($relations, static function ($a, $b) {
+            return $a['index'] <=> $b['index'];
         });
 
         $data = $this->loadData($relations, $object, $params);
