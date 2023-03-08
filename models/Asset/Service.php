@@ -604,7 +604,7 @@ class Service extends Model\Element\Service
     /**
      * @throws \League\Flysystem\FilesystemException
      */
-    public static function getStreamedResponseFromImageThumbnail(ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array $thumbnail, array $config): StreamedResponse
+    public static function getStreamedResponseFromImageThumbnail(ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail|array $thumbnail, array $config): ?StreamedResponse
     {
         $storage = Storage::get('thumbnail');
         $config['file_extension'] ??= strtolower(File::getFileExtension($config['filename']));
@@ -655,9 +655,13 @@ class Service extends Model\Element\Service
 
         $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
 
-        return new StreamedResponse(function () use ($thumbnailStream) {
-            fpassthru($thumbnailStream);
-        }, 200, $headers);
+        if ($thumbnailStream) {
+            return new StreamedResponse(function () use ($thumbnailStream) {
+                fpassthru($thumbnailStream);
+            }, 200, $headers);
+        }else{
+            return null;
+        }
     }
 
     /**
