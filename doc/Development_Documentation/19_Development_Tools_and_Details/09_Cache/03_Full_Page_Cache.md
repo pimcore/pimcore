@@ -55,7 +55,7 @@ In this case you can use obtain the pull page cache service from the container a
 
     use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
     
-    public function portalAction(Request $request , FullPageCacheListener $FullPageCacheListener)
+    public function portalAction(Request $request, FullPageCacheListener $fullPageCacheListener)
     {
        $FullPageCacheListener->disable("Your disable reason");
        return $this->redirect('de');
