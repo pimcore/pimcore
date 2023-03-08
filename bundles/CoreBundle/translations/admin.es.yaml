@@ -400,13 +400,6 @@ translations_are_not_configured: "Las traducciones no est\xE1n configuradas"
 read_more_here: "Leer m\xE1s aqu\xED"
 publish_version: "Publicar versi\xF3n"
 start: Inicio
-su: Do
-mo: Lu
-tu: Ma
-we: Mi
-th: Ju
-fr: Vi
-sa: sa
 session_error_text: "Parece haber un problema con su sesi\xF3n. \xBFQuiere permanecer
   en ella bajo su propio riesgo?"
 session_error: "Error de sesi\xF3n"
