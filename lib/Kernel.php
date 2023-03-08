@@ -247,7 +247,7 @@ abstract class Kernel extends SymfonyKernel
                 }
                 $options = $containerConfig['storage'][$configKey]['options'];
 
-                $configDir = rtrim($options['directory'] ?? LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
+                $configDir = rtrim($options['directory'] ?? self::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
                 $configDir = "$configDir/";
                 if (is_dir($configDir)) {
                     // @phpstan-ignore-next-line
@@ -255,6 +255,17 @@ abstract class Kernel extends SymfonyKernel
                 }
             }
         });
+    }
+
+    private static function getStorageDirectoryFromSymfonyConfig(array $config, string $configKey, string $storageDir): string
+    {
+        if (isset($_SERVER[$storageDir])) {
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storageDir));
+            return $_SERVER[$storageDir];
+        }
+
+        return $config['config_storage'][$configKey]['options']['directory'];
     }
 
     /**

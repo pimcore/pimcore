@@ -240,7 +240,12 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $writeLocation = $this->writeTarget ?? $this->defaultWriteLocation;
+        //TODO remove in Pimcore 11
+        $writeLocation = $this->writeTargetEnvVariableName ? $_SERVER[$this->writeTargetEnvVariableName] ?? null : null;
+
+        if ($writeLocation === null) {
+            $writeLocation = $this->writeTarget ?? $this->defaultWriteLocation;
+        }
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
             throw new \Exception(sprintf('Invalid write location: %s', $writeLocation));
@@ -338,7 +343,7 @@ class LocationAwareConfigRepository
      */
     private function getVarConfigFile(string $key): string
     {
-        $directory = rtrim($this->options['directory'] ?? $this->storageDirectory, '/\\');
+        $directory = rtrim($this->storageDirectory ?? $this->storageConfig['options']['directory'], '/\\');
 
         return $directory . '/' . $key . '.yaml';
     }
@@ -417,7 +422,7 @@ class LocationAwareConfigRepository
         string $writeTargetEnvVarName,
     ): array
     {
-        $storageConfig = $containerConfig['storage'][$configId];
+        $storageConfig = $containerConfig['config_storage'][$configId];
 
         if (isset($_SERVER[$writeTargetEnvVarName])) {
             trigger_deprecation('pimcore/pimcore', '10.6',
