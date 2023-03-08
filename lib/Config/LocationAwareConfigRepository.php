@@ -244,7 +244,7 @@ class LocationAwareConfigRepository
         $writeLocation = $this->writeTargetEnvVariableName ? $_SERVER[$this->writeTargetEnvVariableName] ?? null : null;
 
         if ($writeLocation === null) {
-            $writeLocation = $this->writeTarget ?? $this->defaultWriteLocation;
+            $writeLocation = $this->storageConfig['target'] ?? $this->defaultWriteLocation;
         }
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
