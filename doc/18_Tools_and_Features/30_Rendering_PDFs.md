@@ -6,7 +6,7 @@ You can use the PimcoreWebToPrintBundle functionality to accomplish this.
 Please make sure that you have set up and installed the PimcoreWebToPrintBundle correctly ("Settings" -> "Web2Print Settings").
 
 You need to enable and install the PimcoreWebToPrintBundle via the bundles.php, and then you 
-just have to provide the correct settings (Tool -> HeadlessChrome / PDFreactor) and the corresponding settings.
+just have to provide the correct settings (Tool -> PDFreactor / Chromium / Gotenberg) and the corresponding settings.
 
 In your controller you just have to return the PDF instead of the HTML. 
 
@@ -46,6 +46,8 @@ class BlogController extends FrontendController
 ```
 ## Advanced example
 
+                                                    TODO: Add Gotenberg and Chromium adapters in the example
+
 ```php
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,20 +68,7 @@ class BlogController extends FrontendController
 
         $adapter = \Pimcore\Bundle\WebToPrintBundle\Processor::getInstance();
         //add custom settings if necessary
-        if ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome) {
-            $params['adapterConfig'] = [
-                'landscape' => false,
-                'printBackground' => true,
-                'format' => 'A4',
-                'margin' => [
-                    'top' => '16 mm',
-                    'bottom' => '30 mm',
-                    'right' => '8 mm',
-                    'left' => '8 mm',
-                ],
-                'displayHeaderFooter' => false,
-            ];
-        } elseif($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
+        if ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor) {
             //Config settings -> http://www.pdfreactor.com/product/doc/webservice/php.html#Configuration
             $params['adapterConfig'] = [
                 'author' => 'Max Mustermann',
