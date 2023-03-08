@@ -98,3 +98,5 @@
           options:
             directory: '/var/www/html/var/config/custom_reports'
     ```
+  
+- [Web2Print] Please keep in mind that deprecated `HeadlessChrome` will need to be replaced with the new processor `Chrome` when starting using 11.

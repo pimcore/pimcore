@@ -295,7 +295,7 @@ pimcore.settings.web2print = Class.create({
                                 store: [
                                     ["pdfreactor", "PDFreactor"],
                                     ["wkhtmltopdf", "WkHtmlToPdf (Deprecated)"],
-                                    ["headlesschrome", "Headless Chrome"],
+                                    ["headlesschrome", "Headless Chrome (Deprecated)"],
                                 ],
                                 mode: "local",
                                 triggerAction: "all",
