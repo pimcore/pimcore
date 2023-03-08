@@ -57,7 +57,7 @@ class PublicServicesController extends Controller
         try {
             $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
             if ($thumbnail) {
-                return Asset\Service::getStreamFromImageThumbnail($thumbnail, $config);
+                return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
             }
             throw new \Exception('Unable to generate '.$config['type'].' thumbnail, see logs for details.');
         } catch (\Exception $e) {

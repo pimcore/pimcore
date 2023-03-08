@@ -604,7 +604,7 @@ class Service extends Model\Element\Service
     /**
      * @throws \League\Flysystem\FilesystemException
      */
-    public static function getStreamFromImageThumbnail(ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail $thumbnail, array $config): StreamedResponse
+    public static function getStreamedResponseFromImageThumbnail(ImageThumbnail|VideoImageThumbnail|DocumentImageThumbnail $thumbnail, array $config): StreamedResponse
     {
         $storage = Storage::get('thumbnail');
 
@@ -663,7 +663,7 @@ class Service extends Model\Element\Service
     /**
      * @throws \Exception
      */
-    public static function getStreamByUri(string $uri): ?StreamedResponse
+    public static function getStreamedResponseByUri(string $uri): ?StreamedResponse
     {
         $config = self::extractThumbnailInfoFromUri($uri);
 
@@ -672,7 +672,7 @@ class Service extends Model\Element\Service
             $storagePath = urldecode($uri);
             if ($storage->fileExists($storagePath)) {
                 $stream = $storage->readStream($storagePath);
-                
+
                 return new StreamedResponse(function () use ($stream) {
                     fpassthru($stream);
                 }, 200, [
@@ -683,7 +683,7 @@ class Service extends Model\Element\Service
             } else {
                 $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
                 if ($thumbnail) {
-                    return Asset\Service::getStreamFromImageThumbnail($thumbnail, $config);
+                    return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
                 }
             }
         }

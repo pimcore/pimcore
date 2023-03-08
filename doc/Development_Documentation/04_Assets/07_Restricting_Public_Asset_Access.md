@@ -151,7 +151,7 @@ class MyAssetController extends FrontendController
                 'Content-Type' => 'application/pdf',
             ]);
         } else {
-            return Asset\Service::getStreamByUri($pathInfo);
+            return Asset\Service::getStreamedResponseByUri($pathInfo);
         }
 
         throw new AccessDeniedHttpException('Access denied.');
