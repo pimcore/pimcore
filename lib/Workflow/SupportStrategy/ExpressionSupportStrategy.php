@@ -77,7 +77,7 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
         }
 
 
-        foreach ($this->className ?? [] as $className) {
+        foreach ($this->className as $className) {
             if ($subject instanceof $className) {
                 return true;
             }

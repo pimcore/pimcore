@@ -261,10 +261,6 @@ final class RedirectHandler implements LoggerAwareInterface
      */
     private function getRegexRedirects()
     {
-        if (is_array($this->redirects)) {
-            return $this->redirects;
-        }
-
         $cacheKey = 'system_route_redirect';
         if (($this->redirects = Cache::load($cacheKey)) === false) {
             // acquire lock to avoid concurrent redirect cache warm-up
