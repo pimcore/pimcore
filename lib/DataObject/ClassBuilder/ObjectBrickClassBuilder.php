@@ -66,7 +66,7 @@ class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
 
         $cd .= 'protected $type = "' . $definition->getKey() . "\";\n";
 
-        if (is_array($definition->getFieldDefinitions()) && count($definition->getFieldDefinitions())) {
+        if (is_array($definition->getFieldDefinitions())) {
             foreach ($definition->getFieldDefinitions() as $key => $def) {
                 $cd .= 'protected $' . $key . ";\n";
             }
@@ -87,8 +87,8 @@ class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
 
         $cd .= "\n\n";
 
-        if (is_array($definition->getFieldDefinitions()) && count($definition->getFieldDefinitions())) {
-            foreach ($definition->getFieldDefinitions() as $key => $def) {
+        if (is_array($definition->getFieldDefinitions())) {
+            foreach ($definition->getFieldDefinitions() as $def) {
                 $cd .= $def->getGetterCodeObjectbrick($definition);
 
                 if ($def instanceof ClassDefinition\Data\Localizedfields) {

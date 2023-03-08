@@ -62,7 +62,7 @@ class FieldCollectionClassBuilder implements FieldCollectionClassBuilderInterfac
 
         $cd .= 'protected $type = "' . $definition->getKey() . "\";\n";
 
-        if (is_array($definition->getFieldDefinitions()) && count($definition->getFieldDefinitions())) {
+        if (is_array($definition->getFieldDefinitions())) {
             foreach ($definition->getFieldDefinitions() as $key => $def) {
                 $cd .= 'protected $' . $key . ";\n";
             }

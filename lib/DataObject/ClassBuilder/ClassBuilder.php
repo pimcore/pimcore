@@ -126,7 +126,7 @@ class ClassBuilder implements ClassBuilderInterface
 
         $cd .= "\n\n";
 
-        if (is_array($classDefinition->getFieldDefinitions()) && count($classDefinition->getFieldDefinitions())) {
+        if (is_array($classDefinition->getFieldDefinitions())) {
             foreach ($classDefinition->getFieldDefinitions() as $def) {
                 $cd .= $this->fieldDefinitionBuilder->buildFieldDefinition($classDefinition, $def);
             }

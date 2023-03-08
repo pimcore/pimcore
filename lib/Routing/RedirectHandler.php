@@ -261,7 +261,7 @@ final class RedirectHandler implements LoggerAwareInterface
      */
     private function getRegexRedirects()
     {
-        if (null !== $this->redirects && is_array($this->redirects)) {
+        if (is_array($this->redirects)) {
             return $this->redirects;
         }
 
