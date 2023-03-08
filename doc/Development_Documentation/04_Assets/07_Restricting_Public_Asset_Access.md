@@ -155,16 +155,9 @@ class MyAssetController extends FrontendController
             $config = Service::extractThumbnailInfoFromUri($pathInfo);
             if ($config){
                 $thumbnail = Service::getImageThumbnailByArrayConfig($config);
-                
                 if ($thumbnail) {
-                    $stream = $thumbnail->getStream();
-                    return new StreamedResponse(function () use ($stream) {
-                        fpassthru($stream);
-                    }, 200, [
-                        'Content-Type' => $thumbnail->getMimeType(),
-                    ]);
+                    return Asset\Service::getStreamFromImageThumbnail($thumbnail, $config);
                 }
-                return $this->forward('Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::thumbnailAction', $config);
             }
 
             throw new \Exception('Could not generate thumbnail.');
