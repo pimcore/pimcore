@@ -109,6 +109,9 @@ class Mail extends Email
 
     private Model\Tool\Email\Log $lastLogEntry;
 
+    /**
+     * @return $this
+     */
     public function setHostUrl(string $url): static
     {
         $this->hostUrl = $url;
@@ -182,9 +185,12 @@ class Mail extends Email
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setIgnoreDebugMode(bool $value): static
     {
-        $this->ignoreDebugMode = (bool)$value;
+        $this->ignoreDebugMode = $value;
 
         return $this;
     }

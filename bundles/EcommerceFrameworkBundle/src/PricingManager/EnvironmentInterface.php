@@ -28,31 +28,52 @@ interface EnvironmentInterface
 
     public const EXECUTION_MODE_CART = 'cart';
 
-    public function setCart(CartInterface $cart): EnvironmentInterface;
+    /**
+     * @return $this
+     */
+    public function setCart(CartInterface $cart): static;
 
     public function getCart(): ?CartInterface;
 
-    public function setCartItem(CartItemInterface $cartItem): EnvironmentInterface;
+    /**
+     * @return $this
+     */
+    public function setCartItem(CartItemInterface $cartItem): static;
 
     public function getCartItem(): ?CartItemInterface;
 
-    public function setProduct(CheckoutableInterface $product): EnvironmentInterface;
+    /**
+     * @return $this
+     */
+    public function setProduct(CheckoutableInterface $product): static;
 
     public function getProduct(): ?CheckoutableInterface;
 
-    public function setVisitorInfo(VisitorInfo $visitorInfo): EnvironmentInterface;
+    /**
+     * @return $this
+     */
+    public function setVisitorInfo(VisitorInfo $visitorInfo): static;
 
     public function getVisitorInfo(): ?VisitorInfo;
 
-    public function setRule(RuleInterface $rule): EnvironmentInterface;
+    /**
+     * @return $this
+     */
+    public function setRule(RuleInterface $rule): static;
 
     public function getRule(): ?RuleInterface;
 
-    public function setPriceInfo(PriceInfoInterface $priceInfo): EnvironmentInterface;
+    /**
+     * @return $this
+     */
+    public function setPriceInfo(PriceInfoInterface $priceInfo): static;
 
     public function getPriceInfo(): ?PriceInfoInterface;
 
-    public function setCategories(array $categories): EnvironmentInterface;
+    /**
+     * @return $this
+     */
+    public function setCategories(array $categories): static;
 
     /**
      * @return AbstractCategory[]
@@ -62,9 +83,9 @@ interface EnvironmentInterface
     /**
      * sets execution mode of system - either product or cart
      *
-     * @param string $executionMode
+     * @return $this
      */
-    public function setExecutionMode(string $executionMode): void;
+    public function setExecutionMode(string $executionMode): static;
 
     /**
      * returns in with execution mode the system is - either product or cart

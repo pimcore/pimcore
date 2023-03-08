@@ -53,7 +53,7 @@ abstract class AbstractOrderList implements OrderListInterface
         return new $class($row);
     }
 
-    public function setListType(string $type): OrderListInterface
+    public function setListType(string $type): static
     {
         $this->listType = $type;
 

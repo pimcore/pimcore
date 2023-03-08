@@ -34,7 +34,7 @@ final class Version20230222075502 extends AbstractMigration
     public function up(Schema $schema): void
     {
         if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', 'pimcore')) {
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', true, 'bool', 'pimcore');
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\GoogleMarketingBundle\\PimcoreGoogleMarketingBundle', true, SettingsStore::TYPE_BOOLEAN, 'pimcore');
         }
 
         $this->addSql("INSERT IGNORE INTO `users_permission_definitions` (`key`, `category`) VALUES ('google_marketing', 'Pimcore Google Marketing Bundle')");

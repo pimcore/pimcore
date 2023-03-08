@@ -28,7 +28,7 @@ class Product implements OrderListFilterInterface
         $this->product = $product;
     }
 
-    public function apply(OrderListInterface $orderList): OrderListFilterInterface
+    public function apply(OrderListInterface $orderList): static
     {
         $db = \Pimcore\Db::get();
         $ids = [

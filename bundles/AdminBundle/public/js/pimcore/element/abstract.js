@@ -279,6 +279,30 @@ pimcore.element.abstract = Class.create({
         }
     },
 
+    getLanguageMenuItems: function() {
+        let languages = [];
+        this.frontendLanguages.forEach((language) => {
+            let languageData = {
+                text: t(pimcore.available_languages[language]),
+                iconCls: "pimcore_icon_language_" + language.toLowerCase(),
+                handler: function() {
+                    this.languageSwitcher.setIconCls(languageData.iconCls);
+                    pimcore.globalmanager.add('global_language_' + this.id, language);
+                    this.toolbar.fireEvent(
+                        pimcore.events.globalLanguageChanged,
+                        language
+                    );
+                }.bind(this)
+            };
+
+            languages.push(languageData);
+        });
+
+        return new Ext.menu.Menu({
+           items: [...languages]
+        })
+    },
+
     getMetaInfoMenuItems: function() {
         var metainfo = this.getMetaInfo();
 

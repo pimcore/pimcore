@@ -110,6 +110,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      */
     protected bool $properties = false;
 
+    /**
+     * @return $this
+     */
     public function setCreate(bool $create): static
     {
         $this->create = $create;
@@ -122,6 +125,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this->create;
     }
 
+    /**
+     * @return $this
+     */
     public function setDelete(bool $delete): static
     {
         $this->delete = $delete;
@@ -134,6 +140,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this->delete;
     }
 
+    /**
+     * @return $this
+     */
     public function setList(bool $list): static
     {
         $this->list = $list;
@@ -146,6 +155,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this->list;
     }
 
+    /**
+     * @return $this
+     */
     public function setProperties(bool $properties): static
     {
         $this->properties = $properties;
@@ -158,6 +170,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this->properties;
     }
 
+    /**
+     * @return $this
+     */
     public function setPublish(bool $publish): static
     {
         $this->publish = $publish;
@@ -170,6 +185,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this->publish;
     }
 
+    /**
+     * @return $this
+     */
     public function setRename(bool $rename): static
     {
         $this->rename = $rename;
@@ -182,6 +200,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this->rename;
     }
 
+    /**
+     * @return $this
+     */
     public function setSettings(bool $settings): static
     {
         $this->settings = $settings;
@@ -194,6 +215,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this->settings;
     }
 
+    /**
+     * @return $this
+     */
     public function setVersions(bool $versions): static
     {
         $this->versions = $versions;
@@ -206,6 +230,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this->versions;
     }
 
+    /**
+     * @return $this
+     */
     public function setView(bool $view): static
     {
         $this->view = $view;
@@ -218,6 +245,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this->view;
     }
 
+    /**
+     * @return $this
+     */
     public function setCid(int $cid): static
     {
         $this->cid = $cid;
@@ -230,6 +260,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this->cid;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserId(int $userId): static
     {
         $this->userId = $userId;
@@ -242,6 +275,9 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this->userId;
     }
 
+    /**
+     * @return $this
+     */
     public function setCpath(string $cpath): static
     {
         $this->cpath = $cpath;
