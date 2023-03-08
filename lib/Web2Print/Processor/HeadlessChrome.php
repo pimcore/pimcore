@@ -34,15 +34,6 @@ class HeadlessChrome extends Processor
 {
     private $nodePath = '';
 
-    public function __construct(){
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6',
-            sprintf('%s has been deprecated and will be removed in Pimcore 11 and replaced by a new processor called %s.',
-                __CLASS__, 'Chromium')
-        );
-    }
-
     /**
      * @internal
      */
