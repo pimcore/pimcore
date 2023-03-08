@@ -287,13 +287,10 @@ pimcore.settings.redirects = Class.create({
                 editor: {
                     xtype: 'datefield',
                     format: 'Y-m-d',
-                    listeners: {
-                        change: function (column, value, oldValue, eOpts) {
-                            if(value !== pimcore.helpers.escapeHtml(value)){
-                                // reset value to empty string.
-                                column.setRawValue("");
-                            }
-                        }.bind(this)
+                    onChange: function(value, oldValue) {
+                        if(Ext.String.hasHtmlCharacters(value)) {
+                            this.reset();
+                        }
                     },
                 },
                 renderer:

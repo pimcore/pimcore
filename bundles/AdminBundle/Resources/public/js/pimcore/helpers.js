@@ -18,22 +18,6 @@ pimcore.helpers.sanitizeEmail = function (email) {
     return email.replace(/[^a-zA-Z0-9_\-@.+]/g,'');
 };
 
-
-// Note: Only run this once. And don't run it on already encoded strings e.g. &amp; becomes &amp;amp;
-pimcore.helpers.escapeHtml = function (html) {
-    var map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    if (typeof html === 'string' || html instanceof String) {
-        return html.replace(/[&<>"']/g, function(m) { return map[m]; });
-    }
-    return html;
-}
-
 pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
 
     if (!ExtJS) {
