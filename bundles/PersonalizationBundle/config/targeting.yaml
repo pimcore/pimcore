@@ -198,8 +198,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }
 
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingElementListener: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingDocumentRendererListener: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\RenderletListener: ~
+
     # Newsletter Adapter
     pimcore.document.newsletter.factory.default:
         class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
         arguments:
             - 'Pimcore\Bundle\PersonalizationBundle\Document\Newsletter\AddressSourceAdapter\DefaultAdapter'
+
