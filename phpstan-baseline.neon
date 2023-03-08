@@ -268,9 +268,9 @@ parameters:
 		-
 			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
 			count: 1
-			path: ib/Messenger/Handler/SearchBackendHandler.php
+			path: lib/Messenger/Handler/SearchBackendHandler.php
 
 		-
 			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SearchBackendHandler\\:\\:shouldFlush\\(\\) is unused\\.$#"
 			count: 1
-			path: ib/Messenger/Handler/SearchBackendHandler.php
+			path: lib/Messenger/Handler/SearchBackendHandler.php
