@@ -265,7 +265,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
         var type = data.type;
 
         if (type === "text") {
-            return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            return Ext.util.Format.htmlEncode(value);
         }
 
         if (type === "bool") {
