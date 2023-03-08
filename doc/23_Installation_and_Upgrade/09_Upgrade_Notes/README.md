@@ -254,6 +254,7 @@ pimcore:
 - Removed methods `Pimcore\Tool\Admin::isExtJS6()`, `\Pimcore\Tool\Admin::getLanguageFile()`, `\Pimcore\Tool::exitWithError()`.
 - Moved implementation of `PimcoreBundleAdminSupportInterface` from `AbstractPimcoreBundle` to bundle classes. 
 Moved `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` from  `AbstractPimcoreBundle` to `BundleAdminSupportTrait`.
+- [Cache] Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
 
 ## 10.6.0
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
