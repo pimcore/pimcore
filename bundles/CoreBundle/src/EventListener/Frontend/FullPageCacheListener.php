@@ -364,6 +364,11 @@ class FullPageCacheListener
     {
         $cache = true;
 
+        // do not cache when the application indicated a 'no-store' in the response Cache-Control header
+        if ($response->headers->getCacheControlDirective('no-store')) {
+            $cache = false;
+        }
+
         // do not cache common responses
         if ($response instanceof BinaryFileResponse) {
             $cache = false;
