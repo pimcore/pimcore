@@ -108,20 +108,29 @@ class Task extends Model\AbstractModel
         return $this->version;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
@@ -129,13 +138,19 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDate(int $date): static
     {
-        $this->date = (int) $date;
+        $this->date = $date;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setAction(string $action): static
     {
         $this->action = $action;
@@ -143,6 +158,9 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setVersion(?int $version): static
     {
         $this->version = $version;
@@ -155,12 +173,12 @@ class Task extends Model\AbstractModel
         return $this->active;
     }
 
+    /**
+     * @return $this
+     */
     public function setActive(bool $active): static
     {
-        if (empty($active)) {
-            $active = false;
-        }
-        $this->active = (bool) $active;
+        $this->active = $active;
 
         return $this;
     }

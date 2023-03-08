@@ -87,6 +87,9 @@ class FullPageCacheListener
         return $this->enabled;
     }
 
+    /**
+     * @return $this
+     */
     public function setLifetime(?int $lifetime): static
     {
         $this->lifetime = $lifetime;
