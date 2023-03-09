@@ -314,18 +314,50 @@ trait ImageThumbnailTrait
     }
 
     /**
+     * TODO: Pimcore 11: remove convertArgsBcLayer method (BC layer)
+     *
+     * @param array $args
+     *
+     * @return array
+     */
+    protected function convertArgsBcLayer($args)
+    {
+        if ((count($args) == 1 && is_array($args[0])) || count($args) == 0) {
+            return $args[0] ?? [];
+        } else {
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                'Calling the getPath() method with arguments is deprecated since version 10.6 and will be removed in Pimcore 11.
+                Use an array with options (e.g. ->getPath(["deferred" => true, "cacheBuster" => false]))');
+
+            if (count($args) == 1) {
+                return [
+                    'deferredAllowed' => $args[0],
+                ];
+            } elseif (count($args) == 2) {
+                return [
+                    'deferredAllowed' => $args[0],
+                    'cacheBuster' => $args[1],
+                ];
+            }
+        }
+
+        return [];
+    }
+
+    /**
      * @internal
      *
      * @param array $pathReference
+     * @param bool $frontend
      *
      * @return string|null
      */
-    protected function convertToWebPath(array $pathReference): ?string
+    protected function convertToWebPath(array $pathReference, bool $frontend): ?string
     {
         $type = $pathReference['type'] ?? null;
         $path = $pathReference['src'] ?? null;
 
-        if (Tool::isFrontend()) {
+        if ($frontend) {
             if ($type === 'data-uri') {
                 return $path;
             } elseif ($type === 'deferred') {
@@ -350,7 +382,7 @@ trait ImageThumbnailTrait
      */
     public function getFrontendPath(): string
     {
-        $path = $this->getPath();
+        $path = $this->getPath(['forceFrontend' => true, 'deferredAllowed' => false]);
         if (!\preg_match('@^(https?|data):@', $path)) {
             $path = \Pimcore\Tool::getHostUrl() . $path;
         }

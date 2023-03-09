@@ -180,7 +180,7 @@ class ThumbnailsImageCommand extends AbstractCommand
 
         foreach ($thumbnailsToGenerate as $thumbnailConfig) {
             $thumbnail = $image->getThumbnail($thumbnailConfig);
-            $path = $thumbnail->getPath(false);
+            $path = $thumbnail->getPath(['deferredAllowed' => false]);
 
             // triggers fetching the thumbnail info and updating the asset cache table if width or height are not in the cache
             $thumbnail->getDimensions();
