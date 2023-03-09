@@ -28,8 +28,6 @@ class Pimcore
 
     private static ?KernelInterface $kernel = null;
 
-    private static \Composer\Autoload\ClassLoader $autoloader;
-
     public static function inDebugMode(): bool
     {
         return (bool) self::getKernel()->isDebug();
