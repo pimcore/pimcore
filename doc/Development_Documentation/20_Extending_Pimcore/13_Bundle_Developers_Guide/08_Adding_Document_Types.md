@@ -1,8 +1,9 @@
 # Adding Document Types
 
-Previously, the only way to define custom documents was to create them in a special namespace `Pimcore\Model\Document`. This
-is still possible, but the document can be in any namespace as long as the document is correctly registered. Registration
-can be done in the config via a static mapping from document type to class name.
+Defining custom documents can be done in the config via a static mapping from document type to class name.
+
+Prior to 10.6, the only way to define custom documents was to create them in a special namespace `Pimcore\Model\Document`. This
+is still possible, but the document can be in any namespace as long as the document is correctly registered.
 
 To register a new document, you need to follow 2 steps:
 
@@ -44,4 +45,4 @@ pimcore:
 
 The type_definitions should only be used to add new documents.
 If you want to override an existing class please use the `pimcore:models:class_overrides` instead.
-For a more detailed explanation see [Overriding Models](https://github.com/pimcore/pimcore/tree/11.x/doc/Development_Documentation/20_Extending_Pimcore/03_Overriding_Models.md).
+For a more detailed explanation see [Overriding Models](../../03_Overriding_Models.md).
