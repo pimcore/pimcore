@@ -16,7 +16,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
 /**
- * @deprecated please implement getQueryColumnType() on your data-type
+ * @deprecated Will be removed with Pimcore 11. Please implement getQueryColumnType() on your data-type class instead.
  */
 trait QueryColumnType
 {
