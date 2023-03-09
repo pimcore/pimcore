@@ -179,7 +179,7 @@ class SettingsController extends AdminController
 
                 $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
                 if ($existingItem && $existingItem->getId() != $metadata->getId()) {
-                    return $this->adminJson(['message' => 'rule_violation', 'success' => false]);
+                    return $this->adminJson(['message' => 'predefined_metadata_definitions_error_name_exists_msg', 'success' => false]);
                 }
 
                 $metadata->minimize();

@@ -399,6 +399,7 @@ select_all: Select All
 deselect_all: Deselect All
 definitions_saved: Definitions saved
 predefined_metadata_definitions: Predefined Metadata Definitions
+predefined_metadata_definitions_error_name_exists_msg: Definition with this name already exists
 default_layout: Use as default layout
 hide_edit_image_tab: Hide Edit Image Tab
 are_you_sure_recursive: There child nodes which will be deleted as well! Are you sure?
