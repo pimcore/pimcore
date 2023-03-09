@@ -23,13 +23,13 @@ use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Asset\Document\ImageThumbnail as DocumentImageThumbnail;
+use Pimcore\Model\Asset\Image\Thumbnail as ImageThumbnail;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
+use Pimcore\Model\Asset\Video\ImageThumbnail as VideoImageThumbnail;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Model\Asset\Video\ImageThumbnail as VideoImageThumbnail;
-use Pimcore\Model\Asset\Document\ImageThumbnail as DocumentImageThumbnail;
-use Pimcore\Model\Asset\Image\Thumbnail as ImageThumbnail;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
@@ -518,7 +518,7 @@ class Service extends Model\Element\Service
 
         $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $config['prefix']);
         $prefix = preg_replace('@' . $asset->getId() . '/$@', '', $prefix);
-        if (ltrim($asset->getPath(), '/') === ltrim($prefix,'/')) {
+        if (ltrim($asset->getPath(), '/') === ltrim($prefix, '/')) {
             // just check if the thumbnail exists -> throws exception otherwise
             $thumbnailConfigClass = 'Pimcore\\Model\\Asset\\' . ucfirst($config['type']) . '\\Thumbnail\Config';
             $thumbnailConfig = $thumbnailConfigClass::getByName($config['thumbnail_name']);
@@ -598,6 +598,7 @@ class Service extends Model\Element\Service
                 return $asset->getThumbnail($thumbnailConfig);
             }
         }
+
         return null;
     }
 
@@ -685,7 +686,6 @@ class Service extends Model\Element\Service
                     'Content-Type' => $storage->mimeType($storagePath),
                     'Content-Length' => $storage->fileSize($storagePath),
                 ]);
-
             } else {
                 $thumbnail = Asset\Service::getImageThumbnailByArrayConfig($config);
                 if ($thumbnail) {
@@ -693,6 +693,7 @@ class Service extends Model\Element\Service
                 }
             }
         }
+
         return null;
     }
 
@@ -711,9 +712,7 @@ class Service extends Model\Element\Service
             '.*'                // filename
         );
 
-
         if (preg_match($regExpression, $uri, $matches)) {
-
             return [
                 'prefix' => $matches[1],
                 'type' => $matches[2],

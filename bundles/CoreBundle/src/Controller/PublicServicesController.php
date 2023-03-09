@@ -16,22 +16,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
-use function date;
 use Pimcore\Bundle\SeoBundle\Config;
 use Pimcore\Controller\Controller;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
-use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
-use function time;
 
 /**
  * @internal
@@ -51,7 +46,7 @@ class PublicServicesController extends Controller
             'asset_id' => (int) $request->get('assetId'),
             'thumbnail_name' => $request->get('thumbnailName'),
             'filename' => $filename,
-            'file_extension' => $requestedFileExtension
+            'file_extension' => $requestedFileExtension,
         ];
 
         try {
@@ -59,9 +54,11 @@ class PublicServicesController extends Controller
             if ($thumbnail) {
                 return Asset\Service::getStreamedResponseFromImageThumbnail($thumbnail, $config);
             }
+
             throw new \Exception('Unable to generate '.$config['type'].' thumbnail, see logs for details.');
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
+
             return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');
         }
     }
