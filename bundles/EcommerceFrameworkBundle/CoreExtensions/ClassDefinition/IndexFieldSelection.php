@@ -30,6 +30,8 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     use Data\Extension\QueryColumnType;
 
     /**
+     * @deprecated Will be removed with Pimcore 11
+     *
      * Static type of this element
      *
      * @var string
@@ -37,6 +39,8 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     public $fieldtype = 'indexFieldSelection';
 
     /**
+     * @deprecated Will be removed with Pimcore 11
+     *
      * Type for the column to query
      *
      * @var array
@@ -48,6 +52,8 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     ];
 
     /**
+     * @deprecated Will be removed with Pimcore 11
+     *
      * Type for the column
      *
      * @var array
