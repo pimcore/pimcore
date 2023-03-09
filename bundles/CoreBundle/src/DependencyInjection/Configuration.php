@@ -907,7 +907,7 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    private function addClassResolverNode(ArrayNodeDefinition $node, $name): void
+    private function addClassResolverNode(ArrayNodeDefinition $node, string $name): void
     {
         $node
             ->children()

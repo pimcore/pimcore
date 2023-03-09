@@ -184,8 +184,8 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
                     $createValues['contentMasterDocumentId'] = $request->get('inheritanceSource');
                 }
 
-                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
-                $document = $loader->build($request->get('type'));
+                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($document->getType());
+                $document = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
 
                 $document = $document::create($parentDocument->getId(), $createValues);
 

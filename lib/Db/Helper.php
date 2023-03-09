@@ -31,7 +31,7 @@ class Helper
      * Typically, these are the primary key columns.
      * The values for the specified keys are read from the $data parameter.
      */
-    public static function upsert(ConnectionInterface|\Doctrine\DBAL\Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
+    public static function upsert(Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
     {
         try {
             $data = $quoteIdentifiers ? self::quoteDataIdentifiers($connection, $data) : $data;
@@ -51,13 +51,13 @@ class Helper
     /**
      * @deprecated will be removed in Pimcore 11. Use Pimcore\Db\Helper::upsert instead.
      *
-     * @param ConnectionInterface|\Doctrine\DBAL\Connection $connection
+     * @param Connection $connection
      * @param string $table
      * @param array $data
      *
      * @return int|string
      */
-    public static function insertOrUpdate(ConnectionInterface|\Doctrine\DBAL\Connection $connection, $table, array $data)
+    public static function insertOrUpdate(Connection $connection, string $table, array $data)
     {
         trigger_deprecation(
             'pimcore/pimcore',
