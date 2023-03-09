@@ -54,6 +54,9 @@ class PublicServicesController extends Controller
         $asset = Asset::getById($assetId);
 
         if ($asset) {
+            $thumbnailDir = rtrim($asset->getRealPath(), '/').'/'.$asset->getId().'/image-thumb__'.$asset->getId().'__'.$thumbnailName;
+            $thumbnailFileStoragePath = $thumbnailDir . '/' . $filename;
+
             $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix'));
             $prefix = preg_replace('@' . $asset->getId() . '/$@', '', $prefix);
             if ($asset->getPath() === ('/' . $prefix)) {
@@ -83,6 +86,9 @@ class PublicServicesController extends Controller
                         } elseif ($this->getParameter('pimcore.config')['assets'][$thumbnailType]['thumbnails']['status_cache']) {
                             // Delete Thumbnail Name from Cache so the next call can generate a new TmpStore entry
                             $asset->getDao()->deleteFromThumbnailCache($thumbnailName);
+
+                            // Also delete the thumbnail if it already exists in the storage so that a new TmpStore entry can be generated
+                            $storage->delete($thumbnailFileStoragePath);
                         }
                     }
 
