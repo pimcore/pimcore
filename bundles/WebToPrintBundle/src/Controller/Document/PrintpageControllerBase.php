@@ -23,7 +23,6 @@ use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Schedule\Task;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
