@@ -399,10 +399,8 @@ class SettingsController extends AdminController
             }
         }
 
-        $valueArray['general']['valid_language'] = explode(',', $valueArray['general']['valid_languages']);
-
         //for "wrong" legacy values
-        foreach ($valueArray['general']['valid_language'] as $existingValue) {
+        foreach ($valueArray['general']['valid_languages'] as $existingValue) {
             if (!in_array($existingValue, $validLanguages)) {
                 $languageOptions[] = [
                     'language' => $existingValue,
@@ -480,7 +478,7 @@ class SettingsController extends AdminController
                 'domain' => $values['general.domain'],
                 'redirect_to_maindomain' => $values['general.redirect_to_maindomain'],
                 'language' => $values['general.language'],
-                'valid_languages' => implode(',', $filteredLanguages),
+                'valid_languages' => $filteredLanguages,
                 'fallback_languages' => $fallbackLanguages,
                 'default_language' => $values['general.defaultLanguage'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
