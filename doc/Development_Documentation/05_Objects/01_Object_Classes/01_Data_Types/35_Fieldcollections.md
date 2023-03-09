@@ -72,26 +72,26 @@ $item->setObject($object);
 
 Field collections do not support inheritance out of the box because currently field collection data does not get saved to a query table (so you would not be able to query for inherited data).
 
-Nevertheless you can use inheritance for field collections for data maintenance by [overriding the class](../../../20_Extending_Pimcore/03_Overriding_Models.md) which contains the field collection field and adding a custom getter method to this overriding class:
+Nevertheless, you can use inheritance for field collections for data maintenance by [overriding the class](../../../20_Extending_Pimcore/03_Overriding_Models.md) which contains the field collection field and adding a custom getter method to this overriding class:
 ```php
 // custom getter for field collection field named 'fieldCollection'
 public function getFieldCollection () {
-	$data = parent::getFieldCollection();
+    $data = parent::getFieldCollection();
 
     $inheritanceEnabled = DataObject::getGetInheritedValues();
     DataObject::setGetInheritedValues(true);
     
-	if (\Pimcore\Model\DataObject::doGetInheritedValues($this) && $this->getClass()->getFieldDefinition("fieldCollection")->isEmpty($data)) {
-		try {
-			return $this->getValueFromParent("fieldCollection");
-		} catch (\Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException $e) {
-			// no data from parent available, continue ... 
-		}
-	}
+    try {
+        if (\Pimcore\Model\DataObject::doGetInheritedValues($this) && $this->getClass()->getFieldDefinition("fieldCollection")->isEmpty($data)) {
+            return $this->getValueFromParent("fieldCollection");
+	} 
+    } catch (\Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException $e) {
+        // no data from parent available, continue ... 
+    } finally {
+        DataObject::setGetInheritedValues($inheritanceEnabled);
+    }
     
-    DataObject::setGetInheritedValues($inheritanceEnabled);
-
-	return $data;
+    return $data;
 }
 ```
 
