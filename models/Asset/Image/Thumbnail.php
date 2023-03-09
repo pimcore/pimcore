@@ -49,13 +49,22 @@ final class Thumbnail
     }
 
     /**
-     * @param bool $deferredAllowed
-     * @param bool $cacheBuster
+     * TODO: Pimcore 11: Change method signature to getPath($args = [])
+     *
+     * @param mixed $args,...
      *
      * @return string
      */
-    public function getPath($deferredAllowed = true, $cacheBuster = false)
+    public function getPath(...$args)
     {
+        // TODO: Pimcore 11: remove calling the covertArgsBcLayer() method
+        $args = $this->convertArgsBcLayer($args);
+
+        // set defaults
+        $deferredAllowed = $args['deferredAllowed'] ?? true;
+        $cacheBuster = $args['cacheBuster'] ?? false;
+        $forceFrontend = $args['forceFrontend'] ?? false;
+
         $pathReference = null;
         if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
@@ -72,7 +81,8 @@ final class Thumbnail
             $pathReference = $this->getPathReference($deferredAllowed);
         }
 
-        $path = $this->convertToWebPath($pathReference);
+        $frontend = \Pimcore\Tool::isFrontend() || $forceFrontend;
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         if ($cacheBuster) {
             $path = $this->addCacheBuster($path, ['cacheBuster' => true], $this->getAsset());
@@ -169,7 +179,7 @@ final class Thumbnail
      */
     public function __toString()
     {
-        return $this->getPath(true);
+        return $this->getPath();
     }
 
     /**
@@ -319,7 +329,7 @@ final class Thumbnail
         if (isset($options['previewDataUri'])) {
             $attributes['src'] = $options['previewDataUri'];
         } else {
-            $path = $this->getPath(true);
+            $path = $this->getPath();
             $attributes['src'] = $this->addCacheBuster($path, $options, $image);
         }
 

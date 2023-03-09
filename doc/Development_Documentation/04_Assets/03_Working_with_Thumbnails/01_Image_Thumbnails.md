@@ -159,6 +159,15 @@ echo $thumbnail->getHtml(['imgAttributes' => ["class" => "custom-class"]]);
 // get the path to the thumbnail
 $path = $thumbnail->getPath();
  
+// get path and disable deferred thumbnails
+$path = $thumbnail->getPath(["deferredAllowed" => false]);
+// possible options: ["deferredAllowed" => true, "cacheBuster" => false, "forceFrontend" => false]
+
+// getting the full url to a thumbnail (including the frontend_prefix) - also works in console commands
+$path = $thumbnail->getFrontendPath();
+//or
+$path = $this->getPath(['forceFrontend' => true, 'deferredAllowed' => false]);
+
 // Asset\Image\Thumbnail implements __toString(), so you can still print the path by
 echo $thumbnail; // prints something like /Car%20Images/....png
 
