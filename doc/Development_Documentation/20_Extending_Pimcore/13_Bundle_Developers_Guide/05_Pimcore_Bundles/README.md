@@ -10,7 +10,7 @@ in order to show up in the extension manager. This gives you the following possi
 * The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in editmode. 
 
 To get started quickly, you can extend `Pimcore\Extension\Bundle\AbstractPimcoreBundle` which already implements all methods
-defined by the interface. Besides name, description and version as shown in the extension manager, the interface defines the following methods you
+defined by the interface. Besides name, description and version as shown in the extension manager, the `PimcoreBundleInterface` interface defines the following methods you
 can use to configure your bundle:
 
 ```php
@@ -31,36 +31,10 @@ interface PimcoreBundleInterface extends BundleInterface
      * @return string|RouteReferenceInterface|null
      */
     public function getAdminIframePath();
-
-    /**
-     * Get javascripts to include in admin interface
-     *
-     * @return string[]|RouteReferenceInterface[]
-     */
-    public function getJsPaths();
-
-    /**
-     * Get stylesheets to include in admin interface
-     *
-     * @return string[]|RouteReferenceInterface[]
-     */
-    public function getCssPaths();
-
-    /**
-     * Get javascripts to include in editmode
-     *
-     * @return string[]|RouteReferenceInterface[]
-     */
-    public function getEditmodeJsPaths();
-
-    /**
-     * Get stylesheets to include in editmode
-     *
-     * @return string[]|RouteReferenceInterface[]
-     */
-    public function getEditmodeCssPaths();
 }
 ```
+
+If you need to load assets (JS or CSS) in the Admin or Editmode UI please have a look at the [loading assets in the Admin UI](../13_Loading_Admin_UI_Assets.md) section in the docs.
 
 ## Installer
 
@@ -86,6 +60,8 @@ to fulfill the following requirements:
     
 If you add a new bundle to `src/YourBundleName/YourBundleName.php` and it implements the interface, it should be automatically
 shown in the extension manager.
+
+> If the bundle needs to load any kind of assets like (CSS or JS) it also has to implement the `PimcoreBundleAdminSupportInterface`.
 
 ### Composer bundles
 
