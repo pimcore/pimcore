@@ -169,26 +169,6 @@ class Pimcore
     }
 
     /**
-     * @return \Composer\Autoload\ClassLoader
-     *
-     * @internal
-     */
-    public static function getAutoloader(): \Composer\Autoload\ClassLoader
-    {
-        return self::$autoloader;
-    }
-
-    /**
-     * @param \Composer\Autoload\ClassLoader $autoloader
-     *
-     * @internal
-     */
-    public static function setAutoloader(\Composer\Autoload\ClassLoader $autoloader): void
-    {
-        self::$autoloader = $autoloader;
-    }
-
-    /**
      * Forces a garbage collection.
      *
      * @static
