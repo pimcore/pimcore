@@ -45,4 +45,4 @@ pimcore:
 
 The type_definitions should only be used to add new documents.
 If you want to override an existing class please use the `pimcore:models:class_overrides` instead.
-For a more detailed explanation see [Overriding Models](../../03_Overriding_Models.md).
+For a more detailed explanation see [Overriding Models](../03_Overriding_Models.md).
