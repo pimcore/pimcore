@@ -422,7 +422,7 @@ class LocationAwareConfigRepository
         string $writeTargetEnvVarName,
     ): array
     {
-        $storageConfig = $containerConfig['config_storage'][$configId];
+        $storageConfig = $containerConfig['config_location'][$configId];
 
         if (isset($_SERVER[$writeTargetEnvVarName])) {
             trigger_deprecation('pimcore/pimcore', '10.6',

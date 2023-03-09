@@ -61,6 +61,8 @@ abstract class Kernel extends SymfonyKernel
         registerBundles as microKernelRegisterBundles;
     }
 
+    private const CONFIG_LOCATION = 'config_location';
+
     /**
      * @deprecated will be removed in Pimcore 11
      *
@@ -236,16 +238,16 @@ abstract class Kernel extends SymfonyKernel
             $resolvingBag = $container->getParameterBag();
             $containerConfig = $resolvingBag->resolveValue($containerConfig);
 
-            if (!array_key_exists('config_storage', $containerConfig)) {
+            if (!array_key_exists(self::CONFIG_LOCATION, $containerConfig)) {
                 return;
             }
 
             foreach ($configArray as $config) {
                 $configKey = str_replace('-', '_', $config['defaultStorageDirectoryName']);
-                if (!isset($containerConfig['config_storage'][$configKey])) {
+                if (!isset($containerConfig[self::CONFIG_LOCATION][$configKey])) {
                     continue;
                 }
-                $options = $containerConfig['config_storage'][$configKey]['options'];
+                $options = $containerConfig[self::CONFIG_LOCATION][$configKey]['options'];
 
                 $configDir = rtrim($options['directory'] ?? self::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
                 $configDir = "$configDir/";
@@ -265,7 +267,7 @@ abstract class Kernel extends SymfonyKernel
             return $_SERVER[$storageDir];
         }
 
-        return $config['config_storage'][$configKey]['options']['directory'];
+        return $config[self::CONFIG_LOCATION][$configKey]['options']['directory'];
     }
 
     /**
