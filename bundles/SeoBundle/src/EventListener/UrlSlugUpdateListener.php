@@ -30,7 +30,7 @@ class UrlSlugUpdateListener implements EventSubscriberInterface
     /**
      * @inheritDoc
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             UrlSlugEvents::POST_SAVE => 'onURLSlugUpdate',

@@ -280,3 +280,11 @@ pimcore.events.beforeDestroyWysiwyg = "pimcore.wysiwyg.beforeDestroy";
  */
 pimcore.events.prepareDocumentPageSettingsLayout = "pimcore.documentPageSettingsLayout.prepare";
 
+/**
+ * fired when global language is changed
+ * layout and document are passed as parameter
+ */
+pimcore.events.globalLanguageChanged = "pimcore.globalLanguage.changed";
+
+
+

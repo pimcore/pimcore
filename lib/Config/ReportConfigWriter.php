@@ -56,7 +56,7 @@ final class ReportConfigWriter
         SettingsStore::set(
             self::REPORT_SETTING_ID,
             json_encode($settings),
-            'string',
+            SettingsStore::TYPE_STRING,
             self::REPORT_SETTING_SCOPE
         );
     }

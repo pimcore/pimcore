@@ -87,6 +87,9 @@ class FullPageCacheListener
         return $this->enabled;
     }
 
+    /**
+     * @return $this
+     */
     public function setLifetime(?int $lifetime): static
     {
         $this->lifetime = $lifetime;
@@ -329,7 +332,7 @@ class FullPageCacheListener
                 }
 
                 $now = new \DateTime('now');
-                $response->headers->set('X-Pimcore-Cache-Date', $now->format(\DateTimeInterface::ISO8601));
+                $response->headers->set('X-Pimcore-Cache-Date', $now->format(\DateTimeInterface::ATOM));
 
                 $cacheKey = $this->defaultCacheKey;
                 $deviceDetector = Tool\DeviceDetector::getInstance();

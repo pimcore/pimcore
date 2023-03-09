@@ -44,14 +44,14 @@ final class Version20221220152444 extends AbstractMigration
                     $enableBundle = $data['enableInDefaultView'];
                     unset($data['enableInDefaultView']);
                     $data = json_encode($data);
-                    SettingsStore::set('web_to_print', $data, 'string', 'pimcore_web_to_print');
+                    SettingsStore::set('web_to_print', $data, SettingsStore::TYPE_STRING, 'pimcore_web_to_print');
                 }
             }
 
             // updating description  of permissions
             $this->addSql("UPDATE `users_permission_definitions` SET `category` = 'Pimcore Web2Print Bundle' WHERE `key` = 'web2print_settings'");
 
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle', $enableBundle, 'bool', 'pimcore');
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle', $enableBundle, SettingsStore::TYPE_BOOLEAN, 'pimcore');
         }
 
         $this->warnIf(
@@ -74,7 +74,7 @@ final class Version20221220152444 extends AbstractMigration
                 // we do not know the original value so we set it to false
                 $data['enableInDefaultView'] = false;
                 $data = json_encode($data);
-                SettingsStore::set('web_to_print', $data, 'string', 'pimcore_web_to_print');
+                SettingsStore::set('web_to_print', $data, SettingsStore::TYPE_STRING, 'pimcore_web_to_print');
             }
         }
         // always warn

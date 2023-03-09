@@ -46,7 +46,7 @@ class Payment implements OrderListFilterInterface
         $this->value = $paymentState;
     }
 
-    public function apply(OrderListInterface $orderList): OrderListFilterInterface
+    public function apply(OrderListInterface $orderList): static
     {
         switch ($this->value) {
             case self::PAYMENT_STATE_OK:
