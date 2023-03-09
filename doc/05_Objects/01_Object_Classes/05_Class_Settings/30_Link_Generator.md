@@ -61,7 +61,7 @@ class ProductLinkGenerator extends AbstractProductLinkGenerator implements LinkG
 
     protected function doGenerate(ProductInterface $object, array $params): string
     {
-        return DataObject\Service::useInheritedValues(true, function () use ($customer, $segmentManager) {
+        return DataObject\Service::useInheritedValues(true, function () use ($object, $params) {
             return $this->pimcoreUrl->__invoke(
                 [
                     'productname' => Text::toUrl($object->getOSName() ? $object->getOSName() : 'product'),
