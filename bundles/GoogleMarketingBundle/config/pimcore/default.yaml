@@ -1,0 +1,33 @@
+pimcore_google_marketing:
+    #client_id: 73893596983.apps.googleusercontent.com
+    #email: 73893596983@developer.gserviceaccount.com
+    #simple_api_key: AIzaSyCo9Wj49hYJWW2WgOju4iMYNTvdcBxmyQ8
+    #browser_api_key: AIzaSyBJX16kWAmUVEz1c1amzp2iKqAfumbcoQQ
+
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #
+    # EVENT LISTENERS
+    #
+
+
+    Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend\GoogleSearchConsoleVerificationListener: ~
+
+    Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend\GoogleAnalyticsCodeListener:
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
+
+    Pimcore\Bundle\GoogleMarketingBundle\EventListener\Frontend\GoogleTagManagerListener:
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -108 }
+
+    Pimcore\Bundle\GoogleMarketingBundle\EventListener\IndexSettingsListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }

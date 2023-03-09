@@ -39,7 +39,7 @@ final class Staticroute extends AbstractModel
 
     protected string $reverse;
 
-    protected string $controller;
+    protected ?string $controller;
 
     protected string $variables;
 
@@ -234,7 +234,10 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    public function setController(string $controller): static
+    /**
+     * @return $this
+     */
+    public function setController(?string $controller): static
     {
         $this->controller = $controller;
 
@@ -525,7 +528,7 @@ final class Staticroute extends AbstractModel
         return $this->creationDate;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;

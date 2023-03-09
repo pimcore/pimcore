@@ -101,11 +101,11 @@ class Dao extends Model\Dao\AbstractDao
             $language = $translation->getProperty('language');
         }
 
-        Helper::insertOrUpdate($this->db, 'documents_translations', [
+        Helper::upsert($this->db, 'documents_translations', [
             'id' => $translation->getId(),
             'sourceId' => $sourceId,
             'language' => $language,
-        ]);
+        ], $this->getPrimaryKey('documents_translations'));
     }
 
     public function removeTranslation(Document $document): void

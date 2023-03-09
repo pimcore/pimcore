@@ -36,11 +36,9 @@ For accessing and working with tags via API, take a look into `Pimcore\Model\Ele
 /**
  * returns all assigned tags for element
  *
- * @param string $cType
- * @param int $cId
  * @return Tag[]
  */
-public static function getTagsForElement($cType, $cId)
+public static function getTagsForElement(string $cType, int $cId): array
 {
     $tag = new Tag();
 
@@ -49,24 +47,16 @@ public static function getTagsForElement($cType, $cId)
 
 /**
  * adds given tag to element
- *
- * @param string $cType
- * @param int $cId
- * @param Tag $tag
  */
-public static function addTagToElement($cType, $cId, Tag $tag)
+public static function addTagToElement(string $cType, int $cId, Tag $tag): void
 {
     $tag->getDao()->addTagToElement($cType, $cId);
 }
 
 /**
  * removes given tag from element
- *
- * @param string $cType
- * @param int $cId
- * @param Tag $tag
  */
-public static function removeTagFromElement($cType, $cId, Tag $tag)
+public static function removeTagFromElement(string $cType, int $cId, Tag $tag): void
 {
     $tag->getDao()->removeTagFromElement($cType, $cId);
 }
@@ -75,11 +65,9 @@ public static function removeTagFromElement($cType, $cId, Tag $tag)
  * sets given tags to element and removes all other tags
  * to remove all tags from element, provide empty array of tags
  *
- * @param string $cType
- * @param int $cId
  * @param Tag[] $tags
  */
-public static function setTagsForElement($cType, $cId, array $tags)
+public static function setTagsForElement(string $cType, int $cId, array $tags): void
 {
     $tag = new Tag();
     $tag->getDao()->setTagsForElement($cType, $cId, $tags);

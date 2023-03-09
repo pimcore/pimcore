@@ -23,10 +23,10 @@ use com\realobjects\pdfreactor\webservice\client\JavaScriptMode;
 use com\realobjects\pdfreactor\webservice\client\LogLevel;
 use com\realobjects\pdfreactor\webservice\client\ViewerPreferences;
 use Pimcore\Bundle\WebToPrintBundle\Config;
+use Pimcore\Bundle\WebToPrintBundle\Event\DocumentEvents;
 use Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
-use Pimcore\Event\DocumentEvents;
 use Pimcore\Logger;
 
 class PdfReactor extends Processor

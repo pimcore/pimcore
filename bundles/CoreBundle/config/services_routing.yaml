@@ -36,10 +36,3 @@ services:
     Pimcore\Routing\Loader\BundleRoutingLoader:
         tags:
             - { name: routing.loader }
-
-    # redirect handler used to handle redirects before/after routing
-    Pimcore\Routing\RedirectHandler:
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: routing }

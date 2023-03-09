@@ -40,4 +40,9 @@ abstract class AbstractValue implements ValueInterface
     {
         return $this->label;
     }
+
+    public function getRenderer(): ?string
+    {
+        return null;
+    }
 }

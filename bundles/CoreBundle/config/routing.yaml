@@ -31,3 +31,9 @@ _fos_js_routing:
 _pimcore_bundle_auto:
     resource: .
     type: pimcore_bundle
+
+pimcore_admin_webdav:
+    path: /admin/asset/webdav{path}
+    defaults: { _controller: Pimcore\Bundle\CoreBundle\Controller\WebDavController::webdavAction }
+    requirements:
+        path: '.*'

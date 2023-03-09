@@ -85,7 +85,7 @@ class Dao extends AbstractDao
             'properties' => $this->model->getProperties(),
         ];
 
-        Helper::insertOrUpdate($this->db, 'search_backend_data', $data);
+        Helper::upsert($this->db, 'search_backend_data', $data, $this->getPrimaryKey('search_backend_data'));
     }
 
     /**

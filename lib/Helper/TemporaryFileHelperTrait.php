@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Helper;
 
-use Pimcore;
 use Pimcore\File;
 
 /**
@@ -66,7 +65,7 @@ trait TemporaryFileHelperTrait
             $fileExtension = File::getFileExtension($streamMeta['uri']);
         }
 
-        $tmpFilePath = File::getLocalTempFilePath($fileExtension);
+        $tmpFilePath = File::getLocalTempFilePath($fileExtension, $keep);
 
         $dest = fopen($tmpFilePath, 'wb', false, File::getContext());
         if (!$dest) {
@@ -75,15 +74,6 @@ trait TemporaryFileHelperTrait
 
         stream_copy_to_stream($src, $dest);
         fclose($dest);
-
-        if (!$keep) {
-            /** @var LongRunningHelper $longRunningHelper */
-            $longRunningHelper = Pimcore::getContainer()->get(LongRunningHelper::class);
-            $longRunningHelper->addTmpFilePath($tmpFilePath);
-            register_shutdown_function(static function () use ($tmpFilePath) {
-                @unlink($tmpFilePath);
-            });
-        }
 
         return $tmpFilePath;
     }
