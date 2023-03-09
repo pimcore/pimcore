@@ -19,8 +19,6 @@ namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
-use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerInterface;
-use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Event\DocumentEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -32,10 +30,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class RenderletListener implements EventSubscriberInterface
 {
-
-    private ActionHandlerInterface|DelegatingActionHandler $actionHandler;
-
-
     /**
      * @return string[]
      */
