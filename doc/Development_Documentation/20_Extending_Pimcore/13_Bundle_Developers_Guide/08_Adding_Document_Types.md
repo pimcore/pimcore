@@ -1,14 +1,13 @@
 # Adding Document Types
 
-Previously, the only way to define custom documents was to create them in a special namespace `Pimcore\Model\Document`. This
-is still possible, but the document can be in any namespace as long as the document is correctly registered. Registration
-can be done via 2 config entries which define a list of prefixes (namespaces) to be searched and a static mapping from
-document type to class name. For best performance, you should always use the type definitions mapping as it avoids having to look
-up class names.
+Defining custom documents can be done in the config via a static mapping from document type to class name.
+
+Prior to 10.6, the only way to define custom documents was to create them in a special namespace `Pimcore\Model\Document`. This
+is still possible, but the document can be in any namespace as long as the document is correctly registered.
 
 To register a new document, you need to follow 2 steps:
 
-## 1) Create the document class
+### 1) Create the document class
 
 The document **must** extend `Pimcore\Model\Document`. Lets create a `Book` document (the namespace does not matter
 but it's best practice to put your documents into a `Model\Document` sub-namespace):
@@ -26,7 +25,7 @@ class Book extends \Pimcore\Model\Document
 }
 ```
 
-## 2) Register the document on the document type map
+### 2) Register the document on the document type map
 
 Next we need to update `pimcore.documents.type_definitions.map` configuration to include our document. This can be done in any config
 file which is loaded (e.g. `/config/config.yaml`), but if you provide the editable with a bundle you should define it
@@ -41,3 +40,9 @@ pimcore:
             map:
                 book: \App\Model\Document\Book
 ```
+
+### Do not use to override a class
+
+The type_definitions should only be used to add new documents.
+If you want to override an existing class please use the `pimcore:models:class_overrides` instead.
+For a more detailed explanation see [Overriding Models](../03_Overriding_Models.md).
