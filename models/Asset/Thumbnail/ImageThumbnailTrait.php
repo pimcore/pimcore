@@ -327,7 +327,7 @@ trait ImageThumbnailTrait
         } else {
             trigger_deprecation('pimcore/pimcore', '10.6',
                 'Calling the getPath() method with arguments is deprecated since version 10.6 and will be removed in Pimcore 11.
-                Use an array with options (e.g. ->getPath(["deferred" => true, "cacheBuster" => false]))');
+                Use an array with options (e.g. ->getPath(["deferredAllowed" => true, "cacheBuster" => false]))');
 
             if (count($args) == 1) {
                 return [
