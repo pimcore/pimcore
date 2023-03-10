@@ -311,13 +311,13 @@ $asset = Asset\Image::getById(123);
 $asset->getThumbnail("myConfig", false); // set the 2nd parameter to false
 ```
 
-The processing is also forced when calling the method `getPathReference()` or `getPath(false)` on 
+The processing is also forced when calling the method `getPathReference()` or `getPath(['deferredAllowed' => false])` on 
 the returning thumbnail object: 
 
 ```php
 $asset->getThumbnail("myConfig")->getPathReference(); 
 // or 
-$asset->getThumbnail("myConfig")->getPath(false); 
+$asset->getThumbnail("myConfig")->getPath(['deferredAllowed' => false]); 
 ```
 
 

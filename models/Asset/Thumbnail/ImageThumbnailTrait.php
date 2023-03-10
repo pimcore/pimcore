@@ -310,7 +310,7 @@ trait ImageThumbnailTrait
      */
     public function getFileExtension()
     {
-        return \Pimcore\File::getFileExtension($this->getPath(true));
+        return \Pimcore\File::getFileExtension($this->getPath());
     }
 
     /**
