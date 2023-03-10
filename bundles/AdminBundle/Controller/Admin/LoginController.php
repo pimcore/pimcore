@@ -245,7 +245,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $csrfProtection->regenerateCsrfToken();
 
-        $params['error'] = $error;
+        $params['success'] = !$error;
         return $this->render('@PimcoreAdmin/Admin/Login/lostpassword.html.twig', $params);
     }
 
