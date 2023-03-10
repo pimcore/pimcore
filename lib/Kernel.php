@@ -233,38 +233,6 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
-     * @param ContainerBuilder $container
-     *
-     * @return void
-     *
-     * @deprecated Remove in Pimcore 11
-     */
-    private function registerExtensionConfigFileResources(ContainerBuilder $container)
-    {
-        $filenames = [
-            'extensions.php',
-            sprintf('extensions_%s.php', $this->getEnvironment()),
-        ];
-
-        $directories = [
-            PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY,
-            PIMCORE_CONFIGURATION_DIRECTORY,
-        ];
-
-        // add possible extensions.php files as file existence resources (only for the current env)
-        foreach ($directories as $directory) {
-            foreach ($filenames as $filename) {
-                $container->addResource(new FileExistenceResource($directory . '/' . $filename));
-            }
-        }
-
-        // add extensions.php as container resource
-        if ($this->extensionConfig->configFileExists()) {
-            $container->addResource(new FileResource($this->extensionConfig->locateConfigFile()));
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function boot(): void

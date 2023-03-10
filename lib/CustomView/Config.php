@@ -47,9 +47,7 @@ final class Config
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_custom_views',
-                $storageConfig,
-                null,
-                null
+                $storageConfig
             );
         }
 

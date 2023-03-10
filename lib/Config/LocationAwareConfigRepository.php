@@ -57,7 +57,7 @@ class LocationAwareConfigRepository
         array $containerConfig,
         ?string $settingsStoreScope,
         string|array|null $storageDirectory,
-        ?string $writeTargetEnvVariableName,
+        ?string $writeTargetEnvVariableName = null,
         ?string $defaultWriteLocation = null
     ) {
         $this->containerConfig = $containerConfig;
