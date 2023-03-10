@@ -184,9 +184,10 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
                 }
 
                 $className = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($request->get('type'));
-                $document = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
 
                 /** @var Document\PageSnippet $document */
+                $document = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+
                 $document = $document::create($parentDocument->getId(), $createValues);
 
                 try {
