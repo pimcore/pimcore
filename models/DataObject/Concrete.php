@@ -259,8 +259,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 $this->setModificationDate(time());
             }
 
+            // If fields other than metadata has been modified
+            $modifiedFields = array_filter($this->getDirtyFields(), fn ($field) => !in_array($field, ['userModification', 'modificationDate']));
+
             // hook should be also called if "save only new version" is selected
-            if ($saveOnlyVersion) {
+            if ($saveOnlyVersion && count($modifiedFields) > 0) {
                 $preUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
                     'isAutoSave' => $isAutoSave,
@@ -285,7 +288,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
 
             // hook should be also called if "save only new version" is selected
-            if ($saveOnlyVersion) {
+            if ($saveOnlyVersion && count($modifiedFields) > 0) {
                 $postUpdateEvent = new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
                     'isAutoSave' => $isAutoSave,

@@ -272,10 +272,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $data[$fieldName] = $insertData;
                     $this->model->set($fieldName, $fd->getDataFromResource($insertData, $this->model, $fieldDefinitionParams));
                 }
-
-                if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
-                    $this->model->markFieldDirty($fieldName, false);
-                }
             }
         }
         $tableName = 'object_store_' . $this->model->getClassId();

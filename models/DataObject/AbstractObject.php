@@ -525,11 +525,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $differentOldPath = null;
 
         try {
+            // If user data has been modified
+            $modifiedFields = array_filter($this->getDirtyFields(), fn ($field) => !in_array($field, ['userModification', 'modificationDate']));
+
             $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
             $preEvent = new DataObjectEvent($this, $parameters);
             if ($this->getId()) {
                 $isUpdate = true;
-                $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
+                if (count($modifiedFields) > 0) {
+                    $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
+                }
             } else {
                 self::disableDirtyDetection();
                 $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
@@ -630,7 +635,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $this->clearDependentCache($additionalTags);
 
             $postEvent = new DataObjectEvent($this, $parameters);
-            if ($isUpdate) {
+            if ($isUpdate && count($modifiedFields) > 0) {
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
                 }
