@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\GridConfig[]
      */
-    public function getGridConfigs()
+    public function getGridConfigs(): array
     {
         return $this->getData();
     }
@@ -39,7 +40,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setGridConfigs($gridConfigs)
+    public function setGridConfigs(?array $gridConfigs): static
     {
         return $this->setData($gridConfigs);
     }

@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 /**
-Fields Summary:
-- token [input]
-- usages [numeric]
-- onlyTokenPerCart [checkbox]
-*/
+ * Fields Summary:
+ * - token [input]
+ * - usages [numeric]
+ * - onlyTokenPerCart [checkbox]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -14,10 +15,10 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class VoucherTokenTypeSingle extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType
 {
-protected $type = "VoucherTokenTypeSingle";
-protected $token;
-protected $usages;
-protected $onlyTokenPerCart;
+protected string $type = "VoucherTokenTypeSingle";
+protected ?string $token;
+protected ?int $usages;
+protected ?bool $onlyTokenPerCart;
 
 
 /**
@@ -37,9 +38,9 @@ public function getToken(): ?string
 /**
 * Set token - Token
 * @param string|null $token
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle
+* @return $this
 */
-public function setToken(?string $token)
+public function setToken(?string $token): static
 {
 	$this->token = $token;
 
@@ -63,14 +64,13 @@ public function getUsages(): ?int
 /**
 * Set usages - Usage count
 * @param int|null $usages
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle
+* @return $this
 */
-public function setUsages(?int $usages)
+public function setUsages(?int $usages): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("usages");
 	$this->usages = $fd->preSetData($this, $usages);
-
 	return $this;
 }
 
@@ -91,9 +91,9 @@ public function getOnlyTokenPerCart(): ?bool
 /**
 * Set onlyTokenPerCart - Only token of a cart
 * @param bool|null $onlyTokenPerCart
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle
+* @return $this
 */
-public function setOnlyTokenPerCart(?bool $onlyTokenPerCart)
+public function setOnlyTokenPerCart(?bool $onlyTokenPerCart): static
 {
 	$this->onlyTokenPerCart = $onlyTokenPerCart;
 

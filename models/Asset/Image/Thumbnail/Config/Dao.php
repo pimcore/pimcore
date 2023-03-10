@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
 
@@ -25,19 +26,23 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function configure()
+    private const CONFIG_KEY = 'image_thumbnails';
+
+    public function configure(): void
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+
+        $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
+            $config,
+            self::CONFIG_KEY,
+            'PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS',
+            'PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS'
+        );
 
         parent::configure([
             'containerConfig' => $config['assets']['image']['thumbnails']['definitions'],
             'settingsStoreScope' => 'pimcore_image_thumbnails',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/image-thumbnails',
-            'legacyConfigFile' => 'image-thumbnails.php',
-            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS',
+            'storageDirectory' => $storageConfig,
         ]);
     }
 
@@ -46,7 +51,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function getByName($id = null)
+    public function getByName(string $id = null): void
     {
         if ($id != null) {
             $this->model->setName($id);
@@ -69,11 +74,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
     public function exists(string $name): bool
     {
         return (bool) $this->getDataByName($this->model->getName());
@@ -84,7 +84,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function save($forceClearTempFiles = false)
+    public function save(bool $forceClearTempFiles = false): void
     {
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -119,7 +119,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [
@@ -141,7 +141,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @param bool $forceClearTempFiles force removing generated thumbnail files of saved thumbnail config
      */
-    public function delete($forceClearTempFiles = false)
+    public function delete(bool $forceClearTempFiles = false): void
     {
         $this->deleteData($this->model->getName());
 
@@ -163,7 +163,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         Model\Asset\Dao::$thumbnailStatusCache = [];
     }
 
-    protected function autoClearTempFiles()
+    protected function autoClearTempFiles(): void
     {
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {

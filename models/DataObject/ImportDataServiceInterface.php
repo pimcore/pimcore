@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,14 +20,5 @@ use stdClass;
 
 interface ImportDataServiceInterface
 {
-    /**
-     *
-     * @param stdClass $resolverConfig
-     * @param Concrete $object
-     * @param array $rowData
-     * @param array $params
-     *
-     * @return Concrete
-     */
-    public function populate($resolverConfig, $object, $rowData, $params = []);
+    public function populate(stdClass $resolverConfig, Concrete $object, array $rowData, array $params = []): Concrete;
 }

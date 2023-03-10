@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,20 +26,11 @@ class OrderManagerEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var CartInterface
-     */
-    protected $cart;
+    protected CartInterface $cart;
 
-    /**
-     * @var AbstractOrder
-     */
-    protected $order;
+    protected ?AbstractOrder $order = null;
 
-    /**
-     * @var OrderManagerInterface
-     */
-    protected $orderManager;
+    protected OrderManagerInterface $orderManager;
 
     /**
      * OrderManagerEvent constructor.
@@ -56,49 +48,31 @@ class OrderManagerEvent extends Event
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return CartInterface
-     */
     public function getCart(): CartInterface
     {
         return $this->cart;
     }
 
-    /**
-     * @param CartInterface $cart
-     */
     public function setCart(CartInterface $cart): void
     {
         $this->cart = $cart;
     }
 
-    /**
-     * @return AbstractOrder|null
-     */
     public function getOrder(): ?AbstractOrder
     {
         return $this->order;
     }
 
-    /**
-     * @param AbstractOrder $order
-     */
     public function setOrder(AbstractOrder $order): void
     {
         $this->order = $order;
     }
 
-    /**
-     * @return OrderManagerInterface
-     */
     public function getOrderManager(): OrderManagerInterface
     {
         return $this->orderManager;
     }
 
-    /**
-     * @param OrderManagerInterface $orderManager
-     */
     public function setOrderManager(OrderManagerInterface $orderManager): void
     {
         $this->orderManager = $orderManager;

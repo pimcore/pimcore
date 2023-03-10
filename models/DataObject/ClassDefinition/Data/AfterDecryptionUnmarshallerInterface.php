@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,5 +27,5 @@ interface AfterDecryptionUnmarshallerInterface
      *
      * @return mixed
      */
-    public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */;
+    public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed;
 }

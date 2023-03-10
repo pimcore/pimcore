@@ -33,12 +33,12 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Loads the relations for the given sourceId and type
      *
-     * @param int $id
-     * @param string $type
+     * @param int|null $id
+     * @param string|null $type
      *
      * @return void
      */
-    public function getBySourceId($id = null, $type = null)
+    public function getBySourceId(int $id = null, string $type = null): void
     {
         if ($id && $type) {
             $this->model->setSourceId($id);
@@ -48,11 +48,11 @@ class Dao extends Model\Dao\AbstractDao
         // requires
         $data = $this->db->fetchAllAssociative('SELECT dependencies.targetid,dependencies.targettype
             FROM dependencies
-            LEFT JOIN objects ON dependencies.targettype="object" AND dependencies.targetid=objects.o_id
+            LEFT JOIN objects ON dependencies.targettype="object" AND dependencies.targetid=objects.id
             LEFT JOIN assets ON dependencies.targettype="asset" AND dependencies.targetid=assets.id
             LEFT JOIN documents ON dependencies.targettype="document" AND dependencies.targetid=documents.id
             WHERE dependencies.sourceid = ? AND dependencies.sourcetype = ?
-            ORDER BY objects.o_path, objects.o_key, documents.path, documents.key, assets.path, assets.filename',
+            ORDER BY objects.path, objects.key, documents.path, documents.key, assets.path, assets.filename',
             [$this->model->getSourceId(), $this->model->getSourceType()]);
 
         if (is_array($data) && count($data) > 0) {
@@ -69,7 +69,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return void
      */
-    public function cleanAllForElement($element)
+    public function cleanAllForElement(Element\ElementInterface $element): void
     {
         try {
             $id = $element->getId();
@@ -96,7 +96,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return void
      */
-    public function clear()
+    public function clear(): void
     {
         try {
             Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $this->model->getSourceId()) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $this->model->getSourceType()));
@@ -110,7 +110,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return void
      */
-    public function save()
+    public function save(): void
     {
         // get existing dependencies
         $existingDependenciesRaw = $this->db->fetchAllAssociative('SELECT id, targetType, targetId FROM dependencies WHERE sourceType= ? AND sourceId = ?',
@@ -176,20 +176,20 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Loads the relations that need the given source element
      *
-     * @param int $offset
-     * @param int $limit
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
      */
-    public function getRequiredBy($offset = null, $limit = null)
+    public function getRequiredBy(int $offset = null, int $limit = null): array
     {
         $query = '
             SELECT dependencies.sourceid, dependencies.sourcetype FROM dependencies
-            LEFT JOIN objects ON dependencies.sourceid=objects.o_id AND dependencies.sourcetype="object"
+            LEFT JOIN objects ON dependencies.sourceid=objects.id AND dependencies.sourcetype="object"
             LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.sourcetype="asset"
             LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.sourcetype="document"
             WHERE dependencies.targettype = ? AND dependencies.targetid = ?
-            ORDER BY objects.o_path, objects.o_key, documents.path, documents.key, assets.path, assets.filename
+            ORDER BY objects.path, objects.key, documents.path, documents.key, assets.path, assets.filename
         ';
 
         if ($offset !== null && $limit !== null) {
@@ -220,7 +220,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getRequiredByWithPath($offset = null, $limit = null, $orderBy = null, $orderDirection = null)
+    public function getRequiredByWithPath(int $offset = null, int $limit = null, string $orderBy = null, string $orderDirection = null): array
     {
         $targetId = (int)$this->model->getSourceId();
 
@@ -241,17 +241,17 @@ class Dao extends Model\Dao\AbstractDao
         $query = "
             SELECT id, type, path
             FROM (
-                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(o.o_path, o.o_key) as path
+                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(o.path, o.key) as `path`
                 FROM dependencies d
-                JOIN objects o ON o.o_id = d.sourceid
+                JOIN objects o ON o.id = d.sourceid
                 WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'object'
                 UNION
-                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(doc.path, doc.key) as path
+                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(doc.path, doc.key) as `path`
                 FROM dependencies d
                 JOIN documents doc ON doc.id = d.sourceid
                 WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'document'
                 UNION
-                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(a.path, a.filename) as path
+                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(a.path, a.filename) as `path`
                 FROM dependencies d
                 JOIN assets a ON a.id = d.sourceid
                 WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'asset'
@@ -276,7 +276,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return int
      */
-    public function getRequiredByTotalCount()
+    public function getRequiredByTotalCount(): int
     {
         return (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE targettype = ? AND targetid = ?', [$this->model->getSourceType(), $this->model->getSourceId()]);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,11 +19,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
-    use Extension\QueryColumnType;
+    use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
@@ -36,39 +39,19 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     const CALCULATOR_TYPE_CLASS = 'class';
 
     /**
-     * Static type of this element
-     *
      * @internal
      *
      * @var string
      */
-    public $fieldtype = 'calculatedValue';
+    public string $elementType = 'input';
 
     /**
      * @internal
-     *
-     * @var string
-     */
-    public $elementType = 'input';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string
      */
     public string $calculatorType = self::CALCULATOR_TYPE_CLASS;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     public ?string $calculatorExpression = null;
 
@@ -77,16 +60,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @var string
      */
-    public $calculatorClass;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar';
+    public string $calculatorClass;
 
     /**
      * Column length
@@ -95,22 +69,17 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @var int
      */
-    public $columnLength = 190;
+    public int $columnLength = 190;
 
-    /**
-     * @return string
-     */
     public function getElementType(): string
     {
         return $this->elementType;
     }
 
     /**
-     * @param string $elementType
-     *
      * @return $this
      */
-    public function setElementType($elementType)
+    public function setElementType(string $elementType): static
     {
         if ($elementType) {
             $this->elementType = $elementType;
@@ -119,39 +88,15 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string|int $width
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-    }
-
-    /**
-     * @return int
-     */
-    public function getColumnLength()
+    public function getColumnLength(): int
     {
         return $this->columnLength;
     }
 
     /**
-     * @param int|null $columnLength
-     *
      * @return $this
      */
-    public function setColumnLength($columnLength)
+    public function setColumnLength(?int $columnLength): static
     {
         if ($columnLength) {
             $this->columnLength = $columnLength;
@@ -160,78 +105,60 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCalculatorClass()
+    public function getCalculatorClass(): string
     {
         return $this->calculatorClass;
     }
 
-    /**
-     * @param string $calculatorClass
-     */
-    public function setCalculatorClass($calculatorClass)
+    public function setCalculatorClass(string $calculatorClass): void
     {
         $this->calculatorClass = $calculatorClass;
     }
 
-    /**
-     * @return string
-     */
     public function getCalculatorType(): string
     {
         return $this->calculatorType;
     }
 
-    /**
-     * @param string $calculatorType
-     */
     public function setCalculatorType(string $calculatorType): void
     {
         $this->calculatorType = $calculatorType;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCalculatorExpression(): ?string
     {
         return $this->calculatorExpression;
     }
 
-    /**
-     * @param string|null $calculatorExpression
-     */
     public function setCalculatorExpression(?string $calculatorExpression): void
     {
         $this->calculatorExpression = $calculatorExpression;
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param string|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
+     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param Model\DataObject\Data\CalculatedValue|null $data
-     * @param DataObject\Concrete $object
+     * @param mixed $data
+     * @param Concrete|null $object
      * @param array $params
      *
      * @return string|null
+     *
+     * @see Data::getDataForEditmode
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof Model\DataObject\Data\CalculatedValue) {
             return Model\DataObject\Service::getCalculatedFieldValueForEditMode($object, $params, $data);
@@ -241,29 +168,31 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param float $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return null
+     *
+     * @see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         return null;
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param DataObject\Data\CalculatedValue|null $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     *
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return (string)$this->getDataForEditmode($data, $object, $params);
     }
@@ -271,7 +200,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         // nothing to do
     }
@@ -279,23 +208,23 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
-        return $this->getDataFromObjectParam($object, $params);
+        return $this->getDataFromObjectParam($object, $params) ?? '';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType()
+    public function getQueryColumnType(): string
     {
-        return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
+        return 'varchar(' . $this->getColumnLength() . ')';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getGetterCode($class)
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
 
@@ -303,7 +232,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '()' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '(): ' . $this->getReturnTypeDeclaration() . "\n";
         $code .= '{' . "\n";
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
@@ -325,14 +254,14 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getGetterCodeLocalizedfields($class)
+    public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
         $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '($language = null)' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '(?string $language = null): ' . $this->getReturnTypeDeclaration() . "\n";
         $code .= '{' . "\n";
         $code .= "\t" . 'if (!$language) {' . "\n";
         $code .= "\t\t" . 'try {' . "\n";
@@ -380,7 +309,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getGetterCodeObjectbrick($brickClass)
+    public function getGetterCodeObjectbrick(\Pimcore\Model\DataObject\Objectbrick\Definition $brickClass): string
     {
         $key = $this->getName();
         $code = '';
@@ -388,7 +317,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '($language = null)' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '(?string $language = null): ' . $this->getReturnTypeDeclaration() . "\n";
         $code .= '{' . "\n";
 
         $code .= "\t" . '$brickDefinition = DataObject\Objectbrick\Definition::getByKey("' . $brickClass->getKey() . '");' . "\n";
@@ -407,7 +336,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getGetterCodeFieldcollection($fieldcollectionDefinition)
+    public function getGetterCodeFieldcollection(Definition $fieldcollectionDefinition): string
     {
         $key = $this->getName();
 
@@ -416,7 +345,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '()' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '(): ' . $this->getReturnTypeDeclaration() . "\n";
         $code .= '{' . "\n";
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
@@ -436,90 +365,33 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getSetterCode($class)
+    public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
-        $key = $this->getName();
-
-        $code = '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . "\n";
-        $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . ')' . "\n";
-        $code .= '{' . "\n";
-
-        $code .= "\t" . 'return $this;' . "\n";
-        $code .= "}\n\n";
-
-        return $code;
+        return '';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSetterCodeObjectbrick($brickClass)
+    public function getSetterCodeObjectbrick(\Pimcore\Model\DataObject\Objectbrick\Definition $brickClass): string
     {
-        $key = $this->getName();
-
-        $code = '';
-        $code .= '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
-        $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . ')' . "\n";
-        $code .= '{' . "\n";
-        $code .= "\t" . 'return $this;' . "\n";
-        $code .= "}\n\n";
-
-        return $code;
+        return '';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSetterCodeFieldcollection($fieldcollectionDefinition)
+    public function getSetterCodeFieldcollection(Definition $fieldcollectionDefinition): string
     {
-        $key = $this->getName();
-
-        $code = '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
-        $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . ')' . "\n";
-        $code .= '{' . "\n";
-        $code .= "\t" . 'return $this;' . "\n";
-        $code .= "}\n\n";
-
-        return $code;
+        return '';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSetterCodeLocalizedfields($class)
+    public function getSetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
-        $key = $this->getName();
-        if ($class instanceof DataObject\Objectbrick\Definition) {
-            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
-        } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
-            $classname = 'Fieldcollection\\Data\\' . ucfirst($class->getKey());
-        } else {
-            $classname = $class->getName();
-        }
-
-        $code = '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
-        $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . ', $language = null)' . "\n";
-        $code .= '{' . "\n";
-        $code .= "\t" . 'return $this;' . "\n";
-        $code .= "}\n\n";
-
-        return $code;
+        return '';
     }
 
     /**
@@ -529,7 +401,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @return mixed
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data;
     }
@@ -537,51 +409,38 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function supportsInheritance()
+    public function supportsInheritance(): bool
     {
         return false;
     }
 
-    /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         return $oldValue === $newValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\' . DataObject\Data\CalculatedValue::class;
+        return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\' . DataObject\Data\CalculatedValue::class;
+        return 'mixed';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
-        return '\\' . DataObject\Data\CalculatedValue::class . '|null';
+        return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
-        return '\\' . DataObject\Data\CalculatedValue::class . '|null';
+        return 'mixed';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'calculatedValue';
     }
 }

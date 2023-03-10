@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,66 +19,41 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
 class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'table';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public $height = 0;
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public $cols;
+    public ?int $cols = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $colsFixed = false;
+    public bool $colsFixed = false;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public $rows;
+    public ?int $rows = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $rowsFixed = false;
+    public bool $rowsFixed = false;
 
     /**
      * Default data
@@ -86,224 +62,101 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @var string
      */
-    public $data = '';
+    public string $data = '';
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $columnConfigActivated = false;
+    public bool $columnConfigActivated = false;
 
     /**
      * @internal
      *
      * @var array
      */
-    public $columnConfig = [];
+    public array $columnConfig = [];
 
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
-
-    /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    /**
-     * @return string|int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
-     * @param string|int $height
-     *
-     * @return $this
-     */
-    public function setHeight($height)
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getCols()
+    public function getCols(): ?int
     {
         return $this->cols;
     }
 
-    /**
-     * @param int|null $cols
-     *
-     * @return $this
-     */
-    public function setCols($cols)
+    public function setCols(?int $cols): static
     {
         $this->cols = $this->getAsIntegerCast($cols);
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getRows()
+    public function getRows(): ?int
     {
         return $this->rows;
     }
 
-    /**
-     * @param int|null $rows
-     *
-     * @return $this
-     */
-    public function setRows($rows)
+    public function setRows(?int $rows): static
     {
         $this->rows = $this->getAsIntegerCast($rows);
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getRowsFixed()
+    public function getRowsFixed(): bool
     {
         return $this->rowsFixed;
     }
 
-    /**
-     * @param bool $rowsFixed
-     *
-     *@return $this
-     */
-    public function setRowsFixed($rowsFixed)
+    public function setRowsFixed(bool $rowsFixed): static
     {
         $this->rowsFixed = (bool)$rowsFixed;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getColsFixed()
+    public function getColsFixed(): bool
     {
         return $this->colsFixed;
     }
 
-    /**
-     * @param bool $colsFixed
-     *
-     * @return $this
-     */
-    public function setColsFixed($colsFixed)
+    public function setColsFixed(bool $colsFixed): static
     {
         $this->colsFixed = (bool)$colsFixed;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getData()
+    public function getData(): string
     {
         return $this->data;
     }
 
-    /**
-     * @param string $data
-     *
-     * @return $this
-     */
-    public function setData($data)
+    public function setData(string $data): static
     {
         $this->data = $data;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isColumnConfigActivated(): bool
     {
         return $this->columnConfigActivated;
     }
 
-    /**
-     * @param bool $columnConfigActivated
-     */
     public function setColumnConfigActivated(bool $columnConfigActivated): void
     {
         $this->columnConfigActivated = $columnConfigActivated;
     }
 
-    /**
-     * @return array
-     */
     public function getColumnConfig(): array
     {
         return $this->columnConfig;
     }
 
-    /**
-     * @param array $columnConfig
-     */
     public function setColumnConfig(array $columnConfig): void
     {
         $this->columnConfig = $columnConfig;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function convertDataToValueArray(array $data)
+    protected function convertDataToValueArray(array $data): array
     {
         $valueArray = [];
         foreach ($data as $entry) {
@@ -318,15 +171,15 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param string|array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
+     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (empty($data)) {
             // if it is empty then there is no need to serialize anything
@@ -342,15 +195,16 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $unserializedData = Serialize::unserialize((string) $data);
 
@@ -385,15 +239,15 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param string|array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     *
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if (!empty($data)) {
             $tmpLine = [];
@@ -412,15 +266,16 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     *
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (is_array($data)) {
             //make sure only array values are used of edit mode (other wise ext stores do not work anymore)
@@ -430,28 +285,22 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $data;
     }
 
-    /**
-     * @param array $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array
-     */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     *
+     * @see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         // check for empty data
         $checkData = '';
@@ -476,23 +325,24 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return array
+     * @return array|null
      */
-    public function getDataFromGridEditor($data, $object = null, $params = [])
+    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     *
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         $versionPreview = $this->getDiffVersionPreview($data, $object, $params);
         if (is_array($versionPreview) && $versionPreview['html']) {
@@ -505,7 +355,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -519,20 +369,17 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
-            return base64_encode(Serialize::serialize($data));
+            return json_encode($data);
         }
 
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
@@ -555,7 +402,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
@@ -565,11 +412,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = [])
+    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array|string
     {
         if ($data) {
             $html = '<table>';
@@ -615,7 +462,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @param DataObject\ClassDefinition\Data\Table $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->cols = $masterDefinition->cols;
         $this->colsFixed = $masterDefinition->colsFixed;
@@ -624,44 +471,26 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->data = $masterDefinition->data;
     }
 
-    /**
-     * @param array|null $oldValue
-     * @param array|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         return $this->isEqualArray($oldValue, $newValue);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return 'array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return 'array|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return 'array';
@@ -670,11 +499,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function getGetterCode($class)
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
 
-        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -689,8 +518,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         $code .= $this->getPreGetValueHookCode($key);
 
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($this instanceof  PreGetDataInterface || method_exists($this, 'preGetData')) {
+        if ($this instanceof  PreGetDataInterface) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n\n";
@@ -720,11 +548,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function getGetterCodeObjectbrick($brickClass)
+    public function getGetterCodeObjectbrick(\Pimcore\Model\DataObject\Objectbrick\Definition $brickClass): string
     {
         $key = $this->getName();
 
-        if ($brickClass->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -738,8 +566,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
 
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
+        if ($this instanceof PreGetDataInterface) {
             $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n";
@@ -768,11 +595,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function getGetterCodeFieldcollection($fieldcollectionDefinition)
+    public function getGetterCodeFieldcollection(Definition $fieldcollectionDefinition): string
     {
         $key = $this->getName();
 
-        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -786,8 +613,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
 
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
+        if ($this instanceof PreGetDataInterface) {
             $code .= "\t" . '$container = $this;' . "\n";
             $code .= "\t" . '/** @var \\' . static::class . ' $fd */' . "\n";
             $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
@@ -809,11 +635,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function getGetterCodeLocalizedfields($class)
+    public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
 
-        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -823,7 +649,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typeDeclaration . "\n";
+        $code .= 'public function get' . ucfirst($key) . ' (?string $language = null)' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
@@ -842,5 +668,20 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $code .= "}\n\n";
 
         return $code;
+    }
+
+    public function getColumnType(): string
+    {
+        return 'longtext';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'table';
     }
 }

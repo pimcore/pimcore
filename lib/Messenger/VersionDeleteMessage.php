@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,17 +25,11 @@ class VersionDeleteMessage
     {
     }
 
-    /**
-     * @return string
-     */
     public function getElementType(): string
     {
         return $this->elementType;
     }
 
-    /**
-     * @return int
-     */
     public function getElementId(): int
     {
         return $this->elementId;

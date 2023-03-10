@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,15 +20,7 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface CustomRecyclingMarshalInterface
 {
-    /**
-     * @param Concrete $object
-     * @param mixed $data
-     */
-    public function marshalRecycleData($object, $data);
+    public function marshalRecycleData(Concrete $object, mixed $data): mixed;
 
-    /**
-     * @param Concrete $object
-     * @param mixed $data
-     */
-    public function unmarshalRecycleData($object, $data);
+    public function unmarshalRecycleData(Concrete $object, mixed $data): mixed;
 }

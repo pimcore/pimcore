@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Model\DataObject\Data\RgbaColor;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\User;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class GeneralTest extends AbstractClassificationStoreTest
 {
@@ -46,7 +47,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         parent::tearDown();
     }
 
-    public function testBasics()
+    public function testBasics(): void
     {
         // make sure that store config exists
         $store = Classificationstore\StoreConfig::getByName('teststore');
@@ -136,7 +137,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         Cache::enable();
     }
 
-    public function testBooleanSelect()
+    public function testBooleanSelect(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -147,7 +148,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('booleanSelect', $store->getId());
 
         $originalValue = true;
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -161,7 +161,7 @@ class GeneralTest extends AbstractClassificationStoreTest
      *
      * @throws \Exception
      */
-    protected function createCsObject()
+    protected function createCsObject(): \Pimcore\Model\DataObject\Csstore
     {
         $o = new \Pimcore\Model\DataObject\Csstore();
         $o->setParentId(1);
@@ -173,7 +173,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         return $o;
     }
 
-    public function testCheckbox()
+    public function testCheckbox(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -184,7 +184,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('checkbox', $store->getId());
 
         $originalValue = true;
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -193,7 +192,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testClassificationStoreInput()
+    public function testClassificationStoreInput(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -204,7 +203,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('input', $store->getId());
 
         $originalValue = '123';
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -213,7 +211,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testClassificationStoreQuantityValue()
+    public function testClassificationStoreQuantityValue(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $this->configureStoreWithQuantityValueField($store);
@@ -226,7 +224,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $csField = $o->getCsstore();
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroupQvalue');
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('qValue', $store->getId());
-        $value = new \Pimcore\Model\DataObject\Data\QuantityValue(123, 1);
+        $value = new \Pimcore\Model\DataObject\Data\QuantityValue(123, '1');
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $value);
         $o->save();
 
@@ -240,7 +238,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($value->getUnit(), $value1->getUnit());
 
         //clear value
-        $value = new \Pimcore\Model\DataObject\Data\QuantityValue(null, 1);
+        $value = new \Pimcore\Model\DataObject\Data\QuantityValue(null, '1');
         $o->getCsstore()->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $value);
         $o->save();
 
@@ -268,7 +266,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         Cache::enable();
     }
 
-    public function testCountry()
+    public function testCountry(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -279,7 +277,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('country', $store->getId());
 
         $originalValue = 'AT';
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -288,7 +285,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testCountrymultiselect()
+    public function testCountrymultiselect(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -299,7 +296,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('countrymultiselect', $store->getId());
 
         $originalValue = ['AT', 'DE'];
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -308,7 +304,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testDate()
+    public function testDate(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -320,7 +316,6 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $originalValue = new Carbon();
         $originalValue->setTimestamp(time());
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -329,7 +324,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testDatetime()
+    public function testDatetime(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -341,7 +336,6 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $originalValue = new Carbon();
         $originalValue->setTimestamp(time());
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -350,7 +344,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testEncryptedField()
+    public function testEncryptedField(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -362,7 +356,6 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $delegate = new Input();
         $originalValue = new EncryptedField($delegate, 'abc');
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -371,7 +364,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testInput()
+    public function testInput(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -382,7 +375,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('input', $store->getId());
 
         $originalValue = 'abc';
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -391,7 +383,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testInputQuantityValue()
+    public function testInputQuantityValue(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -409,7 +401,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         }
 
         $originalValue = new InputQuantityValue('abc', $unit->getId());
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -418,7 +409,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testLanguage()
+    public function testLanguage(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -429,7 +420,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('language', $store->getId());
 
         $originalValue = 'fr';
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -438,7 +428,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testLanguagemultiselect()
+    public function testLanguagemultiselect(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -449,7 +439,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('languagemultiselect', $store->getId());
 
         $originalValue = ['AT', 'DE'];
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -458,7 +447,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testMultiselect()
+    public function testMultiselect(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -469,7 +458,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('multiselect', $store->getId());
 
         $originalValue = ['A', 'D'];
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -478,7 +466,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testNumeric()
+    public function testNumeric(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -489,7 +477,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('numeric', $store->getId());
 
         $originalValue = 12.57;
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -498,7 +485,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testQuantityValue()
+    public function testQuantityValue(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -516,7 +503,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         }
 
         $originalValue = new QuantityValue(123, $unit->getId());
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -525,7 +511,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testRgbaColor()
+    public function testRgbaColor(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -536,7 +522,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('rgbaColor', $store->getId());
 
         $originalValue = new RgbaColor(1, 2, 3, 4);
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -545,7 +530,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testSelect()
+    public function testSelect(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -556,7 +541,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('select', $store->getId());
 
         $originalValue = 'B';
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -565,7 +549,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testSlider()
+    public function testSlider(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -576,7 +560,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('slider', $store->getId());
 
         $originalValue = 47;
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -585,7 +568,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testTable()
+    public function testTable(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -596,7 +579,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('table', $store->getId());
 
         $originalValue = [['A', 'B'], ['C', 'D']];
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -605,7 +587,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testTextarea()
+    public function testTextarea(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -616,7 +598,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('textarea', $store->getId());
 
         $originalValue = "line1\nline2";
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -625,7 +606,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testTime()
+    public function testTime(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -636,7 +617,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('time', $store->getId());
 
         $originalValue = '12:30';
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -645,7 +625,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testUser()
+    public function testUser(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -666,7 +646,6 @@ class GeneralTest extends AbstractClassificationStoreTest
             $user = $userListing[0];
         }
         $originalValue = $user->getId();
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -675,7 +654,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testWysiwyg()
+    public function testWysiwyg(): void
     {
         $store = Classificationstore\StoreConfig::getByName('teststore');
         $o = $this->createCsObject();
@@ -686,7 +665,6 @@ class GeneralTest extends AbstractClassificationStoreTest
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('wysiwyg', $store->getId());
 
         $originalValue = 'line1<br>line2';
-        /** @var \Pimcore\Model\DataObject\Classificationstore $csField */
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $originalValue);
         $o->save();
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId(), ['force' => true]);
@@ -695,16 +673,16 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($originalValue, $newValue);
     }
 
-    public function testAddGridFeatureJoinsWithTwoFilters()
+    public function testAddGridFeatureJoinsWithTwoFilters(): void
     {
         $name = 'inheritance';
         $class = ClassDefinition::getByName($name);
 
         $list = new \Pimcore\Model\DataObject\Inheritance\Listing();
 
-        $list->setCondition("(o_path = '/tmp' OR o_path LIKE '/tmp/%') AND 1 = 1");
+        $list->setCondition("(`path` = '/tmp' OR `path` like '/tmp/%') AND 1 = 1");
         $list->setLimit(25);
-        $list->setOffset('0');
+        $list->setOffset(0);
         $list->setGroupBy('oo_id');
         $list->setOrder('ASC');
 
@@ -748,14 +726,14 @@ class GeneralTest extends AbstractClassificationStoreTest
             'joinType' => 'left',
             'joinTable' => 'object_classificationstore_data_inheritance',
             'joinAlias' => 'cskey_teststore_1_1',
-            'joinCondition' => "(cskey_teststore_1_1.o_id = object_localized_inheritance_en.o_id and cskey_teststore_1_1.fieldname = 'teststore' and cskey_teststore_1_1.groupId=1 and cskey_teststore_1_1.keyId=1 and cskey_teststore_1_1.language = 'default')",
+            'joinCondition' => "(cskey_teststore_1_1.id = object_localized_inheritance_en.id and cskey_teststore_1_1.fieldname = 'teststore' and cskey_teststore_1_1.groupId=1 and cskey_teststore_1_1.keyId=1 and cskey_teststore_1_1.language = 'default')",
         ];
 
         $expectedJoin1 = [
             'joinType' => 'left',
             'joinTable' => 'object_classificationstore_data_inheritance',
             'joinAlias' => 'cskey_teststore_1_2',
-            'joinCondition' => "(cskey_teststore_1_2.o_id = object_localized_inheritance_en.o_id and cskey_teststore_1_2.fieldname = 'teststore' and cskey_teststore_1_2.groupId=1 and cskey_teststore_1_2.keyId=2 and cskey_teststore_1_2.language = 'default')",
+            'joinCondition' => "(cskey_teststore_1_2.id = object_localized_inheritance_en.id and cskey_teststore_1_2.fieldname = 'teststore' and cskey_teststore_1_2.groupId=1 and cskey_teststore_1_2.keyId=2 and cskey_teststore_1_2.language = 'default')",
         ];
 
         $selectParts = $queryBuilder->getQueryPart('select');

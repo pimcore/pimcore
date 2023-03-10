@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,8 +21,8 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class GeopointRenderer extends AbstractRenderer
 {
-    /**
-     * @var string
-     */
-    public $renderer = 'geopoint';
+    public function getRenderer(): ?string
+    {
+        return 'geopoint';
+    }
 }

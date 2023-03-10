@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ class RedisCoreHandlerTest extends AbstractCoreHandlerTest
      *
      * @return RedisTagAwareAdapter
      */
-    protected function createCachePool()
+    protected function createCachePool(): RedisTagAwareAdapter
     {
         $dsn = getenv('PIMCORE_TEST_REDIS_DSN');
         $client = RedisAdapter::createConnection($dsn);

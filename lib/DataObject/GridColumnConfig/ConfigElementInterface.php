@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,15 +20,14 @@ use Pimcore\Model\Element\ElementInterface;
 
 interface ConfigElementInterface
 {
-    /**
-     * @return string
-     */
-    public function getLabel();
+    public function getLabel(): string;
 
     /**
      * @param ElementInterface|ElementInterface[] $element
      *
      * @return \stdClass|ResultContainer|null
      */
-    public function getLabeledValue($element);
+    public function getLabeledValue(array|ElementInterface $element): ResultContainer|\stdClass|null;
+
+    public function getRenderer(): ?string;
 }

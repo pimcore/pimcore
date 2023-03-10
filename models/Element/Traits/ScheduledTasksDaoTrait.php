@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ trait ScheduledTasksDaoTrait
      *
      * @param int[] $ignoreIds
      */
-    public function deleteAllTasks(array $ignoreIds = [])
+    public function deleteAllTasks(array $ignoreIds = []): void
     {
         $type = Service::getElementType($this->model);
         $where = '`cid` = ' . $this->db->quote($this->model->getId()) . ' AND `ctype` = ' . $this->db->quote($type);

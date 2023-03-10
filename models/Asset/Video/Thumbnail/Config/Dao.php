@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Messenger\CleanupThumbnailsMessage;
 use Pimcore\Model;
 
@@ -25,16 +26,23 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    public function configure()
+    private const CONFIG_KEY = 'video_thumbnails';
+
+    public function configure(): void
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
+
+        $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
+            $config,
+            self::CONFIG_KEY,
+            'PIMCORE_CONFIG_STORAGE_DIR_VIDEO_THUMBNAILS',
+            'PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS'
+        );
 
         parent::configure([
             'containerConfig' => $config['assets']['video']['thumbnails']['definitions'],
             'settingsStoreScope' => 'pimcore_video_thumbnails',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_VIDEO_THUMBNAILS'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/video-thumbnails',
-            'legacyConfigFile' => 'video-thumbnails.php',
-            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_VIDEO_THUMBNAILS',
+            'storageDirectory' => $storageConfig,
         ]);
     }
 
@@ -43,7 +51,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function getByName($id = null)
+    public function getByName(string $id = null): void
     {
         if ($id != null) {
             $this->model->setName($id);
@@ -69,7 +77,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * @throws \Exception
      */
-    public function save()
+    public function save(): void
     {
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -95,13 +103,13 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * Deletes object from database
      */
-    public function delete()
+    public function delete(): void
     {
         $this->deleteData($this->model->getName());
         $this->autoClearTempFiles();
     }
 
-    protected function autoClearTempFiles()
+    protected function autoClearTempFiles(): void
     {
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['video']['thumbnails']['auto_clear_temp_files'];
         if ($enabled) {
@@ -114,7 +122,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [

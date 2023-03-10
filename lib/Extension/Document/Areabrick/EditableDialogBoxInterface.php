@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,11 +21,5 @@ use Pimcore\Model\Document\Editable\Area\Info;
 
 interface EditableDialogBoxInterface
 {
-    /**
-     * @param Document\Editable $area
-     * @param Info|null $info
-     *
-     * @return EditableDialogBoxConfiguration
-     */
     public function getEditableDialogBoxConfiguration(Document\Editable $area, ?Info $info): EditableDialogBoxConfiguration;
 }

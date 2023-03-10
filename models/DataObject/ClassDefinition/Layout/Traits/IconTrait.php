@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,19 +26,13 @@ trait IconTrait
      *
      * @var string|null
      */
-    public $icon;
+    public ?string $icon = null;
 
-    /**
-     * @return string|null
-     */
     public function getIcon(): ?string
     {
         return $this->icon;
     }
 
-    /**
-     * @param string|null $icon
-     */
     public function setIcon(?string $icon): void
     {
         $this->icon = $icon;

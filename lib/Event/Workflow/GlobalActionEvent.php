@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,20 +25,11 @@ class GlobalActionEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var Workflow
-     */
-    protected $workflow;
+    protected Workflow $workflow;
 
-    /**
-     * @var mixed
-     */
-    protected $subject;
+    protected mixed $subject = null;
 
-    /**
-     * @var GlobalAction
-     */
-    protected $globalAction;
+    protected GlobalAction $globalAction;
 
     /**
      * DocumentEvent constructor.
@@ -47,7 +39,7 @@ class GlobalActionEvent extends Event
      * @param GlobalAction $globalAction
      * @param array $arguments
      */
-    public function __construct(Workflow $workflow, $subject, GlobalAction $globalAction, array $arguments = [])
+    public function __construct(Workflow $workflow, mixed $subject, GlobalAction $globalAction, array $arguments = [])
     {
         $this->workflow = $workflow;
         $this->subject = $subject;
@@ -55,26 +47,17 @@ class GlobalActionEvent extends Event
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return Workflow
-     */
-    public function getWorkflow()
+    public function getWorkflow(): Workflow
     {
         return $this->workflow;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getSubject()
+    public function getSubject(): mixed
     {
         return $this->subject;
     }
 
-    /**
-     * @return GlobalAction
-     */
-    public function getGlobalAction()
+    public function getGlobalAction(): GlobalAction
     {
         return $this->globalAction;
     }

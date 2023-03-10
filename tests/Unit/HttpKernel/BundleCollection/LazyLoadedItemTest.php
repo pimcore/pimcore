@@ -21,7 +21,7 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class LazyLoadedItemTest extends TestCase
@@ -34,7 +34,7 @@ class LazyLoadedItemTest extends TestCase
         LazyLoadedItemTestBundleB::resetCounter();
     }
 
-    public function testGetBundle()
+    public function testGetBundle(): void
     {
         $item = new LazyLoadedItem(LazyLoadedItemTestBundleA::class);
 
@@ -51,21 +51,21 @@ class LazyLoadedItemTest extends TestCase
         $this->assertInstanceOf(LazyLoadedItemTestBundleA::class, $bundle);
     }
 
-    public function testGetBundleIdentifier()
+    public function testGetBundleIdentifier(): void
     {
         $item = new LazyLoadedItem(LazyLoadedItemTestBundleA::class);
 
         $this->assertEquals(LazyLoadedItemTestBundleA::class, $item->getBundleIdentifier());
     }
 
-    public function testExceptionOnInvalidClass()
+    public function testExceptionOnInvalidClass(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The class "FooBarBazingaDummyClassName" does not exist');
         new LazyLoadedItem('FooBarBazingaDummyClassName');
     }
 
-    public function testIsPimcoreBundle()
+    public function testIsPimcoreBundle(): void
     {
         $itemA = new LazyLoadedItem(LazyLoadedItemTestBundleA::class);
         $itemB = new LazyLoadedItem(LazyLoadedItemTestBundleB::class);
@@ -81,7 +81,7 @@ class LazyLoadedItemTest extends TestCase
         $this->assertEquals(0, LazyLoadedItemTestBundleB::getCounter());
     }
 
-    public function testIsPimcoreBundleWithBundleInstance()
+    public function testIsPimcoreBundleWithBundleInstance(): void
     {
         $itemA = new LazyLoadedItem(LazyLoadedItemTestBundleA::class);
         $itemB = new LazyLoadedItem(LazyLoadedItemTestBundleB::class);
@@ -99,7 +99,7 @@ class LazyLoadedItemTest extends TestCase
         $this->assertTrue($itemB->isPimcoreBundle());
     }
 
-    public function testRegistersDependencies()
+    public function testRegistersDependencies(): void
     {
         $collection = new BundleCollection();
 
@@ -113,7 +113,7 @@ class LazyLoadedItemTest extends TestCase
         ], $collection->getIdentifiers());
     }
 
-    public function testRegistersDependenciesWithBundleInstance()
+    public function testRegistersDependenciesWithBundleInstance(): void
     {
         $collection = new BundleCollection();
 
@@ -131,17 +131,14 @@ class LazyLoadedItemTest extends TestCase
 
 class LazyLoadedItemTestBundleA extends Bundle
 {
-    /**
-     * @var int
-     */
-    private static $counter = 0;
+    private static int $counter = 0;
 
     public function __construct()
     {
         static::$counter++;
     }
 
-    public static function resetCounter()
+    public static function resetCounter(): void
     {
         static::$counter = 0;
     }
@@ -154,17 +151,14 @@ class LazyLoadedItemTestBundleA extends Bundle
 
 class LazyLoadedItemTestBundleB extends AbstractPimcoreBundle
 {
-    /**
-     * @var int
-     */
-    private static $counter = 0;
+    private static int $counter = 0;
 
     public function __construct()
     {
         static::$counter++;
     }
 
-    public static function resetCounter()
+    public static function resetCounter(): void
     {
         static::$counter = 0;
     }
@@ -177,7 +171,7 @@ class LazyLoadedItemTestBundleB extends AbstractPimcoreBundle
 
 class LazyLoadedItemTestBundleC extends Bundle implements DependentBundleInterface
 {
-    public static function registerDependentBundles(BundleCollection $collection)
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
         $collection->add(new LazyLoadedItem(LazyLoadedItemTestBundleA::class));
     }

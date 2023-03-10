@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,7 +26,7 @@ use Pimcore\Tool\Storage;
  */
 final class Recyclebin extends Model\AbstractModel
 {
-    public function flush()
+    public function flush(): void
     {
         $this->getDao()->flush();
         Storage::get('recycle_bin')->deleteDirectory('/');

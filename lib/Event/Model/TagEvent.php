@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,10 +24,7 @@ class TagEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var Tag
-     */
-    protected $tag;
+    protected Tag $tag;
 
     /**
      * TagEvent constructor.
@@ -40,17 +38,11 @@ class TagEvent extends Event
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return Tag
-     */
     public function getTag(): Tag
     {
         return $this->tag;
     }
 
-    /**
-     * @param Tag $tag
-     */
     public function setTag(Tag $tag): void
     {
         $this->tag = $tag;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,7 +27,7 @@ class Table implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function marshal($value, $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if (!is_null($value)) {
             return ['value' => Serialize::serialize($value)];
@@ -38,7 +39,7 @@ class Table implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function unmarshal($value, $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             return Serialize::unserialize($value['value']);

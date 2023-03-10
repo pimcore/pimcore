@@ -25,47 +25,25 @@ interface ItemInterface
 
     const SOURCE_EXTENSION_MANAGER_CONFIG = 'extension_manager_config';
 
-    /**
-     * @return string
-     */
     public function getBundleIdentifier(): string;
 
-    /**
-     * @return BundleInterface
-     */
     public function getBundle(): BundleInterface;
 
-    /**
-     * @return bool
-     */
     public function isPimcoreBundle(): bool;
 
-    /**
-     * @return int
-     */
     public function getPriority(): int;
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getEnvironments(): array;
 
     /**
      * Registers dependent bundles if the bundle implements DependentBundleInterface
-     *
-     * @param BundleCollection $collection
      */
-    public function registerDependencies(BundleCollection $collection);
+    public function registerDependencies(BundleCollection $collection): void;
 
-    /**
-     * @param string $environment
-     *
-     * @return bool
-     */
     public function matchesEnvironment(string $environment): bool;
 
-    /**
-     * @return string
-     */
     public function getSource(): string;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,5 +25,5 @@ interface AddressSourceAdapterFactoryInterface
      *
      * @return AddressSourceAdapterInterface
      */
-    public function create($params);
+    public function create(array $params): AddressSourceAdapterInterface;
 }

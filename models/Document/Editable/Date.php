@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,7 @@
 
 namespace Pimcore\Model\Document\Editable;
 
+use Carbon\Carbon;
 use Pimcore\Model;
 
 /**
@@ -27,14 +29,14 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @internal
      *
-     * @var \Carbon\Carbon|null
+     * @var Carbon|null
      */
-    protected $date;
+    protected ?\Carbon\Carbon $date = null;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'date';
     }
@@ -42,15 +44,12 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->date;
     }
 
-    /**
-     * @return \Carbon\Carbon|null
-     */
-    public function getDate()
+    public function getDate(): ?\Carbon\Carbon
     {
         return $this->getData();
     }
@@ -58,7 +57,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?int
     {
         if ($this->date) {
             return $this->date->getTimestamp();
@@ -72,25 +71,22 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      */
     public function frontend()
     {
-        $format = null;
+        if ($this->date instanceof Carbon) {
+            if (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
+                return $this->date->formatLocalized($this->config['outputFormat']);
+            } else {
+                if (isset($this->config['format']) && $this->config['format']) {
+                    $format = $this->config['format'];
+                } else {
+                    $format = \DateTimeInterface::ATOM;
+                }
 
-        if (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
-            $format = $this->config['outputFormat'];
-        } elseif (isset($this->config['format']) && $this->config['format']) {
-            $format = $this->config['format'];
-        } else {
-            $format = 'Y-m-d\TH:i:sO'; // ISO8601
-        }
-
-        if ($this->date instanceof \DateTimeInterface) {
-            return $this->date->formatLocalized($format);
+                return $this->date->format($format);
+            }
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForResource()
+    public function getDataForResource(): mixed
     {
         if ($this->date) {
             return $this->date->getTimestamp();
@@ -102,10 +98,10 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         if ($data) {
-            $this->setDateFromTimestamp($data);
+            $this->setDateFromTimestamp((int)$data);
         }
 
         return $this;
@@ -114,9 +110,9 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
-        if (strlen($data) > 5) {
+        if (strlen((string) $data) > 5) {
             $timestamp = strtotime($data);
             $this->setDateFromTimestamp($timestamp);
         }
@@ -124,10 +120,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         if ($this->date) {
             return false;
@@ -136,12 +129,9 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return true;
     }
 
-    /**
-     * @param int $timestamp
-     */
-    private function setDateFromTimestamp($timestamp)
+    private function setDateFromTimestamp(int $timestamp): void
     {
-        $this->date = new \Carbon\Carbon();
+        $this->date = new Carbon();
         $this->date->setTimestamp($timestamp);
     }
 }

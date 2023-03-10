@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,25 +16,18 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
 final class BooleanFormatter extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $yesValue;
+    private string $yesValue;
 
-    /**
-     * @var string
-     */
-    private $noValue;
+    private string $noValue;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -44,16 +38,16 @@ final class BooleanFormatter extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
         $booleanResult = null;
 
-        foreach ($childs as $c) {
+        foreach ($children as $c) {
             $childResult = $c->getLabeledValue($element);
             $childValues = $childResult->value;
             if ($childValues && !is_array($childValues)) {
@@ -76,34 +70,22 @@ final class BooleanFormatter extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getYesValue()
+    public function getYesValue(): mixed
     {
         return $this->yesValue;
     }
 
-    /**
-     * @param mixed $yesValue
-     */
-    public function setYesValue($yesValue)
+    public function setYesValue(mixed $yesValue): void
     {
         $this->yesValue = $yesValue;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getNoValue()
+    public function getNoValue(): mixed
     {
         return $this->noValue;
     }
 
-    /**
-     * @param mixed $noValue
-     */
-    public function setNoValue($noValue)
+    public function setNoValue(mixed $noValue): void
     {
         $this->noValue = $noValue;
     }

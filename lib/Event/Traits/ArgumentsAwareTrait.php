@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,7 +23,7 @@ trait ArgumentsAwareTrait
      *
      * @var array
      */
-    protected $arguments = [];
+    protected array $arguments = [];
 
     /**
      * Get argument by key.
@@ -33,7 +34,7 @@ trait ArgumentsAwareTrait
      *
      * @throws \InvalidArgumentException If key is not found.
      */
-    public function getArgument($key)
+    public function getArgument(string $key): mixed
     {
         if ($this->hasArgument($key)) {
             return $this->arguments[$key];
@@ -46,11 +47,11 @@ trait ArgumentsAwareTrait
      * Add argument to event.
      *
      * @param string $key   Argument name
-     * @param mixed  $value Value
+     * @param mixed $value Value
      *
      * @return $this
      */
-    public function setArgument($key, $value)
+    public function setArgument(string $key, mixed $value): static
     {
         $this->arguments[$key] = $value;
 
@@ -62,7 +63,7 @@ trait ArgumentsAwareTrait
      *
      * @return array
      */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
     }
@@ -74,7 +75,7 @@ trait ArgumentsAwareTrait
      *
      * @return $this
      */
-    public function setArguments(array $args = [])
+    public function setArguments(array $args = []): static
     {
         $this->arguments = $args;
 
@@ -88,7 +89,7 @@ trait ArgumentsAwareTrait
      *
      * @return bool
      */
-    public function hasArgument($key)
+    public function hasArgument(string $key): bool
     {
         return array_key_exists($key, $this->arguments);
     }

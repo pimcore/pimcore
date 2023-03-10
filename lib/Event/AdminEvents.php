@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,30 +30,6 @@ final class AdminEvents
     const LOGIN_REDIRECT = 'pimcore.admin.login.redirect';
 
     /**
-     * The LOGIN_CREDENTIALS event is triggered after login credentials were resolved from request.
-     *
-     * This event allows you to influence the credentials resolved in the authenticator before
-     * they are passed to getUser().
-     *
-     * @Event("Pimcore\Event\Admin\Login\LoginCredentialsEvent")
-     *
-     * @var string
-     */
-    const LOGIN_CREDENTIALS = 'pimcore.admin.login.credentials';
-
-    /**
-     * The LOGIN_FAILED event is triggered when credentials were invalid.
-     *
-     * This event allows you to set a custom user which is resolved from the given credentials
-     * from a third-party authentication system (e.g. an external service).
-     *
-     * @Event("Pimcore\Event\Admin\Login\LoginFailedEvent")
-     *
-     * @var string
-     */
-    const LOGIN_FAILED = 'pimcore.admin.login.failed';
-
-    /**
      * The LOGIN_LOSTPASSWORD event is triggered before the lost password email
      * is sent.
      *
@@ -79,6 +56,25 @@ final class AdminEvents
     const LOGIN_LOGOUT = 'pimcore.admin.login.logout';
 
     /**
+     * The LOGIN_BEFORE_RENDER event is triggered before the login view is rendered.
+     *
+     * Allows overriding the parameters and including templates.
+     * ```php
+     * public function getContent(GenericEvent $event): void
+     * {
+     *     $parameters = $event->getArgument('parameters');
+     *     $parameters['includeTemplates']['VendorBundleName'] = '@VendorBundleName/path/to/template.html.twig';
+     *     $event->setArgument('parameters', $parameters);
+     * }
+     * ```
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const LOGIN_BEFORE_RENDER = 'pimcore.admin.login.beforeRender';
+
+    /**
      * The INDEX_SETTINGS event is triggered when the settings object is built for the index page.
      *
      * @Event("Pimcore\Event\Admin\IndexActionSettingsEvent")
@@ -86,6 +82,15 @@ final class AdminEvents
      * @var string
      */
     const INDEX_ACTION_SETTINGS = 'pimcore.admin.indexAction.settings';
+
+    /**
+     * The SAVE_SYSTEM_SETTINGS event is triggered when the system settings are saved.
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const SAVE_ACTION_SYSTEM_SETTINGS = 'pimcore.admin.saveAction.system.settings';
 
     /**
      * Fired before the request params are parsed.
@@ -344,7 +349,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.asset.treeGetChildsById.preSendData';
+    const ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.asset.treeGetChildrenById.preSendData';
 
     /**
      * Fired before the request params are parsed.
@@ -369,7 +374,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.document.treeGetChildsById.preSendData';
+    const DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.document.treeGetChildrenById.preSendData';
 
     /**
      * Fired before the request params are parsed.
@@ -408,7 +413,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.dataobject.treeGetChildsById.preSendData';
+    const OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.dataobject.treeGetChildrenById.preSendData';
 
     /**
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ClassController

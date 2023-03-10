@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,17 +20,17 @@ use Pimcore\Config;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class LocalizedFieldTest extends ModelTestCase
 {
     public function tearDown(): void
     {
-        Localizedfield::setStrictMode(Localizedfield::STRICT_DISABLED);
+        Localizedfield::setStrictMode((bool)Localizedfield::STRICT_DISABLED);
     }
 
-    public function testStrictMode()
+    public function testStrictMode(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -40,7 +41,7 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals('TestKo', $object->getLinput('ko'));
     }
 
-    public function testExceptionInStrictMode()
+    public function testExceptionInStrictMode(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -51,7 +52,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->setLinput('Test');
     }
 
-    public function testExceptionWithLocaleInStrictMode()
+    public function testExceptionWithLocaleInStrictMode(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -63,7 +64,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->setLinput('Test', 'ko');
     }
 
-    public function testLocalizedFieldInsideFieldCollection()
+    public function testLocalizedFieldInsideFieldCollection(): void
     {
         $object = TestHelper::createEmptyObject();
 
@@ -94,7 +95,7 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals('textDE', $loadedItem->getLinput('de'), 'New localized value inside fieldcollection not saved or loaded properly');
     }
 
-    public function testLocalizedFieldFallback()
+    public function testLocalizedFieldFallback(): void
     {
         $configuration = Config::getSystemConfiguration();
         $configuration['general']['fallback_languages']['de'] = 'en';

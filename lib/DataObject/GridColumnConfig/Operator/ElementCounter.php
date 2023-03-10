@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,20 +16,16 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
 final class ElementCounter extends AbstractOperator
 {
-    /**
-     * @var bool
-     */
-    private $countEmpty;
+    private bool $countEmpty;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -38,15 +35,15 @@ final class ElementCounter extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
         $count = 0;
 
-        foreach ($childs as $c) {
+        foreach ($children as $c) {
             $childResult = $c->getLabeledValue($element);
             $childValues = $childResult->value ?? null;
 
@@ -74,18 +71,12 @@ final class ElementCounter extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @return bool
-     */
-    public function getCountEmpty()
+    public function getCountEmpty(): bool
     {
         return $this->countEmpty;
     }
 
-    /**
-     * @param bool $countEmpty
-     */
-    public function setCountEmpty($countEmpty)
+    public function setCountEmpty(bool $countEmpty): void
     {
         $this->countEmpty = $countEmpty;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,45 +25,21 @@ use Pimcore\Model\Element\Service;
  */
 final class Property extends AbstractModel
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected ?string $name = null;
 
-    /**
-     * @var mixed
-     */
-    protected $data;
+    protected mixed $data = null;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected ?string $type = null;
 
-    /**
-     * @var string
-     */
-    protected $ctype;
+    protected ?string $ctype = null;
 
-    /**
-     * @var string|null
-     */
-    protected $cpath;
+    protected ?string $cpath = null;
 
-    /**
-     * @var int
-     */
-    protected $cid;
+    protected ?int $cid = null;
 
-    /**
-     * @var bool
-     */
-    protected $inheritable;
+    protected bool $inheritable = false;
 
-    /**
-     * @var bool
-     */
-    protected $inherited = false;
+    protected bool $inherited = false;
 
     /**
      * @internal
@@ -71,12 +48,12 @@ final class Property extends AbstractModel
      *
      * @return $this
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         // IMPORTANT: if you use this method be sure that the type of the property is already set
 
         if (in_array($this->getType(), ['document', 'asset', 'object'])) {
-            $el = Element\Service::getElementByPath($this->getType(), $data);
+            $el = Element\Service::getElementByPath($this->getType(), (string)$data);
             $this->data = null;
             if ($el) {
                 $this->data = $el->getId();
@@ -101,7 +78,7 @@ final class Property extends AbstractModel
      *
      * @return $this
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         // IMPORTANT: if you use this method be sure that the type of the property is already set
         // do not set data for object, asset and document here, this is loaded dynamically when calling $this->getData();
@@ -120,63 +97,48 @@ final class Property extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getCid()
+    public function getCid(): ?int
     {
         return $this->cid;
     }
 
     /**
      * enum('document','asset','object')
-     *
-     * @return string
      */
-    public function getCtype()
+    public function getCtype(): ?string
     {
         return $this->ctype;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getData()
+    public function getData(): mixed
     {
         // lazy-load data of type asset, document, object
         if (in_array($this->getType(), ['document', 'asset', 'object']) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
-            return Element\Service::getElementById($this->getType(), $this->data);
+            return Element\Service::getElementById($this->getType(), (int) $this->data);
         }
 
         return $this->data;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
      * enum('text','document','asset','object','bool','select')
-     *
-     * @return string
      */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
     /**
-     * @param int $cid
-     *
      * @return $this
      */
-    public function setCid($cid)
+    public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
@@ -188,7 +150,7 @@ final class Property extends AbstractModel
      *
      * @return $this
      */
-    public function setCtype($ctype)
+    public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
 
@@ -196,11 +158,9 @@ final class Property extends AbstractModel
     }
 
     /**
-     * @param mixed $data
-     *
      * @return $this
      */
-    public function setData($data)
+    public function setData(mixed $data): static
     {
         if ($data instanceof ElementInterface) {
             $this->setType(Service::getElementType($data));
@@ -213,11 +173,9 @@ final class Property extends AbstractModel
     }
 
     /**
-     * @param string $name
-     *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -231,25 +189,19 @@ final class Property extends AbstractModel
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getCpath()
+    public function getCpath(): ?string
     {
         return $this->cpath;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInherited()
+    public function getInherited(): bool
     {
         return $this->inherited;
     }
@@ -259,17 +211,15 @@ final class Property extends AbstractModel
      *
      * @return bool
      */
-    public function isInherited()
+    public function isInherited(): bool
     {
         return $this->getInherited();
     }
 
     /**
-     * @param string|null $cpath
-     *
      * @return $this
      */
-    public function setCpath($cpath)
+    public function setCpath(?string $cpath): static
     {
         $this->cpath = $cpath;
 
@@ -277,33 +227,26 @@ final class Property extends AbstractModel
     }
 
     /**
-     * @param bool $inherited
-     *
      * @return $this
      */
-    public function setInherited($inherited)
+    public function setInherited(bool $inherited): static
     {
-        $this->inherited = (bool) $inherited;
+        $this->inherited = $inherited;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInheritable()
+    public function getInheritable(): bool
     {
         return $this->inheritable;
     }
 
     /**
-     * @param bool $inheritable
-     *
      * @return $this
      */
-    public function setInheritable($inheritable)
+    public function setInheritable(bool $inheritable): static
     {
-        $this->inheritable = (bool) $inheritable;
+        $this->inheritable = $inheritable;
 
         return $this;
     }
@@ -313,7 +256,7 @@ final class Property extends AbstractModel
      *
      * @return array
      */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $dependencies = [];
 
@@ -340,11 +283,11 @@ final class Property extends AbstractModel
      *  "asset" => array(...)
      * )
      *
-     * @internal
-     *
      * @param array $idMapping
+     *
+     * @internal
      */
-    public function rewriteIds($idMapping)
+    public function rewriteIds(array $idMapping): void
     {
         if (!$this->isInherited()) {
             if (array_key_exists($this->getType(), $idMapping)) {
@@ -362,7 +305,7 @@ final class Property extends AbstractModel
      *
      * @return array
      */
-    public function serialize()
+    public function serialize(): array
     {
         return [
           'name' => $this->getName(),

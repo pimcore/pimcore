@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,22 +27,14 @@ use Doctrine\Migrations\Version\ExecutionResult;
  */
 final class FilteredTableMetadataStorage implements MetadataStorage
 {
-    /**
-     * @var TableMetadataStorage
-     */
-    private $storage;
+    private TableMetadataStorage $storage;
+
+    private ?string $prefix = null;
 
     /**
-     * @var null|string
-     */
-    private $prefix;
-
-    /**
-     * @param DependencyFactory $dependencyFactory
-     *
      * @return $this
      */
-    public function __invoke(DependencyFactory $dependencyFactory)
+    public function __invoke(DependencyFactory $dependencyFactory): static
     {
         $storage = new TableMetadataStorage(
             $dependencyFactory->getConnection(),
@@ -55,33 +48,21 @@ final class FilteredTableMetadataStorage implements MetadataStorage
         return $this;
     }
 
-    /**
-     * @param TableMetadataStorage $storage
-     */
     public function setStorage(TableMetadataStorage $storage): void
     {
         $this->storage = $storage;
     }
 
-    /**
-     * @param string|null $prefix
-     */
     public function setPrefix(?string $prefix): void
     {
         $this->prefix = $prefix;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function ensureInitialized(): void
     {
         $this->storage->ensureInitialized();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExecutedMigrations(): ExecutedMigrationsList
     {
         $migrations = $this->storage->getExecutedMigrations();
@@ -92,7 +73,7 @@ final class FilteredTableMetadataStorage implements MetadataStorage
         $filteredMigrations = [];
         $items = $migrations->getItems();
         foreach ($items as $migration) {
-            if (strpos($migration->getVersion(), $this->prefix) === 0) {
+            if (strpos((string)$migration->getVersion(), $this->prefix) === 0) {
                 $filteredMigrations[] = $migration;
             }
         }
@@ -100,17 +81,11 @@ final class FilteredTableMetadataStorage implements MetadataStorage
         return new ExecutedMigrationsList($filteredMigrations);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function complete(ExecutionResult $migration): void
     {
         $this->storage->complete($migration);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function reset(): void
     {
         $this->storage->reset();

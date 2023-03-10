@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,15 +21,12 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 
 class LockableAttributeBag extends AttributeBag implements LockableAttributeBagInterface
 {
-    /**
-     * @var bool
-     */
-    protected $locked = false;
+    protected bool $locked = false;
 
     /**
      * {@inheritdoc}
      */
-    public function lock()
+    public function lock(): void
     {
         $this->locked = true;
     }
@@ -36,7 +34,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     /**
      * {@inheritdoc}
      */
-    public function unlock()
+    public function unlock(): void
     {
         $this->locked = false;
     }
@@ -44,7 +42,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     /**
      * {@inheritdoc}
      */
-    public function isLocked()
+    public function isLocked(): bool
     {
         return $this->locked;
     }
@@ -52,7 +50,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     /**
      * {@inheritdoc}
      */
-    public function set($name, $value)
+    public function set(string $name, mixed $value): void
     {
         $this->checkLock();
 
@@ -62,7 +60,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     /**
      * {@inheritdoc}
      */
-    public function replace(array $attributes)
+    public function replace(array $attributes): void
     {
         $this->checkLock();
 
@@ -74,8 +72,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      *
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function remove($name)//: mixed
+    public function remove(string $name): mixed
     {
         $this->checkLock();
 
@@ -87,8 +84,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      *
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function clear()//: mixed
+    public function clear(): mixed
     {
         $this->checkLock();
 
@@ -99,7 +95,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      * @throws AttributeBagLockedException
      *      if lock is set
      */
-    protected function checkLock()
+    protected function checkLock(): void
     {
         if ($this->locked) {
             throw new AttributeBagLockedException('Attribute bag is locked');

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style type="text/css">
+    body {
+        margin: 0;
+        padding: 10px;
+        font-family: Arial;
+        font-size: 12px;
+    }
+
+    h2 {
+        border-bottom: 1px solid #000;
+    }
+
+    .sub {
+        font-style: italic;
+        border:0;
+    }
+
+    table {
+        border-left: 1px solid #000;
+        border-top: 1px solid #000;
+        border-collapse: collapse;
+    }
+
+    td, th {
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
+        padding: 2px;
+    }
+
+    th {
+        text-align: left;
+    }
+</style>
+
+
+</head>
+
+<body>
+
+<h2>{{ data["code"] }} | {{ data["uri"] }}</h2>
+
+{% for key,value in data %}
+    {% if key in ["parametersGet", "parametersPost", "serverVars", "cookies"] %}
+        {% if value is not empty %}
+            <h2 class="sub">{{ key|trans([], 'admin') }}</h2>
+
+            <table>
+                {% for key,value in value %}
+                    <tr>
+                        <th valign="top">{{ key }}</th>
+                        <td valign="top">{{ value }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+
+</body>
+</html>

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,9 +21,6 @@ namespace Pimcore\Event\Traits;
  */
 trait RecursionBlockingEventDispatchHelperTrait
 {
-    /**
-     * @var array
-     */
     private array $activeDispatchingEvents = [];
 
     /**

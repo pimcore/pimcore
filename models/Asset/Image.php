@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,14 +35,14 @@ class Image extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'image';
+    protected string $type = 'image';
 
     private bool $clearThumbnailsOnSave = false;
 
     /**
      * {@inheritdoc}
      */
-    protected function update($params = [])
+    protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
             foreach (['imageWidth', 'imageHeight', 'imageDimensionsCalculated'] as $key) {
@@ -159,15 +160,15 @@ class Image extends Model\Asset
     }
 
     /**
-     * @internal
-     *
-     * @param null|string $generator
+     * @param string|null $generator
      *
      * @return bool|string
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    public function generateLowQualityPreview($generator = null)
+    public function generateLowQualityPreview(string $generator = null): bool|string
     {
         if (!$this->isLowQualityPreviewEnabled()) {
             return false;
@@ -216,10 +217,7 @@ EOT;
         return false;
     }
 
-    /**
-     * @return string
-     */
-    public function getLowQualityPreviewPath()
+    public function getLowQualityPreviewPath(): string
     {
         $storagePath = $this->getLowQualityPreviewStoragePath();
         $path = $storagePath;
@@ -240,10 +238,7 @@ EOT;
         return $path;
     }
 
-    /**
-     * @return string
-     */
-    private function getLowQualityPreviewStoragePath()
+    private function getLowQualityPreviewStoragePath(): string
     {
         return sprintf(
             '%s/%s/image-thumb__%s__-low-quality-preview.svg',
@@ -253,9 +248,6 @@ EOT;
         );
     }
 
-    /**
-     * @return string|null
-     */
     public function getLowQualityPreviewDataUri(): ?string
     {
         if (!$this->isLowQualityPreviewEnabled()) {
@@ -276,11 +268,9 @@ EOT;
      *
      * @internal
      *
-     * @param string|array|Image\Thumbnail\Config $config
-     *
      * @return Image\Thumbnail\Config|null
      */
-    public function getThumbnailConfig($config)
+    public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config
     {
         $thumbnail = $this->getThumbnail($config);
 
@@ -288,14 +278,9 @@ EOT;
     }
 
     /**
-     * Returns a path to a given thumbnail or an thumbnail configuration.
-     *
-     * @param null|string|array|Image\Thumbnail\Config $config
-     * @param bool $deferred
-     *
-     * @return Image\Thumbnail
+     * Returns a path to a given thumbnail or a thumbnail configuration.
      */
-    public function getThumbnail($config = null, $deferred = true)
+    public function getThumbnail(array|string|Image\Thumbnail\Config|null $config = null, bool $deferred = true): Image\Thumbnail
     {
         return new Image\Thumbnail($this, $config, $deferred);
     }
@@ -307,7 +292,7 @@ EOT;
      *
      * @return null|\Pimcore\Image\Adapter
      */
-    public static function getImageTransformInstance()
+    public static function getImageTransformInstance(): ?\Pimcore\Image\Adapter
     {
         try {
             $image = \Pimcore\Image::getInstance();
@@ -322,10 +307,7 @@ EOT;
         return $image;
     }
 
-    /**
-     * @return string
-     */
-    public function getFormat()
+    public function getFormat(): string
     {
         if ($this->getWidth() > $this->getHeight()) {
             return 'landscape';
@@ -346,7 +328,7 @@ EOT;
      *
      * @throws \Exception
      */
-    public function getDimensions($path = null, $force = false)
+    public function getDimensions(string $path = null, bool $force = false): ?array
     {
         if (!$force) {
             $width = $this->getCustomSetting('imageWidth');
@@ -424,10 +406,7 @@ EOT;
         return $dimensions;
     }
 
-    /**
-     * @return int
-     */
-    public function getWidth()
+    public function getWidth(): int
     {
         $dimensions = $this->getDimensions();
 
@@ -438,10 +417,7 @@ EOT;
         return 0;
     }
 
-    /**
-     * @return int
-     */
-    public function getHeight()
+    public function getHeight(): int
     {
         $dimensions = $this->getDimensions();
 
@@ -452,10 +428,7 @@ EOT;
         return 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCustomSetting($key, $value)
+    public function setCustomSetting(string $key, mixed $value): static
     {
         if (in_array($key, ['focalPointX', 'focalPointY'])) {
             // if the focal point changes we need to clean all thumbnails on save
@@ -467,10 +440,7 @@ EOT;
         return parent::setCustomSetting($key, $value);
     }
 
-    /**
-     * @return bool
-     */
-    public function isVectorGraphic()
+    public function isVectorGraphic(): bool
     {
         // we use a simple file-extension check, for performance reasons
         if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@", $this->getFilename())) {
@@ -485,7 +455,7 @@ EOT;
      *
      * @return bool
      */
-    public function isAnimated()
+    public function isAnimated(): bool
     {
         $isAnimated = false;
 
@@ -507,10 +477,8 @@ EOT;
 
     /**
      * Checks if this object represents an animated gif file
-     *
-     * @return bool
      */
-    private function isAnimatedGif()
+    private function isAnimatedGif(): bool
     {
         $isAnimated = false;
 
@@ -535,10 +503,8 @@ EOT;
 
     /**
      * Checks if this object represents an animated png file
-     *
-     * @return bool
      */
-    private function isAnimatedPng()
+    private function isAnimatedPng(): bool
     {
         $isAnimated = false;
 

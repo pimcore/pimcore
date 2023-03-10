@@ -17,12 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Tool;
 
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\HtmlUtils;
 
 class HtmlUtilsTest extends TestCase
 {
-    private $attributes = [
+    private array $attributes = [
         'foo' => 'bar',
         'baz' => 'inga',
         'noop' => null,
@@ -31,7 +31,7 @@ class HtmlUtilsTest extends TestCase
         'doe' => 2,
     ];
 
-    public function testAssembleAttributeString()
+    public function testAssembleAttributeString(): void
     {
         $this->assertEquals(
             'foo="bar" baz="inga" noop quux="1" john="1" doe="2"',
@@ -39,7 +39,7 @@ class HtmlUtilsTest extends TestCase
         );
     }
 
-    public function testAssembleAttributeStringOmitsNullValuesWhenConfigured()
+    public function testAssembleAttributeStringOmitsNullValuesWhenConfigured(): void
     {
         $this->assertEquals(
             'foo="bar" baz="inga" quux="1" john="1" doe="2"',

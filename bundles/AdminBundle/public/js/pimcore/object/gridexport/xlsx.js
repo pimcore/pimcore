@@ -1,0 +1,63 @@
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
+pimcore.registerNS("pimcore.object.gridexport.xlsx");
+/**
+ * @private
+ */
+pimcore.object.gridexport.xlsx = Class.create(pimcore.element.gridexport.abstract, {
+    name: "xlsx",
+    text: t("export_xlsx"),
+
+    getDownloadUrl: function (fileHandle) {
+        return Routing.generate('pimcore_admin_dataobject_dataobjecthelper_downloadxlsxfile', { fileHandle: fileHandle });
+    },
+
+    getObjectSettingsContainer: function () {
+        var enableInheritance = new Ext.form.Checkbox({
+            fieldLabel: t('enable_inheritance'),
+            name: 'enableInheritance',
+            value: true,
+            inputValue: true,
+            labelWidth: 200
+        });
+
+        return new Ext.form.FieldSet({
+            title: t('object_settings'),
+            items: [
+                enableInheritance
+            ]
+        });
+    },
+    getExportSettingsContainer: function () {
+        return new Ext.form.FieldSet({
+            title: t('export_xlsx'),
+            items: [
+                new Ext.form.ComboBox({
+                    fieldLabel: t('header'),
+                    name: 'header',
+                    store: [
+                        ['name', t('name')],
+                        ['title', t('title')],
+                        ['no_header', t('no_header')]
+                    ],
+                    labelWidth: 200,
+                    value: 'title',
+                    forceSelection: true,
+                })
+            ]
+        });
+    }
+});
+
+pimcore.globalmanager.get("pimcore.object.gridexport").push(new pimcore.object.gridexport.xlsx())

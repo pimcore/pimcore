@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,13 +25,7 @@ use Pimcore\Model\User;
  */
 trait ElementEditLockHelperTrait
 {
-    /**
-     * @param int $id
-     * @param string $type
-     *
-     * @return JsonResponse
-     */
-    protected function getEditLockResponse(int $id, string $type)
+    protected function getEditLockResponse(int $id, string $type): JsonResponse
     {
         $editLock = Editlock::getByElement($id, $type);
         $user = User::getById($editLock->getUserId());

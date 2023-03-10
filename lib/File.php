@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,30 +19,23 @@ namespace Pimcore;
 use League\Flysystem\FilesystemOperator;
 use Pimcore;
 use Pimcore\Helper\LongRunningHelper;
+use Symfony\Component\Filesystem\Path;
 
+/**
+ * @internal
+ */
 class File
 {
-    /**
-     * @var int
-     */
-    public static $defaultMode = 0664;
+    public static int $defaultMode = 0664;
 
     /**
      * @var null|resource
      */
     protected static $context = null;
 
-    /**
-     * @var int
-     */
     private static int $defaultFlags = LOCK_EX;
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    public static function getFileExtension($name)
+    public static function getFileExtension(string $name): string
     {
         $name = strtolower($name);
 
@@ -59,15 +53,15 @@ class File
     /**
      * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
      *
-     * @internal
-     *
      * @param string $tmpFilename
      * @param string|null $language
      * @param string $replacement
      *
      * @return string
+     *
+     * @internal
      */
-    public static function getValidFilename($tmpFilename, $language = null, $replacement = '-')
+    public static function getValidFilename(string $tmpFilename, string $language = null, string $replacement = '-'): string
     {
         $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename, $language);
         $tmpFilename = strtolower($tmpFilename);
@@ -80,25 +74,16 @@ class File
         return $tmpFilename;
     }
 
-    /**
-     * @param int $mode
-     */
-    public static function setDefaultMode($mode)
+    public static function setDefaultMode(int $mode): void
     {
         self::$defaultMode = $mode;
     }
 
-    /**
-     * @return int
-     */
-    public static function getDefaultMode()
+    public static function getDefaultMode(): int
     {
         return self::$defaultMode;
     }
 
-    /**
-     * @param int $defaultFlags
-     */
     public static function setDefaultFlags(int $defaultFlags): void
     {
         self::$defaultFlags = $defaultFlags;
@@ -110,8 +95,10 @@ class File
      *
      * @return int|false
      */
-    public static function put($path, $data)
+    public static function put(string $path, mixed $data): bool|int
     {
+        $path = Path::canonicalize($path);
+
         if (!is_dir(dirname($path))) {
             self::mkdir(dirname($path));
         }
@@ -123,14 +110,14 @@ class File
     }
 
     /**
-     * @internal
-     *
      * @param string $path
      * @param string $data
      *
      * @return int|false
+     *
+     * @internal
      */
-    public static function putPhpFile($path, $data)
+    public static function putPhpFile(string $path, string $data): bool|int
     {
         $return = self::put($path, $data);
 
@@ -141,22 +128,15 @@ class File
         return $return;
     }
 
-    /**
-     * @param string $path
-     * @param int|null $mode
-     * @param bool $recursive
-     *
-     * @return bool
-     */
-    public static function mkdir($path, $mode = 0775, $recursive = true)
+    public static function mkdir(string $path, ?int $mode = 0775, bool $recursive = true): bool
     {
         if (is_dir($path)) {
             return true;
         }
-
         $return = true;
 
         $oldMask = umask(0);
+        $path = Path::canonicalize($path);
 
         if ($recursive) {
             // we cannot use just mkdir() with recursive=true because of possible race conditions, see also
@@ -193,13 +173,7 @@ class File
         return $return;
     }
 
-    /**
-     * @param string $oldPath
-     * @param string $newPath
-     *
-     * @return bool
-     */
-    public static function rename($oldPath, $newPath)
+    public static function rename(string $oldPath, string $newPath): bool
     {
         if (stream_is_local($oldPath) && stream_is_local($newPath)) {
             // rename is only possible if both stream wrapper are the same
@@ -229,7 +203,7 @@ class File
     /**
      * @param resource $context
      */
-    public static function setContext($context)
+    public static function setContext($context): void
     {
         self::$context = $context;
     }
@@ -262,7 +236,7 @@ class File
      *
      * @throws \League\Flysystem\FilesystemException
      */
-    public static function recursiveDeleteEmptyDirs(FilesystemOperator $storage, string $storagePath)
+    public static function recursiveDeleteEmptyDirs(FilesystemOperator $storage, string $storagePath): void
     {
         if ($storagePath === '.') {
             return;

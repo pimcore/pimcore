@@ -26,23 +26,14 @@ use Pimcore\Workflow\Place\StatusInfo;
  */
 final class WorkflowStateFactory implements OperatorFactoryInterface
 {
-    /**
-     * @var StatusInfo
-     */
-    private $workflowStatusInfo;
+    private StatusInfo $workflowStatusInfo;
 
-    /**
-     * @param StatusInfo $workflowStatusInfo
-     */
     public function __construct(StatusInfo $workflowStatusInfo)
     {
         $this->workflowStatusInfo = $workflowStatusInfo;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function build(\stdClass $configElement, $context = null): OperatorInterface
+    public function build(\stdClass $configElement, array $context = []): OperatorInterface
     {
         $operator = new WorkflowState($configElement, $context);
         $operator->setWorkflowStatusInfo($this->workflowStatusInfo);

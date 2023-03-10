@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,25 +16,18 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
 final class StringContains extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $search;
+    private string $search;
 
-    /**
-     * @var bool
-     */
-    private $insensitive;
+    private bool $insensitive;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -44,18 +38,18 @@ final class StringContains extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
         $result->value = null;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
-        if ($childs) {
-            $newChildsResult = [];
+        if ($children) {
+            $newChildrenResult = [];
 
-            foreach ($childs as $c) {
+            foreach ($children as $c) {
                 $childResult = $c->getLabeledValue($element);
                 $childValues = $childResult->value;
                 if ($childValues && !is_array($childValues)) {
@@ -79,21 +73,16 @@ final class StringContains extends AbstractOperator
                     }
                 }
 
-                $newChildsResult[] = $newValue;
+                $newChildrenResult[] = $newValue;
             }
 
-            $result->value = $newChildsResult;
+            $result->value = $newChildrenResult;
         }
 
         return $result;
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public function contains($value)
+    public function contains(string $value): bool
     {
         $needle = $this->getSearch();
         if (empty($needle)) {
@@ -106,34 +95,22 @@ final class StringContains extends AbstractOperator
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getSearch()
+    public function getSearch(): string
     {
         return $this->search;
     }
 
-    /**
-     * @param string $search
-     */
-    public function setSearch($search)
+    public function setSearch(string $search): void
     {
         $this->search = $search;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInsensitive()
+    public function getInsensitive(): bool
     {
         return $this->insensitive;
     }
 
-    /**
-     * @param bool $insensitive
-     */
-    public function setInsensitive($insensitive)
+    public function setInsensitive(bool $insensitive): void
     {
         $this->insensitive = $insensitive;
     }

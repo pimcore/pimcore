@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,43 +24,24 @@ class LostPasswordEvent extends Event
 {
     use ResponseAwareTrait;
 
-    /**
-     * @var User
-     */
-    protected $user;
+    protected User $user;
 
-    /**
-     * @var string
-     */
-    protected $loginUrl;
+    protected string $loginUrl;
 
-    /**
-     * @var bool
-     */
-    protected $sendMail = true;
+    protected bool $sendMail = true;
 
-    /**
-     * @param User $user
-     * @param string $loginUrl
-     */
-    public function __construct(User $user, $loginUrl)
+    public function __construct(User $user, string $loginUrl)
     {
         $this->user = $user;
         $this->loginUrl = $loginUrl;
     }
 
-    /**
-     * @return User
-     */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    /**
-     * @return string
-     */
-    public function getLoginUrl()
+    public function getLoginUrl(): string
     {
         return $this->loginUrl;
     }
@@ -69,7 +51,7 @@ class LostPasswordEvent extends Event
      *
      * @return bool
      */
-    public function getSendMail()
+    public function getSendMail(): bool
     {
         return $this->sendMail;
     }
@@ -81,7 +63,7 @@ class LostPasswordEvent extends Event
      *
      * @return $this
      */
-    public function setSendMail($sendMail)
+    public function setSendMail(bool $sendMail): static
     {
         $this->sendMail = (bool)$sendMail;
 

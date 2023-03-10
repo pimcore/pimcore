@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,20 +16,16 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
 final class Anonymizer extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $mode;
+    private string $mode;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -38,16 +35,16 @@ final class Anonymizer extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
         $result->isArrayType = true;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
         $resultItems = [];
 
-        foreach ($childs as $c) {
+        foreach ($children as $c) {
             $childResult = $c->getLabeledValue($element);
             $childValues = $childResult->value;
 
@@ -63,7 +60,7 @@ final class Anonymizer extends AbstractOperator
             }
         }
 
-        if (count($childs) == 1) {
+        if (count($children) == 1) {
             $result->value = $resultItems[0];
         } else {
             $result->value = $resultItems;

@@ -34,27 +34,21 @@ final class Thumbnail
      *
      * @var bool[]
      */
-    protected static $hasListenersCache = [];
+    protected static array $hasListenersCache = [];
 
     /**
      * @param Image $asset
      * @param string|array|Thumbnail\Config|null $config
      * @param bool $deferred
      */
-    public function __construct($asset, $config = null, $deferred = true)
+    public function __construct(Image $asset, array|string|Thumbnail\Config $config = null, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->deferred = $deferred;
-        $this->config = $this->createConfig($config);
+        $this->config = $this->createConfig($config ?? []);
     }
 
-    /**
-     * @param bool $deferredAllowed
-     * @param bool $cacheBuster
-     *
-     * @return string
-     */
-    public function getPath($deferredAllowed = true, $cacheBuster = false)
+    public function getPath(bool $deferredAllowed = true, bool $cacheBuster = false): string
     {
         $pathReference = null;
         if ($this->getConfig()) {
@@ -90,11 +84,6 @@ final class Thumbnail
         return $path;
     }
 
-    /**
-     * @param string $eventName
-     *
-     * @return bool
-     */
     protected function hasListeners(string $eventName): bool
     {
         if (!isset(self::$hasListenersCache[$eventName])) {
@@ -104,12 +93,7 @@ final class Thumbnail
         return self::$hasListenersCache[$eventName];
     }
 
-    /**
-     * @param string $filename
-     *
-     * @return bool
-     */
-    protected function useOriginalFile($filename)
+    protected function useOriginalFile(string $filename): bool
     {
         if ($this->getConfig()) {
             if (!$this->getConfig()->isRasterizeSVG() && preg_match("@\.svgz?$@", $filename)) {
@@ -121,11 +105,12 @@ final class Thumbnail
     }
 
     /**
+     * @param bool $deferredAllowed
+     *
      * @internal
      *
-     * @param bool $deferredAllowed
      */
-    public function generate($deferredAllowed = true)
+    public function generate(bool $deferredAllowed = true): void
     {
         $deferred = false;
         $generated = false;
@@ -167,18 +152,11 @@ final class Thumbnail
     /**
      * @return string Public path to thumbnail image.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getPath(true);
     }
 
-    /**
-     * @param string $path
-     * @param array $options
-     * @param Asset $asset
-     *
-     * @return string
-     */
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
@@ -233,7 +211,7 @@ final class Thumbnail
      *
      * @return string
      */
-    public function getHtml($options = [])
+    public function getHtml(array $options = []): string
     {
         /** @var Image $image */
         $image = $this->getAsset();
@@ -303,12 +281,6 @@ final class Thumbnail
         return $html;
     }
 
-    /**
-     * @param array $options
-     * @param array $removeAttributes
-     *
-     * @return string
-     */
     public function getImageTag(array $options = [], array $removeAttributes = []): string
     {
         /** @var Image $image */
@@ -404,7 +376,7 @@ final class Thumbnail
      *
      * @throws \Exception
      */
-    public function getMedia($name, $highRes = 1)
+    public function getMedia(string $name, int $highRes = 1): Thumbnail
     {
         $thumbConfig = $this->getConfig();
         $mediaConfigs = $thumbConfig->getMedias();
@@ -429,11 +401,9 @@ final class Thumbnail
      *
      * @param string|array|Thumbnail\Config $selector Name, array or object describing a thumbnail configuration.
      *
-     * @return Thumbnail\Config
-     *
      * @throws NotFoundException
      */
-    private function createConfig($selector)
+    private function createConfig(array|string|Thumbnail\Config $selector): Thumbnail\Config
     {
         $thumbnailConfig = Thumbnail\Config::getByAutoDetect($selector);
 
@@ -447,9 +417,6 @@ final class Thumbnail
     /**
      * Get value that can be directly used ina srcset HTML attribute for images.
      *
-     * @param Image\Thumbnail\Config $thumbConfig
-     * @param Image $image
-     * @param array $options
      * @param string|null $mediaQuery Can be empty string if no media queries are defined.
      *
      * @return string Relative paths to different thunbnail images with 1x and 2x resolution

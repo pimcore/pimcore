@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,7 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Admin;
 
 /**
@@ -23,40 +25,19 @@ use Pimcore\Tool\Admin;
  */
 final class AnyGetter extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $attribute;
+    private string $attribute;
 
-    /**
-     * @var string
-     */
-    private $param1;
+    private string $param1;
 
-    /**
-     * @var bool
-     */
-    private $isArrayType;
+    private bool $isArrayType;
 
-    /**
-     * @var string
-     */
-    private $forwardAttribute;
+    private string $forwardAttribute;
 
-    /**
-     * @var string
-     */
-    private $forwardParam1;
+    private string $forwardParam1;
 
-    /**
-     * @var bool
-     */
-    private $returnLastResult;
+    private bool $returnLastResult;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         if (!Admin::getCurrentUser()->isAdmin()) {
             throw new \Exception('AnyGetter only allowed for admin users');
@@ -77,17 +58,17 @@ final class AnyGetter extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
         $getter = 'get'.ucfirst($this->attribute);
         $fallbackGetter = $this->attribute;
 
-        if (!$childs) {
+        if (!$children) {
             $result->value = null;
             if ($this->attribute && method_exists($element, $getter)) {
                 $result->value = $element->$getter($this->getParam1());
@@ -99,16 +80,16 @@ final class AnyGetter extends AbstractOperator
                 $result->value = $result->value->getObjectVars();
             }
         } else {
-            if (count($childs) > 1) {
+            if (count($children) > 1) {
                 $result->isArrayType = true;
             }
             $resultElements = [];
 
-            if (!is_array($childs)) {
-                $childs = [$childs];
+            if (!is_array($children)) {
+                $children = [$children];
             }
 
-            foreach ($childs as $c) {
+            foreach ($children as $c) {
                 $forwardObject = $element;
 
                 if ($this->forwardAttribute) {
@@ -159,7 +140,7 @@ final class AnyGetter extends AbstractOperator
                 }
                 $resultElements[] = $resultElementValue;
             }
-            if (count($childs) == 1) {
+            if (count($children) == 1) {
                 $result->value = $resultElements[0];
             } else {
                 $result->value = $resultElements;
@@ -169,98 +150,62 @@ final class AnyGetter extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @return string
-     */
-    public function getAttribute()
+    public function getAttribute(): string
     {
         return $this->attribute;
     }
 
-    /**
-     * @param string $attribute
-     */
-    public function setAttribute($attribute)
+    public function setAttribute(string $attribute): void
     {
         $this->attribute = $attribute;
     }
 
-    /**
-     * @return string
-     */
-    public function getParam1()
+    public function getParam1(): string
     {
         return $this->param1;
     }
 
-    /**
-     * @param string $param1
-     */
-    public function setParam1($param1)
+    public function setParam1(string $param1): void
     {
         $this->param1 = $param1;
     }
 
-    /**
-     * @return string
-     */
-    public function getForwardAttribute()
+    public function getForwardAttribute(): string
     {
         return $this->forwardAttribute;
     }
 
-    /**
-     * @param string $forwardAttribute
-     */
-    public function setForwardAttribute($forwardAttribute)
+    public function setForwardAttribute(string $forwardAttribute): void
     {
         $this->forwardAttribute = $forwardAttribute;
     }
 
-    /**
-     * @return string
-     */
-    public function getForwardParam1()
+    public function getForwardParam1(): string
     {
         return $this->forwardParam1;
     }
 
-    /**
-     * @param string $forwardParam1
-     */
-    public function setForwardParam1($forwardParam1)
+    public function setForwardParam1(string $forwardParam1): void
     {
         $this->forwardParam1 = $forwardParam1;
     }
 
-    /**
-     * @return bool
-     */
-    public function getIsArrayType()
+    public function getIsArrayType(): bool
     {
         return $this->isArrayType;
     }
 
-    /**
-     * @param bool $isArrayType
-     */
-    public function setIsArrayType($isArrayType)
+    public function setIsArrayType(bool $isArrayType): void
     {
         $this->isArrayType = $isArrayType;
     }
 
-    /**
-     * @return bool
-     */
-    public function getReturnLastResult()
+    public function getReturnLastResult(): bool
     {
         return $this->returnLastResult;
     }
 
-    /**
-     * @param bool $returnLastResult
-     */
-    public function setReturnLastResult($returnLastResult)
+    public function setReturnLastResult(bool $returnLastResult): void
     {
         $this->returnLastResult = $returnLastResult;
     }

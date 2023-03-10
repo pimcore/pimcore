@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,12 +21,12 @@ use Pimcore\Model\Element\Service;
 
 class Document extends Data
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): mixed
     {
-        $element = Service::getElementByPath('document', $value);
+        $element = null;
+        if ($value) {
+            $element = Service::getElementByPath('document', $value);
+        }
         if ($element) {
             return $element->getId();
         }
@@ -33,10 +34,7 @@ class Document extends Data
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): mixed
     {
         $element = null;
         if (is_numeric($value)) {
@@ -46,57 +44,16 @@ class Document extends Data
         return $element;
     }
 
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @deprecated use denormalize() instead, will be removed in Pimcore 11
-     *
-     * @return string
-     */
-    public function unmarshal($value, $params = [])
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.4',
-            sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        $element = null;
-        if (is_numeric($value)) {
-            $element = Service::getElementById('document', $value);
-        }
-        if ($element) {
-            $value = $element->getRealFullPath();
-        } else {
-            $value = '';
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function transformGetterData($data, $params = [])
+    public function transformGetterData(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
-            return \Pimcore\Model\Document\Service::getElementById('document', $data);
+            return \Pimcore\Model\Document\Service::getElementById('document', (int) $data);
         }
 
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function transformSetterData($data, $params = [])
+    public function transformSetterData(mixed $data, array $params = []): mixed
     {
         if ($data instanceof \Pimcore\Model\Document) {
             return $data->getId();
@@ -105,15 +62,12 @@ class Document extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return int|string|null
-     */
-    public function getDataFromEditMode($data, $params = [])
+    public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
-        $element = Service::getElementByPath('document', $data);
+        $element = null;
+        if ($data) {
+            $element = Service::getElementByPath('document', $data);
+        }
         if ($element) {
             return $element->getId();
         }
@@ -121,13 +75,7 @@ class Document extends Data
         return '';
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataForResource($data, $params = [])
+    public function getDataForResource(mixed $data, array $params = []): mixed
     {
         if ($data instanceof ElementInterface) {
             return $data->getId();
@@ -136,10 +84,7 @@ class Document extends Data
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForEditMode($data, $params = [])
+    public function getDataForEditMode(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
             $data = Service::getElementById('document', $data);
@@ -151,13 +96,7 @@ class Document extends Data
         }
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDataForListfolderGrid($data, $params = [])
+    public function getDataForListfolderGrid(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
             $data = \Pimcore\Model\Document::getById($data);
@@ -170,13 +109,7 @@ class Document extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return array
-     */
-    public function resolveDependencies($data, $params = [])
+    public function resolveDependencies(mixed $data, array $params = []): array
     {
         if ($data instanceof \Pimcore\Model\Document && isset($params['type'])) {
             $elementId = $data->getId();
@@ -194,13 +127,7 @@ class Document extends Data
         return [];
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return int|null
-     */
-    public function getDataFromListfolderGrid($data, $params = [])
+    public function getDataFromListfolderGrid(mixed $data, array $params = []): ?int
     {
         $data = \Pimcore\Model\Document::getByPath($data);
 

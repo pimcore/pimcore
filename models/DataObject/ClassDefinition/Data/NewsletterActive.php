@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,12 +20,8 @@ use Pimcore\Model;
 
 class NewsletterActive extends Model\DataObject\ClassDefinition\Data\Checkbox
 {
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $fieldtype = 'newsletterActive';
+    public function getFieldType(): string
+    {
+        return 'newsletterActive';
+    }
 }

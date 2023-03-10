@@ -70,30 +70,30 @@ class Asset extends Element\AbstractElement
      *
      * @internal
      *
-     * @var array
+     * @var string[]
      */
-    public static $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
+    public static array $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $type = '';
+    protected string $type = '';
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $filename;
+    protected ?string $filename = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $mimetype;
+    protected ?string $mimetype = null;
 
     /**
      * @internal
@@ -107,14 +107,14 @@ class Asset extends Element\AbstractElement
      *
      * @var array|null
      */
-    protected $versions = null;
+    protected ?array $versions = null;
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $metadata = [];
+    protected array $metadata = [];
 
     /**
      * List of some custom settings  [key] => value
@@ -124,42 +124,35 @@ class Asset extends Element\AbstractElement
      *
      * @var array
      */
-    protected $customSettings = [];
+    protected array $customSettings = [];
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $hasMetaData = false;
+    protected bool $hasMetaData = false;
 
     /**
      * @internal
      *
-     * @var array|null
+     * @var Listing|null
      */
-    protected $siblings;
-
-    /**
-     * @internal
-     *
-     * @var bool|null
-     */
-    protected $hasSiblings;
+    protected ?Listing $siblings = null;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $dataChanged = false;
+    protected bool $dataChanged = false;
 
     /**
      * {@inheritdoc}
      */
     protected function getBlockedVars(): array
     {
-        $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
+        $blockedVars = ['scheduledTasks', 'versions', 'parent', 'stream'];
 
         if (!$this->isInDumpState()) {
             // for caching asset
@@ -169,11 +162,7 @@ class Asset extends Element\AbstractElement
         return $blockedVars;
     }
 
-    /**
-     *
-     * @return array
-     */
-    public static function getTypes()
+    public static function getTypes(): array
     {
         return self::$types;
     }
@@ -182,11 +171,11 @@ class Asset extends Element\AbstractElement
      * Static helper to get an asset by the passed path
      *
      * @param string $path
-     * @param array|bool $force
+     * @param array $params
      *
      * @return static|null
      */
-    public static function getByPath($path, $force = false)
+    public static function getByPath(string $path, array $params = []): static|null
     {
         if (!$path) {
             return null;
@@ -198,7 +187,7 @@ class Asset extends Element\AbstractElement
             $asset = new static();
             $asset->getDao()->getByPath($path);
 
-            return static::getById($asset->getId(), Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1));
+            return static::getById($asset->getId(), Service::prepareGetByIdParams($params));
         } catch (NotFoundException $e) {
             return null;
         }
@@ -211,7 +200,7 @@ class Asset extends Element\AbstractElement
      *
      * @return bool
      */
-    protected static function typeMatch(Asset $asset)
+    protected static function typeMatch(Asset $asset): bool
     {
         $staticType = static::class;
         if ($staticType !== Asset::class) {
@@ -223,22 +212,23 @@ class Asset extends Element\AbstractElement
         return true;
     }
 
-    /**
-     * @param int $id
-     * @param array|bool $force
-     *
-     * @return static|null
-     */
-    public static function getById($id, $force = false)
+    public static function getById(int|string $id, array $params = []): ?static
     {
-        if (!is_numeric($id) || $id < 1) {
+        if (is_string($id)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '11.0',
+                sprintf('Passing id as string to method %s is deprecated', __METHOD__)
+            );
+            $id = is_numeric($id) ? (int) $id : 0;
+        }
+        if ($id < 1) {
             return null;
         }
 
-        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
-        $params = Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
+        $params = Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
             $asset = RuntimeCache::get($cacheKey);
@@ -286,39 +276,31 @@ class Asset extends Element\AbstractElement
         return $asset;
     }
 
-    /**
-     * @param int $parentId
-     * @param array $data
-     * @param bool $save
-     *
-     * @return Asset
-     */
-    public static function create($parentId, $data = [], $save = true)
+    public static function create(int $parentId, array $data = [], bool $save = true): Asset
     {
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
         $class = Asset::class;
         if (array_key_exists('filename', $data) && (array_key_exists('data', $data) || array_key_exists('sourcePath', $data) || array_key_exists('stream', $data))) {
+            $mimeType = 'directory';
+            $mimeTypeGuessData = null;
             if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
+                $mimeTypeGuessData = $tmpFile;
                 if (array_key_exists('data', $data)) {
                     File::put($tmpFile, $data['data']);
-                    self::checkMaxPixels($tmpFile, $data);
-                    $mimeType = MimeTypes::getDefault()->guessMimeType($tmpFile);
                     unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
                         // stream is a local file, so we don't have to write a tmp file
-                        self::checkMaxPixels($streamMeta['uri'], $data);
-                        $mimeType = MimeTypes::getDefault()->guessMimeType($streamMeta['uri']);
+                        $mimeTypeGuessData = $streamMeta['uri'];
                     } else {
                         // write a tmp file because the stream isn't a pointer to the local filesystem
                         $isRewindable = @rewind($data['stream']);
                         $dest = fopen($tmpFile, 'w+', false, File::getContext());
                         stream_copy_to_stream($data['stream'], $dest);
-                        self::checkMaxPixels($tmpFile, $data);
-                        $mimeType = MimeTypes::getDefault()->guessMimeType($tmpFile);
+                        $mimeTypeGuessData = $tmpFile;
 
                         if (!$isRewindable) {
                             $data['stream'] = $dest;
@@ -328,21 +310,24 @@ class Asset extends Element\AbstractElement
                         }
                     }
                 }
+                $mimeType = MimeTypes::getDefault()->guessMimeType($mimeTypeGuessData);
             } else {
-                if (is_dir($data['sourcePath'])) {
-                    $mimeType = 'directory';
-                } else {
-                    self::checkMaxPixels($data['sourcePath'], $data);
-                    $mimeType = MimeTypes::getDefault()->guessMimeType($data['sourcePath']);
+                if (!is_dir($data['sourcePath'])) {
+                    $mimeTypeGuessData = $data['sourcePath'];
                     if (is_file($data['sourcePath'])) {
                         $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
                     }
+                    $mimeType = MimeTypes::getDefault()->guessMimeType($mimeTypeGuessData);
                 }
-
                 unset($data['sourcePath']);
             }
 
             $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
+            // only check maxpixels if it is an image
+            if ($type === 'image' && $mimeTypeGuessData) {
+                self::checkMaxPixels($mimeTypeGuessData, $data);
+            }
+
             $class = '\\Pimcore\\Model\\Asset\\' . ucfirst($type);
             if (array_key_exists('type', $data)) {
                 unset($data['type']);
@@ -367,15 +352,15 @@ class Asset extends Element\AbstractElement
         // this check is intentionally done in Asset::create() because in Asset::update() it would result
         // in an additional download from remote storage if configured, so in terms of performance
         // this is the more efficient way
-        $maxPixels = (int) Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
+        $maxPixels = (int)Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
         if ($size = @getimagesize($localPath)) {
-            $imagePixels = (int) ($size[0] * $size[1]);
+            $imagePixels = (int)($size[0] * $size[1]);
             if ($imagePixels > $maxPixels) {
                 Logger::error("Image to be created {$localPath} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
 
                 $diff = sqrt(1 + ($maxPixels / $imagePixels));
-                $suggestion_0 = (int) round($size[0] / $diff, -2, PHP_ROUND_HALF_DOWN);
-                $suggestion_1 = (int) round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
+                $suggestion_0 = (int)round($size[0] / $diff, -2, PHP_ROUND_HALF_DOWN);
+                $suggestion_1 = (int)round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
 
                 $mp = $maxPixels / 1_000_000;
                 // unlink file before throwing exception
@@ -395,7 +380,7 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception
      */
-    public static function getList($config = [])
+    public static function getList(array $config = []): Listing
     {
         if (!is_array($config)) {
             throw new Exception('Unable to initiate list class - please provide valid configuration array');
@@ -411,29 +396,14 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param array $config
-     *
-     * @return int total count
-     */
-    public static function getTotalCount($config = [])
-    {
-        $list = static::getList($config);
-        $count = $list->getTotalCount();
-
-        return $count;
-    }
-
-    /**
-     * @internal
-     *
      * @param string $mimeType
      * @param string $filename
      *
      * @return string
+     *
+     * @internal
      */
-    public static function getTypeFromMimeMapping($mimeType, $filename)
+    public static function getTypeFromMimeMapping(string $mimeType, string $filename): string
     {
         if ($mimeType == 'directory') {
             return 'folder';
@@ -476,19 +446,13 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
-        // additional parameters (e.g. "versionNote" for the version note)
-        $params = [];
-        if (func_num_args() && is_array(func_get_arg(0))) {
-            $params = func_get_arg(0);
-        }
-
         $isUpdate = false;
         $differentOldPath = null;
 
         try {
-            $preEvent = new AssetEvent($this, $params);
+            $preEvent = new AssetEvent($this, $parameters);
 
             if ($this->getId()) {
                 $isUpdate = true;
@@ -497,11 +461,11 @@ class Asset extends Element\AbstractElement
                 $this->dispatchEvent($preEvent, AssetEvents::PRE_ADD);
             }
 
-            $params = $preEvent->getArguments();
+            $parameters = $preEvent->getArguments();
 
             $this->correctPath();
 
-            $params['isUpdate'] = $isUpdate; // we need that in $this->update() for certain types (image, video, document)
+            $parameters['isUpdate'] = $isUpdate; // we need that in $this->update() for certain types (image, video, document)
 
             // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
@@ -521,7 +485,7 @@ class Asset extends Element\AbstractElement
                         $oldPath = $this->getDao()->getCurrentFullPath();
                     }
 
-                    $this->update($params);
+                    $this->update($parameters);
 
                     $storage = Storage::get('asset');
                     // if the old path is different from the new path, update all children
@@ -546,7 +510,7 @@ class Asset extends Element\AbstractElement
                     // this has to be after the registry update and the DB update, otherwise this would cause problem in the
                     // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
                     if ($this->getType() != 'folder') {
-                        $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
                     }
 
                     $this->commit();
@@ -594,7 +558,7 @@ class Asset extends Element\AbstractElement
 
             $this->setDataChanged(false);
 
-            $postEvent = new AssetEvent($this, $params);
+            $postEvent = new AssetEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
@@ -606,7 +570,7 @@ class Asset extends Element\AbstractElement
 
             return $this;
         } catch (Exception $e) {
-            $failureEvent = new AssetEvent($this, $params);
+            $failureEvent = new AssetEvent($this, $parameters);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 $this->dispatchEvent($failureEvent, AssetEvents::POST_UPDATE_FAILURE);
@@ -623,7 +587,7 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception|DuplicateFullPathException
      */
-    public function correctPath()
+    public function correctPath(): void
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
@@ -631,8 +595,12 @@ class Asset extends Element\AbstractElement
                 throw new Exception("invalid filename '" . $this->getKey() . "' for asset with id [ " . $this->getId() . ' ]');
             }
 
+            if (!$this->getParentId()) {
+                throw new Exception('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+            }
+
             if ($this->getParentId() == $this->getId()) {
-                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+                throw new Exception("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
             }
 
             if ($this->getFilename() === '..' || $this->getFilename() === '.') {
@@ -640,20 +608,13 @@ class Asset extends Element\AbstractElement
             }
 
             $parent = Asset::getById($this->getParentId());
-            if ($parent) {
-                // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
-                // that is currently in the parent asset (in memory), because this might have changed but wasn't not saved
-                $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
-            } else {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '10.5',
-                    'Fallback for parentId will be removed in Pimcore 11.',
-                );
-                // parent document doesn't exist anymore, set the parent to to root
-                $this->setParentId(1);
-                $this->setPath('/');
+            if (!$parent) {
+                throw new Exception('ParentID not found.');
             }
+
+            // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
+            // that is currently in the parent asset (in memory), because this might have changed but wasn't not saved
+            $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
         } elseif ($this->getId() == 1) {
             // some data in root node should always be the same
             $this->setParentId(0);
@@ -676,6 +637,7 @@ class Asset extends Element\AbstractElement
             if ($duplicate instanceof Asset && $duplicate->getId() != $this->getId()) {
                 $duplicateFullPathException = new DuplicateFullPathException('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save asset');
                 $duplicateFullPathException->setDuplicateElement($duplicate);
+                $duplicateFullPathException->setCauseElement($this);
 
                 throw $duplicateFullPathException;
             }
@@ -685,13 +647,13 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @internal
-     *
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws Exception
+     *
+     * @internal
      */
-    protected function update($params = [])
+    protected function update(array $params = []): void
     {
         $storage = Storage::get('asset');
         $this->updateModificationInfos();
@@ -810,7 +772,7 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      */
-    protected function postPersistData()
+    protected function postPersistData(): void
     {
         // hook for the save process, can be overwritten in implementations, such as Image
     }
@@ -818,13 +780,13 @@ class Asset extends Element\AbstractElement
     /**
      * @param bool $setModificationDate
      * @param bool $saveOnlyVersion
-     * @param string $versionNote version note
+     * @param string|null $versionNote version note
      *
      * @return null|Version
      *
      * @throws Exception
      */
-    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, string $versionNote = null): ?Version
     {
         try {
             // hook should be also called if "save only new version" is selected
@@ -877,10 +839,7 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFullPath()
+    public function getFullPath(): string
     {
         $path = $this->getPath() . $this->getFilename();
 
@@ -898,7 +857,7 @@ class Asset extends Element\AbstractElement
      *
      * @internal
      */
-    public function getFrontendFullPath()
+    public function getFrontendFullPath(): string
     {
         $path = $this->getPath() . $this->getFilename();
         $path = urlencode_ignore_slash($path);
@@ -915,28 +874,19 @@ class Asset extends Element\AbstractElement
         return $event->getArgument('frontendPath');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRealPath()
+    public function getRealPath(): ?string
     {
         return $this->path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRealFullPath()
+    public function getRealFullPath(): string
     {
         $path = $this->getRealPath() . $this->getFilename();
 
         return $path;
     }
 
-    /**
-     * @return array
-     */
-    public function getSiblings()
+    public function getSiblings(): Listing
     {
         if ($this->siblings === null) {
             if ($this->getParentId()) {
@@ -947,51 +897,36 @@ class Asset extends Element\AbstractElement
                 }
                 $list->setOrderKey('filename');
                 $list->setOrder('asc');
-                $this->siblings = $list->getAssets();
+                $this->siblings = $list;
             } else {
-                $this->siblings = [];
+                $list = new Asset\Listing();
+                $list->setAssets([]);
+                $this->siblings = $list;
             }
         }
 
         return $this->siblings;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSiblings()
+    public function hasSiblings(): bool
     {
-        if (is_bool($this->hasSiblings)) {
-            if (($this->hasSiblings && empty($this->siblings)) || (!$this->hasSiblings && !empty($this->siblings))) {
-                return $this->getDao()->hasSiblings();
-            } else {
-                return $this->hasSiblings;
-            }
-        }
-
         return $this->getDao()->hasSiblings();
     }
 
-    /**
-     * @return bool
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return false;
     }
 
-    /**
-     * @return Asset[]
-     */
-    public function getChildren()
+    public function getChildren(): Listing
     {
-        return [];
+        return (new Listing())->setAssets([]);
     }
 
     /**
      * @throws FilesystemException
      */
-    private function deletePhysicalFile()
+    private function deletePhysicalFile(): void
     {
         $storage = Storage::get('asset');
         if ($this->getType() != 'folder') {
@@ -1001,10 +936,7 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete(bool $isNested = false)
+    public function delete(bool $isNested = false): void
     {
         if ($this->getId() == 1) {
             throw new Exception('root-node cannot be deleted');
@@ -1082,10 +1014,7 @@ class Asset extends Element\AbstractElement
         $this->dispatchEvent(new AssetEvent($this), AssetEvents::POST_DELETE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function clearDependentCache($additionalTags = [])
+    public function clearDependentCache(array $additionalTags = []): void
     {
         try {
             $tags = [$this->getCacheTag(), 'asset_properties', 'output'];
@@ -1097,56 +1026,34 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * @return string|null
-     */
-    public function getFilename()
+    public function getFilename(): ?string
     {
         return $this->filename;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->getFilename();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $filename
-     *
-     * @return $this
-     */
-    public function setFilename($filename)
+    public function setFilename(string $filename): static
     {
         $this->filename = (string)$filename;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setKey($key)
+    public function setKey(string $key): static
     {
         return $this->setFilename($key);
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = (string)$type;
 
@@ -1156,7 +1063,7 @@ class Asset extends Element\AbstractElement
     /**
      * @return string|false
      */
-    public function getData()
+    public function getData(): bool|string
     {
         $stream = $this->getStream();
         if ($stream) {
@@ -1166,12 +1073,7 @@ class Asset extends Element\AbstractElement
         return '';
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function setData($data)
+    public function setData(mixed $data): static
     {
         $handle = tmpfile();
         fwrite($handle, $data);
@@ -1209,7 +1111,7 @@ class Asset extends Element\AbstractElement
      *
      * @return $this
      */
-    public function setStream($stream)
+    public function setStream($stream): static
     {
         // close existing stream
         if ($stream !== $this->stream) {
@@ -1234,7 +1136,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    private function closeStream()
+    private function closeStream(): void
     {
         if (is_resource($this->stream)) {
             @fclose($this->stream);
@@ -1242,20 +1144,12 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function getDataChanged()
+    public function getDataChanged(): bool
     {
         return $this->dataChanged;
     }
 
-    /**
-     * @param bool $changed
-     *
-     * @return $this
-     */
-    public function setDataChanged($changed = true)
+    public function setDataChanged(bool $changed = true): static
     {
         $this->dataChanged = $changed;
 
@@ -1265,7 +1159,7 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getVersions()
+    public function getVersions(): array
     {
         if ($this->versions === null) {
             $this->setVersions($this->getDao()->getVersions());
@@ -1279,7 +1173,7 @@ class Asset extends Element\AbstractElement
      *
      * @return $this
      */
-    public function setVersions($versions)
+    public function setVersions(array $versions): static
     {
         $this->versions = $versions;
 
@@ -1295,7 +1189,7 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception
      */
-    public function getTemporaryFile(bool $keep = false)
+    public function getTemporaryFile(bool $keep = false): string
     {
         return self::getTemporaryFileFromStream($this->getStream(), $keep);
     }
@@ -1307,30 +1201,19 @@ class Asset extends Element\AbstractElement
      *
      * @throws Exception
      */
-    public function getLocalFile()
+    public function getLocalFile(): string
     {
         return self::getLocalFileFromStream($this->getStream());
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function setCustomSetting($key, $value)
+    public function setCustomSetting(string $key, mixed $value): static
     {
         $this->customSettings[$key] = $value;
 
         return $this;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getCustomSetting($key)
+    public function getCustomSetting(string $key): mixed
     {
         if (is_array($this->customSettings) && array_key_exists($key, $this->customSettings)) {
             return $this->customSettings[$key];
@@ -1339,30 +1222,19 @@ class Asset extends Element\AbstractElement
         return null;
     }
 
-    /**
-     * @param string $key
-     */
-    public function removeCustomSetting($key)
+    public function removeCustomSetting(string $key): void
     {
         if (is_array($this->customSettings) && array_key_exists($key, $this->customSettings)) {
             unset($this->customSettings[$key]);
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getCustomSettings()
+    public function getCustomSettings(): array
     {
         return $this->customSettings;
     }
 
-    /**
-     * @param mixed $customSettings
-     *
-     * @return $this
-     */
-    public function setCustomSettings($customSettings)
+    public function setCustomSettings(mixed $customSettings): static
     {
         if (is_string($customSettings)) {
             $customSettings = Serialize::unserialize($customSettings);
@@ -1381,20 +1253,15 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getMimeType()
+    public function getMimeType(): ?string
     {
         return $this->mimetype;
     }
 
     /**
-     * @param string $mimetype
-     *
      * @return $this
      */
-    public function setMimeType($mimetype)
+    public function setMimeType(string $mimetype): static
     {
         $this->mimetype = (string)$mimetype;
 
@@ -1409,7 +1276,7 @@ class Asset extends Element\AbstractElement
      * @internal
      *
      */
-    public function setMetadataRaw($metadata)
+    public function setMetadataRaw(array $metadata): static
     {
         $this->metadata = $metadata;
         if ($this->metadata) {
@@ -1424,7 +1291,7 @@ class Asset extends Element\AbstractElement
      *
      * @return $this
      */
-    public function setMetadata($metadata)
+    public function setMetadata(array $metadata): static
     {
         $this->metadata = [];
         $this->setHasMetaData(false);
@@ -1438,22 +1305,14 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getHasMetaData()
+    public function getHasMetaData(): bool
     {
         return $this->hasMetaData;
     }
 
-    /**
-     * @param bool $hasMetaData
-     *
-     * @return $this
-     */
-    public function setHasMetaData($hasMetaData)
+    public function setHasMetaData(bool $hasMetaData): static
     {
-        $this->hasMetaData = (bool)$hasMetaData;
+        $this->hasMetaData = $hasMetaData;
 
         return $this;
     }
@@ -1466,7 +1325,7 @@ class Asset extends Element\AbstractElement
      *
      * @return $this
      */
-    public function addMetadata($name, $type, $data = null, $language = null)
+    public function addMetadata(string $name, string $type, mixed $data = null, string $language = null): static
     {
         if ($name && $type) {
             $tmp = [];
@@ -1507,13 +1366,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param string $name
-     * @param string|null $language
-     *
-     * @return $this
-     */
-    public function removeMetadata(string $name, ?string $language = null)
+    public function removeMetadata(string $name, ?string $language = null): static
     {
         if ($name) {
             $tmp = [];
@@ -1536,92 +1389,98 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param string|null $name
-     * @param string|null $language
-     * @param bool $strictMatch
-     * @param bool $raw
-     *
-     * @return array|string|null
-     */
-    public function getMetadata($name = null, $language = null, $strictMatch = false, $raw = false)
+    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
         $this->dispatchEvent($preEvent, AssetEvents::PRE_GET_METADATA);
         $this->metadata = $preEvent->getArgument('metadata');
 
-        $convert = function ($metaData) {
-            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-            $transformedData = $metaData['data'];
-
-            try {
-                /** @var Data $instance */
-                $instance = $loader->build($metaData['type']);
-                $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
-            } catch (UnsupportedException $e) {
-            }
-
-            return $transformedData;
-        };
-
         if ($name) {
-            if ($language === null) {
-                $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
-            }
-
-            $data = null;
-            foreach ($this->metadata as $md) {
-                if ($md['name'] == $name) {
-                    if ($language == $md['language']) {
-                        if ($raw) {
-                            return $md;
-                        }
-
-                        return $convert($md);
-                    }
-                    if (empty($md['language']) && !$strictMatch) {
-                        if ($raw) {
-                            return $md;
-                        }
-                        $data = $md;
-                    }
-                }
-            }
-
-            if ($data) {
-                if ($raw) {
-                    return $data;
-                }
-
-                return $convert($data);
-            }
-
-            return null;
+            return $this->getMetadataByName($name, $language, $strictMatchLanguage, $raw);
         }
 
         $metaData = $this->getObjectVar('metadata');
         $result = [];
+        $metaDataWithLanguage = [];
         if (is_array($metaData)) {
             foreach ($metaData as $md) {
                 $md = (array)$md;
-                if (!$raw) {
-                    $md['data'] = $convert($md);
+
+                if ((empty($md['language']) && !$strictMatchLanguage) || ($language == $md['language']) || !$language) {
+                    if (!$raw) {
+                        $md['data'] = $this->transformMetadata($md);
+                    }
+                    $result[] = $md;
                 }
-                $result[] = $md;
+
+                if (!empty($md['language'])) {
+                    $metaDataWithLanguage[$md['language']][$md['name']] = $md;
+                }
+            }
+        }
+
+        if ($language && !$strictMatchLanguage) {
+            foreach ($result as $key => &$item) {
+                if (!$item['language'] && isset($metaDataWithLanguage[$language][$item['name']])) {
+                    $itemWithLanguage = $metaDataWithLanguage[$language][$item['name']];
+                    if (!in_array($itemWithLanguage, $result)) {
+                        $item = $itemWithLanguage;
+                    } else {
+                        unset($result[$key]);
+                    }
+                }
             }
         }
 
         return $result;
     }
 
-    /**
-     * @param bool $formatted
-     * @param int $precision
-     *
-     * @return string|int
-     */
-    public function getFileSize($formatted = false, $precision = 2)
+    private function transformMetadata(array $metaData): mixed
+    {
+        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+        $transformedData = $metaData['data'];
+
+        try {
+            /** @var Data $instance */
+            $instance = $loader->build($metaData['type']);
+            $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
+        } catch (UnsupportedException $e) {
+        }
+
+        return $transformedData;
+    }
+
+    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    {
+        if ($language === null) {
+            $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
+        }
+
+        $data = null;
+        foreach ($this->metadata as $md) {
+            if ($md['name'] == $name) {
+                if (empty($md['language']) && !$strictMatchLanguage) {
+                    if ($raw) {
+                        return $md;
+                    }
+                    $data = $md;
+                } elseif ($language == $md['language']) {
+                    $data = $md;
+
+                    break;
+                }
+            }
+        }
+
+        if ($data) {
+            return $raw ? $data : $this->transformMetadata($data);
+        }
+
+        return null;
+    }
+
+    public function getFileSize(bool $formatted = false, int $precision = 2): int|string
     {
         try {
             $bytes = Storage::get('asset')->fileSize($this->getRealFullPath());
@@ -1636,23 +1495,16 @@ class Asset extends Element\AbstractElement
         return $bytes;
     }
 
-    /**
-     * @return Asset|null
-     */
-    public function getParent() /** : ?Asset */
+    public function getParent(): ?Asset
     {
         $parent = parent::getParent();
 
         return $parent instanceof Asset ? $parent : null;
     }
 
-    /**
-     * @param Asset|null $parent
-     *
-     * @return $this
-     */
-    public function setParent($parent)
+    public function setParent(?ElementInterface $parent): static
     {
+        /** @var Pimcore\Model\Element\AbstractElement $parent */
         $this->parent = $parent;
         if ($parent instanceof Asset) {
             $this->parentId = $parent->getId();
@@ -1661,7 +1513,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         if ($this->isInDumpState()) {
             // set current parent and path, this is necessary because the serialized data can have a different path than the original element (element was moved)
@@ -1714,21 +1566,17 @@ class Asset extends Element\AbstractElement
         return array_merge(...$dependencies);
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->parent = null;
         $this->versions = null;
-        $this->hasSiblings = null;
         $this->siblings = null;
         $this->scheduledTasks = null;
         $this->closeStream();
     }
 
-    /**
-     * @param bool $force
-     */
-    public function clearThumbnails($force = false)
+    public function clearThumbnails(bool $force = false): void
     {
         if ($this->getDataChanged() || $force) {
             foreach (['thumbnail', 'asset_cache'] as $storageName) {
@@ -1741,13 +1589,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param FilesystemOperator $storage
-     * @param string $oldPath
-     * @param string|null $newPath
-     *
      * @throws FilesystemException
      */
-    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null)
+    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null): void
     {
         if ($newPath === null) {
             $newPath = $this->getRealFullPath();
@@ -1770,11 +1614,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $oldPath
-     *
      * @throws FilesystemException
      */
-    private function relocateThumbnails(string $oldPath)
+    private function relocateThumbnails(string $oldPath): void
     {
         if ($this instanceof Folder) {
             $oldThumbnailsPath = $oldPath;
@@ -1810,9 +1652,6 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * @param Asset $asset
-     */
     private function clearFolderThumbnails(Asset $asset): void
     {
         do {
@@ -1824,10 +1663,7 @@ class Asset extends Element\AbstractElement
         } while ($asset !== null);
     }
 
-    /**
-     * @param string $name
-     */
-    public function clearThumbnail($name)
+    public function clearThumbnail(string $name): void
     {
         try {
             Storage::get('thumbnail')->deleteDirectory($this->getRealPath().'/'.$this->getId().'/image-thumb__'.$this->getId().'__'.$name);
@@ -1847,9 +1683,6 @@ class Asset extends Element\AbstractElement
         );
     }
 
-    /**
-     * @return string
-     */
     public function getFrontendPath(): string
     {
         $path = $this->getFullPath();

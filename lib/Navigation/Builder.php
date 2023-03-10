@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,44 +28,28 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Builder
 {
+    private RequestHelper $requestHelper;
+
     /**
-     * @var RequestHelper
+     * @internal
+     *
+     * @var string|null
      */
-    private $requestHelper;
+    protected ?string $htmlMenuIdPrefix = null;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $htmlMenuIdPrefix;
+    protected string $pageClass = DocumentPage::class;
 
-    /**
-     * @internal
-     *
-     * @var string
-     */
-    protected $pageClass = DocumentPage::class;
+    private int $currentLevel = 0;
 
-    /**
-     * @var int
-     */
-    private $currentLevel = 0;
+    private array $navCacheTags = [];
 
-    /**
-     * @var array
-     */
-    private $navCacheTags = [];
+    private OptionsResolver $optionsResolver;
 
-    /**
-     * @var OptionsResolver
-     */
-    private $optionsResolver;
-
-    /**
-     * @param RequestHelper $requestHelper
-     * @param string|null $pageClass
-     */
     public function __construct(RequestHelper $requestHelper, ?string $pageClass = null)
     {
         $this->requestHelper = $requestHelper;
@@ -77,10 +62,7 @@ class Builder
         $this->configureOptions($this->optionsResolver);
     }
 
-    /**
-     * @param OptionsResolver $options
-     */
-    protected function configureOptions(OptionsResolver $options)
+    protected function configureOptions(OptionsResolver $options): void
     {
         $options->setDefaults([
             'root' => null,
@@ -103,49 +85,38 @@ class Builder
         $options->setAllowedTypes('markActiveTrail', ['bool']);
     }
 
-    /**
-     * @param array $options
-     *
-     * @return array
-     */
     protected function resolveOptions(array $options): array
     {
         return $this->optionsResolver->resolve($options);
     }
 
     /**
-     * @param array|Document|null $activeDocument
-     * @param Document|null $navigationRootDocument
-     * @param string|null $htmlMenuIdPrefix
-     * @param \Closure|null $pageCallback
-     * @param bool|string $cache
-     * @param int|null $maxDepth
-     * @param int|null $cacheLifetime
-     *
-     * @return Container
+     * @param array{
+     *     root?: ?Document,
+     *     htmlMenuPrefix?: ?string,
+     *     pageCallback?: ?callable,
+     *     cache?: string|bool,
+     *     cacheLifetime?: ?int,
+     *     maxDepth?: ?int,
+     *     active?: ?Document,
+     *     markActiveTrail?: bool
+     * } $params
      *
      * @throws \Exception
      */
-    public function getNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null, ?int $cacheLifetime = null)
+    public function getNavigation(array $params): Container
     {
-        //TODO Pimcore 11: remove the `if (...)` block to remove the BC layer
-        if (func_num_args() > 1 || ($activeDocument !== null && !is_array($activeDocument))) {
-            trigger_deprecation('pimcore/pimcore', '10.5', 'Calling Pimcore\Navigation\Builder::getNavigation() using extra arguments is deprecated and will be removed in Pimcore 11.' .
-            'Instead, specify the arguments as an array');
-        } else {
-            [
-                'root' => $navigationRootDocument,
-                'htmlMenuPrefix' => $htmlMenuIdPrefix,
-                'pageCallback' => $pageCallback,
-                'cache' => $cache,
-                'cacheLifetime' => $cacheLifetime,
-                'maxDepth' => $maxDepth,
-                'active' => $activeDocument,
-                'markActiveTrail' => $markActiveTrail,
-            ] = $this->resolveOptions($activeDocument);
-        }
+        [
+            'root' => $navigationRootDocument,
+            'htmlMenuPrefix' => $htmlMenuIdPrefix,
+            'pageCallback' => $pageCallback,
+            'cache' => $cache,
+            'cacheLifetime' => $cacheLifetime,
+            'maxDepth' => $maxDepth,
+            'active' => $activeDocument,
+            'markActiveTrail' => $markActiveTrail,
+        ] = $this->resolveOptions($params);
 
-        $markActiveTrail ??= true; //TODO Pimcore 11: remove with the BC layer
         $cacheEnabled = $cache !== false;
 
         $this->htmlMenuIdPrefix = $htmlMenuIdPrefix;
@@ -298,14 +269,14 @@ class Builder
     }
 
     /**
-     * @internal
-     *
      * @param Page $page
      * @param bool $isActive
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    protected function addActiveCssClasses(Page $page, $isActive = false)
+    protected function addActiveCssClasses(Page $page, bool $isActive = false): void
     {
         $page->setActive(true);
 
@@ -333,11 +304,9 @@ class Builder
     }
 
     /**
-     * @param string $pageClass
-     *
      * @return $this
      */
-    public function setPageClass(string $pageClass)
+    public function setPageClass(string $pageClass): static
     {
         $this->pageClass = $pageClass;
 
@@ -349,7 +318,7 @@ class Builder
      *
      * @return String
      */
-    public function getPageClass()
+    public function getPageClass(): string
     {
         return $this->pageClass;
     }
@@ -363,34 +332,34 @@ class Builder
     {
         // the intention of this function is mainly to be overridden in order to customize the behavior of the navigation
         // e.g. for custom filtering and other very specific use-cases
-        return $parentDocument->getChildren();
+        return $parentDocument->getChildren()->load();
     }
 
     /**
-     * @internal
-     *
      * @param Document $parentDocument
      * @param bool $isRoot
-     * @param callable $pageCallback
+     * @param callable|null $pageCallback
      * @param array $parents
      * @param int|null $maxDepth
      *
      * @return Page[]
      *
      * @throws \Exception
+     *
+     * @internal
      */
-    protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null, $parents = [], $maxDepth = null)
+    protected function buildNextLevel(Document $parentDocument, bool $isRoot = false, callable $pageCallback = null, array $parents = [], int $maxDepth = null): array
     {
         $this->currentLevel++;
         $pages = [];
-        $childs = $this->getChildren($parentDocument);
+        $children = $this->getChildren($parentDocument);
         $parents[$parentDocument->getId()] = $parentDocument;
 
-        if (!is_array($childs)) {
+        if (!is_array($children)) {
             return $pages;
         }
 
-        foreach ($childs as $child) {
+        foreach ($children as $child) {
             $classes = '';
 
             if ($child instanceof Document\Hardlink) {

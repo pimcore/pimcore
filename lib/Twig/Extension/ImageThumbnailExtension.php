@@ -49,26 +49,11 @@ class ImageThumbnailExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @param Image  $image
-     * @param string $thumbnail
-     * @param bool   $deferred
-     *
-     * @return Image\Thumbnail
-     */
     public function getImageThumbnail(Image $image, string $thumbnail, bool $deferred = true): Image\Thumbnail
     {
         return $image->getThumbnail($thumbnail, $deferred);
     }
 
-    /**
-     * @param Image  $image
-     * @param string $thumbnail
-     * @param array  $options
-     * @param bool   $deferred
-     *
-     * @return string
-     */
     public function getImageThumbnailHtml(
         Image $image,
         string $thumbnail,

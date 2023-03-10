@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,23 +22,13 @@ use Symfony\Component\Workflow\Workflow;
 
 class PlaceConfig
 {
-    /**
-     * @var string
-     */
-    private $place;
+    private string $place;
 
-    /**
-     * @var array
-     */
-    private $placeConfigArray;
+    private array $placeConfigArray;
 
-    /**
-     * @var ExpressionService
-     */
-    private $expressionService;
+    private ExpressionService $expressionService;
 
-    /** @var string */
-    private $workflowName;
+    private string $workflowName;
 
     public function __construct(string $place, array $placeConfigArray, ExpressionService $expressionService, string $workflowName)
     {
@@ -87,12 +78,7 @@ class PlaceConfig
         return $this->placeConfigArray['visibleInHeader'];
     }
 
-    /**
-     * @param object $subject
-     *
-     * @return string|null
-     */
-    public function getObjectLayout(Workflow $workflow, $subject): ?string
+    public function getObjectLayout(Workflow $workflow, object $subject): ?string
     {
         return $this->getPermissions($workflow, $subject)['objectLayout'] ?? null;
     }
@@ -107,18 +93,12 @@ class PlaceConfig
         return $this->workflowName;
     }
 
-    /**
-     * @return array
-     */
     public function getPlaceConfigArray(): array
     {
         return $this->placeConfigArray;
     }
 
-    /**
-     * @param object $subject
-     */
-    public function getPermissions(Workflow $workflow, $subject): array
+    public function getPermissions(Workflow $workflow, object $subject): array
     {
         foreach ($this->placeConfigArray['permissions'] ?? [] as $permission) {
             $condition = $permission['condition'] ?? false;
@@ -132,10 +112,7 @@ class PlaceConfig
         return [];
     }
 
-    /**
-     * @param object $subject
-     */
-    public function getUserPermissions(Workflow $workflow, $subject): array
+    public function getUserPermissions(Workflow $workflow, object $subject): array
     {
         $result = [];
 

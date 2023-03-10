@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,7 +23,7 @@ interface AddressSourceAdapterInterface
      *
      * @return SendingParamContainer[]
      */
-    public function getMailAddressesForBatchSending();
+    public function getMailAddressesForBatchSending(): array;
 
     /**
      * returns params to be set on mail for test sending
@@ -31,14 +32,14 @@ interface AddressSourceAdapterInterface
      *
      * @return SendingParamContainer
      */
-    public function getParamsForTestSending($emailAddress);
+    public function getParamsForTestSending(string $emailAddress): SendingParamContainer;
 
     /**
      * returns total number of newsletter recipients
      *
      * @return int
      */
-    public function getTotalRecordCount();
+    public function getTotalRecordCount(): int;
 
     /**
      * returns array of params to be set on mail for single sending
@@ -48,5 +49,5 @@ interface AddressSourceAdapterInterface
      *
      * @return SendingParamContainer[]
      */
-    public function getParamsForSingleSending($limit, $offset);
+    public function getParamsForSingleSending(int $limit, int $offset): array;
 }

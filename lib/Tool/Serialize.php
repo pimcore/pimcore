@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,27 +18,14 @@ namespace Pimcore\Tool;
 
 final class Serialize
 {
-    /**
-     * @var array
-     */
-    protected static $loopFilterProcessedObjects = [];
+    protected static array $loopFilterProcessedObjects = [];
 
-    /**
-     * @param mixed $data
-     *
-     * @return string
-     */
-    public static function serialize($data)
+    public static function serialize(mixed $data): string
     {
         return serialize($data);
     }
 
-    /**
-     * @param string $data
-     *
-     * @return mixed
-     */
-    public static function unserialize($data)
+    public static function unserialize(?string $data = null): mixed
     {
         if (!empty($data) && is_string($data)) {
             $data = unserialize($data);
@@ -53,7 +41,7 @@ final class Serialize
      *
      * @return \Symfony\Component\Serializer\Serializer
      */
-    public static function getAdminSerializer()
+    public static function getAdminSerializer(): \Symfony\Component\Serializer\Serializer
     {
         return \Pimcore::getContainer()->get('pimcore_admin.serializer');
     }
@@ -68,19 +56,14 @@ final class Serialize
      *
      * @return mixed
      */
-    public static function removeReferenceLoops($data): mixed
+    public static function removeReferenceLoops(mixed $data): mixed
     {
         self::$loopFilterProcessedObjects = []; // reset
 
         return self::loopFilterCycles($data);
     }
 
-    /**
-     * @param mixed $element
-     *
-     * @return mixed
-     */
-    protected static function loopFilterCycles($element)
+    protected static function loopFilterCycles(mixed $element): mixed
     {
         if (is_array($element)) {
             foreach ($element as &$value) {

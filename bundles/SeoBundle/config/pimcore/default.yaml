@@ -1,0 +1,42 @@
+pimcore_admin:
+    user:
+        default_key_bindings:
+            seo_document_editor:
+                key: 'S'
+                action: seoDocumentEditor
+                ctrl: true
+                alt: true
+            robots:
+                key: 'J'
+                action: robots
+                ctrl: true
+                alt: true
+            http_error_log:
+                key: 'O'
+                action: httpErrorLog
+                ctrl: true
+                alt: true
+
+pimcore_seo:
+    sitemaps:
+        generators:
+            pimcore_documents:
+                enabled: true
+                priority: 100
+                generator_id: Pimcore\Bundle\SeoBundle\Sitemap\Document\DocumentTreeGenerator
+
+    redirects:
+        status_codes:
+            300: Multiple Choices
+            301: Moved Permanently
+            302: Found
+            303: See Other
+            307: Temporary Redirect
+        auto_create_redirects: false
+
+presta_sitemap:
+    # do not add properties by default
+    defaults:
+        lastmod: ~
+        priority: ~
+        changefreq: ~

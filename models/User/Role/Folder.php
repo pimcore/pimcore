@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,8 +23,5 @@ use Pimcore\Model;
  */
 class Folder extends Model\User\UserRole\Folder
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $type = 'rolefolder';
+    protected string $type = 'rolefolder';
 }

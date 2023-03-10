@@ -1,0 +1,75 @@
+/*
+ * Color Thief v2.0
+ * by Lokesh Dhakar - http://www.lokeshdhakar.com
+ *
+ * Thanks
+ * ------
+ * Nick Rabinowitz - For creating quantize.js.
+ * John Schulz - For clean up and optimization. @JFSIII
+ * Nathan Spady - For adding drag and drop support to the demo page.
+ *
+ * License
+ * -------
+ * Copyright 2011, 2015 Lokesh Dhakar
+ * Released under the MIT license
+ * https://raw.githubusercontent.com/lokesh/color-thief/master/LICENSE
+ *
+ * @license
+ */
+
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+/*!
+ * Block below copied from Protovis: http://mbostock.github.com/protovis/
+ * Copyright 2010 Stanford Visualization Group
+ * Licensed under the BSD License: http://www.opensource.org/licenses/bsd-license.php
+ * @license
+ */
+
+/*!
+ * Sizzle CSS Selector Engine v2.3.4
+ * https://sizzlejs.com/
+ *
+ * Copyright JS Foundation and other contributors
+ * Released under the MIT license
+ * https://js.foundation/
+ *
+ * Date: 2019-04-08
+ */
+
+/*!
+ * jQuery JavaScript Library v3.4.1
+ * https://jquery.com/
+ *
+ * Includes Sizzle.js
+ * https://sizzlejs.com/
+ *
+ * Copyright JS Foundation and other contributors
+ * Released under the MIT license
+ * https://jquery.org/license
+ *
+ * Date: 2019-05-01T21:04Z
+ */
+
+/*!
+ * quantize.js Copyright 2008 Nick Rabinowitz.
+ * Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+ * @license
+ */
+
+/*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
+
+/*! alertifyjs - v1.11.4 - Mohammad Younes <Mohammad@alertifyjs.com> (http://alertifyjs.com) */
+
+/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
+
+/**
+ * hermite-resize - Canvas image resize/resample using Hermite filter with JavaScript.
+ * @version v2.2.8
+ * @link https://github.com/viliusle/miniPaint
+ * @license MIT
+ */

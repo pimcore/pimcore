@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,8 +20,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class FieldcollectionTest
@@ -43,13 +44,13 @@ class FieldcollectionTest extends ModelTestCase
         parent::tearDown();
     }
 
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
         $this->tester->setupPimcoreClass_RelationTest();
         $this->tester->setupFieldcollection_Unittestfieldcollection();
     }
 
-    public function testRelationFieldInsideFieldCollection()
+    public function testRelationFieldInsideFieldCollection(): void
     {
         $target1 = new RelationTest();
         $target1->setParent(Service::createFolderByPath('__test/relationobjects'));
@@ -118,7 +119,7 @@ class FieldcollectionTest extends ModelTestCase
         $this->assertEquals([], $rel);
     }
 
-    public function testLocalizedFieldInsideFieldCollection()
+    public function testLocalizedFieldInsideFieldCollection(): void
     {
         $target1 = new RelationTest();
         $target1->setParent(Service::createFolderByPath('__test/relationobjects'));

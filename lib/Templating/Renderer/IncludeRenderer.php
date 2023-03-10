@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,36 +17,25 @@
 namespace Pimcore\Templating\Renderer;
 
 use Pimcore\Cache;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\DomCrawler;
 use Pimcore\Tool\Frontend;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @internal
  */
 class IncludeRenderer
 {
-    /**
-     * @var ActionRenderer
-     */
-    protected $actionRenderer;
-
-    /**
-     * @var DocumentTargetingConfigurator
-     */
-    private $targetingConfigurator;
-
     public function __construct(
-        ActionRenderer $actionRenderer,
-        DocumentTargetingConfigurator $targetingConfigurator
+        protected ActionRenderer $actionRenderer,
+        protected EventDispatcherInterface $eventDispatcher,
     ) {
-        $this->actionRenderer = $actionRenderer;
-        $this->targetingConfigurator = $targetingConfigurator;
     }
 
     /**
@@ -58,7 +48,7 @@ class IncludeRenderer
      *
      * @return string
      */
-    public function render($include, array $params = [], $editmode = false, $cacheEnabled = true)
+    public function render(mixed $include, array $params = [], bool $editmode = false, bool $cacheEnabled = true): string
     {
         if (!is_array($params)) {
             $params = [];
@@ -86,8 +76,10 @@ class IncludeRenderer
         }
 
         if ($include instanceof PageSnippet && $include->isPublished()) {
-            // apply best matching target group (if any)
-            $this->targetingConfigurator->configureTargetGroup($include);
+            $this->eventDispatcher->dispatch(
+                new DocumentEvent($include, $params),
+                DocumentEvents::INCLUDERENDERER_PRE_RENDER
+            );
         }
 
         // check if output-cache is enabled, if so, we're also using the cache here
@@ -108,7 +100,7 @@ class IncludeRenderer
             });
 
             // TODO is this enough for cache or should we disable caching completely?
-            if ($include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
+            if (method_exists($include, 'getUseTargetGroup') && $include->getUseTargetGroup()) {
                 $cacheParams['target_group'] = $include->getUseTargetGroup();
             }
 
@@ -139,13 +131,7 @@ class IncludeRenderer
         return $content;
     }
 
-    /**
-     * @param PageSnippet $include
-     * @param array $params
-     *
-     * @return string
-     */
-    protected function renderAction(PageSnippet $include, $params)
+    protected function renderAction(PageSnippet $include, array $params): string
     {
         return $this->actionRenderer->render($include, $params);
     }
@@ -160,7 +146,7 @@ class IncludeRenderer
      *
      * @return string
      */
-    protected function modifyEditmodeContent(PageSnippet $include, $content)
+    protected function modifyEditmodeContent(PageSnippet $include, string $content): string
     {
         $editmodeClass = ' pimcore_editable pimcore_editable_inc ';
 
@@ -168,9 +154,9 @@ class IncludeRenderer
         // this is needed by the editmode to highlight included documents
         try {
             $html = new DomCrawler($content);
-            $childs = $html->filterXPath('//' . DomCrawler::FRAGMENT_WRAPPER_TAG . '/*'); // FRAGMENT_WRAPPER_TAG is added by DomCrawler for fragments
+            $children = $html->filterXPath('//' . DomCrawler::FRAGMENT_WRAPPER_TAG . '/*'); // FRAGMENT_WRAPPER_TAG is added by DomCrawler for fragments
             /** @var \DOMElement $child */
-            foreach ($childs as $child) {
+            foreach ($children as $child) {
                 $child->setAttribute('class', $child->getAttribute('class') . $editmodeClass);
                 $child->setAttribute('pimcore_type', $include->getType());
                 $child->setAttribute('pimcore_id', (string) $include->getId());

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,10 +32,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
 
     private Config\LocationAwareConfigRepository $locationAwareConfigRepository;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configure()
+    public function configure(): void
     {
         $params = func_get_arg(0);
         $this->settingsStoreScope = $params['settingsStoreScope'] ?? 'pimcore_config';
@@ -49,17 +47,11 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
             $this->settingsStoreScope,
             $params['storageDirectory'] ?? null,
             $params['writeTargetEnvVariableName'] ?? null,
-            $params['defaultWriteLocation'] ?? null,
-            $params['legacyConfigFile'] ?? null
+            $params['defaultWriteLocation'] ?? null
         );
     }
 
-    /**
-     * @param string $id
-     *
-     * @return mixed
-     */
-    protected function getDataByName(string $id)
+    protected function getDataByName(string $id): mixed
     {
         $this->id = $id;
 
@@ -81,9 +73,6 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
         return $data;
     }
 
-    /**
-     * @return array
-     */
     protected function loadIdList(): array
     {
         return $this->locationAwareConfigRepository->fetchAllKeys();
@@ -106,7 +95,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
      *
      * @throws \Exception
      */
-    protected function saveData(string $id, $data)
+    protected function saveData(string $id, array $data): void
     {
         $dao = $this;
         $this->invalidateCache($id);
@@ -123,7 +112,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
      *
      * @return mixed
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return $data;
     }
@@ -138,9 +127,6 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
         return $this->locationAwareConfigRepository->getWriteTarget();
     }
 
-    /**
-     * @return bool
-     */
     public function isWriteable(): bool
     {
         return $this->locationAwareConfigRepository->isWriteable($this->id, $this->dataSource);

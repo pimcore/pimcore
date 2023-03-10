@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,24 +25,15 @@ use Symfony\Component\HttpFoundation\RequestMatcherInterface;
  */
 class PimcoreContextGuesser
 {
-    /**
-     * @var array
-     */
-    private $routes = [];
+    private array $routes = [];
 
     /**
      * @var RequestMatcherInterface[][]
      */
-    private $matchers;
+    private ?array $matchers = null;
 
-    /**
-     * @var RequestMatcherFactory
-     */
-    private $requestMatcherFactory;
+    private RequestMatcherFactory $requestMatcherFactory;
 
-    /**
-     * @param RequestMatcherFactory $factory
-     */
     public function __construct(RequestMatcherFactory $factory)
     {
         $this->requestMatcherFactory = $factory;
@@ -53,7 +45,7 @@ class PimcoreContextGuesser
      * @param string $context
      * @param array $routes
      */
-    public function addContextRoutes(string $context, array $routes)
+    public function addContextRoutes(string $context, array $routes): void
     {
         $this->routes[$context] = $routes;
     }
