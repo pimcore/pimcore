@@ -1385,10 +1385,19 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $localizedFields = $object->getLocalizedFields();
                 $localizedFields->setLoadedAllLazyData();
             }
+
+            // Mark fields that have changed as dirty
+            if ($request->get('task') !== 'autoSave' && $request->get('task') !== 'unpublish') {
+                $fields = array_keys($object->getClass()->getFieldDefinitions());
+                foreach ($fields as $field) {
+                    $getter  ='get' . ucfirst($field);
+                    if ($object->$getter() !== $objectFromDatabase->$getter()) {
+                        $object->markFieldDirty($field);
+                    }
+                }
+            }
         }
 
-        // data
-        $data = [];
         if ($request->get('data')) {
             $this->applyChanges($object, $this->decodeJson($request->get('data')));
         }
