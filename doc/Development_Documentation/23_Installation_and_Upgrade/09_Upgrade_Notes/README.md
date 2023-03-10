@@ -35,7 +35,7 @@
 - [Document] Deprecated the `HTML-Tags` field under the `SEO & Settings` panel of Document/Page, `setMetaData()` and `getMetaData()`
 - [Document] The `HTML-Tags` (document metadata) field under SEO & Settings panel is now only visible and editable by Admin users`.
 - [Thumbnails] Using Callable in Asset thumbnail transformations is deprecated and will not work in Pimcore 11.
-- [Thumbnails] Deprecated ```$thumbnail->getPath(false)```, use ```$thumbnail->getPath(["deferredAllowed" => false]);``` instead
+- [Thumbnails] Deprecated the usage of `$thumbnail->getPath(false)` by passing boolean parameters, use `$thumbnail->getPath(["deferredAllowed" => false]);` and pass an array instead. Added the possibility to get the frontend path by adding `forceFrontend => true` into the array, useful in console commands.
 - Marked `Pimcore\Model\User\AbstractUser` and `Pimcore\Model\User\UserRole` classes as abstract via php doc. It will be natively abstract in Pimcore 11.
 - [Database] Deprecated `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
 
