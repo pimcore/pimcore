@@ -167,7 +167,7 @@ $path = $thumbnail->getPath(["deferredAllowed" => false]);
 // getting the full url to a thumbnail (including the frontend_prefix) - also works in console commands
 $path = $thumbnail->getFrontendPath();
 //or
-$path = $this->getPath(['forceFrontend' => true, 'deferredAllowed' => false]);
+$path = $this->getPath(['deferredAllowed' => false, 'forceFrontend' => true]);
 
 // Asset\Image\Thumbnail implements __toString(), so you can still print the path by
 echo $thumbnail; // prints something like /Car%20Images/....png
