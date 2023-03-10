@@ -42,7 +42,7 @@ final class Config
             }
 
             $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
-                $containerConfig,
+                $pimcoreContainerConfig,
                 self::CONFIG_ID,
                 'PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT',
                 'PIMCORE_WRITE_TARGET_WEB_TO_PRINT'
