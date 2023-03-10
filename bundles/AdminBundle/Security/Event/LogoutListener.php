@@ -71,9 +71,13 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
      */
     public function onLogout(LogoutEvent $event): RedirectResponse|Response
     {
-        $request = $event->getRequest();
-
-        return $this->onLogoutSuccess($request);
+        // only call $this->onLogoutSuccess() when the logout is requested from firewall 'pimcore_admin'.
+        // this prevents getting logged out from pimcore while logging out from another firewall
+        if ($event->getToken()->getFirewallName() == 'pimcore_admin') {
+            return $this->onLogoutSuccess($event->getRequest());
+        } else {
+            return $event->getResponse();
+        }
     }
 
     /**
