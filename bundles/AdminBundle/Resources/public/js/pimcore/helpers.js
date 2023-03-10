@@ -1967,6 +1967,13 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                 name: 'attributes',
                                 width: 300,
                                 value: data["attributes"]
+                            },
+                            {
+                                fieldLabel: t('append_slash'),
+                                xtype: 'checkbox',
+                                name: 'appendslash',
+                                width: 300,
+                                value: data["appendslash"]
                             }
                         ]
                     }
