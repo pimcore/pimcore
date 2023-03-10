@@ -71,9 +71,11 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
      */
     public function onLogout(LogoutEvent $event): RedirectResponse|Response
     {
-        $request = $event->getRequest();
-
-        return $this->onLogoutSuccess($request);
+        if ($event->getToken()->getFirewallName() == 'pimcore_admin') {
+            return $this->onLogoutSuccess($event->getRequest());
+        } else {
+            return $event->getResponse();
+        }
     }
 
     /**
