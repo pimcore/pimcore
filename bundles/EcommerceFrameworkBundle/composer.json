@@ -16,7 +16,8 @@
     "pimcore/pimcore": "^11.0",
     "pimcore/personalization-bundle": "^1.0",
     "pimcore/google-marketing-bundle": "dev-main",
-    "knplabs/knp-paginator-bundle": "^6.0.0"
+    "knplabs/knp-paginator-bundle": "^6.0.0",
+    "symfony/webpack-encore-bundle": "^1.7"
   },
   "require-dev": {
     "phpstan/phpstan": "^1.9",

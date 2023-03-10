@@ -12,14 +12,14 @@
         <div id="content">
             <ul id="tabs" class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
-                    <a href="#manager" class="nav-link active" role="tab" data-toggle="tab" aria-controls="manager" aria-selected="true">
+                    <buttom data-bs-target="#manager" class="nav-link active" role="tab" data-bs-toggle="tab" aria-controls="manager" aria-selected="true">
                         <span class="fa fa-home"></span> {{ ('bundle_ecommerce_voucherservice_tab-manager')|trans([],'admin') }}
-                    </a>
+                    </buttom>
                 </li>
                 <li class="nav-item">
-                    <a id="statistic-tab" href="#statistics" class="nav-link" role="tab" data-toggle="tab" aria-controls="statistics" aria-selected="true">
+                    <button id="statistic-tab" data-bs-target="#statistics" class="nav-link" role="tab" data-bs-toggle="tab" aria-controls="statistics" aria-selected="true">
                         <span class="fa fa-chart-line"></span> {{ ('bundle_ecommerce_voucherservice_tab-statistics')|trans([],'admin') }}
-                    </a>
+                    </button>
                 </li>
             </ul>
 
@@ -33,7 +33,7 @@
 
                     <div class="row header">
                         <div class="col col-sm-4">
-                            <button type="button" class="btn btn-primary js-modal"  data-toggle="modal" data-modal="generate">{{ ('bundle_ecommerce_voucherservice_generate-button')|trans([],'admin') }}</button>
+                            <button type="button" class="btn btn-primary js-modal"  data-bs-toggle="modal" data-modal="generate">{{ ('bundle_ecommerce_voucherservice_generate-button')|trans([],'admin') }}</button>
                             {% if voucherType is defined and voucherType != "VoucherTokenTypeSingle" %}
                                 <button type="button" class="btn btn-default js-modal" data-modal="cleanUp">{{ ('bundle_ecommerce_voucherservice_cleanup-button')|trans([],'admin') }}</button>
                             {% endif %}
@@ -49,7 +49,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="col col-sm-4 text-right">
+                        <div class="col col-sm-4 text-end">
                             <div class="btn-group">
                                 {% if supportsExport %}
                                     {% set exportUrl = path('pimcore_ecommerce_backend_voucher_export-tokens', urlParams|merge({'format': 'csv'})) %}
@@ -69,18 +69,18 @@
                                 <div class="col col-sm-5 mb-3">
                                     <h4 style="float: left;"><i class="fa fa-list"></i> {{ 'bundle_ecommerce_voucherservice_token-overview-headline'|trans([],'admin') }}</h4>
                                 </div>
-                                <div class="col col-sm-7 text-right">
+                                <div class="col col-sm-7 text-end">
                                     {% include "@PimcoreEcommerceFramework/voucher/parts/paginator.html.twig" with {'paginationVariables': paginator.getPaginationData() } %}
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col col-sm-6">
                                     {% if voucherType is defined and voucherType != "VoucherTokenTypeSingle" %}
-                                        <h6 class="card-subtitle font-weight-light">{{ count|number_format(0, ',', ' ') }} {{ ('bundle_ecommerce_voucherservice_result-text')|trans([],'admin') }}</h6>
+                                        <h6 class="card-subtitle fw-light">{{ count|number_format(0, ',', ' ') }} {{ ('bundle_ecommerce_voucherservice_result-text')|trans([],'admin') }}</h6>
                                     {% endif %}
                                 </div>
                                 {% if pagesCount is defined %}
-                                    <div class="col col-sm-6 text-right">
+                                    <div class="col col-sm-6 text-end">
                                         <h6 class="subtitle pages">{{ ('bundle_ecommerce_voucherservice_tokens-per-page')|trans([],'admin') }}
                                             <a class="pages-count {{ ( pagesCount == 25? 'active') }}" href="{{ pimcore_url({'tokensPerPage': 25}) }}">25</a>
                                             <a class="pages-count {{ (pagesCount == 75? 'active') }}" href="{{ pimcore_url({'tokensPerPage': 75}) }}">75</a>
@@ -124,30 +124,30 @@
                                 <h3><i class="fa fa-search"></i> {{ ('bundle_ecommerce_voucherservice_filter-headline')|trans([],'admin') }}</h3>
 
                                 <form class="form-horizontal js-filter-form" action="{{ pimcore_url([], null, true) }}">
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                             <label>{{ ('bundle_ecommerce_voucherservice_filter-token')|trans([],'admin') }}</label>
                                             <input type="text" name="token" value="{{ app.request.get('token') }}" placeholder="token"
                                                    class="form-control"/>
                                     </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-sm-6">
+                                    <div class="row">
+                                        <div class="mb-3 col-sm-6">
                                             <label>{{ ('bundle_ecommerce_voucherservice_filter-from-date')|trans([],'admin') }}</label>
                                             <input type="text" name="creation_from" value="{{ app.request.get('creation_from') }}"
                                                    placeholder="YYYY-MM-DD" class="js-datepicker form-control"/>
                                         </div>
-                                        <div class="form-group  col-sm-6">
+                                        <div class="mb-3  col-sm-6">
                                                 <label>{{ ('bundle_ecommerce_voucherservice_filter-to-date')|trans([],'admin') }}</label>
                                                 <input type="text" name="creation_to" value="{{ app.request.get('creation_to') }}"
                                                        placeholder="YYYY-MM-DD" class="js-datepicker form-control"/>
                                         </div>
                                     </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-sm-6">
+                                    <div class="row">
+                                        <div class="mb-3 col-sm-6">
                                             <label>{{ ('bundle_ecommerce_voucherservice_filter-usages')|trans([],'admin') }}</label>
                                             <input type="number" name="usages" value="{{ app.request.get('usages') }}" min="0"
                                                    placeholder="usages" class="form-control"/>
                                         </div>
-                                        <div class="form-group col-sm-6">
+                                        <div class="mb-3 col-sm-6">
                                             <label>{{ ('bundle_ecommerce_voucherservice_filter-length')|trans([],'admin') }}</label>
                                             <select class="form-control" name="length" >
                                                 {% for length, amount in tokenLengths %}
@@ -159,7 +159,7 @@
 
                                     <input type="hidden" name="id" value="{{ app.request.get('id') }}">
 
-                                    <div class="form-group">
+                                    <div class="mb-3">
                                         <div class=" col col-sm-12">
                                             <button class="btn btn-primary" type="submit">{{ ('bundle_ecommerce_voucherservice_apply-filter-button')|trans([],'admin') }}</button>
                                         </div>
@@ -183,7 +183,7 @@
                                 <div class="alert alert-danger"> {{ error }}  </div>
                             {% endif %}
                         </div>
-                        <div class="col col-sm-8 text-right">
+                        <div class="col col-sm-8 text-end">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default js-modal" data-modal="cleanup-reservations"><span class="fa fa-refresh"></span>
                                     {{ ('bundle_ecommerce_voucherservice_cleanup-reservations-button'|trans([],'admin')) }}

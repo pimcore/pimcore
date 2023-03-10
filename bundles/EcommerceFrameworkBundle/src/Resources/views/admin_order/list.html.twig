@@ -1,8 +1,5 @@
 {% extends '@PimcoreEcommerceFramework/back-office.html.twig' %}
 
-{% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
-{% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.js')) %}
-
 {% set urlParams = app.request.query.all %}
 {% block content %}
     <div class="page-header mt-5">
@@ -12,14 +9,14 @@
     <div class="panel panel-default">
         <form class="form" role="search">
             <div class="panel-body border rounded">
-                <div class="form-row m-2">
-                    <div class="form-group col-md-4">
+                <div class="row m-2">
+                    <div class="col-md-4 mb-3">
                         <div class="input-group">
-                            <div class="input-group-btn input-group-prepend" id="search-filter">
+                            <div class="input-group-btn" id="search-filter">
                                 {% set arrFields = {'order': ('bundle_ecommerce.back-office.order-list.filter-order')|trans([],'admin') ,
                                     'productType' :   ('bundle_ecommerce.back-office.order-list.filter-product-type')|trans([],'admin') } %}
                                 {% set selected = app.request.get('search', 'order') %}
-                                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-target="#">
+                                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" data-target="#">
                                     <span id="search-filter-label" data-bind="label">{{ arrFields[selected] }}</span>
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
@@ -32,25 +29,25 @@
                             <input type="text" class="form-control" name="q" placeholder="{{ 'bundle_ecommerce.back-office.order-list.search.placeholder'|trans([],'admin') }}" value="{{ app.request.get('q') }}">
                         </div>
                     </div>
-                    <div class="form-group col-md-2">
+                    <div class="col-md-2 mb-3">
                         <div class="input-group">
-                            <div class="input-group-prepend"><span class="input-group-text fa fa-calendar"></span></div>
+                            <span class="input-group-text fa fa-calendar"></span>
                             <input type="text" id="date-from" class="form-control date" name="from" placeholder="{{ 'bundle_ecommerce.back-office.order-list.filter-date.from'|trans([],'admin') }}" value="{{ app.request.get('from') }}">
                         </div>
                     </div>
-                    <div class="form-group col-md-2">
+                    <div class="col-md-2 mb-3">
                         <div class="input-group">
-                            <div class="input-group-prepend"><span class="input-group-text fa fa-calendar"></span></div>
+                            <span class="input-group-text fa fa-calendar"></span>
                             <input type="text" id="date-till" class="form-control date" name="till" placeholder="{{ 'bundle_ecommerce.back-office.order-list.filter-date.to'|trans([],'admin') }}" value="{{ app.request.get('till') }}">
                         </div>
                     </div>
                     {% set list = listPricingRule.load() %}
 
                     {%  if (list|length > 0)  %}
-                        <div class="form-group col-sm-4">
+                        <div class="col-sm-4 mb-3">
                             <div class="input-group">
-                                <div class="input-group-prepend"><span class="input-group-text fa fa-tag"></span></div>
-                                <select class="form-control custom-select" name="pricingRule">
+                                <span class="input-group-text fa fa-tag"></span>
+                                <select class="form-control form-select" name="pricingRule">
                                     <option value="">{{ 'bundle_ecommerce.back-office.order-list.filter-pricing-rules'|trans([],'admin') }}</option>
                                     {% for item in list %}
                                         <option value="{{ item.getId() }}" {{ (item.getId() == app.request.get('pricingRule') ? 'selected':'') }}>{{ item.getLabel() }}</option>
@@ -61,7 +58,7 @@
                     {% endif %}
 
                 </div>
-                <div class="form-group col-md-12 card-header">
+                <div class="mb-3 col-md-12 card-header">
                     <button type="submit" class="btn btn-outline-secondary btn-sm d-block mx-auto"><span class="fa fa-filter"></span> {{ 'bundle_ecommerce.back-office.order-list.search.button'|trans([],'admin') }} </button>
                 </div>
             </div>
@@ -77,7 +74,7 @@
             <th width="180">{{ 'bundle_ecommerce.back-office.order'|trans([],'admin') }}</th>
             <th width="180">{{ 'bundle_ecommerce.back-office.order.date'|trans([],'admin') }}</th>
             <th width="80">{{ 'bundle_ecommerce.back-office.order.order-items'|trans([],'admin') }}</th>
-            <th class="text-right" width="100">{{ 'bundle_ecommerce.back-office.order.price.total'|trans([],'admin') }}</th>
+            <th class="text-end" width="100">{{ 'bundle_ecommerce.back-office.order.price.total'|trans([],'admin') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -102,15 +99,14 @@
                 {{ formatter.formatDateTime(date, constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) }}
             </td>
             <td>{{ item['Items'] }}</td>
-            </td>
-            <td class="text-right">{{ formatter.formatCurrency(item['TotalPrice'], defaultCurrency.getShortName()) }}</td>
+            <td class="text-end">{{ formatter.formatCurrency(item['TotalPrice'], defaultCurrency.getShortName()) }}</td>
         </tr>
         {% endfor %}
         </tbody>
         <tfoot>
         <tr>
             <td colspan="3"></td>
-            <td class="text-right">
+            <td class="text-end">
                 <strong>{{ defaultCurrency.toCurrency(totalSum) }}</strong>
             </td>
         </tr>

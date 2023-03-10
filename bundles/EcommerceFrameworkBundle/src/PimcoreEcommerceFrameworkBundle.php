@@ -27,6 +27,7 @@ use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\Version;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 
 class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle implements DependentBundleInterface
 {
@@ -90,5 +91,6 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle implements D
         $collection->addBundle(PimcoreApplicationLoggerBundle::class);
         $collection->addBundle(PimcorePersonalizationBundle::class);
         $collection->addBundle(PimcoreGoogleMarketingBundle::class);
+        $collection->addBundle(new WebpackEncoreBundle());
     }
 }

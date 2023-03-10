@@ -9,12 +9,12 @@
         <div id="content">
             <ul  id="tabs" class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
-                    <a href="#manager" class="nav-link active" role="tab" data-toggle="tab" aria-controls="manager" aria-selected="true">
+                    <a href="#manager" class="nav-link active" role="tab" data-bs-toggle="tab" aria-controls="manager" aria-selected="true">
                         <span class="fa fa-home"></span> {{ ('bundle_ecommerce_voucherservice_tab-manager')|trans([],'admin') }}
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a id="statistic-tab" href="#statistics" class="nav-link" role="tab" data-toggle="tab" aria-controls="statistics" aria-selected="true">
+                    <a id="statistic-tab" href="#statistics" class="nav-link" role="tab" data-bs-toggle="tab" aria-controls="statistics" aria-selected="true">
                         <span class="fa fa-chart-line"></span> {{ ('bundle_ecommerce_voucherservice_tab-statistics')|trans([],'admin') }}
                     </a>
                 </li>
@@ -45,7 +45,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="col col-sm-4 text-right">
+                        <div class="col col-sm-4 text-end">
                             <div class="btn-group">
                                 {% if supportsExport %}
                                     {% set exportUrl = path('pimcore_ecommerce_backend_voucher_export-tokens', urlParams|merge({'format': 'csv'})) %}
@@ -65,7 +65,7 @@
                                 <div class="col col-sm-5">
                                     <h3 style="float: left;"><i class="fa fa-list"></i> {{ ('bundle_ecommerce_voucherservice_token-overview-headline')|trans([],'admin') }}</h3>
                                 </div>
-                                <div class="col col-sm-7 text-right">
+                                <div class="col col-sm-7 text-end">
                                 </div>
                             </div>
                             <div class="row">
@@ -114,7 +114,7 @@
                                 <div class="alert alert-danger"> {{ error }} </div>
                             {% endif %}
                         </div>
-                        <div class="col col-sm-8 text-right">
+                        <div class="col col-sm-8 text-end">
                             <button type="button" class="btn btn-default js-modal" data-modal="cleanup-reservations"><span class="fa fa-refresh"></span> {{ ('bundle_ecommerce_voucherservice_cleanup-reservations-button')|trans([],'admin') }}</button>
                         </div>
                     </div>

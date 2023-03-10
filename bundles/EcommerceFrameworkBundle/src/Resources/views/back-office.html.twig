@@ -8,11 +8,18 @@
 
         <title>{% block ecommerce_title %}Ecommerce Framework Back Office{% endblock %}</title>
 
+        {{ encore_entry_script_tags('bootstrap', null, 'pimcoreEcommerceFramework') }}
+        {{ encore_entry_link_tags('bootstrap', null, 'pimcoreEcommerceFramework') }}
+
+        {{ encore_entry_script_tags('flatpickr', null, 'pimcoreEcommerceFramework') }}
+        {{ encore_entry_link_tags('flatpickr', null, 'pimcoreEcommerceFramework') }}
+
+        {{ encore_entry_script_tags('leaflet', null, 'pimcoreEcommerceFramework') }}
+        {{ encore_entry_link_tags('leaflet', null, 'pimcoreEcommerceFramework') }}
+
         {% apply spaceless %}
-            {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/css/bootstrap.css')) %}
             {% do pimcore_head_link().appendStylesheet('/bundles/pimcoreecommerceframework/vendor/fontawesome/css/fontawesome-all.min.css') %}
             {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/css/back-office.css')) %}
-            {% do pimcore_head_script().prependFile(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/js/bootstrap-native-v4.min.js')) %}
 
 
         {% endapply %}
@@ -38,7 +45,7 @@
                 <a href="#" class="navbar-brand"><span class="fa fa-shopping-cart"></span> Ecommerce Framework Back Office</a>
 
                 <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav ms-auto">
                         {% set user = pimcoreUser %}
                         {% set currentRouteName = app.request.get('_route') %}
                         {% set arrActions = [] %}
@@ -77,18 +84,18 @@
     {% endblock %}
 
     <script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
-        var pimcore = parent.pimcore;
-        var popups = document.getElementsByClassName('popup-modal');
-        for (var i = 0; i < popups.length; i++) {
-            var element = popups[i];
+        const pimcore = parent.pimcore;
+        const popups = document.getElementsByClassName('popup-modal');
+        for (let i = 0; i < popups.length; i++) {
+            const element = popups[i];
 
             element.onclick = function (e) {
                 e.preventDefault();
-                var xhttp = new XMLHttpRequest();
+                const xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
-                        var actionModal = document.getElementById('actionModal');
-                        var modal = new Modal(actionModal,
+                        const actionModal = document.getElementById('actionModal');
+                        const modal = new Modal(actionModal,
                             {
                                 content: '<div id="modal-content" class="modal-content">' + this.response + '</div>', // sets modal content
                             });
@@ -102,6 +109,8 @@
             };
 
         }
+        // http://host.docker.internal/bundles/pimcoreecommerceframework/build/ecommerceFramework/leaflet.js
+        L.Icon.Default.imagePath = '/bundles/pimcoreecommerceframework/build/ecommerceFramework/images/';
     </script>
 
     </body>

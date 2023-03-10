@@ -1,6 +1,6 @@
 <div class="paging">
     {% if paginationVariables.pageCount is defined and paginationVariables.pageCount > 1 %}
-        <ul class="pagination float-right">
+        <ul class="pagination float-end">
             {% if paginationVariables.previous is defined %}
                 <li class="first">
                     <a class="pagination-li" href="{{ pimcore_url({'page': paginationVariables.previous}) }}" rel="{{ paginationVariables.previous }}" >
