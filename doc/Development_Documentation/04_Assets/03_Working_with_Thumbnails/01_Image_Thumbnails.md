@@ -373,7 +373,7 @@ So again, this feature is only useful in some edge-cases.
 
 this generates the followinig ouput:
 
-```php
+```sh
 /Car%20Images/ac%20cars/68/image-thumb__68__testThumbnailDefinitionName/automotive-car-classic-149813.jpg
 ```
 
