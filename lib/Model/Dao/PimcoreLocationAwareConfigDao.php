@@ -52,9 +52,6 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
             $params['defaultWriteLocation'] ?? null,
             $params['legacyConfigFile'] ?? null
         );
-
-        $this->locationAwareConfigRepository->setWriteTarget($params['writeTarget'] ?? null);
-        $this->locationAwareConfigRepository->setOptions($params['options'] ?? null);
     }
 
     /**

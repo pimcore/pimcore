@@ -88,7 +88,7 @@
     ```
     ```yaml
     pimcore:
-      storage:
+      config_location:
         image_thumbnails:
           target: 'symfony-config'
           options:

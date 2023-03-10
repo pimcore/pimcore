@@ -26,11 +26,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS';
-
     private const CONFIG_KEY = 'image_thumbnails';
 
     /**
@@ -40,17 +35,18 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
-        $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($config, self::CONFIG_KEY, 'PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS');
-        $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($config, self::CONFIG_KEY, self::WRITE_TARGET);
+        $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
+            $config,
+            self::CONFIG_KEY,
+            'PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS',
+            'PIMCORE_WRITE_TARGET_IMAGE_THUMBNAILS'
+        );
 
         parent::configure([
             'containerConfig' => $config['assets']['image']['thumbnails']['definitions'],
             'settingsStoreScope' => 'pimcore_image_thumbnails',
-            'storageDirectory' => $storageDirectory,
-            'legacyConfigFile' => 'image-thumbnails.php',
-            'writeTargetEnvVariableName' => self::WRITE_TARGET,
-            'writeTarget' => $writeTarget,
-            'options' => $config['storage'][self::CONFIG_KEY]['options'],
+            'storageDirectory' => $storageConfig,
+            'legacyConfigFile' => 'image-thumbnails.php'
         ]);
     }
 

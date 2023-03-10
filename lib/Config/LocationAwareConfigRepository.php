@@ -81,24 +81,16 @@ class LocationAwareConfigRepository
     protected ?string $legacyConfigFile = null;
 
     /**
-     * @var string|null
-     */
-    protected ?string $writeTarget = null;
-
-    /**
-     * @var array|null
-     */
-    protected ?array $options = null;
-
-    /**
      * @deprecated Will be removed in Pimcore 11
      */
     private ?PhpArrayFileTable $legacyStore = null;
 
+    protected ?array $storageConfig = null;
+
     /**
      * @param array $containerConfig
      * @param string|null $settingsStoreScope
-     * @param string|null $storageDirectory
+     * @param string|array|null $storageDirectory
      * @param string|null $writeTargetEnvVariableName
      * @param string|null $defaultWriteLocation
      * @param string|null $legacyConfigFile
@@ -107,19 +99,24 @@ class LocationAwareConfigRepository
     public function __construct(
         array $containerConfig,
         ?string $settingsStoreScope,
-        ?string $storageDirectory,
-        ?string $writeTargetEnvVariableName,
-        ?string $defaultWriteLocation = null,
-        ?string $legacyConfigFile = null,
-        mixed $loadLegacyConfigCallback = null
+        string|array|null $storageDirectory, // will be renamed to `array $storageConfig` in Pimcore 11
+        ?string $writeTargetEnvVariableName, // @TODO to be removed in Pimcore 11
+        ?string $defaultWriteLocation = null, // @TODO to be removed in Pimcore 11
+        ?string $legacyConfigFile = null, // @TODO to be removed in Pimcore 11
+        mixed $loadLegacyConfigCallback = null // @TODO to be removed in Pimcore 11
     ) {
         $this->containerConfig = $containerConfig;
         $this->settingsStoreScope = $settingsStoreScope;
-        $this->storageDirectory = rtrim($storageDirectory, '/\\');
         $this->writeTargetEnvVariableName = $writeTargetEnvVariableName;
         $this->defaultWriteLocation = $defaultWriteLocation ?: self::LOCATION_SYMFONY_CONFIG;
         $this->legacyConfigFile = $legacyConfigFile;
         $this->loadLegacyConfigCallback = $loadLegacyConfigCallback;
+
+        if(is_string($storageDirectory)) {
+            $this->storageDirectory = rtrim($storageDirectory, '/\\');
+        } else if(is_array($storageDirectory)) {
+            $this->storageConfig = $storageDirectory;
+        }
     }
 
     /**
@@ -243,7 +240,12 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $writeLocation = $this->writeTarget ?? $this->defaultWriteLocation;
+        //TODO remove in Pimcore 11
+        $writeLocation = $this->writeTargetEnvVariableName ? $_SERVER[$this->writeTargetEnvVariableName] ?? null : null;
+
+        if ($writeLocation === null) {
+            $writeLocation = $this->storageConfig['target'] ?? $this->defaultWriteLocation;
+        }
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
             throw new \Exception(sprintf('Invalid write location: %s', $writeLocation));
@@ -341,7 +343,7 @@ class LocationAwareConfigRepository
      */
     private function getVarConfigFile(string $key): string
     {
-        $directory = rtrim($this->options['directory'] ?? $this->storageDirectory, '/\\');
+        $directory = rtrim($this->storageDirectory ?? $this->storageConfig['options']['directory'], '/\\');
 
         return $directory . '/' . $key . '.yaml';
     }
@@ -406,39 +408,36 @@ class LocationAwareConfigRepository
         }
     }
 
-    public static function getStorageDirectoryFromSymfonyConfig(array $config, string $configKey, string $storageDir): string
+    /**
+     * @TODO to be removed in Pimcore 11
+     * @internal
+     * @param array $containerConfig
+     * @param string $configId
+     * @return array
+     */
+    public static function getStorageConfigurationCompatibilityLayer(
+        array $containerConfig,
+        string $configId,
+        string $storagePathEnvVarName,
+        string $writeTargetEnvVarName,
+    ): array
     {
-        if (isset($_SERVER[$storageDir])) {
-            trigger_deprecation('pimcore/pimcore', '10.6',
-                sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storageDir));
+        $storageConfig = $containerConfig['config_location'][$configId];
 
-            return $_SERVER[$storageDir];
+        if (isset($_SERVER[$writeTargetEnvVarName])) {
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                sprintf('Setting write targets (%s) using environment variables is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $writeTargetEnvVarName));
+
+            $storageConfig['target'] = $_SERVER[$writeTargetEnvVarName];
         }
 
-        return PIMCORE_CONFIGURATION_DIRECTORY . '/' . str_replace('_', '-', $configKey);
-    }
-
-    public static function getWriteTargetFromSymfonyConfig(array $config, string $configKey, string $writeTarget): ?string
-    {
-        if (isset($_SERVER[$writeTarget])) {
+        if (isset($_SERVER[$storagePathEnvVarName])) {
             trigger_deprecation('pimcore/pimcore', '10.6',
-                sprintf('Setting write targets (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $writeTarget));
+                sprintf('Setting storage directory (%s) in the environment variables file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storagePathEnvVarName));
 
-            return $_SERVER[$writeTarget];
-        } elseif (isset($config['storage'][$configKey]['target'])) {
-            return $config['storage'][$configKey]['target'];
+            $storageConfig['options']['directory'] = $_SERVER[$storagePathEnvVarName];
         }
 
-        return null;
-    }
-
-    public function setWriteTarget(?string $writeTarget): void
-    {
-        $this->writeTarget = $writeTarget;
-    }
-
-    public function setOptions(?array $options): void
-    {
-        $this->options = $options;
+        return $storageConfig;
     }
 }
