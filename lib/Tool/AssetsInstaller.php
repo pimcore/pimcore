@@ -119,8 +119,8 @@ class AssetsInstaller
     private function configureOptions(OptionsResolver $resolver)
     {
         $defaults = [
-            'symlink' => true,
-            'relative' => true,
+            'symlink' => false,
+            'relative' => false,
             'env' => false,
             'ansi' => false,
             'no-ansi' => false,
@@ -129,16 +129,30 @@ class AssetsInstaller
         $composerJsonSetting = $this->readComposerJsonSetting();
         if (null !== $composerJsonSetting) {
             if ('symlink' === $composerJsonSetting) {
-                $defaults = array_merge([
-                    'symlink' => true,
-                    'relative' => false,
-                ], $defaults);
+                $defaults = array_merge(
+                    $defaults,
+                    [
+                        'symlink' => true,
+                        'relative' => false,
+                    ]
+                );
             } elseif ('relative' === $composerJsonSetting) {
-                $defaults = array_merge([
-                    'symlink' => true,
-                    'relative' => true,
-                ], $defaults);
+                $defaults = array_merge(
+                    $defaults,
+                    [
+                        'symlink' => true,
+                        'relative' => true,
+                    ]
+                );
             }
+        }
+
+        if(in_array($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null, ['symlink', 'relative'])) {
+            $defaults['symlink'] = true;
+        }
+
+        if(($_SERVER['SYMFONY_ASSETS_INSTALL'] ?? null) === 'relative') {
+            $defaults['relative'] = true;
         }
 
         $resolver->setDefaults($defaults);
