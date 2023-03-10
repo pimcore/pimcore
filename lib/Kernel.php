@@ -25,7 +25,6 @@ use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
-use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
@@ -55,6 +54,8 @@ abstract class Kernel extends SymfonyKernel
 
         registerBundles as microKernelRegisterBundles;
     }
+
+    private const CONFIG_LOCATION = 'config_location';
 
     private BundleCollection $bundleCollection;
 
@@ -198,18 +199,18 @@ abstract class Kernel extends SymfonyKernel
             $resolvingBag = $container->getParameterBag();
             $containerConfig = $resolvingBag->resolveValue($containerConfig);
 
-            if (!array_key_exists('storage', $containerConfig)) {
+            if (!array_key_exists(self::CONFIG_LOCATION, $containerConfig)) {
                 return;
             }
 
             foreach ($configArray as $config) {
                 $configKey = str_replace('-', '_', $config['defaultStorageDirectoryName']);
-                if (!isset($containerConfig['storage'][$configKey])) {
+                if (!isset($containerConfig[self::CONFIG_LOCATION][$configKey])) {
                     continue;
                 }
-                $options = $containerConfig['storage'][$configKey]['options'];
+                $options = $containerConfig[self::CONFIG_LOCATION][$configKey]['options'];
 
-                $configDir = rtrim($options['directory'] ?? LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
+                $configDir = rtrim($options['directory'] ?? self::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
                 $configDir = "$configDir/";
                 if (is_dir($configDir)) {
                     // @phpstan-ignore-next-line
@@ -217,6 +218,50 @@ abstract class Kernel extends SymfonyKernel
                 }
             }
         });
+    }
+
+    private static function getStorageDirectoryFromSymfonyConfig(array $config, string $configKey, string $storageDir): string
+    {
+        if (isset($_SERVER[$storageDir])) {
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storageDir));
+
+            return $_SERVER[$storageDir];
+        }
+
+        return $config[self::CONFIG_LOCATION][$configKey]['options']['directory'];
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     *
+     * @return void
+     *
+     * @deprecated Remove in Pimcore 11
+     */
+    private function registerExtensionConfigFileResources(ContainerBuilder $container)
+    {
+        $filenames = [
+            'extensions.php',
+            sprintf('extensions_%s.php', $this->getEnvironment()),
+        ];
+
+        $directories = [
+            PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY,
+            PIMCORE_CONFIGURATION_DIRECTORY,
+        ];
+
+        // add possible extensions.php files as file existence resources (only for the current env)
+        foreach ($directories as $directory) {
+            foreach ($filenames as $filename) {
+                $container->addResource(new FileExistenceResource($directory . '/' . $filename));
+            }
+        }
+
+        // add extensions.php as container resource
+        if ($this->extensionConfig->configFileExists()) {
+            $container->addResource(new FileResource($this->extensionConfig->locateConfigFile()));
+        }
     }
 
     /**

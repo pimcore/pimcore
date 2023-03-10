@@ -51,22 +51,24 @@ class LocationAwareConfigRepository
      */
     protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
 
-    protected ?string $writeTarget = null;
-
-    protected ?array $options = null;
+    protected ?array $storageConfig = null;
 
     public function __construct(
         array $containerConfig,
         ?string $settingsStoreScope,
-        ?string $storageDirectory,
+        string|array|null $storageDirectory,
         ?string $writeTargetEnvVariableName,
         ?string $defaultWriteLocation = null
     ) {
         $this->containerConfig = $containerConfig;
         $this->settingsStoreScope = $settingsStoreScope;
-        $this->storageDirectory = rtrim($storageDirectory, '/\\');
         $this->writeTargetEnvVariableName = $writeTargetEnvVariableName;
         $this->defaultWriteLocation = $defaultWriteLocation ?: self::LOCATION_SYMFONY_CONFIG;
+        if (is_string($storageDirectory)) {
+            $this->storageDirectory = rtrim($storageDirectory, '/\\');
+        } elseif (is_array($storageDirectory)) {
+            $this->storageConfig = $storageDirectory;
+        }
     }
 
     public function loadConfigByKey(string $key): array
@@ -139,7 +141,12 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $writeLocation = $this->writeTarget ?? $this->defaultWriteLocation;
+        //TODO remove in Pimcore 11
+        $writeLocation = $this->writeTargetEnvVariableName ? $_SERVER[$this->writeTargetEnvVariableName] ?? null : null;
+
+        if ($writeLocation === null) {
+            $writeLocation = $this->storageConfig['target'] ?? $this->defaultWriteLocation;
+        }
 
         if (!in_array($writeLocation, [self::LOCATION_SETTINGS_STORE, self::LOCATION_SYMFONY_CONFIG, self::LOCATION_DISABLED])) {
             throw new \Exception(sprintf('Invalid write location: %s', $writeLocation));
@@ -215,7 +222,7 @@ class LocationAwareConfigRepository
 
     private function getVarConfigFile(string $key): string
     {
-        $directory = rtrim($this->options['directory'] ?? $this->storageDirectory, '/\\');
+        $directory = rtrim($this->storageDirectory ?? $this->storageConfig['options']['directory'], '/\\');
 
         return $directory . '/' . $key . '.yaml';
     }
@@ -259,39 +266,38 @@ class LocationAwareConfigRepository
         }
     }
 
-    public static function getStorageDirectoryFromSymfonyConfig(array $config, string $configKey, string $storageDir): string
-    {
-        if (isset($_SERVER[$storageDir])) {
-            trigger_deprecation('pimcore/pimcore', '10.6',
-                sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storageDir));
+    /**
+     * @TODO to be removed in Pimcore 11
+     *
+     * @internal
+     *
+     * @param array $containerConfig
+     * @param string $configId
+     *
+     * @return array
+     */
+    public static function getStorageConfigurationCompatibilityLayer(
+        array $containerConfig,
+        string $configId,
+        string $storagePathEnvVarName,
+        string $writeTargetEnvVarName,
+    ): array {
+        $storageConfig = $containerConfig['config_location'][$configId];
 
-            return $_SERVER[$storageDir];
+        if (isset($_SERVER[$writeTargetEnvVarName])) {
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                sprintf('Setting write targets (%s) using environment variables is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $writeTargetEnvVarName));
+
+            $storageConfig['target'] = $_SERVER[$writeTargetEnvVarName];
         }
 
-        return PIMCORE_CONFIGURATION_DIRECTORY . '/' . str_replace('_', '-', $configKey);
-    }
-
-    public static function getWriteTargetFromSymfonyConfig(array $config, string $configKey, string $writeTarget): ?string
-    {
-        if (isset($_SERVER[$writeTarget])) {
+        if (isset($_SERVER[$storagePathEnvVarName])) {
             trigger_deprecation('pimcore/pimcore', '10.6',
-                sprintf('Setting write targets (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $writeTarget));
+                sprintf('Setting storage directory (%s) in the environment variables file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storagePathEnvVarName));
 
-            return $_SERVER[$writeTarget];
-        } elseif (isset($config['storage'][$configKey]['target'])) {
-            return $config['storage'][$configKey]['target'];
+            $storageConfig['options']['directory'] = $_SERVER[$storagePathEnvVarName];
         }
 
-        return null;
-    }
-
-    public function setWriteTarget(?string $writeTarget): void
-    {
-        $this->writeTarget = $writeTarget;
-    }
-
-    public function setOptions(?array $options): void
-    {
-        $this->options = $options;
+        return $storageConfig;
     }
 }

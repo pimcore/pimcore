@@ -1903,7 +1903,7 @@ final class Configuration implements ConfigurationInterface
     {
         $storageNode = $rootNode
             ->children()
-            ->arrayNode('storage')
+            ->arrayNode('config_location')
             ->addDefaultsIfNotSet()
             ->children();
 

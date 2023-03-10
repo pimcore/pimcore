@@ -23,11 +23,6 @@ use Pimcore\Config\LocationAwareConfigRepository;
  */
 final class Config
 {
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_CUSTOM_VIEWS';
-
     private const CONFIG_ID = 'custom_views';
 
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
@@ -42,18 +37,20 @@ final class Config
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
             $config = $containerConfig[self::CONFIG_ID]['definitions'];
 
-            $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($containerConfig, self::CONFIG_ID, 'PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT');
-            $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($containerConfig, self::CONFIG_ID, 'PIMCORE_WRITE_TARGET_WEB_TO_PRINT');
+            $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
+                $containerConfig,
+                self::CONFIG_ID,
+                'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS',
+                'PIMCORE_WRITE_TARGET_CUSTOM_VIEWS'
+            );
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_custom_views',
-                $storageDirectory,
-                self::WRITE_TARGET
+                $storageConfig,
+                null,
+                null
             );
-
-            self::$locationAwareConfigRepository->setWriteTarget($writeTarget);
-            self::$locationAwareConfigRepository->setOptions($containerConfig['storage'][self::CONFIG_ID]['options']);
         }
 
         return self::$locationAwareConfigRepository;
