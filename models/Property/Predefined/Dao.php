@@ -43,7 +43,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             'containerConfig' => $config['properties']['predefined']['definitions'],
             'settingsStoreScope' => 'pimcore_predefined_properties',
             'storageDirectory' => $storageConfig,
-            'legacyConfigFile' => 'predefined-properties.php'
+            'legacyConfigFile' => 'predefined-properties.php',
         ]);
     }
 

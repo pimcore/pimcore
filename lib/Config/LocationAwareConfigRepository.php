@@ -112,9 +112,9 @@ class LocationAwareConfigRepository
         $this->legacyConfigFile = $legacyConfigFile;
         $this->loadLegacyConfigCallback = $loadLegacyConfigCallback;
 
-        if(is_string($storageDirectory)) {
+        if (is_string($storageDirectory)) {
             $this->storageDirectory = rtrim($storageDirectory, '/\\');
-        } else if(is_array($storageDirectory)) {
+        } elseif (is_array($storageDirectory)) {
             $this->storageConfig = $storageDirectory;
         }
     }
@@ -410,9 +410,12 @@ class LocationAwareConfigRepository
 
     /**
      * @TODO to be removed in Pimcore 11
+     *
      * @internal
+     *
      * @param array $containerConfig
      * @param string $configId
+     *
      * @return array
      */
     public static function getStorageConfigurationCompatibilityLayer(
@@ -420,8 +423,7 @@ class LocationAwareConfigRepository
         string $configId,
         string $storagePathEnvVarName,
         string $writeTargetEnvVarName,
-    ): array
-    {
+    ): array {
         $storageConfig = $containerConfig['config_location'][$configId];
 
         if (isset($_SERVER[$writeTargetEnvVarName])) {

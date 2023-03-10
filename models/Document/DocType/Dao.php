@@ -43,7 +43,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             'containerConfig' => $config['documents']['doc_types']['definitions'],
             'settingsStoreScope' => 'pimcore_document_types',
             'storageDirectory' => $storageConfig,
-            'legacyConfigFile' => 'document-types.php'
+            'legacyConfigFile' => 'document-types.php',
         ]);
     }
 

@@ -42,7 +42,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             'containerConfig' => $config['custom_report']['definitions'],
             'settingsStoreScope' => 'pimcore_custom_reports',
             'storageDirectory' => $storageConfig,
-            'legacyConfigFile' => 'custom-reports.php'
+            'legacyConfigFile' => 'custom-reports.php',
         ]);
     }
 

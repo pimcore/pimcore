@@ -80,7 +80,6 @@ final class Config
                 self::LEGACY_FILE,
                 $loadLegacyConfigCallback
             );
-
         }
 
         return self::$locationAwareConfigRepository;

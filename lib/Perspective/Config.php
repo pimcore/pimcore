@@ -62,7 +62,6 @@ final class Config
                 null,
                 self::LEGACY_FILE
             );
-
         }
 
         return self::$locationAwareConfigRepository;

@@ -52,7 +52,6 @@ final class Config
                 return null;
             };
 
-
             $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
                 $containerConfig,
                 self::CONFIG_ID,

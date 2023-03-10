@@ -46,7 +46,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             'containerConfig' => $config['assets']['image']['thumbnails']['definitions'],
             'settingsStoreScope' => 'pimcore_image_thumbnails',
             'storageDirectory' => $storageConfig,
-            'legacyConfigFile' => 'image-thumbnails.php'
+            'legacyConfigFile' => 'image-thumbnails.php',
         ]);
     }
 

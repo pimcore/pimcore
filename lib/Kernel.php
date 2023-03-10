@@ -23,7 +23,6 @@ use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
-use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
@@ -264,6 +263,7 @@ abstract class Kernel extends SymfonyKernel
         if (isset($_SERVER[$storageDir])) {
             trigger_deprecation('pimcore/pimcore', '10.6',
                 sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storageDir));
+
             return $_SERVER[$storageDir];
         }
 
