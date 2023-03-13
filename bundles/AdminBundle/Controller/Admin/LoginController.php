@@ -113,6 +113,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $params['csrfTokenRefreshInterval'] = ((int)$session_gc_maxlifetime - 60) * 1000;
 
+        if ($request->get('too_many_attempts')) {
+            $params['error'] = $request->get('too_many_attempts');
+        }
         if ($request->get('auth_failed')) {
             $params['error'] = 'error_auth_failed';
         }

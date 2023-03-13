@@ -120,6 +120,7 @@
     "Please check your mailbox.": "Please check your mailbox.",
     "Login": "Login",
     "Submit": "Submit",
+    "Too many failed login attempts, please try again in %minutes% minutes.": "Too many failed login attempts, please try again in %minutes% minutes.",
     "A temporary login link has been sent to your email address.": "A temporary login link has been sent to your email address.",
     "user_inactive": "User is not active",
     "user_no_email_address": "User has no email address",
