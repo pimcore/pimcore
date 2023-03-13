@@ -1,7 +1,4 @@
 # Pimcore
-parameters:
-    usagelog_path: "%kernel.logs_dir%/usage.log"
-
 pimcore_admin:
 
     session:
@@ -184,6 +181,6 @@ monolog:
     handlers:
         usage:
             type: stream
-            path: "%usagelog_path%"
+            path:  "%kernel.logs_dir%/usage.log"
             level: debug
             channels: ['admin_statistics']

@@ -152,12 +152,12 @@ class PimcoreUsers implements DataProviderInterface
 
     protected function getUsageLogDataForUser(User\AbstractUser $user): array
     {
-//        $config = \Pimcore::getContainer()->getParameter('monolog.handlers_to_channels');
+        $logDir = \Pimcore::getContainer()->getParameter('kernel.logs_dir');
 
         $pattern = ' [' . $user->getId() . ',';
         $matches = [];
 
-        $handle = @fopen(PIMCORE_LOG_DIRECTORY . '/usage.log', 'r');
+        $handle = @fopen($logDir . '/usage.log', 'r');
         if ($handle) {
             while (!feof($handle)) {
                 $buffer = fgets($handle);
@@ -168,7 +168,7 @@ class PimcoreUsers implements DataProviderInterface
             fclose($handle);
         }
 
-        $archiveFiles = glob(PIMCORE_LOG_DIRECTORY . '/usage-archive-*.log.gz');
+        $archiveFiles = glob($logDir . '/usage-archive-*.log.gz');
         foreach ($archiveFiles as $archiveFile) {
             $handle = @gzopen($archiveFile, 'r');
             if ($handle) {
