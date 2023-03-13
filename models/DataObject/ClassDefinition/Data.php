@@ -70,6 +70,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $permissions;
 
     /**
+     * @deprecated Will be removed with Pimcore 11
+     *
      * @var string
      */
     public $datatype = 'data';
@@ -306,6 +308,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
+     * @deprecated Will be removed with Pimcore 11
+     *
      * @return string
      */
     public function getDatatype()
@@ -314,6 +318,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
+     * @deprecated Will be removed with Pimcore 11
+     *
      * @param string $datatype
      *
      * @return $this

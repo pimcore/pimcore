@@ -208,8 +208,7 @@ pimcore:
                 newsletter: \Pimcore\Model\Document\Newsletter
                 printpage: \Pimcore\Model\Document\Printpage
                 printcontainer: \Pimcore\Model\Document\Printcontainer
-            prefixes:
-                - \Pimcore\Model\Document\
+
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\

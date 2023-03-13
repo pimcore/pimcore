@@ -28,6 +28,8 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     use Data\Extension\PositionSortTrait;
 
     /**
+     * @deprecated Will be removed with Pimcore 11
+     *
      * Static type of this element
      *
      * @var string

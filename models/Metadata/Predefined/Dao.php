@@ -26,28 +26,24 @@ use Symfony\Component\Uid\Uuid as Uid;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_PREDEFINED_ASSET_METADATA';
-
     private const CONFIG_KEY = 'predefined_asset_metadata';
 
     public function configure()
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
-        $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($config, self::CONFIG_KEY, 'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_ASSET_METADATA');
-        $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($config, self::CONFIG_KEY, self::WRITE_TARGET);
+        $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
+            $config,
+            self::CONFIG_KEY,
+            'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_ASSET_METADATA',
+            'PIMCORE_WRITE_TARGET_PREDEFINED_ASSET_METADATA'
+        );
 
         parent::configure([
             'containerConfig' => $config['assets']['metadata']['predefined']['definitions'],
             'settingsStoreScope' => 'pimcore_predefined_asset_metadata',
-            'storageDirectory' => $storageDirectory,
+            'storageDirectory' => $storageConfig,
             'legacyConfigFile' => 'predefined-asset-metadata.php',
-            'writeTargetEnvVariableName' => self::WRITE_TARGET,
-            'writeTarget' => $writeTarget,
-            'options' => $config['storage'][self::CONFIG_KEY]['options'],
         ]);
     }
 

@@ -385,7 +385,7 @@ trait PimcoreExtensionsTrait
         trigger_deprecation(
             'pimcore/pimcore',
             '10.5.0',
-            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::insertOrUpdate() instead.', __METHOD__)
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::upsert() instead.', __METHOD__)
         );
         // get the field name of the primary key
         $fieldsPrimaryKey = self::$tablePrimaryKeyCache[$table] ??= $this->getPrimaryKeyColumns($table);

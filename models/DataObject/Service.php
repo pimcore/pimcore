@@ -564,24 +564,28 @@ class Service extends Model\Element\Service
 
         $inheritanceEnabled = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
-        $result = $config->getLabeledValue($object);
-        if (isset($result->value)) {
-            $result = $result->value;
 
-            if (!empty($config->renderer)) {
-                $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->renderer);
-                /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
-                $rendererImpl = new $classname();
-                if (method_exists($rendererImpl, 'getDataForGrid')) {
-                    $result = $rendererImpl->getDataForGrid($result, $object, []);
+        try {
+            $result = $config->getLabeledValue($object);
+            if (isset($result->value)) {
+                $result = $result->value;
+
+                if (!empty($config->renderer)) {
+                    $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->renderer);
+                    /** @var Model\DataObject\ClassDefinition\Data $rendererImpl */
+                    $rendererImpl = new $classname();
+                    if (method_exists($rendererImpl, 'getDataForGrid')) {
+                        $result = $rendererImpl->getDataForGrid($result, $object, []);
+                    }
                 }
+
+                return $result;
             }
 
-            return $result;
+            return null;
+        } finally {
+            AbstractObject::setGetInheritedValues($inheritanceEnabled);
         }
-        AbstractObject::setGetInheritedValues($inheritanceEnabled);
-
-        return null;
     }
 
     /**
@@ -1623,37 +1627,40 @@ class Service extends Model\Element\Service
 
         $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
         Model\DataObject\Concrete::setGetInheritedValues(true);
-        switch ($fd->getCalculatorType()) {
-            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
-                $className = $fd->getCalculatorClass();
-                $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-                if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
-                    Logger::error('Class does not exist or is not valid: ' . $className);
 
+        try {
+            switch ($fd->getCalculatorType()) {
+                case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
+                    $className = $fd->getCalculatorClass();
+                    $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
+                    if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+                        Logger::error('Class does not exist or is not valid: ' . $className);
+
+                        return null;
+                    }
+
+                    $result = $calculator->getCalculatedValueForEditMode($object, $data);
+
+                    break;
+
+                case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
+
+                    try {
+                        $result = self::evaluateExpression($fd, $object, $data);
+                    } catch (SyntaxError $exception) {
+                        return $exception->getMessage();
+                    }
+
+                    break;
+
+                default:
                     return null;
-                }
+            }
 
-                $result = $calculator->getCalculatedValueForEditMode($object, $data);
-
-                break;
-
-            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
-
-                try {
-                    $result = self::evaluateExpression($fd, $object, $data);
-                } catch (SyntaxError $exception) {
-                    return $exception->getMessage();
-                }
-
-                break;
-
-            default:
-                return null;
+            return $result;
+        } finally {
+            Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
         }
-
-        Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
-
-        return $result;
     }
 
     /**
@@ -1688,43 +1695,45 @@ class Service extends Model\Element\Service
         $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
         Model\DataObject\Concrete::setGetInheritedValues(true);
 
-        if (
-            $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
-            $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
-        ) {
-            $object = $object->getObject();
-        }
+        try {
+            if (
+                $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
+                $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
+            ) {
+                $object = $object->getObject();
+            }
 
-        switch ($fd->getCalculatorType()) {
-            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
-                $className = $fd->getCalculatorClass();
-                $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-                if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
-                    Logger::error('Class does not exist or is not valid: ' . $className);
+            switch ($fd->getCalculatorType()) {
+                case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_CLASS:
+                    $className = $fd->getCalculatorClass();
+                    $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
+                    if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+                        Logger::error('Class does not exist or is not valid: ' . $className);
 
+                        return null;
+                    }
+                    $result = $calculator->compute($object, $data);
+
+                    break;
+
+                case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
+
+                    try {
+                        $result = self::evaluateExpression($fd, $object, $data);
+                    } catch (SyntaxError $exception) {
+                        return $exception->getMessage();
+                    }
+
+                    break;
+
+                default:
                     return null;
-                }
-                $result = $calculator->compute($object, $data);
+            }
 
-                break;
-
-            case DataObject\ClassDefinition\Data\CalculatedValue::CALCULATOR_TYPE_EXPRESSION:
-
-                try {
-                    $result = self::evaluateExpression($fd, $object, $data);
-                } catch (SyntaxError $exception) {
-                    return $exception->getMessage();
-                }
-
-                break;
-
-            default:
-                return null;
+            return $result;
+        } finally {
+            Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
         }
-
-        Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
-
-        return $result;
     }
 
     /**

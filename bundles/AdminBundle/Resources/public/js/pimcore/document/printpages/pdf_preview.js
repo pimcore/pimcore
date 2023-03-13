@@ -264,15 +264,15 @@ pimcore.document.printpages.pdfpreview = Class.create({
         var data = record.data;
         var type = data.type;
 
-        if (type == "bool") {
-            if (value) {
-                return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
-            } else {
-                return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
-            }
+        if (type === "text") {
+            return Ext.util.Format.htmlEncode(value);
         }
 
-        if (type == "select") {
+        if (type === "bool") {
+            return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn' + (value ? ' x-grid-checkcolumn-checked' : '') + '" style=""></div></div>';
+        }
+
+        if (type === "select") {
             return t("web2print_" + value, value);
         }
 

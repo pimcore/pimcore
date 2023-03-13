@@ -1521,6 +1521,8 @@ class Service extends Model\AbstractModel
      */
     public static function saveElementToSession($element, $postfix = '', $clone = true)
     {
+        self::loadAllFields($element);
+
         if ($clone) {
             $context = [
                 'source' => __METHOD__,
@@ -1543,6 +1545,7 @@ class Service extends Model\AbstractModel
                 );
             }
 
+            $copier->addFilter(new Model\Version\SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(Model\Element\ElementDumpStateInterface::class, Model\Element\ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
             $element = $copier->copy($element);
         }
 
@@ -1550,7 +1553,6 @@ class Service extends Model\AbstractModel
         $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $postfix);
         $tag = $elementType . '-session' . $postfix;
 
-        self::loadAllFields($element);
         $element->setInDumpState(true);
         $serializedData = Serialize::serialize($element);
 
