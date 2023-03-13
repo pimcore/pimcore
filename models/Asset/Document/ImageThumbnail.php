@@ -70,7 +70,7 @@ final class ImageThumbnail
 
         // set defaults
         $deferredAllowed = $args['deferredAllowed'] ?? true;
-        $frontend = $args['forceFrontend'] ?? \Pimcore\Tool::isFrontend();
+        $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
 
         $pathReference = $this->getPathReference($deferredAllowed);
 

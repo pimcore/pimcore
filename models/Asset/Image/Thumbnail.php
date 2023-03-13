@@ -63,7 +63,7 @@ final class Thumbnail
         // set defaults
         $deferredAllowed = $args['deferredAllowed'] ?? true;
         $cacheBuster = $args['cacheBuster'] ?? false;
-        $frontend = $args['forceFrontend'] ?? \Pimcore\Tool::isFrontend();
+        $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
 
         $pathReference = null;
         if ($this->getConfig()) {

@@ -384,7 +384,7 @@ trait ImageThumbnailTrait
      */
     public function getFrontendPath(): string
     {
-        $path = $this->getPath(['deferredAllowed' => false, 'forceFrontend' => true]);
+        $path = $this->getPath(['deferredAllowed' => false, 'frontend' => true]);
         if (!\preg_match('@^(https?|data):@', $path)) {
             $path = \Pimcore\Tool::getHostUrl() . $path;
         }
