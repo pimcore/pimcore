@@ -68,15 +68,16 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        $url = $this->router->generate(AdminLoginAuthenticator::PIMCORE_ADMIN_LOGIN, [
+        $requestParameters = [
             'auth_failed' => 'true',
-        ]);
+        ];
 
         if ($exception instanceof TooManyLoginAttemptsAuthenticationException) {
-            $url = $this->router->generate(AdminLoginAuthenticator::PIMCORE_ADMIN_LOGIN, [
+            $requestParameters = [
                 'too_many_attempts' => strtr($this->translator->trans($exception->getMessageKey(), domain:'admin'), $exception->getMessageData()),
-            ]);
+            ];
         }
+        $url = $this->router->generate(AdminLoginAuthenticator::PIMCORE_ADMIN_LOGIN, $requestParameters);
 
         return new RedirectResponse($url);
     }
