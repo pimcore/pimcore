@@ -239,15 +239,15 @@ trait ImageThumbnailTrait
                 $dimensions = $config->getEstimatedDimensions($asset);
             }
 
-            if ($config->getHighResolution() && $config->getHighResolution() > 1) {
-                $dimensions['width'] = (int)floor($dimensions['width'] / $config->getHighResolution());
-                $dimensions['height'] = (int)floor($dimensions['height'] / $config->getHighResolution());
-            }
-
             if (empty($dimensions)) {
                 // unable to calculate dimensions -> use fallback
                 // generate the thumbnail and get dimensions from the thumbnail file
                 $dimensions = $this->readDimensionsFromFile();
+            }
+
+            if ($config->getHighResolution() && $config->getHighResolution() > 1) {
+                $dimensions['width'] = (int)floor($dimensions['width'] / $config->getHighResolution());
+                $dimensions['height'] = (int)floor($dimensions['height'] / $config->getHighResolution());
             }
 
             $this->width = $dimensions['width'] ?? null;
