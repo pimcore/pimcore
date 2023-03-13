@@ -246,8 +246,13 @@ trait ImageThumbnailTrait
             }
 
             if ($config->getHighResolution() && $config->getHighResolution() > 1) {
-                $dimensions['width'] = (int)floor($dimensions['width'] / $config->getHighResolution());
-                $dimensions['height'] = (int)floor($dimensions['height'] / $config->getHighResolution());
+                if(!empty($dimensions['width'])) {
+                    $dimensions['width'] = (int)floor($dimensions['width'] / $config->getHighResolution());
+                }
+
+                if (!empty($dimensions['height'])) {
+                    $dimensions['height'] = (int)floor($dimensions['height'] / $config->getHighResolution());
+                }
             }
 
             $this->width = $dimensions['width'] ?? null;
