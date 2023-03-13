@@ -54,7 +54,7 @@ This will change the `Car` icon depending on the car type:
 ```php
 namespace App\Model\Product\AdminStyle;
 
-use App\Website\Tool\ForceInheritance;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\AdminStyle;
 
 class Car extends AdminStyle
@@ -68,7 +68,7 @@ class Car extends AdminStyle
         $this->element = $element;
 
         if ($element instanceof \App\Model\Product\Car) {
-            ForceInheritance::run(function () use ($element) {
+            DataObject\Service::useInheritedValues(true, function () use ($element) {
                 if ($element->getObjectType() == 'actual-car') {
                     $this->elementIcon = '/bundles/pimcoreadmin/img/twemoji/1f697.svg';
                 }
@@ -98,7 +98,7 @@ The example outlines how to provide a custom tooltip for `Car` objects.
         if ($this->element instanceof \App\Model\Product\Car) {
             $element = $this->element;
 
-            return ForceInheritance::run(function () use ($element) {
+            return DataObject\Service::useInheritedValues(true, function () use ($element) {
                 $text = '<h1>' . $element->getName() . '</h1>';
 
                 $mainImage = $element->getMainImage();
