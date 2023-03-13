@@ -40,6 +40,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.object = object;
     },
 
+    setToolbar:function (toolbar) {
+        this.toolbar = toolbar;
+    },
 
     getGridColumnConfig: function(field) {
         return {text: t(field.label), width: 150, sortable: false, dataIndex: field.key,

@@ -20,6 +20,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     type: "localizedfields",
 
     frontendLanguages: null,
+    globalLanguage: null,
 
     tabPanelDefaultConfig: {
         monitorResize: true,
@@ -146,6 +147,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 });
             }
         }
+        this.setGlobalLanguage();
 
         if (isSplitViewEnabled && this.fieldConfig.provideSplitView) {
             var panelConf = {};
@@ -208,8 +210,25 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 }
             }
 
-            var tabPanelLeft = new Ext.TabPanel(panelConf["left"]);
-            var tabPanelRight = new Ext.TabPanel(panelConf["right"]);
+            panelConf["left"].listeners = {
+                pimcoreGlobalLanguageChanged: function (language) {
+                    this.getLanguageTabListener(this.tabPanelLeft, language, this.frontendLanguages);
+                }.bind(this)
+            }
+
+            panelConf["right"].listeners = {
+                pimcoreGlobalLanguageChanged: function (language) {
+                    this.getLanguageTabListener(this.tabPanelRight, language, this.frontendLanguages);
+                }.bind(this)
+            }
+
+            this.tabPanelLeft = new Ext.TabPanel(panelConf["left"]);
+            this.tabPanelRight = new Ext.TabPanel(panelConf["right"]);
+
+            if (this.globalLanguage) {
+                this.setActiveLanguegeTab(this.tabPanelLeft, this.globalLanguage);
+                this.setActiveLanguegeTab(this.tabPanelRight, this.globalLanguage);
+            }
 
             var splitViewConfig = {
                 border: true,
@@ -225,12 +244,12 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 items: [{
                     xtype: 'panel',
                     height: 'auto',
-                    items: [tabPanelLeft],
+                    items: [this.tabPanelLeft],
                     flex: 1
                 }, {
                     xtype: 'panel',
                     height: 'auto',
-                    items: [tabPanelRight],
+                    items: [this.tabPanelRight],
                     flex: 1
                 }]
             };
@@ -285,11 +304,22 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                             this.availablePanels[newLanguage].show();
                             this.currentLanguage = newLanguage;
                             this.component.updateLayout();
+                        }.bind(this),
+                        pimcoreGlobalLanguageChanged: function (language) {
+                            let globalLanguageIndex = 0;
+                            if (this.frontendLanguages.includes(language)) {
+                                globalLanguageIndex = this.frontendLanguages.indexOf(language);
+                            }
+                            this.countrySelect.setValue(this.frontendLanguages[globalLanguageIndex]);
                         }.bind(this)
                     }
                 };
 
                 this.countrySelect = new Ext.form.ComboBox(options);
+
+                if (this.globalLanguage) {
+                    this.countrySelect.setValue(this.globalLanguage);
+                }
 
                 wrapperConfig.items = [];
 
@@ -397,14 +427,20 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     }
                     tbarItems.push(configureSplitViewButton);
                 }
-
+                panelConf.listeners = {
+                    pimcoreGlobalLanguageChanged: function (language) {
+                        this.getLanguageTabListener(this.tabPanel, language, this.frontendLanguages);
+                    }.bind(this)
+                }
                 this.tabPanel = new Ext.TabPanel(panelConf);
+                if (this.globalLanguage) {
+                    this.setActiveLanguegeTab(this.tabPanel, this.globalLanguage);
+                }
                 wrapperConfig.items = [this.tabPanel];
             }
 
             wrapperConfig.style = "margin-bottom: 10px";
             wrapperConfig.cls = "object_localizedfields_panel";
-
 
             if (tbarItems) {
                 wrapperConfig.tbar = tbarItems;
@@ -414,7 +450,20 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         }
 
         this.component.updateLayout();
-
+        if (this.toolbar) {
+            this.toolbar.on(pimcore.events.globalLanguageChanged, function(language) {
+                if (isSplitViewEnabled && this.fieldConfig.provideSplitView) {
+                    this.tabPanelLeft.fireEvent('pimcoreGlobalLanguageChanged', language);
+                    this.tabPanelRight.fireEvent('pimcoreGlobalLanguageChanged', language);
+                } else {
+                    if (this.dropdownLayout) {
+                        this.countrySelect.fireEvent('pimcoreGlobalLanguageChanged', language);
+                    } else {
+                        this.tabPanel.fireEvent('pimcoreGlobalLanguageChanged', language);
+                    }
+                }
+            }.bind(this));
+        }
         this.fieldConfig.datatype = "data";
         this.fieldConfig.fieldtype = "localizedfields";
 
@@ -429,7 +478,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             padding: "10px",
             deferredRender: true,
             hideMode: "offsets",
-            items: [],
             listeners: {
                 afterrender: function (l, editable, runtimeContext, dataProvider, panel) {
                     if (!panel.__tabpanel_initialized) {
@@ -473,6 +521,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     },
 
     styleLanguageTab: function(item, hideLabels, language) {
+        item.currentLanguage = language;
         if (hideLabels) {
             item.title = '<div class="pimcore_icon_language_' + language.toLowerCase() + '" title="' + pimcore.available_languages[language] + '" style="width: 20px; height:20px;"></div>';
             item.tbar = Ext.create('Ext.toolbar.Toolbar', {
@@ -963,6 +1012,20 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         } else {
             this.doApplySplitViewSettings(store);
         }
+    },
+
+    getLanguageTabListener: function (languageTab, language, frontendLanguages) {
+        if (frontendLanguages.includes(language)) {
+            this.setActiveLanguegeTab(languageTab, language)
+        }
+    },
+
+    setActiveLanguegeTab: function (languageTab, language) {
+        languageTab.items.items.forEach((tabLanguage) => {
+            if (tabLanguage.currentLanguage === language) {
+                languageTab.setActiveTab(tabLanguage);
+            }
+        });
     }
 });
 

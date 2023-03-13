@@ -33,8 +33,11 @@ final class Version20221222134837 extends AbstractMigration
     public function up(Schema $schema): void
     {
         if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle', 'pimcore')) {
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle', true, 'bool', 'pimcore');
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle', true, SettingsStore::TYPE_BOOLEAN, 'pimcore');
         }
+
+        // updating description  of permissions
+        $this->addSql("UPDATE `users_permission_definitions` SET `category` = 'Pimcore Static Routes Bundle' WHERE `key` = 'routes'");
 
         $this->warnIf(
             null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle', 'pimcore'),
@@ -44,6 +47,13 @@ final class Version20221222134837 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // do nothing
+        if (SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle', 'pimcore')) {
+            SettingsStore::delete('BUNDLE_INSTALLED__Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle', 'pimcore');
+        }
+
+        // restoring the permission
+        $this->addSql("UPDATE `users_permission_definitions` SET `category` = '' WHERE `key` = 'routes'");
+
+        $this->write('Please deactivate the Pimcore\\Bundle\\StaticRoutesBundle\\PimcoreStaticRoutesBundle manually in config/bundles.php');
     }
 }

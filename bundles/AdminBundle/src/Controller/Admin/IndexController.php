@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Doctrine\DBAL\Connection;
 use Exception;
-use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
@@ -61,7 +60,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
      * @Route("/", name="pimcore_admin_index", methods={"GET"})
      *
      * @param Request $request
-     * @param SiteConfigProvider $siteConfigProvider
      * @param KernelInterface $kernel
      * @param Executor $maintenanceExecutor
      * @param CsrfProtectionHandler $csrfProtection
@@ -73,7 +71,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
      */
     public function indexAction(
         Request $request,
-        SiteConfigProvider $siteConfigProvider,
         KernelInterface $kernel,
         Executor $maintenanceExecutor,
         CsrfProtectionHandler $csrfProtection,
@@ -87,11 +84,10 @@ class IndexController extends AdminController implements KernelResponseEventInte
         ];
 
         $this
-            ->setAdminLanguage($request, $user)
             ->addRuntimePerspective($templateParams, $user)
             ->addPluginAssets($templateParams);
 
-        $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtection, $siteConfigProvider);
+        $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtection);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
             return $this->redirectToRoute('pimcore_admin_2fa_setup');
@@ -177,7 +173,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection, SiteConfigProvider $siteConfigProvider): static
+    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection): static
     {
         $config                = $templateParams['config'];
         $dashboardHelper       = new \Pimcore\Helper\Dashboard($user);
@@ -235,9 +231,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'perspective'           => $templateParams['runtimePerspective'],
             'availablePerspectives' => \Pimcore\Perspective\Config::getAvailablePerspectives($user),
             'disabledPortlets'      => $dashboardHelper->getDisabledPortlets(),
-
-            // google analytics
-            'google_analytics_enabled' => (bool) $siteConfigProvider->isSiteReportingConfigured(),
 
             // this stuff is used to decide whether the "add" button should be grayed out or not
             'image-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable(),

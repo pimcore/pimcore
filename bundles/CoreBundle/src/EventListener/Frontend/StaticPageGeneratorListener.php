@@ -102,7 +102,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
 
             if ($storage->fileExists($filename)) {
                 $content = $storage->read($filename);
-                $date = date(\DateTimeInterface::ISO8601, $storage->lastModified($filename));
+                $date = date(\DateTimeInterface::ATOM, $storage->lastModified($filename));
 
                 $reponse = new Response(
                     $content, Response::HTTP_OK, [
