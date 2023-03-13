@@ -162,7 +162,7 @@ pimcore.bundle.customreports.custom.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item') + " (a-zA-Z-_)",
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item') + ".<br>" + t("naming_requirements_3chars") + " (a-zA-Z0-9_-)",
                                                 this.addFieldComplete.bind(this), null, null, "");
     },
 

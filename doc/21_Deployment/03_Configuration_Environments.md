@@ -58,7 +58,7 @@ The default storage directory for Symfony Config files is `/var/config/...`.
 Available options for write targets and directory for Symfony Config files are: 
 ```yaml
 pimcore:
-    storage:
+    config_location:
         image_thumbnails:
             target: 'symfony-config'
             options:
@@ -117,7 +117,7 @@ If you'd like to allow changes in production, switch to the alternate `settings-
 You can do so by adding the following to your `symfony-config`. e.g.:
 ```yaml
 pimcore:
-    storage:
+    config_location:
         custom_reports:
             target: 'settings-store'
 ```

@@ -195,8 +195,7 @@ pimcore:
                 hardlink: \Pimcore\Model\Document\Hardlink
                 email: \Pimcore\Model\Document\Email
                 newsletter: \Pimcore\Model\Document\Newsletter
-            prefixes:
-                - \Pimcore\Model\Document\
+
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\

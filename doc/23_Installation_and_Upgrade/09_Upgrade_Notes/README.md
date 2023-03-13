@@ -229,6 +229,13 @@ pimcore_seo:
 - [Page] Removed the functionality to input `metadata` html tags in Settings section of the document.
 - [Asset] Image thumbnails: Removed support for using custom callbacks for thumbnail transformations.
 - Marked `Pimcore\File` as internal. This class shouldn't be used anymore, use `Symfony\Component\Filesystem` instead.
+- [Config] Recommended and default format for storing the valid languages in `system.yaml` is now an array, for example:
+```yaml
+pimcore:
+    general:
+        valid_languages:
+            - en
+            - de
 - [Targeting] Targeting is now using the opt-in approach. So, it will not be enabled by default. Please set the
   cookie `pimcore_targeting_enabled=1` to enable it.
 
@@ -270,6 +277,7 @@ pimcore_seo:
 - [Document] The `HTML-Tags` (document metadata) field under SEO & Settings panel is now only visible and editable by Admin users`.
 - [Thumbnails] Using Callable in Asset thumbnail transformations is deprecated and will not work in Pimcore 11.
 - Marked `Pimcore\Model\User\AbstractUser` and `Pimcore\Model\User\UserRole` classes as abstract via php doc. It will be natively abstract in Pimcore 11.
+- [Database] Deprecated `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).

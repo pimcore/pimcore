@@ -39,7 +39,8 @@ class Sql extends AbstractAdapter
 
             $order = '';
             if ($sort && $dir) {
-                $order = ' ORDER BY ' . $db->quoteIdentifier($sort) . ' ' . $dir;
+                $dir = ((strtoupper($dir) === 'ASC') ? 'ASC' : 'DESC');
+                $order = ' ORDER BY ' . $db->quoteIdentifier($sort) . ' ' .$dir;
             }
 
             $sql = $baseQuery['data'] . $order;
@@ -126,7 +127,7 @@ class Sql extends AbstractAdapter
             $db = Db::get();
             foreach ($drillDownFilters as $field => $value) {
                 if ($value !== '' && $value !== null) {
-                    $havingParts[] = "$field = " . $db->quote($value);
+                    $havingParts[] = ($db->quoteIdentifier($field) .' = ' . $db->quote($value));
                 }
             }
 

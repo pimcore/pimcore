@@ -193,8 +193,14 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('language')
                     ->defaultValue('en')
                 ->end()
-                ->scalarNode('valid_languages')
-                    ->defaultValue('en')
+                ->arrayNode('valid_languages')
+                    ->info('String or array format are supported.')
+                    ->beforeNormalization()
+                    ->ifString()
+                        ->then(fn ($v) => explode(',', $v))
+                    ->end()
+                    ->defaultValue(['en'])
+                    ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('fallback_languages')
                     ->performNoDeepMerging()
@@ -876,7 +882,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
-        $this->addImplementationLoaderNode($documentsNode, 'type_definitions');
+        $this->addClassResolverNode($documentsNode, 'type_definitions');
     }
 
     /**
@@ -894,6 +900,22 @@ final class Configuration implements ConfigurationInterface
                             ->prototype('scalar')->end()
                         ->end()
                         ->arrayNode('prefixes')
+                            ->prototype('scalar')->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    private function addClassResolverNode(ArrayNodeDefinition $node, string $name): void
+    {
+        $node
+            ->children()
+                ->arrayNode($name)
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('map')
+                            ->useAttributeAsKey('name')
                             ->prototype('scalar')->end()
                         ->end()
                     ->end()
@@ -1881,7 +1903,7 @@ final class Configuration implements ConfigurationInterface
     {
         $storageNode = $rootNode
             ->children()
-            ->arrayNode('storage')
+            ->arrayNode('config_location')
             ->addDefaultsIfNotSet()
             ->children();
 
