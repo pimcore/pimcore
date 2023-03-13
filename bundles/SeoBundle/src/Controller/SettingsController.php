@@ -60,7 +60,7 @@ class SettingsController extends AdminController
         }
 
         foreach ($values as $siteId => $robotsContent) {
-            SettingsStore::set('robots.txt-' . $siteId, $robotsContent, 'string', 'robots.txt');
+            SettingsStore::set('robots.txt-' . $siteId, $robotsContent, SettingsStore::TYPE_STRING, 'robots.txt');
         }
 
         return $this->adminJson([

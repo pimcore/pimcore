@@ -28,15 +28,15 @@ class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'settings_store';
 
-    public function set(string $id, float|bool|int|string $data, string $type = 'string', ?string $scope = null): bool
+    public function set(string $id, float|bool|int|string $data, string $type = SettingsStore::TYPE_STRING, ?string $scope = null): bool
     {
         try {
-            Helper::insertOrUpdate($this->db, self::TABLE_NAME, [
+            Helper::upsert($this->db, self::TABLE_NAME, [
                 'id' => $id,
                 'data' => $data,
                 'scope' => (string) $scope,
                 'type' => $type,
-            ]);
+            ], $this->getPrimaryKey(self::TABLE_NAME));
 
             return true;
         } catch (\Exception $e) {

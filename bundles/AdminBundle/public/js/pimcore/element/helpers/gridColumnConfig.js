@@ -242,8 +242,10 @@ pimcore.element.helpers.gridColumnConfig = {
                 if (value && typeof value == "object") {
                     filterStringConfig.push(filterData[i].getProperty() + " " + operator + " ("
                         + value.join(" OR ") + ")");
-                } else {
+                } else if (value) {
                     filterStringConfig.push(filterData[i].getProperty() + " " + operator + " " + value);
+                } else {
+                    filterStringConfig.push(filterData[i].getProperty() + " " + " IS (NULL OR '')");
                 }
             }
 

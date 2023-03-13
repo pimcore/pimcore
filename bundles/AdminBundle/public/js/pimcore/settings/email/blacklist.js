@@ -126,9 +126,15 @@ pimcore.settings.email.blacklist = Class.create({
                         icon:"/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                         handler:function (grid, rowIndex) {
                             let data = grid.getStore().getAt(rowIndex);
-                            pimcore.helpers.deleteConfirm(t('email_blacklist'), data.data.address, function () {
-                                grid.getStore().removeAt(rowIndex);
-                            }.bind(this));
+                            const sanitizedEmail = pimcore.helpers.sanitizeEmail(data.data.address);
+
+                            pimcore.helpers.deleteConfirm(
+                                t('email_blacklist'),
+                                sanitizedEmail,
+                                function () {
+                                    grid.getStore().removeAt(rowIndex);
+                                }.bind(this)
+                            );
                         }.bind(this)
                     }
                 ]
@@ -188,8 +194,10 @@ pimcore.settings.email.blacklist = Class.create({
     onAdd:function (btn, ev) {
         Ext.MessageBox.prompt("", t("email_address"), function (button, value) {
             if(button == "ok") {
+                const sanitizedEmail = pimcore.helpers.sanitizeEmail(value);
+
                 var u = {
-                    "address": value
+                    "address": sanitizedEmail
                 };
 
                 this.grid.store.insert(0, u);

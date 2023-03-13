@@ -92,12 +92,12 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
             }
         }
 
-        SettingsStore::set($this->getSettingsStoreInstallationId(), true, 'bool', 'pimcore');
+        SettingsStore::set($this->getSettingsStoreInstallationId(), true, SettingsStore::TYPE_BOOLEAN, 'pimcore');
     }
 
     protected function markUninstalled(): void
     {
-        SettingsStore::set($this->getSettingsStoreInstallationId(), false, 'bool', 'pimcore');
+        SettingsStore::set($this->getSettingsStoreInstallationId(), false, SettingsStore::TYPE_BOOLEAN, 'pimcore');
 
         $migrationVersion = $this->getLastMigrationVersionClassName();
         if ($migrationVersion) {

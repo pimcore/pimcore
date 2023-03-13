@@ -437,13 +437,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                 $object = $object->getObject();
             }
 
-            $dirtyLanguages = $localizedFields->getDirtyLanguages();
-            $localizedFields->setObject($object);
-            if (is_array($dirtyLanguages)) {
-                $localizedFields->markLanguagesAsDirty($dirtyLanguages);
-            } else {
-                $localizedFields->resetLanguageDirtyMap();
-            }
+            $localizedFields->setObjectOmitDirty($object);
 
             $context = isset($params['context']) ? $params['context'] : null;
             $localizedFields->setContext($context);
@@ -696,7 +690,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $config = \Pimcore\Config::getSystemConfiguration('general');
         $languages = [];
         if (isset($config['valid_languages'])) {
-            $languages = explode(',', $config['valid_languages']);
+            $languages = $config['valid_languages'];
         }
 
         $dataForValidityCheck = $this->getDataForValidity($data, $languages);

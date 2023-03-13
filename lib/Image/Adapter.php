@@ -312,7 +312,7 @@ abstract class Adapter
      *
      * @return $this|false
      */
-    abstract public function load(string $imagePath, array $options = []): bool|static;
+    abstract public function load(string $imagePath, array $options = []): static|false;
 
     /**
      * @param string $path
@@ -332,13 +332,8 @@ abstract class Adapter
 
     /**
      * @internal
-     *
-     * @param string $format
-     * @param bool $force
-     *
-     * @return mixed
      */
-    abstract public function supportsFormat(string $format, bool $force = false): mixed;
+    abstract public function supportsFormat(string $format, bool $force = false): bool;
 
     public function preModify(): void
     {

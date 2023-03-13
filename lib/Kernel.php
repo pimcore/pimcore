@@ -27,7 +27,6 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
-use Presta\SitemapBundle\PrestaSitemapBundle;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -37,7 +36,9 @@ use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -53,6 +54,8 @@ abstract class Kernel extends SymfonyKernel
 
         registerBundles as microKernelRegisterBundles;
     }
+
+    private const CONFIG_LOCATION = 'config_location';
 
     private BundleCollection $bundleCollection;
 
@@ -184,14 +187,49 @@ abstract class Kernel extends SymfonyKernel
             ],
         ];
 
-        foreach ($configArray as $config) {
-            $configDir = rtrim($_SERVER[$config['storageDirectoryEnvVariableName']] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/' . $config['defaultStorageDirectoryName'], '/\\');
-            $configDir = "$configDir/";
-            if (is_dir($configDir)) {
-                // @phpstan-ignore-next-line
-                $loader->import($configDir);
+        $loader->load(function (ContainerBuilder $container) use ($loader, $configArray) {
+            $containerConfig = $container->getExtensionConfig('pimcore');
+            $containerConfig = array_merge(...$containerConfig);
+
+            $processor = new Processor();
+            // @phpstan-ignore-next-line
+            $configuration = $container->getExtension('pimcore')->getConfiguration($containerConfig, $container);
+            $containerConfig = $processor->processConfiguration($configuration, ['pimcore' => $containerConfig]);
+
+            $resolvingBag = $container->getParameterBag();
+            $containerConfig = $resolvingBag->resolveValue($containerConfig);
+
+            if (!array_key_exists(self::CONFIG_LOCATION, $containerConfig)) {
+                return;
             }
+
+            foreach ($configArray as $config) {
+                $configKey = str_replace('-', '_', $config['defaultStorageDirectoryName']);
+                if (!isset($containerConfig[self::CONFIG_LOCATION][$configKey])) {
+                    continue;
+                }
+                $options = $containerConfig[self::CONFIG_LOCATION][$configKey]['options'];
+
+                $configDir = rtrim($options['directory'] ?? self::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
+                $configDir = "$configDir/";
+                if (is_dir($configDir)) {
+                    // @phpstan-ignore-next-line
+                    $loader->import($configDir);
+                }
+            }
+        });
+    }
+
+    private static function getStorageDirectoryFromSymfonyConfig(array $config, string $configKey, string $storageDir): string
+    {
+        if (isset($_SERVER[$storageDir])) {
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storageDir));
+
+            return $_SERVER[$storageDir];
         }
+
+        return $config[self::CONFIG_LOCATION][$configKey]['options']['directory'];
     }
 
     /**
@@ -320,7 +358,6 @@ abstract class Kernel extends SymfonyKernel
             new DoctrineBundle(),
             new DoctrineMigrationsBundle(),
             new CmfRoutingBundle(),
-            new PrestaSitemapBundle(),
             new SchebTwoFactorBundle(),
             new FOSJsRoutingBundle(),
             new FlysystemBundle(),
@@ -367,15 +404,6 @@ abstract class Kernel extends SymfonyKernel
      */
     protected function setSystemRequirements(): void
     {
-        // try to set system-internal variables
-        $maxExecutionTime = 240;
-        if (php_sapi_name() === 'cli') {
-            $maxExecutionTime = 0;
-        }
-
-        //@ini_set("memory_limit", "1024M");
-        @ini_set('max_execution_time', (string) $maxExecutionTime);
-        @set_time_limit($maxExecutionTime);
         ini_set('default_charset', 'UTF-8');
 
         // set internal character encoding to UTF-8

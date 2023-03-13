@@ -292,15 +292,6 @@ pimcore.layout.toolbar = Class.create({
  
              var extrasItems = [];
 
-             if (user.isAllowed("redirects") && perspectiveCfg.inToolbar("extras.redirects")) {
-                 extrasItems.push({
-                     text: t("redirects"),
-                     iconCls: "pimcore_nav_icon_redirects",
-                     itemId: 'pimcore_menu_extras_redirects',
-                     handler: this.editRedirects
-                 });
-             }
-
              let translationItems = [];
 
              if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
@@ -575,83 +566,81 @@ pimcore.layout.toolbar = Class.create({
                          items: []
                      }
                  };
- 
-                 if (user.isAllowed("classes")) {
-                     if (perspectiveCfg.inToolbar("settings.objects.classes")) {
-                         objectMenu.menu.items.push({
-                             text: t("classes"),
-                             iconCls: "pimcore_nav_icon_class",
-                             itemId: 'pimcore_menu_settings_data_objects_classes',
-                             handler: this.editClasses
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.fieldcollections")) {
-                         objectMenu.menu.items.push({
-                             text: t("field_collections"),
-                             iconCls: "pimcore_nav_icon_fieldcollection",
-                             itemId: 'pimcore_menu_settings_data_objects_fieldcollections',
-                             handler: this.editFieldcollections
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.objectbricks")) {
-                         objectMenu.menu.items.push({
-                             text: t("objectbricks"),
-                             iconCls: "pimcore_nav_icon_objectbricks",
-                             itemId: 'pimcore_menu_settings_data_objects_objectbricks',
-                             handler: this.editObjectBricks
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.quantityValue")) {
-                         objectMenu.menu.items.push({
-                             text: t("quantityValue_field"),
-                             iconCls: "pimcore_nav_icon_quantityValue",
-                             itemId: 'pimcore_menu_settings_data_objects_quantity_value',
-                             cls: "pimcore_main_menu",
-                             handler: function () {
-                                 try {
-                                     pimcore.globalmanager.get("quantityValue_units").activate();
-                                 }
-                                 catch (e) {
-                                     pimcore.globalmanager.add("quantityValue_units", new pimcore.object.quantityValue.unitsettings());
-                                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.classes") && user.isAllowed("classes")) {
+                     objectMenu.menu.items.push({
+                         text: t("classes"),
+                         iconCls: "pimcore_nav_icon_class",
+                         itemId: 'pimcore_menu_settings_data_objects_classes',
+                         handler: this.editClasses
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.fieldcollections") && user.isAllowed("fieldcollections")) {
+                     objectMenu.menu.items.push({
+                         text: t("field_collections"),
+                         iconCls: "pimcore_nav_icon_fieldcollection",
+                         itemId: 'pimcore_menu_settings_data_objects_fieldcollections',
+                         handler: this.editFieldcollections
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.objectbricks") && user.isAllowed("objectbricks")) {
+                     objectMenu.menu.items.push({
+                         text: t("objectbricks"),
+                         iconCls: "pimcore_nav_icon_objectbricks",
+                         itemId: 'pimcore_menu_settings_data_objects_objectbricks',
+                         handler: this.editObjectBricks
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.quantityValue") && user.isAllowed("quantityValueUnits")) {
+                     objectMenu.menu.items.push({
+                         text: t("quantityValue_field"),
+                         iconCls: "pimcore_nav_icon_quantityValue",
+                         itemId: 'pimcore_menu_settings_data_objects_quantity_value',
+                         cls: "pimcore_main_menu",
+                         handler: function () {
+                             try {
+                                 pimcore.globalmanager.get("quantityValue_units").activate();
                              }
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.classificationstore")) {
-                         objectMenu.menu.items.push({
-                             text: t("classification_store"),
-                             iconCls: "pimcore_nav_icon_classificationstore",
-                             itemId: 'pimcore_menu_settings_data_objects_classificationstore',
-                             handler: this.editClassificationStoreConfig
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.bulkExport")) {
-                         objectMenu.menu.items.push({
-                             text: t("bulk_export"),
-                             iconCls: "pimcore_nav_icon_export",
-                             itemId: 'pimcore_menu_settings_data_objects_bulk_export',
-                             handler: this.bulkExport
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.bulkImport")) {
-                         objectMenu.menu.items.push({
-                             text: t("bulk_import"),
-                             iconCls: "pimcore_nav_icon_import",
-                             itemId: 'pimcore_menu_settings_data_objects_bulk_import',
-                             handler: this.bulkImport.bind(this)
-                         });
-                     }
- 
- 
-                     if (objectMenu.menu.items.length > 0) {
-                         settingsItems.push(objectMenu);
-                     }
+                             catch (e) {
+                                 pimcore.globalmanager.add("quantityValue_units", new pimcore.object.quantityValue.unitsettings());
+                             }
+                         }
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.classificationstore") && user.isAllowed("classificationstore")) {
+                     objectMenu.menu.items.push({
+                         text: t("classification_store"),
+                         iconCls: "pimcore_nav_icon_classificationstore",
+                         itemId: 'pimcore_menu_settings_data_objects_classificationstore',
+                         handler: this.editClassificationStoreConfig
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.bulkExport") && user.isAllowed("classes")) {
+                     objectMenu.menu.items.push({
+                         text: t("bulk_export"),
+                         iconCls: "pimcore_nav_icon_export",
+                         itemId: 'pimcore_menu_settings_data_objects_bulk_export',
+                         handler: this.bulkExport
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.bulkImport") && user.isAllowed("classes")) {
+                     objectMenu.menu.items.push({
+                         text: t("bulk_import"),
+                         iconCls: "pimcore_nav_icon_import",
+                         itemId: 'pimcore_menu_settings_data_objects_bulk_import',
+                         handler: this.bulkImport.bind(this)
+                     });
+                 }
+
+
+                 if (objectMenu.menu.items.length > 0) {
+                     settingsItems.push(objectMenu);
                  }
              }
 
@@ -738,7 +727,7 @@ pimcore.layout.toolbar = Class.create({
                  }
  
                  if (perspectiveCfg.inToolbar("settings.cache.generatePreviews")) {
-                     if (pimcore.settings.document_generatepreviews && (pimcore.settings.chromium || pimcore.settings.htmltoimage)) {
+                     if (pimcore.settings.document_generatepreviews && (pimcore.settings.chromium || pimcore.settings.gotenberg)) {
                          cacheItems.push({
                              text: t("generate_page_previews"),
                              iconCls: "pimcore_nav_icon_page_previews",
@@ -1095,16 +1084,6 @@ pimcore.layout.toolbar = Class.create({
          }
          catch (e) {
              pimcore.globalmanager.add("translationdomainmanager", new pimcore.settings.translation.domain(domain));
-         }
-     },
-
-     editRedirects: function () {
- 
-         try {
-             pimcore.globalmanager.get("redirects").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("redirects", new pimcore.settings.redirects());
          }
      },
  

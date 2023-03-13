@@ -196,13 +196,6 @@ class Multiselect extends Data implements
         return null;
     }
 
-    /**
-     * @param array $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|string|null
-     */
     public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array|string|null
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
