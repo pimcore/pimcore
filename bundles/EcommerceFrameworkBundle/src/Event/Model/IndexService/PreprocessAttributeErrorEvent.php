@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Model\Ecommerce\IndexService;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\IndexService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
 

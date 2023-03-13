@@ -21,7 +21,7 @@ final class IndexServiceEvents
     /**
      * Fired when error occurs during processing attributes for index. Event can influence handling of that error (like ignoring, throwing exceptions, etc.)
      *
-     * @Event("Pimcore\Event\Model\Ecommerce\IndexService\PreprocessAttributeErrorEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\IndexService\PreprocessAttributeErrorEvent")
      *
      * @var string
      */
@@ -30,7 +30,7 @@ final class IndexServiceEvents
     /**
      * Fired when error occurs during pre processing index data. Event can influence handling of that error (like throwing exceptions, etc.)
      *
-     * @Event("Pimcore\Event\Model\Ecommerce\IndexService\PreprocessErrorEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\IndexService\PreprocessErrorEvent")
      *
      * @var string
      */

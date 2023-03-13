@@ -28,8 +28,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInte
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
-use Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent;
-use Pimcore\Event\Model\Ecommerce\SendConfirmationMailEvent;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\CommitOrderProcessorEvent;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\SendConfirmationMailEvent;
 use Pimcore\Logger;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

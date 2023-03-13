@@ -33,7 +33,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPayme
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Event\Model\Ecommerce\CheckoutManagerStepsEvent;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\CheckoutManagerStepsEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CheckoutManager implements CheckoutManagerInterface
