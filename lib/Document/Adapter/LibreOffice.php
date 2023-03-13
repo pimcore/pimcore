@@ -182,43 +182,17 @@ class LibreOffice extends Ghostscript
             $asset = $this->asset;
         }
 
-        // if asset is pdf extract via ghostscript
-        if (parent::isFileTypeSupported($asset->getFilename())) {
-            return parent::getText($page, $asset);
-        }
-
-        if ($page) {
-            // for per page extraction we have to convert the document to PDF and extract the text via ghostscript
-            return parent::getText($page, $asset, self::getTemporaryFileFromStream($this->getPdf($asset)));
-        }
-
-        if ($this->isFileTypeSupported($asset->getFilename())) {
-            $localAssetTmpPath = $asset->getLocalFile();
-            // if we want to get the text of the whole document, we can use libreoffices text export feature
-            $cmd = [self::getLibreOfficeCli(), '--headless', '--nologo', '--nofirststartwizard', '--norestore', '--convert-to', 'txt:Text', '--outdir',  PIMCORE_SYSTEM_TEMP_DIRECTORY, $localAssetTmpPath];
-            Console::addLowProcessPriority($cmd);
-            $process = new Process($cmd);
-            $process->setTimeout(240);
-            $process->run();
-            $out = $process->getOutput();
-
-            Logger::debug('LibreOffice Output was: ' . $out);
-
-            $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . preg_replace("/\." . File::getFileExtension($localAssetTmpPath) . '$/', '.txt', $localAssetTmpPath);
-            if (file_exists($tmpName)) {
-                $text = file_get_contents($tmpName);
-                $text = \Pimcore\Tool\Text::convertToUTF8($text);
-                unlink($tmpName);
-
-                return $text;
+        try {
+            if (!parent::isFileTypeSupported($asset->getFilename())) {
+                $path = $this->getPdf($asset);
             }
 
-            $message = "Couldn't convert document to Text: " . $asset->getRealFullPath() . " with the command: '" . $process->getCommandLine() . "' - now trying to get the text out of the PDF with ghostscript...";
-            Logger::notice($message);
-
-            return parent::getText($page, $asset, self::getTemporaryFileFromStream($this->getPdf($asset)));
+            return parent::getText($page, $asset, $path);
         }
+        catch (\Exception $e){
+            Logger::debug($e->getMessage());
 
-        return ''; // default empty string
+            return ''; // default empty string
+        }
     }
 }
