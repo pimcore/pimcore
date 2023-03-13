@@ -221,6 +221,10 @@ class Ghostscript extends Adapter
                 if(self::isFileTypeSupported($asset->getFilename())) {
                     $path = $asset->getLocalFile();
                 }
+
+                if(empty($path)) {
+                    throw new \Exception('Variable $path can\'t be null.');
+                }
             }
 
             try {
