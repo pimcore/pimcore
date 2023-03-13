@@ -223,7 +223,7 @@ class Ghostscript extends Adapter
                 }
 
                 if(empty($path)) {
-                    throw new \Exception('Variable $path can\'t be null.');
+                    throw new \Exception('Variable $path can\'t be null at this point.');
                 }
             }
 
