@@ -50,6 +50,7 @@ class PimcorePersonalizationExtension extends ConfigurableExtension
         }
 
         $loader->load('targeting.yaml');
+        $loader->load('services.yaml');
 
         // set TargetingStorageInterface type hint to the configured service ID
         $container->setAlias(TargetingStorageInterface::class, $config['storage_id']);

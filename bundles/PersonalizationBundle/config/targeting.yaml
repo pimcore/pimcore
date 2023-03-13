@@ -5,20 +5,6 @@ services:
         public: false
 
     #
-    # INSTALLER
-    #
-    Pimcore\Bundle\PersonalizationBundle\Installer:
-        public: true
-        arguments:
-            $bundle: "@=service('kernel').getBundle('PimcorePersonalizationBundle')"
-
-    # auto-register all controllers as services
-    Pimcore\Bundle\PersonalizationBundle\Controller\:
-        resource: '../src/Controller'
-        public: true
-        tags: [ 'controller.service_arguments' ]
-
-    #
     # TARGETING STORAGE
     #
     # The TargetingStorageInterface alias will be set to whatever service_id is configured
@@ -201,10 +187,5 @@ services:
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingElementListener: ~
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingDocumentRendererListener: ~
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\RenderletListener: ~
-
-    # Newsletter Adapter
-    pimcore.document.newsletter.factory.default:
-        class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
-        arguments:
-            - 'Pimcore\Bundle\PersonalizationBundle\Document\Newsletter\AddressSourceAdapter\DefaultAdapter'
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\TargetingEnableListener: ~
 
