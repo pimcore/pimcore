@@ -245,7 +245,7 @@ trait ImageThumbnailTrait
                 $dimensions = $this->readDimensionsFromFile();
             }
 
-            if ($config->getHighResolution() && $config->getHighResolution() > 1) {
+            if ($config && $config->getHighResolution() && $config->getHighResolution() > 1) {
                 if(!empty($dimensions['width'])) {
                     $dimensions['width'] = (int)floor($dimensions['width'] / $config->getHighResolution());
                 }
