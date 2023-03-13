@@ -58,7 +58,9 @@ class MiscController extends AdminController
         }, $controllerReferences);
 
         return $this->adminJson([
+            'success' => true,
             'data' => $result,
+            'total' => count($result),
         ]);
     }
 
