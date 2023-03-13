@@ -47,3 +47,9 @@ services:
     Pimcore\Bundle\AdminBundle\EventListener\UsageStatisticsListener: ~
 
     Pimcore\Bundle\AdminBundle\EventListener\EnablePreviewTimeSliderListener: ~
+
+    #
+    # Workflows
+    #
+    Pimcore\Bundle\AdminBundle\EventListener\WorkflowManagementListener:
+        public: true # can be disabled

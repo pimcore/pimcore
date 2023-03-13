@@ -196,7 +196,7 @@ class MiscController extends AdminController
     public function adminCssAction(Request $request, Config $config): Response
     {
         // customviews config
-        $cvData = \Pimcore\CustomView\Config::get();
+        $cvData = \Pimcore\Bundle\AdminBundle\CustomView\Config::get();
 
         // languages
         $languages = \Pimcore\Tool::getValidLanguages();
@@ -374,7 +374,7 @@ class MiscController extends AdminController
                 $languageOptions[] = [
                     'language' => $short,
                     'display' => $translation . " ($short)",
-                    'flag' => \Pimcore\Tool::getLanguageFlagFile($short, true),
+                    'flag' => \Pimcore\Bundle\AdminBundle\Tool::getLanguageFlagFile($short, true),
                 ];
             }
         }

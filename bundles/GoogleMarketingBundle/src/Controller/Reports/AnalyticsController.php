@@ -21,6 +21,7 @@ use Google\Service\Analytics;
 use Pimcore\Bundle\GoogleMarketingBundle\Api\Api;
 use Pimcore\Bundle\GoogleMarketingBundle\Config\SiteConfigProvider;
 use Pimcore\Bundle\GoogleMarketingBundle\Controller\ReportsControllerBase;
+use Pimcore\Bundle\GoogleMarketingBundle\Helper\ImageChart;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
@@ -294,7 +295,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
             $outputData[$order[$key]] = [
                 'label' => str_replace('ga:', '', $key),
                 'value' => round($value, 2),
-                'chart' => \Pimcore\Helper\ImageChart::lineSmall($dailyDataGrouped[$key]),
+                'chart' => ImageChart::lineSmall($dailyDataGrouped[$key]),
                 'metric' => str_replace('ga:', '', $key),
             ];
         }

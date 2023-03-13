@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use Pimcore\Bundle\AdminBundle\Perspective\Config;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\User\Role;
@@ -510,9 +511,7 @@ final class User extends User\UserRole
             $this->mergedPerspectives = array_values($this->mergedPerspectives);
             if (!$this->mergedPerspectives) {
                 // $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
-                $allPerspectives = \Pimcore\Perspective\Config::get();
-                $this->mergedPerspectives = [];
-
+                $allPerspectives = Config::get();
                 $this->mergedPerspectives = array_keys($allPerspectives);
             }
         }
@@ -532,7 +531,7 @@ final class User extends User\UserRole
             return $perspectives[0];
         } else {
             // all perspectives are allowed
-            $perspectives = \Pimcore\Perspective\Config::getAvailablePerspectives($this);
+            $perspectives = Config::getAvailablePerspectives($this);
 
             return $perspectives[0]['name'];
         }

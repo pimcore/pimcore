@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tool\Console;
-use Pimcore\Workflow\ActionsButtonService;
+use Pimcore\Bundle\AdminBundle\Service\Workflow\ActionsButtonService;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Place\StatusInfo;
