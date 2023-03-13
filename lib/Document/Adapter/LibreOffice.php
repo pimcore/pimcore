@@ -189,7 +189,7 @@ class LibreOffice extends Ghostscript
 
         if ($page) {
             // for per page extraction we have to convert the document to PDF and extract the text via ghostscript
-            return parent::getText($page, $asset, self::getTemporaryFileFromStream($this->getPdf()));
+            return parent::getText($page, $asset, self::getTemporaryFileFromStream($this->getPdf($asset)));
         }
 
         if ($this->isFileTypeSupported($asset->getFilename())) {
@@ -216,7 +216,7 @@ class LibreOffice extends Ghostscript
             $message = "Couldn't convert document to Text: " . $asset->getRealFullPath() . " with the command: '" . $process->getCommandLine() . "' - now trying to get the text out of the PDF with ghostscript...";
             Logger::notice($message);
 
-            return parent::getText($page, $asset, self::getTemporaryFileFromStream($this->getPdf()));
+            return parent::getText($page, $asset, self::getTemporaryFileFromStream($this->getPdf($asset)));
         }
 
         return ''; // default empty string
