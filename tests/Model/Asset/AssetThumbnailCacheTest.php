@@ -59,7 +59,7 @@ class AssetThumbnailCacheTest extends TestCase
         $asset = $this->testAsset;
         $thumbnailName = $this->thumbnailName;
 
-        /** @var Asset\Image $asset **/
+        /** @var Asset\Image $asset * */
         $thumbConfig = $asset->getThumbnail($thumbnailName);
         $asset->clearThumbnails(true);
 

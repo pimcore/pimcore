@@ -850,7 +850,7 @@ final class Config extends Model\AbstractModel
      */
     public function getHash(): string
     {
-        return hash("xxh32", serialize([
+        return hash('xxh32', serialize([
             $this->getPreserveAnimation(),
             $this->getQuality(),
             $this->isPreserveColor(),
