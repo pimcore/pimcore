@@ -245,7 +245,12 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $csrfProtection->regenerateCsrfToken();
 
-        $params['success'] = !$error;
+        if ($error){
+            $params['reset_error'] = 'There is no valid account with the info you provided. Please make sure you are entering a correct input.';
+            if ($error === 'user_reset_password_too_many_attempts') {
+                $params['reset_error'] = 'Too many attempts. Please retry later.';
+            }
+        }
         return $this->render('@PimcoreAdmin/Admin/Login/lostpassword.html.twig', $params);
     }
 
