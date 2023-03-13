@@ -76,11 +76,10 @@ final class ImageThumbnail
 
         // set defaults
         $deferredAllowed = $args['deferredAllowed'] ?? true;
-        $forceFrontend = $args['forceFrontend'] ?? false;
+        $frontend = $args['forceFrontend'] ?? \Pimcore\Tool::isFrontend();
 
         $pathReference = $this->getPathReference($deferredAllowed);
 
-        $frontend = \Pimcore\Tool::isFrontend() || $forceFrontend;
         $path = $this->convertToWebPath($pathReference, $frontend);
 
         $event = new GenericEvent($this, [
