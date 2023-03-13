@@ -34,6 +34,9 @@ class BlogController extends FrontendController
 ```
 ## Advanced example
 
+> **Note**
+> The example should be considered as valid, even though HeadlessChrome is deprecated in 10.6 and will be replaced by `Pimcore\Bundle\WebToPrintBundle\Processor\Chromium` in 11.
+
 ```php
 class BlogController extends FrontendController
 {

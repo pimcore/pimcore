@@ -98,3 +98,5 @@
           options:
             directory: '/var/www/html/var/config/custom_reports'
     ```
+  
+- [Web2Print] Please keep in mind that the deprecated processor `HeadlessChrome` needs to be replaced with the new processor `Chrome` in Pimcore 11.
