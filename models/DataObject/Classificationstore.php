@@ -111,7 +111,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getItems()
     {
-        return $this->getAllDataFromField(fn($classificationStore, $fieldsArray) => array_merge($classificationStore->items, $fieldsArray));
+        return $this->getAllDataFromField(fn($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->items);
     }
 
     /**
