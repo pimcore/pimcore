@@ -844,4 +844,18 @@ final class Config extends Model\AbstractModel
 
         $this->setName($this->getName() . '_auto_' . md5($serialized));
     }
+
+    /**
+     * @internal
+     */
+    public function getHash(): string
+    {
+        return hash("xxh32", serialize([
+            $this->getPreserveAnimation(),
+            $this->getQuality(),
+            $this->isPreserveColor(),
+            $this->isPreserveMetaData(),
+            $this->getItems(),
+        ]));
+    }
 }

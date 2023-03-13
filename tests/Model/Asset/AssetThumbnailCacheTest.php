@@ -59,29 +59,31 @@ class AssetThumbnailCacheTest extends TestCase
         $asset = $this->testAsset;
         $thumbnailName = $this->thumbnailName;
 
+        /** @var Asset\Image $asset **/
+        $thumbConfig = $asset->getThumbnail($thumbnailName);
         $asset->clearThumbnails(true);
 
         $thumbnailStorage = Storage::get('thumbnail');
-        $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
+        $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));
 
         //check if thumbnail exists after getting path reference deferred
-        $pathReference = $asset->getThumbnail($thumbnailName)->getPathReference(true);
+        $pathReference = $thumbConfig->getPathReference(true);
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
-        $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
+        $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));
 
         //create thumbnail
-        $asset->getThumbnail($thumbnailName)->getPath(false);
+        $thumbConfig->getPath(false);
 
         //recheck if thumbnail exists
         $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
-        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));
 
         //update asset
         $asset->setData(file_get_contents(TestHelper::resolveFilePath('assets/images/image2.jpg')));
         $asset->save();
 
         //check if cache is cleared
-        $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
+        $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
 
         //load asset via public service controller
@@ -89,20 +91,20 @@ class AssetThumbnailCacheTest extends TestCase
         $subRequest = new Request([
             'assetId' => $asset->getId(),
             'thumbnailName' => $thumbnailName,
-            'filename' => $asset->getFilename(),
+            'filename' => $thumbConfig->getFilename(),
             'type' => 'image',
             'prefix' => '',
         ]);
         $response = $controller->thumbnailAction($subRequest);
 
         //check if cache is filled
-        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));
         $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
 
         //delete just file on file system
         //check if cache cleared - expected to not be cleared
         $thumbnailStorage->delete($pathReference['storagePath']);
-        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
 
         //check via controller
@@ -110,17 +112,17 @@ class AssetThumbnailCacheTest extends TestCase
         $subRequest = new Request([
             'assetId' => $asset->getId(),
             'thumbnailName' => $thumbnailName,
-            'filename' => $asset->getFilename(),
+            'filename' => $thumbConfig->getFilename(),
             'type' => 'image',
             'prefix' => '',
         ]);
         $response = $controller->thumbnailAction($subRequest);
-        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));
         $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
 
         //delete again from file system
         $thumbnailStorage->delete($pathReference['storagePath']);
-        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
+        $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $thumbConfig->getFilename()));
         $this->assertFalse($thumbnailStorage->fileExists($pathReference['storagePath']));
     }
 }
