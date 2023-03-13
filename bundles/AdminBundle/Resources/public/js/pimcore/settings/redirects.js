@@ -287,7 +287,7 @@ pimcore.settings.redirects = Class.create({
                 editor: {
                     xtype: 'datefield',
                     format: 'Y-m-d',
-                    onChange: function(value, oldValue) {
+                    onChange: function(value) {
                         if(Ext.String.hasHtmlCharacters(value)) {
                             this.reset();
                         }
