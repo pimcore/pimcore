@@ -249,7 +249,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $csrfProtection->regenerateCsrfToken();
 
         if ($error){
-            $params['reset_error'] = 'There is no valid account with the info you provided. Please make sure you are entering a correct input.';
+            $params['reset_error'] = 'Please make sure you are entering a correct input.';
             if ($error === 'user_reset_password_too_many_attempts') {
                 $params['reset_error'] = 'Too many attempts. Please retry later.';
             }
