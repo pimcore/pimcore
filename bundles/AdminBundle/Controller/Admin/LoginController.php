@@ -36,6 +36,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -112,6 +113,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $params['csrfTokenRefreshInterval'] = ((int)$session_gc_maxlifetime - 60) * 1000;
 
+        if ($request->get('too_many_attempts')) {
+            $params['error'] = $request->get('too_many_attempts');
+        }
         if ($request->get('auth_failed')) {
             $params['error'] = 'error_auth_failed';
         }
@@ -167,31 +171,46 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      */
-    public function lostpasswordAction(Request $request, ?BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher)
+    public function lostpasswordAction(Request $request, ?BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher, RateLimiterFactory $resetPasswordLimiter)
     {
         $params = $this->buildLoginPageViewParams($config);
         $error = null;
 
         if ($request->getMethod() === 'POST' && $username = $request->get('username')) {
+
             $user = User::getByName($username);
-
-            if ($user instanceof User) {
-                if (!$user->isActive()) {
-                    $error = 'user_inactive';
-                }
-
-                if (!$user->getEmail()) {
-                    $error = 'user_no_email_address';
-                }
-
-                if (!$user->getPassword()) {
-                    $error = 'user_no_password';
-                }
-            } else {
+            if (!$user instanceof User) {
                 $error = 'user_unknown';
             }
 
-            if (!$error && $user instanceof User) {
+            // TODO Pimcore 11: remove this BC layer, only the RateLimiter would be valid
+            if ($bruteforceProtectionHandler) {
+                try {
+                    $bruteforceProtectionHandler->checkProtection($username, $request);
+                } catch (\Exception $e) {
+                    $error = 'user_reset_password_too_many_attempts';
+                }
+            }else{
+                $limiter = $resetPasswordLimiter->create($request->getClientIp());
+
+                if (false === $limiter->consume(1)->isAccepted()) {
+                    $error = 'user_reset_password_too_many_attempts';
+                }
+            }
+
+            if (!$error) {
+                if (!$user->isActive()) {
+                    $error = 'user_inactive';
+                }
+                if (!$user->getEmail()) {
+                    $error = 'user_no_email_address';
+                }
+                if (!$user->getPassword()) {
+                    $error = 'user_no_password';
+                }
+            }
+
+            if (!$error) {
                 $token = Authentication::generateToken($user->getName());
 
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
@@ -229,6 +248,12 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $csrfProtection->regenerateCsrfToken();
 
+        if ($error){
+            $params['reset_error'] = 'Please make sure you are entering a correct input.';
+            if ($error === 'user_reset_password_too_many_attempts') {
+                $params['reset_error'] = 'Too many attempts. Please retry later.';
+            }
+        }
         return $this->render('@PimcoreAdmin/Admin/Login/lostpassword.html.twig', $params);
     }
 
