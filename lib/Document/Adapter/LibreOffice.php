@@ -185,7 +185,7 @@ class LibreOffice extends Ghostscript
         try {
             if (!parent::isFileTypeSupported($asset->getFilename())) {
                 $file = $this->getPdf($asset);
-                if(!$file) {
+                if(!is_resource($file)) {
                     throw new \Exception(sprintf('Could not convert asset with id %s to pdf', $asset->getId()));
                 }
 
