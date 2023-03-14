@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\PersonalizationBundle\Targeting;
 
 use Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\DataProviderInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
-use Pimcore\Debug\Traits\StopwatchTrait;
+use Pimcore\Bundle\PersonalizationBundle\Debug\Traits\StopwatchTrait;
 use Psr\Container\ContainerInterface;
 
 class DataLoader implements DataLoaderInterface
