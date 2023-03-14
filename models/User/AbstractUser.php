@@ -45,7 +45,13 @@ abstract class AbstractUser extends Model\AbstractModel
             if (\Pimcore\Cache\RuntimeCache::isRegistered($cacheKey)) {
                 $user = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             } else {
-                $user = new static();
+                $reflectionClass = new \ReflectionClass(static::class);
+                if ($reflectionClass->isAbstract()) {
+                    $user = new Model\User();
+                    $user->setType('');
+                } else {
+                    $user = new static();
+                }
                 $user->getDao()->getById($id);
                 $className = Service::getClassNameForType($user->getType());
 
