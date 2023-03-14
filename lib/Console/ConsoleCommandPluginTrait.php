@@ -19,6 +19,11 @@ use Pimcore\Event\System\ConsoleEvent;
 use Pimcore\Event\SystemEvents;
 use Symfony\Component\Console\Command\Command;
 
+trigger_deprecation('pimcore/pimcore', '10.6', 'The "%s" trait is deprecated and will be removed in Pimcore 11.', ConsoleCommandPluginTrait::class);
+
+/**
+ * @deprecated since Pimcore 10.6 and will be removed in Pimcore 11
+ */
 trait ConsoleCommandPluginTrait
 {
     /**
