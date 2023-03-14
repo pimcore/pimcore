@@ -672,7 +672,9 @@ class PimcoreBundleManager
 
         $result = [];
         foreach ($this->getActiveBundles() as $bundle) {
-            if(!$bundle instanceof PimcoreBundleAdminSupportInterface){
+            $paths = $bundle->$getter();
+
+            if(!empty($paths) && !$bundle instanceof PimcoreBundleAdminSupportInterface){
                 trigger_deprecation(
                     'pimcore/pimcore',
                     '10.6',
@@ -684,8 +686,6 @@ class PimcoreBundleManager
                     )
                 );
             }
-
-            $paths = $bundle->$getter();
 
             foreach ($paths as $path) {
                 if ($path instanceof RouteReferenceInterface) {
