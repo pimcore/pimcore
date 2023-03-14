@@ -49,8 +49,9 @@ abstract class Kernel extends SymfonyKernel
 {
     use MicroKernelTrait {
         registerContainerConfiguration as microKernelRegisterContainerConfiguration;
-
         registerBundles as microKernelRegisterBundles;
+        configureContainer as protected;
+        configureRoutes as protected;
     }
 
     private const CONFIG_LOCATION = 'config_location';
