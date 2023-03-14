@@ -602,7 +602,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
          */
         $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
             $fieldDefinitionConfig,
-            $fieldDefinitionConfig->fieldtype
+            $fieldDefinitionConfig['fieldtype']
         );
 
         $optionsProvider = OptionsProviderResolver::resolveProvider(
