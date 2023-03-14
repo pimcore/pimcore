@@ -40,6 +40,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @var array
      */
+    protected const FORBIDDEN_NAMES = [
+        'abstract', 'class', 'data', 'folder', 'list', 'permissions', 'resource', 'dao', 'concrete', 'items',
+        'object', 'interface', 'default'
+    ];
+
+    /**
+     * @var array
+     */
     public $classDefinitions = [];
 
     /**
@@ -160,7 +168,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             throw new \Exception('A object-brick needs a key to be saved!');
         }
 
-        if (!preg_match('/[a-zA-Z]+[a-zA-Z0-9]+/', $this->getKey())) {
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $this->getKey()) || $this->isForbiddenName()) {
             throw new \Exception(sprintf('Invalid key for object-brick: %s', $this->getKey()));
         }
 
