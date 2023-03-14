@@ -121,8 +121,7 @@ $orderList->addSelectField(['Items' => 'count(orderItem.id)']);
 <?php
 
 // e.g. get all orderings for a customer
-$orderList->joinCustomer( \Pimcore\Model\DataObject\Customer::classId() );
-$orderList->getQuery()->where('customer.id = ?', 12345);
+$orderList->addFilter(new CustomerObject($customer));
 
 
 // e.g. filter product number
