@@ -14,23 +14,23 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\Email\Blacklist;
+namespace Pimcore\Model\Tool\Email\Blocklist;
 
 use Pimcore\Model;
 
 /**
  * @internal
  *
- * @method \Pimcore\Model\Tool\Email\Blacklist\Listing\Dao getDao()
+ * @method \Pimcore\Model\Tool\Email\Blocklist\Listing\Dao getDao()
  * @method void delete()*
- * @method Model\Tool\Email\Blacklist[] load()
- * @method Model\Tool\Email\Blacklist|false current()
+ * @method Model\Tool\Email\Blocklist[] load()
+ * @method Model\Tool\Email\Blocklist|false current()
  * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @param Model\Tool\Email\Blacklist[]|null $items
+     * @param Model\Tool\Email\Blocklist[]|null $items
      *
      * @return $this
      */
@@ -40,7 +40,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return Model\Tool\Email\Blacklist[]
+     * @return Model\Tool\Email\Blocklist[]
      */
     public function getItems(): array
     {

@@ -44,13 +44,13 @@ class FullPageCacheCookieCleanupListener implements EventSubscriberInterface
         $response = $event->getResponse();
         $cookies = $response->headers->getCookies();
 
-        $blacklist = [
+        $blocklist = [
             CookieStorage::COOKIE_NAME_VISITOR,
             CookieStorage::COOKIE_NAME_SESSION,
         ];
 
         foreach ($cookies as $cookie) {
-            if (in_array($cookie->getName(), $blacklist)) {
+            if (in_array($cookie->getName(), $blocklist)) {
                 $response->headers->removeCookie(
                     $cookie->getName(),
                     $cookie->getPath(),

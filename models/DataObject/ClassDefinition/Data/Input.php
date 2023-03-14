@@ -235,11 +235,11 @@ class Input extends Data implements
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data\Input $masterDefinition
+     * @param Model\DataObject\ClassDefinition\Data\Input $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(Model\DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->columnLength = $masterDefinition->columnLength;
+        $this->columnLength = $mainDefinition->columnLength;
     }
 
     /**

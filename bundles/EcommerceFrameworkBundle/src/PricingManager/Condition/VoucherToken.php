@@ -26,12 +26,12 @@ class VoucherToken implements ConditionInterface
     /**
      * @var int[]
      */
-    protected array $whiteListIds = [];
+    protected array $allowListIds = [];
 
     /**
      * @var \stdClass[]
      */
-    protected array $whiteList = [];
+    protected array $allowList = [];
 
     /**
      * @var string[]
@@ -59,7 +59,7 @@ class VoucherToken implements ConditionInterface
 
     public function checkVoucherCode(string $code): bool
     {
-        if (in_array(VoucherServiceToken::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
+        if (in_array(VoucherServiceToken::getByCode($code)->getVoucherSeriesId(), $this->allowListIds)) {
             return true;
         }
 
@@ -71,13 +71,13 @@ class VoucherToken implements ConditionInterface
         // basic
         $json = [
             'type' => 'VoucherToken',
-            'whiteList' => [],
+            'allowList' => [],
             'error_messages' => $this->getErrorMessagesRaw(),
         ];
 
         // add categories
-        foreach ($this->getWhiteList() as $series) {
-            $json['whiteList'][] = [
+        foreach ($this->getAllowList() as $series) {
+            $json['allowList'][] = [
                 $series->id,
                 $series->path,
             ];
@@ -90,21 +90,21 @@ class VoucherToken implements ConditionInterface
     {
         $json = json_decode($string);
 
-        $whiteListIds = [];
-        $whiteList = [];
+        $allowListIds = [];
+        $allowList = [];
 
-        foreach ($json->whiteList as $series) {
+        foreach ($json->allowList as $series) {
             $seriesId = $series->id;
             if ($seriesId) {
-                $whiteListIds[] = $seriesId;
-                $whiteList[] = $series;
+                $allowListIds[] = $seriesId;
+                $allowList[] = $series;
             }
         }
 
         $this->setErrorMessagesRaw((array)$json->error_messages);
 
-        $this->setWhiteListIds($whiteListIds);
-        $this->setWhiteList($whiteList);
+        $this->setAllowListIds($allowListIds);
+        $this->setAllowList($allowList);
 
         return $this;
     }
@@ -117,33 +117,33 @@ class VoucherToken implements ConditionInterface
     /**
      * @return int[]
      */
-    public function getWhiteListIds(): array
+    public function getAllowListIds(): array
     {
-        return $this->whiteListIds;
+        return $this->allowListIds;
     }
 
     /**
-     * @param int[] $whiteListIds
+     * @param int[] $allowListIds
      */
-    public function setWhiteListIds(array $whiteListIds): void
+    public function setAllowListIds(array $allowListIds): void
     {
-        $this->whiteListIds = $whiteListIds;
+        $this->allowListIds = $allowListIds;
     }
 
     /**
      * @return \stdClass[]
      */
-    public function getWhiteList(): array
+    public function getAllowList(): array
     {
-        return $this->whiteList;
+        return $this->allowList;
     }
 
     /**
-     * @param \stdClass[] $whiteList
+     * @param \stdClass[] $allowList
      */
-    public function setWhiteList(array $whiteList): void
+    public function setAllowList(array $allowList): void
     {
-        $this->whiteList = $whiteList;
+        $this->allowList = $allowList;
     }
 
     /**

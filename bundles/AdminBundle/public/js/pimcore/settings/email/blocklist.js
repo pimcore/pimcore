@@ -11,11 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.email.blacklist");
+pimcore.registerNS("pimcore.settings.email.blocklist");
 /**
  * @private
  */
-pimcore.settings.email.blacklist = Class.create({
+pimcore.settings.email.blocklist = Class.create({
 
     initialize:function () {
 
@@ -24,15 +24,15 @@ pimcore.settings.email.blacklist = Class.create({
 
     activate:function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.setActiveItem("email_blacklist");
+        tabPanel.setActiveItem("email_blocklist");
     },
 
     getTabPanel:function () {
 
         if (!this.panel) {
             this.panel = new Ext.Panel({
-                id:"email_blacklist",
-                title:t("email_blacklist"),
+                id:"email_blocklist",
+                title:t("email_blocklist"),
                 iconCls:"pimcore_icon_email pimcore_icon_overlay_delete",
                 border:false,
                 layout:"fit",
@@ -42,11 +42,11 @@ pimcore.settings.email.blacklist = Class.create({
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
-            tabPanel.setActiveItem("email_blacklist");
+            tabPanel.setActiveItem("email_blocklist");
 
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("email_blacklist");
+                pimcore.globalmanager.remove("email_blocklist");
             }.bind(this));
 
             pimcore.layout.refresh();
@@ -58,7 +58,7 @@ pimcore.settings.email.blacklist = Class.create({
     getRowEditor:function () {
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = Routing.generate('pimcore_admin_email_blacklist');
+        var url = Routing.generate('pimcore_admin_email_blocklist');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
@@ -129,7 +129,7 @@ pimcore.settings.email.blacklist = Class.create({
                             const sanitizedEmail = pimcore.helpers.sanitizeEmail(data.data.address);
 
                             pimcore.helpers.deleteConfirm(
-                                t('email_blacklist'),
+                                t('email_blocklist'),
                                 sanitizedEmail,
                                 function () {
                                     grid.getStore().removeAt(rowIndex);

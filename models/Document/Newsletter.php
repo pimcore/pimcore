@@ -79,7 +79,7 @@ class Newsletter extends Model\Document\PageSnippet
     /**
      * {@inheritdoc}
      */
-    protected bool $supportsContentMaster = false;
+    protected bool $supportsContentMain = false;
 
     /**
      * Contains the email subject

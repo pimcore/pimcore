@@ -21,11 +21,11 @@ use Pimcore\Model;
 /**
  * @internal
  *
- * @method \Pimcore\Model\Tool\Email\Blacklist\Dao getDao()
+ * @method \Pimcore\Model\Tool\Email\Blocklist\Dao getDao()
  * @method void delete()
  * @method void save()
  */
-class Blacklist extends Model\AbstractModel
+class Blocklist extends Model\AbstractModel
 {
     protected ?string $address = null;
 
@@ -33,7 +33,7 @@ class Blacklist extends Model\AbstractModel
 
     protected ?int $modificationDate = null;
 
-    public static function getByAddress(string $addr): ?Blacklist
+    public static function getByAddress(string $addr): ?Blocklist
     {
         try {
             $address = new self();

@@ -11,19 +11,19 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.bundle.googlemarketing.report.webmastertools.settings");
+pimcore.registerNS("pimcore.bundle.googlemarketing.report.webmaintools.settings");
 
 /**
  * @private
  */
-pimcore.bundle.googlemarketing.report.webmastertools.settings = Class.create({
+pimcore.bundle.googlemarketing.report.webmaintools.settings = Class.create({
 
     initialize: function (parent) {
         this.parent = parent;
     },
 
     getKey: function () {
-        return "webmastertools";
+        return "webmaintools";
     },
 
     getLayout: function () {
@@ -83,8 +83,8 @@ pimcore.bundle.googlemarketing.report.webmastertools.settings = Class.create({
                     name: "verification",
                     labelWidth: 250,
                     width: 650,
-                    value: this.parent.getValue("webmastertools.sites." + key + ".verification"),
-                    id: "report_settings_webmastertools_verification_" + id
+                    value: this.parent.getValue("webmaintools.sites." + key + ".verification"),
+                    id: "report_settings_webmaintools_verification_" + id
                 }
             ]
         };
@@ -106,7 +106,7 @@ pimcore.bundle.googlemarketing.report.webmastertools.settings = Class.create({
             }
 
             sitesData[key] = {
-                verification: Ext.getCmp("report_settings_webmastertools_verification_" + id).getValue()
+                verification: Ext.getCmp("report_settings_webmaintools_verification_" + id).getValue()
             };
         }, this);
 
@@ -119,4 +119,4 @@ pimcore.bundle.googlemarketing.report.webmastertools.settings = Class.create({
 });
 
 
-pimcore.bundle.googlemarketing.settings.broker.push("pimcore.bundle.googlemarketing.report.webmastertools.settings");
+pimcore.bundle.googlemarketing.settings.broker.push("pimcore.bundle.googlemarketing.report.webmaintools.settings");

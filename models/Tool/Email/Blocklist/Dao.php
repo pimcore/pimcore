@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Tool\Email\Blacklist;
+namespace Pimcore\Model\Tool\Email\Blocklist;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model;
@@ -21,7 +21,7 @@ use Pimcore\Model;
 /**
  * @internal
  *
- * @property \Pimcore\Model\Tool\Email\Blacklist $model
+ * @property \Pimcore\Model\Tool\Email\Blocklist $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
@@ -32,10 +32,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByAddress(string $address): void
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM email_blacklist WHERE address = ?', [$address]);
+        $data = $this->db->fetchAssociative('SELECT * FROM email_blocklist WHERE address = ?', [$address]);
 
         if (empty($data['address'])) {
-            throw new Model\Exception\NotFoundException('blacklist item with address ' . $address . ' not found');
+            throw new Model\Exception\NotFoundException('blocklist item with address ' . $address . ' not found');
         }
         $this->assignVariablesToModel($data);
     }
@@ -55,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
         // save main table
         $data = [];
         foreach ($version as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns('email_blacklist'))) {
+            if (in_array($key, $this->getValidTableColumns('email_blocklist'))) {
                 if (is_bool($value)) {
                     $value = (int) $value;
                 }
@@ -64,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::upsert($this->db, 'email_blacklist', $data, $this->getPrimaryKey('email_blacklist'));
+        Helper::upsert($this->db, 'email_blocklist', $data, $this->getPrimaryKey('email_blocklist'));
     }
 
     /**
@@ -72,6 +72,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete(): void
     {
-        $this->db->delete('email_blacklist', ['address' => $this->model->getAddress()]);
+        $this->db->delete('email_blocklist', ['address' => $this->model->getAddress()]);
     }
 }

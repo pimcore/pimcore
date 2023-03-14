@@ -348,13 +348,13 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Password $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Password $mainDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition): void
     {
-        $this->algorithm = $masterDefinition->algorithm;
-        $this->salt = $masterDefinition->salt;
-        $this->saltlocation = $masterDefinition->saltlocation;
+        $this->algorithm = $mainDefinition->algorithm;
+        $this->salt = $mainDefinition->salt;
+        $this->saltlocation = $mainDefinition->saltlocation;
     }
 
     public function getParameterTypeDeclaration(): ?string

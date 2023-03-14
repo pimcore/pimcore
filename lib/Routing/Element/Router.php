@@ -145,7 +145,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * Tries to get the current route name from current or master request
+     * Tries to get the current route name from current or main request
      */
     protected function getCurrentRoute(): ?string
     {

@@ -44,7 +44,7 @@ class RedisStorage implements TargetingStorageInterface
         $key = $this->buildKey($visitorInfo, $scope);
         $result = $this->redis->hGetAll($key);
 
-        $blacklist = [
+        $blocklist = [
             self::STORAGE_KEY_CREATED_AT,
             self::STORAGE_KEY_UPDATED_AT,
             self::STORAGE_KEY_META_ENTRY,
@@ -53,7 +53,7 @@ class RedisStorage implements TargetingStorageInterface
         $data = [];
         foreach ($result as $key => $value) {
             // filter internal values
-            if (in_array($key, $blacklist, true)) {
+            if (in_array($key, $blocklist, true)) {
                 continue;
             }
 

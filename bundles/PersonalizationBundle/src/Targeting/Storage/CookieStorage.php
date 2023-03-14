@@ -67,15 +67,15 @@ class CookieStorage implements TargetingStorageInterface
     {
         $this->loadData($visitorInfo, $scope);
 
-        $blacklist = [
+        $blocklist = [
             self::STORAGE_KEY_CREATED_AT,
             self::STORAGE_KEY_UPDATED_AT,
             self::STORAGE_KEY_META_ENTRY,
         ];
 
         // filter internal values
-        $result = array_filter($this->data[$scope], function ($key) use ($blacklist) {
-            return !in_array($key, $blacklist, true);
+        $result = array_filter($this->data[$scope], function ($key) use ($blocklist) {
+            return !in_array($key, $blocklist, true);
         }, ARRAY_FILTER_USE_KEY);
 
         return $result;

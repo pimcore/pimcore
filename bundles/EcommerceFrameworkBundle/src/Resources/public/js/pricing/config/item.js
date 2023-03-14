@@ -1070,11 +1070,11 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionVoucherToken"),
             items: [
-                new pimcore.bundle.EcommerceFramework.pricing.config.objects(data.whiteList, {
+                new pimcore.bundle.EcommerceFramework.pricing.config.objects(data.allowList, {
                     classes: [
                         "OnlineShopVoucherSeries"
                     ],
-                    name: "whiteList",
+                    name: "allowList",
                     title: "White List",
                     visibleFields: "path",
                     height: 200,

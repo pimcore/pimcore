@@ -30,7 +30,7 @@ pimcore.settings.user.workspace.customlayouts = Class.create({
         var i;
         for (i = 0; i < this.allLayouts.length; i++) {
             var name = this.allLayouts[i].name;
-            if (this.allLayouts[i].type == "master") {
+            if (this.allLayouts[i].type == "main") {
                 name = "<b>" + name + "</b>";
             } else {
                 name = "&nbsp;&nbsp;&nbsp;" + name;
