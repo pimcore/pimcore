@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types = 1);
 
 /**
@@ -15,21 +14,21 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Document\TypeDefinition\Loader;
-
-use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
-use Pimcore\Model\Document;
+namespace Pimcore\Resolver;
 
 /**
+ * Core class resolver returning FQCN
+ *
  * @internal
  */
-class TypeLoader extends ImplementationLoader implements TypeLoaderInterface
+class ClassResolver implements ResolverInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function build(string $name, array $params = []): Document
+    public function __construct(protected array $map)
     {
-        return parent::build($name, $params);
+    }
+
+    public function resolve(string $name): ?string
+    {
+        return $this->map[$name] ?? null;
     }
 }

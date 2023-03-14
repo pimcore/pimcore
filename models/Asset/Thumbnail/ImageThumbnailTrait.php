@@ -413,7 +413,10 @@ trait ImageThumbnailTrait
         return null;
     }
 
-    private function getFilename(): string
+    /**
+     * @internal
+     */
+    public function getFilename(): string
     {
         $pathReference = $this->getPathReference(true);
 

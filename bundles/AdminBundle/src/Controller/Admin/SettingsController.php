@@ -179,7 +179,7 @@ class SettingsController extends AdminController
 
                 $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
                 if ($existingItem && $existingItem->getId() != $metadata->getId()) {
-                    return $this->adminJson(['message' => 'rule_violation', 'success' => false]);
+                    return $this->adminJson(['message' => 'predefined_metadata_definitions_error_name_exists_msg', 'success' => false]);
                 }
 
                 $metadata->minimize();
@@ -221,7 +221,7 @@ class SettingsController extends AdminController
             if ($filter = $request->get('filter')) {
                 $list->setFilter(function (Metadata\Predefined $predefined) use ($filter) {
                     foreach ($predefined->getObjectVars() as $value) {
-                        if (stripos($value, $filter) !== false) {
+                        if (stripos((string)$value, $filter) !== false) {
                             return true;
                         }
                     }
@@ -341,7 +341,7 @@ class SettingsController extends AdminController
                             $cellValues = is_array($value) ? $value : [$value];
 
                             foreach ($cellValues as $cellValue) {
-                                if (stripos($cellValue, $filter) !== false) {
+                                if (stripos((string)$cellValue, $filter) !== false) {
                                     return true;
                                 }
                             }
@@ -399,10 +399,8 @@ class SettingsController extends AdminController
             }
         }
 
-        $valueArray['general']['valid_language'] = explode(',', $valueArray['general']['valid_languages']);
-
         //for "wrong" legacy values
-        foreach ($valueArray['general']['valid_language'] as $existingValue) {
+        foreach ($valueArray['general']['valid_languages'] as $existingValue) {
             if (!in_array($existingValue, $validLanguages)) {
                 $languageOptions[] = [
                     'language' => $existingValue,
@@ -480,7 +478,7 @@ class SettingsController extends AdminController
                 'domain' => $values['general.domain'],
                 'redirect_to_maindomain' => $values['general.redirect_to_maindomain'],
                 'language' => $values['general.language'],
-                'valid_languages' => implode(',', $filteredLanguages),
+                'valid_languages' => $filteredLanguages,
                 'fallback_languages' => $fallbackLanguages,
                 'default_language' => $values['general.defaultLanguage'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
