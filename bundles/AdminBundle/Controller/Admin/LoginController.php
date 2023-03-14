@@ -177,7 +177,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $error = null;
 
         if ($request->getMethod() === 'POST' && $username = $request->get('username')) {
-
             $user = User::getByName($username);
             if (!$user instanceof User) {
                 $error = 'user_unknown';
@@ -190,7 +189,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                 } catch (\Exception $e) {
                     $error = 'user_reset_password_too_many_attempts';
                 }
-            }else{
+            } else {
                 $limiter = $resetPasswordLimiter->create($request->getClientIp());
 
                 if (false === $limiter->consume(1)->isAccepted()) {
@@ -248,12 +247,13 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $csrfProtection->regenerateCsrfToken();
 
-        if ($error){
+        if ($error) {
             $params['reset_error'] = 'Please make sure you are entering a correct input.';
             if ($error === 'user_reset_password_too_many_attempts') {
                 $params['reset_error'] = 'Too many attempts. Please retry later.';
             }
         }
+
         return $this->render('@PimcoreAdmin/Admin/Login/lostpassword.html.twig', $params);
     }
 
