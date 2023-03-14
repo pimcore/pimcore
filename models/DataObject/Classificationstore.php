@@ -111,7 +111,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getItems()
     {
-        return $this->getAllDataFromField(fn($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->items);
+        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->items);
     }
 
     /**
@@ -467,7 +467,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getGroupCollectionMappings(): array
     {
-        return $this->getAllDataFromField(fn($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->groupCollectionMapping);
+        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->groupCollectionMapping);
     }
 
     /**
@@ -504,7 +504,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getGroups(): array
     {
-        return $this->getAllDataFromField(fn($classificationStore, $fieldsArray) => array_merge(Classificationstore::getActiveGroupsWithConfig($classificationStore), $fieldsArray));
+        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => array_merge(Classificationstore::getActiveGroupsWithConfig($classificationStore), $fieldsArray));
     }
 
     private function getAllDataFromField(callable $mergeFunction): array
