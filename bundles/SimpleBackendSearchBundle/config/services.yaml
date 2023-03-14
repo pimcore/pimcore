@@ -55,3 +55,10 @@ services:
         class: Pimcore\Bundle\SimpleBackendSearchBundle\DataProvider\GDPR\DataObjects
         arguments:
             $config: '%pimcore.gdpr-data-extrator.dataobjects%'
+
+    #
+    # Maintenance Tasks
+    #
+    Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: optimize_fulltext_indexes }

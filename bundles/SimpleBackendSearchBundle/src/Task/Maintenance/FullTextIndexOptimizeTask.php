@@ -14,18 +14,21 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Maintenance\Tasks;
+namespace Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance;
 
+use Doctrine\DBAL\Exception;
 use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
 use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\LockInterface;
+
 
 /**
  * @internal
  */
 class FullTextIndexOptimizeTask implements TaskInterface
 {
-    private \Symfony\Component\Lock\LockInterface $lock;
+    private LockInterface $lock;
 
     public function __construct(LockFactory $lockFactory)
     {
@@ -35,7 +38,7 @@ class FullTextIndexOptimizeTask implements TaskInterface
     /**
      * {@inheritdoc}
      *
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      */
     public function execute(): void
     {
