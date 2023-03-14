@@ -40,14 +40,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @var array
      */
-    protected const FORBIDDEN_NAMES = [
-        'abstract', 'class', 'data', 'folder', 'list', 'permissions', 'resource', 'dao', 'concrete', 'items',
-        'object', 'interface', 'default'
-    ];
-
-    /**
-     * @var array
-     */
     public $classDefinitions = [];
 
     /**
