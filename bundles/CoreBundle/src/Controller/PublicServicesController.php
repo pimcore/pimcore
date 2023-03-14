@@ -58,7 +58,7 @@ class PublicServicesController extends Controller
                     return new Response("HTTP/1.1 404 Not Found\n Requested thumbnail format is disabled", 404);
 
                 foreach($thumbnailFormats as $autoFormat => $autoFormatConfig) {
-                    if(!$autoFormatConfig['enabled'] && $requestedFileExtension == $autoFormat) {
+                    if($requestedFileExtension == $autoFormat && !$autoFormatConfig['enabled']) {
                         return new Response("HTTP/1.1 404 Not Found\nRequested thumbnail format is disabled from the config", 404);
                     }
                 }
