@@ -249,7 +249,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function deleteAction(Request $request)
     {
-        $user = User\AbstractUser::getById((int)$request->get('id'));
+        $user = User::getById((int)$request->get('id'));
 
         // only admins are allowed to delete admins and folders
         // because a folder might contain an admin user, so it is simply not allowed for users with the "users" permission
