@@ -24,8 +24,6 @@ use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
-use Pimcore\Model\Document\TypeDefinition\Loader\PrefixLoader as DocumentTypePrefixLoader;
-use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
@@ -126,6 +124,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('request_response.yaml');
         $loader->load('l10n.yaml');
         $loader->load('argument_resolvers.yaml');
+        $loader->load('class_resolvers.yaml');
         $loader->load('implementation_factories.yaml');
         $loader->load('documents.yaml');
         $loader->load('event_listeners.yaml');
@@ -146,6 +145,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
+        $this->configureClassResolvers($container, $config);
         $this->configureRouting($container, $config['routing']);
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
@@ -204,10 +204,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
                 'config' => $config['assets']['metadata']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class,
             ],
-            TypeLoader::class => [
-                'config' => $config['documents']['type_definitions'],
-                'prefixLoader' => DocumentTypePrefixLoader::class,
-            ],
         ];
 
         // read config and add map/prefix loaders if configured - makes sure only needed objects are built
@@ -234,6 +230,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             $service = $container->getDefinition($serviceId);
             $service->setArguments([$loaders]);
         }
+    }
+
+    private function configureClassResolvers(ContainerBuilder $container, array $config): void
+    {
+        $container->setParameter('pimcore.documents.classes.map', $config['documents']['type_definitions']['map']);
     }
 
     private function configureRouting(ContainerBuilder $container, array $config)

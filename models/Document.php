@@ -24,7 +24,6 @@ use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
-use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
@@ -265,9 +264,8 @@ class Document extends Element\AbstractElement
             }
 
             try {
-                // Getting Typeloader from container
-                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
-                $newDocument = $loader->build($document->getType());
+                // Getting classname from document resolver
+                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($document->getType());
             } catch(UnsupportedException $ex) {
                 trigger_deprecation(
                     'pimcore/pimcore',
@@ -287,9 +285,10 @@ class Document extends Element\AbstractElement
                         $className = $oldStyleClass;
                     }
                 }
-                /** @var Document $newDocument */
-                $newDocument = self::getModelFactory()->build($className);
             }
+
+            /** @var Document $newDocument */
+            $newDocument = self::getModelFactory()->build($className);
 
             if (get_class($document) !== get_class($newDocument)) {
                 $document = $newDocument;
