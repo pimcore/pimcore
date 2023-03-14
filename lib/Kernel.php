@@ -76,11 +76,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function getCacheDir(): string
     {
-        if (isset($_SERVER['APP_CACHE_DIR'])) {
-            return $_SERVER['APP_CACHE_DIR'].'/'.$this->environment;
-        }
-
-        return PIMCORE_SYMFONY_CACHE_DIRECTORY . '/' . $this->environment;
+        return ($_SERVER['APP_CACHE_DIR'] ?? PIMCORE_SYMFONY_CACHE_DIRECTORY) . '/' . $this->environment;
     }
 
     /**
