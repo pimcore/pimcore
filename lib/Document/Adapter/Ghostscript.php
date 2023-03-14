@@ -217,12 +217,12 @@ class Ghostscript extends Adapter
                 $asset = $this->asset;
             }
 
-            if(!$path || !file_exists($path)) {
-                if(self::isFileTypeSupported($asset->getFilename())) {
+            if (!$path || !file_exists($path)) {
+                if (self::isFileTypeSupported($asset->getFilename())) {
                     $path = $asset->getLocalFile();
                 }
 
-                if(empty($path)) {
+                if (empty($path)) {
                     throw new \Exception('Could not get local file for asset with id ' . $asset->getId());
                 }
             }
