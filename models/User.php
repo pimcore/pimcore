@@ -132,6 +132,9 @@ final class User extends User\UserRole
      */
     protected $twoFactorAuthentication;
 
+    /**
+     * OIDC Provider from pimcore/openid-connect
+     */
     protected ?string $provider = null;
 
     /**
