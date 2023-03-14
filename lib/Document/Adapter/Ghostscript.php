@@ -223,7 +223,7 @@ class Ghostscript extends Adapter
                 }
 
                 if(empty($path)) {
-                    throw new \Exception('Variable $path can\'t be null at this point.');
+                    throw new \Exception('Could not get local file for asset with id ' . $asset->getId());
                 }
             }
 
