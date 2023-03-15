@@ -99,7 +99,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     public function getItems(): array
     {
-        return $this->items;
+        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->items);
     }
 
     public function setObject(Concrete $object): static
@@ -406,7 +406,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     public function getGroupCollectionMappings(): array
     {
-        return $this->groupCollectionMapping;
+        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => $fieldsArray + $classificationStore->groupCollectionMapping);
     }
 
     public function setGroupCollectionMappings(array $groupCollectionMapping): void
@@ -427,7 +427,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     public function getGroupCollectionMapping(int $groupId): ?int
     {
-        return $this->groupCollectionMapping[$groupId] ?? null;
+        return $this->getGroupCollectionMappings()[$groupId] ?? null;
     }
 
     /**
@@ -435,11 +435,34 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      */
     public function getGroups(): array
     {
-        $activeGroups = $this->getActiveGroups();
+        return $this->getAllDataFromField(fn ($classificationStore, $fieldsArray) => array_merge(Classificationstore::getActiveGroupsWithConfig($classificationStore), $fieldsArray));
+    }
+
+    private function getAllDataFromField(callable $mergeFunction): array
+    {
+        $fieldsArray = $mergeFunction($this, []);
+        $object = $this->getObject();
+        while (($parent = Service::hasInheritableParentObject($object)) !== null) {
+            $fieldDefintions = $parent->getClass()->getFieldDefinitions();
+            foreach ($fieldDefintions as $key => $fd) {
+                if ($fd instanceof Model\DataObject\ClassDefinition\Data\Classificationstore) {
+                    $getter = 'get' . ucfirst($key);
+                    $fieldsArray = $mergeFunction($parent->$getter(), $fieldsArray);
+                }
+            }
+            $object = $parent;
+        }
+
+        return $fieldsArray;
+    }
+
+    private static function getActiveGroupsWithConfig(Classificationstore $classificationStore): array
+    {
         $groups = [];
+        $activeGroups = $classificationStore->getActiveGroups();
         foreach (array_keys($activeGroups) as $groupId) {
-            $groupConfig = $this->getGroupConfigById($groupId);
-            $groups[] = $this->createGroup($this, $groupConfig);
+            $groupConfig = $classificationStore->getGroupConfigById($groupId);
+            $groups[] = $classificationStore->createGroup($classificationStore, $groupConfig);
         }
 
         return $groups;

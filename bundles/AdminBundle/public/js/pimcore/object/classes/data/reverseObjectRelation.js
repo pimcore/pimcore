@@ -85,15 +85,21 @@ pimcore.object.classes.data.reverseObjectRelation = Class.create(pimcore.object.
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('height_explanation')
-            },
-            {
-                xtype: 'textfield',
-                width: 600,
-                fieldLabel: t("path_formatter_service"),
-                name: 'pathFormatterClass',
-                value: this.datax.pathFormatterClass
             }
         ]);
+
+
+        if(!this.isInCustomLayoutEditor()) {
+
+            this.specificPanel.add([
+                {
+                    xtype: 'textfield',
+                    width: 600,
+                    fieldLabel: t("path_formatter_service"),
+                    name: 'pathFormatterClass',
+                    value: this.datax.pathFormatterClass
+                }
+            ]);
 
         this.classCombo = new Ext.form.ComboBox({
             typeAhead: true,
@@ -105,65 +111,64 @@ pimcore.object.classes.data.reverseObjectRelation = Class.create(pimcore.object.
             fieldLabel: t('owner_class'),
             name: 'ownerClassName',
             value: this.datax.ownerClassName,
-            disabled: this.isInCustomLayoutEditor(),
-            forceSelection:true,
-            editable: true,
-            listeners: {
-                change: function(field, classNamevalue, oldValue) {
-                    this.datax.ownerClassName=classNamevalue;
-                }.bind(this)
-            }
-        });
 
-
-        this.fieldComboStore = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
-                reader: {
-                    type: 'json',
-                    rootProperty: "availableFields"
-                },
-                extraParams: {
-                    types: 'manyToManyObjectRelation,manyToOneRelation',
-                    name: this.datax.ownerClassName
+                forceSelection: true,
+                editable: true,
+                listeners: {
+                    change: function (field, classNamevalue, oldValue) {
+                        this.datax.ownerClassName = classNamevalue;
+                    }.bind(this)
                 }
-            },
-            fields: ['key', 'label'],
-            disabled: this.isInCustomLayoutEditor(),
-            autoLoad: false,
-            forceSelection:true
-        });
+            });
 
 
-        this.fieldCombo = new Ext.form.ComboBox({
-            fieldLabel: t('owner_field'),
-            value: this.datax.ownerFieldName,
-            store: this.fieldComboStore,
-            listWidth: 'auto',
-            displayField: 'key',
-            valueField: 'key' ,
-            lastQuery: '',
-            name: 'ownerFieldName',
-            editable: false,
-            disabled: this.isInCustomLayoutEditor(),
-            listeners: {
-                focus: function(){
-                    if (this.datax.ownerClassName != null) {
-                        this.fieldCombo.store.load({params:{name:this.datax.ownerClassName}});
+            this.fieldComboStore = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
+                    reader: {
+                        type: 'json',
+                        rootProperty: "availableFields"
+                    },
+                    extraParams: {
+                        types: 'manyToManyObjectRelation,manyToOneRelation',
+                        name: this.datax.ownerClassName
                     }
-                }.bind(this)
-            }
-        });
+                },
+                fields: ['key', 'label'],
+                autoLoad: false,
+                forceSelection: true
+            });
+
+
+            this.fieldCombo = new Ext.form.ComboBox({
+                fieldLabel: t('owner_field'),
+                value: this.datax.ownerFieldName,
+                store: this.fieldComboStore,
+                listWidth: 'auto',
+                displayField: 'key',
+                valueField: 'key',
+                lastQuery: '',
+                name: 'ownerFieldName',
+                editable: false,
+                listeners: {
+                    focus: function () {
+                        if (this.datax.ownerClassName != null) {
+                            this.fieldCombo.store.load({params: {name: this.datax.ownerClassName}});
+                        }
+                    }.bind(this)
+                }
+            });
 
         this.specificPanel.add(this.classCombo);
         this.specificPanel.add(this.fieldCombo);
 
-        this.specificPanel.add(new Ext.form.DisplayField({
-            hideLabel: true,
-            value: t('non_owner_description'),
-            cls: "pimcore_extra_label_bottom"
-        }));
+            this.specificPanel.add(new Ext.form.DisplayField({
+                hideLabel: true,
+                value: t('non_owner_description'),
+                cls: "pimcore_extra_label_bottom"
+            }));
+        }
 
         return this.layout;
     },

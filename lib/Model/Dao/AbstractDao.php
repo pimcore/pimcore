@@ -63,6 +63,14 @@ abstract class AbstractDao implements DaoInterface
     /**
      * @return string[]
      */
+    public function getPrimaryKey(string $table, bool $cache = true): array
+    {
+        return $this->getValidTableColumns($table, $cache, true, $primaryKeyColumnsOnly = false);
+    }
+
+    /**
+     * @return string[]
+     */
     public function getValidTableColumns(string $table, bool $cache = true, bool $primaryKeyColumnsOnly = false): array
     {
         $cacheKey = self::CACHEKEY . $table;
