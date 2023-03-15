@@ -112,7 +112,6 @@ class Dao extends Model\Dao\AbstractDao
             ->where('uuid = :uuid')
             ->setParameter('uuid', $uuid, Types::STRING);
 
-
         $result = $queryBuilder
             ->execute()
             ->fetchOne();
