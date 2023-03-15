@@ -297,10 +297,7 @@ class Definition extends Model\AbstractModel
         return $cd;
     }
 
-    /**
-     * @return bool
-     */
-    public function isForbiddenName()
+    public function isForbiddenName(): bool
     {
         return in_array($this->getKey(), self::FORBIDDEN_NAMES);
     }
