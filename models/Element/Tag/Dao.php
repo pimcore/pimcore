@@ -72,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            Helper::insertOrUpdate($this->db, 'tags', $data);
+            Helper::upsert($this->db, 'tags', $data, $this->getPrimaryKey('tags'));
 
             $lastInsertId = $this->db->lastInsertId();
             if (!$this->model->getId() && $lastInsertId) {
@@ -153,7 +153,7 @@ class Dao extends Model\Dao\AbstractDao
             'ctype' => $cType,
             'cid' => $cId,
         ];
-        Helper::insertOrUpdate($this->db, 'tags_assignment', $data);
+        Helper::upsert($this->db, 'tags_assignment', $data, $this->getPrimaryKey('tags_assignment'));
     }
 
     public function removeTagFromElement(string $cType, int $cId): void

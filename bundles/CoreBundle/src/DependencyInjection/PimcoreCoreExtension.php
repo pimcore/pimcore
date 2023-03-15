@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
-use Pimcore\DependencyInjection\ServiceCollection;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
@@ -25,17 +24,13 @@ use Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader;
 use Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypePrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
-use Pimcore\Model\Document\TypeDefinition\Loader\PrefixLoader as DocumentTypePrefixLoader;
-use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Factory;
-use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 /**
@@ -107,6 +102,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('request_response.yaml');
         $loader->load('l10n.yaml');
         $loader->load('argument_resolvers.yaml');
+        $loader->load('class_resolvers.yaml');
         $loader->load('implementation_factories.yaml');
         $loader->load('documents.yaml');
         $loader->load('event_listeners.yaml');
@@ -114,7 +110,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('templating_twig.yaml');
         $loader->load('profiler.yaml');
         $loader->load('migrations.yaml');
-        $loader->load('sitemaps.yaml');
         $loader->load('aliases.yaml');
         $loader->load('image_optimizers.yaml');
         $loader->load('maintenance.yaml');
@@ -126,11 +121,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
+        $this->configureClassResolvers($container, $config);
         $this->configureRouting($container, $config['routing']);
         $this->configureTranslations($container, $config['translations']);
         $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
-        $this->configureSitemaps($container, $config['sitemaps']);
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
@@ -172,10 +167,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
                 'config' => $config['assets']['metadata']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class,
             ],
-            TypeLoader::class => [
-                'config' => $config['documents']['type_definitions'],
-                'prefixLoader' => DocumentTypePrefixLoader::class,
-            ],
             AssetTypeLoader::class => [
                 'config' => $this->flattenConfigurationForTypeLoader($config['assets']['type_definitions']),
                 'prefixLoader' => AssetTypePrefixLoader::class,
@@ -200,16 +191,19 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             if ($cfg['config']['map']) {
                 $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
                 $classMapLoader->setPublic(false);
-
                 $classMapLoaderId = $serviceId . '.class_map_loader';
                 $container->setDefinition($classMapLoaderId, $classMapLoader);
-
                 $loaders[] = new Reference($classMapLoaderId);
             }
 
             $service = $container->getDefinition($serviceId);
             $service->setArguments([$loaders]);
         }
+    }
+
+    private function configureClassResolvers(ContainerBuilder $container, array $config): void
+    {
+        $container->setParameter('pimcore.documents.classes.map', $config['documents']['type_definitions']['map']);
     }
 
     private function configureRouting(ContainerBuilder $container, array $config): void
@@ -246,44 +240,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
 
         $definition->replaceArgument(1, $factoryMapping);
-    }
-
-    private function configureSitemaps(ContainerBuilder $container, array $config): void
-    {
-        $listener = $container->getDefinition(SitemapGeneratorListener::class);
-
-        $generators = [];
-        if (isset($config['generators']) && !empty($config['generators'])) {
-            $generators = $config['generators'];
-        }
-
-        uasort($generators, function (array $a, array $b) {
-            if ($a['priority'] === $b['priority']) {
-                return 0;
-            }
-
-            return $a['priority'] < $b['priority'] ? 1 : -1;
-        });
-
-        $mapping = [];
-        foreach ($generators as $generatorName => $generatorConfig) {
-            if (!$generatorConfig['enabled']) {
-                continue;
-            }
-
-            $mapping[$generatorName] = new Reference($generatorConfig['generator_id']);
-        }
-
-        // the locator is a symfony core service locator containing every generator
-        $locator = new Definition(ServiceLocator::class, [$mapping]);
-        $locator->setPublic(false);
-        $locator->addTag('container.service_locator');
-
-        // the collection decorates the locator as iterable in the defined key order
-        $collection = new Definition(ServiceCollection::class, [$locator, array_keys($mapping)]);
-        $collection->setPublic(false);
-
-        $listener->setArgument('$generators', $collection);
     }
 
     /**

@@ -158,6 +158,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         return $this->indexVersion;
     }
 
+    /**
+     * @return $this
+     */
     public function setIndexVersion(int $indexVersion): static
     {
         $this->indexVersion = $indexVersion;

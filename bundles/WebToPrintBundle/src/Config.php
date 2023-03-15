@@ -34,17 +34,24 @@ final class Config
         if (!self::$locationAwareConfigRepository) {
             $config = [];
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore_web_to_print');
+            $pimcoreContainerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
             if ($containerConfig['generalTool']) {
                 $config = [
                     self::CONFIG_ID => $containerConfig,
                 ];
             }
 
+            $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
+                $pimcoreContainerConfig,
+                self::CONFIG_ID,
+                'PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT',
+                'PIMCORE_WRITE_TARGET_WEB_TO_PRINT'
+            );
+
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_web_to_print',
-                $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/web-to-print',
-                'PIMCORE_WRITE_TARGET_WEB_TO_PRINT'
+                $storageConfig
             );
         }
 

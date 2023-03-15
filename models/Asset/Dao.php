@@ -163,7 +163,7 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'assets', $data);
+        Helper::upsert($this->db, 'assets', $data, $this->getPrimaryKey('assets'));
         if ($data['hasMetaData'] && count($metadataItems)) {
             foreach ($metadataItems as $metadataItem) {
                 $this->db->insert('assets_metadata', $metadataItem);
@@ -541,7 +541,7 @@ class Dao extends Model\Element\Dao
             'width' => $width,
             'height' => $height,
         ];
-        Helper::insertOrUpdate($this->db, 'assets_image_thumbnail_cache', $thumb);
+        Helper::upsert($this->db, 'assets_image_thumbnail_cache', $thumb, $this->getPrimaryKey('assets_image_thumbnail_cache'));
 
         if (isset(self::$thumbnailStatusCache[$assetId])) {
             $hash = $name . $filename;

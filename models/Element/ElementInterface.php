@@ -142,7 +142,7 @@ interface ElementInterface extends ModelInterface
     /**
      * @return $this
      */
-    public function setVersionCount(?int $versionCount): static;
+    public function setVersionCount(int $versionCount): static;
 
     public function getVersionCount(): int;
 

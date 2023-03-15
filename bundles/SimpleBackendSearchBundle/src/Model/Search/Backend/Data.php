@@ -125,6 +125,9 @@ class Data extends AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(?Data\Id $id): static
     {
         $this->id = $id;
@@ -137,6 +140,9 @@ class Data extends AbstractModel
         return $this->key;
     }
 
+    /**
+     * @return $this
+     */
     public function setKey(?string $key): static
     {
         $this->key = $key;
@@ -149,6 +155,9 @@ class Data extends AbstractModel
         return $this->index;
     }
 
+    /**
+     * @return $this
+     */
     public function setIndex(?int $index): static
     {
         $this->index = $index;
@@ -161,6 +170,9 @@ class Data extends AbstractModel
         return $this->fullPath;
     }
 
+    /**
+     * @return $this
+     */
     public function setFullPath(string $fullpath): static
     {
         $this->fullPath = $fullpath;
@@ -173,6 +185,9 @@ class Data extends AbstractModel
         return $this->type;
     }
 
+    /**
+     * @return $this
+     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -185,6 +200,9 @@ class Data extends AbstractModel
         return $this->subtype;
     }
 
+    /**
+     * @return $this
+     */
     public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
@@ -197,6 +215,9 @@ class Data extends AbstractModel
         return $this->creationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = $creationDate;
@@ -209,6 +230,9 @@ class Data extends AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
@@ -221,6 +245,9 @@ class Data extends AbstractModel
         return $this->userModification;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserModification(int $userModification): static
     {
         $this->userModification = $userModification;
@@ -233,6 +260,9 @@ class Data extends AbstractModel
         return $this->userOwner;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserOwner(int $userOwner): static
     {
         $this->userOwner = $userOwner;
@@ -250,6 +280,9 @@ class Data extends AbstractModel
         return (bool) $this->published;
     }
 
+    /**
+     * @return $this
+     */
     public function setPublished(bool $published): static
     {
         $this->published = $published;
@@ -262,6 +295,9 @@ class Data extends AbstractModel
         return $this->data;
     }
 
+    /**
+     * @return $this
+     */
     public function setData(string $data): static
     {
         $this->data = $data;
@@ -274,6 +310,9 @@ class Data extends AbstractModel
         return $this->properties;
     }
 
+    /**
+     * @return $this
+     */
     public function setProperties(string $properties): static
     {
         $this->properties = $properties;
@@ -281,6 +320,9 @@ class Data extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDataFromElement(Element\ElementInterface $element): static
     {
         $this->data = null;

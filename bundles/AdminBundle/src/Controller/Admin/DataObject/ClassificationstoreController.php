@@ -43,6 +43,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deleteCollectionAction(Request $request): JsonResponse
     {
+        $this->checkPermission('classificationstore');
+
         $id = $request->request->getInt('id');
 
         $configRelations = new Classificationstore\CollectionGroupRelation\Listing();
@@ -67,6 +69,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deleteCollectionRelationAction(Request $request): JsonResponse
     {
+        $this->checkPermission('classificationstore');
+
         $colId = $request->request->getInt('colId');
         $groupId = $request->request->getInt('groupId');
 
@@ -88,6 +92,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deleteRelationAction(Request $request): JsonResponse
     {
+        $this->checkPermission('classificationstore');
+
         $keyId = (int) $request->get('keyId');
         $groupId = (int) $request->get('groupId');
 
@@ -109,6 +115,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function deleteGroupAction(Request $request): JsonResponse
     {
+        $this->checkPermission('classificationstore');
+
         $id = $request->request->getInt('id');
 
         $config = Classificationstore\GroupConfig::getById($id);
@@ -128,6 +136,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function createGroupAction(Request $request): JsonResponse
     {
+        $this->checkPermission('classificationstore');
+
         $name = $request->get('name');
         $storeId = (int) $request->get('storeId');
         $config = Classificationstore\GroupConfig::getByName($name, $storeId);
@@ -155,6 +165,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function createStoreAction(Request $request): JsonResponse
     {
+        $this->checkPermission('classificationstore');
+
         $name = $request->get('name');
 
         $config = Classificationstore\StoreConfig::getByName($name);
@@ -181,6 +193,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
      */
     public function createCollectionAction(Request $request): JsonResponse
     {
+        $this->checkPermission('classificationstore');
+
         $name = $request->get('name');
         $storeId = (int) $request->get('storeId');
         $config = Classificationstore\CollectionConfig::getByName($name, $storeId);

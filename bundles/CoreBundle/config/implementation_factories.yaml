@@ -13,10 +13,6 @@ services:
     Pimcore\Model\Document\Editable\Loader\EditableLoader:
         public: true
 
-    # document data loader
-    Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader:
-        public: true
-
     # asset type loader
     Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader:
         public: true

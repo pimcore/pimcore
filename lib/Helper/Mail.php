@@ -414,9 +414,7 @@ CSS;
     /**
      * parses an email string in the following name/mail list annotation: 'Name 1 <address1@mail.com>, Name 2 <address2@mail.com>, ...'
      *
-     * @param string $emailString
-     *
-     * @return array
+     * @return list<array{email: string, name: string}>
      */
     public static function parseEmailAddressField(?string $emailString): array
     {

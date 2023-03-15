@@ -215,6 +215,7 @@ final class Config implements ArrayAccess
 
             $config = Cache::load($cacheKey);
             if (!$config) {
+                $config = [];
                 $cacheTags = ['website_config', 'system', 'config', 'output'];
 
                 $list = new Model\WebsiteSetting\Listing();

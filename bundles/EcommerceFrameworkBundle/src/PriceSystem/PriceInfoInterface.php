@@ -66,18 +66,18 @@ interface PriceInfoInterface
      *
      * @param PriceSystemInterface $priceSystem
      *
-     * @return PriceInfoInterface
+     * @return $this
      */
-    public function setPriceSystem(PriceSystemInterface $priceSystem): PriceInfoInterface;
+    public function setPriceSystem(PriceSystemInterface $priceSystem): static;
 
     /**
      * Relation to product
      *
      * @param CheckoutableInterface $product
      *
-     * @return PriceInfoInterface
+     * @return $this
      */
-    public function setProduct(CheckoutableInterface $product): PriceInfoInterface;
+    public function setProduct(CheckoutableInterface $product): static;
 
     /**
      * Returns product

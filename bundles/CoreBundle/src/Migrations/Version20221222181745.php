@@ -45,10 +45,10 @@ final class Version20221222181745 extends AbstractMigration
 
             $this->addSql("DELETE `object_classificationstore_data_{$tableNumber}`
             FROM `object_classificationstore_data_{$tableNumber}`
-            LEFT JOIN `$theTableGroups` ON object_classificationstore_data_{$tableNumber}.o_id = $theTableGroups.o_id AND
+            LEFT JOIN `$theTableGroups` ON object_classificationstore_data_{$tableNumber}.id = $theTableGroups.id AND
             object_classificationstore_data_{$tableNumber}.fieldname = $theTableGroups.fieldname AND
             object_classificationstore_data_{$tableNumber}.groupId = $theTableGroups.groupId
-            WHERE $theTableGroups.o_id IS NULL AND  $theTableGroups.fieldname IS NULL AND $theTableGroups.groupId IS NULL;");
+            WHERE $theTableGroups.id IS NULL AND  $theTableGroups.fieldname IS NULL AND $theTableGroups.groupId IS NULL;");
 
             $this->addSql("ALTER TABLE `$theTableGroups` MODIFY COLUMN groupId INT(11) UNSIGNED NOT NULL;");
             $this->addSql("ALTER TABLE `$theTableGroups`
@@ -58,10 +58,10 @@ final class Version20221222181745 extends AbstractMigration
 
             $theTableData = "object_classificationstore_data_$tableNumber";
             $this->addSql("ALTER TABLE `$theTableData` MODIFY COLUMN groupId INT(11) UNSIGNED NOT NULL;");
-            $this->addSql("CREATE INDEX `groupKeys` ON `$theTableData` (`o_id`, `fieldname`, `groupId`);");
+            $this->addSql("CREATE INDEX `groupKeys` ON `$theTableData` (`id`, `fieldname`, `groupId`);");
             $this->addSql("ALTER TABLE `$theTableData`
-            ADD CONSTRAINT `fk_object_classificationstore_data_{$tableNumber}__o_id__fieldname__groupId` FOREIGN KEY (`o_id`, `fieldname`, `groupId`)
-            REFERENCES `$theTableGroups` (`o_id`, `fieldname`, `groupId`)
+            ADD CONSTRAINT `fk_object_classificationstore_data_{$tableNumber}__id__fieldname__groupId` FOREIGN KEY (`id`, `fieldname`, `groupId`)
+            REFERENCES `$theTableGroups` (`id`, `fieldname`, `groupId`)
             ON DELETE CASCADE;");
         }
     }
@@ -80,7 +80,7 @@ final class Version20221222181745 extends AbstractMigration
             $this->addSql("ALTER TABLE `$theTableGroups` DROP FOREIGN KEY `fk_object_classificationstore_groups_{$tableNumber}__groupId`;");
 
             $theTableData = "object_classificationstore_data_$tableNumber";
-            $this->addSql("ALTER TABLE `$theTableData` DROP FOREIGN KEY `fk_object_classificationstore_data_{$tableNumber}__o_id__fieldname__groupId`;");
+            $this->addSql("ALTER TABLE `$theTableData` DROP FOREIGN KEY `fk_object_classificationstore_data_{$tableNumber}__id__fieldname__groupId`;");
             $this->addSql("ALTER TABLE `$theTableData` DROP INDEX `groupKeys`;");
 
             $this->addSql("ALTER TABLE `$theTableData` MODIFY COLUMN groupId BIGINT(20) NOT NULL;");
