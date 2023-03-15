@@ -27,6 +27,17 @@ use Pimcore\Db\PhpArrayFileTable;
  */
 final class Version20210323082921 extends AbstractMigration
 {
+    protected function load(string $filePath): array
+    {
+        if (file_exists($filePath)) {
+            $data = include($filePath);
+            if (is_array($data)) {
+                return $data;
+            }
+        }
+        return [];
+    }
+
     public function getDescription(): string
     {
         return '';
@@ -53,8 +64,7 @@ final class Version20210323082921 extends AbstractMigration
         // move data from PHP file to database
         $file = Config::locateConfigFile('website-settings.php');
         if (is_file($file)) {
-            $data = PhpArrayFileTable::get($file)->fetchAll();
-
+            $data = $this->load($file);
             foreach ($data as $row) {
                 if (!empty($row['id'])) {
                     if (!isset($row['language'])) {
