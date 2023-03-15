@@ -569,7 +569,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             DataObject\Service::removeElementFromSession('object', $object->getId());
 
-
             $layoutArray = json_decode($this->encodeJson($data['layout']), true);
             $this->classFieldDefinitions = json_decode($this->encodeJson($object->getClass()->getFieldDefinitions()), true);
             $this->injectValuesForCustomLayout($layoutArray);
@@ -596,7 +595,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         //TODO remove in Pimcore 11
-        if(isset($layout['childs'])) {
+        if (isset($layout['childs'])) {
             foreach ($layout['childs'] as &$child) {
                 if ($child['datatype'] === 'layout') {
                     $this->injectValuesForCustomLayout($child);

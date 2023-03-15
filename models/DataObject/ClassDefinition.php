@@ -1492,7 +1492,7 @@ final class ClassDefinition extends Model\AbstractModel
 
         foreach ($customLayouts as $customLayout) {
             $layoutDefinition = $customLayout->getLayoutDefinitions();
-            if($layoutDefinition === null) {
+            if ($layoutDefinition === null) {
                 continue;
             }
             $this->deleteDeletedDataComponentsInLayoutDefinition($layoutDefinition);
