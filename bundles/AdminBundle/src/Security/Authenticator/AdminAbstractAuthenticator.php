@@ -66,11 +66,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        if ($exception instanceof TooManyLoginAttemptsAuthenticationException) {
-            return new Response(strtr($exception->getMessageKey(), $exception->getMessageData()));
-        }
-
-        $url = $this->router->generate(AdminAbstractAuthenticator::PIMCORE_ADMIN_LOGIN, [
+        $requestParameters = [
             'auth_failed' => 'true',
         ];
 
@@ -79,7 +75,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
                 'too_many_attempts' => $this->translator->trans($exception->getMessageKey(), $exception->getMessageData(), 'admin'),
             ];
         }
-        $url = $this->router->generate(AdminLoginAuthenticator::PIMCORE_ADMIN_LOGIN, $requestParameters);
+        $url = $this->router->generate(self::PIMCORE_ADMIN_LOGIN, $requestParameters);
 
         return new RedirectResponse($url);
     }
@@ -116,8 +112,8 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         // as we authenticate statelessly (short lived sessions) the authentication is called for
         // every request. therefore we only redirect if we're on the login page
         if (!in_array($request->attributes->get('_route'), [
-            AdminAbstractAuthenticator::PIMCORE_ADMIN_LOGIN,
-            AdminAbstractAuthenticator::PIMCORE_ADMIN_LOGIN_CHECK,
+            self::PIMCORE_ADMIN_LOGIN,
+            self::PIMCORE_ADMIN_LOGIN_CHECK,
         ])) {
             return null;
         }
