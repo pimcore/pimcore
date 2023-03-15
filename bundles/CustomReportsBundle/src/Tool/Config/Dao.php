@@ -25,11 +25,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_CUSTOM_REPORTS';
-
     private const CONFIG_KEY = 'custom_reports';
 
     public function configure(): void
@@ -37,16 +32,18 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
         $definitions = \Pimcore::getContainer()->getParameter('pimcore_custom_reports.definitions');
 
-        $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($config, self::CONFIG_KEY, 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS');
-        $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($config, self::CONFIG_KEY, self::WRITE_TARGET);
+        $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
+            $config,
+            self::CONFIG_KEY,
+            'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_REPORTS',
+            'PIMCORE_WRITE_TARGET_CUSTOM_REPORTS'
+        );
 
         parent::configure([
             'containerConfig' => $definitions,
             'settingsStoreScope' => 'pimcore_custom_reports',
-            'storageDirectory' => $storageDirectory,
-            'writeTargetEnvVariableName' => self::WRITE_TARGET,
-            'writeTarget' => $writeTarget,
-            'options' => $config['storage'][self::CONFIG_KEY]['options'],
+            'storageDirectory' => $storageConfig,
+            'legacyConfigFile' => 'custom-reports.php',
         ]);
     }
 

@@ -206,7 +206,7 @@ pimcore.bundle.web2print.settings = Class.create({
                     }
                 ]
             });
-            
+
             this.layout = Ext.create('Ext.form.Panel', {
                 bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,

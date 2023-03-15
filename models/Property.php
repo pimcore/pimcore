@@ -133,9 +133,12 @@ final class Property extends AbstractModel
         return $this->type;
     }
 
+    /**
+     * @return $this
+     */
     public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
@@ -154,6 +157,9 @@ final class Property extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setData(mixed $data): static
     {
         if ($data instanceof ElementInterface) {
@@ -166,6 +172,9 @@ final class Property extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -207,6 +216,9 @@ final class Property extends AbstractModel
         return $this->getInherited();
     }
 
+    /**
+     * @return $this
+     */
     public function setCpath(?string $cpath): static
     {
         $this->cpath = $cpath;
@@ -214,9 +226,12 @@ final class Property extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setInherited(bool $inherited): static
     {
-        $this->inherited = (bool) $inherited;
+        $this->inherited = $inherited;
 
         return $this;
     }
@@ -226,9 +241,12 @@ final class Property extends AbstractModel
         return $this->inheritable;
     }
 
+    /**
+     * @return $this
+     */
     public function setInheritable(bool $inheritable): static
     {
-        $this->inheritable = (bool) $inheritable;
+        $this->inheritable = $inheritable;
 
         return $this;
     }

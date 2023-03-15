@@ -105,7 +105,7 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
 A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
 
 
-In the application, there has to be a route in (config/routing.yaml) and a controller action that handles the request, e.g. like the following:
+In the application, there has to be a route in (config/routes.yaml) and a controller action that handles the request, e.g. like the following:
 
 ```yaml
 # config/routes.yaml
@@ -113,7 +113,7 @@ In the application, there has to be a route in (config/routing.yaml) and a contr
 # important this has to be the first route in the file!
 asset_protect:
     path: /protected/{path}
-    defaults: { _controller: App\Controller\MyAssetController:protectedAssetAction }
+    defaults: { _controller: App\Controller\MyAssetController::protectedAssetAction }
     requirements:
         path: '.*'
 ```
@@ -125,18 +125,15 @@ namespace App\Controller;
 
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Asset;
-use Pimcore\Tool\Storage;
+use Pimcore\Model\Asset\Service;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\RouterInterface;
 
 class MyAssetController extends FrontendController
 {
-    public function protectedAssetAction(Request $request, RouterInterface $router): Response
+    public function protectedAssetAction(Request $request): Response
     {
         // IMPORTANT!
         // Add your code here to check permission!
@@ -153,30 +150,8 @@ class MyAssetController extends FrontendController
             }, 200, [
                 'Content-Type' => 'application/pdf',
             ]);
-        } elseif (preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
-            $storage = Storage::get('thumbnail');
-            $storagePath = urldecode($pathInfo);
-            if($storage->fileExists($storagePath)){
-                $stream = $storage->readStream($storagePath);
-                return new StreamedResponse(function () use ($stream) {
-                    fpassthru($stream);
-                }, 200, [
-                    'Content-Type' => $storage->mimeType($storagePath),
-                ]);
-            } else {
-                $pimcoreThumbnailRoute = '_pimcore_service_thumbnail';
-                $route = $router->getRouteCollection()->get($pimcoreThumbnailRoute);
-                $collection = new RouteCollection();
-                $collection->add($pimcoreThumbnailRoute, $route);
-                $matcher = new UrlMatcher($collection, $router->getContext());
-
-                try {
-                    $parameters = $matcher->matchRequest($request);
-                    return $this->forward('Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::thumbnailAction', $parameters);
-                } catch (\Exception $e) {
-                    // nothing to do
-                }
-            }
+        } else {
+            return Asset\Service::getStreamedResponseByUri($pathInfo);
         }
 
         throw new AccessDeniedHttpException('Access denied.');
