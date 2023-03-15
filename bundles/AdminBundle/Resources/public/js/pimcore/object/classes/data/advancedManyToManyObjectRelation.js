@@ -125,48 +125,47 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             });
 
             this.specificPanel.add(this.classCombo);
-        }
 
-        this.fieldStore = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
-                extraParams: {
-                    no_brick_columns: "true",
-                    gridtype: 'all',
-                    name: this.datax.allowedClassId
+            this.fieldStore = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
+                    extraParams: {
+                        no_brick_columns: "true",
+                        gridtype: 'all',
+                        name: this.datax.allowedClassId
+                    },
+                    reader: {
+                        type: 'json',
+                        rootProperty: "availableFields"
+                    }
                 },
-                reader: {
-                    type: 'json',
-                    rootProperty: "availableFields"
+                fields: ['key', 'label'],
+                autoLoad: false,
+                forceSelection: true,
+                listeners: {
+                    load: function () {
+                        this.fieldSelect.setValue(this.datax.visibleFields);
+                    }.bind(this)
+
                 }
-            },
-            fields: ['key', 'label'],
-            autoLoad: false,
-            forceSelection: true,
-            listeners: {
-                load: function () {
-                    this.fieldSelect.setValue(this.datax.visibleFields);
-                }.bind(this)
+            });
+            this.fieldStore.load();
 
-            }
-        });
-        this.fieldStore.load();
-
-        this.fieldSelect = new Ext.ux.form.MultiSelect({
-            name: "visibleFields",
-            triggerAction: "all",
-            editable: false,
-            fieldLabel: t("objectsMetadata_visible_fields"),
-            store: this.fieldStore,
-            value: this.datax.visibleFields,
-            displayField: "key",
-            valueField: "key",
-            width: 400,
-            height: 300
-        });
-        this.specificPanel.add(this.fieldSelect);
-
+            this.fieldSelect = new Ext.ux.form.MultiSelect({
+                name: "visibleFields",
+                triggerAction: "all",
+                editable: false,
+                fieldLabel: t("objectsMetadata_visible_fields"),
+                store: this.fieldStore,
+                value: this.datax.visibleFields,
+                displayField: "key",
+                valueField: "key",
+                width: 400,
+                height: 300
+            });
+            this.specificPanel.add(this.fieldSelect);
+        }
 
         this.stores = {};
         this.grids = {};

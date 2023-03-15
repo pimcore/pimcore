@@ -287,6 +287,8 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         });
 
         stylingItems.push(valueGrid);
+
+        return stylingItems;
     },
 
     applyData: function ($super) {

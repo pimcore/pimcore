@@ -588,7 +588,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $this->injectValuesForCustomLayout($child);
             } else {
                 foreach ($this->classFieldDefinitions[$child['name']] as $key => $value) {
-                    if ($child[$key] === null || $child[$key] === '' || (is_array($child[$key]) && empty($child[$key]))) {
+                    if (array_key_exists($key, $child) && ($child[$key] === null || $child[$key] === '' || (is_array($child[$key]) && empty($child[$key])))) {
                         $child[$key] = $value;
                     }
                 }
@@ -596,13 +596,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         //TODO remove in Pimcore 11
-        foreach ($layout['childs'] as &$child) {
-            if ($child['datatype'] === 'layout') {
-                $this->injectValuesForCustomLayout($child);
-            } else {
-                foreach ($this->classFieldDefinitions[$child['name']] as $key => $value) {
-                    if ($child[$key] === null || $child[$key] === '' || (is_array($child[$key]) && empty($child[$key]))) {
-                        $child[$key] = $value;
+        if(isset($layout['childs'])) {
+            foreach ($layout['childs'] as &$child) {
+                if ($child['datatype'] === 'layout') {
+                    $this->injectValuesForCustomLayout($child);
+                } else {
+                    foreach ($this->classFieldDefinitions[$child['name']] as $key => $value) {
+                        if (array_key_exists($key, $child) && ($child[$key] === null || $child[$key] === '' || (is_array($child[$key]) && empty($child[$key])))) {
+                            $child[$key] = $value;
+                        }
                     }
                 }
             }
