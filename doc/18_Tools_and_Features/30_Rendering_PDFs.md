@@ -46,7 +46,6 @@ class BlogController extends FrontendController
 ```
 ## Advanced example
 
-                                                    TODO: Add Gotenberg and Chromium adapters in the example
 
 ```php
 use Symfony\Component\HttpFoundation\Request;
@@ -78,6 +77,9 @@ class BlogController extends FrontendController
                 'appendLog' => true,
                 'enableDebugMode' => true
             ];
+        } elseif ($adapter instanceof Gotenberg) {
+            $params = Config::getWeb2PrintConfig();
+            $params = json_decode($params['gotenbergSettings'], true) ?: [];
         }
 
         return new Response(
