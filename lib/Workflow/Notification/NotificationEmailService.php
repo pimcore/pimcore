@@ -171,27 +171,24 @@ class NotificationEmailService extends AbstractNotificationService
 
     protected function getHtmlBody(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string
     {
-        // allow retrieval of inherited values
-        list($emailTemplate, $translatorLocaleBackup) = DataObject\Service::useInheritedValues(true, function () use ($subjectType, $subject, $workflow, $action, $deeplink, $language, $mailPath) {
-            $translatorLocaleBackup = null;
-            if ($this->translator instanceof LocaleAwareInterface) {
-                $translatorLocaleBackup = $this->translator->getLocale();
-                $this->translator->setLocale($language);
-            }
-
-            $emailTemplate = $this->template->render(
-                $mailPath, $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)
-            );
-
-            return [$emailTemplate, $translatorLocaleBackup];
-        });
-
+        $translatorLocaleBackup = null;
         if ($this->translator instanceof LocaleAwareInterface) {
-            //reset translation locale
-            $this->translator->setLocale($translatorLocaleBackup);
+            $translatorLocaleBackup = $this->translator->getLocale();
+            $this->translator->setLocale($language);
         }
 
-        return $emailTemplate;
+        try {
+            // allow retrieval of inherited values
+            return DataObject\Service::useInheritedValues(true, fn () => $this->template->render(
+                $mailPath,
+                $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language),
+            ));
+        } finally {
+            if ($this->translator instanceof LocaleAwareInterface) {
+                //reset translation locale
+                $this->translator->setLocale($translatorLocaleBackup);
+            }
+        }
     }
 
     protected function getNotificationEmailParameters(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $deeplink, string $language): array

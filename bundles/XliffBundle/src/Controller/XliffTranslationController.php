@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\XliffBundle\Controller;
 
-use Pimcore\Bundle\AdminBundle\Controller\Admin\TranslationController;
+use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\XliffBundle\ExportService\Exporter\ExporterInterface;
 use Pimcore\Bundle\XliffBundle\ExportService\ExportServiceInterface;
 use Pimcore\Bundle\XliffBundle\ImportDataExtractor\ImportDataExtractorInterface;
@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/translation")
  *
  */
-class XliffTranslationController extends TranslationController
+class XliffTranslationController extends AdminController
 {
     /**
      * @Route("/xliff-export", name="pimcore_bundle_xliff_translation_xliffexport", methods={"POST"})

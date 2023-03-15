@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Pimcore
@@ -14,17 +14,12 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tool;
+namespace Pimcore\Resolver;
 
-/**
- * @internal
- */
-class Cast
+interface ResolverInterface
 {
-    public static function castToClass(string $class, object $object): mixed
-    {
-        $class = ltrim($class, '\\');
-
-        return unserialize(preg_replace('/^O:\d+:"[^"]++"/', 'O:' . strlen($class) . ':"' . $class . '"', serialize($object)));
-    }
+    /**
+     * Returns FQCN of class
+     */
+    public function resolve(string $name): ?string;
 }

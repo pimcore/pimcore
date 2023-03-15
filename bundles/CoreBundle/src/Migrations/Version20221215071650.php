@@ -34,7 +34,7 @@ final class Version20221215071650 extends AbstractMigration
     public function up(Schema $schema): void
     {
         if (!SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle', 'pimcore')) {
-            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle', true, 'bool', 'pimcore');
+            SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\GlossaryBundle\\PimcoreGlossaryBundle', true, SettingsStore::TYPE_BOOLEAN, 'pimcore');
         }
 
         // updating description  of permissions

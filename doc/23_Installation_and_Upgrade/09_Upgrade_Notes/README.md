@@ -84,7 +84,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is
   removed. Instead, please pass the arguments as an associative array (eg.`getNavigation($args)`.For details, please see [#12310](https://github.com/pimcore/pimcore/issues/12310)
 - [Flysystem] Bumped `league/flysystem-bundle` minimum requirement to ^3.0 (which introduces `directoryExists()`,`has()` methods and fixes support for `directory_visibility` configuration option). Please bump the Flysystem Adapters requirement accordingly to `^3.0` in your project `composer.json`. 
- NB: [Visibility](https://flysystem.thephpleague.com/docs/visibility/) permissions were specified as `0644` for files and `0755` for directories, are now using the more simplified `public/private` options which are translated respectively into `0600` and `0744`. 
+ NB: [Visibility](https://flysystem.thephpleague.com/docs/visibility/) permissions were specified as `0644` for files and `0755` for directories, are now both using the more simplified `public` option, which is translated into `0744`. 
 - [AdminBundle] Removed deprecated methods `getTranslator()`, `getBundleManager()` and `getTokenResolver()` from the `Pimcore\Bundle\AdminBundle\Controller\AdminController`
 - [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
 - [Sitemap] Bumped minimum requirement of `presta\sitemap-bundle` to `^3.3`, dropped support for `v2` and removed related BC Layer.
@@ -216,6 +216,7 @@ pimcore:
 - [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been removed.
 - [Authentication] Deprecated method `Pimcore\Tool\Authentication::authenticatePlaintext()` has been removed.
 - [DataObjects][CSV Export] Changed encoding of table data-types to `json_encode` from `base64_encoded`.
+- [DataObjects] Added global language switcher for localized fields
 - Marked `Pimcore\Model\User\AbstractUser` and `Pimcore\Model\User\UserRole` classes as abstract.
 - [Security] Admin Login Events
   - Removed `AdminEvents::LOGIN_CREDENTIALS` event.
@@ -230,6 +231,14 @@ pimcore_seo:
 - [Page] Removed the functionality to input `metadata` html tags in Settings section of the document.
 - [Asset] Image thumbnails: Removed support for using custom callbacks for thumbnail transformations.
 - Marked `Pimcore\File` as internal. This class shouldn't be used anymore, use `Symfony\Component\Filesystem` instead.
+- [Config] Recommended and default format for storing the valid languages in `system.yaml` is now an array, for example:
+```yaml
+pimcore:
+    general:
+        valid_languages:
+            - en
+            - de
+```
 
 ## 10.6.0
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
@@ -269,6 +278,9 @@ pimcore_seo:
 - [Document] The `HTML-Tags` (document metadata) field under SEO & Settings panel is now only visible and editable by Admin users`.
 - [Thumbnails] Using Callable in Asset thumbnail transformations is deprecated and will not work in Pimcore 11.
 - Marked `Pimcore\Model\User\AbstractUser` and `Pimcore\Model\User\UserRole` classes as abstract via php doc. It will be natively abstract in Pimcore 11.
+- [Bundles] Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in the `PimcoreBundleInterface`. These methods will be provided by the new `PimcoreBundleAdminSupportInterface`.
+- [Web2print] Deprecated `HeadlessChrome` processor, it will be removed and replaced by `Chromium` processor (which doesn't require NodeJS to work) in Pimcore 11.
+- [Database] Deprecated `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).

@@ -50,6 +50,9 @@ class WorkflowState extends Model\AbstractModel
         return $this->cid;
     }
 
+    /**
+     * @return $this
+     */
     public function setCid(int $cid): static
     {
         $this->cid = $cid;
@@ -62,6 +65,9 @@ class WorkflowState extends Model\AbstractModel
         return $this->ctype;
     }
 
+    /**
+     * @return $this
+     */
     public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
@@ -74,6 +80,9 @@ class WorkflowState extends Model\AbstractModel
         return $this->place;
     }
 
+    /**
+     * @return $this
+     */
     public function setPlace(string $place): static
     {
         $this->place = $place;
@@ -86,6 +95,9 @@ class WorkflowState extends Model\AbstractModel
         return $this->workflow;
     }
 
+    /**
+     * @return $this
+     */
     public function setWorkflow(string $workflow): static
     {
         $this->workflow = $workflow;

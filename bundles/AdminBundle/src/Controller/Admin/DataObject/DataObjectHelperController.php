@@ -507,7 +507,7 @@ class DataObjectHelperController extends AdminController
 
         $frontendLanguages = Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), $config['general']['valid_languages']);
         if ($frontendLanguages) {
-            $language = explode(',', $frontendLanguages)[0];
+            $language = $frontendLanguages[0];
         } else {
             $language = $request->getLocale();
         }

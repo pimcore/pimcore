@@ -23,7 +23,6 @@ use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Schedule\Task;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -184,8 +183,10 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
                     $createValues['contentMasterDocumentId'] = $request->get('inheritanceSource');
                 }
 
-                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
-                $document = $loader->build($request->get('type'));
+                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($request->get('type'));
+
+                /** @var Document $document */
+                $document = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
 
                 $document = $document::create($parentDocument->getId(), $createValues);
 

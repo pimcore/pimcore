@@ -140,6 +140,9 @@ class Log extends Model\AbstractModel
      */
     protected ?string $error = null;
 
+    /**
+     * @return $this
+     */
     public function setDocumentId(int $id): static
     {
         $this->documentId = $id;
@@ -147,6 +150,9 @@ class Log extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setRequestUri(string $requestUri): static
     {
         $this->requestUri = $requestUri;
@@ -172,13 +178,19 @@ class Log extends Model\AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
-        $this->id = (int)$id;
+        $this->id = $id;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setSubject(string $subject): static
     {
         $this->subject = $subject;
@@ -230,6 +242,9 @@ class Log extends Model\AbstractModel
         return $this->documentId;
     }
 
+    /**
+     * @return $this
+     */
     public function setParams(string|array $params): static
     {
         $this->params = $params;
@@ -300,7 +315,9 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     *  Checks if a html log file exits and sets $this->emailLogExistsHtml to 0 or 1
+     * Checks if a html log file exits and sets $this->emailLogExistsHtml to 0 or 1
+     *
+     * @return $this
      */
     public function setEmailLogExistsHtml(): static
     {
@@ -323,6 +340,8 @@ class Log extends Model\AbstractModel
 
     /**
      * Checks if a text log file exits and sets $this->emailLogExistsText to 0 or 1
+     *
+     * @return $this
      */
     public function setEmailLogExistsText(): static
     {
@@ -365,10 +384,8 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the content of the html log file
-     *
-     * @return string | false
      */
-    public function getHtmlLog(): bool|string
+    public function getHtmlLog(): string|false
     {
         if ($this->getEmailLogExistsHtml()) {
             $storage = Storage::get('email_log');
@@ -381,10 +398,8 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the content of the text log file
-     *
-     * @return string | false
      */
-    public function getTextLog(): bool|string
+    public function getTextLog(): string|false
     {
         if ($this->getEmailLogExistsText()) {
             $storage = Storage::get('email_log');
@@ -429,6 +444,9 @@ class Log extends Model\AbstractModel
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setTo(?string $to): static
     {
         $this->to = $to;
@@ -446,6 +464,9 @@ class Log extends Model\AbstractModel
         return $this->to;
     }
 
+    /**
+     * @return $this
+     */
     public function setCc(?string $cc): static
     {
         $this->cc = $cc;
@@ -463,6 +484,9 @@ class Log extends Model\AbstractModel
         return $this->cc;
     }
 
+    /**
+     * @return $this
+     */
     public function setBcc(?string $bcc): static
     {
         $this->bcc = $bcc;
@@ -480,6 +504,9 @@ class Log extends Model\AbstractModel
         return $this->bcc;
     }
 
+    /**
+     * @return $this
+     */
     public function setFrom(string $from): static
     {
         $this->from = $from;
@@ -497,6 +524,9 @@ class Log extends Model\AbstractModel
         return $this->from;
     }
 
+    /**
+     * @return $this
+     */
     public function setReplyTo(string $replyTo): static
     {
         $this->replyTo = $replyTo;
@@ -514,6 +544,9 @@ class Log extends Model\AbstractModel
         return $this->replyTo;
     }
 
+    /**
+     * @return $this
+     */
     public function setBodyHtml(string $html): static
     {
         $this->bodyHtml = $html;
@@ -531,6 +564,9 @@ class Log extends Model\AbstractModel
         return $this->bodyHtml;
     }
 
+    /**
+     * @return $this
+     */
     public function setBodyText(string $text): static
     {
         $this->bodyText = $text;
