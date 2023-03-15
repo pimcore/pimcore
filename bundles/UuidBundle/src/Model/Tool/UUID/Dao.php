@@ -15,9 +15,9 @@
 
 namespace Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 
+use Doctrine\DBAL\Types\Types;
 use Exception;
 use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
-use Doctrine\DBAL\Types\Types;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 
