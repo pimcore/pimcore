@@ -80,45 +80,46 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
     },
 
     initSelection: function () {
-        this.specificPanel.add([
-            new Ext.ux.form.MultiSelect({
-                name: "allowedTypes",
-                triggerAction: "all",
-                editable: false,
-                fieldLabel: t("allowed_types"),
-                store: this.store,
-                value: this.datax.allowedTypes,
-                displayField: "key",
-                valueField: "key",
-                width: 400,
-                height: 100
-            }), {
-                xtype: "checkbox",
-                fieldLabel: t("lazy_loading"),
-                name: "lazyLoading",
-                checked: this.datax.lazyLoading
-            },{
-                xtype: "numberfield",
-                fieldLabel: t("maximum_items"),
-                name: "maxItems",
-                value: this.datax.maxItems,
-                minValue: 0
-            },
-            {
-                xtype: "checkbox",
-                fieldLabel: t("disallow_addremove"),
-                name: "disallowAddRemove",
-                checked: this.datax.disallowAddRemove
-            },
-            {
-                xtype: "checkbox",
-                fieldLabel: t("disallow_reorder"),
-                name: "disallowReorder",
-                checked: this.datax.disallowReorder
-            }
-        ]);
-
-        this.specificPanel.updateLayout();
+        if(!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add([
+                new Ext.ux.form.MultiSelect({
+                    name: "allowedTypes",
+                    triggerAction: "all",
+                    editable: false,
+                    fieldLabel: t("allowed_types"),
+                    store: this.store,
+                    value: this.datax.allowedTypes,
+                    displayField: "key",
+                    valueField: "key",
+                    width: 400,
+                    height: 100
+                }), {
+                    xtype: "checkbox",
+                    fieldLabel: t("lazy_loading"),
+                    name: "lazyLoading",
+                    checked: this.datax.lazyLoading
+                }, {
+                    xtype: "numberfield",
+                    fieldLabel: t("maximum_items"),
+                    name: "maxItems",
+                    value: this.datax.maxItems,
+                    minValue: 0
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("disallow_addremove"),
+                    name: "disallowAddRemove",
+                    checked: this.datax.disallowAddRemove
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("disallow_reorder"),
+                    name: "disallowReorder",
+                    checked: this.datax.disallowReorder
+                }
+            ]);
+            this.specificPanel.updateLayout();
+        }
 
         this.standardSettingsForm.add(
             [

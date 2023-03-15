@@ -60,6 +60,10 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
+        if(this.isInCustomLayoutEditor()) {
+            return [];
+        }
+
         var defaultDateConfig = {
             fieldLabel: t("default_value"),
             name: "defaultValue",

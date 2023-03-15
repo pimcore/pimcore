@@ -56,7 +56,7 @@ pimcore.object.classes.data.targetGroup = Class.create(pimcore.object.classes.da
 
         $super();
 
-        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
+        const nameField = this.layout.getComponent("standardSettings").getComponent("name");
         nameField.disable();
 
         return this.layout;
