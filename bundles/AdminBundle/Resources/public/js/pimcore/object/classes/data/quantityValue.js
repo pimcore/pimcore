@@ -64,64 +64,65 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('width_explanation')
-            },
-            {
-                xtype: "numberfield",
-                fieldLabel: t("default_value"),
-                name: "defaultValue",
-                value: this.datax.defaultValue
-            },{
-                xtype: 'combobox',
-                name: 'defaultUnit',
-                triggerAction: "all",
-                editable: true,
-                typeAhead: true,
-                selectOnFocus: true,
-                forceSelection: true,
-                fieldLabel: t('default_unit'),
-                store: this.store,
-                value: this.datax.defaultUnit,
-                displayField: 'abbreviation',
-                valueField: 'id',
-                width: 275
-            },{
-                xtype: 'textfield',
-                width: 600,
-                fieldLabel: t("default_value_generator"),
-                labelWidth: 140,
-                name: 'defaultValueGenerator',
-                value: this.datax.defaultValueGenerator
-            },
-            {
-                xtype: "panel",
-                bodyStyle: "padding-top: 3px",
-                style: "margin-bottom: 10px",
-                html: '<span class="object_field_setting_warning">' + t('inherited_default_value_warning') + '</span>'
-            },
-            {
-                xtype: 'multiselect',
-                queryDelay: 0,
-                triggerAction: 'all',
-                resizable: true,
-                width: 600,
-                fieldLabel: t("valid_quantityValue_units"),
-                typeAhead: true,
-                name: 'validUnits',
-                value: this.datax.validUnits,
-                store: this.store,
-                displayField: 'abbreviation',
-                valueField: 'id'
-            },
-            {
-                xtype: "checkbox",
-                name: "autoConvert",
-                fieldLabel: t("auto_convert"),
-                checked: this.datax.autoConvert
             }
         ]);
 
         if (!this.inCustomLayoutEditor) {
             this.specificPanel.add([
+
+                {
+                    xtype: "numberfield",
+                    fieldLabel: t("default_value"),
+                    name: "defaultValue",
+                    value: this.datax.defaultValue
+                },{
+                    xtype: 'combobox',
+                    name: 'defaultUnit',
+                    triggerAction: "all",
+                    editable: true,
+                    typeAhead: true,
+                    selectOnFocus: true,
+                    forceSelection: true,
+                    fieldLabel: t('default_unit'),
+                    store: this.store,
+                    value: this.datax.defaultUnit,
+                    displayField: 'abbreviation',
+                    valueField: 'id',
+                    width: 275
+                },{
+                    xtype: 'textfield',
+                    width: 600,
+                    fieldLabel: t("default_value_generator"),
+                    labelWidth: 140,
+                    name: 'defaultValueGenerator',
+                    value: this.datax.defaultValueGenerator
+                },
+                {
+                    xtype: "panel",
+                    bodyStyle: "padding-top: 3px",
+                    style: "margin-bottom: 10px",
+                    html: '<span class="object_field_setting_warning">' + t('inherited_default_value_warning') + '</span>'
+                },
+                {
+                    xtype: 'multiselect',
+                    queryDelay: 0,
+                    triggerAction: 'all',
+                    resizable: true,
+                    width: 600,
+                    fieldLabel: t("valid_quantityValue_units"),
+                    typeAhead: true,
+                    name: 'validUnits',
+                    value: this.datax.validUnits,
+                    store: this.store,
+                    displayField: 'abbreviation',
+                    valueField: 'id'
+                },
+                {
+                    xtype: "checkbox",
+                    name: "autoConvert",
+                    fieldLabel: t("auto_convert"),
+                    checked: this.datax.autoConvert
+                },
                 {
                     xtype: "numberfield",
                     fieldLabel: t("decimal_size"),

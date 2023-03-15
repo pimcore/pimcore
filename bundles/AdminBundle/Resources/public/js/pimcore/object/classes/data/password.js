@@ -62,105 +62,6 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
 
         $super();
 
-        var algorithmsProxy = {
-            type: 'ajax',
-            url: Routing.generate('pimcore_admin_settings_getavailablealgorithms'),
-            reader: {
-                type: 'json',
-                totalProperty:'total',
-                successProperty:'success',
-                rootProperty: "data"
-            }
-        }
-
-        this.algorithmsStore = new Ext.data.Store({
-            proxy: algorithmsProxy,
-            fields: [
-                {name:'key'},
-                {name:'value'}
-            ],
-            listeners: {
-	            load: function() {
-	                if (this.datax.restrictTo) {
-	                    this.possibleOptions.setValue(this.datax.restrictTo);
-	                }
-	            }.bind(this)
-            }
-        });
-
-        var saltCombo = new Ext.form.field.ComboBox({
-            xtype: "combo",
-            width: 300,
-            fieldLabel: t("saltlocation"),
-            hidden: this.datax.algorithm == "password_hash",
-            itemId: "saltlocation",
-            name: "saltlocation",
-            value: this.datax.saltlocation || 'back',
-            triggerAction: 'all',
-            lazyRender:true,
-            mode: 'local',
-            store: new Ext.data.ArrayStore({
-                id: 0,
-                fields: [
-                    'value',
-                    'key'
-                ],
-                data: this.statics.CONFIG_DATA
-            }),
-            valueField: 'value',
-            displayField: 'key',
-            disabled: this.isInCustomLayoutEditor()
-        });
-
-        var salt =  new Ext.form.field.Text({
-            xtype: 'textfield',
-            fieldLabel: t("salt"),
-            hidden: this.datax.algorithm == "password_hash",
-            width: 300,
-            itemId: "salt",
-            name: "salt",
-            value: this.datax.salt,
-            emptyText: '',
-            disabled: this.isInCustomLayoutEditor()
-        });
-
-        var handleSaltFieldsVisibility = function(algorithm) {
-            if (algorithm == "password_hash") {
-                saltCombo.hide();
-                salt.hide();
-            } else {
-                saltCombo.show();
-                salt.show();
-            }
-        };
-
-        var algorithmsCombo = new Ext.form.field.ComboBox({
-            xtype: "combo",
-            width: 300,
-            fieldLabel: t("algorithm"),
-            itemId: "algorithm",
-            name: "algorithm",
-            value: this.datax.algorithm || 'password_hash',
-            triggerAction: 'all',
-            lazyRender:true,
-            mode: 'local',
-            store: this.algorithmsStore,
-            valueField: 'value',
-            displayField: 'key',
-            editable: false,
-            disabled: this.isInCustomLayoutEditor(),
-            listeners: {
-                select: function (combo, record, index) {
-                    handleSaltFieldsVisibility(record.data.key);
-                }.bind(this),
-
-                render: function(combo) {
-                    handleSaltFieldsVisibility(combo.getValue());
-                }.bind(this)
-            }
-        });
-
-
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
@@ -173,21 +74,124 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('width_explanation')
-            },
-            {
-                xtype: "numberfield",
-                fieldLabel: t("min_length"),
-                name: "minimumLength",
-                minValue: 0,
-                value: this.datax.minimumLength
-            },
-            algorithmsCombo,
-            salt,
-            saltCombo
-
+            }
         ]);
 
-        this.algorithmsStore.load();
+        if(!this.isInCustomLayoutEditor()) {
+            const algorithmsProxy = {
+                type: 'ajax',
+                url: Routing.generate('pimcore_admin_settings_getavailablealgorithms'),
+                reader: {
+                    type: 'json',
+                    totalProperty: 'total',
+                    successProperty: 'success',
+                    rootProperty: "data"
+                }
+            }
+
+            this.algorithmsStore = new Ext.data.Store({
+                proxy: algorithmsProxy,
+                fields: [
+                    {name: 'key'},
+                    {name: 'value'}
+                ],
+                listeners: {
+                    load: function () {
+                        if (this.datax.restrictTo) {
+                            this.possibleOptions.setValue(this.datax.restrictTo);
+                        }
+                    }.bind(this)
+                }
+            });
+
+            const saltCombo = new Ext.form.field.ComboBox({
+                xtype: "combo",
+                width: 300,
+                fieldLabel: t("saltlocation"),
+                hidden: this.datax.algorithm == "password_hash",
+                itemId: "saltlocation",
+                name: "saltlocation",
+                value: this.datax.saltlocation || 'back',
+                triggerAction: 'all',
+                lazyRender: true,
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: [
+                        'value',
+                        'key'
+                    ],
+                    data: this.statics.CONFIG_DATA
+                }),
+                valueField: 'value',
+                displayField: 'key',
+                disabled: this.isInCustomLayoutEditor()
+            });
+
+            const salt = new Ext.form.field.Text({
+                xtype: 'textfield',
+                fieldLabel: t("salt"),
+                hidden: this.datax.algorithm == "password_hash",
+                width: 300,
+                itemId: "salt",
+                name: "salt",
+                value: this.datax.salt,
+                emptyText: '',
+                disabled: this.isInCustomLayoutEditor()
+            });
+
+            const handleSaltFieldsVisibility = function (algorithm) {
+                if (algorithm == "password_hash") {
+                    saltCombo.hide();
+                    salt.hide();
+                } else {
+                    saltCombo.show();
+                    salt.show();
+                }
+            };
+
+            const algorithmsCombo = new Ext.form.field.ComboBox({
+                xtype: "combo",
+                width: 300,
+                fieldLabel: t("algorithm"),
+                itemId: "algorithm",
+                name: "algorithm",
+                value: this.datax.algorithm || 'password_hash',
+                triggerAction: 'all',
+                lazyRender: true,
+                mode: 'local',
+                store: this.algorithmsStore,
+                valueField: 'value',
+                displayField: 'key',
+                editable: false,
+                listeners: {
+                    select: function (combo, record, index) {
+                        handleSaltFieldsVisibility(record.data.key);
+                    }.bind(this),
+
+                    render: function (combo) {
+                        handleSaltFieldsVisibility(combo.getValue());
+                    }.bind(this)
+                }
+            });
+
+
+            this.specificPanel.add([
+                {
+                    xtype: "numberfield",
+                    fieldLabel: t("min_length"),
+                    name: "minimumLength",
+                    minValue: 0,
+                    value: this.datax.minimumLength
+                },
+                algorithmsCombo,
+                salt,
+                saltCombo
+
+            ]);
+
+            this.algorithmsStore.load();
+        }
 
         return this.layout;
     },

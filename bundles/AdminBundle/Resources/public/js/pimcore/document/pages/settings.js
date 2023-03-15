@@ -235,7 +235,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                             method: "POST",
                                             params: {
                                                 id: this.document.id,
-                                                path: el.getValue()
+                                                path: pimcore.helpers.sanitizeUrlSlug(el.getValue())
                                             },
                                             success: function (res) {
                                                 res = Ext.decode(res.responseText);
@@ -249,6 +249,10 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                                 }
                                             }
                                         });
+                                    }.bind(this),
+                                    "change": function (el) {
+                                        const sanitizedValue = pimcore.helpers.sanitizeUrlSlug(el.getValue());
+                                        el.setValue(sanitizedValue);
                                     }.bind(this)
                                 }
                             }

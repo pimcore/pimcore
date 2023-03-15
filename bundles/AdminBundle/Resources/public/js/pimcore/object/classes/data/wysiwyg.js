@@ -64,7 +64,7 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-        return [
+        const stylingItems = [
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -86,14 +86,21 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('height_explanation')
-            },
+            }
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            return stylingItems;
+        }
+
+        return stylingItems.concat([
             {
                 xtype: "textarea",
                 fieldLabel: t("editor_configuration"),
                 name: "toolbarConfig",
                 value: datax.toolbarConfig,
-                width:400,
-                height:150
+                width: 400,
+                height: 150
             },
             {
                 xtype: "checkbox",
@@ -108,7 +115,7 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
                 value: datax.maxCharacters
             }
 
-        ];
+        ]);
     },
 
     applySpecialData: function(source) {

@@ -60,22 +60,29 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-        var specificItems = [
-            {
-                xtype: "textfield",
-                fieldLabel: t("default_value"),
-                name: "defaultValue",
-                value: datax.defaultValue,
-                width: 600
-            },
-            {
-                xtype: 'textfield',
-                width: 600,
-                fieldLabel: t("default_value_generator"),
-                labelWidth: 140,
-                name: 'defaultValueGenerator',
-                value: datax.defaultValueGenerator
-            },
+        let specificItems = [];
+
+        if (!this.isInCustomLayoutEditor()) {
+            specificItems = [
+                {
+                    xtype: "textfield",
+                    fieldLabel: t("default_value"),
+                    name: "defaultValue",
+                    value: datax.defaultValue,
+                    width: 600
+                },
+                {
+                    xtype: 'textfield',
+                    width: 600,
+                    fieldLabel: t("default_value_generator"),
+                    labelWidth: 140,
+                    name: 'defaultValueGenerator',
+                    value: datax.defaultValueGenerator
+                }
+            ];
+        }
+
+        specificItems = specificItems.concat([
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -93,7 +100,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 name: "showCharCount",
                 value: datax.showCharCount
             }
-        ];
+        ]);
 
         if (!this.isInCustomLayoutEditor() && !this.isInClassificationStoreEditor()) {
 

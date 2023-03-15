@@ -76,6 +76,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     private array $metaData = [];
 
+    private array $classFieldDefinitions = [];
+
     /**
      * @Route("/tree-get-childs-by-id", name="treegetchildsbyid", methods={"GET"})
      *
@@ -575,10 +577,45 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             DataObject\Service::removeElementFromSession('object', $object->getId());
 
+            $layoutArray = json_decode($this->encodeJson($data['layout']), true);
+            $this->classFieldDefinitions = json_decode($this->encodeJson($object->getClass()->getFieldDefinitions()), true);
+            $this->injectValuesForCustomLayout($layoutArray);
+            $data['layout'] = $layoutArray;
+
             return $this->adminJson($data);
         }
 
         throw $this->createAccessDeniedHttpException();
+    }
+
+    private function injectValuesForCustomLayout(array &$layout): void
+    {
+        foreach ($layout['children'] as &$child) {
+            if ($child['datatype'] === 'layout') {
+                $this->injectValuesForCustomLayout($child);
+            } else {
+                foreach ($this->classFieldDefinitions[$child['name']] as $key => $value) {
+                    if (array_key_exists($key, $child) && ($child[$key] === null || $child[$key] === '' || (is_array($child[$key]) && empty($child[$key])))) {
+                        $child[$key] = $value;
+                    }
+                }
+            }
+        }
+
+        //TODO remove in Pimcore 11
+        if (isset($layout['childs'])) {
+            foreach ($layout['childs'] as &$child) {
+                if ($child['datatype'] === 'layout') {
+                    $this->injectValuesForCustomLayout($child);
+                } else {
+                    foreach ($this->classFieldDefinitions[$child['name']] as $key => $value) {
+                        if (array_key_exists($key, $child) && ($child[$key] === null || $child[$key] === '' || (is_array($child[$key]) && empty($child[$key])))) {
+                            $child[$key] = $value;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
