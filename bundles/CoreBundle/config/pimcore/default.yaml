@@ -141,8 +141,6 @@ pimcore:
                 unknown:
                     class: \Pimcore\Model\Asset\Unknown
                     mapping: [ "/\\.stp$/" ]
-            prefixes:
-                - \Pimcore\Model\Asset\
 
     objects:
         class_definitions:

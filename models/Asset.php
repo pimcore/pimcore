@@ -251,8 +251,8 @@ class Asset extends Element\AbstractElement
             try {
                 $asset->getDao()->getById($id);
 
-                $loader = \Pimcore::getContainer()->get(Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader::class);
-                $newAsset = $loader->build($asset->getType());
+                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($asset->getType());
+                $newAsset = self::getModelFactory()->build($className);
 
                 if (get_class($asset) !== get_class($newAsset)) {
                     $asset = $newAsset;
@@ -341,9 +341,10 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        $loader = \Pimcore::getContainer()->get(Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader::class);
+        $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+
         /** @var Asset $asset */
-        $asset = $loader->build($type);
+        $asset = self::getModelFactory()->build($className);
         $asset->setParentId($parentId);
         self::checkCreateData($data);
         $asset->setValues($data);
@@ -707,8 +708,9 @@ class Asset extends Element\AbstractElement
                 }
 
                 // not only check if the type is set but also if the implementation can be found
-                $loader = \Pimcore::getContainer()->get(Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader::class);
-                if (!$loader->supports($this->getType())) {
+                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+
+                if (!self::getModelFactory()->supports($className)) {
                     throw new Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
             }

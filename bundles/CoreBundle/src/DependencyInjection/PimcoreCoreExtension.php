@@ -20,8 +20,6 @@ use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
-use Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader;
-use Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypePrefixLoader;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
@@ -167,10 +165,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
                 'config' => $config['assets']['metadata']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class,
             ],
-            AssetTypeLoader::class => [
-                'config' => $this->flattenConfigurationForTypeLoader($config['assets']['type_definitions']),
-                'prefixLoader' => AssetTypePrefixLoader::class,
-            ],
         ];
 
         // read config and add map/prefix loaders if configured - makes sure only needed objects are built
@@ -204,6 +198,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     private function configureClassResolvers(ContainerBuilder $container, array $config): void
     {
         $container->setParameter('pimcore.documents.classes.map', $config['documents']['type_definitions']['map']);
+        $container->setParameter('pimcore.assets.classes.map', $this->flattenConfigurationForClassResolver($config['assets']['type_definitions']));
     }
 
     private function configureRouting(ContainerBuilder $container, array $config): void
@@ -286,23 +281,16 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     /**
      * Extract class definitions and prefixes if configuration has more than just a class definition
      */
-    private function flattenConfigurationForTypeLoader(array $configuration) : array
+    private function flattenConfigurationForClassResolver(array $configuration) : array
     {
-        $newConfiguration = [
-            'map' => [],
-        ];
+        $newConfiguration = [];
+
         if (isset($configuration['map'])) {
             foreach ($configuration['map'] as $type => $config) {
                 if (isset($config['class'])) {
-                    $newConfiguration['map'][$type] = $config['class'];
+                    $newConfiguration[$type] = $config['class'];
                 }
             }
-        }
-
-        if (isset($configuration['prefixes'])) {
-            $newConfiguration['prefixes'] = $configuration['prefixes'];
-        } else {
-            $newConfiguration['prefixes'] = [];
         }
 
         return $newConfiguration;
