@@ -77,7 +77,7 @@ class BlogController extends FrontendController
                 'appendLog' => true,
                 'enableDebugMode' => true
             ];
-        } elseif ($adapter instanceof Gotenberg) {
+        } elseif ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\Gotenberg) {
             $params = Config::getWeb2PrintConfig();
             $params = json_decode($params['gotenbergSettings'], true) ?: [];
         }
