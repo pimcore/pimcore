@@ -748,10 +748,38 @@ class ElementController extends AdminController
         $allowedTypes = ['asset', 'document', 'object'];
         $offset = (int) $request->get('start', 0);
         $limit = (int) $request->get('limit', 25);
+        $filterRequires = $request->get('filter');
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
             $dependencies = $element->getDependencies();
+
+            if ($filterRequires) {
+                $filters = $this->decodeJson($filterRequires);
+    
+                foreach ($filters as $filter) {
+
+                  if ($filter['type'] == 'string') {
+                    $value = ($filter['value']??'');
+                  }
+                   
+                  $elements = $element->getDependencies()->getFilterRequiresByPath($offset,$limit,$value);
+
+                }
+
+                if(count($elements) > 0){
+                    $e = Model\Element\Service::getFilterRequiresForFrontend($elements);
+
+                    $e['start'] = $offset;
+                    $e['limit'] = $limit;
+                    $e['total'] = count($e['requires']);
+
+                    return $this->adminJson($e);
+                }else{
+                    return $this->adminJson($elements);
+                }
+                
+            }
 
             if ($element instanceof Model\Element\ElementInterface) {
                 $dependenciesResult = Model\Element\Service::getRequiresDependenciesForFrontend($dependencies, $offset, $limit);
@@ -781,10 +809,38 @@ class ElementController extends AdminController
         $allowedTypes = ['asset', 'document', 'object'];
         $offset = (int) $request->get('start', 0);
         $limit = (int) $request->get('limit', 25);
+        $filterRequiredBy = $request->get('filter');
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
             $dependencies = $element->getDependencies();
+
+            if ($filterRequiredBy) {
+                $filters = $this->decodeJson($filterRequiredBy);
+    
+                foreach ($filters as $filter) {
+
+                    if ($filter['type'] == 'string') {
+                    $value = ($filter['value']??'');
+                    }
+                    
+                    $elements = $element->getDependencies()->getFilterRequiredByPath($offset,$limit,$value);
+
+                }
+
+                if(count($elements) > 0){
+                    $result = Model\Element\Service::getFilterRequiredByForFrontend($elements);
+
+                    $result['start'] = $offset;
+                    $result['limit'] = $limit;
+                    $result['total'] = count($result['requiredBy']);
+
+                    return $this->adminJson($result);
+                }else{
+                    return $this->adminJson($elements);
+                }
+                
+            }
 
             if ($element instanceof Model\Element\ElementInterface) {
                 $dependenciesResult = Model\Element\Service::getRequiredByDependenciesForFrontend($dependencies, $offset, $limit);

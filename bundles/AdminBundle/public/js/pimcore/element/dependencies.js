@@ -110,12 +110,15 @@ pimcore.element.dependencies = Class.create({
             model: requiresModel
         });
 
+        var plugins = ['pimcore.gridfilters'];
+
         this.requiresGrid = new Ext.grid.GridPanel({
             store: this.requiresStore,
+            plugins: plugins,
             columns: [
                 {text: "ID", sortable: true, dataIndex: 'id', hidden:true},
                 {text: t("type"), sortable: true, dataIndex: 'type', hidden: true},
-                {text: t("subtype"), sortable: true, dataIndex: 'subtype', width: 50,
+                {text: t("subtype"), sortable: true, dataIndex: 'subtype', width: 55,
                   renderer:
                     function (value, metaData, record, rowIndex, colIndex, store) {
                         return '<div style="height: 16px;" class="pimcore_icon_' + record.get('type') + ' pimcore_icon_' + value
@@ -217,13 +220,15 @@ pimcore.element.dependencies = Class.create({
             model: requiredByModel
 
         });
+        var plugins = ['pimcore.gridfilters'];
 
         this.requiredByGrid = Ext.create('Ext.grid.Panel', {
             store: this.requiredByStore,
+            plugins: plugins,
             columns: [
                 {text: "ID", sortable: true, dataIndex: 'id', hidden:true},
                 {text: t("type"), sortable: true, dataIndex: 'type', hidden: true},
-                {text: t("subtype"), sortable: true, dataIndex: 'subtype', width: 50,
+                {text: t("subtype"), sortable: true, dataIndex: 'subtype', width: 55,
                  renderer:
                     function (value, metaData, record, rowIndex, colIndex, store) {
                         return '<div style="height: 16px;" class="pimcore_icon_' + record.get('type') + ' pimcore_icon_' + value
