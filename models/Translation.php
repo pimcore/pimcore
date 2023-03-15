@@ -366,7 +366,7 @@ final class Translation extends AbstractModel
      * @param string $domain
      * @param bool $replaceExistingTranslations
      * @param array|null $languages
-     * @param array|null $dialect
+     * @param \stdClass|null $dialect
      *
      * @return array
      *
@@ -374,7 +374,7 @@ final class Translation extends AbstractModel
      *
      * @internal
      */
-    public static function importTranslationsFromFile(string $file, string $domain = self::DOMAIN_DEFAULT, bool $replaceExistingTranslations = true, array $languages = null, array $dialect = null): array
+    public static function importTranslationsFromFile(string $file, string $domain = self::DOMAIN_DEFAULT, bool $replaceExistingTranslations = true, array $languages = null, \stdClass $dialect = null): array
     {
         $delta = [];
 

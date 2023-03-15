@@ -75,6 +75,9 @@ class TargetGroup extends Model\AbstractModel
         return false;
     }
 
+    /**
+     * @return $this
+     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -87,9 +90,12 @@ class TargetGroup extends Model\AbstractModel
         return $this->description;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
-        $this->id = (int)$id;
+        $this->id = $id;
 
         return $this;
     }
@@ -99,6 +105,9 @@ class TargetGroup extends Model\AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;

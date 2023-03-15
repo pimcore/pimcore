@@ -45,7 +45,7 @@ final class Version20220829132224 extends AbstractMigration
         if (count($configs) > 0) {
             $existingConfig = SettingsStore::get($id, $scope);
             if (!$existingConfig || $overwriteExistingConfig) {
-                SettingsStore::set($id, json_encode($configs), 'string', $scope);
+                SettingsStore::set($id, json_encode($configs), SettingsStore::TYPE_STRING, $scope);
             }
         }
     }

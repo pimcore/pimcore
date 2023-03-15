@@ -272,16 +272,12 @@ class UserController extends AdminController implements KernelControllerEventInt
     /**
      * @Route("/user/update", name="pimcore_admin_user_update", methods={"PUT"})
      *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
      * @throws \Exception
      */
     public function updateAction(Request $request): JsonResponse
     {
-        /** @var User|null $user */
-        $user = User\UserRole::getById((int)$request->get('id'));
+        /** @var User|User\Role|null $user */
+        $user = User\UserRole::getById($request->request->getInt('id'));
 
         if (!$user) {
             throw $this->createNotFoundException();

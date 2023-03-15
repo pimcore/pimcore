@@ -48,6 +48,9 @@ abstract class AbstractBundleCommand extends AbstractCommand
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     protected function configureFailWithoutErrorOption(): static
     {
         $this->addOption(

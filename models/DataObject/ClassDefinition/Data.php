@@ -552,6 +552,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         if ($this instanceof DataObject\ClassDefinition\Data\PreSetDataInterface) {
             $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
         } else {
+            $code .= "\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n\n";
             $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n\n";
         }
 
@@ -914,7 +915,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                 $code .= "\t\t" . 'return $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
                 $code .= "\t" . '});' . "\n";
             } else {
-                $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+                $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
             }
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
 

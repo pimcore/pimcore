@@ -30,6 +30,6 @@ final class Version20230110130748 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\TinymceBundle\\PimcoreTinymceBundle', true, 'bool', 'pimcore');
+        SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\TinymceBundle\\PimcoreTinymceBundle', true, SettingsStore::TYPE_BOOLEAN, 'pimcore');
     }
 }
