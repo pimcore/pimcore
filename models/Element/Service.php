@@ -200,6 +200,56 @@ class Service extends Model\AbstractModel
         return $dependencies;
     }
 
+        /**
+     * @param array $elements
+     *
+     * @return array
+     *
+     * @internal
+     *
+     */
+    public static function getFilterRequiresForFrontend($elements)
+    {
+        $dependencies['hasHidden'] = false;
+
+        foreach ($elements as $r) {
+            if ($e = self::getDependedElement($r)) {
+                if ($e->isAllowed('list')) {
+                    $dependencies['requires'][] = self::getDependencyForFrontend($e);
+                } else {
+                    $dependencies['hasHidden'] = true;
+                }
+            }
+        }
+
+        return $dependencies;
+    }
+
+    /**
+     * @param array $elements
+     *
+     * @return array
+     *
+     * @internal
+     *
+     */
+    public static function getFilterRequiredByPathForFrontend($elements)
+    {
+        $dependencies['hasHidden'] = false;
+
+        foreach ($elements as $r) {
+            if ($e = self::getDependedElement($r)) {
+                if ($e->isAllowed('list')) {
+                    $dependencies['requiredBy'][] = self::getDependencyForFrontend($e);
+                } else {
+                    $dependencies['hasHidden'] = true;
+                }
+            }
+        }
+
+        return $dependencies;
+    }
+
     private static function getDependencyForFrontend(ElementInterface $element): array
     {
         return [
