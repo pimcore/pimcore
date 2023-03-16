@@ -219,7 +219,7 @@ pimcore.bundle.web2print.settings = Class.create({
                     }
                 ]
             });
-            
+
             this.gotenbergSettings = Ext.create("Ext.form.FieldSet", {
                 title: t('web2print_gotenberg_settings'),
                 collapsible: true,
@@ -267,7 +267,7 @@ pimcore.bundle.web2print.settings = Class.create({
                     }
                 ]
             });
-            
+
             this.layout = Ext.create('Ext.form.Panel', {
                 bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,
@@ -310,7 +310,7 @@ pimcore.bundle.web2print.settings = Class.create({
                                 value: this.getValue("generalTool"),
                                 store: [
                                     ["pdfreactor", "PDFreactor"],
-                                    ["headlesschrome", "Headless Chrome"],
+                                    ["headlesschrome", "Headless Chrome (Deprecated)"],
                                     ["gotenberg", "Gotenberg Chromium"],
                                 ],
                                 mode: "local",

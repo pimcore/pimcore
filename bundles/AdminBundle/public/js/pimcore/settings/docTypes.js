@@ -232,8 +232,10 @@ pimcore.settings.document.doctypes = Class.create({
                     tooltip: t('delete'),
                     handler: function (grid, rowIndex) {
                         let data = grid.getStore().getAt(rowIndex);
-                        pimcore.helpers.deleteConfirm(t('document_type'), data.data.name, function () {
-                            grid.getStore().removeAt(rowIndex);
+                        pimcore.helpers.deleteConfirm(t('document_type'),
+                            Ext.util.Format.htmlEncode(data.data.name),
+                            function () {
+                                grid.getStore().removeAt(rowIndex);
                         }.bind(this));
                     }.bind(this)
                 }]

@@ -68,7 +68,7 @@ pimcore.object.classes.data.textarea = Class.create(pimcore.object.classes.data.
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-        return [
+        const stylingItems = [
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -92,23 +92,31 @@ pimcore.object.classes.data.textarea = Class.create(pimcore.object.classes.data.
                 value: t('height_explanation')
             },
             {
-                xtype: "numberfield",
-                fieldLabel: t("max_length"),
-                name: "maxLength",
-                value: datax.maxLength
-            },{
                 xtype: "checkbox",
                 fieldLabel: t("show_charcount"),
                 name: "showCharCount",
                 value: datax.showCharCount
-            }, {
+            }
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            return stylingItems;
+        }
+
+        return stylingItems.concat([
+            {
+                xtype: "numberfield",
+                fieldLabel: t("max_length"),
+                name: "maxLength",
+                value: datax.maxLength
+            },
+            {
                 xtype: "checkbox",
                 fieldLabel: t("exclude_from_search_index"),
                 name: "excludeFromSearchIndex",
                 checked: datax.excludeFromSearchIndex
             }
-        ];
-
+        ]);
     },
 
     applySpecialData: function(source) {
