@@ -252,7 +252,7 @@ class Asset extends Element\AbstractElement
                 $asset->getDao()->getById($id);
 
                 $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($asset->getType());
-                /** @var Asset $asset */
+                /** @var Asset $newAsset */
                 $newAsset = self::getModelFactory()->build($className);
 
                 if (get_class($asset) !== get_class($newAsset)) {
