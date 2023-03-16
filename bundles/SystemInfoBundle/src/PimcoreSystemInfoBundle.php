@@ -15,11 +15,10 @@
 
 namespace Pimcore\Bundle\SystemInfoBundle;
 
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreSystemInfoBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
+class PimcoreSystemInfoBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 

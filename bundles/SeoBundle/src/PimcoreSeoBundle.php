@@ -16,14 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle;
 
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 
-class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleInterface, PimcoreBundleAdminSupportInterface
+class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleInterface
 {
     use PackageVersionTrait;
 
