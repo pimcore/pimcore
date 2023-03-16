@@ -229,8 +229,13 @@ pimcore_seo:
 - [Page] Removed the functionality to input `metadata` html tags in Settings section of the document.
 - [Asset] Image thumbnails: Removed support for using custom callbacks for thumbnail transformations.
 - Marked `Pimcore\File` as internal. This class shouldn't be used anymore, use `Symfony\Component\Filesystem` instead.
-- [Targeting] Targeting is now using the opt-in approach. So, it will not be enabled by default. Please set the
-  cookie `pimcore_targeting_enabled=1` to enable it.
+- [Targeting] Targeting is now using the opt-in approach. So, it will not be enabled by default. Please enable it in the config
+```yaml
+  pimcore_personalization:
+      targeting:
+          enabled:
+              true
+ ```
 
 ## 10.6.0
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
