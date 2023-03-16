@@ -22,7 +22,6 @@ use Pimcore\Maintenance\TaskInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 
-
 /**
  * @internal
  */
