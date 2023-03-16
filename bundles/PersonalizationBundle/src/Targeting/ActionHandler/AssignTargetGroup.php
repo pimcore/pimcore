@@ -27,14 +27,9 @@ class AssignTargetGroup implements ActionHandlerInterface
 {
     const STORAGE_KEY = 'tg';
 
-    private TargetingStorageInterface $storage;
-
-    // @phpstan-ignore-next-line
     public function __construct(
-        ConditionMatcherInterface $conditionMatcher, // TODO: Remove in Pimcore 11
-        TargetingStorageInterface $storage
+        private TargetingStorageInterface $storage
     ) {
-        $this->storage = $storage;
     }
 
     public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null): void
@@ -138,7 +133,7 @@ class AssignTargetGroup implements ActionHandlerInterface
 
     protected function assignToVisitor(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $count): void
     {
-        $threshold = (int)$targetGroup->getThreshold();
+        $threshold = $targetGroup->getThreshold();
 
         // only assign if count reached the threshold if threshold is > 1
         if ($threshold <= 1 || $count >= $threshold) {
