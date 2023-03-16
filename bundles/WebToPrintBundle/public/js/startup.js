@@ -76,7 +76,7 @@ pimcore.bundle.web2print.startup = Class.create({
             });
 
             if (document.data.type != "email" && document.data.type != "newsletter" && document.data.type != "link") {
-                menu.add(new Ext.menu.Item({
+                menu.insert(0, new Ext.menu.Item({
                     text: t('add_printpage'),
                     iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
                     menu: documentMenu.printPage,

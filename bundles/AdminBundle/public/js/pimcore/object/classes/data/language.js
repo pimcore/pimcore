@@ -63,6 +63,10 @@ pimcore.object.classes.data.language = Class.create(pimcore.object.classes.data.
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
+        if (this.isInCustomLayoutEditor()) {
+            return [];
+        }
+
         return[
             {
                 xtype: "checkbox",
