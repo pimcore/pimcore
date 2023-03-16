@@ -187,5 +187,4 @@ services:
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingElementListener: ~
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingDocumentRendererListener: ~
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\RenderletListener: ~
-    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\TargetingEnableListener: ~
 
