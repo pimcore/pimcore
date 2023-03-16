@@ -20,7 +20,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Config;
-use Pimcore\Db\PhpArrayFileTable;
 
 /**
  * @internal
@@ -35,6 +34,7 @@ final class Version20210323082921 extends AbstractMigration
                 return $data;
             }
         }
+
         return [];
     }
 
