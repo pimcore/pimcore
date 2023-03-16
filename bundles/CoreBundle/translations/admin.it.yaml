@@ -402,13 +402,6 @@ translations_are_not_configured: Le traduzioni non sono configurate
 read_more_here: Ulteriori informazioni
 publish_version: Pubblica versione
 start: Inizio
-su: Do
-mo: Lu
-tu: Ma
-we: Me
-th: Gi
-fr: Ve
-sa: Sa
 session_error_text: Sembra che ci sia un problema con la sessione. Continuare ugualmente?
 session_error: Errore di sessione
 please_wait: Attendere prego ...

@@ -48,54 +48,6 @@ class Helper
         }
     }
 
-    /**
-     * @deprecated will be removed in Pimcore 11. Use Pimcore\Db\Helper::upsert instead.
-     *
-     * @param Connection $connection
-     * @param string $table
-     * @param array $data
-     *
-     * @return int|string
-     */
-    public static function insertOrUpdate(Connection $connection, string $table, array $data)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.6.0',
-            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::upsert() instead.', __METHOD__)
-        );
-
-        // extract and quote col names from the array keys
-        $i = 0;
-        $bind = [];
-        $cols = [];
-        $vals = [];
-        foreach ($data as $col => $val) {
-            $cols[] = $connection->quoteIdentifier($col);
-            $bind['col' . $i] = $val;
-            $vals[] = ':col' . $i;
-            $i++;
-        }
-
-        // build the statement
-        $set = [];
-        foreach ($cols as $i => $col) {
-            $set[] = sprintf('%s = %s', $col, $vals[$i]);
-        }
-
-        $sql = sprintf(
-            'INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s;',
-            $connection->quoteIdentifier($table),
-            implode(', ', $cols),
-            implode(', ', $vals),
-            implode(', ', $set)
-        );
-
-        $bind = array_merge($bind, $bind);
-
-        return $connection->executeStatement($sql, $bind);
-    }
-
     public static function fetchPairs(Connection $db, string $sql, array $params = [], array $types = []): array
     {
         $stmt = $db->executeQuery($sql, $params, $types);

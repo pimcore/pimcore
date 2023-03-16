@@ -193,12 +193,12 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                             name: 'pathFormatterClass',
                             value: this.datax.pathFormatterClass
                         }, {
-                        xtype: "checkbox",
-                        boxLabel: t("allow_to_clear_relation"),
-                        name: "allowToClearRelation",
-                        value: this.datax.allowToClearRelation ?? true
-                    }
-                ])
+                            xtype: "checkbox",
+                            boxLabel: t("allow_to_clear_relation"),
+                            name: "allowToClearRelation",
+                            value: this.datax.allowToClearRelation ?? true
+                        }
+                    ])
                 },
                 {
                     xtype: 'fieldset',
@@ -255,10 +255,10 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                                 change: function (cbox, checked) {
                                     if (checked) {
                                         Ext.getCmp('class_allow_inline_download_' + this.uniqeFieldId).show();
-                                    Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).show();
-                                    Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).show();
-                                } else {
-                                    Ext.getCmp('class_allow_inline_download_' + this.uniqeFieldId).hide();
+                                        Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).show();
+                                        Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).show();
+                                    } else {
+                                        Ext.getCmp('class_allow_inline_download_' + this.uniqeFieldId).hide();
                                         Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).hide();
                                         Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).hide();
 
@@ -267,42 +267,42 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                             }
                         },
                         {
-                        fieldLabel: t("allow_asset_inline_download"),
-                        name: "assetInlineDownloadAllowed",
-                        id: 'class_allow_inline_download_' + this.uniqeFieldId,
-                        hidden: !this.datax.assetsAllowed,
-                        allowEdit: this.datax.assetsAllowed,
-                        value: this.datax.assetInlineDownloadAllowed,
-                        xtype: 'checkbox'
-                    },
-                    new Ext.ux.form.MultiSelect({
-                        fieldLabel: t("allowed_asset_types") + '<br />' + t('allowed_types_hint'),
-                        name: "assetTypes",
-                        id: 'class_allowed_asset_types_' + this.uniqeFieldId,
-                        hidden: !this.datax.assetsAllowed,
-                        allowEdit: this.datax.assetsAllowed,
-                        value: allowedAssets,
-                        displayField: "text",
-                        valueField: "text",
-                        store: assetTypeStore,
-                        width: 400
-                    }), {
-                        fieldLabel: t("upload_path"),
-                        name: "assetUploadPath",
-                        hidden: !this.datax.assetsAllowed,
-                        id: 'class_asset_upload_path_' + this.uniqeFieldId,
-                        fieldCls: "input_drop_target",
-                        value: this.datax.assetUploadPath,
-                        width: 500,
-                        xtype: "textfield",
-                        listeners: {
-                            "render": function (el) {
-                                new Ext.dd.DropZone(el.getEl(), {
-                                    //reference: this,
-                                    ddGroup: "element",
-                                    getTargetFromEvent: function(e) {
-                                        return this.getEl();
-                                    }.bind(el),
+                            fieldLabel: t("allow_asset_inline_download"),
+                            name: "assetInlineDownloadAllowed",
+                            id: 'class_allow_inline_download_' + this.uniqeFieldId,
+                            hidden: !this.datax.assetsAllowed,
+                            allowEdit: this.datax.assetsAllowed,
+                            value: this.datax.assetInlineDownloadAllowed,
+                            xtype: 'checkbox'
+                        },
+                        new Ext.ux.form.MultiSelect({
+                            fieldLabel: t("allowed_asset_types") + '<br />' + t('allowed_types_hint'),
+                            name: "assetTypes",
+                            id: 'class_allowed_asset_types_' + this.uniqeFieldId,
+                            hidden: !this.datax.assetsAllowed,
+                            allowEdit: this.datax.assetsAllowed,
+                            value: allowedAssets,
+                            displayField: "text",
+                            valueField: "text",
+                            store: assetTypeStore,
+                            width: 400
+                        }), {
+                            fieldLabel: t("upload_path"),
+                            name: "assetUploadPath",
+                            hidden: !this.datax.assetsAllowed,
+                            id: 'class_asset_upload_path_' + this.uniqeFieldId,
+                            fieldCls: "input_drop_target",
+                            value: this.datax.assetUploadPath,
+                            width: 500,
+                            xtype: "textfield",
+                            listeners: {
+                                "render": function (el) {
+                                    new Ext.dd.DropZone(el.getEl(), {
+                                        //reference: this,
+                                        ddGroup: "element",
+                                        getTargetFromEvent: function (e) {
+                                            return this.getEl();
+                                        }.bind(el),
 
                                         onNodeOver: function (target, dd, e, data) {
                                             if (data.records.length === 1 && data.records[0].data.elementType === "asset") {
@@ -366,25 +366,26 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                         })
                     ]
                 }
-        ]);
+            ]);
 
-        const displayModeStore = [
-            ['grid', t('display_mode_display')]
-        ];
-        if(pimcore.helpers.hasSearchImplementation()) {
-            displayModeStore.push(['combo', t('display_mode_inline_search')]);
+            const displayModeStore = [
+                ['grid', t('display_mode_display')]
+            ];
+            if (pimcore.helpers.hasSearchImplementation()) {
+                displayModeStore.push(['combo', t('display_mode_inline_search')]);
+            }
+
+            this.specificPanel.add({
+                xtype: "combo",
+                fieldLabel: t("display_mode"),
+                name: "displayMode",
+                value: this.datax.displayMode ?? 'grid',
+                labelWidth: 140,
+                forceSelection: true,
+                width: 400,
+                store: displayModeStore
+            });
         }
-
-        this.specificPanel.add({
-            xtype: "combo",
-            fieldLabel: t("display_mode"),
-            name: "displayMode",
-            value: this.datax.displayMode ?? 'grid',
-            labelWidth: 140,
-            forceSelection: true,
-            width: 400,
-            store: displayModeStore
-        });
 
         return this.layout;
     },

@@ -200,6 +200,12 @@ class LoginController extends AdminController implements KernelControllerEventIn
                 $error = 'user_unknown';
             }
 
+            $limiter = $resetPasswordLimiter->create($request->getClientIp());
+
+            if (false === $limiter->consume(1)->isAccepted()) {
+                $error = 'user_reset_password_too_many_attempts';
+            }
+
             if (!$error) {
                 if (!$user->isActive()) {
                     $error = 'user_inactive';
@@ -251,8 +257,6 @@ class LoginController extends AdminController implements KernelControllerEventIn
 
         if ($error) {
             $params['reset_error'] = 'Please make sure you are entering a correct input.';
-            //TODO check if comparision can be true
-            // @phpstan-ignore-next-line
             if ($error === 'user_reset_password_too_many_attempts') {
                 $params['reset_error'] = 'Too many attempts. Please retry later.';
             }
