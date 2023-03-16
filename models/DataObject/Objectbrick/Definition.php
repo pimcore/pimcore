@@ -597,7 +597,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function getDefinitionFile($key = null)
     {
-        return $this->locateDefinitionFile($key ?? $this->getKey(), 'objectbricks/%s.php');
+        $definitionFileKey = $key ?? $this->getKey();
+
+        return $this->locateDefinitionFile(strtolower($definitionFileKey), 'objectbricks/%s.php');
     }
 
     /**
