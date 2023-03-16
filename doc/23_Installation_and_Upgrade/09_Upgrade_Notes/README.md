@@ -237,6 +237,7 @@ pimcore:
             - en
             - de
 ```
+- [DataBase] Removed deprecated `PhpArrayFileTable`.
 
 ## 10.6.0
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
