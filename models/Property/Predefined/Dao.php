@@ -26,27 +26,23 @@ use Symfony\Component\Uid\Uuid as Uid;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    private const WRITE_TARGET = 'PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES';
-
     private const CONFIG_KEY = 'predefined_properties';
 
     public function configure(): void
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
-        $storageDirectory = LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($config, self::CONFIG_KEY, 'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES');
-        $writeTarget = LocationAwareConfigRepository::getWriteTargetFromSymfonyConfig($config, self::CONFIG_KEY, self::WRITE_TARGET);
+        $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
+            $config,
+            self::CONFIG_KEY,
+            'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES',
+            'PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES'
+        );
 
         parent::configure([
             'containerConfig' => $config['properties']['predefined']['definitions'],
             'settingsStoreScope' => 'pimcore_predefined_properties',
-            'storageDirectory' => $storageDirectory,
-            'writeTargetEnvVariableName' => self::WRITE_TARGET,
-            'writeTarget' => $writeTarget,
-            'options' => $config['storage'][self::CONFIG_KEY]['options'],
+            'storageDirectory' => $storageConfig,
         ]);
     }
 

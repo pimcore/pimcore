@@ -13,10 +13,6 @@ services:
     Pimcore\Model\Document\Editable\Loader\EditableLoader:
         public: true
 
-    # document data loader
-    Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader:
-        public: true
-
     # object data loader
     pimcore.implementation_loader.object.data:
         class: Pimcore\Model\DataObject\ClassDefinition\Loader\DataLoader
