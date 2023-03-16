@@ -16,14 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle;
 
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Bundle\PersonalizationBundle\DependencyInjection\Compiler\DebugStopwatchPass;
 use Pimcore\Bundle\PersonalizationBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class PimcorePersonalizationBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
+class PimcorePersonalizationBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 

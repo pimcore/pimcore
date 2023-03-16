@@ -16,11 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GlossaryBundle;
 
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreGlossaryBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
+class PimcoreGlossaryBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 

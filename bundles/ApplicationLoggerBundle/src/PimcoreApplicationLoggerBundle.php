@@ -16,11 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\ApplicationLoggerBundle;
 
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreApplicationLoggerBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
+class PimcoreApplicationLoggerBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
