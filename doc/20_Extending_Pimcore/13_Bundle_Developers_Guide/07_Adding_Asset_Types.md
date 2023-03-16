@@ -35,7 +35,7 @@ For examples have a look at the Pimcore core asset types at
 ## 3) Register the asset on the asset type map
 
 Next we need to update the `pimcore.assets.type_definitions.map` configuration to include our asset. This can be done in any config
-file which is loaded (e.g. `/config/config.yaml`). The mapping has to be an array of regular expressions of your data type.
+file which is loaded (e.g. `/config/config.yaml`). The matching has to be an array of regular expressions of your data type.
 
 ```yaml
 # /config/config.yaml
