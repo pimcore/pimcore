@@ -45,6 +45,6 @@ pimcore:
         type_definitions:
             map:
                 indesign:
-                    class: \App\Asset\InDesign
+                    class: \App\Model\Asset\InDesign
                     matching: ["/\\.indd/"]
 ```
