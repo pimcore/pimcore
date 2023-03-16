@@ -54,6 +54,11 @@ framework:
         buses:
             messenger.bus.pimcore-core:
         reset_on_message: true
+    rate_limiter:
+        reset_password:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '5 minutes'
 
 # Twig Configuration
 twig:
