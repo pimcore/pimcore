@@ -14,7 +14,7 @@ For examples have a look at the Pimcore core asset types at
 
 ```php
 <?php
-// src/Model/Assets/InDesign.php
+// src/Model/Asset/InDesign.php
 
 namespace App\Model\Asset;
 
