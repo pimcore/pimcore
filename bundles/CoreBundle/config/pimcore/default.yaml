@@ -120,27 +120,27 @@ pimcore:
             map:
                 image:
                     class: \Pimcore\Model\Asset\Image
-                    mapping: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
+                    matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
                 archive:
                     class: \Pimcore\Model\Asset\Archive
-                    mapping: ['/zip/', '/tar/']
+                    matching: ['/zip/', '/tar/']
                 audio:
                     class: \Pimcore\Model\Asset\Audio
-                    mapping: ['/audio/']
+                    matching: ['/audio/']
                 document:
                     class: \Pimcore\Model\Asset\Document
-                    mapping: ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/']
+                    matching: ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/']
                 folder:
                     class: \Pimcore\Model\Asset\Folder
                 text:
                    class: \Pimcore\Model\Asset\Text
-                   mapping: [ "/text\\//", "/xml$/", "/\\.json$/" ]
+                   matching: [ "/text\\//", "/xml$/", "/\\.json$/" ]
                 video:
                    class: \Pimcore\Model\Asset\Video
-                   mapping: [ "/video/" ]
+                   matching: [ "/video/" ]
                 unknown:
                     class: \Pimcore\Model\Asset\Unknown
-                    mapping: [ "/\\.stp$/" ]
+                    matching: [ "/\\.stp$/" ]
 
     objects:
         class_definitions:

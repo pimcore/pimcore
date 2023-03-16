@@ -618,7 +618,7 @@ final class Configuration implements ConfigurationInterface
 
                             ->end()
                         ->end();
-        $this->addImplementationLoaderNodeFromArrayDefinition($assetsNode, "type_definitions");
+        $this->addImplementationNodeFromArrayDefinition($assetsNode, "type_definitions");
     }
 
     /**
@@ -912,9 +912,9 @@ final class Configuration implements ConfigurationInterface
     }
 
     /**
-     * Add implementation node config with array (map[class,mapping], prefixes)
+     * Add implementation node config with array (map[class,matching], prefixes)
      */
-    private function addImplementationLoaderNodeFromArrayDefinition(ArrayNodeDefinition $node, string $name): void
+    private function addImplementationNodeFromArrayDefinition(ArrayNodeDefinition $node, string $name): void
     {
         $node
             ->children()
@@ -925,7 +925,7 @@ final class Configuration implements ConfigurationInterface
                             ->arrayPrototype()
                             ->children()
                                 ->scalarNode('class')->end()
-                                ->arrayNode('mapping')
+                                ->arrayNode('matching')
                                     ->prototype('scalar')->end()
                                 ->end()
                             ->end()

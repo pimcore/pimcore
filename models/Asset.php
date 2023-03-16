@@ -422,7 +422,7 @@ class Asset extends Element\AbstractElement
         $assetTypes = Pimcore::getContainer()->getParameter('pimcore.config')['assets']['type_definitions']['map'];
 
         foreach ($assetTypes as $assetType => $assetTypeConfiguration) {
-            foreach ($assetTypeConfiguration['mapping'] as $pattern) {
+            foreach ($assetTypeConfiguration['matching'] as $pattern) {
                 if (preg_match($pattern, $mimeType . ' .' . File::getFileExtension($filename))) {
                     $type = $assetType;
 
