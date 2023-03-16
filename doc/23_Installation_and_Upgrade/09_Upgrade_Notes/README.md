@@ -238,8 +238,8 @@ pimcore:
             - de
  ```
 - Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.
-- [Targeting] Targeting is now using the opt-in approach. So, it will not be enabled by default. Please enable it in
-  the config
+- [Database] Removed `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
+- [Targeting] Targeting is now using the opt-in approach. So, it will not be enabled by default. Please enable it in the config
 ```yaml
   pimcore_personalization:
       targeting:
