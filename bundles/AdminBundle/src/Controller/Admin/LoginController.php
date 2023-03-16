@@ -257,8 +257,6 @@ class LoginController extends AdminController implements KernelControllerEventIn
 
         if ($error) {
             $params['reset_error'] = 'Please make sure you are entering a correct input.';
-            //TODO check if comparision can be true
-            // @phpstan-ignore-next-line
             if ($error === 'user_reset_password_too_many_attempts') {
                 $params['reset_error'] = 'Too many attempts. Please retry later.';
             }
