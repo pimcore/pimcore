@@ -46,5 +46,5 @@ pimcore:
             map:
                 indesign:
                     class: \App\Asset\InDesign
-                    mapping: ["/\\.indd/"]
+                    matching: ["/\\.indd/"]
 ```
