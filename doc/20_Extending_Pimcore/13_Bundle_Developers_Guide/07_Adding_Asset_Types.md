@@ -7,7 +7,7 @@ To register new custom asset types, you must follow these steps:
 ## 1) Create the PHP asset class
 
 The asset **must** extend `Pimcore\Model\Asset`. Let´s create a class for InDesign (the namespace does not matter)
-but it's best practice to put your assets into a `Model\Assets` sub-namespace):
+but it's best practice to put your assets into a `Model\Asset` sub-namespace):
 
 For examples have a look at the Pimcore core asset types at
 [github](https://github.com/pimcore/pimcore/tree/11.x/models/Asset).
