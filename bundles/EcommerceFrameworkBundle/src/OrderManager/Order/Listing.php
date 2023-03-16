@@ -297,7 +297,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
     public function setUseSubItems(bool $useSubItems): static
     {
-        $this->useSubItems = (bool)$useSubItems;
+        $this->useSubItems = $useSubItems;
 
         return $this;
     }

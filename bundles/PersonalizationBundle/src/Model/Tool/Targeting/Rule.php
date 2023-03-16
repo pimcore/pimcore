@@ -112,6 +112,9 @@ class Rule extends Model\AbstractModel
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -124,9 +127,12 @@ class Rule extends Model\AbstractModel
         return $this->description;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
@@ -136,6 +142,9 @@ class Rule extends Model\AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -148,6 +157,9 @@ class Rule extends Model\AbstractModel
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setActions(array $actions): static
     {
         if (!$actions) {
@@ -164,6 +176,9 @@ class Rule extends Model\AbstractModel
         return $this->actions;
     }
 
+    /**
+     * @return $this
+     */
     public function setConditions(array $conditions): static
     {
         if (!$conditions) {

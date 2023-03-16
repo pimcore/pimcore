@@ -482,7 +482,7 @@ class Installer
             $stdErr->write($process->getOutput());
             $stdErr->write($process->getErrorOutput());
             $stdErr->note($taskName . ' failed. Please run the following command manually:');
-            $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
+            $stdErr->writeln('  ' . str_replace(["'", '\\'], ['', '\\\\'], $process->getCommandLine()));
         }
     }
 
@@ -556,7 +556,7 @@ class Installer
             $stdErr->write($process->getOutput());
             $stdErr->write($process->getErrorOutput());
             $stdErr->note('Installing assets failed. Please run the following command manually:');
-            $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
+            $stdErr->writeln('  ' . str_replace(["'", '\\'], ['', '\\\\'], $process->getCommandLine()));
         }
     }
 

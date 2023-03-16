@@ -83,123 +83,128 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('height_explanation')
-            },
-            {
-                xtype: "numberfield",
-                fieldLabel: t("maximum_items"),
-                name: "maxItems",
-                value: this.datax.maxItems,
-                disabled: this.isInCustomLayoutEditor(),
-                minValue: 0
-            },
-            {
-                xtype: 'textfield',
-                width: 600,
-                fieldLabel: t("path_formatter_service"),
-                name: 'pathFormatterClass',
-                value: this.datax.pathFormatterClass
             }
         ]);
 
-        this.classCombo = new Ext.form.ComboBox({
-            typeAhead: true,
-            triggerAction: 'all',
-            width: 600,
-            store: pimcore.globalmanager.get("object_types_store"),
-            valueField: 'text',
-            editable: true,
-            displayField: 'text',
-            fieldLabel: t('objectsMetadata_allowed_class'),
-            name: 'allowedClassId',
-            value: this.datax.allowedClassId,
-            forceSelection:true,
-            allowBlank: false,
-            listeners: {
-                change: function(field, classNamevalue, oldValue) {
-                    this.datax.allowedClassId = classNamevalue;
-                    if (this.datax.allowedClassId != null) {
-                        this.fieldStore.load({params:{name:this.datax.allowedClassId}});
-                    }
-                }.bind(this)
-            }
-        });
-
-        this.specificPanel.add(this.classCombo);
-
-        this.fieldStore = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
-                extraParams: {
-                    no_brick_columns: true,
-                    gridtype: 'all',
-                    name: this.datax.allowedClassId
+        if (!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add([
+                {
+                    xtype: "numberfield",
+                    fieldLabel: t("maximum_items"),
+                    name: "maxItems",
+                    value: this.datax.maxItems,
+                    minValue: 0
                 },
-                reader: {
-                    type: 'json',
-                    rootProperty: "availableFields"
+                {
+                    xtype: 'textfield',
+                    width: 600,
+                    fieldLabel: t("path_formatter_service"),
+                    name: 'pathFormatterClass',
+                    value: this.datax.pathFormatterClass
                 }
-            },
-            fields: ['key', 'label'],
-            autoLoad: false,
-            forceSelection:true,
-            listeners: {
-                load: function() {
-                    this.fieldSelect.setValue(this.datax.visibleFields);
-                }.bind(this)
+            ]);
 
-            }
-        });
-        this.fieldStore.load();
+            this.classCombo = new Ext.form.ComboBox({
+                typeAhead: true,
+                triggerAction: 'all',
+                width: 600,
+                store: pimcore.globalmanager.get("object_types_store"),
+                valueField: 'text',
+                editable: true,
+                displayField: 'text',
+                fieldLabel: t('objectsMetadata_allowed_class'),
+                name: 'allowedClassId',
+                value: this.datax.allowedClassId,
+                forceSelection: true,
+                allowBlank: false,
+                listeners: {
+                    change: function (field, classNamevalue, oldValue) {
+                        this.datax.allowedClassId = classNamevalue;
+                        if (this.datax.allowedClassId != null) {
+                            this.fieldStore.load({params: {name: this.datax.allowedClassId}});
+                        }
+                    }.bind(this)
+                }
+            });
 
-        this.fieldSelect = new Ext.ux.form.MultiSelect({
-            name: "visibleFields",
-            triggerAction: "all",
-            editable: false,
-            fieldLabel: t("objectsMetadata_visible_fields"),
-            store: this.fieldStore,
-            value: this.datax.visibleFields,
-            displayField: "key",
-            valueField: "key",
-            width: 400,
-            height: 300
-        });
-        this.specificPanel.add(this.fieldSelect);
+            this.specificPanel.add(this.classCombo);
 
+            this.fieldStore = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
+                    extraParams: {
+                        no_brick_columns: true,
+                        gridtype: 'all',
+                        name: this.datax.allowedClassId
+                    },
+                    reader: {
+                        type: 'json',
+                        rootProperty: "availableFields"
+                    }
+                },
+                fields: ['key', 'label'],
+                autoLoad: false,
+                forceSelection: true,
+                listeners: {
+                    load: function () {
+                        this.fieldSelect.setValue(this.datax.visibleFields);
+                    }.bind(this)
+
+                }
+            });
+            this.fieldStore.load();
+
+            this.fieldSelect = new Ext.ux.form.MultiSelect({
+                name: "visibleFields",
+                triggerAction: "all",
+                editable: false,
+                fieldLabel: t("objectsMetadata_visible_fields"),
+                store: this.fieldStore,
+                value: this.datax.visibleFields,
+                displayField: "key",
+                valueField: "key",
+                width: 400,
+                height: 300
+            });
+            this.specificPanel.add(this.fieldSelect);
+        }
 
         this.stores = {};
         this.grids = {};
-        this.specificPanel.add(this.getGrid("cols", this.datax.columns, true));
 
-        this.specificPanel.add({
-            xtype: "checkbox",
-            boxLabel: t("enable_text_selection"),
-            name: "enableTextSelection",
-            value: this.datax.enableTextSelection
-        });
+        if (!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add(this.getGrid("cols", this.datax.columns, true));
 
-        this.specificPanel.add({
-            xtype: "checkbox",
-            boxLabel: t("enable_batch_edit_columns"),
-            name: "enableBatchEdit",
-            value: this.datax.enableBatchEdit
-        });
+            this.specificPanel.add({
+                xtype: "checkbox",
+                boxLabel: t("enable_text_selection"),
+                name: "enableTextSelection",
+                value: this.datax.enableTextSelection
+            });
 
-        this.specificPanel.add({
-            xtype: "checkbox",
-            boxLabel: t("allow_multiple_assignments"),
-            name: "allowMultipleAssignments",
-            value: this.datax.allowMultipleAssignments
-        });
+            this.specificPanel.add({
+                xtype: "checkbox",
+                boxLabel: t("enable_batch_edit_columns"),
+                name: "enableBatchEdit",
+                value: this.datax.enableBatchEdit
+            });
 
-        this.specificPanel.add({
-            xtype: "checkbox",
-            boxLabel: t("allow_to_create_new_object"),
-            name: "allowToCreateNewObject",
-            value: this.datax.allowToCreateNewObject
-        });
+            this.specificPanel.add({
+                xtype: "checkbox",
+                boxLabel: t("allow_multiple_assignments"),
+                name: "allowMultipleAssignments",
+                value: this.datax.allowMultipleAssignments
+            });
 
-        this.specificPanel.add({
+            this.specificPanel.add({
+                xtype: "checkbox",
+                boxLabel: t("allow_to_create_new_object"),
+                name: "allowToCreateNewObject",
+                value: this.datax.allowToCreateNewObject
+            });
+
+            this.specificPanel.add({
             xtype: "checkbox",
             boxLabel: t("allow_to_clear_relation"),
             name: "allowToClearRelation",
@@ -218,7 +223,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                 hideLabel: true,
                 value: t('async_loading_warning_block'),
                 cls: "pimcore_extra_label_bottom"
-            });
+            });}
         }
 
         return this.layout;
@@ -384,7 +389,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
     } ,
 
     getData: function () {
-        if(this.grids) {
+        if(this.grids && this.stores.cols) {
             var cols = [];
             this.stores.cols.each(function(rec) {
                 delete rec.data.id;

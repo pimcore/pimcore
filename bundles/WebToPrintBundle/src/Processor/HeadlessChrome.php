@@ -28,6 +28,9 @@ use Spiritix\Html2Pdf\Input\StringInput;
 use Spiritix\Html2Pdf\Output\FileOutput;
 use Spiritix\Html2Pdf\Output\StringOutput;
 
+/**
+ * @deprecated will be removed in Pimcore 11 and replaced by Processor\Chromium
+ */
 class HeadlessChrome extends Processor
 {
     private string $nodePath = '';

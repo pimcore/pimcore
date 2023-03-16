@@ -5,7 +5,9 @@ pimcore:
         domain: pimcore-test.dev
         redirect_to_maindomain: false
         language: en
-        valid_languages: 'en,de'
+        valid_languages:
+            - en
+            - de
         fallback_languages:
             en: ''
             de: ''

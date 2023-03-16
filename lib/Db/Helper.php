@@ -23,6 +23,14 @@ use Pimcore\Model\Element\ValidationException;
 
 class Helper
 {
+    /**
+     *
+     * @param array<string, mixed> $data The data to be inserted or updated into the database table.
+     * Array key corresponds to the database column, array value to the actual value.
+     * @param string[] $keys If the table needs to be updated, the columns listed in this parameter will be used as criteria/condition for the where clause.
+     * Typically, these are the primary key columns.
+     * The values for the specified keys are read from the $data parameter.
+     */
     public static function upsert(Connection $connection, string $table, array $data, array $keys, bool $quoteIdentifiers = true): int|string
     {
         try {
@@ -33,7 +41,7 @@ class Helper
             $critera = [];
             foreach ($keys as $key) {
                 $key = $quoteIdentifiers ? $connection->quoteIdentifier($key) : $key;
-                $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%1$s" passed for upsert not found in data', $key));
+                $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%s" passed for upsert not found in data', $key));
             }
 
             return $connection->update($table, $data, $critera);

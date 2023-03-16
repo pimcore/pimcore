@@ -193,14 +193,22 @@ class Ghostscript extends Adapter
         }
     }
 
-    public function getText(?int $page = null, ?Asset\Document $asset = null): mixed
+    public function getText(?int $page = null, ?Asset\Document $asset = null, ?string $path = null): mixed
     {
         try {
             if (!$asset && $this->asset) {
                 $asset = $this->asset;
             }
 
-            $path = $asset->getLocalFile();
+            if (!$path || !file_exists($path)) {
+                if (self::isFileTypeSupported($asset->getFilename())) {
+                    $path = $asset->getLocalFile();
+                }
+
+                if (empty($path)) {
+                    throw new \Exception('Could not get local file for asset with id ' . $asset->getId());
+                }
+            }
 
             return $this->convertPdfToText($page, $path);
         } catch (\Exception $e) {

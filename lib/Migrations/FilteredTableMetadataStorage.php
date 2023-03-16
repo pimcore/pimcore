@@ -31,6 +31,9 @@ final class FilteredTableMetadataStorage implements MetadataStorage
 
     private ?string $prefix = null;
 
+    /**
+     * @return $this
+     */
     public function __invoke(DependencyFactory $dependencyFactory): static
     {
         $storage = new TableMetadataStorage(

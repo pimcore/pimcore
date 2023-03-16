@@ -18,6 +18,10 @@ pimcore.helpers.sanitizeEmail = function (email) {
     return email.replace(/[^a-zA-Z0-9_\-@.+]/g,'');
 };
 
+pimcore.helpers.sanitizeUrlSlug = function (slug) {
+    return slug.replace(/[^a-z0-9-_+/]/gi, '');
+};
+
 pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
 
     if (!ExtJS) {
@@ -1090,7 +1094,7 @@ pimcore.helpers.getClassForIcon = function (icon) {
 
     var content = styleContainer.dom.innerHTML;
     var classname = "pimcore_dynamic_class_for_icon_" + uniqid();
-    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; background-size: 100% 100% !important; }\n");
+    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; background-size: contain !important; }\n");
     styleContainer.dom.innerHTML = content;
 
     return classname;
