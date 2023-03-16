@@ -16,10 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CustomReportsBundle;
 
+use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreCustomReportsBundle extends AbstractPimcoreBundle
+class PimcoreCustomReportsBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
 {
     use PackageVersionTrait;
 

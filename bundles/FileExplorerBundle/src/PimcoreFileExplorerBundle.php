@@ -15,11 +15,12 @@
 
 namespace Pimcore\Bundle\FileExplorerBundle;
 
+use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use function dirname;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreFileExplorerBundle extends AbstractPimcoreBundle
+class PimcoreFileExplorerBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
 {
     use PackageVersionTrait;
 

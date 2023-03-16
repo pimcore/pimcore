@@ -16,10 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WebToPrintBundle;
 
+use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreWebToPrintBundle extends AbstractPimcoreBundle
+class PimcoreWebToPrintBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
 {
     use PackageVersionTrait;
 

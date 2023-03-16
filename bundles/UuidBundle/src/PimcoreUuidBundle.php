@@ -15,12 +15,13 @@
 
 namespace Pimcore\Bundle\UuidBundle;
 
+use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Bundle\UuidBundle\DependencyInjection\PimcoreUuidExtension;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
-class PimcoreUuidBundle extends AbstractPimcoreBundle
+class PimcoreUuidBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
 {
     use PackageVersionTrait;
 
