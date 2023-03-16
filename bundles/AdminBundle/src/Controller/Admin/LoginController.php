@@ -115,6 +115,9 @@ class LoginController extends AdminController implements KernelControllerEventIn
 
         $params['csrfTokenRefreshInterval'] = ((int)$session_gc_maxlifetime - 60) * 1000;
 
+        if ($request->get('too_many_attempts')) {
+            $params['error'] = $request->get('too_many_attempts');
+        }
         if ($request->get('auth_failed')) {
             $params['error'] = 'error_auth_failed';
         }
@@ -199,24 +202,23 @@ class LoginController extends AdminController implements KernelControllerEventIn
             }
 
             $user = User::getByName($username);
-
-            if ($user instanceof User) {
-                if (!$user->isActive()) {
-                    $error = 'user_inactive';
-                }
-
-                if (!$user->getEmail()) {
-                    $error = 'user_no_email_address';
-                }
-
-                if (!$user->getPassword()) {
-                    $error = 'user_no_password';
-                }
-            } else {
+            if (!$user instanceof User) {
                 $error = 'user_unknown';
             }
 
-            if (!$error && $user instanceof User) {
+            if (!$error) {
+                if (!$user->isActive()) {
+                    $error = 'user_inactive';
+                }
+                if (!$user->getEmail()) {
+                    $error = 'user_no_email_address';
+                }
+                if (!$user->getPassword()) {
+                    $error = 'user_no_password';
+                }
+            }
+
+            if (!$error) {
                 $token = Authentication::generateToken($user->getName());
 
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
@@ -253,7 +255,14 @@ class LoginController extends AdminController implements KernelControllerEventIn
 
         $csrfProtection->regenerateCsrfToken($request->getSession());
 
-        $params['error'] = $error;
+        if ($error) {
+            $params['reset_error'] = 'Please make sure you are entering a correct input.';
+            //TODO check if comparision can be true
+            // @phpstan-ignore-next-line
+            if ($error === 'user_reset_password_too_many_attempts') {
+                $params['reset_error'] = 'Too many attempts. Please retry later.';
+            }
+        }
 
         return $this->render('@PimcoreAdmin/admin/login/lost_password.html.twig', $params);
     }

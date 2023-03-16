@@ -58,41 +58,43 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
 
         $super();
 
-        this.specificPanel.add({
-            xtype: "fieldset",
-            title: t("crop"),
-            style: "margin-top: 10px;",
-            items: [{
-                xtype: "numberfield",
-                fieldLabel: t("ratio") + " X",
-                name: "ratioX",
-                value: this.datax.ratioX
-            },
-                {
+        if (!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add({
+                xtype: "fieldset",
+                title: t("crop"),
+                style: "margin-top: 10px;",
+                items: [{
                     xtype: "numberfield",
-                    fieldLabel: t("ratio") + " Y",
-                    name: "ratioY",
-                    value: this.datax.ratioY
+                    fieldLabel: t("ratio") + " X",
+                    name: "ratioX",
+                    value: this.datax.ratioX
                 },
-                {
-                    xtype: "textarea",
-                    name: "predefinedDataTemplates",
-                    height: 300,
-                    width: "100%",
-                    value: this.datax.predefinedDataTemplates,
-                    validator: function (value) {
-                        if(Ext.isString(value) && value.length > 3)
-                        try {
-                            Ext.decode(value);
-                            return true;
-                        } catch (e) {
-                            return false;
-                        }
+                    {
+                        xtype: "numberfield",
+                        fieldLabel: t("ratio") + " Y",
+                        name: "ratioY",
+                        value: this.datax.ratioY
                     },
-                    fieldLabel: t("predefined_hotspot_data_templates")
-                }
-            ]
-        });
+                    {
+                        xtype: "textarea",
+                        name: "predefinedDataTemplates",
+                        height: 300,
+                        width: "100%",
+                        value: this.datax.predefinedDataTemplates,
+                        validator: function (value) {
+                            if (Ext.isString(value) && value.length > 3)
+                                try {
+                                    Ext.decode(value);
+                                    return true;
+                                } catch (e) {
+                                    return false;
+                                }
+                        },
+                        fieldLabel: t("predefined_hotspot_data_templates")
+                    }
+                ]
+            });
+        }
 
         return this.layout;
     },
