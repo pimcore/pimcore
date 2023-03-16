@@ -238,6 +238,7 @@ pimcore:
             - de
 ```
 - Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.
+- [DataBase] Removed deprecated `PhpArrayFileTable`.
 - [Database] Removed `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
 
 ## 10.6.0
