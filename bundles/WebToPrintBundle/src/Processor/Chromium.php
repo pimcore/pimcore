@@ -48,10 +48,6 @@ class Chromium extends Processor
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
 
-        if (isset($web2printConfig['hostUrl'])) {
-            $params['hostUrl'] = $web2printConfig['hostUrl'];
-        }
-
         $html = $this->processHtml($html, $params);
         $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
 
