@@ -30,7 +30,7 @@ Pimcore provides a Content Security Policy handler, which enables an additional 
 Content Security Policy is enabled by default.
 Read more about [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP).
 
-And to allow external urls for each directive, add a custom configuration in `config/config.yaml` and provide a list in the configuration:
+To allow external urls for each directive, add a custom configuration in `config/config.yaml` and provide a list in the configuration:
 ```yaml
 # config/config.yaml
 pimcore_admin:
