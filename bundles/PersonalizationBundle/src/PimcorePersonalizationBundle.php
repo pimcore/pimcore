@@ -59,7 +59,7 @@ class PimcorePersonalizationBundle extends AbstractPimcoreBundle
             '/bundles/pimcorepersonalization/js/object/classes/data/targetGroup.js',
             '/bundles/pimcorepersonalization/js/object/classes/data/targetGroupMultiselect.js',
             '/bundles/pimcorepersonalization/js/object/tags/targetGroup.js',
-            '/bundles/pimcorepersonalization/js/object/tags/targetGroupMultiselect.js'
+            '/bundles/pimcorepersonalization/js/object/tags/targetGroupMultiselect.js',
         ];
     }
 
