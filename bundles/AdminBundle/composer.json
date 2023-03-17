@@ -22,6 +22,9 @@
     "phpunit/phpunit": "^9.3"
   },
   "autoload": {
+    "files": [
+      "src/autoload.php"
+    ],
     "psr-4": {
       "Pimcore\\Bundle\\AdminBundle\\": "src/"
     }

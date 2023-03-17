@@ -55,9 +55,9 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return Model\GridConfigFavourite
+     * @return GridConfigFavourite
      */
-    public function save(): Model\GridConfigFavourite
+    public function save(): GridConfigFavourite
     {
         $gridConfigFavourite = $this->model->getObjectVars();
         $data = [];

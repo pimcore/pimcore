@@ -50,3 +50,5 @@ class LoginRedirectEvent extends Event
         $this->routeParams = $routeParams;
     }
 }
+
+@class_alias(LoginRedirectEvent::class, 'Pimcore\Event\Admin\Login\LoginRedirectEvent');

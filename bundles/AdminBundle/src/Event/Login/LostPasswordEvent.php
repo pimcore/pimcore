@@ -70,3 +70,5 @@ class LostPasswordEvent extends Event
         return $this;
     }
 }
+
+@class_alias(LostPasswordEvent::class, 'Pimcore\Event\Admin\Login\LostPasswordEvent');

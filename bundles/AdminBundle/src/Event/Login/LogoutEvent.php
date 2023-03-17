@@ -40,3 +40,5 @@ class LogoutEvent extends Event
         return $this->user;
     }
 }
+
+@class_alias(LogoutEvent::class, 'Pimcore\Event\Admin\Login\LogoutEvent');

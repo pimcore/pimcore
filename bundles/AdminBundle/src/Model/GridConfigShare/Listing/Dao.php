@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Model\GridConfigShare\Listing;
 
+use Pimcore\Bundle\AdminBundle\Model\GridConfigShare;
 use Pimcore\Bundle\AdminBundle\Model\GridConfigShare\Listing;
 use Pimcore\Model;
 
@@ -36,7 +37,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $data = $this->db->fetchAllAssociative('SELECT * FROM gridconfig_shares' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($data as $configData) {
-            $gridConfig = new Model\GridConfigShare();
+            $gridConfig = new GridConfigShare();
             $gridConfig->setValues($configData);
             $gridConfigs[] = $gridConfig;
         }

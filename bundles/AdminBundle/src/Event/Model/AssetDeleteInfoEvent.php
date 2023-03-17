@@ -23,3 +23,5 @@ class AssetDeleteInfoEvent extends AssetEvent implements ElementDeleteInfoEventI
 {
     use ElementDeleteInfoEventTrait;
 }
+
+@class_alias(AssetDeleteInfoEvent::class, 'Pimcore\Event\Model\AssetDeleteInfoEvent');

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Model\GridConfigFavourite\Listing;
 
+use Pimcore\Bundle\AdminBundle\Model\GridConfig;
 use Pimcore\Bundle\AdminBundle\Model\GridConfigFavourite;
 use Pimcore\Model;
 
@@ -37,7 +38,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $gridConfigs = [];
 
         foreach ($data as $configData) {
-            $gridConfig = new Model\GridConfig();
+            $gridConfig = new GridConfig();
             $gridConfig->setValues($configData);
             $gridConfigs[] = $gridConfig;
         }

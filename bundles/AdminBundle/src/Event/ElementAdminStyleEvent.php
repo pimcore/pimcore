@@ -94,4 +94,4 @@ class ElementAdminStyleEvent extends Event
     }
 }
 
-class_alias(ElementAdminStyleEvent::class, 'Pimcore\Event\Admin\ElementAdminStyleEvent');
+@class_alias(ElementAdminStyleEvent::class, 'Pimcore\Event\Admin\ElementAdminStyleEvent');

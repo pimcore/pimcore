@@ -21,6 +21,7 @@ use Pimcore\Config;
 use Pimcore\Controller\Config\ControllerDataProvider;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
+use Pimcore\Bundle\AdminBundle\Tool as AdminTool;
 use Pimcore\Tool\Storage;
 use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -339,7 +340,7 @@ class MiscController extends AdminController
      */
     public function getLanguageFlagAction(Request $request): BinaryFileResponse
     {
-        $iconPath = Tool::getLanguageFlagFile($request->get('language'));
+        $iconPath = AdminTool::getLanguageFlagFile($request->get('language'));
         $response = new BinaryFileResponse($iconPath);
         $response->headers->set('Content-Type', 'image/svg+xml');
 

@@ -28,3 +28,5 @@ interface ElementDeleteInfoEventInterface extends ElementEventInterface
 
     public function setReason(string $reason): void;
 }
+
+@class_alias(ElementDeleteInfoEventInterface::class, 'Pimcore\Event\Model\ElementDeleteInfoEventInterface');

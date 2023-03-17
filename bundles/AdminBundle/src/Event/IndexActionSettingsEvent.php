@@ -43,3 +43,5 @@ class IndexActionSettingsEvent extends Event
         $this->settings[$key] = $value;
     }
 }
+
+@class_alias(IndexActionSettingsEvent::class, 'Pimcore\Event\Admin\IndexActionSettingsEvent');

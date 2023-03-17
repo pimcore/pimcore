@@ -557,3 +557,5 @@ final class AdminEvents
      */
     public const PERSPECTIVE_POST_GET_RUNTIME = 'pimcore.admin.perspective.postGetRuntime';
 }
+
+@class_alias(AdminEvents::class, 'Pimcore\Event\AdminEvents');
