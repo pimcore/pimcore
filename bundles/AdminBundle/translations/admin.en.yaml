@@ -365,13 +365,6 @@ translations_are_not_configured: 'Translation are not configured'
 read_more_here: 'Read more about here'
 publish_version: 'Publish version'
 start: Start
-su: Su
-mo: Mo
-tu: Tu
-we: We
-th: Th
-fr: Fr
-sa: Sa
 session_error_text: 'It seems there is a problem with your session. We recommend to reload this page in order to be save, but you can try to save your changes first.'
 session_error: 'Session Error'
 please_wait: 'Please wait ...'

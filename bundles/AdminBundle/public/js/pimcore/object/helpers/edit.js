@@ -432,7 +432,7 @@ pimcore.object.helpers.edit = {
                             // apply tooltips
                             if(field.tooltip) {
                                 try {
-                                    var tooltipHtml = field.tooltip;
+                                    var tooltipHtml = Ext.util.Format.htmlEncode(field.tooltip);
 
                                     // classification-store tooltips are already translated
                                     if (context.type != "classificationstore") {
