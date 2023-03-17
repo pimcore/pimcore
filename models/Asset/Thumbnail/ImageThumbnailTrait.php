@@ -324,7 +324,7 @@ trait ImageThumbnailTrait
     {
         $totalArgs = count($args);
         if ($totalArgs > 0) {
-            if (is_array($args[0])){
+            if (is_array($args[0])) {
                 return $args[0];
             }
 
@@ -332,11 +332,12 @@ trait ImageThumbnailTrait
                 'Calling the getPath() method with arguments is deprecated since version 10.6 and will be removed in Pimcore 11.
             Use an array with options (e.g. ->getPath(["deferredAllowed" => true, "cacheBuster" => false]))');
 
-            if ($totalArgs === 1){
+            if ($totalArgs === 1) {
                 return [
                     'deferredAllowed' => $args[0],
                 ];
             }
+
             return [
                 'deferredAllowed' => $args[0],
                 'cacheBuster' => $args[1],
@@ -384,7 +385,7 @@ trait ImageThumbnailTrait
      */
     public function getFrontendPath(): string
     {
-        $path = $this->getPath(['deferredAllowed' => false, 'frontend' => true]);
+        $path = $this->getPath(['deferredAllowed' => true, 'frontend' => true]);
         if (!\preg_match('@^(https?|data):@', $path)) {
             $path = \Pimcore\Tool::getHostUrl() . $path;
         }
