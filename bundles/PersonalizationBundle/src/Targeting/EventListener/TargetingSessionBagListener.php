@@ -26,15 +26,19 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Traits\EnabledTrait;
 
 class TargetingSessionBagListener implements EventSubscriberInterface
 {
+    use EnabledTrait;
+
     const TARGETING_BAG_SESSION = 'pimcore_targeting_session';
 
     const TARGETING_BAG_VISITOR = 'pimcore_targeting_visitor';
 
     public function __construct(protected Config $config)
     {
+
     }
 
     /**
@@ -54,7 +58,7 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if (!$this->isEnabled()) {
+        if(!$this->isTargetingEnabled()) {
             return;
         }
 
@@ -86,7 +90,7 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     public function configureIgnoredSessionKeys(IgnoredSessionKeysEvent $event): void
     {
-        if (!$this->isEnabled()) {
+        if(!$this->isTargetingEnabled()) {
             return;
         }
 
@@ -104,7 +108,7 @@ class TargetingSessionBagListener implements EventSubscriberInterface
      */
     public function prepareFullPageCacheResponse(PrepareResponseEvent $event): void
     {
-        if (!$this->isEnabled()) {
+        if(!$this->isTargetingEnabled()) {
             return;
         }
 
@@ -133,8 +137,5 @@ class TargetingSessionBagListener implements EventSubscriberInterface
         }
     }
 
-    protected function isEnabled(): bool
-    {
-        return \Pimcore::getKernel()->getContainer()->getParameter('pimcore_personalization.targeting.session.enabled');
-    }
+
 }

@@ -55,11 +55,9 @@ class PimcorePersonalizationExtension extends ConfigurableExtension
         // set TargetingStorageInterface type hint to the configured service ID
         $container->setAlias(TargetingStorageInterface::class, $config['storage_id']);
 
-        if ($config['enabled']) {
-            // enable targeting by registering listeners
-            $loader->load('targeting/services.yaml');
-            $loader->load('targeting/listeners.yaml');
-        }
+        //register listeners
+        $loader->load('targeting/services.yaml');
+        $loader->load('targeting/listeners.yaml');
 
         $dataProviders = [];
         foreach ($config['data_providers'] as $dataProviderKey => $dataProviderServiceId) {

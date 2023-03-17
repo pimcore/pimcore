@@ -239,13 +239,7 @@ pimcore:
  ```
 - Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.
 - [Database] Removed `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
-- [Targeting] Targeting is now using the opt-in approach. So, it will not be enabled by default. Please enable it in the config
-```yaml
-  pimcore_personalization:
-      targeting:
-          enabled:
-              true
- ```
+- [Targeting] Targeting is now using the opt-in approach and will not be enabled by default. So, user should set the following cookie `pimcore_targeting_enabled=1` to enable targeting. User can use tools like `Cookiebot` to choose consent and set the cookie accordingly.
 
 ## 10.6.0
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)

@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
@@ -85,10 +85,13 @@ class TargetingListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if (!$this->enabled) {
-            return;
-        }
+        if($event->getRequest()->cookies->has('pimcore_targeting_enabled')) {
+            $this->enable();
+       }
 
+       if(!$this->isTargetingEnabled()) {
+            return;
+       }
 
         $request = $event->getRequest();
 
@@ -143,7 +146,7 @@ class TargetingListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        if (!$this->enabled) {
+        if(!$this->isTargetingEnabled()) {
             return;
         }
 
