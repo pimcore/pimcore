@@ -56,7 +56,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode()
+    /** : mixed */
     {
         // update path if internal link
         $this->updatePathFromInternal(true, true);
@@ -164,11 +165,12 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 if ((is_string($value) || is_numeric($value))
                     && (strpos($key, 'data-') === 0 ||
                         strpos($key, 'aria-') === 0 ||
-                        in_array($key, $allowedAttributes))) {
+                        in_array($key, $allowedAttributes))
+                ) {
                     if (!empty($this->data[$key]) && !empty($this->config[$key])) {
-                        $attribs[] = $key.'="'. $this->data[$key] .' '. $this->config[$key] .'"';
+                        $attribs[] = $key . '="' . $this->data[$key] . ' ' . $this->config[$key] . '"';
                     } elseif (!empty($value)) {
-                        $attribs[] = $key.'="'.$value.'"';
+                        $attribs[] = $key . '="' . $value . '"';
                     }
                 }
             }
@@ -179,7 +181,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 $attribs[] = $this->data['attributes'];
             }
 
-            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($this->data['text'])) . $suffix . '</a>';
+            return '<a href="' . $url . '" ' . implode(' ', $attribs) . '>' . $prefix . ($noText ? '' : htmlspecialchars($this->data['text'])) . $suffix . '</a>';
         }
 
         return '';
@@ -197,8 +199,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 if (!$doc) {
                     $sane = false;
                     Logger::notice(
-                        'Detected insane relation, removing reference to non existent document with id ['.$this->getDocumentId(
-                        ).']'
+                        'Detected insane relation, removing reference to non existent document with id [' . $this->getDocumentId() . ']'
                     );
                     $this->data = null;
                 }
@@ -207,8 +208,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 if (!$asset) {
                     $sane = false;
                     Logger::notice(
-                        'Detected insane relation, removing reference to non existent asset with id ['.$this->getDocumentId(
-                        ).']'
+                        'Detected insane relation, removing reference to non existent asset with id [' . $this->getDocumentId() . ']'
                     );
                     $this->data = null;
                 }
@@ -217,8 +217,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 if (!$object) {
                     $sane = false;
                     Logger::notice(
-                        'Detected insane relation, removing reference to non existent object with id ['.$this->getDocumentId(
-                        ).']'
+                        'Detected insane relation, removing reference to non existent object with id [' . $this->getDocumentId() . ']'
                     );
                     $this->data = null;
                 }
@@ -245,6 +244,10 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             $anchor = $this->getAnchor();
             $anchor = str_replace('"', urlencode('"'), $anchor);
             $url .= '#' . str_replace('#', '', $anchor);
+        }
+
+        if ($this->data['appendslash']) {
+            $url .= '/';
         }
 
         return $url;
@@ -485,7 +488,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             if ((int)$this->data['internalId'] > 0) {
                 if ($this->data['internalType'] == 'document') {
                     if ($doc = Document::getById($this->data['internalId'])) {
-                        $key = 'document_'.$doc->getId();
+                        $key = 'document_' . $doc->getId();
 
                         $dependencies[$key] = [
                             'id' => $doc->getId(),
@@ -494,7 +497,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                     }
                 } elseif ($this->data['internalType'] == 'asset') {
                     if ($asset = Asset::getById($this->data['internalId'])) {
-                        $key = 'asset_'.$asset->getId();
+                        $key = 'asset_' . $asset->getId();
 
                         $dependencies[$key] = [
                             'id' => $asset->getId(),
@@ -511,7 +514,8 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds($idMapping)
+    /** : void */
     {
         if (isset($this->data['internal']) && $this->data['internal']) {
             $type = $this->data['internalType'];
