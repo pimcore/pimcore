@@ -39,7 +39,7 @@ class Definition extends Model\AbstractModel
      */
     protected const FORBIDDEN_NAMES = [
         'abstract', 'class', 'data', 'folder', 'list', 'permissions', 'resource', 'dao', 'concrete', 'items',
-        'object', 'interface', 'default'
+        'object', 'interface', 'default',
     ];
 
     /**
