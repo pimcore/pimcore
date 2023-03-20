@@ -237,6 +237,14 @@ pimcore:
             - en
             - de
 ```
+- [Admin] Certain classes has been moved to AdminBundle with changes in namespace (with BC layer) as defined below:
+```
+Pimcore\Event\Admin\* => Pimcore\Bundle\AdminBundle\Event\*
+Pimcore\Event\AdminEvents => Pimcore\Bundle\AdminBundle\Event\AdminEvents
+Pimcore\Event\Model\* => Pimcore\Bundle\AdminBundle\Event\Model\*
+and 
+\Pimcore\Tool::getLanguageFlagFile() to \Pimcore\Bundle\AdminBundle\Tool::getLanguageFlagFile()
+```
 
 ## 10.6.0
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
