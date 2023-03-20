@@ -62,6 +62,10 @@ final class Version20230320131322 extends AbstractMigration
                                 $objectBrick->$fieldSetter($objectBrick->$fieldGetter($relationItem['position']), $relationItem['position']);
                                 $objectBrick->markFieldDirty('localizedfields');
                                 $objectBrick->markFieldDirty('testRelation');
+                                if(!method_exists($objectBrick, 'getLocalizedfields')) {
+                                    // this cannot happen, because we already checked that there are localized fields via $brickDefinition->getFieldDefinition('localizedfields') but PhpStan complains...
+                                    continue;
+                                }
                                 /** @var Localizedfield $localizedFields */
                                 $localizedFields = $objectBrick->getLocalizedfields();
                                 $localizedFields->markLanguageAsDirty($relationItem['position']);
