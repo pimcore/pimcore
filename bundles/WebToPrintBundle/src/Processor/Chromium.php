@@ -34,36 +34,38 @@ class Chromium extends Processor
     protected function buildPdf(PrintAbstract $document, object $config): string
     {
         $web2printConfig = Config::getWeb2PrintConfig();
-        $web2printConfig = $web2printConfig['chromiumSettings'];
-        $web2printConfig = json_decode($web2printConfig, true);
+        $chromiumConfig = $chromiumConfig['chromiumSettings'];
+        $chromiumConfig = json_decode($chromiumConfig, true);
 
         $params = [
             'document' => $document
         ];
 
-        if (isset($web2printConfig['hostUrl'])) {
-            $params['hostUrl'] = $web2printConfig['hostUrl'];
-        }
+
 
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
 
+        if (isset($web2printConfig['hostUrl'])) {
+            $params['hostUrl'] = $web2printConfig['hostUrl'];
+        }
+
         $html = $this->processHtml($html, $params);
         $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
 
-        if ($web2printConfig) {
+        if ($chromiumConfig) {
             foreach (['header', 'footer'] as $item) {
-                if (key_exists($item, $web2printConfig) && $web2printConfig[$item] &&
-                    $content = file_get_contents($web2printConfig[$item])) {
-                    $web2printConfig[$item . 'Template'] = $content;
+                if (key_exists($item, $chromiumConfig) && $chromiumConfig[$item] &&
+                    $content = file_get_contents($chromiumConfig[$item])) {
+                    $chromiumConfig[$item . 'Template'] = $content;
                 }
-                unset($web2printConfig[$item]);
+                unset($chromiumConfig[$item]);
             }
         }
 
         try {
             $this->updateStatus($document->getId(), 50, 'pdf_conversion');
-            $pdf = $this->getPdfFromString($html, $web2printConfig ?? []);
+            $pdf = $this->getPdfFromString($html, $chromiumConfig ?? []);
             $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         } catch (\Exception $e) {
             Logger::error((string) $e);

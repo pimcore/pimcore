@@ -33,8 +33,8 @@ class Gotenberg extends Processor
     protected function buildPdf(PrintAbstract $document, object $config): string
     {
         $web2printConfig = Config::getWeb2PrintConfig();
-        $web2printConfig = $web2printConfig['gotenbergSettings'];
-        $web2printConfig = json_decode($web2printConfig, true);
+        $gotenbergSettings = $web2printConfig['gotenbergSettings'];
+        $gotenbergSettings = json_decode($gotenbergSettings, true);
 
         $params = ['document' => $document];
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
@@ -48,19 +48,19 @@ class Gotenberg extends Processor
         $html = $this->processHtml($html, $params);
         $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
 
-        if ($web2printConfig) {
+        if ($gotenbergSettings) {
             foreach (['header', 'footer'] as $item) {
-                if (key_exists($item, $web2printConfig) && $web2printConfig[$item] &&
-                    file_exists($web2printConfig[$item])) {
-                    $web2printConfig[$item . 'Template'] = $web2printConfig[$item];
+                if (key_exists($item, $gotenbergSettings) && $gotenbergSettings[$item] &&
+                    file_exists($gotenbergSettings[$item])) {
+                    $gotenbergSettings[$item . 'Template'] = $gotenbergSettings[$item];
                 }
-                unset($web2printConfig[$item]);
+                unset($gotenbergSettings[$item]);
             }
         }
 
         try {
             $this->updateStatus($document->getId(), 50, 'pdf_conversion');
-            $pdf = $this->getPdfFromString($html, $web2printConfig ?? []);
+            $pdf = $this->getPdfFromString($html, $gotenbergSettings ?? []);
             $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         } catch (\Exception $e) {
             Logger::error((string) $e);

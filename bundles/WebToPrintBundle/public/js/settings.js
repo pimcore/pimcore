@@ -230,6 +230,32 @@ pimcore.bundle.web2print.settings = Class.create({
                 defaults: {width: 450},
                 items: [
                     {
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_chromium_documentation_docker"),
+                        name: 'additions',
+                        width: 850,
+                        value: t('web2print_chromium_documentation_docker_text'),
+                    },
+                    {
+                        xtype: 'textfield',
+                        width: 650,
+                        fieldLabel: t("web2print_hostURL"),
+                        name: 'chromiumHostUrl',
+                        value: this.getValue("chromiumHostUrl")
+                    },
+                    {
+                        xtype: "displayfield",
+                        fieldLabel: t("web2print_chromium_documentation"),
+                        name: 'documentation',
+                        width: 600,
+                        value: t('web2print_chromium_options_documentation'),
+                        autoEl:{
+                            tag: 'a',
+                            target: '_blank',
+                            href: "https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-printToPDF", // suggesting the link mentioned in https://github.com/chrome-php/chrome/blob/6bc3ad7de6d17a3beedd5c114850ac6fcf24f28b/src/PageUtils/PagePdf.php#L24-L43
+                        }
+                    },
+                    {
                         xtype: 'textarea',
                         width: 850,
                         height: 200,
@@ -251,22 +277,12 @@ pimcore.bundle.web2print.settings = Class.create({
                     },
                     {
                         xtype: "displayfield",
-                        fieldLabel: t("web2print_chromium_documentation"),
-                        name: 'documentation',
-                        width: 600,
-                        value: t('web2print_chromium_options_documentation'),
-                        autoEl:{
-                            tag: 'a',
-                            target: '_blank',
-                            href: "https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-printToPDF", // suggesting the link mentioned in https://github.com/chrome-php/chrome/blob/6bc3ad7de6d17a3beedd5c114850ac6fcf24f28b/src/PageUtils/PagePdf.php#L24-L43
-                        }
-                    },{
-                        xtype: "displayfield",
                         fieldLabel: t("web2print_chromium_documentation_additions"),
                         name: 'additions',
                         width: 850,
                         value: t('web2print_chromium_documentation_additions_text'),
-                    },{
+                    },
+                    {
                         xtype: "displayfield",
                         fieldLabel: t("web2print_json_converter"),
                         name: 'json_converter',
@@ -297,6 +313,13 @@ pimcore.bundle.web2print.settings = Class.create({
                         width: 850,
                         value: t('web2print_gotenberg_documentation_additions_text'),
                     },{
+                        xtype: 'textfield',
+                        width: 650,
+                        fieldLabel: t("web2print_hostURL"),
+                        name: 'gotenbergHostUrl',
+                        value: this.getValue("gotenbergHostUrl"),
+                        emptyText: "http://nginx:80"
+                    }, {
                         xtype: 'textarea',
                         width: 850,
                         height: 200,
