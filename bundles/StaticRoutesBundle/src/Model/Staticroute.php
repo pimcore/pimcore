@@ -33,21 +33,27 @@ final class Staticroute extends AbstractModel
 {
     protected ?string $id = null;
 
-    protected string $name;
+    protected ?string $name = null;
 
-    protected string $pattern;
+    protected string $pattern = '';
 
-    protected string $reverse;
+    protected ?string $reverse = null;
 
-    protected ?string $controller;
+    protected ?string $controller = null;
 
-    protected string $variables;
+    protected ?string $variables = null;
 
-    protected string $defaults;
+    protected ?string $defaults = null;
 
+    /**
+     * @var int[]
+     */
     protected array $siteId = [];
 
-    protected array $methods;
+    /**
+     * @var string[]
+     */
+    protected array $methods = [];
 
     protected int $priority = 1;
 
@@ -205,7 +211,7 @@ final class Staticroute extends AbstractModel
         return $this->pattern;
     }
 
-    public function getController(): string
+    public function getController(): ?string
     {
         return $this->controller;
     }
@@ -215,7 +221,7 @@ final class Staticroute extends AbstractModel
         return $this->variables;
     }
 
-    public function getDefaults(): string
+    public function getDefaults(): ?string
     {
         return $this->defaults;
     }
@@ -295,7 +301,7 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -310,12 +316,14 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    public function getReverse(): string
+    public function getReverse(): ?string
     {
         return $this->reverse;
     }
 
     /**
+     * @param int[]|string|null $siteId
+     * 
      * @return $this
      */
     public function setSiteId(array|string|null $siteId): static
@@ -349,6 +357,9 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
+    /**
+     * @return int[]
+     */
     public function getSiteId(): array
     {
         return $this->siteId;
@@ -511,12 +522,17 @@ final class Staticroute extends AbstractModel
         return [];
     }
 
+    /**
+     * @return string[]
+     */
     public function getMethods(): array
     {
         return $this->methods;
     }
 
     /**
+     * @param string[]|string $methods
+     *
      * @return $this
      */
     public function setMethods(array|string $methods): static
