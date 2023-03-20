@@ -70,7 +70,7 @@ class AssetThumbnailCacheTest extends TestCase
         $this->assertNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
 
         //create thumbnail
-        $asset->getThumbnail($thumbnailName)->getPath(false);
+        $asset->getThumbnail($thumbnailName)->getPath(['deferredAllowed' => false]);
 
         //recheck if thumbnail exists
         $this->assertTrue($thumbnailStorage->fileExists($pathReference['storagePath']));
