@@ -89,7 +89,7 @@ final class Frontend
         }
 
         foreach (self::getFullSiteListing() as $site) {
-            /** @var $site Site */
+            /** @var Site $site */
             if (strpos($document->getRealFullPath(), $site->getRootPath() . '/') === 0 || $site->getRootDocument()->getId() == $document->getId()) {
                 $pathMapping[$document->getRealFullPath()] = $site->getId();
                 Pimcore\Cache::save($pathMapping, $pathSiteMappingCacheKey, ['system', 'resource'], null, 997);
