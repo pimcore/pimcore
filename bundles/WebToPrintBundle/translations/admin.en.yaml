@@ -67,6 +67,8 @@ web2print_gotenberg_documentation_additions_text: >-
 web2print_headlesschrome_json_converter:
 web2print_hostname: Hostname
 web2print_protocol: Protocol
+web2print_port: Port
+web2print_apiKey: API Key
 web2print_chromium_requirements: Requirements
 web2print_chromium_requirements_documentation: Please make sure to install chrome-php/chrome via composer
 web2print_chromium_settings: Chromium settings
@@ -82,3 +84,4 @@ web2print_chromium_documentation_docker: Notes for Dockerized Chromium
 web2print_chromium_documentation_docker_text: >-
     When using a Dockerized Chromium through WebSocket, the following field must be
     set to the web server service accordingly. eg. `http://nginx:80`
+web2print_hostURL: Host Url
