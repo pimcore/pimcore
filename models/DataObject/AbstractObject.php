@@ -976,7 +976,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
 
         try {
-            $tags = ['object_' . $objectId, 'object_properties' . $objectId, 'output'];
+            $tags = ['object_' . $objectId, 'object_properties_' . $objectId, 'output'];
             $tags = array_merge($tags, $additionalTags);
 
             Cache::clearTags($tags);
