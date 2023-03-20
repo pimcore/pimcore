@@ -18,6 +18,10 @@ pimcore.helpers.sanitizeEmail = function (email) {
     return email.replace(/[^a-zA-Z0-9_\-@.+]/g,'');
 };
 
+pimcore.helpers.sanitizeUrlSlug = function (slug) {
+    return slug.replace(/[^a-z0-9-_+/]/gi, '');
+};
+
 pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
 
     if (!ExtJS) {

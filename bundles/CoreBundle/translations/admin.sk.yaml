@@ -408,13 +408,6 @@ translations_are_not_configured: "Preklady nie s\xFA nakonfigurovan\xE9"
 read_more_here: "Pre\u010D\xEDta\u0165 si viac tu"
 publish_version: "Publikova\u0165 verziu"
 start: "Za\u010Diatok"
-su: Ne
-mo: Po
-tu: Ut
-we: St
-th: "\u0160t"
-fr: Pi
-sa: So
 session_error_text: "Zd\xE1 sa, \u017Ee sa vyskytol probl\xE9m s va\u0161ou rel\xE1ciou
   (session). Doporu\u010Dujeme obnovi\u0165 str\xE1nku z bezpe\u010Dnostn\xFDch d\xF4vodov,
   ale m\xF4\u017Eete najsk\xF4r sk\xFAsi\u0165 ulo\u017Eit svoje zmeny."

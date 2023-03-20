@@ -406,13 +406,6 @@ translations_are_not_configured: "\xDCbersetzungen sind nicht konfiguriert"
 read_more_here: Lesen Sie hier mehr dazu
 publish_version: "Version ver\xF6ffentlichen"
 start: Beginn
-su: So
-mo: Mo
-tu: Di
-we: Mi
-th: Do
-fr: Fr
-sa: Sa
 session_error_text: "Es scheint, als w\xFCrde es ein Problem mit Ihrer Session geben,
   wollten Sie trotzdem auf eigenes Risiko eingeloggt bleiben?"
 session_error: Session Fehler

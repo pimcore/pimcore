@@ -411,13 +411,6 @@ translations_are_not_configured: "\xC7eviriler yap\u0131land\u0131r\u0131lmad\u0
 read_more_here: "Detayl\u0131 bilgi oku"
 publish_version: "Yay\u0131nlanma s\xFCr\xFCm\xFC"
 start: "Ba\u015Flang\u0131\xE7"
-su: Paz.
-mo: Pzt.
-tu: Sa.
-we: "\xC7ar."
-th: Per.
-fr: Cum.
-sa: Cmt.
 session_error_text: "Oturumunuzda bir sorun var gibi g\xF6r\xFCn\xFCyor. Kaydetmek
   i\xE7in bu sayfay\u0131 yeniden y\xFCklemenizi \xF6neririz, ancak \xF6nce de\u011Fi\u015Fikliklerinizi
   kaydetmeyi deneyebilirsiniz."
