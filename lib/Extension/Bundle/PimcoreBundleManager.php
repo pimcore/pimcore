@@ -490,7 +490,7 @@ class PimcoreBundleManager
 
         $result = [];
         foreach ($this->getActiveBundles() as $bundle) {
-            if($bundle instanceof PimcoreBundleAdminSupportInterface) {
+            if ($bundle instanceof PimcoreBundleAdminSupportInterface) {
                 $paths = $bundle->$getter();
 
                 foreach ($paths as $path) {

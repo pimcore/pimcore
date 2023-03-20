@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Extension\Bundle;
 
 use Pimcore\Extension\Bundle\Installer\InstallerInterface;
-use Pimcore\Routing\RouteReferenceInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 interface PimcoreBundleInterface extends BundleInterface
