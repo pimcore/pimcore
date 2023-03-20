@@ -24,6 +24,8 @@ use Pimcore\Model\Site;
 
 final class Frontend
 {
+    private const SITE_CACHE_KEY = 'sites_full_list';
+
     public static function isDocumentInSite(?Site $site, Document $document): bool
     {
         $inSite = true;
@@ -51,23 +53,67 @@ final class Frontend
 
     public static function getSiteForDocument(Document $document): ?Site
     {
-        $cacheKey = 'sites_full_list';
-        if (RuntimeCache::isRegistered($cacheKey)) {
-            $sites = RuntimeCache::get($cacheKey);
+        $siteIdOfDocument = self::getSiteIdForDocument($document);
+
+        if(!$siteIdOfDocument) {
+            return null;
+        }
+
+        if (RuntimeCache::isRegistered(SELF::SITE_CACHE_KEY)) {
+            $sites = RuntimeCache::get(SELF::SITE_CACHE_KEY);
         } else {
-            $sites = new Site\Listing();
-            $sites->setOrderKey('(SELECT LENGTH(`path`) FROM documents WHERE documents.id = sites.rootId) DESC', false);
-            $sites = $sites->load();
-            RuntimeCache::set($cacheKey, $sites);
+            $sites = self::getFullSiteListing();
         }
 
         foreach ($sites as $site) {
-            if (strpos($document->getRealFullPath(), $site->getRootPath() . '/') === 0 || $site->getRootDocument()->getId() == $document->getId()) {
+            if($site->getId() == $siteIdOfDocument) {
                 return $site;
             }
         }
 
         return null;
+    }
+
+    public static function getSiteIdForDocument(Document $document): ?int
+    {
+        $pathSiteMappingCacheKey = 'path_site_mapping';
+
+        $pathMapping = Pimcore\Cache::load($pathSiteMappingCacheKey);
+
+        if (!$pathMapping) {
+            $pathMapping = [];
+        }
+
+        if (array_key_exists($document->getRealFullPath(), $pathMapping)) {
+            return $pathMapping[$document->getRealFullPath()];
+        }
+
+        foreach (self::getFullSiteListing() as $site) {
+            /** @var $site Site */
+            if (strpos($document->getRealFullPath(), $site->getRootPath() . '/') === 0 || $site->getRootDocument()->getId() == $document->getId()) {
+                $pathMapping[$document->getRealFullPath()] = $site->getId();
+                Pimcore\Cache::save($pathMapping, $pathSiteMappingCacheKey, ['system', 'resource'], null, 997);
+                return $site->getId();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return Site\Listing[]
+     */
+    private static function getFullSiteListing() : array
+    {
+        if (RuntimeCache::isRegistered(SELF::SITE_CACHE_KEY)) {
+            $sites = RuntimeCache::get(SELF::SITE_CACHE_KEY);
+        } else {
+            $sites = new Site\Listing();
+            $sites->setOrderKey('(SELECT LENGTH(`path`) FROM documents WHERE documents.id = sites.rootId) DESC', false);
+            $sites = $sites->load();
+            RuntimeCache::set(SELF::SITE_CACHE_KEY, $sites);
+        }
+        return $sites;
     }
 
     public static function isOutputCacheEnabled(): bool|array

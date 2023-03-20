@@ -24,6 +24,8 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Routing\DocumentRoute;
+use Pimcore\Tool\Frontend;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -103,11 +105,21 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context): void
     {
         $document = Document::getByPath($context->getPath());
+        $site = $this->siteResolver->getSite($context->getRequest());
+
+        // If the request is not from a site and the document is part of a site
+        // or the ID of the requested site does not match the site where the document is located.
+        // Then we have to throw a NotFoundHttpException
+        if($document && !$context->getRequest()->get('pimcore_editmode')) {
+            $siteIdOfDocument = Frontend::getSiteIdForDocument($document);
+            if(!$site && $siteIdOfDocument || ($site && ($site->getId() != $siteIdOfDocument))) {
+                throw new NotFoundHttpException("The page does not exist on this configured site.");
+            }
+        }
+
 
         // check for a pretty url inside a site
         if (!$document && $this->siteResolver->isSiteRequest($context->getRequest())) {
-            $site = $this->siteResolver->getSite($context->getRequest());
-
             $sitePrettyDocId = $this->documentService->getDao()->getDocumentIdByPrettyUrlInSite($site, $context->getOriginalPath());
             if ($sitePrettyDocId) {
                 if ($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
