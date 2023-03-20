@@ -34,7 +34,7 @@ class Chromium extends Processor
     protected function buildPdf(PrintAbstract $document, object $config): string
     {
         $web2printConfig = Config::getWeb2PrintConfig();
-        $chromiumConfig = $chromiumConfig['chromiumSettings'];
+        $chromiumConfig = $web2printConfig['chromiumSettings'];
         $chromiumConfig = json_decode($chromiumConfig, true);
 
         $params = [
