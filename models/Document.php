@@ -607,7 +607,7 @@ class Document extends Element\AbstractElement
     public function clearDependentCache($additionalTags = [])
     {
         try {
-            $tags = [$this->getCacheTag(), 'document_properties', 'output'];
+            $tags = [$this->getCacheTag(), 'document_properties_'.$this->getId(), 'output'];
             $tags = array_merge($tags, $additionalTags);
 
             \Pimcore\Cache::clearTags($tags);
