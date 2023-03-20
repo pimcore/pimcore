@@ -91,9 +91,9 @@ class Sql extends AbstractAdapter
         $sql = '';
         if (!empty($config['sql']) && !$ignoreSelectAndGroupBy) {
             if (strpos(strtoupper(trim($config['sql'])), 'SELECT') !== 0) {
-                $sql .= 'SELECT ';
+                $sql .= 'SELECT';
             }
-            $sql .= str_replace("\n", ' ', $config['sql']);
+            $sql .= "\n" . $config['sql'];
         } elseif ($selectField) {
             $db = Db::get();
             $sql .= 'SELECT ' . $db->quoteIdentifier($selectField);
@@ -102,23 +102,23 @@ class Sql extends AbstractAdapter
         }
         if (!empty($config['from'])) {
             if (strpos(strtoupper(trim($config['from'])), 'FROM') !== 0) {
-                $sql .= ' FROM ';
+                $sql .= "\n" . 'FROM ';
             }
-            $sql .= ' ' . str_replace("\n", ' ', $config['from']);
+            $sql .= "\n" . $config['from'];
         }
 
         if (!empty($config['where'])) {
             if (str_starts_with(strtoupper(trim($config['where'])), 'WHERE')) {
                 $config['where'] = preg_replace('/^\s*WHERE\s*/', '', $config['where']);
             }
-            $sql .= ' WHERE (' . str_replace("\n", ' ', $config['where']) . ')';
+            $sql .= "\n" . 'WHERE (' . $config['where'] . ')';
         }
 
         if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
             if (strpos(strtoupper(trim($config['groupby'])), 'GROUP BY') !== 0) {
                 $sql .= ' GROUP BY ';
             }
-            $sql .= ' ' . str_replace("\n", ' ', $config['groupby']);
+            $sql .= "\n" . $config['groupby'];
         }
 
         if ($drillDownFilters) {
