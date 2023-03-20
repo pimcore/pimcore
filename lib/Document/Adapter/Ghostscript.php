@@ -158,10 +158,10 @@ class Ghostscript extends Adapter
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
         if (version_compare($this->getVersion(), '9.50', '>=')) {
-            $command .= " --permit-file-read='" . escapeshellcmd($localFile) . "'";
+            $command .= ' --permit-file-read=' . escapeshellarg($localFile);
         }
 
-        $command .= " -c '(" . escapeshellcmd($localFile) . ") (r) file runpdfbegin pdfpagecount = quit'";
+        $command .= ' -c ' . escapeshellarg('(' . $localFile . ') (r) file runpdfbegin pdfpagecount = quit');
 
         Console::addLowProcessPriority($command);
 
@@ -210,14 +210,22 @@ class Ghostscript extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function getText(?int $page = null, ?Asset\Document $asset = null)
+    public function getText(?int $page = null, ?Asset\Document $asset = null, ?string $path = null)
     {
         try {
             if (!$asset && $this->asset) {
                 $asset = $this->asset;
             }
 
-            $path = $asset->getLocalFile();
+            if (!$path || !file_exists($path)) {
+                if (self::isFileTypeSupported($asset->getFilename())) {
+                    $path = $asset->getLocalFile();
+                }
+
+                if (empty($path)) {
+                    throw new \Exception('Could not get local file for asset with id ' . $asset->getId());
+                }
+            }
 
             try {
                 $pdftotextBin = self::getPdftotextCli();

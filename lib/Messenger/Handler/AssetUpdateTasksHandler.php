@@ -51,13 +51,15 @@ class AssetUpdateTasksHandler
     private function saveAsset(Asset $asset)
     {
         Version::disable();
+        $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
         $asset->save();
         Version::enable();
     }
 
     private function processDocument(Asset\Document $asset)
     {
-        if (!$asset->getCustomSetting('document_page_count')) {
+        $pageCount = $asset->getCustomSetting('document_page_count');
+        if (!$pageCount || $pageCount === 'failed') {
             $asset->processPageCount();
             $this->saveAsset($asset);
         }

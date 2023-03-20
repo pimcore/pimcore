@@ -162,6 +162,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         if ($request->get('settings')) {
             if ($document->isAllowed('settings')) {
                 $settings = $this->decodeJson($request->get('settings'));
+
+                if (array_key_exists('prettyUrl', $settings)) {
+                    $settings['prettyUrl'] = htmlspecialchars($settings['prettyUrl']);
+                }
+
                 $document->setValues($settings);
             }
         }

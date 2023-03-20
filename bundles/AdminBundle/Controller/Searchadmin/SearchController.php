@@ -50,8 +50,11 @@ class SearchController extends AdminController
      * @return JsonResponse
      *
      * @todo: $conditionTypeParts could be undefined
+     *
      * @todo: $conditionSubtypeParts could be undefined
+     *
      * @todo: $conditionClassnameParts could be undefined
+     *
      * @todo: $data could be undefined
      */
     public function findAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)
@@ -74,9 +77,9 @@ class SearchController extends AdminController
 
         $query = $this->filterQueryParam($allParams['query'] ?? '');
 
-        $types = explode(',', $allParams['type'] ?? '');
-        $subtypes = explode(',', $allParams['subtype'] ?? '');
-        $classnames = explode(',', $allParams['class'] ?? '');
+        $types = explode(',', preg_replace('/[^a-z,]/i', '', $allParams['type'] ?? ''));
+        $subtypes = explode(',', preg_replace('/[^a-z,]/i', '', $allParams['subtype'] ?? ''));
+        $classnames = explode(',', preg_replace('/[^a-z0-9_,]/i', '', $allParams['class'] ?? ''));
 
         $offset = (int)$allParams['start'];
         $limit = (int)$allParams['limit'];

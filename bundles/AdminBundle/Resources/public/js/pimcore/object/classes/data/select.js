@@ -63,7 +63,25 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             datax.options = [];
         }
 
-        var valueStore = new Ext.data.Store({
+        const stylingItems = [
+            {
+                xtype: "textfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            }
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            return stylingItems;
+        }
+
+        const valueStore = new Ext.data.Store({
             fields: ["key", {name: "value", allowBlank: false}],
             proxy: {
                 type: 'memory'
@@ -71,9 +89,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             data: datax.options
         });
 
-        var valueGrid;
-
-        valueGrid = Ext.create('Ext.grid.Panel', {
+        const valueGrid = Ext.create('Ext.grid.Panel', {
             itemId: "valueeditor",
             viewConfig: {
                 plugins: [
@@ -96,7 +112,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     };
 
                     let selection = this.selectionModel.getSelection();
-                    var idx;
+                    let idx;
                     if (selection.length > 0) {
                         let selectedRow = selection[0];
                         idx = valueStore.indexOf(selectedRow) + 1;
@@ -113,7 +129,6 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     handler: this.showoptioneditor.bind(this, valueStore)
 
                 }],
-            disabled: this.isInCustomLayoutEditor(),
             style: "margin-top: 10px",
             store: valueStore,
             selModel: Ext.create('Ext.selection.RowModel', {}),
@@ -197,26 +212,26 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                 Ext.create('Ext.grid.plugin.CellEditing', {
                     clicksToEdit: 1,
                     listeners: {
-                        edit: function(editor, e) {
-                            if(!e.record.get('value')) {
+                        edit: function (editor, e) {
+                            if (!e.record.get('value')) {
                                 e.record.set('value', e.record.get('key'));
                             }
                         },
-                        beforeedit: function(editor, e) {
-                            if(e.field === 'value') {
+                        beforeedit: function (editor, e) {
+                            if (e.field === 'value') {
                                 return !!e.value;
                             }
                             return true;
                         },
-                        validateedit: function(editor, e) {
-                            if(e.field !== 'value') {
+                        validateedit: function (editor, e) {
+                            if (e.field !== 'value') {
                                 return true;
                             }
 
                             // Iterate to all store data
-                            for(var i=0; i < valueStore.data.length; i++) {
+                            for (var i = 0; i < valueStore.data.length; i++) {
                                 var existingRecord = valueStore.getAt(i);
-                                if(i != e.rowIdx && existingRecord.get('value') === e.value) {
+                                if (i != e.rowIdx && existingRecord.get('value') === e.value) {
                                     return false;
                                 }
                             }
@@ -229,22 +244,9 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
         this.selectionModel = valueGrid.getSelectionModel();
 
-        var items = [
-            {
-                xtype: "textfield",
-                fieldLabel: t("width"),
-                name: "width",
-                value: datax.width
-            },
-            {
-                xtype: "displayfield",
-                hideLabel: true,
-                value: t('width_explanation')
-            }
-        ];
 
-        if (!this.isInCustomLayoutEditor() && !this.isInClassificationStoreEditor()) {
-            items.push({
+        if (!this.isInClassificationStoreEditor()) {
+            stylingItems.push({
                 xtype: "numberfield",
                 fieldLabel: t("columnlength"),
                 name: "columnLength",
@@ -252,14 +254,14 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             });
         }
 
-        items.push({
+        stylingItems.push({
             xtype: "textfield",
             fieldLabel: t("default_value"),
             name: "defaultValue",
             value: datax.defaultValue
         });
 
-        items.push({
+        stylingItems.push({
             xtype: 'textfield',
             width: 600,
             fieldLabel: t("default_value_generator"),
@@ -268,7 +270,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             value: datax.defaultValueGenerator
         });
 
-        items.push({
+        stylingItems.push({
             xtype: "textfield",
             fieldLabel: t("options_provider_class"),
             width: 600,
@@ -276,7 +278,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             value: datax.optionsProviderClass
         });
 
-        items.push({
+        stylingItems.push({
             xtype: "textfield",
             fieldLabel: t("options_provider_data"),
             width: 600,
@@ -284,25 +286,28 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             name: "optionsProviderData"
         });
 
-        items.push(valueGrid);
-        return items;
+        stylingItems.push(valueGrid);
+
+        return stylingItems;
     },
 
     applyData: function ($super) {
 
         $super();
 
-        var options = [];
+        let options = [];
 
-        var valueStore = this.specificPanel.getComponent("valueeditor").getStore();
-        valueStore.commitChanges();
-        valueStore.each(function (rec) {
-            options.push({
-                key: rec.get("key"),
-                value: rec.get("value")
+        let valueEditor = this.specificPanel.getComponent("valueeditor") ?? null;
+        if(valueEditor) {
+            let valueStore = valueEditor.getStore();
+            valueStore.commitChanges();
+            valueStore.each(function (rec) {
+                options.push({
+                    key: rec.get("key"),
+                    value: rec.get("value")
+                });
             });
-        });
-
+        }
         this.datax.options = options;
     },
 

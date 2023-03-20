@@ -63,18 +63,7 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
     },
 
     getSpecificPanelItems: function (datax) {
-
-        var sitesStore = new Ext.data.JsonStore({
-            autoDestroy: true,
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('pimcore_admin_settings_getavailablesites', {excludeMainSite: 1}),
-            },
-            fields: ['id', 'domain']
-        });
-
-        var specificItems = [
+        const stylingItems = [
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -85,7 +74,24 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('width_explanation')
+            }
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            return stylingItems;
+        }
+
+        const sitesStore = new Ext.data.JsonStore({
+            autoDestroy: true,
+            autoLoad: true,
+            proxy: {
+                type: 'ajax',
+                url: Routing.generate('pimcore_admin_settings_getavailablesites', {excludeMainSite: 1}),
             },
+            fields: ['id', 'domain']
+        });
+
+        return stylingItems.concat([
             {
                 xtype: "numberfield",
                 fieldLabel: t("domain_label_width"),
@@ -98,7 +104,6 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
                 name: "action",
                 value: datax.action,
                 width: 740,
-                disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: 'container',
@@ -113,12 +118,8 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
                 valueField: "id",
                 store: sitesStore,
                 width: 600,
-                disabled: this.isInCustomLayoutEditor()
             })
-        ];
-
-        return specificItems;
-
+        ]);
     },
 
     applySpecialData: function (source) {

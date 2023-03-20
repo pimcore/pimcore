@@ -227,7 +227,8 @@ pimcore.object.classes.klass = Class.create({
 
         var listeners = {
             "itemclick" : this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
+            "beforeitemmove": this.onTreeNodeBeforeMove.bind(this)
         };
         return listeners;
     },
@@ -489,8 +490,8 @@ pimcore.object.classes.klass = Class.create({
     },
 
     getRestrictionsFromParent: function (node) {
-        if(node.data.editor.type == "localizedfields") {
-            return "localizedfields";
+        if(in_array(node.data.editor.type, ['localizedfields', 'block'])) {
+            return node.data.editor.type;
         } else {
             if(node.parentNode && node.parentNode.getDepth() > 0) {
                 var parentType = this.getRestrictionsFromParent(node.parentNode);
@@ -501,6 +502,10 @@ pimcore.object.classes.klass = Class.create({
         }
 
         return null;
+    },
+
+    onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
+        return pimcore.helpers.treeDragDropValidate(node, oldParent, newParent);
     },
 
     cloneNode:  function(tree, node) {
@@ -1083,6 +1088,14 @@ pimcore.object.classes.klass = Class.create({
             value: data.index_key
         };
 
+        //fixes data to match store model
+        const indexesArray = [];
+        if(data.index_columns){
+            Object.values(data.index_columns).forEach(column => {
+                indexesArray.push({id: column, value: column});
+            });
+        }  
+
         var tagsField = new Ext.form.field.Tag({
             name: "index_columns",
             width:550,
@@ -1090,7 +1103,7 @@ pimcore.object.classes.klass = Class.create({
             minChars: 2,
             store: this.tagstore,
             fieldLabel: t("columns"),
-            value: data.columns,
+            value: indexesArray,
             draggable: true,
             displayField: 'value',
             valueField: 'value',
@@ -1098,7 +1111,7 @@ pimcore.object.classes.klass = Class.create({
             delimiter: '\x01',
             createNewOnEnter: true,
             componentCls: 'superselect-no-drop-down',
-            value: data.index_columns
+            valueParam: indexesArray
         });
 
         var removeButton = new Ext.button.Button({
@@ -1352,9 +1365,6 @@ pimcore.object.classes.klass = Class.create({
         }
     },
 
-
-
-
     removeChild: function (tree, record) {
         if (this.id != 0) {
             if (this.currentNode == record.data.editor) {
@@ -1374,7 +1384,7 @@ pimcore.object.classes.klass = Class.create({
         if (node.data.editor) {
             if (typeof node.data.editor.getData == "function") {
                 data = node.data.editor.getData();
-
+                data.invalidFieldError = null;
                 data.name = trim(data.name);
 
                 // field specific validation
@@ -1417,6 +1427,10 @@ pimcore.object.classes.klass = Class.create({
                     }
 
                     var invalidFieldsText = t("class_field_name_error") + ": '" + data.name + "'";
+
+                    if (data.invalidFieldError) {
+                        invalidFieldsText = invalidFieldsText + " (" + data.invalidFieldError + ")";
+                    }
 
                     if(node.data.editor.invalidFieldNames){
                         invalidFieldsText = t("reserved_field_names_error")

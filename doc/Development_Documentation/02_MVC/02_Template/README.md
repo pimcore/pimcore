@@ -111,12 +111,12 @@ for details.
 {{ pimcore_inc('/snippets/foo') }}
 ```
 
-See [Template Extensions](./02_Template_Extensions) for details.
+See [Template Extensions](./02_Template_Extensions/README.md) for details.
 
 
 #### Templating Extensions
 
-The following extensions can directly be used on Twig. See [Template Extensions](./02_Template_Extensions) for a 
+The following extensions can directly be used on Twig. See [Template Extensions](./02_Template_Extensions/README.md) for a 
 detailed description of every helper:
 
 * `pimcore_head_link`

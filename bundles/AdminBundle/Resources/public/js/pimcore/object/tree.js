@@ -77,10 +77,17 @@ pimcore.object.tree = Class.create({
 
         var itemsPerPage = pimcore.settings['object_tree_paging_limit'];
 
-        rootNodeConfig.text = t("home");
-        rootNodeConfig.id = "" +  rootNodeConfig.id;
+        let rootNodeConfigText = t('home');
+        let rootNodeConfigIconCls = "pimcore_icon_home";
+        if(this.config.customViewId !== undefined && rootNodeConfig.id !== 1) {
+            rootNodeConfigText = rootNodeConfig.key;
+            rootNodeConfigIconCls = rootNodeConfig.iconCls;
+        }
+
+        rootNodeConfig.text = rootNodeConfigText;
+        rootNodeConfig.id = "" + rootNodeConfig.id;
         rootNodeConfig.allowDrag = true;
-        rootNodeConfig.iconCls = "pimcore_icon_home";
+        rootNodeConfig.iconCls = rootNodeConfigIconCls;
         rootNodeConfig.cls = "pimcore_tree_node_root";
         rootNodeConfig.expanded = true;
 
@@ -256,6 +263,13 @@ pimcore.object.tree = Class.create({
     },
 
     onTreeNodesDrop: function (node, data, overModel, dropPosition, eOpts) {
+        if (typeof this.treeNodeMoveParameter.oldParent.getOwnerTree !== "function") {
+            Ext.Array.each(data.records, function (record) {
+                if (this.onTreeNodeBeforeMove(record, record.parentNode, overModel)) {
+                    this.onTreeNodeMove(record, record.parentNode, overModel, 0);
+                }
+            }.bind(this));
+        }
 
         if (typeof this.treeNodeMoveParameter.oldParent.getOwnerTree !== "function") {
             return;

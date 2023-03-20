@@ -87,6 +87,10 @@ class Localizedfields implements MarshallerInterface
             foreach ($value as $language => $items) {
                 $result[$language] = [];
                 foreach ($items as $key => $normalizedData) {
+                    if (!isset($childDefs[$key])) {
+                        continue;
+                    }
+
                     $childDef = $childDefs[$key];
 
                     if ($this->marshallerService->supportsFielddefinition('block', $childDef->getFieldtype())) {

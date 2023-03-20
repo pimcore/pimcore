@@ -84,9 +84,7 @@ class Folder extends DAV\Collection
                 $parentPath = '';
             }
 
-            if (!$asset = Asset::getByPath($parentPath . '/' . $name)) {
-                throw new DAV\Exception\NotFound('File not found: ' . $name);
-            }
+            $asset = Asset::getByPath($parentPath . '/' . $name);
         } elseif ($name instanceof Asset) {
             $asset = $name;
         }

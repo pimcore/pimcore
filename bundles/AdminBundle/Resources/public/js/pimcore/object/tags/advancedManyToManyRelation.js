@@ -40,20 +40,31 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
         var fields = [];
 
-        fields.push("id");
-        fields.push("path");
-        fields.push("inheritedFields");
-        fields.push("metadata");
-        fields.push("type");
-        fields.push("subtype");
+        fields.push({name: "id"});
+        fields.push({name:"path"});
+        fields.push({name:"inheritedFields"});
+        fields.push({name:"metadata"});
+        fields.push({name:"type"});
+        fields.push({name:"subtype"});
 
         var i;
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
-            fields.push(this.fieldConfig.columns[i].key);
+            let defaultValue = null;
+            switch(this.fieldConfig.columns[i].type.toLowerCase()){
+                case "bool":
+                case "columnbool":
+                    defaultValue = this.fieldConfig.columns[i].value ? (this.fieldConfig.columns[i].value).toLowerCase() == "true" : null;
+                    break;
+                case "text":
+                case "number":
+                    defaultValue = this.fieldConfig.columns[i].value;
+                    break;
+            }
+            fields.push({name: this.fieldConfig.columns[i].key, defaultValue: defaultValue});
         }
 
-        fields.push("rowId");
+        fields.push({name: "rowId"});
 
         var modelName = 'ObjectsMultihrefMetadataEntry';
         if (!Ext.ClassManager.isCreated(modelName)) {

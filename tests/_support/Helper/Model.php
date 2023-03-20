@@ -82,6 +82,7 @@ class Model extends AbstractDefinitionHelper
             $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
             $rootPanel->addChild($panel);
 
+            $panel->addChild($this->createDataChild('input'));
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses(['RelationTest'])
             );

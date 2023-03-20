@@ -1,7 +1,7 @@
 # Loading Assets in the Admin UI
 
 If you need to load assets (JS, CSS) in the Admin or Editmode UI, you have 2 options, depending on if you do that from a
-[Pimcore Bundle](./05_Pimcore_Bundles) or from somewhere else.
+[Pimcore Bundle](./05_Pimcore_Bundles/README.md) or from somewhere else.
 
 ## Pimcore Bundles
 

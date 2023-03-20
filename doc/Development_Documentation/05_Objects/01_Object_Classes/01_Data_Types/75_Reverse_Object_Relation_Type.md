@@ -27,16 +27,13 @@ becomes visible.
 
 
 ## Working with PHP API
-Reverse Object Relation are a pure Pimcore admin feature, they don't play any role in scripting or services.
 
-Since Reverse Object Relation are owned by the remote object, they can only be set through the remote owner. Also the getter 
-has been omitted because Reverse Object Relation are not exposed through exporters.
+Since Reverse Object Relation are owned by the remote object, they can only be set through the remote owner.
 
-The best way to "get" non owner objects would be to use the `getRelationData()` method of objects:
+#### Get relations via PHP API
+
+In order to get the owner objects use the getter method:
 
 ```php
-$def = $object->getClass()->getFieldDefinition("myNonOwnerObjectField");
-$refKey = $def->getOwnerFieldName();
-$refId = $def->getOwnerClassId();
-$nonOwnerRelations = $object->getRelationData($refKey, false, $refId);
+$ownerRelations = $object->getMyReverseObjectRelationField();
 ```

@@ -177,10 +177,15 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         if (is_array($data)) {
             /** @var Model\DataObject\Data\UrlSlug $item */
             foreach ($data as $item) {
-                $slug = $item->getSlug();
+                $slug = htmlspecialchars($item->getSlug());
                 $foundSlug = true;
 
                 if (strlen($slug) > 0) {
+                    $slugToCompare = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;]/', '-', $item->getSlug());
+                    if ($item->getSlug() !== $slugToCompare) {
+                        throw new Model\Element\ValidationException('Slug contains forbidden characters!');
+                    }
+
                     $document = Model\Document::getByPath($slug);
                     if ($document) {
                         throw new Model\Element\ValidationException('Slug must be unique. Found conflict with document path "' . $slug . '"');
@@ -276,8 +281,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                             }
 
                             // if now exception is thrown then the slug is owned by a diffrent object/field
-                            throw new \Exception('Unique constraint violated. Slug alreay used by object '
-                                . $existingSlug->getFieldname() . ', fieldname: ' . $existingSlug->getFieldname());
+                            throw new \Exception('Unique constraint violated. Slug "' . $slug['slug'] . '" is already used by object '
+                                . $existingSlug->getObjectId() . ', fieldname: ' . $existingSlug->getFieldname());
                         }
                     }
 
