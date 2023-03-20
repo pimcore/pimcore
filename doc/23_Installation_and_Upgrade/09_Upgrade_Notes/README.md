@@ -237,6 +237,10 @@ pimcore:
             - en
             - de
 ```
+- [Security] Enabled Content Security Policy by default.
+- Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.
+- [DataBase] Removed deprecated `PhpArrayFileTable`.
+- [Database] Removed `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
 - Removed methods `Pimcore\Tool\Admin::isExtJS6()`, `\Pimcore\Tool\Admin::getLanguageFile()`, `\Pimcore\Tool::exitWithError()`.
 
 ## 10.6.0
@@ -277,6 +281,8 @@ pimcore:
 - [Document] The `HTML-Tags` (document metadata) field under SEO & Settings panel is now only visible and editable by Admin users`.
 - [Thumbnails] Using Callable in Asset thumbnail transformations is deprecated and will not work in Pimcore 11.
 - Marked `Pimcore\Model\User\AbstractUser` and `Pimcore\Model\User\UserRole` classes as abstract via php doc. It will be natively abstract in Pimcore 11.
+- [Bundles] Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in the `PimcoreBundleInterface`. These methods will be provided by the new `PimcoreBundleAdminSupportInterface`.
+- [Web2print] Deprecated `HeadlessChrome` processor, it will be removed and replaced by `Chromium` processor (which doesn't require NodeJS to work) in Pimcore 11.
 - [Database] Deprecated `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
 
 ## 10.5.13

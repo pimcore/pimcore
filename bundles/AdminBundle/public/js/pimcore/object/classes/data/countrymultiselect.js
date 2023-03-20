@@ -60,52 +60,7 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-
-        var countryProxy = {
-            type: 'ajax',
-            url: Routing.generate('pimcore_admin_settings_getavailablecountries'),
-            reader: {
-                type: 'json',
-                rootProperty: 'data'
-            }
-        };
-
-        var possibleOptions;
-        var countryStore = new Ext.data.Store({
-            proxy: countryProxy,
-            fields: [
-                {name: 'key'},
-                {name: 'value'}
-            ]
-        });
-
-        var options = {
-            itemId: "valueeditor",
-            name: "restrictTo",
-            triggerAction: "all",
-            editable: false,
-            fieldLabel: t("restrict_selection_to"),
-            store: countryStore,
-            componentCls: "object_field",
-            height: 200,
-            width: 300,
-            valueField: 'value',
-            displayField: 'key',
-            listeners: {
-                afterRender: function () {
-                    if (datax.restrictTo) {
-                        possibleOptions.setValue(datax.restrictTo);
-                    }
-                }.bind(this)
-            }
-        };
-        if (this.isInCustomLayoutEditor()) {
-            options.disabled = true;
-        }
-
-        var possibleOptions = new Ext.ux.form.MultiSelect(options);
-
-        var specificItems = [
+        const stylingItems = [
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -128,6 +83,56 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
                 hideLabel: true,
                 value: t('height_explanation')
             },
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            return stylingItems;
+        }
+
+        const countryProxy = {
+            type: 'ajax',
+            url: Routing.generate('pimcore_admin_settings_getavailablecountries'),
+            reader: {
+                type: 'json',
+                rootProperty: 'data'
+            }
+        };
+
+        const countryStore = new Ext.data.Store({
+            proxy: countryProxy,
+            fields: [
+                {name: 'key'},
+                {name: 'value'}
+            ]
+        });
+
+        countryStore.load();
+
+        const options = {
+            itemId: "valueeditor",
+            name: "restrictTo",
+            triggerAction: "all",
+            editable: false,
+            fieldLabel: t("restrict_selection_to"),
+            store: countryStore,
+            componentCls: "object_field",
+            height: 200,
+            width: 300,
+            valueField: 'value',
+            displayField: 'key',
+            listeners: {
+                afterRender: function () {
+                    if (datax.restrictTo) {
+                        possibleOptions.setValue(datax.restrictTo);
+                    }
+                }.bind(this)
+            }
+        };
+
+        const possibleOptions = new Ext.ux.form.MultiSelect(options);
+
+
+        return stylingItems.concat([
             {
                 xtype: "combo",
                 fieldLabel: t("multiselect_render_type"),
@@ -144,10 +149,7 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
                 forceSelection: true
             },
             possibleOptions
-        ];
-
-        countryStore.load();
-        return specificItems;
+        ]);
     },
 
     applyData: function ($super) {
