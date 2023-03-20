@@ -403,13 +403,6 @@ translations_are_not_configured: "Tradu\xE7\xE3o n\xE3o foram configuradas"
 read_more_here: Leia mais sobre isso
 publish_version: "Publicar vers\xE3o"
 start: Iniciar
-su: Dom
-mo: Seg
-tu: Ter
-we: Qua
-th: Qui
-fr: Sex
-sa: Sab
 session_error_text: "Parece haver um problema com sua sess\xE3o. Deseja permanecer
   por sua conta e risco ?"
 session_error: "Erro na sess\xE3o"
