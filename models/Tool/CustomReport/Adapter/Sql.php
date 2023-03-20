@@ -90,7 +90,7 @@ class Sql extends AbstractAdapter
         $config = (array)$config;
         $sql = '';
         if (!empty($config['sql']) && !$ignoreSelectAndGroupBy) {
-            if (strpos(strtoupper(trim($config['sql'])), 'SELECT') !== 0) {
+            if (!str_starts_with(strtoupper(trim($config['sql'])), 'SELECT')) {
                 $sql .= 'SELECT';
             }
             $sql .= "\n" . $config['sql'];
@@ -101,7 +101,7 @@ class Sql extends AbstractAdapter
             $sql .= 'SELECT *';
         }
         if (!empty($config['from'])) {
-            if (strpos(strtoupper(trim($config['from'])), 'FROM') !== 0) {
+            if (!str_starts_with(strtoupper(trim($config['from'])), 'FROM')) {
                 $sql .= "\n" . 'FROM ';
             }
             $sql .= "\n" . $config['from'];
@@ -115,7 +115,7 @@ class Sql extends AbstractAdapter
         }
 
         if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
-            if (strpos(strtoupper(trim($config['groupby'])), 'GROUP BY') !== 0) {
+            if (!str_starts_with(strtoupper(trim($config['groupby'])), 'GROUP BY')) {
                 $sql .= ' GROUP BY ';
             }
             $sql .= "\n" . $config['groupby'];
