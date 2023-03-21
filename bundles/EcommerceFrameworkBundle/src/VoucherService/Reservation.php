@@ -34,12 +34,6 @@ class Reservation extends AbstractModel
 
     public ?string $cart_id = null;
 
-    /**
-     * @param string $code
-     * @param CartInterface|null $cart
-     *
-     * @return self|null
-     */
     public static function get(string $code, CartInterface $cart = null): ?self
     {
         try {
@@ -51,42 +45,6 @@ class Reservation extends AbstractModel
             //            Logger::debug($ex->getMessage());
             return null;
         }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return bool
-     */
-    public function exists(): bool
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.2.5',
-            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        return isset($this->id);
-    }
-
-    /**
-     * Check whether the reservation object contains a reservations.
-     *
-     * @param int $cart_id
-     *
-     * @return bool
-     *
-     * @deprecated
-     */
-    public function check(int $cart_id): bool
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.2.5',
-            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        return $cart_id == $this->getCartId();
     }
 
     public static function create(string $code, CartInterface $cart): ?self
@@ -102,12 +60,6 @@ class Reservation extends AbstractModel
         }
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface|null $cart
-     *
-     * @return bool
-     */
     public static function releaseToken(string $code, CartInterface $cart = null): bool
     {
         $db = \Pimcore\Db::get();

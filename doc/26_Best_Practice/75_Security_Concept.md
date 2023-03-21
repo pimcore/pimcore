@@ -27,18 +27,10 @@ Since Pimcore is a Symfony application, it can utilize all Symfony tools, like t
 
 ### Content Security Policy
 Pimcore provides a Content Security Policy handler, which enables an additional security layer to protect from certain attacks like Cross-Site Scripting (XSS) and data injection and so on, by adding `Content-Security-Policy` HTTP response header with [nonce](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce) to every request in Admin interface. The generated nonce encoded string is matched with the one provided in link or inline javascript, which allows them to be executed safely. 
-
+Content Security Policy is enabled by default.
 Read more about [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP).
 
-To enable CSP, add a custom configuration in `config/config.yaml`:
-```yaml
-# config/config.yaml
-pimcore_admin:
-    admin_csp_header:
-        enabled: true
-```
-
-And to allow external urls for each directive, you can provide a list in the configuration:
+To allow external urls for each directive, add a custom configuration in `config/config.yaml` and provide a list in the configuration:
 ```yaml
 # config/config.yaml
 pimcore_admin:
@@ -49,6 +41,14 @@ pimcore_admin:
                 - 'https://bagheera.cat/*'
             style-src:
                 - 'https://oreo.cat/scripts/meow.css'
+```
+
+To disable CSP set the `enabled` property to `false` in your configuration:
+```yaml
+# config/config.yaml
+pimcore_admin:
+    admin_csp_header:
+        enabled: false
 ```
 
 In case, you are using third party bundles or custom implementation that extends the admin backend interface with custom views then you would need to use generated nonce string in your scripts.

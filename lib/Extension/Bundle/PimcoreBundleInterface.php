@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Extension\Bundle;
 
 use Pimcore\Extension\Bundle\Installer\InstallerInterface;
-use Pimcore\Routing\RouteReferenceInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 interface PimcoreBundleInterface extends BundleInterface
@@ -49,52 +48,4 @@ interface PimcoreBundleInterface extends BundleInterface
      * @return InstallerInterface|null
      */
     public function getInstaller(): ?InstallerInterface;
-
-    /**
-     * Get javascripts to include in admin interface
-     *
-     * Strings will be directly included, RouteReferenceInterface objects are used to generate an URL through the
-     * router.
-     *
-     * @return string[]|RouteReferenceInterface[]
-     *
-     * @deprecated Will be removed in Pimcore 11. Please implement PimcoreBundleAdminSupportInterface instead.
-     */
-    public function getJsPaths(): array;
-
-    /**
-     * Get stylesheets to include in admin interface
-     *
-     * Strings will be directly included, RouteReferenceInterface objects are used to generate an URL through the
-     * router.
-     *
-     * @return string[]|RouteReferenceInterface[]
-     *
-     * @deprecated Will be removed in Pimcore 11. Please implement PimcoreBundleAdminSupportInterface instead.
-     */
-    public function getCssPaths(): array;
-
-    /**
-     * Get javascripts to include in editmode
-     *
-     * Strings will be directly included, RouteReferenceInterface objects are used to generate an URL through the
-     * router.
-     *
-     * @return string[]|RouteReferenceInterface[]
-     *
-     * @deprecated Will be removed in Pimcore 11. Please implement PimcoreBundleAdminSupportInterface instead.
-     */
-    public function getEditmodeJsPaths(): array;
-
-    /**
-     * Get stylesheets to include in editmode
-     *
-     * Strings will be directly included, RouteReferenceInterface objects are used to generate an URL through the
-     * router.
-     *
-     * @return string[]|RouteReferenceInterface[]
-     *
-     * @deprecated Will be removed in Pimcore 11. Please implement PimcoreBundleAdminSupportInterface instead.
-     */
-    public function getEditmodeCssPaths(): array;
 }

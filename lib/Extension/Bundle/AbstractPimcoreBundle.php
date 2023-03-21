@@ -16,9 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle;
 
+use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface
+abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface, PimcoreBundleAdminSupportInterface
 {
     protected static ?PimcoreBundleManager $bundleManager = null;
 
