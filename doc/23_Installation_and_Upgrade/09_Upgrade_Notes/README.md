@@ -160,6 +160,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Ecommerce][IndexService] Please make sure to rebuild your product index to make sure changes apply accordingly (this is relevant for mysql and elasticsearch indices). As an alternative you could manually rename and remove `o_` from all index columns/fields.
 - [Ecommerce] Elasticsearch 7 support was removed
 - [Ecommerce] Config option `es_client_params` in `index_service` was removed 
+- [Ecommerce] Remove deprecated methods `check()` and `exists()` from class `Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation`
 - [ClassSavedInterface] Removed `method_exists` bc layer. Please add the corresponding `ClassSavedInterface` interface to your custom field definitions. For more details check the 10.6.0 patch notes.
 - [UrlSlug] Allow processing unpublished fallback document is now default behaviour, removed the related configuration options and usages (`allow_processing_unpublished_fallback_document`, `ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS`). For details, please see [#10005](https://github.com/pimcore/pimcore/issues/10005#issuecomment-907007745)
 - [DataObjects\Documents] **BC Break**: Calling `getChildren/getSiblings` on `AbstractObject`, `Document` and `Asset` now returns unloaded listing. If the list is not traveresed immediately, then it is required to call `load()` explicitily.
@@ -193,6 +194,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Gotenberg] Introducing support for [Gotenberg](https://gotenberg.dev/) as PDF generation, conversion, merge etc.. tool
     - [Asset] Added adapter (as alternative to LibreOffice) for preview generation of supported document type assets and set it as default adapter.
     - [Web2Print] Added settings option, configuration and processor for PDF preview and generation
+- [WebToPrint] Introducing Web2print processor `Chromium` that use `chrome-php/chrome` (same as the page previews), as replacement of HeadlessChrome processor which required NodeJS. 
+- [Chromium] Added support to run chromium in Docker container and work via websocket for web2print and page previews, along of running it by a local binary.
 - [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Asset] Removed VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111)
 - [Permissions] Permission for DataObjects Classes has been structured in a more granular way to have more control. Field collections, objects bricks, classification stores and quantity value units now have their own permission.
@@ -238,6 +241,11 @@ pimcore:
             - en
             - de
 ```
+- [Security] Enabled Content Security Policy by default.
+- Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.
+- [DataBase] Removed deprecated `PhpArrayFileTable`.
+- [Database] Removed `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
+- Removed methods `Pimcore\Tool\Admin::isExtJS6()`, `\Pimcore\Tool\Admin::getLanguageFile()`, `\Pimcore\Tool::exitWithError()`.
 
 ## 10.6.0
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)

@@ -46,7 +46,6 @@ class BlogController extends FrontendController
 ```
 ## Advanced example
 
-
 ```php
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -80,6 +79,9 @@ class BlogController extends FrontendController
         } elseif ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\Gotenberg) {
             $params = Config::getWeb2PrintConfig();
             $params = json_decode($params['gotenbergSettings'], true) ?: [];
+        } elseif ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\Chromium) {
+            $params = Config::getWeb2PrintConfig();
+            $params = json_decode($params['chromiumSettings'], true) ?: [];
         }
 
         return new Response(

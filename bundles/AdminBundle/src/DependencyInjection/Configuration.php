@@ -60,7 +60,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
             ->arrayNode('admin_csp_header')
-                ->canBeEnabled()
+                ->canBeDisabled()
                 ->info('Can be used to enable or disable the Content Security Policy headers.')
                 ->children()
                     ->arrayNode('exclude_paths')
