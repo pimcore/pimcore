@@ -1,5 +1,6 @@
 # Upgrade Notes
 ## 11.0.0
+- [Storage config] Removed setting write targets and storage directory in the environment file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
 - [JS Libraries] Packaged some JS libraries with encore
 - [PHP Options] Removed setting following options: `memory_limit`, `max_execution_time`, `max_input_time` and `display_errors`
 - [Logging] Removed constant `PIMCORE_PHP_ERROR_LOG`

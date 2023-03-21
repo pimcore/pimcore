@@ -16,8 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WebToPrintBundle\DependencyInjection;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\ConfigurationHelper;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
@@ -33,7 +35,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-final class PimcoreWebToPrintExtension extends ConfigurableExtension
+final class PimcoreWebToPrintExtension extends ConfigurableExtension  implements PrependExtensionInterface
 {
     public function loadInternal(array $config, ContainerBuilder $container): void
     {
@@ -44,5 +46,21 @@ final class PimcoreWebToPrintExtension extends ConfigurableExtension
 
         $loader->load('services.yaml');
         $container->setParameter('pimcore_web_to_print', $config);
+    }
+
+    public function prepend(ContainerBuilder $container)
+    {
+        $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore_web_to_print');
+        $configDir = $containerConfig['config_location']['web_to_print']['options']['directory'];
+        $configLoader = new YamlFileLoader(
+            $container,
+            new FileLocator($configDir)
+        );
+
+        //load configs
+        $configs = ConfigurationHelper::locate($configDir);
+        foreach ($configs as $config) {
+            $configLoader->load($config);
+        }
     }
 }
