@@ -15,9 +15,9 @@
 
 namespace Pimcore\Bundle\FileExplorerBundle;
 
+use function dirname;
 use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
 use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
-use function dirname;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
