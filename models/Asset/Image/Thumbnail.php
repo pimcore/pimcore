@@ -48,8 +48,19 @@ final class Thumbnail
         $this->config = $this->createConfig($config ?? []);
     }
 
-    public function getPath(bool $deferredAllowed = true, bool $cacheBuster = false): string
+    /**
+     * TODO: Pimcore 11: Change method signature to getPath($args = [])
+     */
+    public function getPath(mixed ...$args): string
     {
+        // TODO: Pimcore 11: remove calling the covertArgsBcLayer() method
+        $args = $this->convertArgsBcLayer($args);
+
+        // set defaults
+        $deferredAllowed = $args['deferredAllowed'] ?? true;
+        $cacheBuster = $args['cacheBuster'] ?? false;
+        $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
+
         $pathReference = null;
         if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
@@ -66,7 +77,7 @@ final class Thumbnail
             $pathReference = $this->getPathReference($deferredAllowed);
         }
 
-        $path = $this->convertToWebPath($pathReference);
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         if ($cacheBuster) {
             $path = $this->addCacheBuster($path, ['cacheBuster' => true], $this->getAsset());
@@ -105,10 +116,7 @@ final class Thumbnail
     }
 
     /**
-     * @param bool $deferredAllowed
-     *
      * @internal
-     *
      */
     public function generate(bool $deferredAllowed = true): void
     {
@@ -154,7 +162,7 @@ final class Thumbnail
      */
     public function __toString(): string
     {
-        return $this->getPath(true);
+        return $this->getPath();
     }
 
     private function addCacheBuster(string $path, array $options, Asset $asset): string
@@ -291,7 +299,7 @@ final class Thumbnail
         if (isset($options['previewDataUri'])) {
             $attributes['src'] = $options['previewDataUri'];
         } else {
-            $path = $this->getPath(true);
+            $path = $this->getPath();
             $attributes['src'] = $this->addCacheBuster($path, $options, $image);
         }
 
