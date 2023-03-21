@@ -17,14 +17,13 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\WebToPrintBundle\Processor;
 
 use HeadlessChromium\BrowserFactory;
-use HeadlessChromium\Exception\BrowserConnectionFailed;
 use Pimcore\Bundle\WebToPrintBundle\Config;
+use Pimcore\Bundle\WebToPrintBundle\Event\DocumentEvents;
 use Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
-use Pimcore\Bundle\WebToPrintBundle\Event\DocumentEvents;
-use Pimcore\Logger;
 use Pimcore\Image\Chromium as ChromiumLib;
+use Pimcore\Logger;
 
 class Chromium extends Processor
 {
@@ -38,10 +37,8 @@ class Chromium extends Processor
         $chromiumConfig = json_decode($chromiumConfig, true);
 
         $params = [
-            'document' => $document
+            'document' => $document,
         ];
-
-
 
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
@@ -107,22 +104,20 @@ class Chromium extends Processor
 
         ['html' => $html, 'params' => $params] = $event->getArguments();
 
-
         $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
 
-        if (!empty($chromiumUri)){
+        if (!empty($chromiumUri)) {
             $browser = BrowserFactory::connectToBrowser($chromiumUri);
-        }else{
+        } else {
             $browserFactory = new BrowserFactory(ChromiumLib::getChromiumBinary());
             // starts headless chrome
             $browser = $browserFactory->createBrowser([
                 'noSandbox' => true,
                 'startupTimeout' => 120,
                 'enableImages' => true,
-                'ignoreCertificateErrors' => true
+                'ignoreCertificateErrors' => true,
             ]);
         }
-
 
         try {
             $page = $browser->createPage();
@@ -133,7 +128,7 @@ class Chromium extends Processor
                 $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
                 $pdf->saveToFile($path);
                 $output = $path;
-            }else {
+            } else {
                 $output = base64_decode($pdf->getBase64());
             }
         } catch (\Throwable $e) {
@@ -154,11 +149,11 @@ class Chromium extends Processor
             'displayHeaderFooter' => false,
             'preferCSSPageSize' => false,
             'marginTop' => 0.4, //must be a float, value in inches
-            'marginBottom' => 0.4,//must be a float, value in inches
-            'marginLeft' => 0.4,//must be a float, value in inches
-            'marginRight' => 0.4,//must be a float, value in inches
+            'marginBottom' => 0.4, //must be a float, value in inches
+            'marginLeft' => 0.4, //must be a float, value in inches
+            'marginRight' => 0.4, //must be a float, value in inches
             'paperWidth' => 8.5, //must be a float, value in inches
-            'paperHeight' => 11.0,//must be a float, value in inches
+            'paperHeight' => 11.0, //must be a float, value in inches
             'headerTemplate' => '',
             'footerTemplate' => '',
             'scale' => 1.0, // must be a float
@@ -166,5 +161,4 @@ class Chromium extends Processor
             //'ignoreInvalidPageRanges'
         ];
     }
-
 }

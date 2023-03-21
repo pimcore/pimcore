@@ -1942,6 +1942,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
     }
+
     private function addChromiumNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode

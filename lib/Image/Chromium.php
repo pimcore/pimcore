@@ -16,11 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Image;
 
-use Doctrine\DBAL\Driver\Exception;
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Communication\Connection;
 use HeadlessChromium\Communication\Message;
-use HeadlessChromium\Exception\BrowserConnectionFailed;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
 
@@ -31,19 +29,21 @@ class Chromium
 {
     public static function isSupported(): bool
     {
-        if (!class_exists(BrowserFactory::class)){
+        if (!class_exists(BrowserFactory::class)) {
             return false;
         }
 
         $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
-        if (!empty($chromiumUri)){
+        if (!empty($chromiumUri)) {
             try {
                 return (new Connection($chromiumUri))->connect();
             } catch (\Exception $e) {
                 Logger::debug((string) $e);
+
                 return false;
             }
         }
+
         return (bool) self::getChromiumBinary();
     }
 
@@ -70,9 +70,10 @@ class Chromium
                 $browser = BrowserFactory::connectToBrowser($chromiumUri);
             } catch (\Exception $e) {
                 Logger::debug((string) $e);
+
                 return false;
             }
-        }else{
+        } else {
             $binary = self::getChromiumBinary();
             if (!$binary) {
                 return false;
