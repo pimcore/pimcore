@@ -375,7 +375,7 @@ class MiscController extends AdminController
                 $languageOptions[] = [
                     'language' => $short,
                     'display' => $translation . " ($short)",
-                    'flag' => \Pimcore\Bundle\AdminBundle\Tool::getLanguageFlagFile($short, true),
+                    'flag' => AdminTool::getLanguageFlagFile($short, true),
                 ];
             }
         }

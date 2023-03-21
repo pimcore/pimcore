@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace  Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Operator\Factory;
+namespace Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Operator\Factory;
 
 use Pimcore\Bundle\AdminBundle\DataObject\GridColumnConfig\Operator\OperatorInterface;
 use Pimcore\Logger;

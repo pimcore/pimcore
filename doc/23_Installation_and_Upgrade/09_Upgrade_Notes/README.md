@@ -250,6 +250,7 @@ Pimcore\Event\Model\* => Pimcore\Bundle\AdminBundle\Event\Model\*
 and 
 \Pimcore\Tool::getLanguageFlagFile() to \Pimcore\Bundle\AdminBundle\Tool::getLanguageFlagFile()
 ```
+- [Events] Report Event `pimcore.admin.reports.save_settings` has been renamed to `pimcore.reports.save_settings`.
 - Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.
 - [DataBase] Removed deprecated `PhpArrayFileTable`.
 - [Database] Removed `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
