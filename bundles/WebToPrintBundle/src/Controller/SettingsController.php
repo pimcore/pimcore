@@ -21,7 +21,6 @@ use Pimcore\Bundle\WebToPrintBundle\Config;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
 use Pimcore\Bundle\WebToPrintBundle\Processor\Chromium;
 use Pimcore\Bundle\WebToPrintBundle\Processor\Gotenberg;
-use Pimcore\Bundle\WebToPrintBundle\Processor\HeadlessChrome;
 use Pimcore\Bundle\WebToPrintBundle\Processor\PdfReactor;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -101,15 +100,6 @@ class SettingsController extends AdminController
                 'appendLog' => true,
                 'enableDebugMode' => true,
             ];
-        } elseif ($adapter instanceof HeadlessChrome) {
-            $params = Config::getWeb2PrintConfig();
-
-            $params = $params['headlessChromeSettings'];
-            $params = json_decode($params, true);
-
-            if (!is_array($params)) {
-                $params = [];
-            }
         } elseif ($adapter instanceof Gotenberg) {
             $params = Config::getWeb2PrintConfig();
             $params = json_decode($params['gotenbergSettings'], true) ?: [];

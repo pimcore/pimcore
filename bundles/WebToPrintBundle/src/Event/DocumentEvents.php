@@ -65,9 +65,6 @@ final class DocumentEvents
      *  - reactorConfig | configuration which is passed to PDFReactor
      *  - document | Pimcore document that is converted
      *
-     * HeadlessChrome:
-     *  - params | puppeteer PDF options (see also https://pptr.dev/api/puppeteer.pdfoptions/)
-     *  - html | HTML passed to puppeteer
      *
      * @Event("Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent")
      *
