@@ -13,5 +13,3 @@ It's recommended to have a look into the Pimcore [Events and Event Listeners doc
 - [Ecommerce::Commit Order Processor](../src/Event/CommitOrderProcessorEvents.php)
 - [Ecommerce::Order Agent](../src/Event/OrderAgentEvents.php)
 - [Ecommerce::Order Manager](../src/Event/OrderManagerEvents.php)
-- [Ecommerce::Order Manager Item](../src/Event/CheckoutManagerItemEvents.php)
-- [Ecommerce::Send Confirmation Mail](../src/Event/SendConfirmationMailEvents.php)
