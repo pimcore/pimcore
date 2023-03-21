@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
+use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
+use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Compiler\RegisterConfiguredServicesPass;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
@@ -28,8 +30,10 @@ use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\Version;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle implements DependentBundleInterface
+class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle implements DependentBundleInterface, PimcoreBundleAdminSupportInterface
 {
+    use BundleAdminSupportTrait;
+
     /**
      * {@inheritdoc}
      */
