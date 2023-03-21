@@ -670,7 +670,6 @@ invitation_sent: Login Invitation sent
 invitation_link_sent: 'A temporary login link has been sent to email address: "%s" '
 classificationstore_group_by_key: Group by key
 allow_to_create_new_object: Allow to create a new object in relation field
-puppeteer_documentation: Puppeteer
 json_converter: Formatting the Options
 json_converter_link: JSON Formatter
 max_characters: Maximum Characters

@@ -63,10 +63,21 @@ final class ImageThumbnail
         $this->deferred = $deferred;
     }
 
-    public function getPath(bool $deferredAllowed = true): string
+    /**
+     * TODO: Pimcore 11: Change method signature to getPath($args = [])
+     */
+    public function getPath(mixed ...$args): string
     {
+        // TODO: Pimcore 11: remove calling the covertArgsBcLayer() method
+        $args = $this->convertArgsBcLayer($args);
+
+        // set defaults
+        $deferredAllowed = $args['deferredAllowed'] ?? true;
+        $frontend = $args['frontend'] ?? \Pimcore\Tool::isFrontend();
+
         $pathReference = $this->getPathReference($deferredAllowed);
-        $path = $this->convertToWebPath($pathReference);
+
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         $event = new GenericEvent($this, [
             'pathReference' => $pathReference,
@@ -79,8 +90,6 @@ final class ImageThumbnail
     }
 
     /**
-     * @param bool $deferredAllowed
-     *
      * @throws \Exception
      *
      * @internal
