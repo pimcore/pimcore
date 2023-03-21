@@ -43,7 +43,7 @@
 - [Config] `Pimcore\Config\Config` has been removed, see [#12477](https://github.com/pimcore/pimcore/issues/12477). Please use the returned array instead, e.g.
   ```php
   $web2printConfig = Config::getWeb2PrintConfig();
-  $web2printConfig = $web2printConfig['chromium'];
+  $web2printConfig = $web2printConfig['chromiumSettings'];
   ```
 - [Video Editable] Removed [deprecated and legacy `<iframe>` attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe): `frameborder`, `webkitAllowFullScreen`, `mozallowfullscreen`, and `allowfullscreen` for YouTube, Vimeo, and DailyMotion embeds.
 - [Web2Print] Deprecated HeadlessChrome Processor has been removed. Please use Chromium Processor instead.

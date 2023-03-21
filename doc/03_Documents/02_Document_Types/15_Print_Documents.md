@@ -44,8 +44,7 @@ Pimcore ships with default implementations (`Web2PrintController`, `containerAct
 
 Both web-to-print documents have an additional tab that is the place for rendering documents to print-ready PDFs.
 When rendering, the print is first rendererd to HTML, then rendered as a Twig template (yes, you can use Twig expressions in the document) and then rendered to an PDF. PDF rendering itself is done by an
-third party renderer. Currently we support [pdfreactor](https://www.pdfreactor.com/) 
-and [Chromium](https://chromedevtools.github.io/devtools-protocol/). 
+third party renderer. Currently we support [pdfreactor](https://www.pdfreactor.com/), [Chromium](https://chromedevtools.github.io/devtools-protocol/) and [Gotenberg](https://gotenberg.dev/). 
 Please see their documentation for details concerning template possibilities.
 
 ![Web2Print - Container editmode](../../img/printdocuments_editmode_preview.png)
