@@ -61,6 +61,10 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
                 ->booleanNode('pdfreactorEnableDebugMode')->end()
                 ->scalarNode('headlessChromeSettings')->end()
+                ->scalarNode('chromiumHostUrl')->end()
+                ->scalarNode('chromiumSettings')->end()
+                ->scalarNode('gotenbergHostUrl')->end()
+                ->scalarNode('gotenbergSettings')->end()
             ->end();
 
         return $treeBuilder;

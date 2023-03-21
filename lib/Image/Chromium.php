@@ -16,8 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Image;
 
+use Doctrine\DBAL\Driver\Exception;
 use HeadlessChromium\BrowserFactory;
+use HeadlessChromium\Communication\Connection;
 use HeadlessChromium\Communication\Message;
+use HeadlessChromium\Exception\BrowserConnectionFailed;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
 
@@ -28,7 +31,20 @@ class Chromium
 {
     public static function isSupported(): bool
     {
-        return self::getChromiumBinary() && class_exists(BrowserFactory::class);
+        if (!class_exists(BrowserFactory::class)){
+            return false;
+        }
+
+        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
+        if (!empty($chromiumUri)){
+            try {
+                return (new Connection($chromiumUri))->connect();
+            } catch (\Exception $e) {
+                Logger::debug((string) $e);
+                return false;
+            }
+        }
+        return (bool) self::getChromiumBinary();
     }
 
     public static function getChromiumBinary(): ?string
@@ -48,18 +64,26 @@ class Chromium
      */
     public static function convert(string $url, string $outputFile, ?string $sessionName = null, ?string $sessionId = null, string $windowSize = '1280,1024'): bool
     {
-        $binary = self::getChromiumBinary();
-        if (!$binary) {
-            return false;
+        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
+        if (!empty($chromiumUri)) {
+            try {
+                $browser = BrowserFactory::connectToBrowser($chromiumUri);
+            } catch (\Exception $e) {
+                Logger::debug((string) $e);
+                return false;
+            }
+        }else{
+            $binary = self::getChromiumBinary();
+            if (!$binary) {
+                return false;
+            }
+            $browserFactory = new BrowserFactory($binary);
+            $browser = $browserFactory->createBrowser([
+                'noSandbox' => file_exists('/.dockerenv'),
+                'startupTimeout' => 120,
+                'windowSize' => explode(',', $windowSize),
+            ]);
         }
-        $browserFactory = new BrowserFactory($binary);
-
-        // starts headless chrome
-        $browser = $browserFactory->createBrowser([
-            'noSandbox' => file_exists('/.dockerenv'),
-            'startupTimeout' => 120,
-            'windowSize' => explode(',', $windowSize),
-        ]);
 
         try {
             $headers = [];

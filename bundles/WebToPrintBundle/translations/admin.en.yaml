@@ -37,11 +37,14 @@ web2print_baseURL: BaseURL
 web2print_baseURL_txt: >-
     BaseURL for PDFreactor. This is prefixed to each relative url in print
     templates when creating PDFs.
+web2print_docker_baseURL_txt: >-
+    This is prefixed to each relative url in print templates when creating PDFs.
 web2print_apiKey_txt: >-
     If the PDFreactor instance is set up to require API keys, you can enter it
     here.
 web2print_json_converter: Open JSON converter/validator
 web2print_licence: Licence
+web2print_json_converter_link: https://jsonformatter.org/
 web2print_headlesschrome_requirements: Requirements
 web2print_headlesschrome_requirements_documentation: Please make sure to install spiritix/php-chrome-html2pdf via composer
 web2print_headlesschrome_settings: Headless Chrome settings
@@ -59,8 +62,26 @@ web2print_gotenberg_documentation: Option Documentation
 web2print_gotenberg_documentation_additions: Warning
 web2print_gotenberg_documentation_additions_text: >-
     Since Gotenberg is Docker-powered service, it requires absolute urls to work.
-    By default, it works within the same container by using `nginx:80` as base url.
-    Please override this configuration accordingly by defining `hostUrl` option into the settings below.
+    By default, it works within the same container by using `http://nginx:80` as host url.
+    Please override this configuration accordingly into the settings below.
 web2print_headlesschrome_json_converter:
 web2print_hostname: Hostname
 web2print_protocol: Protocol
+web2print_port: Port
+web2print_apiKey: API Key
+web2print_chromium_requirements: Requirements
+web2print_chromium_requirements_documentation: Please make sure to install chrome-php/chrome via composer
+web2print_chromium_settings: Chromium settings
+web2print_chromium_documentation: Option Documentation
+web2print_chromium_options_documentation: >-
+    Please make sure following configuration matches the option available on Chrome DevTools Documentation,
+    any other values may break the pdf generation
+web2print_chromium_documentation_additions: Additional Options
+web2print_chromium_documentation_additions_text: >-
+    There are two additional options: "header" and "footer". This options need a
+    URL, which returns the header or footer template.
+web2print_chromium_documentation_docker: Notes for Dockerized Chromium
+web2print_chromium_documentation_docker_text: >-
+    When using a Dockerized Chromium through WebSocket, the following field must be
+    set to the web server service accordingly. eg. `http://nginx:80`
+web2print_hostURL: Host Url

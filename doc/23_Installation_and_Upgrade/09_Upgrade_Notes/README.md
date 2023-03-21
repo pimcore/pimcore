@@ -192,6 +192,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Gotenberg] Introducing support for [Gotenberg](https://gotenberg.dev/) as PDF generation, conversion, merge etc.. tool
     - [Asset] Added adapter (as alternative to LibreOffice) for preview generation of supported document type assets and set it as default adapter.
     - [Web2Print] Added settings option, configuration and processor for PDF preview and generation
+- [WebToPrint] Introducing Web2print processor `Chromium` that use `chrome-php/chrome` (same as the page previews), as replacement of HeadlessChrome processor which required NodeJS. 
+- [Chromium] Added support to run chromium in Docker container and work via websocket for web2print and page previews, along of running it by a local binary.
 - [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Asset] Removed VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111)
 - [Permissions] Permission for DataObjects Classes has been structured in a more granular way to have more control. Field collections, objects bricks, classification stores and quantity value units now have their own permission.

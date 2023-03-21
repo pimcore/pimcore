@@ -16,54 +16,56 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\WebToPrintBundle\Processor;
 
+use HeadlessChromium\BrowserFactory;
+use HeadlessChromium\Exception\BrowserConnectionFailed;
 use Pimcore\Bundle\WebToPrintBundle\Config;
-use Pimcore\Bundle\WebToPrintBundle\Event\DocumentEvents;
 use Pimcore\Bundle\WebToPrintBundle\Event\Model\PrintConfigEvent;
 use Pimcore\Bundle\WebToPrintBundle\Model\Document\PrintAbstract;
 use Pimcore\Bundle\WebToPrintBundle\Processor;
+use Pimcore\Bundle\WebToPrintBundle\Event\DocumentEvents;
 use Pimcore\Logger;
-use Pimcore\Tool\Console;
-use Spiritix\Html2Pdf\Converter;
-use Spiritix\Html2Pdf\Input\StringInput;
-use Spiritix\Html2Pdf\Output\FileOutput;
-use Spiritix\Html2Pdf\Output\StringOutput;
+use Pimcore\Image\Chromium as ChromiumLib;
 
-/**
- * @deprecated will be removed in Pimcore 11 and replaced by Processor\Chromium
- */
-class HeadlessChrome extends Processor
+class Chromium extends Processor
 {
-    private string $nodePath = '';
-
     /**
      * @internal
      */
     protected function buildPdf(PrintAbstract $document, object $config): string
     {
         $web2printConfig = Config::getWeb2PrintConfig();
-        $web2printConfig = $web2printConfig['headlessChromeSettings'];
-        $web2printConfig = json_decode($web2printConfig, true);
+        $chromiumConfig = $web2printConfig['chromiumSettings'];
+        $chromiumConfig = json_decode($chromiumConfig, true);
 
-        $params = ['document' => $document];
+        $params = [
+            'document' => $document
+        ];
+
+
+
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
+
+        if (isset($web2printConfig['chromiumHostUrl'])) {
+            $params['hostUrl'] = $web2printConfig['chromiumHostUrl'];
+        }
 
         $html = $this->processHtml($html, $params);
         $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
 
-        if ($web2printConfig) {
+        if ($chromiumConfig) {
             foreach (['header', 'footer'] as $item) {
-                if (key_exists($item, $web2printConfig) && $web2printConfig[$item] &&
-                    $content = file_get_contents($web2printConfig[$item])) {
-                    $web2printConfig[$item . 'Template'] = $content;
+                if (key_exists($item, $chromiumConfig) && $chromiumConfig[$item] &&
+                    $content = file_get_contents($chromiumConfig[$item])) {
+                    $chromiumConfig[$item . 'Template'] = $content;
                 }
-                unset($web2printConfig[$item]);
+                unset($chromiumConfig[$item]);
             }
         }
 
         try {
             $this->updateStatus($document->getId(), 50, 'pdf_conversion');
-            $pdf = $this->getPdfFromString($html, $web2printConfig ?? []);
+            $pdf = $this->getPdfFromString($html, $chromiumConfig ?? []);
             $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         } catch (\Exception $e) {
             Logger::error((string) $e);
@@ -101,38 +103,47 @@ class HeadlessChrome extends Processor
             'params' => $params,
             'html' => $html,
         ]);
-
         \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG);
 
         ['html' => $html, 'params' => $params] = $event->getArguments();
 
-        if (!class_exists(StringInput::class)) {
-            throw new \UnexpectedValueException('Please install spiritix/php-chrome-html2pdf via Composer to use Headless Chrome PDF conversion');
+
+        $chromiumUri = \Pimcore\Config::getSystemConfiguration('chromium')['uri'];
+
+        if (!empty($chromiumUri)){
+            $browser = BrowserFactory::connectToBrowser($chromiumUri);
+        }else{
+            $browserFactory = new BrowserFactory(ChromiumLib::getChromiumBinary());
+            // starts headless chrome
+            $browser = $browserFactory->createBrowser([
+                'noSandbox' => true,
+                'startupTimeout' => 120,
+                'enableImages' => true,
+                'ignoreCertificateErrors' => true
+            ]);
         }
 
-        $input = new StringInput();
-        $input->setHtml($html);
 
-        $output = $returnFilePath ? new FileOutput() : new StringOutput();
-        $converter = new Converter($input, $output);
-        if ($this->nodePath) {
-            $converter->setNodePath($this->nodePath);
-        } elseif ($nodePath = Console::getExecutable('node')) {
-            $converter->setNodePath($nodePath);
+        try {
+            $page = $browser->createPage();
+            $page->setHtml($html, 5000);
+
+            $pdf = $page->pdf($params);
+            if ($returnFilePath) {
+                $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
+                $pdf->saveToFile($path);
+                $output = $path;
+            }else {
+                $output = base64_decode($pdf->getBase64());
+            }
+        } catch (\Throwable $e) {
+            Logger::debug('Could not create pdf with chromium: '. print_r($e, true));
+            $output = (string) $e;
+        } finally {
+            $browser->close();
         }
-        $converter->setOptions($params);
 
-        $output = $converter->convert();
-
-        if ($returnFilePath) {
-            $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
-            /** @var FileOutput $output */
-            $output->store($path);
-
-            return $path;
-        }
-        /** @var StringOutput $output */
-        return $output->get();
+        return $output;
     }
 
     private function getDefaultOptions(): array
@@ -140,24 +151,20 @@ class HeadlessChrome extends Processor
         return [
             'landscape' => false,
             'printBackground' => false,
-            'format' => 'A4',
-            'margin' => [
-                'top' => '16 mm',
-                'bottom' => '30 mm',
-                'right' => '8 mm',
-                'left' => '8 mm',
-            ],
             'displayHeaderFooter' => false,
+            'preferCSSPageSize' => false,
+            'marginTop' => 0.4, //must be a float, value in inches
+            'marginBottom' => 0.4,//must be a float, value in inches
+            'marginLeft' => 0.4,//must be a float, value in inches
+            'marginRight' => 0.4,//must be a float, value in inches
+            'paperWidth' => 8.5, //must be a float, value in inches
+            'paperHeight' => 11.0,//must be a float, value in inches
+            'headerTemplate' => '',
+            'footerTemplate' => '',
+            'scale' => 1.0, // must be a float
+            //'pageRanges'
+            //'ignoreInvalidPageRanges'
         ];
     }
 
-    /**
-     * @return $this
-     */
-    public function setNodePath(string $nodePath): static
-    {
-        $this->nodePath = $nodePath;
-
-        return $this;
-    }
 }

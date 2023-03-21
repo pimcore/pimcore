@@ -133,6 +133,7 @@ final class Configuration implements ConfigurationInterface
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
         $this->addWriteTargetNodes($rootNode);
+        $this->addChromiumNode($rootNode);
 
         return $treeBuilder;
     }
@@ -1931,13 +1932,28 @@ final class Configuration implements ConfigurationInterface
     {
         $rootNode
             ->children()
-            ->arrayNode('gotenberg')
-            ->addDefaultsIfNotSet()
-            ->children()
-                ->scalarNode('base_url')
-                ->defaultValue('gotenberg:3000')
+                ->arrayNode('gotenberg')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('base_url')
+                            ->defaultValue('gotenberg:3000')
+                        ->end()
+                    ->end()
                 ->end()
-            ->end()
-        ->end();
+            ->end();
+    }
+    private function addChromiumNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('chromium')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('uri')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 }

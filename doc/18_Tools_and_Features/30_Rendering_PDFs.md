@@ -89,6 +89,9 @@ class BlogController extends FrontendController
                 'appendLog' => true,
                 'enableDebugMode' => true
             ];
+        } elseif ($adapter instanceof \Pimcore\Bundle\WebToPrintBundle\Processor\Chromium) {
+            $params = Config::getWeb2PrintConfig();
+            $params = json_decode($params['chromiumSettings'], true) ?: [];
         }
 
         return new Response(
