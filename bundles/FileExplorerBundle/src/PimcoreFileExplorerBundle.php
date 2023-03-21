@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\FileExplorerBundle;
 
-use Pimcore\Bundle\AdminBundle\Support\AdminSupportTrait;
+use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
 use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use function dirname;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
@@ -23,7 +23,7 @@ use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
 class PimcoreFileExplorerBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
 {
-    use AdminSupportTrait;
+    use BundleAdminSupportTrait;
     use PackageVersionTrait;
 
     public function getComposerPackageName(): string

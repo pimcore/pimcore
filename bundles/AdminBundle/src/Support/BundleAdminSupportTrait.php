@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Support;
 
-trait AdminSupportTrait
+trait BundleAdminSupportTrait
 {
     public function getJsPaths(): array
     {

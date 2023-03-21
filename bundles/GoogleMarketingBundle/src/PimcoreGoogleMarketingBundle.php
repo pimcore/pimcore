@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GoogleMarketingBundle;
 
-use Pimcore\Bundle\AdminBundle\Support\AdminSupportTrait;
+use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
 use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Bundle\CustomReportsBundle\PimcoreCustomReportsBundle;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
@@ -28,7 +28,7 @@ use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 
 class PimcoreGoogleMarketingBundle extends AbstractPimcoreBundle implements DependentBundleInterface, PimcoreBundleAdminSupportInterface
 {
-    use AdminSupportTrait;
+    use BundleAdminSupportTrait;
     use PackageVersionTrait;
 
     public function getComposerPackageName(): string

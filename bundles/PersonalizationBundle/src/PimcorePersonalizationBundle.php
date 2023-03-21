@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle;
 
-use Pimcore\Bundle\AdminBundle\Support\AdminSupportTrait;
+use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
 use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Bundle\PersonalizationBundle\DependencyInjection\Compiler\DebugStopwatchPass;
 use Pimcore\Bundle\PersonalizationBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class PimcorePersonalizationBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
 {
-    use AdminSupportTrait;
+    use BundleAdminSupportTrait;
     use PackageVersionTrait;
 
     // @TODO Enable when bundle is moved to own repo

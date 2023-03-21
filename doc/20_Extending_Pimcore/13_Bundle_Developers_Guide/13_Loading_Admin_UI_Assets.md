@@ -13,7 +13,7 @@ The interface prescribes the following methods:
 - `getEditmodeCssPaths`
 
 
-In order to implement all four methods prescribed by the interface you can use the [`AdminSupportTrait`](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/src/Support/AdminSupportTrait.php).
+In order to implement all four methods prescribed by the interface you can use the [`BundleAdminSupportTrait`](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/src/Support/BundleAdminSupportTrait.php).
 
 ## Event Based
 
