@@ -85,8 +85,7 @@ class TargetingListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if($event->getRequest()->cookies->has('pimcore_targeting_enabled')) {
-            if($event->getRequest()->cookies->get('pimcore_targeting_enabled')) {
+        if($event->getRequest()->cookies->getBoolean('pimcore_targeting_enabled')) {
                 $this->enable();
             }
        }
