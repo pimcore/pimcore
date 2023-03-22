@@ -22,10 +22,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 trait PositionSortTrait
 {
     /**
-     * @param array|string|null $a If of type array must have key `position` with numeric value
-     * @param array|string|null $b If of type array must have key `position` with numeric value
+     * @param array{position: int|string}|string|null $a If of type array must have key `position` with numeric value
+     * @param array{position: int|string}|string|null $b If of type array must have key `position` with numeric value
      *
-     * @return int Any of -1, 0, 1
+     * @return -1|0|1
      */
     protected function sort(array|string|null $a, array|string|null $b): int
     {
