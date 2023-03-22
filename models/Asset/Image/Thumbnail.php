@@ -49,13 +49,12 @@ final class Thumbnail
     }
 
     /**
-     * TODO: Pimcore 11: Change method signature to getPath($args = [])
+     * @param array $args
+     *
+     * @return string
      */
-    public function getPath(mixed ...$args): string
+    public function getPath(array $args = []): string
     {
-        // TODO: Pimcore 11: remove calling the covertArgsBcLayer() method
-        $args = $this->convertArgsBcLayer($args);
-
         // set defaults
         $deferredAllowed = $args['deferredAllowed'] ?? true;
         $cacheBuster = $args['cacheBuster'] ?? false;
