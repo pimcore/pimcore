@@ -28,8 +28,6 @@ class Pimcore
 
     private static ?KernelInterface $kernel = null;
 
-    private static \Composer\Autoload\ClassLoader $autoloader;
-
     public static function inDebugMode(): bool
     {
         return (bool) self::getKernel()->isDebug();
@@ -166,26 +164,6 @@ class Pimcore
         }
 
         return false;
-    }
-
-    /**
-     * @return \Composer\Autoload\ClassLoader
-     *
-     * @internal
-     */
-    public static function getAutoloader(): \Composer\Autoload\ClassLoader
-    {
-        return self::$autoloader;
-    }
-
-    /**
-     * @param \Composer\Autoload\ClassLoader $autoloader
-     *
-     * @internal
-     */
-    public static function setAutoloader(\Composer\Autoload\ClassLoader $autoloader): void
-    {
-        self::$autoloader = $autoloader;
     }
 
     /**

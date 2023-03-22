@@ -244,6 +244,9 @@ pimcore:
             - en
             - de
 ```
+- [Bootstrap]
+  - Relying on `Pimcore\Bootstrap::bootstrap()` for autoloading classes will not work anymore. 
+  - Removed unused constant `PIMCORE_APP_BUNDLE_CLASS_FILE`
 - [Security] Enabled Content Security Policy by default.
 - Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.
 - [DataBase] Removed deprecated `PhpArrayFileTable`.
