@@ -270,10 +270,6 @@ class CoreCacheHandler implements LoggerAwareInterface
         if ($item->isHit()) {
             $data = $item->get();
 
-            if (is_object($data)) {
-                $data->____pimcore_cache_item__ = $key; // TODO where is this used?
-            }
-
             return $data;
         }
 

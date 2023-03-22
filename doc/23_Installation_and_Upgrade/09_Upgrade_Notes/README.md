@@ -118,6 +118,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - `IndexService\Worker\AbstractElasticSearch`, `IndexService\Worker\DefaultFindologic`, `IndexService\Worker\DefaultMysql`, `IndexService\Worker\OptimizedMysql`
     - `IndexService\Config\AbstractConfig` and it's sub-classes.
     - `Tracking\Tracker\Analytics\AbstractAnalyticsTracker` and it's sub-classes.
+  - Ecommerce related Events have been moved. Please check and adapt the Events' namespaces.
+  - [ClassDefinition\LinkGeneratorInterface] method signature has changed, instead of `Pimcore\Model\DataObject\Concrete` a `object` is used. 
 - [Bundles]
   - Removed support for loading bundles through `extensions.php`.
   - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.
@@ -232,6 +234,7 @@ pimcore_seo:
 - [DataObject] Added new helper inheritance helper function `DataObject\Serivce::useInheritedValues`
 - [Page] Removed the functionality to input `metadata` html tags in Settings section of the document.
 - [Asset] Image thumbnails: Removed support for using custom callbacks for thumbnail transformations.
+- [Assets] Removed loading assets via fixed namespace only. Custom Asset Types can be configured.
 - Marked `Pimcore\File` as internal. This class shouldn't be used anymore, use `Symfony\Component\Filesystem` instead.
 - [Config] Recommended and default format for storing the valid languages in `system.yaml` is now an array, for example:
 ```yaml
@@ -241,6 +244,9 @@ pimcore:
             - en
             - de
 ```
+- [Bootstrap]
+  - Relying on `Pimcore\Bootstrap::bootstrap()` for autoloading classes will not work anymore. 
+  - Removed unused constant `PIMCORE_APP_BUNDLE_CLASS_FILE`
 - [Security] Enabled Content Security Policy by default.
 - Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.
 - [DataBase] Removed deprecated `PhpArrayFileTable`.

@@ -95,22 +95,7 @@ class Bootstrap
 
     public static function bootstrap(): void
     {
-        if (defined('PIMCORE_PROJECT_ROOT') && file_exists(PIMCORE_PROJECT_ROOT . '/vendor/autoload.php')) {
-            // PIMCORE_PROJECT_ROOT is usually always set at this point (self::setProjectRoot()), so it makes sense to check this first
-            $loader = include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
-        } elseif (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-            $loader = include __DIR__ . '/../vendor/autoload.php';
-        } elseif (file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
-            $loader = include __DIR__ . '/../../../../vendor/autoload.php';
-        } else {
-            throw new \Exception('Unable to locate autoloader! Pimcore project root not found or invalid, please set/check env variable PIMCORE_PROJECT_ROOT.');
-        }
-
         self::defineConstants();
-
-        /** @var \Composer\Autoload\ClassLoader $loader */
-        \Pimcore::setAutoloader($loader);
-        self::autoload();
 
         // load a startup file if it exists - this is a good place to preconfigure the system
         // before the kernel is loaded - e.g. to set trusted proxies on the request object
@@ -196,19 +181,6 @@ class Bootstrap
 
         // configure PHP's error logging
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
-    }
-
-    private static function autoload(): void
-    {
-        $loader = \Pimcore::getAutoloader();
-
-        // tell the autoloader where to find Pimcore's generated class stubs
-        // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
-        $loader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
-
-        if (defined('PIMCORE_APP_BUNDLE_CLASS_FILE')) {
-            require_once PIMCORE_APP_BUNDLE_CLASS_FILE;
-        }
     }
 
     public static function kernel(): Kernel|\App\Kernel|KernelInterface

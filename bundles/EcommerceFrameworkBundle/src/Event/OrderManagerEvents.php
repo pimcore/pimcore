@@ -19,35 +19,35 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Event;
 final class OrderManagerEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderManagerEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderManagerEvent")
      *
      * @var string
      */
     const PRE_GET_OR_CREATE_ORDER_FROM_CART = 'pimcore.ecommerce.ordermanager.preGetOrCreateOrderFromCart';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderManagerEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderManagerEvent")
      *
      * @var string
      */
     const PRE_UPDATE_ORDER = 'pimcore.ecommerce.ordermanager.preUpdateOrder';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderManagerEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderManagerEvent")
      *
      * @var string
      */
     const POST_UPDATE_ORDER = 'pimcore.ecommerce.ordermanager.postUpdateOrder';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderManagerItemEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderManagerItemEvent")
      *
      * @var string
      */
     const POST_CREATE_ORDER_ITEM = 'pimcore.ecommerce.ordermanager.postCreateOrderItem';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderManagerItemEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderManagerItemEvent")
      *
      * @var string
      */
