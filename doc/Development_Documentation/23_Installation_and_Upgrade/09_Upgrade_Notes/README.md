@@ -41,6 +41,7 @@
 - [Bundles] Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in the `PimcoreBundleInterface`. These methods will be provided by the new `PimcoreBundleAdminSupportInterface`.
 - [Web2print] Deprecated `HeadlessChrome` processor, it will be removed and replaced by `Chromium` processor (which doesn't require NodeJS to work) in Pimcore 11.
 - [Database] Deprecated `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
+- Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in `AbstractPimcoreBundle`. Please use the `PimcoreBundleAdminSupportInterface` and the `BundleAdminSupportTrait` instead.
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
