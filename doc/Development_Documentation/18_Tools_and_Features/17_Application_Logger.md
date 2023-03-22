@@ -116,7 +116,7 @@ the channel you want to log to. When using DI tags, the channel will be created 
 
 > **IMPORTANT**: As the `ApplicationLoggerDb` handler has a dependency on the database connection it is important to exclude
   channels logging database queries (typically the `doctrine` channel) from the handler to avoid infinite loops. Either
-  specify a whitelist of supported channels (as shown in the example above) or exclude the `doctrine` channel by setting
+  specify a allowlist of supported channels (as shown in the example above) or exclude the `doctrine` channel by setting
   channels to `["!doctrine"]`.
   
 As the `type: service` handler config does not support filtering by log level, you can use the `filter` handler type to

@@ -450,13 +450,28 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
+     * @param DataObject\ClassDefinition\Data\Password $mainDefinition
+     */
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        $this->algorithm = $mainDefinition->algorithm;
+        $this->salt = $mainDefinition->salt;
+        $this->saltlocation = $mainDefinition->saltlocation;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
      * @param DataObject\ClassDefinition\Data\Password $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->algorithm = $masterDefinition->algorithm;
-        $this->salt = $masterDefinition->salt;
-        $this->saltlocation = $masterDefinition->saltlocation;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

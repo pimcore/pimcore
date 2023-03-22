@@ -130,7 +130,7 @@ class PimcoreUrl implements RuntimeExtensionInterface
     }
 
     /**
-     * Tries to get the current route name from current or master request
+     * Tries to get the current route name from current or main request
      *
      * @return string|null
      */

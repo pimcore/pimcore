@@ -27,7 +27,7 @@ pimcore.document.snippets.settings = Class.create(pimcore.document.settings_abst
                 items: [
                     this.getControllerViewFields(),
                     this.getPathAndKeyFields(),
-                    this.getContentMasterFields()
+                    this.getContentMainFields()
                 ]
             });
         }

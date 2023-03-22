@@ -340,6 +340,31 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     }
 
     /**
+     * This is used for pages and snippets to change the main document (which is not saved with the normal save button)
+     *
+     * @Route("/change-main-document", name="changemaindocument", methods={"PUT"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function changeMainDocumentAction(Request $request): JsonResponse
+    {
+        $doc = Model\Document\PageSnippet::getById((int) $request->get('id'));
+        if ($doc instanceof Model\Document\PageSnippet) {
+            $doc->setEditables([]);
+            $doc->setContentMainDocumentId($request->get('contentMainDocumentPath'), true);
+            $doc->saveVersion();
+        }
+
+        return $this->adminJson(['success' => true]);
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * This is used for pages and snippets to change the master document (which is not saved with the normal save button)
      *
      * @Route("/change-master-document", name="changemasterdocument", methods={"PUT"})
@@ -352,14 +377,13 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     public function changeMasterDocumentAction(Request $request): JsonResponse
     {
-        $doc = Model\Document\PageSnippet::getById((int) $request->get('id'));
-        if ($doc instanceof Model\Document\PageSnippet) {
-            $doc->setEditables([]);
-            $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'), true);
-            $doc->saveVersion();
-        }
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('Route %s is deprecated and will be removed in Pimcore 11. Use %s instead.', 'changemasterdocument', 'changemaindocument')
+        );
 
-        return $this->adminJson(['success' => true]);
+        return $this->changeMainDocumentAction($request);
     }
 
     /**

@@ -74,7 +74,7 @@ pimcore_ecommerce_framework:
                             analyzer:
                                 my_ngram_analyzer:
                                     tokenizer: my_ngram_tokenizer
-                                whitelist_analyzer:
+                                allowlist_analyzer:
                                     tokenizer: standard
                                     filter:
                                       - white_list_filter

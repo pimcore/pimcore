@@ -12,7 +12,7 @@ Layout object properties can be grouped into panels, which incorporate the layou
 center and additionally they can be positioned into tab panels. This allows logical structuring of object attributes 
 into smaller units of data belonging together. It depends on the use case how data should be grouped and structured.
 Common applications are tabs/groups for different languages or logical groups like basic data, media, sales data, etc.
-In addition to the master editor layout, Custom Layouts for different views on the object data can be defined. 
+In addition to the main editor layout, Custom Layouts for different views on the object data can be defined. 
 
 To define a class, the menu `Settings` -> `Data Objects` -> `Classes` needs to be used in the Pimcore toolbar menu. 
 The class name has to be a valid PHP class name. After creating a new class, the class attributes and layout can be built.

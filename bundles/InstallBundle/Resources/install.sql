@@ -204,7 +204,7 @@ CREATE TABLE `documents_page` (
   `description` varchar(383) DEFAULT NULL,
   `metaData` text,
   `prettyUrl` varchar(255) DEFAULT NULL,
-  `contentMasterDocumentId` int(11) DEFAULT NULL,
+  `contentMainDocumentId` int(11) DEFAULT NULL,
   `targetGroupIds` varchar(255) NOT NULL DEFAULT '',
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   `staticGeneratorEnabled` tinyint(1) unsigned DEFAULT NULL,
@@ -219,7 +219,7 @@ CREATE TABLE `documents_snippet` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
   `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
-  `contentMasterDocumentId` int(11) DEFAULT NULL,
+  `contentMainDocumentId` int(11) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_documents_snippet_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
@@ -243,7 +243,7 @@ CREATE TABLE `documents_printpage` (
   `template` varchar(255) DEFAULT NULL,
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text,
-  `contentMasterDocumentId` int(11) DEFAULT NULL,
+  `contentMainDocumentId` int(11) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_documents_printpage_documents` FOREIGN KEY (`id`) REFERENCES `documents` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
@@ -264,8 +264,8 @@ CREATE TABLE `edit_lock` (
 ) DEFAULT CHARSET=utf8mb4;
 
 
-DROP TABLE IF EXISTS `email_blacklist`;
-CREATE TABLE `email_blacklist` (
+DROP TABLE IF EXISTS `email_blocklist`;
+CREATE TABLE `email_blocklist` (
   `address` varchar(190) NOT NULL DEFAULT '',
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,

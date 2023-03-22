@@ -384,15 +384,30 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
+     * @param DataObject\ClassDefinition\Data\Slider $mainDefinition
+     */
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        $this->minValue = $mainDefinition->minValue;
+        $this->maxValue = $mainDefinition->maxValue;
+        $this->vertical = $mainDefinition->vertical;
+        $this->increment = $mainDefinition->increment;
+        $this->decimalPrecision = $mainDefinition->decimalPrecision;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
      * @param DataObject\ClassDefinition\Data\Slider $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->minValue = $masterDefinition->minValue;
-        $this->maxValue = $masterDefinition->maxValue;
-        $this->vertical = $masterDefinition->vertical;
-        $this->increment = $masterDefinition->increment;
-        $this->decimalPrecision = $masterDefinition->decimalPrecision;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

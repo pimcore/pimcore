@@ -88,7 +88,7 @@ class MyEventListener {
         }
         
         if(!empty($layoutsToRemove)) {
-            //remove master layout from valid layouts
+            //remove main layout from valid layouts
             $validLayouts = $data["validLayouts"];
             foreach($validLayouts as $key => $validLayout) {
                 if(in_array($validLayout['id'], $layoutsToRemove)) {

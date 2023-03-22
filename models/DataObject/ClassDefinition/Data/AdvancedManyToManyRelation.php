@@ -815,12 +815,27 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     }
 
     /**
+     * @param DataObject\ClassDefinition\Data\AdvancedManyToManyRelation $mainDefinition
+     */
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        parent::synchronizeWithMainDefinition($mainDefinition);
+        $this->columns = $mainDefinition->columns;
+    }
+
+    /**
+     * @dprecated will be removed in Pimcore 11
      * @param DataObject\ClassDefinition\Data\AdvancedManyToManyRelation $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
-        parent::synchronizeWithMasterDefinition($masterDefinition);
-        $this->columns = $masterDefinition->columns;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

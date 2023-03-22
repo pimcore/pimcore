@@ -1339,7 +1339,7 @@ Other Changes:
 * Toolbar configurators:
   * [#13147](https://dev.ckeditor.com/ticket/13147): Added buttons to the sticky toolbar.
   * [#13207](https://dev.ckeditor.com/ticket/13207): Used modal window to display toolbar configurator help.
-* [#13316](https://dev.ckeditor.com/ticket/13316): Made [`CKEDITOR.env.isCompatible`](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_env.html#property-isCompatible) a blacklist rather than a whitelist. More about the change in the [Browser Compatibility](https://ckeditor.com/docs/ckeditor4/latest/guide/dev_browsers.html) guide.
+* [#13316](https://dev.ckeditor.com/ticket/13316): Made [`CKEDITOR.env.isCompatible`](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_env.html#property-isCompatible) a blacklist rather than a allowlist. More about the change in the [Browser Compatibility](https://ckeditor.com/docs/ckeditor4/latest/guide/dev_browsers.html) guide.
 * [#13398](https://dev.ckeditor.com/ticket/13398): Renamed `CKEDITOR.fileTools.UploadsRepository` to [`CKEDITOR.fileTools.UploadRepository`](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR.fileTools.uploadRepository.html) and changed all related properties.
 * [#13279](https://dev.ckeditor.com/ticket/13279): Reviewed CSS vendor prefixes.
 * [#13454](https://dev.ckeditor.com/ticket/13454): Removed unused `lang.image.alertUrl` token from the [Image](https://ckeditor.com/cke4/addon/image) plugin.

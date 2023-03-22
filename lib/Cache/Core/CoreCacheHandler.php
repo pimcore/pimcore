@@ -727,7 +727,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      */
     protected function normalizeClearTags(array $tags)
     {
-        $blacklist = $this->tagsIgnoredOnClear;
+        $blocklist = $this->tagsIgnoredOnClear;
 
         // Shutdown tags are special tags being shifted to shutdown when scheduled to clear via clearTags. Explanation for
         // the "output" tag:
@@ -737,7 +737,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         foreach ($this->shutdownTags as $shutdownTag) {
             if (in_array($shutdownTag, $tags)) {
                 $this->addTagClearedOnShutdown($shutdownTag);
-                $blacklist[] = $shutdownTag;
+                $blocklist[] = $shutdownTag;
             }
         }
 
@@ -745,8 +745,8 @@ class CoreCacheHandler implements LoggerAwareInterface
         $tags = array_unique($tags);
 
         // don't clear tags in ignore array
-        $tags = array_filter($tags, function ($tag) use ($blacklist) {
-            return !in_array($tag, $blacklist);
+        $tags = array_filter($tags, function ($tag) use ($blocklist) {
+            return !in_array($tag, $blocklist);
         });
 
         return $tags;

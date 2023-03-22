@@ -81,10 +81,10 @@ class LocaleService implements LocaleServiceInterface
     protected function getLocaleFromRequest()
     {
         if ($this->requestStack) {
-            $masterRequest = $this->requestStack->getMainRequest();
+            $mainRequest = $this->requestStack->getMainRequest();
 
-            if ($masterRequest) {
-                return $masterRequest->getLocale();
+            if ($mainRequest) {
+                return $mainRequest->getLocale();
             }
         }
 
@@ -141,9 +141,9 @@ class LocaleService implements LocaleServiceInterface
 
         if ($locale && is_string($locale)) {
             if ($this->requestStack) {
-                $masterRequest = $this->requestStack->getMainRequest();
-                if ($masterRequest) {
-                    $masterRequest->setLocale($locale);
+                $mainRequest = $this->requestStack->getMainRequest();
+                if ($mainRequest) {
+                    $mainRequest->setLocale($locale);
                 }
 
                 $currentRequest = $this->requestStack->getCurrentRequest();

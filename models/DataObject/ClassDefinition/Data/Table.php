@@ -613,15 +613,30 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
+     * @param DataObject\ClassDefinition\Data\Table $mainDefinition
+     */
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        $this->cols = $mainDefinition->cols;
+        $this->colsFixed = $mainDefinition->colsFixed;
+        $this->rows = $mainDefinition->rows;
+        $this->rowsFixed = $mainDefinition->rowsFixed;
+        $this->data = $mainDefinition->data;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
      * @param DataObject\ClassDefinition\Data\Table $masterDefinition
      */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->cols = $masterDefinition->cols;
-        $this->colsFixed = $masterDefinition->colsFixed;
-        $this->rows = $masterDefinition->rows;
-        $this->rowsFixed = $masterDefinition->rowsFixed;
-        $this->data = $masterDefinition->data;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

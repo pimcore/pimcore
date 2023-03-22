@@ -539,13 +539,28 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data\Multiselect $masterDefinition (will be DataObject\ClassDefinition\Data)
+     * @param DataObject\ClassDefinition\Data\Multiselect $mainDefinition (will be DataObject\ClassDefinition\Data)
      */
     #[\ReturnTypeWillChange]
+    public function synchronizeWithMainDefinition(DataObject\ClassDefinition\Data $mainDefinition)
+    {
+        $this->maxItems = $mainDefinition->maxItems;
+        $this->options = $mainDefinition->options;
+    }
+
+    /**
+     * @deprecated will be removed in Pimcore 11
+     * @param DataObject\ClassDefinition\Data\Multiselect $masterDefinition
+     */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
-        $this->maxItems = $masterDefinition->maxItems;
-        $this->options = $masterDefinition->options;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.6.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use %s instead.', __METHOD__, str_replace('Master', 'Main', __METHOD__))
+        );
+
+        $this->synchronizeWithMainDefinition($masterDefinition);
     }
 
     /**

@@ -283,7 +283,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                     this.getControllerViewFields(true),
                     this.getStaticGeneratorFields(true),
                     this.getPathAndKeyFields(true),
-                    this.getContentMasterFields(true)
+                    this.getContentMainFields(true)
                 ]
 
             });

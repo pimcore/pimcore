@@ -75,8 +75,8 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
             $page->getScheduledTasks()
         );
 
-        if ($page->getContentMasterDocument()) {
-            $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
+        if ($page->getContentMainDocument()) {
+            $data['contentMainDocumentPath'] = $page->getContentMainDocument()->getRealFullPath();
         }
 
         return $this->preSendDataActions($data, $page, $draftVersion);

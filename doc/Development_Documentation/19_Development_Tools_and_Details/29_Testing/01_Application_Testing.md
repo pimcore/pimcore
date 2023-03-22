@@ -46,9 +46,9 @@ expects your tests in a `tests/` directory and processes files in `src/` when ca
     </testsuite>
 
     <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+        <allowlist processUncoveredFilesFromAllowlist="true">
             <directory suffix=".php">src</directory>
-        </whitelist>
+        </allowlist>
     </filter>
 
     <php>
@@ -144,9 +144,9 @@ to a custom bootstrap file and to add environment variables needed to bootstrap 
     </testsuite>
 
     <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+        <allowlist processUncoveredFilesFromAllowlist="true">
             <directory suffix=".php">src</directory>
-        </whitelist>
+        </allowlist>
     </filter>
 
     <php>
