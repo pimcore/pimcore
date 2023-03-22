@@ -19,35 +19,35 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Event;
 final class CommitOrderProcessorEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\CommitOrderProcessorEvent")
      *
      * @var string
      */
     const PRE_COMMIT_ORDER_PAYMENT = 'pimcore.ecommerce.commitorderprocessor.preCommitOrderPayment';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\CommitOrderProcessorEvent")
      *
      * @var string
      */
     const POST_COMMIT_ORDER_PAYMENT = 'pimcore.ecommerce.commitorderprocessor.postCommitOrderPayment';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\CommitOrderProcessorEvent")
      *
      * @var string
      */
     const PRE_COMMIT_ORDER = 'pimcore.ecommerce.commitorderprocessor.preCommitOrder';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\CommitOrderProcessorEvent")
      *
      * @var string
      */
     const POST_COMMIT_ORDER = 'pimcore.ecommerce.commitorderprocessor.postCommitOrder';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\SendConfirmationMailEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\SendConfirmationMailEvent")
      *
      * @var string
      */

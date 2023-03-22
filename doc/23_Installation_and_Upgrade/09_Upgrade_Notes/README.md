@@ -118,6 +118,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - `IndexService\Worker\AbstractElasticSearch`, `IndexService\Worker\DefaultFindologic`, `IndexService\Worker\DefaultMysql`, `IndexService\Worker\OptimizedMysql`
     - `IndexService\Config\AbstractConfig` and it's sub-classes.
     - `Tracking\Tracker\Analytics\AbstractAnalyticsTracker` and it's sub-classes.
+  - Ecommerce related Events have been moved. Please check and adapt the Events' namespaces.
+  - [ClassDefinition\LinkGeneratorInterface] method signature has changed, instead of `Pimcore\Model\DataObject\Concrete` a `object` is used. 
 - [Bundles]
   - Removed support for loading bundles through `extensions.php`.
   - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.

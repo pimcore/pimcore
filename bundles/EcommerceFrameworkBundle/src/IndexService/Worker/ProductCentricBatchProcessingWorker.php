@@ -22,8 +22,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductList
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\Helper;
-use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessAttributeErrorEvent;
-use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessErrorEvent;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\IndexService\PreprocessAttributeErrorEvent;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\IndexService\PreprocessErrorEvent;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
