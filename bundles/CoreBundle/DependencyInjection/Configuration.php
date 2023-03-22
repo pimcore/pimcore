@@ -2137,7 +2137,7 @@ final class Configuration implements ConfigurationInterface
      *
      * @param ArrayNodeDefinition $rootNode
      */
-    private function addStaticroutesNode(ArrayNodeDefinition $rootNode)
+    private function addStaticRoutesNode(ArrayNodeDefinition $rootNode)
     {
         $rootNode
         ->children()
@@ -2297,7 +2297,7 @@ final class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('sandbox_security_policy')
-                        ->info('Whitelist tags, filters & functions for evaluating twig 
+                        ->info('Whitelist tags, filters & functions for evaluating twig
                         templates in a sandbox environment e.g. used by Mailer & Text layout component.')
                         ->children()
                             ->arrayNode('tags')
