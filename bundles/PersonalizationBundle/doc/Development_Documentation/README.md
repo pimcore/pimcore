@@ -159,7 +159,7 @@ bar):
 ## Opt-in for Targeting
 
 <div class="alert alert-warning">
-Targeting is now using the opt-in approach and will not be enabled by default. So, user should set the following cookie `pimcore_targeting_enabled=1` to enable targeting. They can use tools like `Cookiebot` to choose consent and set the cookie accordingly.
+A user has the possibility to enable targeting at any time, by setting the following cookie `pimcore_targeting_enabled=1` .
 </div> 
 
 > Since privacy laws vary from country to country, we recommend that you consult with your legal team or company to check what needs to be done before using this features. 
