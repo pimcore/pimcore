@@ -29,7 +29,7 @@ pimcore.settings.translation.editor = Class.create({
         if (editorType === 'wysiwyg') {
             this.editableDivId = "translationeditor_" + uniqid();
 
-            var html = '<div class="pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + value + '</div>';
+            var html = '<div class="pimcore_editable_wysiwyg" id="' + this.editableDivId + '" contenteditable="true"></div>';
             var pConf = {
                 html: html,
                 border: true,
@@ -186,6 +186,7 @@ pimcore.settings.translation.editor = Class.create({
 
         try {
             this.ckeditor = CKEDITOR.inline(this.editableDivId, eConfig);
+            this.ckeditor.setData(this.field.getValue());
 
             // disable URL field in image dialog
             this.ckeditor.on("dialogShow", function (e) {
