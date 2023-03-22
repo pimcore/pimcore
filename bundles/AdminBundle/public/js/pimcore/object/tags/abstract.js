@@ -21,6 +21,7 @@ pimcore.object.tags.abstract = Class.create({
     name:null,
     title:"",
     initialData:null,
+    toolbar:null,
 
     setObject:function (object) {
         this.object = object;
@@ -28,6 +29,14 @@ pimcore.object.tags.abstract = Class.create({
 
     getObject:function () {
         return this.object;
+    },
+
+    setToolbar:function (toolbar) {
+        this.toolbar = toolbar;
+    },
+
+    getToolbar:function () {
+        return this.toolbar;
     },
 
     setName:function (name) {
@@ -295,5 +304,11 @@ pimcore.object.tags.abstract = Class.create({
         }
 
         return classString;
+    },
+
+    setGlobalLanguage: function () {
+        if ((pimcore.globalmanager.get('global_language_' + this.getContext().objectId)) && this.frontendLanguages.includes(pimcore.globalmanager.get('global_language_' + this.getContext().objectId))) {
+            this.globalLanguage = pimcore.globalmanager.get('global_language_' + this.getContext().objectId);
+        }
     },
 });

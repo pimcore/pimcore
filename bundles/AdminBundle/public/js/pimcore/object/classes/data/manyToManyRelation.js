@@ -65,140 +65,162 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
         this.specificPanel.removeAll();
 
         this.uniqeFieldId = uniqid();
-        var i;
 
-        var allowedClasses = [];
-        if(typeof this.datax.classes == "object") {
-            // this is when it comes from the server
-            for(i=0; i<this.datax.classes.length; i++) {
-                allowedClasses.push(this.datax.classes[i]);
-            }
-        } else if(typeof this.datax.classes == "string") {
-            // this is when it comes from the local store
-            allowedClasses = this.datax.classes.split(",");
-        }
-
-        var allowedDocuments = [];
-        if(typeof this.datax.documentTypes == "object") {
-            // this is when it comes from the server
-            for(i=0; i<this.datax.documentTypes.length; i++) {
-                allowedDocuments.push(this.datax.documentTypes[i]);
-            }
-        } else if(typeof this.datax.documentTypes == "string") {
-            // this is when it comes from the local store
-            allowedDocuments = this.datax.documentTypes.split(",");
-        }
-
-        var allowedAssets = [];
-        if(typeof this.datax.assetTypes == "object") {
-            // this is when it comes from the server
-            for(i=0; i<this.datax.assetTypes.length; i++) {
-                allowedAssets.push(this.datax.assetTypes[i]);
-            }
-        } else if(typeof this.datax.assetTypes == "string") {
-            // this is when it comes from the local store
-            allowedAssets = this.datax.assetTypes.split(",");
-        }
-
-        var classesStore = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_class_gettree')
-            },
-            autoDestroy: true,
-            fields: ["text"]
-        });
-        classesStore.load({
-            "callback": function (classesStore, allowedClasses, success) {
-                if (!classesStore.destroyed) {
-                    classesStore.insert(0, {'id': 'folder', 'text': 'folder'});
-                    if (success) {
-                        Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses.join(","));
-                    }
-                }
-            }.bind(this, classesStore, allowedClasses)
-        });
-
-        var documentTypeStore = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_class_getdocumenttypes')
-            },
-            autoDestroy: true,
-            fields: ["text"]
-        });
-        documentTypeStore.load({
-            "callback": function (allowedDocuments, success) {
-                if (success) {
-                    Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments.join(","));
-                }
-            }.bind(this, allowedDocuments)
-        });
-
-        var assetTypeStore = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_class_getassettypes')
-            },
-            autoDestroy: true,
-            fields: ["text"]
-        });
-        assetTypeStore.load({
-            "callback": function (allowedAssets, success) {
-                if (success) {
-                    Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets.join(","));
-                }
-            }.bind(this, allowedAssets)
-        });
-
-
-        this.specificPanel.add([
+        const stylingItems = [
             {
-                xtype:'fieldset',
-                title: t('layout'),
-                collapsible: false,
-                autoHeight:true,
-                labelWidth: 100,
-                items :[
-                    {
-                        xtype: "textfield",
-                        fieldLabel: t("width"),
-                        name: "width",
-                        value: this.datax.width
-                    },
-                    {
-                        xtype: "displayfield",
-                        hideLabel: true,
-                        value: t('width_explanation')
-                    },
-                    {
-                        xtype: "textfield",
-                        fieldLabel: t("height"),
-                        name: "height",
-                        value: this.datax.height
-                    },
-                    {
-                        xtype: "displayfield",
-                        hideLabel: true,
-                        value: t('height_explanation')
-                    },
-                    {
-                        xtype: "numberfield",
-                        fieldLabel: t("maximum_items"),
-                        name: "maxItems",
-                        value: this.datax.maxItems,
-                        minValue: 0
-                    },
-                    {
-                        xtype: 'textfield',
-                        width: 600,
-                        fieldLabel: t("path_formatter_service"),
-                        name: 'pathFormatterClass',
-                        value: this.datax.pathFormatterClass
-                    },
-                    {
-                        xtype: "checkbox",
-                        width: 600,
+                xtype: "textfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: this.datax.width
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('width_explanation')
+            },
+            {
+                xtype: "textfield",
+                fieldLabel: t("height"),
+                name: "height",
+                value: this.datax.height
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('height_explanation')
+            }
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            this.specificPanel.add([
+                {
+                    xtype: 'fieldset',
+                    title: t('layout'),
+                    collapsible: false,
+                    autoHeight: true,
+                    labelWidth: 100,
+                    items: stylingItems
+                }
+            ]);
+        } else {
+            let i;
+
+            let allowedClasses = [];
+            let allowedDocuments = [];
+            let allowedAssets = [];
+
+            let assetTypeStore = null;
+            let documentTypeStore = null;
+            let classesStore = null;
+            if (typeof this.datax.classes == "object") {
+                // this is when it comes from the server
+                for (i = 0; i < this.datax.classes.length; i++) {
+                    allowedClasses.push(this.datax.classes[i]);
+                }
+            } else if (typeof this.datax.classes == "string") {
+                // this is when it comes from the local store
+                allowedClasses = this.datax.classes.split(",");
+            }
+
+            allowedDocuments = [];
+            if (typeof this.datax.documentTypes == "object") {
+                // this is when it comes from the server
+                for (i = 0; i < this.datax.documentTypes.length; i++) {
+                    allowedDocuments.push(this.datax.documentTypes[i]);
+                }
+            } else if (typeof this.datax.documentTypes == "string") {
+                // this is when it comes from the local store
+                allowedDocuments = this.datax.documentTypes.split(",");
+            }
+
+            allowedAssets = [];
+            if (typeof this.datax.assetTypes == "object") {
+                // this is when it comes from the server
+                for (i = 0; i < this.datax.assetTypes.length; i++) {
+                    allowedAssets.push(this.datax.assetTypes[i]);
+                }
+            } else if (typeof this.datax.assetTypes == "string") {
+                // this is when it comes from the local store
+                allowedAssets = this.datax.assetTypes.split(",");
+            }
+
+            classesStore = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_dataobject_class_gettree')
+                },
+                autoDestroy: true,
+                fields: ["text"]
+            });
+            classesStore.load({
+                "callback": function (classesStore, allowedClasses, success) {
+                    if (!classesStore.destroyed) {
+                        classesStore.insert(0, {'id': 'folder', 'text': 'folder'});
+                        if (success) {
+                            Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses.join(","));
+                        }
+                    }
+                }.bind(this, classesStore, allowedClasses)
+            });
+
+            documentTypeStore = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_dataobject_class_getdocumenttypes')
+                },
+                autoDestroy: true,
+                fields: ["text"]
+            });
+            documentTypeStore.load({
+                "callback": function (allowedDocuments, success) {
+                    if (success) {
+                        Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments.join(","));
+                    }
+                }.bind(this, allowedDocuments)
+            });
+
+            assetTypeStore = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_dataobject_class_getassettypes')
+                },
+                autoDestroy: true,
+                fields: ["text"]
+            });
+            assetTypeStore.load({
+                "callback": function (allowedAssets, success) {
+                    if (success) {
+                        Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets.join(","));
+                    }
+                }.bind(this, allowedAssets)
+            });
+
+
+            this.specificPanel.add([
+                {
+                    xtype: 'fieldset',
+                    title: t('layout'),
+                    collapsible: false,
+                    autoHeight: true,
+                    labelWidth: 100,
+                    items: stylingItems.concat([
+                        {
+                            xtype: "numberfield",
+                            fieldLabel: t("maximum_items"),
+                            name: "maxItems",
+                            value: this.datax.maxItems,
+                            minValue: 0
+                        },
+                        {
+                            xtype: 'textfield',
+                            width: 600,
+                            fieldLabel: t("path_formatter_service"),
+                            name: 'pathFormatterClass',
+                            value: this.datax.pathFormatterClass
+                        },
+                        {
+                            xtype: "checkbox",
+                            width: 600,
                         fieldLabel: t("allow_to_clear_relation"),
                         name: "allowToClearRelation",
                         value: this.datax.allowToClearRelation ?? true
@@ -210,75 +232,73 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
                         name: "enableTextSelection",
                         value: this.datax.enableTextSelection
                     }
-                ]
-            },
-            {
-                xtype:'fieldset',
-                title: t('document_restrictions'),
-                collapsible: false,
-                autoHeight:true,
-                labelWidth: 100,
-                disabled: this.isInCustomLayoutEditor(),
-                items :[
-                    {
-                        xtype: "checkbox",
-                        name: "documentsAllowed",
-                        fieldLabel: t("allow_documents"),
-                        checked: this.datax.documentsAllowed,
-                        listeners:{
-                            change:function(cbox, checked) {
-                                if (checked) {
-                                    Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).show();
-                                } else {
-                                    Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).hide();
+                ])
+                },
+                {
+                    xtype: 'fieldset',
+                    title: t('document_restrictions'),
+                    collapsible: false,
+                    autoHeight: true,
+                    labelWidth: 100,
+                    items: [
+                        {
+                            xtype: "checkbox",
+                            name: "documentsAllowed",
+                            fieldLabel: t("allow_documents"),
+                            checked: this.datax.documentsAllowed,
+                            listeners: {
+                                change: function (cbox, checked) {
+                                    if (checked) {
+                                        Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).show();
+                                    } else {
+                                        Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).hide();
 
-                                }
-                            }.bind(this)
-                        }
-                    },
-                    new Ext.ux.form.MultiSelect({
-                        fieldLabel: t("allowed_document_types") + '<br />' + t('allowed_types_hint'),
-                        name: "documentTypes",
-                        id: 'class_allowed_document_types_' + this.uniqeFieldId,
-                        hidden: !this.datax.documentsAllowed,
-                        allowEdit: this.datax.documentsAllowed,
-                        value: allowedDocuments.join(","),
-                        displayField: "text",
-                        valueField: "text",
-                        store: documentTypeStore,
-                        width: 400
-                    })
-                ]
-            },
-            {
-                xtype:'fieldset',
-                title: t('asset_restrictions'),
-                collapsible: false,
-                autoHeight:true,
-                labelWidth: 100,
-                disabled: this.isInCustomLayoutEditor(),
-                items :[
-                    {
-                        xtype: "checkbox",
-                        fieldLabel: t("allow_assets"),
-                        name: "assetsAllowed",
-                        checked: this.datax.assetsAllowed,
-                        listeners:{
-                            change:function(cbox, checked) {
-                                if (checked) {
-                                    Ext.getCmp('class_allow_inline_download_' + this.uniqeFieldId).show();
+                                    }
+                                }.bind(this)
+                            }
+                        },
+                        new Ext.ux.form.MultiSelect({
+                            fieldLabel: t("allowed_document_types") + '<br />' + t('allowed_types_hint'),
+                            name: "documentTypes",
+                            id: 'class_allowed_document_types_' + this.uniqeFieldId,
+                            hidden: !this.datax.documentsAllowed,
+                            allowEdit: this.datax.documentsAllowed,
+                            value: allowedDocuments.join(","),
+                            displayField: "text",
+                            valueField: "text",
+                            store: documentTypeStore,
+                            width: 400
+                        })
+                    ]
+                },
+                {
+                    xtype: 'fieldset',
+                    title: t('asset_restrictions'),
+                    collapsible: false,
+                    autoHeight: true,
+                    labelWidth: 100,
+                    items: [
+                        {
+                            xtype: "checkbox",
+                            fieldLabel: t("allow_assets"),
+                            name: "assetsAllowed",
+                            checked: this.datax.assetsAllowed,
+                            listeners: {
+                                change: function (cbox, checked) {
+                                    if (checked) {
+                                        Ext.getCmp('class_allow_inline_download_' + this.uniqeFieldId).show();
                                     Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).show();
                                     Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).show();
                                 } else {
                                     Ext.getCmp('class_allow_inline_download_' + this.uniqeFieldId).hide();
-                                    Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).hide();
-                                    Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).hide();
+                                        Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).hide();
+                                        Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).hide();
 
-                                }
-                            }.bind(this)
-                        }
-                    },
-                    {
+                                    }
+                                }.bind(this)
+                            }
+                        },
+                        {
                         fieldLabel: t("allow_asset_inline_download"),
                         name: "assetInlineDownloadAllowed",
                         id: 'class_allow_inline_download_' + this.uniqeFieldId,
@@ -316,69 +336,69 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
                                         return this.getEl();
                                     }.bind(el),
 
-                                    onNodeOver : function(target, dd, e, data) {
-                                        if (data.records.length === 1 && data.records[0].data.elementType === "asset") {
-                                            return Ext.dd.DropZone.prototype.dropAllowed;
-                                        }
-                                    },
+                                        onNodeOver: function (target, dd, e, data) {
+                                            if (data.records.length === 1 && data.records[0].data.elementType === "asset") {
+                                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                            }
+                                        },
 
-                                    onNodeDrop : function (target, dd, e, data) {
-                                        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                        onNodeDrop: function (target, dd, e, data) {
+                                            if (!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                                return false;
+                                            }
+
+                                            data = data.records[0].data;
+                                            if (data.elementType == "asset") {
+                                                this.setValue(data.path);
+                                                return true;
+                                            }
                                             return false;
-                                        }
-
-                                        data = data.records[0].data;
-                                        if (data.elementType == "asset") {
-                                            this.setValue(data.path);
-                                            return true;
-                                        }
-                                        return false;
-                                    }.bind(el)
-                                });
+                                        }.bind(el)
+                                    });
+                                }
                             }
                         }
-                    }
-                ]
-            },
-            {
-                xtype:'fieldset',
-                title: t('object_restrictions') ,
-                collapsible: false,
-                autoHeight:true,
-                labelWidth: 100,
-                disabled: this.isInCustomLayoutEditor(),
-                items :[
-                    {
-                        xtype: "checkbox",
-                        fieldLabel: t("allow_objects"),
-                        name: "objectsAllowed",
-                        checked: this.datax.objectsAllowed,
-                        listeners:{
-                            change:function(cbox, checked) {
-                                if (checked) {
-                                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).show();
-                                } else {
-                                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).hide();
+                    ]
+                },
+                {
+                    xtype: 'fieldset',
+                    title: t('object_restrictions'),
+                    collapsible: false,
+                    autoHeight: true,
+                    labelWidth: 100,
+                    items: [
+                        {
+                            xtype: "checkbox",
+                            fieldLabel: t("allow_objects"),
+                            name: "objectsAllowed",
+                            checked: this.datax.objectsAllowed,
+                            listeners: {
+                                change: function (cbox, checked) {
+                                    if (checked) {
+                                        Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).show();
+                                    } else {
+                                        Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).hide();
 
-                                }
-                            }.bind(this)
-                        }
-                    },
-                    new Ext.ux.form.MultiSelect({
-                        fieldLabel: t("allowed_classes") + '<br />' + t('allowed_types_hint'),
-                        name: "classes",
-                        id: 'class_allowed_object_classes_' + this.uniqeFieldId,
-                        hidden: !this.datax.objectsAllowed,
-                        allowEdit: this.datax.objectsAllowed,
-                        value: allowedClasses.join(","),
-                        displayField: "text",
-                        valueField: "text",
-                        store: classesStore,
-                        width: 400
-                    })
-                ]
-            }
-        ]);
+                                    }
+                                }.bind(this)
+                            }
+                        },
+                        new Ext.ux.form.MultiSelect({
+                            fieldLabel: t("allowed_classes") + '<br />' + t('allowed_types_hint'),
+                            name: "classes",
+                            id: 'class_allowed_object_classes_' + this.uniqeFieldId,
+                            hidden: !this.datax.objectsAllowed,
+                            allowEdit: this.datax.objectsAllowed,
+                            value: allowedClasses.join(","),
+                            displayField: "text",
+                            valueField: "text",
+                            store: classesStore,
+                            width: 400
+                        })
+                    ]
+                }
+            ]);
+        }
 
         return this.layout;
     },

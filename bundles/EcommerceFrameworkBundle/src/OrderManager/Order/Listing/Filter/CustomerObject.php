@@ -29,7 +29,7 @@ class CustomerObject implements OrderListFilterInterface
         $this->customer = $customer;
     }
 
-    public function apply(OrderListInterface $orderList): OrderListFilterInterface
+    public function apply(OrderListInterface $orderList): static
     {
         $orderList->addCondition('order.customer__id = ?', (string) $this->customer->getId());
 

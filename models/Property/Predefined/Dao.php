@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Property\Predefined;
 
+use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
 use Symfony\Component\Uid\Uuid as Uid;
 
@@ -25,15 +26,23 @@ use Symfony\Component\Uid\Uuid as Uid;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
+    private const CONFIG_KEY = 'predefined_properties';
+
     public function configure(): void
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
+        $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
+            $config,
+            self::CONFIG_KEY,
+            'PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES',
+            'PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES'
+        );
+
         parent::configure([
             'containerConfig' => $config['properties']['predefined']['definitions'],
             'settingsStoreScope' => 'pimcore_predefined_properties',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/predefined-properties',
-            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES',
+            'storageDirectory' => $storageConfig,
         ]);
     }
 

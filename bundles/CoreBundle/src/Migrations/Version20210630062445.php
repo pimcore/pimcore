@@ -43,7 +43,7 @@ final class Version20210630062445 extends AbstractMigration
         SettingsStore::set(
             ReportConfigWriter::REPORT_SETTING_ID,
             json_encode($config),
-            'string',
+            SettingsStore::TYPE_STRING,
             ReportConfigWriter::REPORT_SETTING_SCOPE
         );
     }

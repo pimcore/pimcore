@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\InputQuantityValue as InputQuantityValueDataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 
@@ -28,8 +29,23 @@ use Pimcore\Model\DataObject\QuantityValue\Unit;
  *
  * @package Pimcore\Model\DataObject\ClassDefinition\Data
  */
-class InputQuantityValue extends QuantityValue
+class InputQuantityValue extends AbstractQuantityValue
 {
+    /**
+     * @internal
+     */
+    public string|null $defaultValue = null;
+
+    public function getDefaultValue(): string|null
+    {
+        return $this->defaultValue;
+    }
+
+    public function setDefaultValue(string|null $defaultValue): void
+    {
+        $this->defaultValue = $defaultValue;
+    }
+
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?InputQuantityValueDataObject
     {
         if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {
@@ -61,6 +77,11 @@ class InputQuantityValue extends QuantityValue
         return null;
     }
 
+    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?InputQuantityValueDataObject
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -74,6 +95,33 @@ class InputQuantityValue extends QuantityValue
             ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
+    }
+
+    protected function doGetDefaultValue(Concrete $object, array $context = []): ?InputQuantityValueDataObject
+    {
+        if ($this->getDefaultValue() || $this->getDefaultUnit()) {
+            return new InputQuantityValueDataObject($this->getDefaultValue(), $this->getDefaultUnit());
+        }
+
+        return null;
+    }
+
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof Model\DataObject\Data\AbstractQuantityValue) {
+            return false;
+        }
+
+        if (!$newValue instanceof Model\DataObject\Data\AbstractQuantityValue) {
+            return false;
+        }
+
+        return $oldValue->getValue() === $newValue->getValue()
+            && $this->prepareUnitIdForComparison($oldValue->getUnitId()) === $this->prepareUnitIdForComparison($newValue->getUnitId());
     }
 
     private function getNewDataObject(string $value = null, Unit|string $unitId = null): InputQuantityValueDataObject
@@ -99,18 +147,6 @@ class InputQuantityValue extends QuantityValue
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
-    }
-
-    public function normalize(mixed $value, array $params = []): ?array
-    {
-        if ($value instanceof Model\DataObject\Data\InputQuantityValue) {
-            return [
-                'value' => $value->getValue(),
-                'unitId' => $value->getUnitId(),
-            ];
-        }
-
-        return null;
     }
 
     public function denormalize(mixed $value, array $params = []): ?InputQuantityValueDataObject

@@ -577,9 +577,6 @@
     object-fit: contain;
 }
 
-.pimcore_analytics_filter_form_item {
-    margin: 0 30px 0 0;
-}
 
 .pimcore_extra_label {
     font-size: 10px;
@@ -812,24 +809,6 @@ span.warning {
 .pimcore_error b {
     color: #830000;
 }
-
-
-/* REPORTS */
-
-.pimcore_analytics_gridvalue {
-    font-size: 26px;
-    line-height: 40px;
-    display: block;
-    text-align: right;
-}
-
-.pimcore_analytics_gridlabel {
-    font-size: 20px;
-    line-height: 40px;
-    padding: 0 0 0 5px;
-}
-
-
 
 .CodeMirror-line-numbers {
     width: 2.2em;

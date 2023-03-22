@@ -95,14 +95,13 @@ final class Tool
                 return [];
             }
 
-            $validLanguages = str_replace(' ', '', (string)$config['valid_languages']);
-            $languages = explode(',', $validLanguages);
+            $validLanguages = $config['valid_languages'];
 
-            if (!is_array($languages)) {
-                $languages = [];
+            if (!is_array($validLanguages)) {
+                $validLanguages = [];
             }
 
-            self::$validLanguages = $languages;
+            self::$validLanguages = $validLanguages;
         }
 
         return self::$validLanguages;
@@ -663,21 +662,5 @@ final class Tool
         });
 
         return array_values($dirs);
-    }
-
-    /**
-     * @param string $message
-     *
-     * @internal
-     */
-    public static function exitWithError(string $message): void
-    {
-        while (@ob_end_flush());
-
-        if (php_sapi_name() != 'cli') {
-            header('HTTP/1.1 503 Service Temporarily Unavailable');
-        }
-
-        die($message);
     }
 }

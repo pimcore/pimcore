@@ -51,7 +51,7 @@ class Environment implements EnvironmentInterface
      */
     protected string $executionMode = EnvironmentInterface::EXECUTION_MODE_PRODUCT;
 
-    public function setCart(CartInterface $cart): EnvironmentInterface
+    public function setCart(CartInterface $cart): static
     {
         $this->cart = $cart;
 
@@ -75,12 +75,7 @@ class Environment implements EnvironmentInterface
         return $this;
     }
 
-    /**
-     * @param CheckoutableInterface|null $product
-     *
-     * @return EnvironmentInterface
-     */
-    public function setProduct(CheckoutableInterface $product = null): EnvironmentInterface
+    public function setProduct(CheckoutableInterface $product = null): static
     {
         $this->product = $product;
 
@@ -92,7 +87,7 @@ class Environment implements EnvironmentInterface
         return $this->product;
     }
 
-    public function setVisitorInfo(VisitorInfo $visitorInfo): EnvironmentInterface
+    public function setVisitorInfo(VisitorInfo $visitorInfo): static
     {
         $this->visitorInfo = $visitorInfo;
 
@@ -104,7 +99,7 @@ class Environment implements EnvironmentInterface
         return $this->visitorInfo;
     }
 
-    public function setRule(RuleInterface $rule): EnvironmentInterface
+    public function setRule(RuleInterface $rule): static
     {
         $this->rule = $rule;
 
@@ -116,7 +111,7 @@ class Environment implements EnvironmentInterface
         return $this->rule;
     }
 
-    public function setPriceInfo(PriceInfoInterface $priceInfo): EnvironmentInterface
+    public function setPriceInfo(PriceInfoInterface $priceInfo): static
     {
         $this->priceInfo = $priceInfo;
 
@@ -128,7 +123,7 @@ class Environment implements EnvironmentInterface
         return $this->priceInfo;
     }
 
-    public function setCategories(array $categories): EnvironmentInterface
+    public function setCategories(array $categories): static
     {
         $this->categories = $categories;
 
@@ -143,9 +138,11 @@ class Environment implements EnvironmentInterface
         return $this->categories;
     }
 
-    public function setExecutionMode(string $executionMode): void
+    public function setExecutionMode(string $executionMode): static
     {
         $this->executionMode = $executionMode;
+
+        return $this;
     }
 
     public function getExecutionMode(): string

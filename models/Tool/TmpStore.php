@@ -33,8 +33,6 @@ final class TmpStore extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected ?string $tag = null;
 

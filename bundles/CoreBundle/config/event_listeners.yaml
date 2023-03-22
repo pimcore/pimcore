@@ -53,9 +53,6 @@ services:
         calls:
             - [setLogger, ['@logger']]
 
-    # Adds Meta Data entries of document to HeadMeta view helper
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentMetaDataListener: ~
-
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentRendererListener: ~
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\StaticPageGeneratorListener: ~
 
@@ -108,16 +105,6 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\InternalWysiwygHtmlAttributeFilterListener: ~
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener:
-        public: true
-        tags:
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
-
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleTagManagerListener:
-        public: true
-        tags:
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -108 }
-
     Pimcore\Cache\FullPage\SessionStatus:
         arguments:
             $symfonyMetadataStorageKey: '%session.metadata.storage_key%'
@@ -132,9 +119,6 @@ services:
     Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
         calls:
             - [loadTemplateFromResource, ['@@PimcoreCoreBundle/public/misc/maintenance.html']]
-
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleSearchConsoleVerificationListener: ~
-
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\OutputTimestampListener: ~
 

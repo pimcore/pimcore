@@ -34,14 +34,14 @@ class Dao extends Model\Dao\AbstractDao
                 $data = serialize($data);
             }
 
-            Helper::insertOrUpdate($this->db, 'tmp_store', [
+            Helper::upsert($this->db, 'tmp_store', [
                 'id' => $id,
                 'data' => $data,
                 'tag' => $tag,
                 'date' => time(),
                 'expiryDate' => (time() + $lifetime),
                 'serialized' => (int) $serialized,
-            ]);
+            ], $this->getPrimaryKey('tmp_store'));
 
             return true;
         } catch (\Exception $e) {

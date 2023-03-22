@@ -400,13 +400,6 @@ translations_are_not_configured: "T\u0142umaczenia nie s\u0105 skonfigurowane"
 read_more_here: "Czytaj wi\u0119cej tutaj"
 publish_version: Wersja opublikowana
 start: "Pocz\u0105tek"
-su: Nie
-mo: Pon
-tu: Wto
-we: "\u015Aro"
-th: Czw
-fr: "Pi\u0105"
-sa: Sob
 session_error_text: "Wykryto b\u0142\u0105d z obs\u0142ug\u0105 sesji. Czy chcesz
   pozosta\u0107 zalogowany?"
 session_error: "B\u0142\u0105d sesji"

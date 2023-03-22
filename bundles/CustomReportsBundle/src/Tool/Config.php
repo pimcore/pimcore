@@ -414,7 +414,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $data;
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         if ($this->dao) {
             $this->dao = clone $this->dao;
