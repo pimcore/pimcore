@@ -245,7 +245,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'object-custom-layout-writeable' => (new CustomLayout())->isWriteable(),
 
             // search types
-            'asset_search_types' => Asset::getTypes()
+            'asset_search_types' => Asset::getTypes(),
         ];
 
         $this

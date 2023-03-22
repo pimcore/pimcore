@@ -281,7 +281,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     /**
      * Extract class definitions and prefixes if configuration has more than just a class definition
      */
-    private function flattenConfigurationForClassResolver(array $configuration) : array
+    private function flattenConfigurationForClassResolver(array $configuration): array
     {
         $newConfiguration = [];
 

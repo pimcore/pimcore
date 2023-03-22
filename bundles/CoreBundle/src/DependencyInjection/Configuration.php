@@ -619,7 +619,7 @@ final class Configuration implements ConfigurationInterface
 
                             ->end()
                         ->end();
-        $this->addImplementationNodeFromArrayDefinition($assetsNode, "type_definitions");
+        $this->addImplementationNodeFromArrayDefinition($assetsNode, 'type_definitions');
     }
 
     /**
