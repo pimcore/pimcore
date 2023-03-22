@@ -22,8 +22,9 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\Snippet;
-use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
-use Pimcore\Model\Asset\TypeDefinition\Loader\AssetTypeLoader;
+use Pimcore\Model\Exception\NotFoundException;
+use Pimcore\Model\Factory;
+use Pimcore\Resolver\ClassResolver;
 
 trait Relation
 {
@@ -33,13 +34,14 @@ trait Relation
     protected function getPhpDocClassString(bool $asArray = false): string
     {
         $types = [];
+        $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
 
         // add documents
         if ($this->getDocumentsAllowed()) {
             if ($documentTypes = $this->getDocumentTypes()) {
-                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
+                $resolver = \Pimcore::getContainer()->get('pimcore.class.resolver.document');
                 foreach ($documentTypes as $item) {
-                    if ($className = $this->resolveClassName($loader, 'document', $item['documentTypes'])) {
+                    if ($className = $this->resolveClassName($factory, $resolver, $item['documentTypes'])) {
                         $types[] = $className;
                     }
                 }
@@ -53,9 +55,9 @@ trait Relation
         // add assets
         if ($this->getAssetsAllowed()) {
             if ($assetTypes = $this->getAssetTypes()) {
-                $assetLoader = \Pimcore::getContainer()->get(AssetTypeLoader::class);
+                $resolver = \Pimcore::getContainer()->get('pimcore.class.resolver.asset');
                 foreach ($assetTypes as $item) {
-                    if ($className = $this->resolveClassName($assetLoader, 'asset', $item['assetTypes'])) {
+                    if ($className = $this->resolveClassName($factory, $resolver, $item['assetTypes'])) {
                         $types[] = $className;
                     }
                 }
@@ -121,26 +123,16 @@ trait Relation
         return false;
     }
 
-    /**
-     * @param 'asset'|'document'|'object' $type
-     */
-    private function resolveClassName(TypeLoader|AssetTypeLoader $loader, string $type, string $shortName): ?string
+    private function resolveClassName(Factory $factory, ClassResolver $resolver, string $type): ?string
     {
-        $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
-        $className = match ($type) {
-            'asset' => '\\Pimcore\Model\Asset\\' . ucfirst($shortName),
-            'document' => '\\Pimcore\Model\Document\\' . ucfirst($shortName),
-            'object' => '\\Pimcore\Model\DataObject\\' . ucfirst($shortName),
-        };
-
-        try {
-            return $factory->getClassNameFor($className);
-        } catch (UnsupportedException) {
+        if ($className = $resolver->resolve($type)) {
             try {
-                return '\\' . $loader->getClassNameFor($shortName);
-            } catch (UnsupportedException) {
+                return $factory->getClassNameFor($className);
+            } catch (NotFoundException|UnsupportedException) {
                 return null;
             }
         }
+
+        return null;
     }
 }
