@@ -1047,7 +1047,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 }
             </style>
             <div class="pimcore_editable_video_progress" id="' . $uid . '">
-                <img src="' . $thumbnail . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
+                <img src="' . $thumbnail . '" style="width: ' . $this->getWidth() . '; height: ' . $this->getHeight() . 'px;">
                 <div class="pimcore_editable_video_progress_status"></div>
             </div>
         </div>';
