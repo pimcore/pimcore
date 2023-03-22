@@ -747,7 +747,7 @@ framework:
   - Removed: `getDeliveryEMail()`, `setDeliveryEMail()`, `getCartModificationTimestamp()`
 - [Data Objects] Data-Types: Removed getPhpdocType() BC layer
 - [Ecommerce][FilterService] Added method `getFilterValues()` to `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType`
-- [Data Objects] OwnerAwareFieldInterface: added methods `_setOwner($owner)`, `_setOwnerFieldname(?string $fieldname)`, `_setOwnerLanguage(?string $language)`, `_getOwner()`, `_getOwnerFieldname()`, \_getOwnerLanguage() and removed method `setOwner($owner, string $fieldname, $language = null)`.
+- [Data Objects] OwnerAwareFieldInterface: added methods `_setOwner($owner)`, `_setOwnerFieldname(?string $fieldname)`, `_setOwnerLanguage(?string $language)`, `_getOwner()`, `_getOwnerFieldname()`, `_getOwnerLanguage()` and removed method `setOwner($owner, string $fieldname, $language = null)`.
 - [Translations] Remove `pimcore.translations.case_insensitive` support.
 - [Core] Folder structure updated to support Symfony Flex. Changes as per [Symfony Docs](https://symfony.com/doc/5.2/setup/flex.html)
 - [Translations] `Pimcore\Model\Translation\AbstractTranslation`, `Pimcore\Model\Translation\Admin` and `Pimcore\Model\Translation\Website` with corresponding listing classes have been removed. Use new class `Pimcore\Model\Translation` with domain support (`Translation::DOMAIN_DEFAULT` or `Translation::DOMAIN_ADMIN`).
