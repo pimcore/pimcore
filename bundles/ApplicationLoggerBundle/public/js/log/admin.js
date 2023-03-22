@@ -249,7 +249,7 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
 
                 listeners: {
                     rowdblclick : function(grid, record, tr, rowIndex, e, eOpts ) {
-                        new pimcore.log.detailwindow(this.store.getAt(rowIndex).data);
+                        new pimcore.bundle.applicationlogger.log.detailwindow(this.store.getAt(rowIndex).data);
                     }.bind(this)
                 },
 
