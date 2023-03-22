@@ -413,7 +413,6 @@ class SettingsController extends AdminController
             }
         }
 
-
         $response = [
             'values' => $valueArray,
             'config' => [

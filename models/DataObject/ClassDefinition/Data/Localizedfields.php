@@ -713,7 +713,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             $enrichedFieldDefinitions[$key] = $fieldDefinition;
         }
 
-
         return $enrichedFieldDefinitions;
     }
 

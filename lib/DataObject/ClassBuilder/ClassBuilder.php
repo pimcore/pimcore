@@ -126,11 +126,9 @@ class ClassBuilder implements ClassBuilderInterface
 
         $cd .= "\n\n";
 
-
         foreach ($classDefinition->getFieldDefinitions() as $def) {
             $cd .= $this->fieldDefinitionBuilder->buildFieldDefinition($classDefinition, $def);
         }
-
 
         $cd .= "}\n";
         $cd .= "\n";

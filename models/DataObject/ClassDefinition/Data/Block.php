@@ -671,7 +671,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $enrichedFieldDefinitions[$key] = $fieldDefinition;
         }
 
-
         return $enrichedFieldDefinitions;
     }
 

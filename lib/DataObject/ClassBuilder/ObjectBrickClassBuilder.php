@@ -66,11 +66,9 @@ class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
 
         $cd .= 'protected $type = "' . $definition->getKey() . "\";\n";
 
-
         foreach ($definition->getFieldDefinitions() as $key => $def) {
             $cd .= 'protected $' . $key . ";\n";
         }
-
 
         $cd .= "\n\n";
 
@@ -87,7 +85,6 @@ class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
 
         $cd .= "\n\n";
 
-
         foreach ($definition->getFieldDefinitions() as $def) {
             $cd .= $def->getGetterCodeObjectbrick($definition);
 
@@ -101,7 +98,6 @@ class ObjectBrickClassBuilder implements ObjectBrickClassBuilderInterface
                 $cd .= $def->getSetterCode($definition);
             }
         }
-
 
         $cd .= "}\n";
         $cd .= "\n";
