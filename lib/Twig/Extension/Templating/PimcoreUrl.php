@@ -92,8 +92,8 @@ class PimcoreUrl implements RuntimeExtensionInterface
         /** @var Concrete | null $object */
         $object = $parameters['object'] ?? null;
         $linkGenerator = null;
-        
-        if ($object){
+
+        if ($object) {
             if (method_exists($object, 'getClass') && method_exists($object->getClass(), 'getLinkGenerator')) {
                 $linkGenerator = $object->getClass()->getLinkGenerator();
             } elseif (method_exists($object, 'getLinkGenerator')) { // useful for ecommerce LinkGeneratorAwareInterface
