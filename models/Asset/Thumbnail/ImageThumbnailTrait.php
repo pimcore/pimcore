@@ -287,14 +287,6 @@ trait ImageThumbnailTrait
         return \Pimcore\File::getFileExtension($this->getPath());
     }
 
-    /**
-     * @internal
-     *
-     * @param array $pathReference
-     * @param bool $frontend
-     *
-     * @return string|null
-     */
     protected function convertToWebPath(array $pathReference, bool $frontend): ?string
     {
         $type = $pathReference['type'] ?? null;

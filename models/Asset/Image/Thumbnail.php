@@ -48,11 +48,6 @@ final class Thumbnail
         $this->config = $this->createConfig($config ?? []);
     }
 
-    /**
-     * @param array $args
-     *
-     * @return string
-     */
     public function getPath(array $args = []): string
     {
         // set defaults

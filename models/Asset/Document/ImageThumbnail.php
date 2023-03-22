@@ -57,11 +57,6 @@ final class ImageThumbnail
         $this->deferred = $deferred;
     }
 
-    /**
-     * @param array $args
-     *
-     * @return string
-     */
     public function getPath(array $args = []): string
     {
         // set defaults
