@@ -61,6 +61,8 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
 
     /**
      * {@inheritdoc}
+     *
+     * @deprecated Will be removed with Pimcore 11
      */
     public function getJsPaths()
     {
@@ -69,6 +71,8 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
 
     /**
      * {@inheritdoc}
+     *
+     * @deprecated Will be removed with Pimcore 11
      */
     public function getCssPaths()
     {
@@ -77,6 +81,8 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
 
     /**
      * {@inheritdoc}
+     *
+     * @deprecated Will be removed with Pimcore 11
      */
     public function getEditmodeJsPaths()
     {
@@ -85,6 +91,8 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
 
     /**
      * {@inheritdoc}
+     *
+     * @deprecated Will be removed with Pimcore 11
      */
     public function getEditmodeCssPaths()
     {
