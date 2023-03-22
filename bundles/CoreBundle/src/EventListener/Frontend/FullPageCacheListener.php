@@ -371,6 +371,7 @@ class FullPageCacheListener
         foreach (['no-cache', 'private', 'no-store'] as $directive) {
             if ($response->headers->getCacheControlDirective($directive)) {
                 $cache = false;
+
                 break;
             }
         }
