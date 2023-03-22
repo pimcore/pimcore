@@ -27,6 +27,7 @@ use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
@@ -242,6 +243,9 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'custom-views-writeable'              => \Pimcore\CustomView\Config::isWriteable(),
             'class-definition-writeable'          => isset($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE']) ? (bool)$_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] : true,
             'object-custom-layout-writeable' => (new CustomLayout())->isWriteable(),
+
+            // search types
+            'asset_search_types' => Asset::getTypes()
         ];
 
         $this

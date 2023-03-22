@@ -234,6 +234,7 @@ pimcore_seo:
 - [DataObject] Added new helper inheritance helper function `DataObject\Serivce::useInheritedValues`
 - [Page] Removed the functionality to input `metadata` html tags in Settings section of the document.
 - [Asset] Image thumbnails: Removed support for using custom callbacks for thumbnail transformations.
+- [Assets] Removed loading assets via fixed namespace only. Custom Asset Types can be configured.
 - Marked `Pimcore\File` as internal. This class shouldn't be used anymore, use `Symfony\Component\Filesystem` instead.
 - [Config] Recommended and default format for storing the valid languages in `system.yaml` is now an array, for example:
 ```yaml

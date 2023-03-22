@@ -198,6 +198,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     private function configureClassResolvers(ContainerBuilder $container, array $config): void
     {
         $container->setParameter('pimcore.documents.classes.map', $config['documents']['type_definitions']['map']);
+        $container->setParameter('pimcore.assets.classes.map', $this->flattenConfigurationForClassResolver($config['assets']['type_definitions']));
     }
 
     private function configureRouting(ContainerBuilder $container, array $config): void
@@ -275,5 +276,23 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
 
         $serviceLocator->setArgument(0, $arguments);
+    }
+
+    /**
+     * Extract class definitions and prefixes if configuration has more than just a class definition
+     */
+    private function flattenConfigurationForClassResolver(array $configuration) : array
+    {
+        $newConfiguration = [];
+
+        if (isset($configuration['map'])) {
+            foreach ($configuration['map'] as $type => $config) {
+                if (isset($config['class'])) {
+                    $newConfiguration[$type] = $config['class'];
+                }
+            }
+        }
+
+        return $newConfiguration;
     }
 }
