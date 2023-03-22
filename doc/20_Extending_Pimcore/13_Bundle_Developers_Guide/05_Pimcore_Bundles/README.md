@@ -9,7 +9,7 @@ in order to show up in the `pimcore:bundle:list` command. This gives you the fol
 * The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in editmode.
 
 To get started quickly, you can extend `Pimcore\Extension\Bundle\AbstractPimcoreBundle` which already implements all methods
-defined by the interface. Besides name, description and version, the interface defines the following methods you
+defined by the interface. Besides name, description and version as shown in the extension manager, the `PimcoreBundleInterface` interface defines the following methods you
 can use to configure your bundle:
 
 ```php
@@ -21,36 +21,17 @@ interface PimcoreBundleInterface extends BundleInterface
      * If the bundle has an installation routine, an installer is responsible of handling installation related tasks
      */
     public function getInstaller(): ?InstallerInterface;
-
+    
     /**
-     * Get javascripts to include in admin interface
+     * Get path to include in admin iframe
      *
-     * @return string[]|RouteReferenceInterface[]
+     * @return string|RouteReferenceInterface|null
      */
-    public function getJsPaths(): array;
-
-    /**
-     * Get stylesheets to include in admin interface
-     *
-     * @return string[]|RouteReferenceInterface[]
-     */
-    public function getCssPaths(): array;
-
-    /**
-     * Get javascripts to include in editmode
-     *
-     * @return string[]|RouteReferenceInterface[]
-     */
-    public function getEditmodeJsPaths(): array;
-
-    /**
-     * Get stylesheets to include in editmode
-     *
-     * @return string[]|RouteReferenceInterface[]
-     */
-    public function getEditmodeCssPaths(): array;
+    public function getAdminIframePath();
 }
 ```
+
+If you need to load assets (JS or CSS) in the Admin or Editmode UI please have a look at the [loading assets in the Admin UI](../13_Loading_Admin_UI_Assets.md) section in the docs.
 
 ## Installer
 

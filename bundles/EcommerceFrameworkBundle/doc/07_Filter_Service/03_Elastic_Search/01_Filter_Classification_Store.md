@@ -1,6 +1,6 @@
 # Filter Classification Store
 
-With elasticsearch it is possible to index all attributes of [Classification Store](https://github.com/pimcore/pimcore/blob/11.x/doc/Development_Documentation/05_Objects/01_Object_Classes/01_Data_Types/15_Classification_Store.md) 
+With elasticsearch it is possible to index all attributes of [Classification Store](https://github.com/pimcore/pimcore/blob/11.x/doc/05_Objects/01_Object_Classes/01_Data_Types/15_Classification_Store.md) 
 data without defining an attribute for each single classification store key.   
 
 To do so, follow these steps

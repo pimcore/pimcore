@@ -67,7 +67,7 @@
   - Use `fetchAssociative()` instead of `fetchRow()`
   - Use `fetchFirstColumn()` instead of `fetchCol()`
   - Use `Pimcore\Db\Helper::fetchPairs()` instead of `fetchPairs()`
-  - Use `Pimcore\Db\Helper::insertOrUpdate()` instead of `insertOrUpdate()`
+  - Use `Pimcore\Db\Helper::upsert()` instead of `insertOrUpdate()`
   - Use `Pimcore\Db\Helper::quoteInto()` instead of `quoteInto()`
   - Use `quoteIdentifier()` instead of `quoteColumnAs()`
   - Don't use `quoteTableAs()`
@@ -93,7 +93,7 @@
     ```
     ```yaml
     pimcore:
-      storage:
+      config_location:
         image_thumbnails:
           target: 'symfony-config'
           options:
@@ -103,3 +103,5 @@
           options:
             directory: '/var/www/html/var/config/custom_reports'
     ```
+  
+- [Web2Print] Please keep in mind that the deprecated processor `HeadlessChrome` needs to be replaced with the new processor `Chrome` in Pimcore 11.

@@ -19,21 +19,21 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Event;
 final class CheckoutManagerEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\CheckoutManagerStepsEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\CheckoutManagerStepsEvent")
      *
      * @var string
      */
     const PRE_COMMIT_STEP = 'pimcore.ecommerce.checkoutmanager.preCommitStep';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\CheckoutManagerStepsEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\CheckoutManagerStepsEvent")
      *
      * @var string
      */
     const POST_COMMIT_STEP = 'pimcore.ecommerce.checkoutmanager.postCommitStep';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\CheckoutManagerStepsEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\CheckoutManagerStepsEvent")
      *
      * @var string
      */

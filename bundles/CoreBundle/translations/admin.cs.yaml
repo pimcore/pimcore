@@ -405,13 +405,6 @@ translations_are_not_configured: "P\u0159eklady nejsou nakonfigurovan\xE9"
 read_more_here: "V\xEDce zde"
 publish_version: Publikovat verzi
 start: "Za\u010D\xE1tek"
-su: Ne
-mo: Po
-tu: "\xDAt"
-we: St
-th: "\u010Ct"
-fr: "P\xE1"
-sa: So
 session_error_text: "Zd\xE1 se, \u017Ee je probl\xE9m s va\u0161\xED relac\xED (session).
   Doporu\u010Dujeme obnovit str\xE1nku z bezpe\u010Dnostn\xEDch d\u016Fvod\u016F,
   ale m\u016F\u017Eete nejd\u0159\xEDv zkusit ulo\u017Eit sv\xE9 zm\u011Bny."

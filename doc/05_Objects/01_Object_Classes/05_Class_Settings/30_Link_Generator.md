@@ -36,9 +36,9 @@ namespace App\Website\LinkGenerator;
 
 use App\Model\Product\AccessoryPart;
 use App\Model\Product\Car;
-use App\Website\Tool\ForceInheritance;
 use App\Website\Tool\Text;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\LinkGeneratorInterface;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
@@ -61,7 +61,7 @@ class ProductLinkGenerator extends AbstractProductLinkGenerator implements LinkG
 
     protected function doGenerate(ProductInterface $object, array $params): string
     {
-        return ForceInheritance::run(function () use ($object, $params) {
+        return DataObject\Service::useInheritedValues(true, function () use ($object, $params) {
             return $this->pimcoreUrl->__invoke(
                 [
                     'productname' => Text::toUrl($object->getOSName() ? $object->getOSName() : 'product'),

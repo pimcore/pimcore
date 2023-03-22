@@ -11,7 +11,6 @@ Particular useful can be following methods:
 * `getHostname()`
 * `getHostUrl()`
 * `classExists()`
-* `exitWithError()`
 * `getMail()`
 
 ### E-Mail

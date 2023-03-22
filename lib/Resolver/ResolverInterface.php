@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types = 1);
 
 /**
@@ -15,20 +14,12 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Document\TypeDefinition\Loader;
+namespace Pimcore\Resolver;
 
-use Pimcore\Loader\ImplementationLoader\PrefixLoader as BasePrefixLoader;
-
-/**
- * @internal
- */
-final class PrefixLoader extends BasePrefixLoader
+interface ResolverInterface
 {
     /**
-     * {@inheritdoc}
+     * Returns FQCN of class
      */
-    protected function normalizeName(string $name): string
-    {
-        return mb_strtoupper(mb_substr($name, 0, 1)) . mb_substr($name, 1);
-    }
+    public function resolve(string $name): ?string;
 }

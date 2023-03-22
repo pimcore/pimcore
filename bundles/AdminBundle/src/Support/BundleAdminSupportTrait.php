@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 /**
  * Pimcore
  *
@@ -15,18 +13,27 @@ declare(strict_types = 1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Document\TypeDefinition\Loader;
+namespace Pimcore\Bundle\AdminBundle\Support;
 
-use Pimcore\Loader\ImplementationLoader\LoaderInterface;
-use Pimcore\Model\Document;
-
-interface TypeLoaderInterface extends LoaderInterface
+trait BundleAdminSupportTrait
 {
-    /**
-     * @param string $name
-     * @param array $params
-     *
-     * @return Document
-     */
-    public function build(string $name, array $params = []): Document;
+    public function getJsPaths(): array
+    {
+        return [];
+    }
+
+    public function getCssPaths(): array
+    {
+        return [];
+    }
+
+    public function getEditmodeJsPaths(): array
+    {
+        return [];
+    }
+
+    public function getEditmodeCssPaths(): array
+    {
+        return [];
+    }
 }

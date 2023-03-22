@@ -406,13 +406,6 @@ translations_are_not_configured: "Les traductions ne sont pas configur\xE9es"
 read_more_here: En lire plus ici
 publish_version: Publier la version
 start: "D\xE9marrage"
-su: Dim.
-mo: Lun.
-tu: Mar.
-we: Mer.
-th: Jeu.
-fr: Ven.
-sa: Sam.
 session_error_text: "Il semble qu'il y ait un probl\xE8me avec votre session. Nous
   vous recommandons de recharger cette page, mais vous pouvez essayer de sauvegarder
   vos modifications en premier."
