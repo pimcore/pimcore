@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
+use Carbon\Carbon;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -24,20 +25,75 @@ final class Version20230321133700 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Alters date time columns to timestamp columns for application logs, notifications and scheduled tasks.';
+        return 'Alters date time columns to timestamp columns for application logs, notifications and scheduled tasks. Converts values to UTC.';
+    }
+
+    private function converToTimeZone(
+        Schema $schema,
+        string $table,
+        string $timeStampColumn,
+        bool $up = true
+    ) {
+        if($schema->hasTable($table)) {
+            $db = \Pimcore\Db::get();
+            $fromTimeZone = $up ? date_default_timezone_get() : 'UTC';
+            $toTimeZone = $up ? 'UTC' : date_default_timezone_get();
+
+            $this->addSql(
+                sprintf(
+                    'update %s set %s = CONVERT_TZ(%s,%s,%s)',
+                    $db->quoteIdentifier($table),
+                    $db->quoteIdentifier($timeStampColumn),
+                    $db->quoteIdentifier($timeStampColumn),
+                    $db->quote($fromTimeZone),
+                    $db->quote($toTimeZone)
+                )
+            );
+        }
     }
 
     public function up(Schema $schema): void
     {
-        if($schema->hasTable("application_logs")) {
-            $timeZone = date_default_timezone_get();
-        }
+        $this->converToTimeZone(
+            $schema,
+            'application_logs',
+            'timestamp'
+        );
+
+        $this->converToTimeZone(
+            $schema,
+            'notifications',
+            'creationDate'
+        );
+
+        $this->converToTimeZone(
+            $schema,
+            'notifications',
+            'modificationDate'
+        );
     }
 
     public function down(Schema $schema): void
     {
-        if (!$schema->getTable('documents_page')->hasColumn('metaData')) {
-            $this->addSql('ALTER TABLE documents_page ADD COLUMN `metaData` TEXT AFTER `description`');
-        }
+        $this->converToTimeZone(
+            $schema,
+            'application_logs',
+            'timestamp',
+            false
+        );
+
+        $this->converToTimeZone(
+            $schema,
+            'notifications',
+            'creationDate',
+            false
+        );
+
+        $this->converToTimeZone(
+            $schema,
+            'notifications',
+            'modificationDate',
+            false
+        );
     }
 }
