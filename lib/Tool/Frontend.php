@@ -79,6 +79,10 @@ final class Frontend
     {
         $cacheKey = 'sites_path_mapping';
 
+        if(RuntimeCache::isRegistered($cacheKey)) {
+            return RuntimeCache::get($cacheKey);
+        }
+
         $siteMapping = Pimcore\Cache::load($cacheKey);
 
         if(!$siteMapping) {
@@ -91,6 +95,7 @@ final class Frontend
             }
             Pimcore\Cache::save($siteMapping, $cacheKey, ['system', 'resource'], null, 997);
         }
+        RuntimeCache::set($cacheKey, $siteMapping);
 
         return $siteMapping;
     }
