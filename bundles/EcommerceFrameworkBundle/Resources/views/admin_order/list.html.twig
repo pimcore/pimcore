@@ -81,10 +81,8 @@
         </tr>
         </thead>
         <tbody>
-        {% set totalSum = 0 %}
 
         {% for item in paginator.items %}
-            {% set totalSum = totalSum + item['TotalPrice'] %}
             {% set totalSums = totalSums|merge({(item['Currency']): ((totalSums[item['Currency']] is defined ? totalSums[item['Currency']] : 0) + item['TotalPrice'])}) %}
 
         <tr>
