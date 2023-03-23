@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Admin;
+namespace Pimcore\Bundle\AdminBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 

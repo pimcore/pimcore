@@ -13,7 +13,9 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Model;
+namespace Pimcore\Bundle\AdminBundle\Event\Model;
+
+use Pimcore\Event\Model\ElementEventInterface;
 
 interface ElementDeleteInfoEventInterface extends ElementEventInterface
 {

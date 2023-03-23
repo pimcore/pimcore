@@ -13,16 +13,17 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Model;
+namespace Pimcore\Bundle\AdminBundle\Event\Model;
 
+use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Event\Traits\ElementDeleteInfoEventTrait;
 
 /**
- * Class AssetDeleteInfoEvent
+ * Class DataObjectDeleteInfoEvent
  *
  * @package Pimcore\Event\Model
  */
-class AssetDeleteInfoEvent extends AssetEvent implements ElementDeleteInfoEventInterface
+class DataObjectDeleteInfoEvent extends DataObjectEvent implements ElementDeleteInfoEventInterface
 {
     use ElementDeleteInfoEventTrait;
 }

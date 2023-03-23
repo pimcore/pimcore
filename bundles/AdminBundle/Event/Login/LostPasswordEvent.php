@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Admin\Login;
+namespace Pimcore\Bundle\AdminBundle\Event\Login;
 
 use Pimcore\Event\Traits\ResponseAwareTrait;
 use Pimcore\Model\User;

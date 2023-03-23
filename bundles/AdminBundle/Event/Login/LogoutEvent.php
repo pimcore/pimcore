@@ -13,44 +13,39 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Admin\Login;
+namespace Pimcore\Bundle\AdminBundle\Event\Login;
 
 use Pimcore\Event\Traits\RequestAwareTrait;
+use Pimcore\Event\Traits\ResponseAwareTrait;
+use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class LoginCredentialsEvent extends Event
+class LogoutEvent extends Event
 {
     use RequestAwareTrait;
+    use ResponseAwareTrait;
 
     /**
-     * @var array
+     * @var User
      */
-    protected $credentials;
+    protected $user;
 
     /**
      * @param Request $request
-     * @param array $credentials
+     * @param User $user
      */
-    public function __construct(Request $request, array $credentials)
+    public function __construct(Request $request, User $user)
     {
         $this->request = $request;
-        $this->credentials = $credentials;
+        $this->user = $user;
     }
 
     /**
-     * @return array
+     * @return User
      */
-    public function getCredentials()
+    public function getUser()
     {
-        return $this->credentials;
-    }
-
-    /**
-     * @param array $credentials
-     */
-    public function setCredentials(array $credentials)
-    {
-        $this->credentials = $credentials;
+        return $this->user;
     }
 }

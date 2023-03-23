@@ -13,9 +13,9 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event;
+namespace Pimcore\Bundle\AdminBundle\Event;
 
-final class AdminEvents
+class AdminEvents
 {
     /**
      * The LOGIN_REDIRECT event is triggered before user is redirected to login page.
