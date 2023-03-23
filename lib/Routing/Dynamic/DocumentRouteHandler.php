@@ -110,9 +110,9 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         // If the request is not from a site and the document is part of a site
         // or the ID of the requested site does not match the site where the document is located.
         // Then we have to throw a NotFoundHttpException
-        if($document && !$context->getRequest()->get('pimcore_editmode')) {
+        if(!$site && $document && !$context->getRequest()->get('pimcore_editmode')) {
             $siteIdOfDocument = Frontend::getSiteIdForDocument($document);
-            if(!$site && $siteIdOfDocument || ($site && ($site->getId() != $siteIdOfDocument))) {
+            if($siteIdOfDocument) {
                 throw new NotFoundHttpException("The page does not exist on this configured site.");
             }
         }
