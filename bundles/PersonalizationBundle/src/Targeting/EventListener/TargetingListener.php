@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
-use Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
@@ -45,7 +44,6 @@ class TargetingListener implements EventSubscriberInterface
 {
     use StopwatchTrait;
     use PimcoreContextAwareTrait;
-    use EnabledTrait;
     use ResponseInjectionTrait;
     use StaticPageContextAwareTrait;
 
