@@ -24,7 +24,6 @@ use Pimcore\Model\Site;
 
 final class Frontend
 {
-    private const SITE_CACHE_KEY = 'sites_full_list';
 
     public static function isDocumentInSite(?Site $site, Document $document): bool
     {
@@ -59,61 +58,42 @@ final class Frontend
             return null;
         }
 
-        if (RuntimeCache::isRegistered(SELF::SITE_CACHE_KEY)) {
-            $sites = RuntimeCache::get(SELF::SITE_CACHE_KEY);
-        } else {
-            $sites = self::getFullSiteListing();
-        }
+        return Site::getById($siteIdOfDocument);
 
-        foreach ($sites as $site) {
-            if($site->getId() == $siteIdOfDocument) {
-                return $site;
-            }
-        }
-
-        return null;
     }
 
     public static function getSiteIdForDocument(Document $document): ?int
     {
-        $pathSiteMappingCacheKey = 'path_site_mapping';
+        $siteMapping = self::getSiteMapping();
 
-        $pathMapping = Pimcore\Cache::load($pathSiteMappingCacheKey);
 
-        if (!$pathMapping) {
-            $pathMapping = [];
-        }
-
-        if (array_key_exists($document->getRealFullPath(), $pathMapping)) {
-            return $pathMapping[$document->getRealFullPath()];
-        }
-
-        foreach (self::getFullSiteListing() as $site) {
-            /** @var Site $site */
-            if (strpos($document->getRealFullPath(), $site->getRootPath() . '/') === 0 || $site->getRootDocument()->getId() == $document->getId()) {
-                $pathMapping[$document->getRealFullPath()] = $site->getId();
-                Pimcore\Cache::save($pathMapping, $pathSiteMappingCacheKey, ['system', 'resource'], null, 997);
-                return $site->getId();
+        foreach ($siteMapping as $sitePath => $id) {
+            if (str_starts_with($document->getRealFullPath(), $sitePath)) {
+                return $id;
             }
         }
 
         return null;
     }
 
-    /**
-     * @return Site\Listing[]
-     */
-    private static function getFullSiteListing() : array
+    private static function getSiteMapping() : array
     {
-        if (RuntimeCache::isRegistered(SELF::SITE_CACHE_KEY)) {
-            $sites = RuntimeCache::get(SELF::SITE_CACHE_KEY);
-        } else {
+        $cacheKey = 'sites_path_mapping';
+
+        $siteMapping = Pimcore\Cache::load($cacheKey);
+
+        if(!$siteMapping) {
+            $siteMapping = [];
             $sites = new Site\Listing();
             $sites->setOrderKey('(SELECT LENGTH(`path`) FROM documents WHERE documents.id = sites.rootId) DESC', false);
             $sites = $sites->load();
-            RuntimeCache::set(SELF::SITE_CACHE_KEY, $sites);
+            foreach ($sites as $site) {
+                $siteMapping[$site->getRootPath()] = $site->getId();
+            }
+            Pimcore\Cache::save($siteMapping, $cacheKey, ['system', 'resource'], null, 997);
         }
-        return $sites;
+
+        return $siteMapping;
     }
 
     public static function isOutputCacheEnabled(): bool|array
