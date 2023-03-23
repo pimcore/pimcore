@@ -15,8 +15,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Event\Model;
 
+use Pimcore\Bundle\AdminBundle\Event\Traits\ElementDeleteInfoEventTrait;
 use Pimcore\Event\Model\DataObjectEvent;
-use Pimcore\Event\Traits\ElementDeleteInfoEventTrait;
 
 /**
  * Class DataObjectDeleteInfoEvent

@@ -13,17 +13,11 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Event\Model;
-
-use Pimcore\Bundle\AdminBundle\Event\Traits\ElementDeleteInfoEventTrait;
-use Pimcore\Event\Model\DocumentEvent;
+namespace Pimcore\Event\Login;
 
 /**
- * Class DocumentDeleteInfoEvent
- *
- * @package Pimcore\Event\Model
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Login\LogoutEvent instead
  */
-class DocumentDeleteInfoEvent extends DocumentEvent implements ElementDeleteInfoEventInterface
+class LogoutEvent extends \Pimcore\Bundle\AdminBundle\Event\Login\LogoutEvent
 {
-    use ElementDeleteInfoEventTrait;
 }
