@@ -259,7 +259,10 @@ class OrderAgent implements OrderAgentInterface
      */
     public function getCurrency()
     {
-        return $this->getOrder()->getCurrency() !== null ? new Currency($this->order->getCurrency()) : $this->environment->getDefaultCurrency();
+        if($this->getOrder()->getCurrency() !== null) {
+            return new Currency($this->getOrder()->getCurrency());
+        } 
+        return $this->environment->getDefaultCurrency();
     }
 
     /**
