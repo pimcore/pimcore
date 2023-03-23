@@ -136,6 +136,7 @@ class LogController extends AdminController implements KernelControllerEventInte
                 'id' => $row['id'],
                 'pid' => $row['pid'],
                 'message' => $row['message'],
+                'date' => $row['timestamp'],
                 'timestamp' => $carbonTs->getTimestamp(),
                 'priority' => $row['priority'],
                 'fileobject' => $fileobject,

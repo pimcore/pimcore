@@ -182,7 +182,6 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
                     align: 'left',
                     sortable: true,
                     renderer: function (d) {
-                        console.log(d);
                         return Ext.Date.format(new Date(d*1000), "Y-m-d H:i:s");
                     }
                 },{
