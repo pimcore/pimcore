@@ -579,15 +579,14 @@ class Service extends Model\Element\Service
 
                 return $asset->getImageThumbnail($thumbnailConfig, $page);
             } elseif ($asset instanceof Asset\Image) {
-
                 // Throw exception if the requested thumbnail format is disabled from the config
                 $thumbnailFormats = ThumbnailConfig::getAutoFormats();
-                if(!in_array($config['file_extension'], ['jpg', 'jpeg'])) {
-
-                    if(empty($thumbnailFormats))
+                if (!in_array($config['file_extension'], ['jpg', 'jpeg'])) {
+                    if (empty($thumbnailFormats)) {
                         throw new NotFoundHttpException('Requested thumbnail format is disabled');
-                    foreach($thumbnailFormats as $autoFormat => $autoFormatConfig) {
-                        if($config['file_extension'] == $autoFormat && !$autoFormatConfig['enabled']) {
+                    }
+                    foreach ($thumbnailFormats as $autoFormat => $autoFormatConfig) {
+                        if ($config['file_extension'] == $autoFormat && !$autoFormatConfig['enabled']) {
                             throw new NotFoundHttpException('Requested thumbnail format is disabled');
                         }
                     }
