@@ -12,3 +12,9 @@ services:
         class: Pimcore\Resolver\ClassResolver
         arguments:
             $map: '%pimcore.documents.classes.map%'
+
+    pimcore.class.resolver.asset:
+        public: true
+        class: Pimcore\Resolver\ClassResolver
+        arguments:
+            $map: '%pimcore.assets.classes.map%'

@@ -14,33 +14,37 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Model\Ecommerce;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class CommitOrderProcessorEvent extends Event
+class SendConfirmationMailEvent extends Event
 {
     use ArgumentsAwareTrait;
 
     protected CommitOrderProcessorInterface $commitOrderProcessor;
 
-    protected ?AbstractOrder $order = null;
+    protected AbstractOrder $order;
+
+    protected string $confirmationMailConfig;
+
+    protected bool $skipDefaultBehaviour = false;
 
     /**
-     * CommitOrderProcessorEvent constructor.
+     * SendConfirmationMailEvent constructor.
      *
      * @param CommitOrderProcessorInterface $commitOrderProcessor
-     * @param AbstractOrder|null $order
-     * @param array $arguments
+     * @param AbstractOrder $order
+     * @param string $confirmationMailConfig
      */
-    public function __construct(CommitOrderProcessorInterface $commitOrderProcessor, ?AbstractOrder $order, array $arguments = [])
+    public function __construct(CommitOrderProcessorInterface $commitOrderProcessor, AbstractOrder $order, string $confirmationMailConfig)
     {
         $this->commitOrderProcessor = $commitOrderProcessor;
         $this->order = $order;
-        $this->arguments = $arguments;
+        $this->confirmationMailConfig = $confirmationMailConfig;
     }
 
     public function getCommitOrderProcessor(): CommitOrderProcessorInterface
@@ -53,7 +57,7 @@ class CommitOrderProcessorEvent extends Event
         $this->commitOrderProcessor = $commitOrderProcessor;
     }
 
-    public function getOrder(): ?AbstractOrder
+    public function getOrder(): AbstractOrder
     {
         return $this->order;
     }
@@ -61,5 +65,25 @@ class CommitOrderProcessorEvent extends Event
     public function setOrder(AbstractOrder $order): void
     {
         $this->order = $order;
+    }
+
+    public function getConfirmationMailConfig(): string
+    {
+        return $this->confirmationMailConfig;
+    }
+
+    public function setConfirmationMailConfig(string $confirmationMailConfig): void
+    {
+        $this->confirmationMailConfig = $confirmationMailConfig;
+    }
+
+    public function doSkipDefaultBehaviour(): bool
+    {
+        return $this->skipDefaultBehaviour;
+    }
+
+    public function setSkipDefaultBehaviour(bool $skipDefaultBehaviour): void
+    {
+        $this->skipDefaultBehaviour = $skipDefaultBehaviour;
     }
 }
