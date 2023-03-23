@@ -61,6 +61,9 @@ class AssetUpdateTasksHandler
         $pageCount = $asset->getCustomSetting('document_page_count');
         if (!$pageCount || $pageCount === 'failed') {
             $asset->processPageCount();
+            if ($asset->getCustomSetting('document_page_count') == 'failed') {
+                throw new \RuntimeException(sprintf('Failed processing page count for document asset %s.', $asset->getId()));
+            }
             $this->saveAsset($asset);
         }
 

@@ -70,7 +70,7 @@ have a look at the logs as a starting point when debugging installation issues.
 ## 5. Maintenance Cron Job
 
 Maintenance tasks are handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance
-messages to the bus and runs them afterwards immediately from the queue. However it's recommended to setup independent
+messages to the bus and runs them afterwards immediately from the queue. However, it is  recommended to set up independent
 workers that process the queues, by running `bin/console messenger:consume pimcore_core pimcore_maintenance pimcore_image_optimize` (using e.g.
 `Supervisor`) and adding `--async` option to the `pimcore:maintenance` command that stops the maintenance command to process
 the queue directly.
@@ -87,6 +87,11 @@ the queue directly.
 ```
 
 Keep in mind, that the cron job has to run as the same user as the web interface to avoid permission issues (eg. `www-data`).
+
+### Handle Failed jobs
+If there are maintenance jobs that are failed in the processing, after defined retries they are moved to `pimcore_failed_jobs`
+transports. You can process the failed jobs again by fixing the underlying issue with command `bin/console messenger:consume pimcore_failed_jobs`.
+Please follow the [Symfony docs](https://symfony.com/doc/current/messenger.html#saving-retrying-failed-messages) for options on failed jobs processing.
 
 ## 6. Additional Information & Help
 
