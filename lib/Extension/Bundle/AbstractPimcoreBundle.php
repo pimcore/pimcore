@@ -16,10 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle;
 
-use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface, PimcoreBundleAdminSupportInterface
+abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface
 {
     protected static ?PimcoreBundleManager $bundleManager = null;
 
@@ -53,38 +52,6 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     public function getInstaller(): ?Installer\InstallerInterface
     {
         return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getJsPaths(): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCssPaths(): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEditmodeJsPaths(): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEditmodeCssPaths(): array
-    {
-        return [];
     }
 
     public static function isInstalled(): bool

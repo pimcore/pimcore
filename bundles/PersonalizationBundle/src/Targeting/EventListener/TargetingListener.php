@@ -21,6 +21,7 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Traits\EnabledT
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
+use Pimcore\Bundle\PersonalizationBundle\Debug\Traits\StopwatchTrait;
 use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingEvent;
 use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerInterface;
@@ -31,7 +32,6 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\Code\TargetingCodeGenerator;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoResolver;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
-use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService;

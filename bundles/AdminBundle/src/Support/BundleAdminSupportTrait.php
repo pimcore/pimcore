@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -14,13 +13,27 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\DataObject\ClassDefinition;
+namespace Pimcore\Bundle\AdminBundle\Support;
 
-interface LinkGeneratorInterface
+trait BundleAdminSupportTrait
 {
-    /**
-     *
-     * To support mockups or arbitrary objects
-     */
-    public function generate(object $object, array $params = []): string;
+    public function getJsPaths(): array
+    {
+        return [];
+    }
+
+    public function getCssPaths(): array
+    {
+        return [];
+    }
+
+    public function getEditmodeJsPaths(): array
+    {
+        return [];
+    }
+
+    public function getEditmodeCssPaths(): array
+    {
+        return [];
+    }
 }

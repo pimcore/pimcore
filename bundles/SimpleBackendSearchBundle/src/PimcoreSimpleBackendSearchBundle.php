@@ -16,11 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SimpleBackendSearchBundle;
 
+use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
+use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle
+class PimcoreSimpleBackendSearchBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
 {
+    use BundleAdminSupportTrait;
     use PackageVersionTrait;
 
     public function getJsPaths(): array

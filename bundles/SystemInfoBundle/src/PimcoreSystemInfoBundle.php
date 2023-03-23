@@ -15,11 +15,14 @@
 
 namespace Pimcore\Bundle\SystemInfoBundle;
 
+use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
+use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
-class PimcoreSystemInfoBundle extends AbstractPimcoreBundle
+class PimcoreSystemInfoBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
 {
+    use BundleAdminSupportTrait;
     use PackageVersionTrait;
 
     // @TODO Enable when bundle move to own repo
