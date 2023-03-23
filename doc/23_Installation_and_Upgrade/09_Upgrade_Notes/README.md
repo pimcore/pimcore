@@ -43,9 +43,10 @@
 - [Config] `Pimcore\Config\Config` has been removed, see [#12477](https://github.com/pimcore/pimcore/issues/12477). Please use the returned array instead, e.g.
   ```php
   $web2printConfig = Config::getWeb2PrintConfig();
-  $web2printConfig = $web2printConfig['headlessChromeSettings'];
+  $web2printConfig = $web2printConfig['chromiumSettings'];
   ```
 - [Video Editable] Removed [deprecated and legacy `<iframe>` attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe): `frameborder`, `webkitAllowFullScreen`, `mozallowfullscreen`, and `allowfullscreen` for YouTube, Vimeo, and DailyMotion embeds.
+- [Web2Print] Deprecated HeadlessChrome Processor has been removed. Please use Chromium Processor instead.
 - [Web2Print] Deprecated WkHtmlToPdf Processor has been removed.
 - [Documents] Deprecated WkHtmlToImage has been removed.
 - [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
@@ -117,6 +118,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
     - `IndexService\Worker\AbstractElasticSearch`, `IndexService\Worker\DefaultFindologic`, `IndexService\Worker\DefaultMysql`, `IndexService\Worker\OptimizedMysql`
     - `IndexService\Config\AbstractConfig` and it's sub-classes.
     - `Tracking\Tracker\Analytics\AbstractAnalyticsTracker` and it's sub-classes.
+  - Ecommerce related Events have been moved. Please check and adapt the Events' namespaces.
+  - [ClassDefinition\LinkGeneratorInterface] method signature has changed, instead of `Pimcore\Model\DataObject\Concrete` a `object` is used. 
 - [Bundles]
   - Removed support for loading bundles through `extensions.php`.
   - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.
@@ -159,6 +162,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Ecommerce][IndexService] Please make sure to rebuild your product index to make sure changes apply accordingly (this is relevant for mysql and elasticsearch indices). As an alternative you could manually rename and remove `o_` from all index columns/fields.
 - [Ecommerce] Elasticsearch 7 support was removed
 - [Ecommerce] Config option `es_client_params` in `index_service` was removed 
+- [Ecommerce] Remove deprecated methods `check()` and `exists()` from class `Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation`
 - [ClassSavedInterface] Removed `method_exists` bc layer. Please add the corresponding `ClassSavedInterface` interface to your custom field definitions. For more details check the 10.6.0 patch notes.
 - [UrlSlug] Allow processing unpublished fallback document is now default behaviour, removed the related configuration options and usages (`allow_processing_unpublished_fallback_document`, `ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS`). For details, please see [#10005](https://github.com/pimcore/pimcore/issues/10005#issuecomment-907007745)
 - [DataObjects\Documents] **BC Break**: Calling `getChildren/getSiblings` on `AbstractObject`, `Document` and `Asset` now returns unloaded listing. If the list is not traveresed immediately, then it is required to call `load()` explicitily.
@@ -192,6 +196,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Gotenberg] Introducing support for [Gotenberg](https://gotenberg.dev/) as PDF generation, conversion, merge etc.. tool
     - [Asset] Added adapter (as alternative to LibreOffice) for preview generation of supported document type assets and set it as default adapter.
     - [Web2Print] Added settings option, configuration and processor for PDF preview and generation
+- [WebToPrint] Introducing Web2print processor `Chromium` that use `chrome-php/chrome` (same as the page previews), as replacement of HeadlessChrome processor which required NodeJS. 
+- [Chromium] Added support to run chromium in Docker container and work via websocket for web2print and page previews, along of running it by a local binary.
 - [Events] Event `pimcore.element.note.postAdd` has been removed. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Asset] Removed VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111)
 - [Permissions] Permission for DataObjects Classes has been structured in a more granular way to have more control. Field collections, objects bricks, classification stores and quantity value units now have their own permission.
@@ -228,6 +234,7 @@ pimcore_seo:
 - [DataObject] Added new helper inheritance helper function `DataObject\Serivce::useInheritedValues`
 - [Page] Removed the functionality to input `metadata` html tags in Settings section of the document.
 - [Asset] Image thumbnails: Removed support for using custom callbacks for thumbnail transformations.
+- [Assets] Removed loading assets via fixed namespace only. Custom Asset Types can be configured.
 - Marked `Pimcore\File` as internal. This class shouldn't be used anymore, use `Symfony\Component\Filesystem` instead.
 - [Config] Recommended and default format for storing the valid languages in `system.yaml` is now an array, for example:
 ```yaml
@@ -237,9 +244,17 @@ pimcore:
             - en
             - de
 ```
+- [Bootstrap]
+  - Relying on `Pimcore\Bootstrap::bootstrap()` for autoloading classes will not work anymore. 
+  - Removed unused constant `PIMCORE_APP_BUNDLE_CLASS_FILE`
+- [Security] Enabled Content Security Policy by default.
 - Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.
 - [DataBase] Removed deprecated `PhpArrayFileTable`.
 - [Database] Removed `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
+- Removed methods `Pimcore\Tool\Admin::isExtJS6()`, `\Pimcore\Tool\Admin::getLanguageFile()`, `\Pimcore\Tool::exitWithError()`.
+- Moved implementation of `PimcoreBundleAdminSupportInterface` from `AbstractPimcoreBundle` to bundle classes. 
+Moved `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` from  `AbstractPimcoreBundle` to `BundleAdminSupportTrait`.
+- [Cache] Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
 
 ## 10.6.0
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
@@ -278,6 +293,7 @@ pimcore:
 - [Document] Deprecated the `HTML-Tags` field under the `SEO & Settings` panel of Document/Page, `setMetaData()` and `getMetaData()`
 - [Document] The `HTML-Tags` (document metadata) field under SEO & Settings panel is now only visible and editable by Admin users`.
 - [Thumbnails] Using Callable in Asset thumbnail transformations is deprecated and will not work in Pimcore 11.
+- [Thumbnails] Deprecated the usage of `$thumbnail->getPath(false)` by passing boolean parameters, use `$thumbnail->getPath(["deferredAllowed" => false]);` and pass an array instead. Added the possibility to get the frontend path by adding `frontend => true` into the array, useful in console commands.
 - Marked `Pimcore\Model\User\AbstractUser` and `Pimcore\Model\User\UserRole` classes as abstract via php doc. It will be natively abstract in Pimcore 11.
 - [Bundles] Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in the `PimcoreBundleInterface`. These methods will be provided by the new `PimcoreBundleAdminSupportInterface`.
 - [Web2print] Deprecated `HeadlessChrome` processor, it will be removed and replaced by `Chromium` processor (which doesn't require NodeJS to work) in Pimcore 11.

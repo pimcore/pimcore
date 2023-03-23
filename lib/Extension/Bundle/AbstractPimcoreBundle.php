@@ -54,38 +54,6 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getJsPaths(): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCssPaths(): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEditmodeJsPaths(): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEditmodeCssPaths(): array
-    {
-        return [];
-    }
-
     public static function isInstalled(): bool
     {
         static::$bundleManager ??= \Pimcore::getContainer()->get(PimcoreBundleManager::class);

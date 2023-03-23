@@ -21,7 +21,7 @@ group on a document, but have content for different target groups in snippets or
 You can see which target groups were applied to which document in the profiler. As you can see in the screenshot below,
 the main document used the target group `basketball` while the footer snippet was rendered with the target group `female`.
 
-![Targeting Profiler Target Groups](../../../Development_Documentation/img/targeting_profiler_target_groups.png) 
+![Targeting Profiler Target Groups](../../../img/targeting_profiler_target_groups.png) 
 
 For further debug information see below. 
 

@@ -663,20 +663,4 @@ final class Tool
 
         return array_values($dirs);
     }
-
-    /**
-     * @param string $message
-     *
-     * @internal
-     */
-    public static function exitWithError(string $message): void
-    {
-        while (@ob_end_flush());
-
-        if (php_sapi_name() != 'cli') {
-            header('HTTP/1.1 503 Service Temporarily Unavailable');
-        }
-
-        die($message);
-    }
 }
