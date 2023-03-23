@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Traits;
+namespace Pimcore\Bundle\AdminBundle\Event\Traits;
 
 /**
  * Trait ElementDeleteInfoEventTrait
