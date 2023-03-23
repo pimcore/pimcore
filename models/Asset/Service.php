@@ -25,6 +25,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Document\ImageThumbnail as DocumentImageThumbnail;
 use Pimcore\Model\Asset\Image\Thumbnail as ImageThumbnail;
+use Pimcore\Model\Asset\Image\Thumbnail\Config as ThumbnailConfig;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\Video\ImageThumbnail as VideoImageThumbnail;
 use Pimcore\Model\Element;
@@ -33,6 +34,7 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -577,6 +579,20 @@ class Service extends Model\Element\Service
 
                 return $asset->getImageThumbnail($thumbnailConfig, $page);
             } elseif ($asset instanceof Asset\Image) {
+
+                // Throw exception if the requested thumbnail format is disabled from the config
+                $thumbnailFormats = ThumbnailConfig::getAutoFormats();
+                if(!in_array($config['file_extension'], ['jpg', 'jpeg'])) {
+
+                    if(empty($thumbnailFormats))
+                        throw new NotFoundHttpException('Requested thumbnail format is disabled');
+                    foreach($thumbnailFormats as $autoFormat => $autoFormatConfig) {
+                        if($config['file_extension'] == $autoFormat && !$autoFormatConfig['enabled']) {
+                            throw new NotFoundHttpException('Requested thumbnail format is disabled');
+                        }
+                    }
+                }
+
                 //check if high res image is called
 
                 preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $config['filename'], $matches);
