@@ -102,7 +102,7 @@
             </td>
             <td>{{ item['Items'] }}</td>
             </td>
-            <td class="text-right">{{ formatter.formatCurrency(item['TotalPrice'], currency) }}</td>
+            <td class="text-right">{{ formatter.formatCurrency(item['TotalPrice'], item['Currency']) }}</td>
         </tr>
         {% endfor %}
         </tbody>
