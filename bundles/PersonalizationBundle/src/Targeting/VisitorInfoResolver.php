@@ -27,7 +27,7 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerIn
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\TargetingStorageInterface;
-use Pimcore\Debug\Traits\StopwatchTrait;
+use Pimcore\Bundle\PersonalizationBundle\Debug\Traits\StopwatchTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
