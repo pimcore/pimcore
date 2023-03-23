@@ -30,6 +30,10 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     use DataObject\Traits\SimpleComparisonTrait;
     use DataObject\Traits\ObjectVarTrait;
 
+    public array $allowedTypes;
+    public array $allowedTargets;
+    public array $disabledFields;
+
     /**
      * @param mixed $data
      * @param null|DataObject\Concrete $object
@@ -415,5 +419,38 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function getFieldType(): string
     {
         return 'link';
+    }
+
+    public function getAllowedTypes(): array
+    {
+        return $this->allowedTypes;
+    }
+
+    public function setAllowedTypes(array $allowedTypes): static
+    {
+        $this->allowedTypes = $allowedTypes;
+        return $this;
+    }
+
+    public function getAllowedTargets(): array
+    {
+        return $this->allowedTargets;
+    }
+
+    public function setAllowedTargets(array $allowedTargets): static
+    {
+        $this->allowedTargets = $allowedTargets;
+        return $this;
+    }
+
+    public function getDisabledFields(): array
+    {
+        return $this->disabledFields;
+    }
+
+    public function setDisabledFields(array $disabledFields): static
+    {
+        $this->disabledFields = $disabledFields;
+        return $this;
     }
 }
