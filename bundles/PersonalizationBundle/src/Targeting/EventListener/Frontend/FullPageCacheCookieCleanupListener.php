@@ -21,7 +21,7 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\CookieStorage;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Cookie;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService;
 
 /**
  * Removes cookie storage cookies from cached response (only from the response object, not
@@ -29,6 +29,14 @@ use Symfony\Component\HttpFoundation\Cookie;
  */
 class FullPageCacheCookieCleanupListener implements EventSubscriberInterface
 {
+    private TargetingEnableService $targetingEnableService;
+
+    public function __construct(
+        TargetingEnableService      $targetingEnableService
+    )
+    {
+        $this->targetingEnableService = $targetingEnableService;
+    }
     /**
      * @return string[]
      */
@@ -41,6 +49,9 @@ class FullPageCacheCookieCleanupListener implements EventSubscriberInterface
 
     public function onPrepareFullPageCacheResponse(PrepareResponseEvent $event): void
     {
+        if(!$this->targetingEnableService->isTargetingEnabled()) {
+            return;
+        }
         $response = $event->getResponse();
         $cookies = $response->headers->getCookies();
 

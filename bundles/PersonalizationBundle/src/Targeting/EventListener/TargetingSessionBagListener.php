@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService;
 use Pimcore\Config;
 use Pimcore\Event\Cache\FullPage\IgnoredSessionKeysEvent;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
@@ -26,19 +27,18 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Traits\EnabledTrait;
 
 class TargetingSessionBagListener implements EventSubscriberInterface
 {
-    use EnabledTrait;
-
     const TARGETING_BAG_SESSION = 'pimcore_targeting_session';
 
     const TARGETING_BAG_VISITOR = 'pimcore_targeting_visitor';
 
-    public function __construct(protected Config $config)
-    {
+    private TargetingEnableService $targetingEnableService;
 
+    public function __construct(protected Config $config, TargetingEnableService $targetingEnableService)
+    {
+        $this->targetingEnableService = $targetingEnableService;
     }
 
     /**
@@ -58,7 +58,11 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if(!$this->isTargetingEnabled()) {
+        if(!$this->targetingEnableService->enableTargeting()) {
+            return;
+        }
+
+        if(!$this->isEnabled()) {
             return;
         }
 
@@ -90,7 +94,11 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     public function configureIgnoredSessionKeys(IgnoredSessionKeysEvent $event): void
     {
-        if(!$this->isTargetingEnabled()) {
+        if(!$this->targetingEnableService->isTargetingEnabled()) {
+            return;
+        }
+
+        if(!$this->isEnabled()) {
             return;
         }
 
@@ -108,7 +116,11 @@ class TargetingSessionBagListener implements EventSubscriberInterface
      */
     public function prepareFullPageCacheResponse(PrepareResponseEvent $event): void
     {
-        if(!$this->isTargetingEnabled()) {
+        if(!$this->targetingEnableService->isTargetingEnabled()) {
+            return;
+        }
+
+        if(!$this->isEnabled()) {
             return;
         }
 
@@ -137,5 +149,9 @@ class TargetingSessionBagListener implements EventSubscriberInterface
         }
     }
 
+    protected function isEnabled(): bool
+    {
+        return \Pimcore::getKernel()->getContainer()->getParameter('pimcore_personalization.targeting.session.enabled');
+    }
 
 }

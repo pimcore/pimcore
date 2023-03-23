@@ -7,5 +7,4 @@ services:
 
 
     Pimcore\Bundle\PersonalizationBundle\Targeting\Maintenance\TargetingStorageTask: ~
-
-
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService: ~

@@ -24,6 +24,7 @@ use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\OverrideHandler;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Debug\TargetingDataCollector;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -56,6 +57,8 @@ class ToolbarListener implements EventSubscriberInterface
 
     private CodeInjector $codeInjector;
 
+    private TargetingEnableService $targetingEnableService;
+
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
         DocumentResolver $documentResolver,
@@ -63,7 +66,8 @@ class ToolbarListener implements EventSubscriberInterface
         OverrideHandler $overrideHandler,
         EventDispatcherInterface $eventDispatcher,
         EngineInterface $templatingEngine,
-        CodeInjector $codeInjector
+        CodeInjector $codeInjector,
+        TargetingEnableService $targetingEnableService
     ) {
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->documentResolver = $documentResolver;
@@ -72,6 +76,7 @@ class ToolbarListener implements EventSubscriberInterface
         $this->eventDispatcher = $eventDispatcher;
         $this->templatingEngine = $templatingEngine;
         $this->codeInjector = $codeInjector;
+        $this->targetingEnableService = $targetingEnableService;
     }
 
     /**
@@ -98,6 +103,9 @@ class ToolbarListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
+        if(!$this->targetingEnableService->isTargetingEnabled()) {
+            return;
+        }
         if (!$event->isMainRequest()) {
             return;
         }

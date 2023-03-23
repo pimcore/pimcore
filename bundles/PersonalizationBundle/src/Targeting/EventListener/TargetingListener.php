@@ -34,6 +34,7 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -57,19 +58,22 @@ class TargetingListener implements EventSubscriberInterface
     private RequestHelper $requestHelper;
 
     private TargetingCodeGenerator $codeGenerator;
+    private TargetingEnableService $targetingEnableService;
 
     public function __construct(
         VisitorInfoResolver $visitorInfoResolver,
         ActionHandlerInterface $actionHandler,
         VisitorInfoStorageInterface $visitorInfoStorage,
         RequestHelper $requestHelper,
-        TargetingCodeGenerator $codeGenerator
+        TargetingCodeGenerator $codeGenerator,
+        TargetingEnableService $targetingEnableService
     ) {
         $this->visitorInfoResolver = $visitorInfoResolver;
         $this->actionHandler = $actionHandler;
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->requestHelper = $requestHelper;
         $this->codeGenerator = $codeGenerator;
+        $this->targetingEnableService = $targetingEnableService;
     }
 
     public static function getSubscribedEvents(): array
@@ -85,12 +89,7 @@ class TargetingListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if($event->getRequest()->cookies->getBoolean('pimcore_targeting_enabled')) {
-                $this->enable();
-            }
-       }
-
-       if(!$this->isTargetingEnabled()) {
+       if(!$this->targetingEnableService->isTargetingEnabled()) {
             return;
        }
 
@@ -147,7 +146,7 @@ class TargetingListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        if(!$this->isTargetingEnabled()) {
+        if(!$this->targetingEnableService->isTargetingEnabled()) {
             return;
         }
 
