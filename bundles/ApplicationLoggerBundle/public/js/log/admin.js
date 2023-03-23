@@ -180,7 +180,10 @@ pimcore.bundle.applicationlogger.log.admin = Class.create({
                     dataIndex: 'timestamp',
                     width: 150,
                     align: 'left',
-                    sortable: true
+                    sortable: true,
+                    renderer: function (d) {
+                        return Ext.Date.format(new Date(d*1000), "Y-m-d H:i:s");
+                    }
                 },{
                     text: t("log_pid"),
                     dataIndex: 'pid',
