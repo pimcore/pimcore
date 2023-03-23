@@ -49,7 +49,40 @@ pimcore:
 Sometimes it is more useful to deactivate the full page cache directly in the code, for example when
 it's not possible to define an exclude-regex, or for similar reasons.
 
-In this case you can use obtain the pull page cache service from the container and disable it, eg. in an Controller via DI:
+### Disable caching via the response headers
+Adding the `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` header to your response will disable the full page cache as well as any other
+middleware and browser caching:
+```php
+<?php
+$response->headers->addCacheControlDirective('no-cache');
+// and/or
+$response->headers->addCacheControlDirective('private');
+// and/or
+$response->headers->addCacheControlDirective('no-store');
+```
+
+### Disable the full page cache via an event listener
+The full page cache can be disabled via an event listener on `FullPageCacheEvents::CACHE_RESPONSE`:
+```php
+<?php
+
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+
+class DetermineFullPageCacheEventListener
+{
+    #[AsEventListener(\Pimcore\Event\FullPageCacheEvents::CACHE_RESPONSE)]
+    public function determineFullPageCache(\Pimcore\Event\Cache\FullPage\CacheResponseEvent $event): void
+    {
+        $response = $event->getResponse();
+        if (true) { // Replace with your custom condition
+            $event->setCache(false);
+        }    
+    }
+}
+```
+
+### Disable the full page cache listener entirely
+You can obtain the full page cache service from the container and disable it, e.g. in a Controller via DI: 
 ```php
 <?php
 
@@ -61,6 +94,8 @@ In this case you can use obtain the pull page cache service from the container a
        return $this->redirect('de');
     }
 ```
+
+## Disable the Full Page Cache via your request
 
 ### Disable the Full Page Cache for a Single Request (only in DEBUG MODE)
 Just add the parameter `?pimcore_outputfilters_disabled=true` to the URL.
