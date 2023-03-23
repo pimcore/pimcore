@@ -72,6 +72,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
             $queryBuilder = Db::getConnection()->createQueryBuilder();
             $queryBuilder->select(['SQL_CALC_FOUND_ROWS 1', 'order.oo_id AS OrderId']);
             $queryBuilder->from('object_query_' . OnlineShopOrder::classId(), '`order`');
+            $queryBuilder->addSelect(['order.currency AS Currency']);
 
             // join ordered products
             $this->joinItemsAndSubItems($queryBuilder);

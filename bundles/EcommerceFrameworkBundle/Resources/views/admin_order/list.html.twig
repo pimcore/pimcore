@@ -85,6 +85,7 @@
 
         {% for item in paginator.items %}
             {% set totalSum = totalSum + item['TotalPrice'] %}
+            {% set totalSums = totalSums|merge({(item['Currency']): ((totalSums[item['Currency']] is defined ? totalSums[item['Currency']] : 0) + item['TotalPrice'])}) %}
 
         <tr>
             <td>
@@ -103,17 +104,19 @@
             </td>
             <td>{{ item['Items'] }}</td>
             </td>
-            <td class="text-right">{{ formatter.formatCurrency(item['TotalPrice'], defaultCurrency.getShortName()) }}</td>
+            <td class="text-right">{{ formatter.formatCurrency(item['TotalPrice'], currency) }}</td>
         </tr>
         {% endfor %}
         </tbody>
         <tfoot>
-        <tr>
-            <td colspan="3"></td>
-            <td class="text-right">
-                <strong>{{ defaultCurrency.toCurrency(totalSum) }}</strong>
-            </td>
-        </tr>
+        {% for currency, totalSum in totalSums %}
+            <tr>
+                <td colspan="3"></td>
+                <td class="text-right">
+                    <strong>{{ formatter.formatCurrency(totalSum, currency) }}</strong>
+                </td>
+            </tr>
+        {% endfor %}
         </tfoot>
     </table>
 
