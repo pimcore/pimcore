@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\Snippet;
-use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Model\Factory;
 use Pimcore\Resolver\ClassResolver;
 
@@ -70,7 +69,11 @@ trait Relation
         if ($this->getObjectsAllowed()) {
             if ($classes = $this->getClasses()) {
                 foreach ($classes as $item) {
-                    $types[] = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes']));
+                    try {
+                        $types[] = $factory->getClassNameFor(sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes'])));
+                    } catch (UnsupportedException) {
+                        continue;
+                    }
                 }
             } else {
                 $types[] = '\\' . AbstractObject::class;
@@ -128,7 +131,7 @@ trait Relation
         if ($className = $resolver->resolve($type)) {
             try {
                 return $factory->getClassNameFor($className);
-            } catch (NotFoundException|UnsupportedException) {
+            } catch (UnsupportedException) {
                 return null;
             }
         }
