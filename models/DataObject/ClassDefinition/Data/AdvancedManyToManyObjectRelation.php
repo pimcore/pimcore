@@ -62,15 +62,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     public array $columnKeys = [];
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'advancedManyToManyObjectRelation';
-
-    /**
      * @internal
      */
     public bool $enableBatchEdit = false;
@@ -884,13 +875,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
     /**
      * @internal
-     *
-     * @param mixed $originalData
-     * @param mixed $data
-     * @param Concrete $object
-     * @param array $params
-     *
-     * @return array
      */
     protected function processDiffDataForEditMode(mixed $originalData, mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
@@ -983,5 +967,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     public function getPhpdocReturnType(): ?string
     {
         return '\\'.DataObject\Data\ObjectMetadata::class.'[]';
+    }
+
+    public function getFieldType(): string
+    {
+        return 'advancedManyToManyObjectRelation';
     }
 }

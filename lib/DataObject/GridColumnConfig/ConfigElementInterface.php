@@ -28,4 +28,6 @@ interface ConfigElementInterface
      * @return \stdClass|ResultContainer|null
      */
     public function getLabeledValue(array|ElementInterface $element): ResultContainer|\stdClass|null;
+
+    public function getRenderer(): ?string;
 }

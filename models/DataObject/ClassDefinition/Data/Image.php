@@ -26,37 +26,8 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
-    use Extension\ColumnType;
     use ImageTrait;
-    use Extension\QueryColumnType;
     use Data\Extension\RelationFilterConditionParser;
-
-    /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'image';
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $queryColumnType = 'int(11)';
-
-    /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public $columnType = 'int(11)';
 
     /**
      * @param mixed $data
@@ -131,13 +102,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return null;
     }
 
-    /**
-     * @param Asset\Image $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
     public function getDataForGrid(?Asset\Image $data, Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
@@ -381,5 +345,20 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $name = $params['name'] ?: $this->name;
 
         return $this->getRelationFilterCondition($value, $operator, $name);
+    }
+
+    public function getColumnType(): string
+    {
+        return 'int(11)';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'image';
     }
 }

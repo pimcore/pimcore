@@ -40,12 +40,17 @@ final class Config
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
             $config = $containerConfig[self::CONFIG_ID]['definitions'];
 
+            $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
+                $containerConfig,
+                self::CONFIG_ID,
+                'PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES',
+                'PIMCORE_WRITE_TARGET_PERSPECTIVES'
+            );
+
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_perspectives',
-                $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
-                'PIMCORE_WRITE_TARGET_PERSPECTIVES'
-
+                $storageConfig
             );
         }
 
@@ -129,13 +134,6 @@ final class Config
                 'expanded' => false,
                 'hidden' => false,
                 'sort' => -3,
-                'treeContextMenu' => [
-                    'document' => [
-                        'items' => [
-                            'addPrintPage' => \Pimcore\Config::getWeb2PrintConfig()['enableInDefaultView'] ? true : false, // hide add print documents by default
-                        ],
-                    ],
-                ],
             ],
             [
                 'type' => 'assets',

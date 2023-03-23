@@ -16,11 +16,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\SeoBundle;
 
+use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
+use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use Presta\SitemapBundle\PrestaSitemapBundle;
 
-class PimcoreSeoBundle extends AbstractPimcoreBundle
+class PimcoreSeoBundle extends AbstractPimcoreBundle implements DependentBundleInterface, PimcoreBundleAdminSupportInterface
 {
+    use BundleAdminSupportTrait;
     use PackageVersionTrait;
 
     public function getCssPaths(): array
@@ -37,6 +43,7 @@ class PimcoreSeoBundle extends AbstractPimcoreBundle
             '/bundles/pimcoreseo/js/httpErrorLog.js',
             '/bundles/pimcoreseo/js/robotstxt.js',
             '/bundles/pimcoreseo/js/seopanel.js',
+            '/bundles/pimcoreseo/js/redirects.js',
         ];
     }
 
@@ -51,5 +58,10 @@ class PimcoreSeoBundle extends AbstractPimcoreBundle
     public function getPath(): string
     {
         return \dirname(__DIR__);
+    }
+
+    public static function registerDependentBundles(BundleCollection $collection): void
+    {
+        $collection->addBundle(PrestaSitemapBundle::class);
     }
 }

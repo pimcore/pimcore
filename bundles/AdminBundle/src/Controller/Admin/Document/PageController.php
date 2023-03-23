@@ -21,14 +21,15 @@ use Endroid\QrCode\Writer\PngWriter;
 use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Document\StaticPageGenerator;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Localization\LocaleService;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Pimcore\Model\Redirect;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool\Frontend;
@@ -47,6 +48,8 @@ use Twig\Environment;
  */
 class PageController extends DocumentControllerBase
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @Route("/get-data-by-id", name="getdatabyid", methods={"GET"})
      *
@@ -145,19 +148,13 @@ class PageController extends DocumentControllerBase
             }
         }
 
-        // check if settings exist, before saving meta data
-        if ($request->get('settings') && is_array($settings)) {
-            $metaData = [];
-            for ($i = 1; $i < 30; $i++) {
-                if (array_key_exists('metadata_' . $i, $settings)) {
-                    $metaData[] = $settings['metadata_' . $i];
-                }
-            }
-            $page->setMetaData($metaData);
-        }
-
         list($task, $page, $version) = $this->saveDocument($page, $request);
-
+        $arguments = [
+            'oldPage' => $oldPage,
+            'task' => $task,
+        ];
+        $documentEvent = new DocumentEvent($page, $arguments);
+        $this->dispatchEvent($documentEvent, DocumentEvents::PAGE_POST_SAVE_ACTION);
         if ($task === self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);
 
@@ -169,19 +166,6 @@ class PageController extends DocumentControllerBase
             if ($staticGeneratorEnabled = $page->getStaticGeneratorEnabled()) {
                 $data['staticGeneratorEnabled'] = $staticGeneratorEnabled;
                 $data['staticLastGenerated'] = $staticPageGenerator->getLastModified($page);
-            }
-
-            if ($page->getPrettyUrl() !== $oldPage->getPrettyUrl()
-                && empty($oldPage->getPrettyUrl()) === false
-                && empty($page->getPrettyUrl()) === false
-            ) {
-                $redirect = new Redirect();
-
-                $redirect->setSource($oldPage->getPrettyUrl());
-                $redirect->setTarget($page->getPrettyUrl());
-                $redirect->setStatusCode(301);
-                $redirect->setType(Redirect::TYPE_AUTO_CREATE);
-                $redirect->save();
             }
 
             return $this->adminJson([
@@ -332,9 +316,7 @@ class PageController extends DocumentControllerBase
      */
     public function clearEditableDataAction(Request $request): JsonResponse
     {
-        $targetGroupId = $request->request->get('targetGroup');
         $docId = $request->request->getInt('id');
-
         $doc = Document\PageSnippet::getById($docId);
 
         if (!$doc) {
@@ -342,16 +324,10 @@ class PageController extends DocumentControllerBase
         }
 
         foreach ($doc->getEditables() as $editable) {
-            if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
-                // remove target group specific elements
-                if (preg_match('/^' . preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
-                    $doc->removeEditable($editable->getName());
-                }
-            } else {
-                // remove all but target group data
-                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_EDITABLE_PREFIX, '/') . '/', $editable->getName())) {
-                    $doc->removeEditable($editable->getName());
-                }
+            // remove all but target group data
+            // Hardcoded the TARGET_GROUP_EDITABLE_PREFIX prefix here as we shouldn't remove the bundle specific editables even if bundle is not enabled/installed
+            if (!preg_match('/^' . preg_quote('persona_ -', '/') . '/', $editable->getName())) {
+                $doc->removeEditable($editable->getName());
             }
         }
 

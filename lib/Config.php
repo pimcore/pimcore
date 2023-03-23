@@ -215,6 +215,7 @@ final class Config implements ArrayAccess
 
             $config = Cache::load($cacheKey);
             if (!$config) {
+                $config = [];
                 $cacheTags = ['website_config', 'system', 'config', 'output'];
 
                 $list = new Model\WebsiteSetting\Listing();
@@ -358,33 +359,6 @@ final class Config implements ArrayAccess
     public static function setReportConfig(array $config): void
     {
         RuntimeCache::set('pimcore_config_report', $config);
-    }
-
-    /**
-     * @return array<string, mixed>
-     *
-     * @internal
-     */
-    public static function getWeb2PrintConfig(): array
-    {
-        if (RuntimeCache::isRegistered('pimcore_config_web2print')) {
-            $config = RuntimeCache::get('pimcore_config_web2print');
-        } else {
-            $config = Web2Print\Config::get();
-            self::setWeb2PrintConfig($config);
-        }
-
-        return $config;
-    }
-
-    /**
-     * @param array<string, mixed> $config
-     *
-     * @internal
-     */
-    public static function setWeb2PrintConfig(array $config): void
-    {
-        RuntimeCache::set('pimcore_config_web2print', $config);
     }
 
     /**

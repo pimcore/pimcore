@@ -32,6 +32,12 @@ services:
         tags:
             - { name: messenger.message_handler }
 
+    Pimcore\Messenger\Handler\ScheduledTaskHandler:
+        arguments:
+            - '@Pimcore\Maintenance\Executor'
+        tags:
+            - { name: messenger.message_handler }
+
     Pimcore\Messenger\Handler\OptimizeImageHandler:
         arguments:
             - '@Pimcore\Image\Optimizer'
@@ -40,12 +46,6 @@ services:
             - { name: messenger.message_handler }
 
     Pimcore\Messenger\Handler\GeneratePagePreviewHandler:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: messenger.message_handler }
-
-    Pimcore\Messenger\Handler\GenerateWeb2PrintPdfHandler:
         arguments:
             - '@logger'
         tags:

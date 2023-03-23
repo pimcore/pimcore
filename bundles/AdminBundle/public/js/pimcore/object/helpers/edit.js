@@ -326,6 +326,7 @@ pimcore.object.helpers.edit = {
                     applyDefaults = true;
                 }
                 field.setObject(this.object);
+                field.setToolbar(this.toolbar);
                 field.updateContext(context);
 
                 field.setName(l.name);
@@ -431,7 +432,7 @@ pimcore.object.helpers.edit = {
                             // apply tooltips
                             if(field.tooltip) {
                                 try {
-                                    var tooltipHtml = field.tooltip;
+                                    var tooltipHtml = Ext.util.Format.htmlEncode(field.tooltip);
 
                                     // classification-store tooltips are already translated
                                     if (context.type != "classificationstore") {

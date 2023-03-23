@@ -35,6 +35,7 @@ framework:
         transports:
             pimcore_core: "doctrine://default?queue_name=pimcore_core"
             pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
+            pimcore_scheduled_tasks: "doctrine://default?queue_name=pimcore_scheduled_tasks"
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
             pimcore_asset_update: "doctrine://default?queue_name=pimcore_asset_update"
         routing:
@@ -45,14 +46,19 @@ framework:
             'Pimcore\Messenger\AssetUpdateTasksMessage': pimcore_asset_update
             'Pimcore\Messenger\AssetPreviewImageMessage': pimcore_core
             'Pimcore\Messenger\GeneratePagePreviewMessage': pimcore_core
-            'Pimcore\Messenger\GenerateWeb2PrintPdfMessage': pimcore_core
             'Pimcore\Messenger\VersionDeleteMessage': pimcore_core
             'Pimcore\Messenger\OptimizeImageMessage': pimcore_image_optimize
             'Pimcore\Messenger\MaintenanceTaskMessage': pimcore_maintenance
+            'Pimcore\Messenger\ScheduledTaskMessage': pimcore_scheduled_tasks
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
         reset_on_message: true
+    rate_limiter:
+        reset_password:
+            policy: 'fixed_window'
+            limit: 5
+            interval: '5 minutes'
 
 # Twig Configuration
 twig:
@@ -115,6 +121,31 @@ pimcore:
                         object: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataObject
                         select: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Select
                         textarea: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Textarea
+        type_definitions:
+            map:
+                image:
+                    class: \Pimcore\Model\Asset\Image
+                    matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
+                archive:
+                    class: \Pimcore\Model\Asset\Archive
+                    matching: ['/zip/', '/tar/']
+                audio:
+                    class: \Pimcore\Model\Asset\Audio
+                    matching: ['/audio/']
+                document:
+                    class: \Pimcore\Model\Asset\Document
+                    matching: ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/']
+                folder:
+                    class: \Pimcore\Model\Asset\Folder
+                text:
+                   class: \Pimcore\Model\Asset\Text
+                   matching: [ "/text\\//", "/xml$/", "/\\.json$/" ]
+                video:
+                   class: \Pimcore\Model\Asset\Video
+                   matching: [ "/video/" ]
+                unknown:
+                    class: \Pimcore\Model\Asset\Unknown
+                    matching: [ "/\\.stp$/" ]
 
     objects:
         class_definitions:
@@ -162,8 +193,6 @@ pimcore:
                     advancedManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
                     password: \Pimcore\Model\DataObject\ClassDefinition\Data\Password
                     rgbaColor: \Pimcore\Model\DataObject\ClassDefinition\Data\RgbaColor
-                    targetGroup: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup
-                    targetGroupMultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect
                     quantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue
                     quantityValueRange: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValueRange
                     inputQuantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue
@@ -196,47 +225,19 @@ pimcore:
                 hardlink: \Pimcore\Model\Document\Hardlink
                 email: \Pimcore\Model\Document\Email
                 newsletter: \Pimcore\Model\Document\Newsletter
-                printpage: \Pimcore\Model\Document\Printpage
-                printcontainer: \Pimcore\Model\Document\Printcontainer
-            prefixes:
-                - \Pimcore\Model\Document\
+
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
         valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
 
     routing:
-        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter', 'printpage', 'printcontainer']
+        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter']
 
     newsletter:
         source_adapters:
             defaultAdapter: pimcore.document.newsletter.factory.default
             csvList: pimcore.document.newsletter.factory.csv
-
-    targeting:
-        data_providers:
-            device: Pimcore\Targeting\DataProvider\Device
-            geoip: Pimcore\Targeting\DataProvider\GeoIp
-            geolocation: Pimcore\Targeting\DataProvider\GeoLocation
-            targeting_storage: Pimcore\Targeting\DataProvider\TargetingStorage
-            visited_pages_counter: Pimcore\Targeting\DataProvider\VisitedPagesCounter
-        conditions:
-            browser: Pimcore\Targeting\Condition\Browser
-            country: Pimcore\Targeting\Condition\Country
-            geopoint: Pimcore\Targeting\Condition\GeoPoint
-            hardwareplatform: Pimcore\Targeting\Condition\HardwarePlatform
-            language: Pimcore\Targeting\Condition\Language
-            operatingsystem: Pimcore\Targeting\Condition\OperatingSystem
-            referringsite: Pimcore\Targeting\Condition\ReferringSite
-            searchengine: Pimcore\Targeting\Condition\SearchEngine
-            target_group: Pimcore\Targeting\Condition\TargetGroup
-            timeonsite: Pimcore\Targeting\Condition\TimeOnSite
-            url: Pimcore\Targeting\Condition\Url
-            visitedpagesbefore: Pimcore\Targeting\Condition\VisitedPagesBefore
-        action_handlers:
-            assign_target_group: Pimcore\Targeting\ActionHandler\AssignTargetGroup
-            codesnippet: Pimcore\Targeting\ActionHandler\CodeSnippet
-            redirect: Pimcore\Targeting\ActionHandler\Redirect
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:
@@ -247,19 +248,6 @@ pimcore:
         domains:
             - messages
             - admin
-    sitemaps:
-        generators:
-            pimcore_documents:
-                enabled: true
-                priority: 100
-                generator_id: Pimcore\Sitemap\Document\DocumentTreeGenerator
-    redirects:
-        status_codes:
-            300: Multiple Choices
-            301: Moved Permanently
-            302: Found
-            303: See Other
-            307: Temporary Redirect
 
     templating_engine:
         twig:
@@ -267,9 +255,6 @@ pimcore:
                 tags: ['set']
                 filters: ['escape', 'trans', 'default']
                 functions: ['path', 'asset']
-presta_sitemap:
-    # do not add properties by default
-    defaults:
-        lastmod: ~
-        priority: ~
-        changefreq: ~
+
+    gotenberg:
+        base_url: 'gotenberg:3000'

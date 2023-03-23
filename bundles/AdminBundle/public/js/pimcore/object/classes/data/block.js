@@ -57,42 +57,45 @@ pimcore.object.classes.data.block = Class.create(pimcore.object.classes.data.dat
 
         this.specificPanel.removeAll();
 
-        this.specificPanel.add([
-            {
-                xtype: "numberfield",
-                fieldLabel: t("maximum_items"),
-                name: "maxItems",
-                value: this.datax.maxItems,
-                minValue: 0
-            },
-            {
-                xtype: "checkbox",
-                fieldLabel: t("lazy_loading"),
-                name: "lazyLoading",
-                disabled: this.isInCustomLayoutEditor(),
-                checked: this.datax.lazyLoading
-            },
-            {
-                xtype: "checkbox",
-                fieldLabel: t("disallow_addremove"),
-                name: "disallowAddRemove",
-                checked: this.datax.disallowAddRemove
-            },
-            {
-                xtype: "checkbox",
-                fieldLabel: t("disallow_reorder"),
-                name: "disallowReorder",
-                checked: this.datax.disallowReorder
-            },
-            {
+        if (!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add([
+                {
+                    xtype: "numberfield",
+                    fieldLabel: t("maximum_items"),
+                    name: "maxItems",
+                    value: this.datax.maxItems,
+                    minValue: 0
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("lazy_loading"),
+                    name: "lazyLoading",
+                    disabled: this.isInCustomLayoutEditor(),
+                    checked: this.datax.lazyLoading
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("disallow_addremove"),
+                    name: "disallowAddRemove",
+                    checked: this.datax.disallowAddRemove
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("disallow_reorder"),
+                    name: "disallowReorder",
+                    checked: this.datax.disallowReorder
+                }
+            ]);
+        }
+
+        this.specificPanel.add({
                 xtype: "textfield",
                 fieldLabel: t("css_style") + " (float: left; margin:10px; ...)",
                 name: "styleElement",
                 itemId: "styleElement",
                 value: this.datax.styleElement,
                 width: 740
-            }
-        ]);
+        });
 
         this.specificPanel.updateLayout();
 

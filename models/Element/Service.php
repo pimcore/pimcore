@@ -383,27 +383,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
-     * @param string $sourceKey
-     * @param ElementInterface $target
-     *
-     * @return string
-     *
-     * @deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
-     *
-     */
-    public static function getSaveCopyName(string $type, string $sourceKey, ElementInterface $target): string
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            'The Service::getSaveCopyName() method is deprecated, use Service::getSafeCopyName() instead.'
-        );
-
-        return self::getSafeCopyName($sourceKey, $target);
-    }
-
-    /**
      * Returns a uniqe key for the element in the $target-Path (recursive)
      *
      * @return string
@@ -1392,6 +1371,8 @@ class Service extends Model\AbstractModel
      */
     public static function saveElementToSession(ElementInterface $element, string $sessionId, string $postfix = '', bool $clone = true): void
     {
+        self::loadAllFields($element);
+
         if ($clone) {
             $context = [
                 'source' => __METHOD__,
@@ -1414,6 +1395,7 @@ class Service extends Model\AbstractModel
                 );
             }
 
+            $copier->addFilter(new Model\Version\SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(Model\Element\ElementDumpStateInterface::class, Model\Element\ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
             $element = $copier->copy($element);
         }
 
@@ -1421,7 +1403,6 @@ class Service extends Model\AbstractModel
         $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $sessionId, $postfix);
         $tag = $elementType . '-session' . $postfix;
 
-        self::loadAllFields($element);
         $element->setInDumpState(true);
         $serializedData = Serialize::serialize($element);
 

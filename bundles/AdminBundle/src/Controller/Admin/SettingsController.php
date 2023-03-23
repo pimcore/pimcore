@@ -179,7 +179,7 @@ class SettingsController extends AdminController
 
                 $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
                 if ($existingItem && $existingItem->getId() != $metadata->getId()) {
-                    return $this->adminJson(['message' => 'rule_violation', 'success' => false]);
+                    return $this->adminJson(['message' => 'predefined_metadata_definitions_error_name_exists_msg', 'success' => false]);
                 }
 
                 $metadata->minimize();
@@ -221,7 +221,7 @@ class SettingsController extends AdminController
             if ($filter = $request->get('filter')) {
                 $list->setFilter(function (Metadata\Predefined $predefined) use ($filter) {
                     foreach ($predefined->getObjectVars() as $value) {
-                        if (stripos($value, $filter) !== false) {
+                        if (stripos((string)$value, $filter) !== false) {
                             return true;
                         }
                     }
@@ -341,7 +341,7 @@ class SettingsController extends AdminController
                             $cellValues = is_array($value) ? $value : [$value];
 
                             foreach ($cellValues as $cellValue) {
-                                if (stripos($cellValue, $filter) !== false) {
+                                if (stripos((string)$cellValue, $filter) !== false) {
                                     return true;
                                 }
                             }
@@ -399,10 +399,8 @@ class SettingsController extends AdminController
             }
         }
 
-        $valueArray['general']['valid_language'] = explode(',', $valueArray['general']['valid_languages']);
-
         //for "wrong" legacy values
-        foreach ($valueArray['general']['valid_language'] as $existingValue) {
+        foreach ($valueArray['general']['valid_languages'] as $existingValue) {
             if (!in_array($existingValue, $validLanguages)) {
                 $languageOptions[] = [
                     'language' => $existingValue,
@@ -480,7 +478,7 @@ class SettingsController extends AdminController
                 'domain' => $values['general.domain'],
                 'redirect_to_maindomain' => $values['general.redirect_to_maindomain'],
                 'language' => $values['general.language'],
-                'valid_languages' => implode(',', $filteredLanguages),
+                'valid_languages' => $filteredLanguages,
                 'fallback_languages' => $fallbackLanguages,
                 'default_language' => $values['general.defaultLanguage'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
@@ -582,48 +580,6 @@ class SettingsController extends AdminController
         } else {
             throw new \Exception("Language `$source` doesn't exist");
         }
-    }
-
-    /**
-     * @Route("/get-web2print", name="pimcore_admin_settings_getweb2print", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getWeb2printAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('web2print_settings');
-
-        $valueArray = Config::getWeb2PrintConfig();
-
-        $response = [
-            'values' => $valueArray,
-        ];
-
-        return $this->adminJson($response);
-    }
-
-    /**
-     * @Route("/set-web2print", name="pimcore_admin_settings_setweb2print", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function setWeb2printAction(Request $request): JsonResponse
-    {
-        $this->checkPermission('web2print_settings');
-
-        $values = $this->decodeJson($request->get('data'));
-
-        unset($values['documentation']);
-        unset($values['additions']);
-        unset($values['json_converter']);
-
-        \Pimcore\Web2Print\Config::save($values);
-
-        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1342,7 +1298,7 @@ class SettingsController extends AdminController
                 $type = $item['type'];
                 unset($item['type']);
 
-                $pipe->addItem($type, $item, $mediaName);
+                $pipe->addItem($type, $item, htmlspecialchars($mediaName));
             }
         }
 
@@ -1534,48 +1490,5 @@ class SettingsController extends AdminController
                 $db->executeQuery($sql);
             }
         }
-    }
-
-    /**
-     * @Route("/test-web2print", name="pimcore_admin_settings_testweb2print", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function testWeb2printAction(Request $request): Response
-    {
-        $this->checkPermission('web2print_settings');
-
-        $response = $this->render('@PimcoreAdmin/admin/settings/test_web2print.html.twig');
-        $html = $response->getContent();
-
-        $adapter = \Pimcore\Web2Print\Processor::getInstance();
-        $params = [];
-
-        if ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
-            $params['adapterConfig'] = [
-                'javaScriptMode' => 0,
-                'addLinks' => true,
-                'appendLog' => true,
-                'enableDebugMode' => true,
-            ];
-        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\HeadlessChrome) {
-            $params = Config::getWeb2PrintConfig();
-            $params = json_decode($params['headlessChromeSettings'], true) ?: [];
-        }
-
-        $responseOptions = [
-            'Content-Type' => 'application/pdf',
-        ];
-
-        $pdfData = $adapter->getPdfFromString($html, $params);
-
-        return new \Symfony\Component\HttpFoundation\Response(
-            $pdfData,
-            200,
-            $responseOptions
-
-        );
     }
 }

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 
+use Doctrine\DBAL\Types\Types;
 use Exception;
 use Pimcore\Bundle\UuidBundle\Model\Tool\UUID;
 use Pimcore\Db\Helper;
@@ -33,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->getValidObjectVars();
 
-        Helper::insertOrUpdate($this->db, self::TABLE_NAME, $data);
+        Helper::upsert($this->db, self::TABLE_NAME, $data, $this->getPrimaryKey(self::TABLE_NAME));
     }
 
     public function create(): void
@@ -74,7 +75,17 @@ class Dao extends Model\Dao\AbstractDao
 
     public function getByUuid(string $uuid): UUID
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME ." where uuid='" . $uuid . "'");
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder
+            ->select('*')
+            ->from(self::TABLE_NAME)
+            ->where('uuid = :uuid')
+            ->setParameter('uuid', $uuid, Types::STRING);
+
+        $data = $queryBuilder
+            ->execute()
+            ->fetchAssociative();
+
         $model = new UUID();
         $model->setValues($data);
 
@@ -83,6 +94,17 @@ class Dao extends Model\Dao\AbstractDao
 
     public function exists(string $uuid): bool
     {
-        return (bool) $this->db->fetchOne('SELECT uuid FROM ' . self::TABLE_NAME . ' where uuid = ?', [$uuid]);
+        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder
+            ->select('uuid')
+            ->from(self::TABLE_NAME)
+            ->where('uuid = :uuid')
+            ->setParameter('uuid', $uuid, Types::STRING);
+
+        $result = $queryBuilder
+            ->execute()
+            ->fetchOne();
+
+        return (bool) $result;
     }
 }

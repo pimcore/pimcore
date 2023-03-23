@@ -29,4 +29,10 @@ return [
     "Pimcore\\Bundle\\ApplicationLoggerBundle\\PimcoreApplicationLoggerBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\WebToPrintBundle\\PimcoreWebToPrintBundle" => [
+        "all" => TRUE
+    ],
+    "Pimcore\\Bundle\\TinymceBundle\\PimcoreTinymceBundle" => [
+        "all" => TRUE
+    ],
 ];
