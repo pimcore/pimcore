@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\Debug;
 
+use Pimcore\Bundle\PersonalizationBundle\Debug\Traits\StopwatchTrait;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\TargetingStorage;
@@ -24,7 +25,6 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\VisitedPagesCoun
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\TargetingStorageInterface;
-use Pimcore\Bundle\PersonalizationBundle\Debug\Traits\StopwatchTrait;
 use Pimcore\Model\Document;
 
 class TargetingDataCollector
