@@ -66,7 +66,6 @@ final class Frontend
     {
         $siteMapping = self::getSiteMapping();
 
-
         foreach ($siteMapping as $sitePath => $id) {
             if (str_starts_with($document->getRealFullPath(), $sitePath)) {
                 return $id;
