@@ -31,9 +31,10 @@ class Transliteration
      */
     public static function toASCII(string $value, string $language = null): string
     {
-        $value = transliterator_transliterate('Any-Latin; Latin-ASCII; [^\u001F-\u007f] remove', $value);
-        $value = trim($value);
+        if($language !== null && in_array($language.'-ASCII', transliterator_list_ids())) {
+            return transliterator_transliterate($language.'-ASCII; [^\u001F-\u007f] remove', $value);
+        }
 
-        return $value;
+        return transliterator_transliterate('Any-Latin; Latin-ASCII; [^\u001F-\u007f] remove', $value);
     }
 }
