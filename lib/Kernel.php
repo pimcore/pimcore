@@ -40,19 +40,18 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 abstract class Kernel extends SymfonyKernel
 {
     use MicroKernelTrait {
         registerContainerConfiguration as microKernelRegisterContainerConfiguration;
-
         registerBundles as microKernelRegisterBundles;
+        configureContainer as protected;
+        configureRoutes as protected;
     }
 
     private const CONFIG_LOCATION = 'config_location';
@@ -76,11 +75,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function getCacheDir(): string
     {
-        if (isset($_SERVER['APP_CACHE_DIR'])) {
-            return $_SERVER['APP_CACHE_DIR'].'/'.$this->environment;
-        }
-
-        return PIMCORE_SYMFONY_CACHE_DIRECTORY . '/' . $this->environment;
+        return ($_SERVER['APP_CACHE_DIR'] ?? PIMCORE_SYMFONY_CACHE_DIRECTORY) . '/' . $this->environment;
     }
 
     /**
@@ -91,35 +86,6 @@ abstract class Kernel extends SymfonyKernel
     public function getLogDir(): string
     {
         return PIMCORE_LOG_DIRECTORY;
-    }
-
-    protected function configureContainer(ContainerConfigurator $container): void
-    {
-        $projectDir = realpath($this->getProjectDir());
-
-        $container->import($projectDir . '/config/{packages}/*.yaml');
-        $container->import($projectDir . '/config/{packages}/'.$this->environment.'/*.yaml');
-
-        if (is_file($projectDir . '/config/services.yaml')) {
-            $container->import($projectDir . '/config/services.yaml');
-            $container->import($projectDir . '/config/{services}_'.$this->environment.'.yaml');
-        } elseif (is_file($path = $projectDir . '/config/services.php')) {
-            (require $path)($container->withPath($path), $this);
-        }
-    }
-
-    protected function configureRoutes(RoutingConfigurator $routes): void
-    {
-        $projectDir = realpath($this->getProjectDir());
-
-        $routes->import($projectDir . '/config/{routes}/'.$this->environment.'/*.yaml');
-        $routes->import($projectDir . '/config/{routes}/*.yaml');
-
-        if (is_file($projectDir . '/config/routes.yaml')) {
-            $routes->import($projectDir . '/config/routes.yaml');
-        } elseif (is_file($path = $projectDir . '/config/routes.php')) {
-            (require $path)($routes->withPath($path), $this);
-        }
     }
 
     /**
