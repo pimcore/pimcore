@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
-use Carbon\Carbon;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -34,7 +33,7 @@ final class Version20230321133700 extends AbstractMigration
         string $timeStampColumn,
         bool $up = true
     ): void {
-        if($schema->hasTable($table)) {
+        if ($schema->hasTable($table)) {
             $db = \Pimcore\Db::get();
             $fromTimeZone = $up ? date_default_timezone_get() : 'UTC';
             $toTimeZone = $up ? 'UTC' : date_default_timezone_get();
