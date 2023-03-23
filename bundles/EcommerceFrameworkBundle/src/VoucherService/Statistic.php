@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
 use Pimcore\Db\Helper;
+use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
@@ -69,7 +70,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
 
             return $result;
         } catch (\Exception $e) {
-            //            \Pimcore\Log\Simple::log('VoucherService',$e);
+            Logger::error('VoucherService', [$e]);
             return false;
         }
     }
@@ -83,7 +84,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
 
             return true;
         } catch (\Exception $e) {
-            //            \Pimcore\Log\Simple::log('VoucherService',$e);
+            Logger::error('VoucherService', [$e]);
             return false;
         }
     }

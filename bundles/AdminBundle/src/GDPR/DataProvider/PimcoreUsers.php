@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Db;
 use Pimcore\Model\User;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @internal
@@ -28,9 +29,12 @@ class PimcoreUsers implements DataProviderInterface
 {
     protected TokenStorageUserResolver $userResolver;
 
-    public function __construct(TokenStorageUserResolver $userResolver)
+    private ContainerInterface $container;
+
+    public function __construct(TokenStorageUserResolver $userResolver, ContainerInterface $container)
     {
         $this->userResolver = $userResolver;
+        $this->container = $container;
     }
 
     /**
@@ -152,7 +156,7 @@ class PimcoreUsers implements DataProviderInterface
 
     protected function getUsageLogDataForUser(User\AbstractUser $user): array
     {
-        $logDir = \Pimcore::getContainer()->getParameter('kernel.logs_dir');
+        $logDir = $this->container->getParameter('kernel.logs_dir');
 
         $pattern = ' [' . $user->getId() . ',';
         $matches = [];

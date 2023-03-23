@@ -86,6 +86,12 @@ doctrine:
 # Monolog Configuration
 monolog:
     channels: ['pimcore', 'pimcore_api', 'session']
+    handlers:
+        usage:
+            type: stream
+            path:  "%kernel.logs_dir%/redirect.log"
+            level: debug
+            channels: ['redirect']
 
 # CMF routing
 cmf_routing:

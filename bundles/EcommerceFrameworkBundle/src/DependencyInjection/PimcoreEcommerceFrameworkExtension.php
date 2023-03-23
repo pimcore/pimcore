@@ -84,6 +84,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('factory.yaml');
         $loader->load('environment.yaml');
         $loader->load('cart_manager.yaml');
+        $loader->load('order_agent.yaml');
         $loader->load('order_manager.yaml');
         $loader->load('pricing_manager.yaml');
         $loader->load('price_systems.yaml');

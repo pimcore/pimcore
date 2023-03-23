@@ -223,10 +223,7 @@ final class RedirectHandler implements LoggerAwareInterface
         $response->headers->set(self::RESPONSE_HEADER_NAME_ID, (string) $redirect->getId());
 
         // log all redirects to the redirect log
-        \Pimcore\Log\Simple::log(
-            'redirect',
-            Tool::getAnonymizedClientIp() . " \t Custom-Redirect ID: " . $redirect->getId() . ', Source: ' . $_SERVER['REQUEST_URI'] . ' -> ' . $url
-        );
+        $this->logger->info(Tool::getAnonymizedClientIp(), ['Custom-Redirect ID: ' . $redirect->getId() . ', Source: ' . $_SERVER['REQUEST_URI'] . ' -> ' . $url]);
 
         return $response;
     }
