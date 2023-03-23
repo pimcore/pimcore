@@ -33,7 +33,7 @@ final class Version20230321133700 extends AbstractMigration
         string $table,
         string $timeStampColumn,
         bool $up = true
-    ) {
+    ): void {
         if($schema->hasTable($table)) {
             $db = \Pimcore\Db::get();
             $fromTimeZone = $up ? date_default_timezone_get() : 'UTC';
