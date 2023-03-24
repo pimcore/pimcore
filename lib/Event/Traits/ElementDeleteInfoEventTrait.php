@@ -19,48 +19,10 @@ namespace Pimcore\Event\Traits;
  * Trait ElementDeleteInfoEventTrait
  *
  * @package Pimcore\Event\Traits
+ *
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Traits\ElementDeleteInfoEventTrait instead
  */
 trait ElementDeleteInfoEventTrait
 {
-    /**
-     * @var bool
-     */
-    protected $deletionAllowed = true;
-
-    /**
-     * @var string
-     */
-    protected $reason;
-
-    /**
-     * @return bool
-     */
-    public function getDeletionAllowed(): bool
-    {
-        return $this->deletionAllowed;
-    }
-
-    /**
-     * @param bool $deletionAllowed
-     */
-    public function setDeletionAllowed(bool $deletionAllowed): void
-    {
-        $this->deletionAllowed = $deletionAllowed;
-    }
-
-    /**
-     * @return string
-     */
-    public function getReason(): string
-    {
-        return $this->reason;
-    }
-
-    /**
-     * @param string $reason
-     */
-    public function setReason(string $reason): void
-    {
-        $this->reason = $reason;
-    }
+    use \Pimcore\Bundle\AdminBundle\Event\Traits\ElementDeleteInfoEventTrait;
 }

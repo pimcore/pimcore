@@ -15,25 +15,9 @@
 
 namespace Pimcore\Event\Model;
 
-interface ElementDeleteInfoEventInterface extends ElementEventInterface
+/**
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Model\ElementDeleteInfoEventInterface instead
+ */
+interface ElementDeleteInfoEventInterface extends \Pimcore\Bundle\AdminBundle\Event\Model\ElementDeleteInfoEventInterface
 {
-    /**
-     * @return bool
-     */
-    public function getDeletionAllowed(): bool;
-
-    /**
-     * @param bool $deletionAllowed
-     */
-    public function setDeletionAllowed(bool $deletionAllowed): void;
-
-    /**
-     * @return string
-     */
-    public function getReason(): string;
-
-    /**
-     * @param string $reason
-     */
-    public function setReason(string $reason): void;
 }

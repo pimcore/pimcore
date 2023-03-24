@@ -13,15 +13,17 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Model;
+namespace Pimcore\Bundle\AdminBundle\Event\Model;
+
+use Pimcore\Bundle\AdminBundle\Event\Traits\ElementDeleteInfoEventTrait;
+use Pimcore\Event\Model\DocumentEvent;
 
 /**
- * Class DataObjectDeleteInfoEvent
+ * Class DocumentDeleteInfoEvent
  *
  * @package Pimcore\Event\Model
- *
- * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Model\DataObjectDeleteInfoEvent instead
  */
-class DataObjectDeleteInfoEvent extends \Pimcore\Bundle\AdminBundle\Event\Model\DataObjectDeleteInfoEvent
+class DocumentDeleteInfoEvent extends DocumentEvent implements ElementDeleteInfoEventInterface
 {
+    use ElementDeleteInfoEventTrait;
 }

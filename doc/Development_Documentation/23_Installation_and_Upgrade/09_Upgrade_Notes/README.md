@@ -42,6 +42,15 @@
 - [Web2print] Deprecated `HeadlessChrome` processor, it will be removed and replaced by `Chromium` processor (which doesn't require NodeJS to work) in Pimcore 11.
 - [Database] Deprecated `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
 - Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in `AbstractPimcoreBundle`. Please use the `PimcoreBundleAdminSupportInterface` and the `BundleAdminSupportTrait` instead.
+- [Events] Deprecated Admin Event classes (below), please use these classes from AdminBundle instead.
+  - `Pimcore\Event\AdminEvents`
+  - `Pimcore\Event\Admin\AdminStyleEvent`
+  - `Pimcore\Event\Admin\IndexActionSettingsEvent`
+  - `Pimcore\Event\Admin\Login\*`
+  - `Pimcore\Event\Model\AssetDeleteInfoEvent`
+  - `Pimcore\Event\Model\DocumentDeleteInfoEvent`
+  - `Pimcore\Event\Model\ObjectDeleteInfoEvent`
+  - `Pimcore\Event\Model\ElementDeleteInfoEventInterface`
 
 ## 10.5.13
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
