@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,11 +17,13 @@ namespace Pimcore\Bundle\AdminBundle\Event\Model;
 
 use Pimcore\Event\Model\ElementEventInterface;
 
-/**
- * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Model\ElementDeleteInfoEventInterface instead
- */
-interface ElementDeleteInfoEventInterface extends \Pimcore\Bundle\AdminBundle\Event\Model\ElementDeleteInfoEventInterface
+interface ElementDeleteInfoEventInterface extends ElementEventInterface
 {
-}
+    public function getDeletionAllowed(): bool;
 
-@class_alias(ElementDeleteInfoEventInterface::class, 'Pimcore\Event\Model\ElementDeleteInfoEventInterface');
+    public function setDeletionAllowed(bool $deletionAllowed): void;
+
+    public function getReason(): string;
+
+    public function setReason(string $reason): void;
+}

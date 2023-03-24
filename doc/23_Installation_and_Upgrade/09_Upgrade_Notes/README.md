@@ -263,13 +263,7 @@ pimcore:
   - Relying on `Pimcore\Bootstrap::bootstrap()` for autoloading classes will not work anymore.
   - Removed unused constant `PIMCORE_APP_BUNDLE_CLASS_FILE`
 - [Security] Enabled Content Security Policy by default.
-- [Admin] Certain classes has been moved to AdminBundle with changes in namespace (with BC layer) as defined below:
-```
-Pimcore\Event\Admin\* => Pimcore\Bundle\AdminBundle\Event\*
-Pimcore\Event\AdminEvents => Pimcore\Bundle\AdminBundle\Event\AdminEvents
-Pimcore\Event\Model\* => Pimcore\Bundle\AdminBundle\Event\Model\*
-and 
-\Pimcore\Tool::getLanguageFlagFile() to \Pimcore\Bundle\AdminBundle\Tool::getLanguageFlagFile()
+- [Admin] Removed deprecated Admin Event classes: `Pimcore\Event\Admin\*`, `Pimcore\Event\AdminEvents`, `Pimcore\Event\Model\*`
 ```
 - [Events] Report Event `pimcore.admin.reports.save_settings` has been renamed to `pimcore.reports.save_settings`.
 - Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.

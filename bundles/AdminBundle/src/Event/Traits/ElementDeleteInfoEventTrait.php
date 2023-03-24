@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +15,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Event\Traits;
 
+/**
+ * Trait ElementDeleteInfoEventTrait
+ *
+ * @package Pimcore\Event\Traits
+ */
 trait ElementDeleteInfoEventTrait
 {
     protected bool $deletionAllowed = true;

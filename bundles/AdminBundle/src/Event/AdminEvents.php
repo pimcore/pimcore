@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,14 +15,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Event;
 
-final class AdminEvents
+class AdminEvents
 {
     /**
      * The LOGIN_REDIRECT event is triggered before user is redirected to login page.
      *
      * This event allows you to influence path of the login page, e.g. for SSO integrations.
      *
-     * @Event("Pimcore\Bundle\AdminBundle\Event\Login\LoginRedirectEvent")
+     * @Event("Pimcore\Event\Admin\Login\LoginRedirectEvent")
      *
      * @var string
      */
@@ -37,7 +36,7 @@ final class AdminEvents
      * mail sending at all. For full control, it allows you to set the response
      * to be returned.
      *
-     * @Event("Pimcore\Bundle\AdminBundle\Event\Login\LostPasswordEvent")
+     * @Event("Pimcore\Event\Admin\Login\LostPasswordEvent")
      *
      * @var string
      */
@@ -49,7 +48,7 @@ final class AdminEvents
      * By setting a response on the event, you're able to control the response
      * returned after logout.
      *
-     * @Event("Pimcore\Bundle\AdminBundle\Event\Login\LogoutEvent")
+     * @Event("Pimcore\Event\Admin\Login\LogoutEvent")
      *
      * @var string
      */
@@ -77,7 +76,7 @@ final class AdminEvents
     /**
      * The INDEX_SETTINGS event is triggered when the settings object is built for the index page.
      *
-     * @Event("Pimcore\Bundle\AdminBundle\Event\IndexActionSettingsEvent")
+     * @Event("Pimcore\Event\Admin\IndexActionSettingsEvent")
      *
      * @var string
      */
@@ -511,7 +510,7 @@ final class AdminEvents
      * Arguments:
      *     none
      *
-     * @Event("Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent")
+     * @Event("Pimcore\Event\Admin\ElementAdminStyleEvent")
      *
      * @var string
      */

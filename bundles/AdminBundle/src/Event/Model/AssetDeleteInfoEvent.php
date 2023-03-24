@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,9 +15,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Event\Model;
 
-use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Bundle\AdminBundle\Event\Traits\ElementDeleteInfoEventTrait;
+use Pimcore\Event\Model\AssetEvent;
 
+/**
+ * Class AssetDeleteInfoEvent
+ *
+ * @package Pimcore\Event\Model
+ */
 class AssetDeleteInfoEvent extends AssetEvent implements ElementDeleteInfoEventInterface
 {
     use ElementDeleteInfoEventTrait;

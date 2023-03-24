@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,6 +18,11 @@ namespace Pimcore\Bundle\AdminBundle\Event\Model;
 use Pimcore\Bundle\AdminBundle\Event\Traits\ElementDeleteInfoEventTrait;
 use Pimcore\Event\Model\DataObjectEvent;
 
+/**
+ * Class DataObjectDeleteInfoEvent
+ *
+ * @package Pimcore\Event\Model
+ */
 class DataObjectDeleteInfoEvent extends DataObjectEvent implements ElementDeleteInfoEventInterface
 {
     use ElementDeleteInfoEventTrait;

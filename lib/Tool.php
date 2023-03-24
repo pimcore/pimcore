@@ -116,7 +116,7 @@ final class Tool
      *
      * @internal
      *
-     * @deprecated BC layer to support bundles on Pimcore 10 & 11
+     * @TODO for bundles to be supported on Pimcore 10 & 11
      */
     public static function getLanguageFlagFile(string $language, bool $absolutePath = true): string
     {
