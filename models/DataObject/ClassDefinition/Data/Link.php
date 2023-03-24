@@ -448,6 +448,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function setAllowedTypes(?array $allowedTypes): static
     {
         $this->allowedTypes = $allowedTypes;
+
         return $this;
     }
 
@@ -467,6 +468,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function setAllowedTargets(?array $allowedTargets): static
     {
         $this->allowedTargets = $allowedTargets;
+
         return $this;
     }
 
@@ -486,6 +488,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function setDisabledFields(?array $disabledFields): static
     {
         $this->disabledFields = $disabledFields;
+
         return $this;
     }
 }
