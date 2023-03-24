@@ -30,11 +30,11 @@ final class Dashboard
 
     protected ?array $dashboards = null;
 
-    public function __construct(
-        User $user,
-        protected Filesystem $filesystem
-    ) {
+    protected Filesystem $filesystem;
+
+    public function __construct(User $user) {
         $this->user = $user;
+        $this->filesystem = new Filesystem();
     }
 
     public function getUser(): User
@@ -54,9 +54,8 @@ final class Dashboard
 
     protected function loadFile(): ?array
     {
-        $filesystem = new Filesystem();
         if (!is_dir($this->getConfigDir())) {
-            $filesystem->mkdir($this->getConfigDir(), 0775);
+            $this->filesystem->mkdir($this->getConfigDir(), 0775);
         }
 
         if (empty($this->dashboards)) {

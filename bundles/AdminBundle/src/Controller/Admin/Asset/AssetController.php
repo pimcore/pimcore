@@ -431,7 +431,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @throws \Exception
      */
-    protected function addAsset(Request $request, Config $config, Filesystem $filesystem): array
+    protected function addAsset(Request $request, Config $config): array
     {
         $defaultUploadPath = $config['assets']['default_upload_path'] ?? '/';
 
@@ -442,6 +442,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $filename = $request->get('filename');
             $sourcePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/upload-base64' . uniqid() . '.tmp';
             $data = preg_replace('@^data:[^,]+;base64,@', '', $request->get('data'));
+            $filesystem = new Filesystem();
             $filesystem->dumpFile($sourcePath, base64_decode($data));
         } else {
             throw new \Exception('The filename of the asset is empty');
