@@ -16,10 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore;
 
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Pimcore;
 use Pimcore\Helper\LongRunningHelper;
-use Symfony\Component\Filesystem\Path;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @internal
@@ -32,8 +33,6 @@ class File
      * @var null|resource
      */
     protected static $context = null;
-
-    private static int $defaultFlags = LOCK_EX;
 
     public static function getFileExtension(string $name): string
     {
@@ -50,18 +49,7 @@ class File
         return '';
     }
 
-    /**
-     * Helper to get a valid filename for the filesystem, use Element\Service::getValidKey() for the use with Pimcore Elements
-     *
-     * @param string $tmpFilename
-     * @param string|null $language
-     * @param string $replacement
-     *
-     * @return string
-     *
-     * @internal
-     */
-    public static function getValidFilename(string $tmpFilename, string $language = null, string $replacement = '-'): string
+    public static function getValidFilename(string $tmpFilename, ?string $language = null, string $replacement = '-'): string
     {
         $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename, $language);
         $tmpFilename = strtolower($tmpFilename);
@@ -74,103 +62,24 @@ class File
         return $tmpFilename;
     }
 
-    public static function setDefaultMode(int $mode): void
-    {
-        self::$defaultMode = $mode;
-    }
-
     public static function getDefaultMode(): int
     {
         return self::$defaultMode;
     }
 
-    public static function setDefaultFlags(int $defaultFlags): void
-    {
-        self::$defaultFlags = $defaultFlags;
-    }
-
     /**
-     * @param string $path
-     * @param mixed $data
-     *
      * @return int|false
-     */
-    public static function put(string $path, mixed $data): bool|int
-    {
-        $path = Path::canonicalize($path);
-
-        if (!is_dir(dirname($path))) {
-            self::mkdir(dirname($path));
-        }
-
-        $return = file_put_contents($path, $data, self::$defaultFlags, self::getContext());
-        @chmod($path, self::$defaultMode);
-
-        return $return;
-    }
-
-    /**
-     * @param string $path
-     * @param string $data
-     *
-     * @return int|false
-     *
-     * @internal
      */
     public static function putPhpFile(string $path, string $data): bool|int
     {
-        $return = self::put($path, $data);
+        $filesystem = new Filesystem();
+        $filesystem->dumpFile($path, $data);
 
         if (\function_exists('opcache_invalidate')) {
             opcache_invalidate($path);
         }
 
-        return $return;
-    }
-
-    public static function mkdir(string $path, ?int $mode = 0775, bool $recursive = true): bool
-    {
-        if (is_dir($path)) {
-            return true;
-        }
-        $return = true;
-
-        $oldMask = umask(0);
-        $path = Path::canonicalize($path);
-
-        if ($recursive) {
-            // we cannot use just mkdir() with recursive=true because of possible race conditions, see also
-            // https://github.com/pimcore/pimcore/issues/4011
-
-            $parts = preg_split('@(?<![\:\\\\/]|^)[\\\\/]@', $path);
-            $currentPath = '';
-            $lastKey = array_keys($parts)[count($parts) - 1];
-            $parentPath = $parts[0];
-
-            foreach ($parts as $key => $part) {
-                $currentPath .= $part;
-
-                if (!@is_writable($parentPath) && $key != $lastKey) {
-                    // parent directories don't need to be read/writable (open_basedir restriction), see #4315
-                } elseif (!is_dir($currentPath)) {
-                    if (!@mkdir($currentPath, $mode, false) && !is_dir($currentPath)) {
-                        // the directory was not created by either this or a concurrent process ...
-                        $return = false;
-
-                        break;
-                    }
-                }
-
-                $parentPath = $currentPath;
-                $currentPath .= '/';
-            }
-        } else {
-            $return = @mkdir($path, $mode, false, self::getContext());
-        }
-
-        umask($oldMask);
-
-        return $return;
+        return file_exists($path);
     }
 
     public static function rename(string $oldPath, string $newPath): bool
@@ -231,10 +140,7 @@ class File
     }
 
     /**
-     * @param FilesystemOperator $storage
-     * @param string $storagePath
-     *
-     * @throws \League\Flysystem\FilesystemException
+     * @throws FilesystemException
      */
     public static function recursiveDeleteEmptyDirs(FilesystemOperator $storage, string $storagePath): void
     {
