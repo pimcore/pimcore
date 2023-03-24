@@ -31,6 +31,21 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     use DataObject\Traits\ObjectVarTrait;
 
     /**
+     * @var null|string[]
+     */
+    public ?array $allowedTypes = null;
+
+    /**
+     * @var null|string[]
+     */
+    public ?array $allowedTargets = null;
+
+    /**
+     * @var null|string[]
+     */
+    public ?array $disabledFields = null;
+
+    /**
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
@@ -415,5 +430,62 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public function getFieldType(): string
     {
         return 'link';
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedTypes(): ?array
+    {
+        return $this->allowedTypes;
+    }
+
+    /**
+     * @param null|string[] $allowedTypes
+     *
+     * @return $this
+     */
+    public function setAllowedTypes(?array $allowedTypes): static
+    {
+        $this->allowedTypes = $allowedTypes;
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedTargets(): ?array
+    {
+        return $this->allowedTargets;
+    }
+
+    /**
+     * @param null|string[] $allowedTargets
+     *
+     * @return $this
+     */
+    public function setAllowedTargets(?array $allowedTargets): static
+    {
+        $this->allowedTargets = $allowedTargets;
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getDisabledFields(): ?array
+    {
+        return $this->disabledFields;
+    }
+
+    /**
+     * @param null|string[] $disabledFields
+     *
+     * @return $this
+     */
+    public function setDisabledFields(?array $disabledFields): static
+    {
+        $this->disabledFields = $disabledFields;
+        return $this;
     }
 }
