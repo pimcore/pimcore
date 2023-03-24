@@ -2180,7 +2180,7 @@ final class Configuration implements ConfigurationInterface
      *
      * @param ArrayNodeDefinition $rootNode
      */
-    private function addStaticroutesNode(ArrayNodeDefinition $rootNode)
+    private function addStaticRoutesNode(ArrayNodeDefinition $rootNode)
     {
         $rootNode
         ->children()

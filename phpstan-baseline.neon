@@ -296,3 +296,22 @@ parameters:
 			    - models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
 			    - models/DataObject/ClassDefinition/Data/ClassSavedInterface.php
 			    - models/DataObject/ClassDefinition/Data/Classificationstore.php
+		-
+			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\CleanupThumbnailsHandler\\:\\:process\\(\\) is unused\\.$#"
+			count: 1
+			path: lib/Messenger/Handler/CleanupThumbnailsHandler.php
+
+		-
+			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SanityCheckHandler\\:\\:process\\(\\) is unused\\.$#"
+			count: 1
+			path: lib/Messenger/Handler/SanityCheckHandler.php
+
+		-
+			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
+			count: 1
+			path: lib/Messenger/Handler/SearchBackendHandler.php
+
+		-
+			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SearchBackendHandler\\:\\:shouldFlush\\(\\) is unused\\.$#"
+			count: 1
+			path: lib/Messenger/Handler/SearchBackendHandler.php

@@ -154,6 +154,7 @@ class Dao extends Model\Dao\AbstractDao
               `position` varchar(70) NOT NULL DEFAULT '0',
               INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
               INDEX `reverse_lookup` (`dest_id`, `type`),
+              INDEX `fieldname` (`fieldname`),
 			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTableRelation, 'src_id').'` FOREIGN KEY (`src_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
