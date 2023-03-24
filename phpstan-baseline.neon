@@ -125,11 +125,11 @@ parameters:
 			path: lib/Messenger/Handler/SanityCheckHandler.php
 
 		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
+			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
 			count: 1
-			path: lib/Messenger/Handler/SearchBackendHandler.php
+			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
 
 		-
-			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SearchBackendHandler\\:\\:shouldFlush\\(\\) is unused\\.$#"
+			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:shouldFlush\\(\\) is unused\\.$#"
 			count: 1
-			path: lib/Messenger/Handler/SearchBackendHandler.php
+			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
