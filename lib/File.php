@@ -67,10 +67,7 @@ class File
         return self::$defaultMode;
     }
 
-    /**
-     * @return int|false
-     */
-    public static function putPhpFile(string $path, string $data): bool|int
+    public static function putPhpFile(string $path, string $data): bool
     {
         $filesystem = new Filesystem();
         $filesystem->dumpFile($path, $data);
