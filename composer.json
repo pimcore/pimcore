@@ -173,8 +173,7 @@
   },
   "autoload": {
     "files": [
-      "lib/helper-functions.php",
-      "bundles/AdminBundle/src/autoload.php"
+      "lib/helper-functions.php"
     ],
     "psr-4": {
       "Pimcore\\Model\\": "models",
