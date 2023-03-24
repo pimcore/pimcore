@@ -441,11 +441,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param string[] $allowedTypes
+     * @param null|string[] $allowedTypes
      *
      * @return $this
      */
-    public function setAllowedTypes(array $allowedTypes): static
+    public function setAllowedTypes(?array $allowedTypes): static
     {
         $this->allowedTypes = $allowedTypes;
         return $this;
@@ -460,11 +460,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param string[] $allowedTargets
+     * @param null|string[] $allowedTargets
      *
      * @return $this
      */
-    public function setAllowedTargets(array $allowedTargets): static
+    public function setAllowedTargets(?array $allowedTargets): static
     {
         $this->allowedTargets = $allowedTargets;
         return $this;
@@ -479,11 +479,11 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @param string[] $disabledFields
+     * @param null|string[] $disabledFields
      *
      * @return $this
      */
-    public function setDisabledFields(array $disabledFields): static
+    public function setDisabledFields(?array $disabledFields): static
     {
         $this->disabledFields = $disabledFields;
         return $this;
