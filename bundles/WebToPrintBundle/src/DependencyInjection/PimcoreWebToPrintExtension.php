@@ -48,7 +48,7 @@ final class PimcoreWebToPrintExtension extends ConfigurableExtension  implements
         $container->setParameter('pimcore_web_to_print', $config);
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore_web_to_print');
         $configDir = $containerConfig['config_location']['web_to_print']['options']['directory'];

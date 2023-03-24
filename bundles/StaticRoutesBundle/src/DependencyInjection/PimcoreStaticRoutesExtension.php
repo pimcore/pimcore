@@ -38,7 +38,7 @@ final class PimcoreStaticRoutesExtension extends ConfigurableExtension implement
         $container->setParameter('pimcore_static_routes.config_location', $config['config_location'] ?? []);
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $containerConfig = ConfigurationHelper::getConfigNodeFromSymfonyTree($container, 'pimcore_static_routes');
         $configDir = $containerConfig['config_location']['staticroutes']['options']['directory'];
