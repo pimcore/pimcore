@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -14,16 +13,17 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event\Traits;
+namespace Pimcore\Bundle\AdminBundle\Event\Model;
+
+use Pimcore\Bundle\AdminBundle\Event\Traits\ElementDeleteInfoEventTrait;
+use Pimcore\Event\Model\AssetEvent;
 
 /**
- * Trait ElementDeleteInfoEventTrait
+ * Class AssetDeleteInfoEvent
  *
- * @package Pimcore\Event\Traits
- *
- * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Traits\ElementDeleteInfoEventTrait instead
+ * @package Pimcore\Event\Model
  */
-trait ElementDeleteInfoEventTrait
+class AssetDeleteInfoEvent extends AssetEvent implements ElementDeleteInfoEventInterface
 {
-    use \Pimcore\Bundle\AdminBundle\Event\Traits\ElementDeleteInfoEventTrait;
+    use ElementDeleteInfoEventTrait;
 }
