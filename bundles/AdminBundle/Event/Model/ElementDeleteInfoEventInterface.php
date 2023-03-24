@@ -19,23 +19,11 @@ use Pimcore\Event\Model\ElementEventInterface;
 
 interface ElementDeleteInfoEventInterface extends ElementEventInterface
 {
-    /**
-     * @return bool
-     */
     public function getDeletionAllowed(): bool;
 
-    /**
-     * @param bool $deletionAllowed
-     */
     public function setDeletionAllowed(bool $deletionAllowed): void;
 
-    /**
-     * @return string
-     */
     public function getReason(): string;
 
-    /**
-     * @param string $reason
-     */
     public function setReason(string $reason): void;
 }
