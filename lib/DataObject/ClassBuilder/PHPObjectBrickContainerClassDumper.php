@@ -70,7 +70,7 @@ class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClass
                 }
 
                 $file = $folder . '/' . ucfirst($fieldname) . '.php';
-                File::put($file, $cd);
+                $this->filesystem->dumpFile($file, $cd);
             }
         }
     }

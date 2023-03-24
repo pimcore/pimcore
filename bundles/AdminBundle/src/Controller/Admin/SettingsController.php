@@ -537,7 +537,7 @@ class SettingsController extends AdminController
 
         $settingsYaml = Yaml::dump($settings, 5);
         $configFile = Config::locateConfigFile('system.yaml');
-        File::put($configFile, $settingsYaml);
+       $filesystem->dumpFile($configFile, $settingsYaml);
 
         // clear all caches
         $this->clearSymfonyCache($request, $kernel, $eventDispatcher, $symfonyCacheClearer);
@@ -645,7 +645,7 @@ class SettingsController extends AdminController
         }
 
         // PIMCORE-1854 - recreate .dummy file => should remain
-        File::put(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
+        $filesystem->dumpFile(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
 
         $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR);
     }

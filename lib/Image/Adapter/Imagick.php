@@ -22,6 +22,7 @@ use Pimcore\File;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Symfony\Component\Filesystem\Filesystem;
 
 class Imagick extends Adapter
 {
@@ -265,7 +266,9 @@ class Imagick extends Adapter
 
         if (!stream_is_local($path)) {
             $i->setImageFormat($format);
-            $success = File::put($path, $i->getImageBlob());
+            $filesystem = new Filesystem();
+            $filesystem->dumpFile($path, $i->getImageBlob());
+            $success = file_exists($path);
         } else {
             if ($this->checkPreserveAnimation($format, $i)) {
                 $success = $i->writeImages('GIF:' . $path, true);

@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Log;
 
-use Pimcore\File;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @internal
@@ -25,19 +25,20 @@ class Simple
 {
     public static function log(string $name, string $message): void
     {
+        $filesystem = new Filesystem();
         $log = PIMCORE_LOG_DIRECTORY . "/$name.log";
         clearstatcache(true, $log);
 
         if (!is_file($log)) {
             if (is_writable(dirname($log))) {
-                File::put($log, "AUTOCREATE\n");
+                $filesystem->dumpFile($log, "AUTOCREATE\n");
             }
         }
 
         if (is_writable($log)) {
             // check for big logfile, empty it if it's bigger than about 200M
             if (filesize($log) > 200000000) {
-                File::put($log, '');
+                $filesystem->dumpFile($log, '');
             }
 
             $date = new \DateTime('now');

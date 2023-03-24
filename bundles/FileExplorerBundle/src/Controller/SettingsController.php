@@ -117,7 +117,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function contentSaveAction(Request $request): JsonResponse
+    public function contentSaveAction(Request $request, Filesystem $filesystem): JsonResponse
     {
         $this->checkPermission('fileexplorer');
 
@@ -126,7 +126,7 @@ class SettingsController extends AdminController
         if ($request->get('content') && $request->get('path')) {
             $file = $this->getFileExplorerPath($request, 'path');
             if (is_file($file) && is_writable($file)) {
-                File::put($file, $request->get('content'));
+                $filesystem->dumpFile($file, $request->get('content'));
 
                 $success = true;
             }
@@ -146,7 +146,7 @@ class SettingsController extends AdminController
      *
      * @throws \Exception
      */
-    public function addAction(Request $request): JsonResponse
+    public function addAction(Request $request, Filesystem $filesystem): JsonResponse
     {
         $this->checkPermission('fileexplorer');
 
@@ -162,7 +162,7 @@ class SettingsController extends AdminController
             }
 
             if (is_writable(dirname($file))) {
-                File::put($file, '');
+                $filesystem->dumpFile($file, '');
 
                 $success = true;
             }

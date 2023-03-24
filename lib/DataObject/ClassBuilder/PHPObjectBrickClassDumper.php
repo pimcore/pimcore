@@ -16,13 +16,16 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\ClassBuilder;
 
-use Pimcore\File;
+
 use Pimcore\Model\DataObject\Objectbrick\Definition;
+use Symfony\Component\Filesystem\Filesystem;
 
 class PHPObjectBrickClassDumper implements PHPObjectBrickClassDumperInterface
 {
-    public function __construct(protected ObjectBrickClassBuilderInterface $classBuilder)
-    {
+    public function __construct(
+        protected ObjectBrickClassBuilderInterface $classBuilder,
+        protected Filesystem $filesystem
+    ) {
     }
 
     public function dumpPHPClasses(Definition $definition): void
@@ -30,6 +33,6 @@ class PHPObjectBrickClassDumper implements PHPObjectBrickClassDumperInterface
         $classFilePath = $definition->getPhpClassFile();
         $phpClass = $this->classBuilder->buildClass($definition);
 
-        File::put($classFilePath, $phpClass);
+        $this->filesystem->dumpFile($classFilePath, $phpClass);
     }
 }

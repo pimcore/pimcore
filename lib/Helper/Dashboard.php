@@ -30,8 +30,10 @@ final class Dashboard
 
     protected ?array $dashboards = null;
 
-    public function __construct(User $user)
-    {
+    public function __construct(
+        User $user,
+        protected Filesystem $filesystem
+    ) {
         $this->user = $user;
     }
 
@@ -126,14 +128,14 @@ final class Dashboard
         }
 
         $this->dashboards[$key] = $configuration;
-        File::put($this->getConfigFile(), Serialize::serialize($this->dashboards));
+        $this->filesystem->dumpFile($this->getConfigFile(), Serialize::serialize($this->dashboards));
     }
 
     public function deleteDashboard(string $key): void
     {
         $this->loadFile();
         unset($this->dashboards[$key]);
-        File::put($this->getConfigFile(), Serialize::serialize($this->dashboards));
+        $this->filesystem->dumpFile($this->getConfigFile(), Serialize::serialize($this->dashboards));
     }
 
     public function getDisabledPortlets(): array

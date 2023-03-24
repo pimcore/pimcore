@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use Exception;
+use Symfony\Component\Filesystem\Filesystem;
 use function is_array;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -297,7 +298,8 @@ class Asset extends Element\AbstractElement
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
                 $mimeTypeGuessData = $tmpFile;
                 if (array_key_exists('data', $data)) {
-                    File::put($tmpFile, $data['data']);
+                    $filesystem = new Filesystem();
+                    $filesystem->dumpFile($tmpFile, $data['data']);
                     unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
