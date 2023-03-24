@@ -67,7 +67,7 @@ class File
         return self::$defaultMode;
     }
 
-    public static function putPhpFile(string $path, string $data): bool
+    public static function putPhpFile(string $path, string $data): void
     {
         $filesystem = new Filesystem();
         $filesystem->dumpFile($path, $data);
@@ -75,8 +75,6 @@ class File
         if (\function_exists('opcache_invalidate')) {
             opcache_invalidate($path);
         }
-
-        return file_exists($path);
     }
 
     public static function rename(string $oldPath, string $newPath): bool
