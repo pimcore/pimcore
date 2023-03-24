@@ -81,7 +81,7 @@
         </tr>
         </thead>
         <tbody>
-
+        {% set totalSums = {(defaultCurrency.getShortName()): 0} %}
         {% for item in paginator.items %}
             {% set totalSums = totalSums|merge({(item['Currency']): ((totalSums[item['Currency']] is defined ? totalSums[item['Currency']] : 0) + item['TotalPrice'])}) %}
 
