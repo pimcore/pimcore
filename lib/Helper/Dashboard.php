@@ -19,6 +19,7 @@ namespace Pimcore\Helper;
 use Pimcore\File;
 use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @internal
@@ -51,8 +52,9 @@ final class Dashboard
 
     protected function loadFile(): ?array
     {
+        $filesystem = new Filesystem();
         if (!is_dir($this->getConfigDir())) {
-            File::mkdir($this->getConfigDir());
+            $filesystem->mkdir($this->getConfigDir(), 0775);
         }
 
         if (empty($this->dashboards)) {

@@ -32,6 +32,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -584,6 +585,7 @@ class Service extends Model\Element\Service
      */
     public static function generatePagePreview(int $id, Request $request = null, string $hostUrl = null): bool
     {
+        $filesystem = new Filesystem();
         $doc = Document\Page::getById($id);
         if (!$doc) {
             return false;
@@ -599,7 +601,7 @@ class Service extends Model\Element\Service
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
         $file = $doc->getPreviewImageFilesystemPath();
 
-        File::mkdir(dirname($file));
+        $filesystem->mkdir(dirname($file), 0775);
 
         if (Chromium::convert($url, $tmpFile)) {
             $im = \Pimcore\Image::getInstance();

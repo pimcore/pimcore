@@ -18,11 +18,14 @@ namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\File;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
+use Symfony\Component\Filesystem\Filesystem;
 
 class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClassDumperInterface
 {
-    public function __construct(protected ObjectBrickContainerClassBuilderInterface $classBuilder)
-    {
+    public function __construct(
+        protected ObjectBrickContainerClassBuilderInterface $classBuilder,
+        protected Filesystem $filesystem
+    ) {
     }
 
     public function dumpContainerClasses(Definition $definition): void
@@ -63,7 +66,7 @@ class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClass
                 $folder = $definition->getContainerClassFolder($class->getName());
 
                 if (!is_dir($folder)) {
-                    File::mkdir($folder);
+                    $this->filesystem->mkdir($folder, 0775);
                 }
 
                 $file = $folder . '/' . ucfirst($fieldname) . '.php';

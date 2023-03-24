@@ -387,9 +387,11 @@ function recursiveDelete(string $directory, bool $empty = true): bool
 
 function recursiveCopy(string $source, string $destination): bool
 {
+    $filesystem = new \Symfony\Component\Filesystem\Filesystem();
+
     if (is_dir($source)) {
         if (!is_dir($destination)) {
-            \Pimcore\File::mkdir($destination);
+            $filesystem->mkdir($destination, 0775);
         }
 
         foreach (
@@ -398,14 +400,14 @@ function recursiveCopy(string $source, string $destination): bool
                 RecursiveIteratorIterator::SELF_FIRST
             ) as $item) {
             if ($item->isDir()) {
-                \Pimcore\File::mkdir($destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+                $filesystem->mkdir($destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName(), 0775);
             } else {
                 copy($item, $destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
             }
         }
     } elseif (is_file($source)) {
         if (is_dir(dirname($destination))) {
-            \Pimcore\File::mkdir(dirname($destination));
+            $filesystem->mkdir(dirname($destination), 0775);
         }
         copy($source, $destination);
     }

@@ -44,6 +44,7 @@ use Pimcore\Model\Metadata;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -2281,7 +2282,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function importZipFilesAction(Request $request): JsonResponse
+    public function importZipFilesAction(Request $request, Filesystem $filesystem): JsonResponse
     {
         $jobId = $request->get('jobId');
         $limit = (int)$request->get('limit');
@@ -2291,7 +2292,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $tmpDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/zip-import';
 
         if (!is_dir($tmpDir)) {
-            File::mkdir($tmpDir, 0777, true);
+            $filesystem->mkdir($tmpDir);
         }
 
         $zip = new \ZipArchive;
