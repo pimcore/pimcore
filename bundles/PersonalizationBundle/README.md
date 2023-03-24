@@ -16,4 +16,4 @@ After reading everything about the base concepts, you are
 
  
  > For details on how to extend Pimcores targeting engine and use targeting information in custom modules
- > see our [Dev Docs](./doc/Development_Documentation/README.md)
+ > see our [Dev Docs](./doc/README.md)

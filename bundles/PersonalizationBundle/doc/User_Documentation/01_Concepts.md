@@ -36,7 +36,7 @@ when assigned target groups of current visitor change.
 * **Visitor**: Actions are executed once per visitor. 
 
 The session expiry depends on the used storage engine. In default configuration the session expires when browser is 
-closed. See [Dev Docs](../../Development_Documentation/18_Tools_and_Features/37_Targeting_and_Personalization/09_Targeting_Storage.md) for details.  
+closed. See [Dev Docs](../../18_Tools_and_Features/37_Targeting_and_Personalization/09_Targeting_Storage.md) for details.  
 
 The visitor is identified via a browser cookie (named `_pc_vis`). As long as this cookie is available, a visitor is identified as unique.
 

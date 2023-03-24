@@ -167,7 +167,7 @@ implements the interface `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\I
    but can use more than one source definition and stores first found value in *Product Index*. 
 - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetterSequenceToMultiselect`: Like 
   `DefaultBrickGetterSequence`, but stores all found values as a multi select in the *Product Index*. 
-- `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\TagsGetter`: Gets [Tags](https://github.com/pimcore/pimcore/blob/11.x/doc/Development_Documentation/18_Tools_and_Features/09_Tags.md) 
+- `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\TagsGetter`: Gets [Tags](https://github.com/pimcore/pimcore/blob/11.x/doc/18_Tools_and_Features/09_Tags.md) 
   of product object and returns them as array. 
 - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\DefaultClassificationAttributeGetter`: Gets attribute value
   from classification store. Possible options: 

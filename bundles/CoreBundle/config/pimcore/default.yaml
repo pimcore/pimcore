@@ -121,6 +121,31 @@ pimcore:
                         object: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataObject
                         select: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Select
                         textarea: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Textarea
+        type_definitions:
+            map:
+                image:
+                    class: \Pimcore\Model\Asset\Image
+                    matching: ['/image/', "/\\.eps$/", "/\\.ai$/", "/\\.svgz$/", "/\\.pcx$/", "/\\.iff$/", "/\\.pct$/", "/\\.wmf$/", '/photoshop/']
+                archive:
+                    class: \Pimcore\Model\Asset\Archive
+                    matching: ['/zip/', '/tar/']
+                audio:
+                    class: \Pimcore\Model\Asset\Audio
+                    matching: ['/audio/']
+                document:
+                    class: \Pimcore\Model\Asset\Document
+                    matching: ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/']
+                folder:
+                    class: \Pimcore\Model\Asset\Folder
+                text:
+                   class: \Pimcore\Model\Asset\Text
+                   matching: [ "/text\\//", "/xml$/", "/\\.json$/" ]
+                video:
+                   class: \Pimcore\Model\Asset\Video
+                   matching: [ "/video/" ]
+                unknown:
+                    class: \Pimcore\Model\Asset\Unknown
+                    matching: [ "/\\.stp$/" ]
 
     objects:
         class_definitions:

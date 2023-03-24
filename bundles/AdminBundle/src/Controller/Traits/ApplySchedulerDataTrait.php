@@ -37,7 +37,6 @@ trait ApplySchedulerDataTrait
 
             if (!empty($tasksData)) {
                 foreach ($tasksData as $taskData) {
-                    $taskData['date'] = strtotime($taskData['date'] . ' ' . ($taskData['time'] ?? ''));
                     $taskData['userId'] = $this->getAdminUser()->getId();
 
                     $task = new Task($taskData);

@@ -141,6 +141,7 @@ final class Configuration implements ConfigurationInterface
             'custom_views',
             'object_custom_layouts'
         ]);
+        $this->addChromiumNode($rootNode);
 
         return $treeBuilder;
     }
@@ -626,6 +627,7 @@ final class Configuration implements ConfigurationInterface
 
                             ->end()
                         ->end();
+        $this->addImplementationNodeFromArrayDefinition($assetsNode, 'type_definitions');
     }
 
     /**
@@ -916,6 +918,31 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
+
+    /**
+     * Add implementation node config with array (map[class,matching], prefixes)
+     */
+    private function addImplementationNodeFromArrayDefinition(ArrayNodeDefinition $node, string $name): void
+    {
+        $node
+            ->children()
+                ->arrayNode($name)
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('map')
+                            ->arrayPrototype()
+                            ->children()
+                                ->scalarNode('class')->end()
+                                ->arrayNode('matching')
+                                    ->prototype('scalar')->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
     }
 
     private function addRoutingNode(ArrayNodeDefinition $rootNode): void
@@ -1898,13 +1925,29 @@ final class Configuration implements ConfigurationInterface
     {
         $rootNode
             ->children()
-            ->arrayNode('gotenberg')
-            ->addDefaultsIfNotSet()
-            ->children()
-                ->scalarNode('base_url')
-                ->defaultValue('gotenberg:3000')
+                ->arrayNode('gotenberg')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('base_url')
+                            ->defaultValue('gotenberg:3000')
+                        ->end()
+                    ->end()
                 ->end()
-            ->end()
-        ->end();
+            ->end();
+    }
+
+    private function addChromiumNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('chromium')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('uri')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 }
