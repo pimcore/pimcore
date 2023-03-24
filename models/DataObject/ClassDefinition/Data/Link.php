@@ -31,19 +31,19 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     use DataObject\Traits\ObjectVarTrait;
 
     /**
-     * @var string[]
+     * @var null|string[]
      */
-    public array $allowedTypes;
+    public ?array $allowedTypes = null;
 
     /**
-     * @var string[]
+     * @var null|string[]
      */
-    public array $allowedTargets;
+    public ?array $allowedTargets = null;
 
     /**
-     * @var string[]
+     * @var null|string[]
      */
-    public array $disabledFields;
+    public ?array $disabledFields = null;
 
     /**
      * @param mixed $data
@@ -433,9 +433,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @return string[]
+     * @return null|string[]
      */
-    public function getAllowedTypes(): array
+    public function getAllowedTypes(): ?array
     {
         return $this->allowedTypes;
     }
@@ -452,9 +452,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @return string[]
+     * @return null|string[]
      */
-    public function getAllowedTargets(): array
+    public function getAllowedTargets(): ?array
     {
         return $this->allowedTargets;
     }
@@ -471,9 +471,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @return string[]
+     * @return null|string[]
      */
-    public function getDisabledFields(): array
+    public function getDisabledFields(): ?array
     {
         return $this->disabledFields;
     }
