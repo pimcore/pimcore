@@ -23,5 +23,3 @@ class DataObjectDeleteInfoEvent extends DataObjectEvent implements ElementDelete
 {
     use ElementDeleteInfoEventTrait;
 }
-
-@class_alias(DataObjectDeleteInfoEvent::class, 'Pimcore\Event\Model\DataObjectDeleteInfoEvent');

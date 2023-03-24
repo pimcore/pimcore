@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Service;
 
+use Carbon\Carbon;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
@@ -241,6 +242,7 @@ class NotificationService
 
     public function format(Notification $notification): array
     {
+        $carbonTs = new Carbon($notification->getCreationDate(), 'UTC');
         $data = [
             'id' => $notification->getId(),
             'type' => $notification->getType(),
@@ -249,6 +251,7 @@ class NotificationService
             'sender' => '',
             'read' => (int) $notification->isRead(),
             'date' => $notification->getCreationDate(),
+            'timestamp' => $carbonTs->getTimestamp(),
             'linkedElementType' => $notification->getLinkedElementType(),
             'linkedElementId' => null,
         ];

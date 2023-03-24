@@ -16,12 +16,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\TinymceBundle;
 
+use Pimcore\Bundle\AdminBundle\Support\BundleAdminSupportTrait;
+use Pimcore\Bundle\AdminBundle\Support\PimcoreBundleAdminSupportInterface;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Pimcore\Helper\EncoreHelper;
 
-class PimcoreTinymceBundle extends AbstractPimcoreBundle
+class PimcoreTinymceBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminSupportInterface
 {
+    use BundleAdminSupportTrait;
     use PackageVersionTrait;
 
     public function getCssPaths(): array

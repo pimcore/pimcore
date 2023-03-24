@@ -16,29 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Event\Login;
 
-use Pimcore\Event\Traits\RequestAwareTrait;
-use Pimcore\Event\Traits\ResponseAwareTrait;
-use Pimcore\Model\User;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\EventDispatcher\Event;
-
-class LogoutEvent extends Event
+/**
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Login\LogoutEvent instead
+ */
+class LogoutEvent extends \Pimcore\Bundle\AdminBundle\Event\Login\LogoutEvent
 {
-    use RequestAwareTrait;
-    use ResponseAwareTrait;
-
-    protected User $user;
-
-    public function __construct(Request $request, User $user)
-    {
-        $this->request = $request;
-        $this->user = $user;
-    }
-
-    public function getUser(): User
-    {
-        return $this->user;
-    }
 }
 
 @class_alias(LogoutEvent::class, 'Pimcore\Event\Admin\Login\LogoutEvent');

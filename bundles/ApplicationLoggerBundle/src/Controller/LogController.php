@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\ApplicationLoggerBundle\Controller;
 
+use Carbon\Carbon;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
@@ -130,11 +131,13 @@ class LogController extends AdminController implements KernelControllerEventInte
                 $fileobject = str_replace(PIMCORE_PROJECT_ROOT, '', $row['fileobject']);
             }
 
+            $carbonTs = new Carbon($row['timestamp'], 'UTC');
             $logEntry = [
                 'id' => $row['id'],
                 'pid' => $row['pid'],
                 'message' => $row['message'],
-                'timestamp' => $row['timestamp'],
+                'date' => $row['timestamp'],
+                'timestamp' => $carbonTs->getTimestamp(),
                 'priority' => $row['priority'],
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],

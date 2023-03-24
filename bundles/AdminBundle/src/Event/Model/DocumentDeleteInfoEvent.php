@@ -23,5 +23,3 @@ class DocumentDeleteInfoEvent extends DocumentEvent implements ElementDeleteInfo
 {
     use ElementDeleteInfoEventTrait;
 }
-
-@class_alias(DocumentDeleteInfoEvent::class, 'Pimcore\Event\Model\DocumentDeleteInfoEvent');
