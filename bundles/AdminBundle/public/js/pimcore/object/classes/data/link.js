@@ -16,7 +16,7 @@ pimcore.registerNS("pimcore.object.classes.data.link");
  * @private
  */
 pimcore.object.classes.data.link = Class.create(pimcore.object.classes.data.data, {
-    targets: ['_blank', '_self', '_top', '_parent'],
+    targets: ['', '_blank', '_self', '_top', '_parent'],
     types: ['asset', 'document', 'object'],
     fields: ['text', 'target', 'parameters', 'anchor', 'title', 'accesskey', 'rel', 'tabindex', 'class', 'attributes'],
     type: "link",
