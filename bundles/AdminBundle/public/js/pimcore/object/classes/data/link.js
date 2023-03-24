@@ -57,7 +57,7 @@ pimcore.object.classes.data.link = Class.create(pimcore.object.classes.data.data
         this.specificPanel.add([
             {
                 xtype: "multiselect",
-                fieldLabel: t("allowed_types"),
+                fieldLabel: t("allowed_types") + '<br />' + t('allowed_types_hint'),
                 name: "allowedTypes",
                 id: 'allowedTypes',
                 store: this.types,
@@ -68,7 +68,7 @@ pimcore.object.classes.data.link = Class.create(pimcore.object.classes.data.data
             },
             {
                 xtype: "multiselect",
-                fieldLabel: t("allowed_targets"),
+                fieldLabel: t("allowed_targets") + '<br />' + t('allowed_types_hint'),
                 name: "allowedTargets",
                 id: 'allowedTargets',
                 store: this.targets,
@@ -79,7 +79,7 @@ pimcore.object.classes.data.link = Class.create(pimcore.object.classes.data.data
             },
             {
                 xtype: "multiselect",
-                fieldLabel: t("disabled_fields"),
+                fieldLabel: t("disabled_fields") + '<br />' + t('allowed_types_hint'),
                 name: "disabledFields",
                 id: 'disabledFields',
                 store: this.fields,
