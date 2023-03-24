@@ -81,7 +81,7 @@
         </tr>
         </thead>
         <tbody>
-        {% set totalSums = {(defaultCurrency.getShortName()): 0} %}
+        {% set totalSums = {} %}
         {% for item in paginator.items %}
             {% set totalSums = totalSums|merge({(item['Currency']): ((totalSums[item['Currency']] is defined ? totalSums[item['Currency']] : 0) + item['TotalPrice'])}) %}
 
@@ -101,20 +101,29 @@
                 {{ formatter.formatDateTime(date, constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) }}
             </td>
             <td>{{ item['Items'] }}</td>
-            </td>
             <td class="text-right">{{ formatter.formatCurrency(item['TotalPrice'], item['Currency']) }}</td>
         </tr>
         {% endfor %}
         </tbody>
         <tfoot>
-        {% for currency, totalSum in totalSums %}
-            <tr>
-                <td colspan="3"></td>
-                <td class="text-right">
+        {% if totalSums|length == 0  %}
+            {% set totalSums = {(defaultCurrency.getShortName()): 0} %}
+        {% endif %}
+        <tr>
+            <td colspan="1">
+                {% if totalSums|length > 1  %}
+                    <strong>
+                        {{ 'bundle_ecommerce.back-office.order.price.total'|trans([],'admin') }}
+                    </strong>
+                {% endif %}
+            </td>
+            <td colspan="3" class="text-right">
+                {% for currency, totalSum in totalSums %}
                     <strong>{{ formatter.formatCurrency(totalSum, currency) }}</strong>
-                </td>
-            </tr>
-        {% endfor %}
+                    {% if not loop.last %} | {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
         </tfoot>
     </table>
 
