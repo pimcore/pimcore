@@ -135,8 +135,10 @@ trait Dao
                     $dropColumns[] = 'DROP COLUMN `' . $value . '`';
                 }
             }
-            $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
-            $this->resetValidTableColumnsCache($table);
+            if ($dropColumns) {
+                $this->db->executeQuery('ALTER TABLE `' . $table . '` ' . implode(', ', $dropColumns) . ';');
+                $this->resetValidTableColumnsCache($table);
+            }
         }
     }
 
