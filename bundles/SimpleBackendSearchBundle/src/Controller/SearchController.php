@@ -24,7 +24,7 @@ use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Config;
 use Pimcore\Db\Helper;
 use Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent;
-use Pimcore\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
