@@ -22,7 +22,7 @@ class AdminEvents
      *
      * This event allows you to influence path of the login page, e.g. for SSO integrations.
      *
-     * @Event("Pimcore\Event\Admin\Login\LoginRedirectEvent")
+     * @Event("Pimcore\Bundle\AdminBundle\Event\Login\LoginRedirectEvent")
      *
      * @var string
      */
@@ -36,7 +36,7 @@ class AdminEvents
      * mail sending at all. For full control, it allows you to set the response
      * to be returned.
      *
-     * @Event("Pimcore\Event\Admin\Login\LostPasswordEvent")
+     * @Event("Pimcore\Bundle\AdminBundle\Event\Login\LostPasswordEvent")
      *
      * @var string
      */
@@ -48,7 +48,7 @@ class AdminEvents
      * By setting a response on the event, you're able to control the response
      * returned after logout.
      *
-     * @Event("Pimcore\Event\Admin\Login\LogoutEvent")
+     * @Event("Pimcore\Bundle\AdminBundle\Event\Login\LogoutEvent")
      *
      * @var string
      */
@@ -76,7 +76,7 @@ class AdminEvents
     /**
      * The INDEX_SETTINGS event is triggered when the settings object is built for the index page.
      *
-     * @Event("Pimcore\Event\Admin\IndexActionSettingsEvent")
+     * @Event("Pimcore\Bundle\AdminBundle\Event\IndexActionSettingsEvent")
      *
      * @var string
      */
@@ -510,7 +510,7 @@ class AdminEvents
      * Arguments:
      *     none
      *
-     * @Event("Pimcore\Event\Admin\ElementAdminStyleEvent")
+     * @Event("Pimcore\Bundle\AdminBundle\Event\ElementAdminStyleEvent")
      *
      * @var string
      */
