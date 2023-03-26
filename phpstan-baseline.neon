@@ -255,3 +255,22 @@ parameters:
 			count: 1
 			path: models/Element/Service.php
 
+		-
+			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\CleanupThumbnailsHandler\\:\\:process\\(\\) is unused\\.$#"
+			count: 1
+			path: lib/Messenger/Handler/CleanupThumbnailsHandler.php
+
+		-
+			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SanityCheckHandler\\:\\:process\\(\\) is unused\\.$#"
+			count: 1
+			path: lib/Messenger/Handler/SanityCheckHandler.php
+
+		-
+			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SearchBackendHandler\\:\\:process\\(\\) is unused\\.$#"
+			count: 1
+			path: lib/Messenger/Handler/SearchBackendHandler.php
+
+		-
+			message: "#^Method Pimcore\\\\Messenger\\\\Handler\\\\SearchBackendHandler\\:\\:shouldFlush\\(\\) is unused\\.$#"
+			count: 1
+			path: lib/Messenger/Handler/SearchBackendHandler.php

@@ -128,6 +128,12 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 pimcore.helpers.openElement(this.data.id, this.data.type, subtype);
             }.bind(this));
         }.bind(this));
+        this.component.on('afterrender', function (el) {
+            el.inputEl.setWidth(href.width);
+            el.inputEl.setStyle({
+                'overflow': 'hidden'
+            });
+        });
 
         var items = [this.component, {
             xtype: "button",

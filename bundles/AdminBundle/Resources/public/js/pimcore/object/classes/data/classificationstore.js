@@ -63,70 +63,71 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             value: this.datax.labelWidth
         });
 
-        this.specificPanel.add({
-            xtype: "checkbox",
-            name: "localized",
-            fieldLabel: t("localized"),
-            checked: this.datax.localized
-        });
+        if (!this.isInCustomLayoutEditor()) {
+            this.specificPanel.add({
+                xtype: "checkbox",
+                name: "localized",
+                fieldLabel: t("localized"),
+                checked: this.datax.localized
+            });
 
-        this.specificPanel.add({
-            xtype: "textarea",
-            name: "allowedGroupIds",
-            width: 500,
-            height: 150,
-            fieldLabel: t("allowed_group_ids"),
-            value: this.datax.allowedGroupIds
-        });
+            this.specificPanel.add({
+                xtype: "textarea",
+                name: "allowedGroupIds",
+                width: 500,
+                height: 150,
+                fieldLabel: t("allowed_group_ids"),
+                value: this.datax.allowedGroupIds
+            });
 
-        this.specificPanel.add({
-            xtype: "numberfield",
-            fieldLabel: t("classificationstore_group_limitation"),
-            name: "maxItems",
-            value: this.datax.maxItems,
-            minValue: 0
-        });
+            this.specificPanel.add({
+                xtype: "numberfield",
+                fieldLabel: t("classificationstore_group_limitation"),
+                name: "maxItems",
+                value: this.datax.maxItems,
+                minValue: 0
+            });
 
-        var  store = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: Routing.generate('pimcore_admin_dataobject_classificationstore_liststores')
-            },
-            autoDestroy: false,
-            autoLoad: true,
-            listeners: {
-                load: function() {
-                    this.storeCombo.setValue(this.datax.storeId ? this.datax.storeId : 1);
-                }.bind(this)
-            }
-        });
+            const store = new Ext.data.Store({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_dataobject_classificationstore_liststores')
+                },
+                autoDestroy: false,
+                autoLoad: true,
+                listeners: {
+                    load: function () {
+                        this.storeCombo.setValue(this.datax.storeId ? this.datax.storeId : 1);
+                    }.bind(this)
+                }
+            });
 
-        this.storeCombo = new Ext.form.ComboBox({
-            name: "storeId",
-            fieldLabel: t("store"),
-            value: this.datax.storeId ? this.datax.storeId : 1,
-            store: store,
-            displayField: 'name',
-            valueField: 'id'
-        });
+            this.storeCombo = new Ext.form.ComboBox({
+                name: "storeId",
+                fieldLabel: t("store"),
+                value: this.datax.storeId ? this.datax.storeId : 1,
+                store: store,
+                displayField: 'name',
+                valueField: 'id'
+            });
 
-        this.specificPanel.add(this.storeCombo);
+            this.specificPanel.add(this.storeCombo);
 
-        this.specificPanel.add({
-            xtype: "checkbox",
-            name: "hideEmptyData",
-            fieldLabel: t("hide_empty_data"),
-            checked: this.datax.hideEmptyData
-        });
+            this.specificPanel.add({
+                xtype: "checkbox",
+                name: "hideEmptyData",
+                fieldLabel: t("hide_empty_data"),
+                checked: this.datax.hideEmptyData
+            });
 
-        this.specificPanel.add({
-            xtype: "checkbox",
-            name: "disallowAddRemove",
-            fieldLabel: t("disallow_addremove"),
-            checked: this.datax.disallowAddRemove
+            this.specificPanel.add({
+                xtype: "checkbox",
+                name: "disallowAddRemove",
+                fieldLabel: t("disallow_addremove"),
+                checked: this.datax.disallowAddRemove
 
-        });
-
+            });
+        }
         this.layout.on("render", this.layoutRendered.bind(this));
 
         return this.layout;

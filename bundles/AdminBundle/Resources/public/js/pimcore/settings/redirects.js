@@ -286,7 +286,12 @@ pimcore.settings.redirects = Class.create({
                 flex: 150, sortable:true, dataIndex: "expiry",
                 editor: {
                     xtype: 'datefield',
-                    format: 'Y-m-d'
+                    format: 'Y-m-d',
+                    onChange: function(value) {
+                        if(Ext.String.hasHtmlCharacters(value)) {
+                            this.reset();
+                        }
+                    },
                 },
                 renderer:
                     function(d) {

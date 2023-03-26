@@ -133,6 +133,11 @@ final class User extends User\UserRole
     protected $twoFactorAuthentication;
 
     /**
+     * OIDC Provider from pimcore/openid-connect
+     */
+    protected ?string $provider = null;
+
+    /**
      * @return string|null
      */
     public function getPassword()
@@ -1062,6 +1067,16 @@ final class User extends User\UserRole
 
             $this->twoFactorAuthentication[$key] = $value;
         }
+    }
+
+    public function getProvider(): ?string
+    {
+        return $this->provider;
+    }
+
+    public function setProvider(?string $provider): void
+    {
+        $this->provider = $provider;
     }
 
     public function hasImage()

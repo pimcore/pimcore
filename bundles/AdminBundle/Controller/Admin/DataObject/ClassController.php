@@ -455,6 +455,14 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $class->rename($values['name']);
         }
 
+        if ($values['compositeIndices']) {
+            foreach ($values['compositeIndices'] as $index => $compositeIndex) {
+                if ($compositeIndex['index_key'] !== ($sanitizedKey = preg_replace('/[^a-za-z0-9_\-+]/', '', $compositeIndex['index_key']))) {
+                    $values['compositeIndices'][$index]['index_key'] = $sanitizedKey;
+                }
+            }
+        }
+
         unset($values['creationDate']);
         unset($values['userOwner']);
         unset($values['layoutDefinitions']);
