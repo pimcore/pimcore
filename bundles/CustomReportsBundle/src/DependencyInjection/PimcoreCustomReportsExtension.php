@@ -62,7 +62,7 @@ class PimcoreCustomReportsExtension extends ConfigurableExtension implements Pre
         );
 
         //load configs
-        $configs = ConfigurationHelper::locate($configDir);
+        $configs = ConfigurationHelper::getSymfonyConfigFiles($configDir);
         foreach ($configs as $config) {
             $configLoader->load($config);
         }

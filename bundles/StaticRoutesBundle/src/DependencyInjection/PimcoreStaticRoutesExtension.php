@@ -48,7 +48,7 @@ final class PimcoreStaticRoutesExtension extends ConfigurableExtension implement
         );
 
         //load configs
-        $configs = ConfigurationHelper::locate($configDir);
+        $configs = ConfigurationHelper::getSymfonyConfigFiles($configDir);
         foreach ($configs as $config) {
             $configLoader->load($config);
         }

@@ -131,7 +131,7 @@ final class Configuration implements ConfigurationInterface
         $this->addCustomViewsNode($rootNode);
         $this->addTemplatingEngineNode($rootNode);
         $this->addGotenbergNode($rootNode);
-        ConfigurationHelper::addWriteTargetNodes($rootNode, [
+        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, [
             'image_thumbnails',
             'video_thumbnails',
             'document_types',

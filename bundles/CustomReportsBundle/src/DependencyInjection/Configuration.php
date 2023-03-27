@@ -77,7 +77,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
-        ConfigurationHelper::addWriteTargetNodes($rootNode, ['custom_reports']);
+        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['custom_reports']);
 
         return $treeBuilder;
     }

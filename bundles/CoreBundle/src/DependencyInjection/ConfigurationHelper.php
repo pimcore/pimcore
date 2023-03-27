@@ -27,7 +27,7 @@ use Symfony\Component\Finder\Finder;
  */
 final class ConfigurationHelper
 {
-    public static function addWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes): void
+    public static function addConfigLocationWithWriteTargetNodes(ArrayNodeDefinition $rootNode, array $nodes): void
     {
         $storageNode = $rootNode
             ->children()
@@ -36,12 +36,12 @@ final class ConfigurationHelper
             ->children();
 
         foreach ($nodes as $node) {
-            ConfigurationHelper::addStorageNode($storageNode, $node, '/var/config/' . $node);
+            ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, '/var/config/' . $node);
         }
 
     }
 
-    public static function addStorageNode(NodeBuilder $node, string $name, string $folder): void
+    public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder): void
     {
         $node->
         arrayNode($name)
@@ -60,7 +60,7 @@ final class ConfigurationHelper
             ->end();
     }
 
-    public static function locate(string $configPath, array $params = []): array
+    public static function getSymfonyConfigFiles(string $configPath, array $params = []): array
     {
         $result = [];
         $dirs = [];

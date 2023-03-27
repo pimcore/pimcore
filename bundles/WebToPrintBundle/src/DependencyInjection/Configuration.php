@@ -67,7 +67,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('gotenbergSettings')->end()
             ->end();
 
-        ConfigurationHelper::addWriteTargetNodes($rootNode, ['web_to_print']);
+        ConfigurationHelper::addConfigLocationWithWriteTargetNodes($rootNode, ['web_to_print']);
 
         return $treeBuilder;
     }
