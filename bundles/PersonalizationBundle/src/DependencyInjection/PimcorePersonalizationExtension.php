@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\PersonalizationBundle\DependencyInjection;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\DataLoaderInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\TargetingStorageInterface;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -88,5 +89,10 @@ class PimcorePersonalizationExtension extends ConfigurableExtension
             ->setArgument('$actionHandlers', $actionHandlerLocator);
 
         $container->setParameter('pimcore_personalization.targeting.session.enabled', $config['session']['enabled'] ?? false);
+
+        $container
+            ->findDefinition(TargetingEnableService::class)
+            ->setArgument('$enabled', $config['enabled'] ?? false);
+
     }
 }

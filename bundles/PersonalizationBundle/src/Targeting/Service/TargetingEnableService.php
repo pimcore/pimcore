@@ -23,23 +23,19 @@ class TargetingEnableService
 {
     private RequestHelper $requestHelper;
 
-    private bool $enabled = false;
+    private bool $enabled;
 
-    public function __construct(RequestHelper $requestHelper)
+    public function __construct(RequestHelper $requestHelper, bool $enabled)
     {
+        $this->enabled = $enabled;
         $this->requestHelper = $requestHelper;
     }
 
-    public function isTargetingEnabled(): bool
-    {
-        return $this->enabled;
-    }
+    public function isTargetingEnabled(): bool {
 
-    public function enableTargeting(): bool {
         $request = $this->requestHelper->getCurrentRequest();
 
-        if($request->cookies->getBoolean('pimcore_targeting_enabled') || \Pimcore::getKernel()->getContainer()->getParameter('pimcore_personalization.targeting.enabled')) {
-            $this->enabled = true;
+        if($this->enabled || $request->cookies->getBoolean('pimcore_targeting_enabled')) {
             return true;
         }
         return false;

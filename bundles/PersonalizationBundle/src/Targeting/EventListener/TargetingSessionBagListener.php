@@ -58,7 +58,7 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if(!$this->targetingEnableService->enableTargeting()) {
+        if(!$this->targetingEnableService->isTargetingEnabled()) {
             return;
         }
 
