@@ -103,10 +103,8 @@ class DataObjectHelperController extends AdminController
         $configListing = $configListing->load();
 
         $configData = [];
-        if (is_array($configListing)) {
-            foreach ($configListing as $config) {
-                $configData[] = $config->getObjectVars();
-            }
+        foreach ($configListing as $config) {
+            $configData[] = $config->getObjectVars();
         }
 
         return $configData;
@@ -145,10 +143,8 @@ class DataObjectHelperController extends AdminController
         }
 
         $configData = [];
-        if (is_array($configListing)) {
-            foreach ($configListing as $config) {
-                $configData[] = $config->getObjectVars();
-            }
+        foreach ($configListing as $config) {
+            $configData[] = $config->getObjectVars();
         }
 
         return $configData;
@@ -165,9 +161,6 @@ class DataObjectHelperController extends AdminController
     {
         $classId = $request->get('classId');
         $list = $this->getMyOwnGridColumnConfigs($this->getAdminUser()->getId(), $classId);
-        if (!is_array($list)) {
-            $list = [];
-        }
         $list = array_merge($list, $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId));
         $result = [];
 
@@ -352,14 +345,9 @@ class DataObjectHelperController extends AdminController
         }
 
         $localizedFields = [];
-        $objectbrickFields = [];
-        if (is_array($fields)) {
-            foreach ($fields as $key => $field) {
-                if ($field instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    $localizedFields[] = $field;
-                } elseif ($field instanceof DataObject\ClassDefinition\Data\Objectbricks) {
-                    $objectbrickFields[] = $field;
-                }
+        foreach ($fields as $field) {
+            if ($field instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                $localizedFields[] = $field;
             }
         }
 
@@ -584,7 +572,7 @@ class DataObjectHelperController extends AdminController
         $includeBricks = !$noBrickColumns;
 
         if (is_array($fields)) {
-            foreach ($fields as $key => $field) {
+            foreach ($fields as $field) {
                 if ($field instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     foreach ($field->getFieldDefinitions($context) as $fd) {
                         if (empty($types) || in_array($fd->getFieldType(), $types)) {
@@ -1125,10 +1113,8 @@ class DataObjectHelperController extends AdminController
         $key = $keyPrefix . $field->getName();
         $config = null;
         $title = $field->getName();
-        if (method_exists($field, 'getTitle')) {
-            if ($field->getTitle()) {
-                $title = $field->getTitle();
-            }
+        if ($field->getTitle()) {
+            $title = $field->getTitle();
         }
 
         if ($field instanceof DataObject\ClassDefinition\Data\Slider) {

@@ -50,11 +50,7 @@ class SessionStatus
 
         // we fall back to $_SESSION from here on as the session API does not expose a list of namespaces
         $sessionData = $_SESSION ?? null;
-        if (empty($sessionData)) {
-            return false;
-        }
-
-        if (!is_array($sessionData)) {
+        if (!$sessionData) {
             return false;
         }
 

@@ -48,7 +48,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @internal
      *
-     * @var array|string|null
+     * @var string[]|string|null
      */
     public array|string|null $visibleFields = null;
 
@@ -708,6 +708,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return null;
     }
 
+    /**
+     * @param string[]|string|null $visibleFields
+     *
+     * @return $this
+     */
     public function setVisibleFields(array|string|null $visibleFields): static
     {
         if (is_array($visibleFields) && count($visibleFields)) {

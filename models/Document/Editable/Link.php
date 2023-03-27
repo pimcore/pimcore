@@ -88,10 +88,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $url = $this->getHref();
 
         if (strlen($url) > 0) {
-            if (!is_array($this->config)) {
-                $this->config = [];
-            }
-
             $prefix = '';
             $suffix = '';
             $noText = false;

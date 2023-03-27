@@ -98,9 +98,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function frontend()
     {
-        if (!is_array($this->indices)) {
-            $this->indices = [];
-        }
         reset($this->indices);
         while ($this->loop());
     }
@@ -489,7 +486,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             $editable->setInDialogBox($dialogId);
             $editable->addConfig('dialogBoxConfig', $config);
             $html .= $editable->render();
-        } elseif (is_array($config) && isset($config[0])) {
+        } else {
             foreach ($config as $item) {
                 $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId, $html);
             }

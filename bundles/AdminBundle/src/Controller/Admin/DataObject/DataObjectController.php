@@ -2150,10 +2150,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         foreach ($relations as $r) {
             $originals[] = $r['dest_id'];
         }
-        if (is_array($value)) {
-            foreach ($value as $row) {
-                $changed[] = $row['id'];
-            }
+        foreach ($value as $row) {
+            $changed[] = $row['id'];
         }
         $diff = array_diff($originals, $changed);
 
@@ -2167,10 +2165,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         foreach ($relations as $r) {
             $originals[] = $r['dest_id'];
         }
-        if (is_array($value)) {
-            foreach ($value as $row) {
-                $changed[] = $row['id'];
-            }
+        foreach ($value as $row) {
+            $changed[] = $row['id'];
         }
         $diff = array_diff($changed, $originals);
 

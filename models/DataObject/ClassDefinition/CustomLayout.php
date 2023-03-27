@@ -246,7 +246,7 @@ class CustomLayout extends Model\AbstractModel
      */
     public function delete(): void
     {
-        if (!$this->isWritable()) {
+        if (!$this->isWriteable()) {
             throw new DataObject\Exception\DefinitionWriteException();
         }
 

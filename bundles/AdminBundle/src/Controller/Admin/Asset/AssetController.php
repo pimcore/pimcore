@@ -2507,16 +2507,14 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $success = false;
 
         if ($asset = Asset::getById((int) $request->get('id'))) {
-            if (method_exists($asset, 'clearThumbnails')) {
-                if (!$asset->isAllowed('publish')) {
-                    throw $this->createAccessDeniedException('not allowed to publish');
-                }
-
-                $asset->clearThumbnails(true); // force clear
-                $asset->save();
-
-                $success = true;
+            if (!$asset->isAllowed('publish')) {
+                throw $this->createAccessDeniedException('not allowed to publish');
             }
+
+            $asset->clearThumbnails(true); // force clear
+            $asset->save();
+
+            $success = true;
         }
 
         return $this->adminJson(['success' => $success]);

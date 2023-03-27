@@ -360,41 +360,54 @@ final class Version extends AbstractModel
         return $this->userId;
     }
 
+    /**
+     * @return $this
+     */
     public function setCid(int $cid): static
     {
-        $this->cid = (int) $cid;
+        $this->cid = $cid;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setDate(int $date): static
     {
-        $this->date = (int) $date;
+        $this->date = $date;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setNote(string $note): static
     {
-        $this->note = (string) $note;
+        $this->note = $note;
 
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setUserId(int $userId): static
     {
-        if (is_numeric($userId)) {
-            if ($user = User::getById($userId)) {
-                $this->userId = (int) $userId;
-                $this->setUser($user);
-            }
+        if ($user = User::getById($userId)) {
+            $this->userId = $userId;
+            $this->setUser($user);
         }
 
         return $this;
@@ -409,6 +422,9 @@ final class Version extends AbstractModel
         return $this->data;
     }
 
+    /**
+     * @return $this
+     */
     public function setData(mixed $data): static
     {
         $this->data = $data;
@@ -421,9 +437,12 @@ final class Version extends AbstractModel
         return $this->serialized;
     }
 
+    /**
+     * @return $this
+     */
     public function setSerialized(bool $serialized): static
     {
-        $this->serialized = (bool) $serialized;
+        $this->serialized = $serialized;
 
         return $this;
     }
@@ -433,9 +452,12 @@ final class Version extends AbstractModel
         return $this->ctype;
     }
 
+    /**
+     * @return $this
+     */
     public function setCtype(string $ctype): static
     {
-        $this->ctype = (string) $ctype;
+        $this->ctype = $ctype;
 
         return $this;
     }
@@ -445,6 +467,9 @@ final class Version extends AbstractModel
         return $this->user;
     }
 
+    /**
+     * @return $this
+     */
     public function setUser(?User $user): static
     {
         $this->user = $user;
@@ -462,21 +487,24 @@ final class Version extends AbstractModel
         return $this->public;
     }
 
+    /**
+     * @return $this
+     */
     public function setPublic(bool $public): static
     {
-        $this->public = (bool) $public;
+        $this->public = $public;
 
         return $this;
     }
 
     public function getVersionCount(): int
     {
-        return $this->versionCount ? $this->versionCount : 0;
+        return $this->versionCount ?: 0;
     }
 
     public function setVersionCount(int $versionCount): void
     {
-        $this->versionCount = (int) $versionCount;
+        $this->versionCount = $versionCount;
     }
 
     public function getBinaryFileHash(): ?string
@@ -501,7 +529,7 @@ final class Version extends AbstractModel
 
     public function getGenerateStackTrace(): bool
     {
-        return (bool) $this->generateStackTrace;
+        return $this->generateStackTrace;
     }
 
     public function setGenerateStackTrace(bool $generateStackTrace): void

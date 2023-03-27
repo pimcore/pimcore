@@ -197,17 +197,15 @@ class Service
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
-        if (is_array($objectBrick->getClassDefinitions())) {
-            foreach ($objectBrick->getClassDefinitions() as &$cd) {
-                // for compatibility (upgraded pimcore4s that may deliver class ids in $cd['classname'] we need to
-                // get the class by id in order to be able to correctly set the classname for the generated json
-                if (!$class = DataObject\ClassDefinition::getByName($cd['classname'])) {
-                    $class = DataObject\ClassDefinition::getById($cd['classname']);
-                }
+        foreach ($objectBrick->getClassDefinitions() as &$cd) {
+            // for compatibility (upgraded pimcore4s that may deliver class ids in $cd['classname'] we need to
+            // get the class by id in order to be able to correctly set the classname for the generated json
+            if (!$class = DataObject\ClassDefinition::getByName($cd['classname'])) {
+                $class = DataObject\ClassDefinition::getById($cd['classname']);
+            }
 
-                if ($class) {
-                    $cd['classname'] = $class->getName();
-                }
+            if ($class) {
+                $cd['classname'] = $class->getName();
             }
         }
 
@@ -298,7 +296,7 @@ class Service
      */
     public static function generateLayoutTreeFromArray(array $array, bool $throwException = false, bool $insideLocalizedField = false): Data\EncryptedField|bool|Data|Layout
     {
-        if (is_array($array) && count($array) > 0) {
+        if ($array) {
             if ($title = $array['title'] ?? false) {
                 if (preg_match('/<.+?>/', $title)) {
                     throw new \Exception('not a valid title:' . htmlentities($title));
@@ -384,10 +382,6 @@ class Service
      */
     public static function updateTableDefinitions(array &$tableDefinitions, array $tableNames): void
     {
-        if (!is_array($tableDefinitions)) {
-            $tableDefinitions = [];
-        }
-
         $db = \Pimcore\Db::get();
         $tmp = [];
         foreach ($tableNames as $tableName) {
@@ -483,10 +477,6 @@ class Service
      */
     public static function buildUseTraitsCode(array $useParts, ?string $newTraits): string
     {
-        if (!is_array($useParts)) {
-            $useParts = [];
-        }
-
         if ($newTraits) {
             $customParts = explode(',', $newTraits);
             foreach ($customParts as $trait) {

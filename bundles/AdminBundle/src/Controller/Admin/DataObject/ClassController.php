@@ -1889,7 +1889,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             foreach ($fieldDefs as $fieldDef) {
                 if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
                     $allowedKeys = $fieldDef->getAllowedTypes();
-                    if (is_array($allowedKeys) && in_array($key, $allowedKeys)) {
+                    if (in_array($key, $allowedKeys)) {
                         $result[] = [
                             'class' => $class->getName(),
                             'field' => $fieldDef->getName(),

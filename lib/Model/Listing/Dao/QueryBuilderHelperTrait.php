@@ -101,20 +101,18 @@ trait QueryBuilderHelperTrait
             $c = 0;
             $lastOrder = $order[0] ?? null;
 
-            if (is_array($orderKey)) {
-                foreach ($orderKey as $key) {
-                    if (!empty($order[$c])) {
-                        $lastOrder = $order[$c];
-                    }
-
-                    $parts[] = $key . ' ' . $lastOrder;
-
-                    $c++;
+            foreach ($orderKey as $key) {
+                if (!empty($order[$c])) {
+                    $lastOrder = $order[$c];
                 }
+
+                $parts[] = $key . ' ' . $lastOrder;
+
+                $c++;
             }
 
             if (!empty($parts)) {
-                $queryBuilder->orderBy((string) implode(', ', $parts), ' ');
+                $queryBuilder->orderBy(implode(', ', $parts), ' ');
             }
         }
     }

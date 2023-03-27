@@ -496,10 +496,6 @@ class TranslationController extends AdminController
 
     protected function prefixTranslations(array $translations): array
     {
-        if (!is_array($translations)) {
-            return $translations;
-        }
-
         $prefixedTranslations = [];
         foreach ($translations as $lang => $trans) {
             $prefixedTranslations['_' . $lang] = $trans;

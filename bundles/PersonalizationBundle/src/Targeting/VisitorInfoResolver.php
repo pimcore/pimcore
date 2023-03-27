@@ -190,7 +190,7 @@ class VisitorInfoResolver
     private function handleTargetingRuleActions(VisitorInfo $visitorInfo, Rule $rule): void
     {
         $actions = $rule->getActions();
-        if (!$actions || !is_array($actions)) {
+        if (!$actions) {
             return;
         }
 

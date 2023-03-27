@@ -110,10 +110,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         $container = \Pimcore::getContainer();
         $editableHandler = $container->get(EditableHandler::class);
 
-        if (!is_array($this->config)) {
-            $this->config = [];
-        }
-
         if (empty($this->config['controller']) && !empty($this->config['template'])) {
             $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
         }

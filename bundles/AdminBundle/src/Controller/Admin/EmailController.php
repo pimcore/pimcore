@@ -94,13 +94,11 @@ class EmailController extends AdminController
         $data = $list->load();
         $jsonData = [];
 
-        if (is_array($data)) {
-            foreach ($data as $entry) {
-                $tmp = $entry->getObjectVars();
-                unset($tmp['bodyHtml']);
-                unset($tmp['bodyText']);
-                $jsonData[] = $tmp;
-            }
+        foreach ($data as $entry) {
+            $tmp = $entry->getObjectVars();
+            unset($tmp['bodyHtml']);
+            unset($tmp['bodyText']);
+            $jsonData[] = $tmp;
         }
 
         return $this->adminJson([
@@ -510,10 +508,8 @@ class EmailController extends AdminController
 
             $data = $list->load();
             $jsonData = [];
-            if (is_array($data)) {
-                foreach ($data as $entry) {
-                    $jsonData[] = $entry->getObjectVars();
-                }
+            foreach ($data as $entry) {
+                $jsonData[] = $entry->getObjectVars();
             }
 
             return $this->adminJson([

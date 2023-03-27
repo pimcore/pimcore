@@ -57,11 +57,9 @@ class UserController extends AdminController implements KernelControllerEventInt
         $list->load();
 
         $users = [];
-        if (is_array($list->getUsers())) {
-            foreach ($list->getUsers() as $user) {
-                if ($user->getId() && $user->getName() != 'system') {
-                    $users[] = $this->getTreeNodeConfig($user);
-                }
+        foreach ($list->getUsers() as $user) {
+            if ($user->getId() && $user->getName() != 'system') {
+                $users[] = $this->getTreeNodeConfig($user);
             }
         }
 
@@ -144,22 +142,20 @@ class UserController extends AdminController implements KernelControllerEventInt
                             $setter = 'setWorkspaces' . ucfirst($key);
                             $workspaces = $rObject->$getter();
                             $clonedWorkspaces = [];
-                            if (is_array($workspaces)) {
-                                /** @var User\Workspace\AbstractWorkspace $workspace */
-                                foreach ($workspaces as $workspace) {
-                                    $vars = $workspace->getObjectVars();
-                                    if ($key == 'object') {
-                                        $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\DataObject';
-                                    } else {
-                                        $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\' . ucfirst($key);
-                                    }
-                                    $newWorkspace = new $workspaceClass();
-                                    foreach ($vars as $varKey => $varValue) {
-                                        $newWorkspace->setObjectVar($varKey, $varValue);
-                                    }
-                                    $newWorkspace->setUserId($user->getId());
-                                    $clonedWorkspaces[] = $newWorkspace;
+                            /** @var User\Workspace\AbstractWorkspace $workspace */
+                            foreach ($workspaces as $workspace) {
+                                $vars = $workspace->getObjectVars();
+                                if ($key == 'object') {
+                                    $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\DataObject';
+                                } else {
+                                    $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\' . ucfirst($key);
                                 }
+                                $newWorkspace = new $workspaceClass();
+                                foreach ($vars as $varKey => $varValue) {
+                                    $newWorkspace->setObjectVar($varKey, $varValue);
+                                }
+                                $newWorkspace->setUserId($user->getId());
+                                $clonedWorkspaces[] = $newWorkspace;
                             }
 
                             $user->$setter($clonedWorkspaces);
@@ -217,15 +213,13 @@ class UserController extends AdminController implements KernelControllerEventInt
         $list->load();
 
         $childList = $roleMode ? $list->getRoles() : $list->getUsers();
-        if (is_array($childList)) {
-            foreach ($childList as $user) {
-                if ($user->getId() == $currentUser->getId()) {
-                    throw new \Exception('Cannot delete current user');
-                }
-                if ($user->getId() && $currentUser->getId() && $user->getName() != 'system') {
-                    $currentList[] = $user;
-                    $this->populateChildNodes($user, $currentList, $roleMode);
-                }
+        foreach ($childList as $user) {
+            if ($user->getId() == $currentUser->getId()) {
+                throw new \Exception('Cannot delete current user');
+            }
+            if ($user->getId() && $currentUser->getId() && $user->getName() != 'system') {
+                $currentList[] = $user;
+                $this->populateChildNodes($user, $currentList, $roleMode);
             }
         }
 
@@ -300,9 +294,7 @@ class UserController extends AdminController implements KernelControllerEventInt
             // check if there are permissions transmitted, if so reset them all to false (they will be set later)
             foreach ($values as $key => $value) {
                 if (strpos($key, 'permission_') === 0) {
-                    if (method_exists($user, 'setAllAclToFalse')) {
-                        $user->setAllAclToFalse();
-                    }
+                    $user->setAllAclToFalse();
 
                     break;
                 }
@@ -441,10 +433,8 @@ class UserController extends AdminController implements KernelControllerEventInt
         $availableUserPermissions = $availableUserPermissionsList->load();
 
         $availableUserPermissionsData = [];
-        if (is_array($availableUserPermissions)) {
-            foreach ($availableUserPermissions as $availableUserPermission) {
-                $availableUserPermissionsData[] = $availableUserPermission->getObjectVars();
-            }
+        foreach ($availableUserPermissions as $availableUserPermission) {
+            $availableUserPermissionsData[] = $availableUserPermission->getObjectVars();
         }
 
         // get available roles
@@ -453,10 +443,8 @@ class UserController extends AdminController implements KernelControllerEventInt
         $list->load();
 
         $roles = [];
-        if (is_array($list->getItems())) {
-            foreach ($list->getItems() as $role) {
-                $roles[] = [$role->getId(), $role->getName()];
-            }
+        foreach ($list->getItems() as $role) {
+            $roles[] = [$role->getId(), $role->getName()];
         }
 
         // unset confidential informations
@@ -671,10 +659,8 @@ class UserController extends AdminController implements KernelControllerEventInt
         $list->load();
 
         $roles = [];
-        if (is_array($list->getItems())) {
-            foreach ($list->getItems() as $role) {
-                $roles[] = $this->getRoleTreeNodeConfig($role);
-            }
+        foreach ($list->getItems() as $role) {
+            $roles[] = $this->getRoleTreeNodeConfig($role);
         }
 
         return $this->adminJson($roles);
@@ -982,17 +968,15 @@ class UserController extends AdminController implements KernelControllerEventInt
         $list->load();
 
         $users = [];
-        if (is_array($list->getUsers())) {
-            foreach ($list->getUsers() as $user) {
-                if ($user instanceof User && $user->getId() && $user->getName() != 'system') {
-                    $users[] = [
-                        'id' => $user->getId(),
-                        'name' => $user->getName(),
-                        'email' => $user->getEmail(),
-                        'firstname' => $user->getFirstname(),
-                        'lastname' => $user->getLastname(),
-                    ];
-                }
+        foreach ($list->getUsers() as $user) {
+            if ($user instanceof User && $user->getId() && $user->getName() != 'system') {
+                $users[] = [
+                    'id' => $user->getId(),
+                    'name' => $user->getName(),
+                    'email' => $user->getEmail(),
+                    'firstname' => $user->getFirstname(),
+                    'lastname' => $user->getLastname(),
+                ];
             }
         }
 

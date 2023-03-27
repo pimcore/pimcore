@@ -234,13 +234,11 @@ abstract class AbstractUser extends Model\AbstractModel
         if (count($userRoleListing)) {
             foreach ($userRoleListing as $relatedUser) {
                 $userRoles = $relatedUser->getRoles();
-                if (is_array($userRoles)) {
-                    $key = array_search($this->getId(), $userRoles);
-                    if (false !== $key) {
-                        unset($userRoles[$key]);
-                        $relatedUser->setRoles($userRoles);
-                        $relatedUser->save();
-                    }
+                $key = array_search($this->getId(), $userRoles);
+                if (false !== $key) {
+                    unset($userRoles[$key]);
+                    $relatedUser->setRoles($userRoles);
+                    $relatedUser->save();
                 }
             }
         }

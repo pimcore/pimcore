@@ -89,7 +89,6 @@ class PimcoreUrl implements RuntimeExtensionInterface
             $name = $this->getCurrentRoute();
         }
 
-        /** @var Concrete | null $object */
         $object = $parameters['object'] ?? null;
         $linkGenerator = null;
 

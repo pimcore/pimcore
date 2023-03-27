@@ -55,10 +55,8 @@ class Dao extends Model\Dao\AbstractDao
             ORDER BY objects.path, objects.key, documents.path, documents.key, assets.path, assets.filename',
             [$this->model->getSourceId(), $this->model->getSourceType()]);
 
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $d) {
-                $this->model->addRequirement($d['targetid'], $d['targettype']);
-            }
+        foreach ($data as $d) {
+            $this->model->addRequirement($d['targetid'], $d['targettype']);
         }
     }
 
@@ -77,12 +75,10 @@ class Dao extends Model\Dao\AbstractDao
 
             //schedule for sanity check
             $data = $this->db->fetchAllAssociative('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targettype = ? AND targetid = ?', [$type, $id]);
-            if (is_array($data)) {
-                foreach ($data as $row) {
-                    \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                        new SanityCheckMessage($row['sourcetype'], $row['sourceid'])
-                    );
-                }
+            foreach ($data as $row) {
+                \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+                    new SanityCheckMessage($row['sourcetype'], $row['sourceid'])
+                );
             }
 
             Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $id) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $type));
@@ -200,13 +196,11 @@ class Dao extends Model\Dao\AbstractDao
 
         $requiredBy = [];
 
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $d) {
-                $requiredBy[] = [
-                    'id' => $d['sourceid'],
-                    'type' => $d['sourcetype'],
-                ];
-            }
+        foreach ($data as $d) {
+            $requiredBy[] = [
+                'id' => $d['sourceid'],
+                'type' => $d['sourcetype'],
+            ];
         }
 
         return $requiredBy;
@@ -222,7 +216,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getRequiredByWithPath(int $offset = null, int $limit = null, string $orderBy = null, string $orderDirection = null): array
     {
-        $targetId = (int)$this->model->getSourceId();
+        $targetId = $this->model->getSourceId();
 
         if (in_array($this->model->getSourceType(), ['object', 'document', 'asset'])) {
             $targetType = $this->model->getSourceType();
@@ -262,13 +256,7 @@ class Dao extends Model\Dao\AbstractDao
             $query .= ' LIMIT ' . $offset . ', ' . $limit;
         }
 
-        $requiredBy = $this->db->fetchAllAssociative($query);
-
-        if (is_array($requiredBy) && count($requiredBy) > 0) {
-            return $requiredBy;
-        } else {
-            return [];
-        }
+        return $this->db->fetchAllAssociative($query);
     }
 
     /**

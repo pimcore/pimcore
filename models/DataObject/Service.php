@@ -95,14 +95,12 @@ class Service extends Model\Element\Service
         foreach ($classesList as $class) {
             $fieldDefinitions = $class->getFieldDefinitions();
             $dataKeys = [];
-            if (is_array($fieldDefinitions)) {
-                foreach ($fieldDefinitions as $tag) {
-                    if ($tag instanceof ClassDefinition\Data\User) {
-                        $dataKeys[] = $tag->getName();
-                    }
+            foreach ($fieldDefinitions as $tag) {
+                if ($tag instanceof ClassDefinition\Data\User) {
+                    $dataKeys[] = $tag->getName();
                 }
             }
-            if (is_array($dataKeys) && count($dataKeys) > 0) {
+            if (count($dataKeys) > 0) {
                 $classesToCheck[$class->getName()] = $dataKeys;
             }
         }
@@ -791,16 +789,13 @@ class Service extends Model\Element\Service
      */
     public static function getOptionsForSelectField(string|Concrete $object, ClassDefinition\Data\Multiselect|ClassDefinition\Data\Select|string $definition): array
     {
-        $class = null;
         $options = [];
 
-        if (is_object($object) && method_exists($object, 'getClass')) {
-            $class = $object->getClass();
-        } elseif (is_string($object)) {
+        if (!$object instanceof Concrete) {
             $object = '\\' . ltrim($object, '\\');
             $object = new $object();
-            $class = $object->getClass();
         }
+        $class = $object->getClass();
 
         if ($class) {
             if (is_string($definition)) {

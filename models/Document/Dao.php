@@ -549,7 +549,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @param array $columns
+     * @param string[] $columns
      * @param User $user
      *
      * @return array<string, int>

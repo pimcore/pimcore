@@ -99,6 +99,9 @@ class BooleanSelect extends Data implements
         return $this->options;
     }
 
+    /**
+     * @return $this
+     */
     public function setOptions(array $options): static
     {
         // nothing to do
@@ -263,6 +266,9 @@ class BooleanSelect extends Data implements
         return $this->yesLabel;
     }
 
+    /**
+     * @return $this
+     */
     public function setYesLabel(?string $yesLabel): static
     {
         $this->yesLabel = $yesLabel;
@@ -273,21 +279,12 @@ class BooleanSelect extends Data implements
 
     public function setOptionsEntry(int $value, string $label): void
     {
-        if (!is_array($this->options)) {
-            $this->options = [
-                [
-                    'key' => $label,
-                    'value' => $value,
-                ],
-            ];
-        } else {
-            foreach ($this->options as $idx => $option) {
-                if ($option['value'] == $value) {
-                    $option['key'] = $label;
-                    $this->options[$idx] = $option;
+        foreach ($this->options as $idx => $option) {
+            if ($option['value'] == $value) {
+                $option['key'] = $label;
+                $this->options[$idx] = $option;
 
-                    break;
-                }
+                break;
             }
         }
     }
@@ -297,6 +294,9 @@ class BooleanSelect extends Data implements
         return $this->noLabel;
     }
 
+    /**
+     * @return $this
+     */
     public function setNoLabel(string $noLabel): static
     {
         $this->noLabel = $noLabel;
@@ -310,6 +310,9 @@ class BooleanSelect extends Data implements
         return $this->emptyLabel;
     }
 
+    /**
+     * @return $this
+     */
     public function setEmptyLabel(string $emptyLabel): static
     {
         $this->emptyLabel = $emptyLabel;

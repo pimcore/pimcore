@@ -73,10 +73,8 @@ class AssetHelperController extends AdminController
         $configListing = $configListing->load();
 
         $configData = [];
-        if (is_array($configListing)) {
-            foreach ($configListing as $config) {
-                $configData[] = $config->getObjectVars();
-            }
+        foreach ($configListing as $config) {
+            $configData[] = $config->getObjectVars();
         }
 
         return $configData;
@@ -116,10 +114,8 @@ class AssetHelperController extends AdminController
         }
 
         $configData = [];
-        if (is_array($configListing)) {
-            foreach ($configListing as $config) {
-                $configData[] = $config->getObjectVars();
-            }
+        foreach ($configListing as $config) {
+            $configData[] = $config->getObjectVars();
         }
 
         return $configData;

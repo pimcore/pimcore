@@ -550,11 +550,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     public function hasChildren(): bool
     {
-        if (is_array($this->children) && count($this->children) > 0) {
-            return true;
-        }
-
-        return false;
+        return count($this->children) > 0;
     }
 
     /**
@@ -974,13 +970,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $blockDefinitions = $this->getFieldDefinitions();
 
-        if (is_array($blockDefinitions)) {
-            foreach ($blockDefinitions as $field) {
-                if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
-                    // Lazy loading inside blocks isn't supported, turn it off if possible
-                    if (method_exists($field, 'setLazyLoading')) {
-                        $field->setLazyLoading(false);
-                    }
+        foreach ($blockDefinitions as $field) {
+            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
+                // Lazy loading inside blocks isn't supported, turn it off if possible
+                if (method_exists($field, 'setLazyLoading')) {
+                    $field->setLazyLoading(false);
                 }
             }
         }

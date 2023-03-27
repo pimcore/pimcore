@@ -260,10 +260,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
                 $query = 'select * from classificationstore_collectionrelations where groupId in (' . implode(',', $allowedGroupIds) .')';
                 $relationList = $db->fetchAllAssociative($query);
 
-                if (is_array($relationList)) {
-                    foreach ($relationList as $item) {
-                        $allowedCollectionIds[] = $item['colId'];
-                    }
+                foreach ($relationList as $item) {
+                    $allowedCollectionIds[] = $item['colId'];
                 }
             }
 

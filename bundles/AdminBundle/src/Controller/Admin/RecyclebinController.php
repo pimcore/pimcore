@@ -132,10 +132,8 @@ class RecyclebinController extends AdminController implements KernelControllerEv
 
             $items = $list->load();
             $data = [];
-            if (is_array($items)) {
-                foreach ($items as $item) {
-                    $data[] = $item->getObjectVars();
-                }
+            foreach ($items as $item) {
+                $data[] = $item->getObjectVars();
             }
 
             return $this->adminJson(['data' => $data, 'success' => true, 'total' => $list->getTotalCount()]);

@@ -387,7 +387,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     public function hasChildren(): bool
     {
-        return is_array($this->children) && count($this->children) > 0;
+        return count($this->children) > 0;
     }
 
     /**
@@ -1050,30 +1050,28 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     {
         if ($value instanceof DataObject\Localizedfield) {
             $items = $value->getInternalData();
-            if (is_array($items)) {
-                $result = [];
-                foreach ($items as $language => $languageData) {
-                    $languageResult = [];
-                    foreach ($languageData as $elementName => $elementData) {
-                        $fd = $this->getFieldDefinition($elementName);
-                        if (!$fd) {
-                            // class definition seems to have changed
-                            Logger::warn('class definition seems to have changed, element name: '.$elementName);
+            $result = [];
+            foreach ($items as $language => $languageData) {
+                $languageResult = [];
+                foreach ($languageData as $elementName => $elementData) {
+                    $fd = $this->getFieldDefinition($elementName);
+                    if (!$fd) {
+                        // class definition seems to have changed
+                        Logger::warn('class definition seems to have changed, element name: '.$elementName);
 
-                            continue;
-                        }
-
-                        if ($fd instanceof NormalizerInterface) {
-                            $dataForResource = $fd->normalize($elementData, $params);
-                            $languageResult[$elementName] = $dataForResource;
-                        }
+                        continue;
                     }
 
-                    $result[$language] = $languageResult;
+                    if ($fd instanceof NormalizerInterface) {
+                        $dataForResource = $fd->normalize($elementData, $params);
+                        $languageResult[$elementName] = $dataForResource;
+                    }
                 }
 
-                return $result;
+                $result[$language] = $languageResult;
             }
+
+            return $result;
         }
 
         return null;

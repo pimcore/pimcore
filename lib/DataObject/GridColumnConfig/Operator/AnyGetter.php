@@ -85,10 +85,6 @@ final class AnyGetter extends AbstractOperator
             }
             $resultElements = [];
 
-            if (!is_array($children)) {
-                $children = [$children];
-            }
-
             foreach ($children as $c) {
                 $forwardObject = $element;
 

@@ -314,7 +314,7 @@ class Processor
                     }
                 }
 
-                if (is_array($transformations) && count($transformations) > 0) {
+                if ($transformations) {
                     $sourceImageWidth = PHP_INT_MAX;
                     $sourceImageHeight = PHP_INT_MAX;
                     if ($asset instanceof Asset\Image) {
@@ -461,12 +461,10 @@ class Processor
     private static function containsTransformationType(Config $config, string $transformationType): bool
     {
         $transformations = $config->getItems();
-        if (is_array($transformations) && count($transformations) > 0) {
-            foreach ($transformations as $transformation) {
-                if (!empty($transformation)) {
-                    if ($transformation['method'] == $transformationType) {
-                        return true;
-                    }
+        foreach ($transformations as $transformation) {
+            if (!empty($transformation)) {
+                if ($transformation['method'] == $transformationType) {
+                    return true;
                 }
             }
         }

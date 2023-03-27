@@ -105,11 +105,7 @@ abstract class AbstractRenderer implements RendererInterface
      */
     public function setMinDepth(int $minDepth = null): static
     {
-        if (null !== $minDepth) {
-            $this->_minDepth = (int) $minDepth;
-        } else {
-            $this->_minDepth = null;
-        }
+        $this->_minDepth = $minDepth;
 
         return $this;
     }
@@ -130,11 +126,7 @@ abstract class AbstractRenderer implements RendererInterface
      */
     public function setMaxDepth(int $maxDepth = null): static
     {
-        if (null !== $maxDepth) {
-            $this->_maxDepth = (int) $maxDepth;
-        } else {
-            $this->_maxDepth = null;
-        }
+        $this->_maxDepth = $maxDepth;
 
         return $this;
     }
@@ -144,6 +136,9 @@ abstract class AbstractRenderer implements RendererInterface
         return $this->_maxDepth;
     }
 
+    /**
+     * @return $this
+     */
     public function setIndent(string $indent): static
     {
         $this->_indent = $this->_getWhitespace($indent);
@@ -161,11 +156,12 @@ abstract class AbstractRenderer implements RendererInterface
         return "\n";
     }
 
+    /**
+     * @return $this
+     */
     public function setPrefixForId(string $prefix): static
     {
-        if (is_string($prefix)) {
-            $this->_prefixForId = trim($prefix);
-        }
+        $this->_prefixForId = trim($prefix);
 
         return $this;
     }
@@ -182,9 +178,12 @@ abstract class AbstractRenderer implements RendererInterface
         return $this->_prefixForId;
     }
 
+    /**
+     * @return $this
+     */
     public function skipPrefixForId(bool $flag = true): static
     {
-        $this->_skipPrefixForId = (bool) $flag;
+        $this->_skipPrefixForId = $flag;
 
         return $this;
     }
@@ -194,9 +193,12 @@ abstract class AbstractRenderer implements RendererInterface
         return $this->_renderInvisible;
     }
 
+    /**
+     * @return $this
+     */
     public function setRenderInvisible(bool $renderInvisible = true): static
     {
-        $this->_renderInvisible = (bool) $renderInvisible;
+        $this->_renderInvisible = $renderInvisible;
 
         return $this;
     }
@@ -239,7 +241,7 @@ abstract class AbstractRenderer implements RendererInterface
             }
         }
 
-        if (is_int($maxDepth) && $foundDepth > $maxDepth) {
+        if ($foundDepth > $maxDepth) {
             while ($foundDepth > $maxDepth) {
                 if (--$foundDepth < $minDepth) {
                     $found = null;

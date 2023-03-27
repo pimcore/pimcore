@@ -322,11 +322,7 @@ class Mail extends Email
      */
     public function setParam(int|string $key, mixed $value): static
     {
-        if (is_string($key) || is_int($key)) {
-            $this->params[$key] = $value;
-        } else {
-            Logger::warn('$key has to be a string or integer - Param ignored!');
-        }
+        $this->params[$key] = $value;
 
         return $this;
     }
@@ -388,11 +384,7 @@ class Mail extends Email
      */
     public function unsetParam(int|string $key): static
     {
-        if (is_string($key) || is_int($key)) {
-            unset($this->params[$key]);
-        } else {
-            Logger::warn('$key has to be a string or integer - unsetParam ignored!');
-        }
+        unset($this->params[$key]);
 
         return $this;
     }

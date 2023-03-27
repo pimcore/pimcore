@@ -221,7 +221,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
 
     public function hasChildren(): bool
     {
-        if (is_array($this->children) && count($this->children) > 0) {
+        if (count($this->children) > 0) {
             return true;
         }
 

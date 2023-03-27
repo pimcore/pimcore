@@ -160,13 +160,8 @@ class Composer
      */
     protected static function getPhpArguments(): array
     {
-        $ini = null;
-        $arguments = [];
-
         $phpFinder = new PhpExecutableFinder();
-        if (method_exists($phpFinder, 'findArguments')) {
-            $arguments = $phpFinder->findArguments();
-        }
+        $arguments = $phpFinder->findArguments();
 
         if ($env = getenv('COMPOSER_ORIGINAL_INIS')) {
             $paths = explode(PATH_SEPARATOR, $env);

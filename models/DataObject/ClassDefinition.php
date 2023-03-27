@@ -530,12 +530,10 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
             $modified = false;
 
             $classDefinitions = $brickDefinition->getClassDefinitions();
-            if (is_array($classDefinitions)) {
-                foreach ($classDefinitions as $key => $classDefinition) {
-                    if ($classDefinition['classname'] == $this->getId()) {
-                        unset($classDefinitions[$key]);
-                        $modified = true;
-                    }
+            foreach ($classDefinitions as $key => $classDefinition) {
+                if ($classDefinition['classname'] == $this->getId()) {
+                    unset($classDefinitions[$key]);
+                    $modified = true;
                 }
             }
             if ($modified) {
@@ -935,9 +933,7 @@ final class ClassDefinition extends Model\AbstractModel implements FieldDefiniti
      */
     public function setPropertyVisibility(array $propertyVisibility): static
     {
-        if (is_array($propertyVisibility)) {
-            $this->propertyVisibility = $propertyVisibility;
-        }
+        $this->propertyVisibility = $propertyVisibility;
 
         return $this;
     }

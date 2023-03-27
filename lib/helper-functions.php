@@ -167,33 +167,16 @@ function object2array(object $node): array
     return @json_decode($paj, true);
 }
 
-/**
- * @param array $args
- *
- * @return false|string
- */
-function array_urlencode(array $args): bool|string
+function array_urlencode(array $args): string
 {
-    if (!is_array($args)) {
-        return false;
-    }
-
     return http_build_query($args);
 }
 
 /**
  * same as  array_urlencode but no urlencode()
- *
- * @param array $args
- *
- * @return false|string
  */
-function array_toquerystring(array $args): bool|string
+function array_toquerystring(array $args): string
 {
-    if (!is_array($args)) {
-        return false;
-    }
-
     return urldecode(http_build_query($args));
 }
 

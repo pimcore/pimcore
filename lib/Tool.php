@@ -534,7 +534,7 @@ final class Tool
             $options['timeout'] = 5;
         }
 
-        if (is_array($paramsGet) && count($paramsGet) > 0) {
+        if (count($paramsGet) > 0) {
             //need to insert get params from url to $paramsGet because otherwise they would be ignored
             $urlParts = parse_url($url);
 
@@ -551,7 +551,7 @@ final class Tool
             $options[RequestOptions::QUERY] = $paramsGet;
         }
 
-        if (is_array($paramsPost) && count($paramsPost) > 0) {
+        if (count($paramsPost) > 0) {
             $options[RequestOptions::FORM_PARAMS] = $paramsPost;
             $requestType = 'POST';
         }

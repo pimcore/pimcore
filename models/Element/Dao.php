@@ -98,7 +98,7 @@ abstract class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param array $columns
+     * @param string[] $columns
      * @param User $user
      * @param string $tableSuffix
      *

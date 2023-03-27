@@ -177,7 +177,7 @@ final class Translation extends AbstractModel
      *
      * @param string $domain
      *
-     * @return array
+     * @return string[]
      */
     public static function getValidLanguages(string $domain = self::DOMAIN_DEFAULT): array
     {
@@ -365,7 +365,7 @@ final class Translation extends AbstractModel
      * @param string $file - path to the csv file
      * @param string $domain
      * @param bool $replaceExistingTranslations
-     * @param array|null $languages
+     * @param string[]|null $languages
      * @param \stdClass|null $dialect
      *
      * @return array
@@ -379,7 +379,7 @@ final class Translation extends AbstractModel
         $delta = [];
 
         if (is_readable($file)) {
-            if (!$languages || !is_array($languages)) {
+            if (!$languages) {
                 $languages = static::getValidLanguages($domain);
             }
 
@@ -414,7 +414,7 @@ final class Translation extends AbstractModel
             }
 
             //process translations
-            if (is_array($data) && count($data) > 1) {
+            if (count($data) > 1) {
                 $keys = $data[0];
                 // remove wrong quotes in some export/import constellations
                 $keys = array_map(function ($value) {

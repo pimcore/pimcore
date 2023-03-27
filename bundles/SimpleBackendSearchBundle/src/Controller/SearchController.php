@@ -181,7 +181,7 @@ class SearchController extends AdminController
             }
         }
 
-        if (is_array($types) && !empty($types[0])) {
+        if ($types[0]) {
             $conditionTypeParts = [];
             foreach ($types as $type) {
                 $conditionTypeParts[] = $db->quote($type);
@@ -192,7 +192,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( maintype IN (' . implode(',', $conditionTypeParts) . ') )';
         }
 
-        if (is_array($subtypes) && !empty($subtypes[0])) {
+        if ($subtypes[0]) {
             $conditionSubtypeParts = [];
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
@@ -200,7 +200,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( `type` IN (' . implode(',', $conditionSubtypeParts) . ') )';
         }
 
-        if (is_array($classnames) && !empty($classnames[0])) {
+        if ($classnames[0]) {
             if (in_array('folder', $subtypes)) {
                 $classnames[] = 'folder';
             }
@@ -216,10 +216,8 @@ class SearchController extends AdminController
             $tagIds = $allParams['tagIds'];
 
             $tagsTypeCondition = '';
-            if (is_array($types) && !empty($types[0])) {
+            if ($types[0]) {
                 $tagsTypeCondition = 'ctype IN (\'' . implode('\',\'', $types) . '\') AND';
-            } elseif (!is_array($types)) {
-                $tagsTypeCondition = 'ctype = ' . $db->quote($types) . ' AND ';
             }
 
             foreach ($tagIds as $tagId) {
