@@ -88,7 +88,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
             empty: this.empty.bind(this),
             cancel: this.cancel.bind(this),
             save: this.save.bind(this)
-        });
+        }, this.config);
     },
 
 

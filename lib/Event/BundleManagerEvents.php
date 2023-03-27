@@ -16,6 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Event;
 
+/**
+ * @deprecated Will be moved to the AdminBundle in Pimcore 11
+ */
 final class BundleManagerEvents
 {
     /**

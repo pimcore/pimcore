@@ -16,57 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Admin\Login;
 
-use Pimcore\Model\User;
-use Symfony\Contracts\EventDispatcher\Event;
-
-class LoginFailedEvent extends Event
+/**
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Login\LoginFailedEvent instead
+ */
+class LoginFailedEvent extends \Pimcore\Bundle\AdminBundle\Event\Login\LoginFailedEvent
 {
-    protected array $credentials;
-
-    protected ?User $user = null;
-
-    public function __construct(array $credentials)
-    {
-        $this->credentials = $credentials;
-    }
-
-    public function getCredentials(): array
-    {
-        return $this->credentials;
-    }
-
-    /**
-     * @param string $name
-     * @param mixed $default
-     *
-     * @return mixed
-     */
-    public function getCredential(string $name, mixed $default = null): mixed
-    {
-        if (isset($this->credentials[$name])) {
-            return $this->credentials[$name];
-        }
-
-        return $default;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setUser(User $user): static
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    public function hasUser(): bool
-    {
-        return null !== $this->user;
-    }
 }

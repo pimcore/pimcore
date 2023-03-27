@@ -69,7 +69,7 @@ pimcore.notification.panel = Class.create({
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         this.store = pimcore.helpers.grid.buildDefaultStore(
             Routing.generate('pimcore_admin_notification_findall'),
-            ["id", "title", "sender", "date", "read"],
+            ["id", "title", "sender", "timestamp", "read"],
             itemsPerPage
         );
 
@@ -91,7 +91,12 @@ pimcore.notification.panel = Class.create({
                 }
             },
             {header: t("sender"), flex: 2, sortable: false, dataIndex: 'sender', renderer: Ext.util.Format.htmlEncode},
-            {header: t("date"), flex: 3, sortable: true, filter: 'date', dataIndex: 'date'},
+            {
+                header: t("date"), flex: 3, sortable: true, filter: 'date', dataIndex: 'timestamp',
+                renderer: function(d) {
+                    return Ext.Date.format(new Date(d*1000), "Y-m-d H:i:s");
+                }
+            },
             {
                 header: t("attachment"),
                 xtype: 'actioncolumn',

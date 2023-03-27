@@ -19,63 +19,63 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Event;
 final class OrderAgentEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderAgentEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderAgentEvent")
      *
      * @var string
      */
     const PRE_INIT_PAYMENT = 'pimcore.ecommerce.orderagent.preInitPayment';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderAgentEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderAgentEvent")
      *
      * @var string
      */
     const POST_INIT_PAYMENT = 'pimcore.ecommerce.orderagent.postInitPayment';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderAgentEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderAgentEvent")
      *
      * @var string
      */
     const PRE_START_PAYMENT = 'pimcore.ecommerce.orderagent.preStartPayment';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderAgentEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderAgentEvent")
      *
      * @var string
      */
     const POST_START_PAYMENT = 'pimcore.ecommerce.orderagent.postStartPayment';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderAgentEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderAgentEvent")
      *
      * @var string
      */
     const PRE_CANCEL_PAYMENT = 'pimcore.ecommerce.orderagent.preCancelPayment';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderAgentEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderAgentEvent")
      *
      * @var string
      */
     const POST_CANCEL_PAYMENT = 'pimcore.ecommerce.orderagent.postCancelPayment';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderAgentEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderAgentEvent")
      *
      * @var string
      */
     const FINGERPRINT_GENERATED = 'pimcore.ecommerce.orderagent.fingerPrintGenerated';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderAgentEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderAgentEvent")
      *
      * @var string
      */
     const PRE_UPDATE_PAYMENT = 'pimcore.ecommerce.orderagent.preUpdatePayment';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\OrderAgentEvent")
+     * @Event("Pimcore\Bundle\EcommerceFrameworkBundle\Event\Model\OrderAgentEvent")
      *
      * @var string
      */

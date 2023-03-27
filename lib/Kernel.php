@@ -25,7 +25,6 @@ use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
-use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Event\SystemEvents;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
@@ -41,20 +40,21 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 abstract class Kernel extends SymfonyKernel
 {
     use MicroKernelTrait {
         registerContainerConfiguration as microKernelRegisterContainerConfiguration;
-
         registerBundles as microKernelRegisterBundles;
+        configureContainer as protected;
+        configureRoutes as protected;
     }
+
+    private const CONFIG_LOCATION = 'config_location';
 
     private BundleCollection $bundleCollection;
 
@@ -75,11 +75,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function getCacheDir(): string
     {
-        if (isset($_SERVER['APP_CACHE_DIR'])) {
-            return $_SERVER['APP_CACHE_DIR'].'/'.$this->environment;
-        }
-
-        return PIMCORE_SYMFONY_CACHE_DIRECTORY . '/' . $this->environment;
+        return ($_SERVER['APP_CACHE_DIR'] ?? PIMCORE_SYMFONY_CACHE_DIRECTORY) . '/' . $this->environment;
     }
 
     /**
@@ -90,35 +86,6 @@ abstract class Kernel extends SymfonyKernel
     public function getLogDir(): string
     {
         return PIMCORE_LOG_DIRECTORY;
-    }
-
-    protected function configureContainer(ContainerConfigurator $container): void
-    {
-        $projectDir = realpath($this->getProjectDir());
-
-        $container->import($projectDir . '/config/{packages}/*.yaml');
-        $container->import($projectDir . '/config/{packages}/'.$this->environment.'/*.yaml');
-
-        if (is_file($projectDir . '/config/services.yaml')) {
-            $container->import($projectDir . '/config/services.yaml');
-            $container->import($projectDir . '/config/{services}_'.$this->environment.'.yaml');
-        } elseif (is_file($path = $projectDir . '/config/services.php')) {
-            (require $path)($container->withPath($path), $this);
-        }
-    }
-
-    protected function configureRoutes(RoutingConfigurator $routes): void
-    {
-        $projectDir = realpath($this->getProjectDir());
-
-        $routes->import($projectDir . '/config/{routes}/'.$this->environment.'/*.yaml');
-        $routes->import($projectDir . '/config/{routes}/*.yaml');
-
-        if (is_file($projectDir . '/config/routes.yaml')) {
-            $routes->import($projectDir . '/config/routes.yaml');
-        } elseif (is_file($path = $projectDir . '/config/routes.php')) {
-            (require $path)($routes->withPath($path), $this);
-        }
     }
 
     /**
@@ -198,18 +165,18 @@ abstract class Kernel extends SymfonyKernel
             $resolvingBag = $container->getParameterBag();
             $containerConfig = $resolvingBag->resolveValue($containerConfig);
 
-            if (!array_key_exists('storage', $containerConfig)) {
+            if (!array_key_exists(self::CONFIG_LOCATION, $containerConfig)) {
                 return;
             }
 
             foreach ($configArray as $config) {
                 $configKey = str_replace('-', '_', $config['defaultStorageDirectoryName']);
-                if (!isset($containerConfig['storage'][$configKey])) {
+                if (!isset($containerConfig[self::CONFIG_LOCATION][$configKey])) {
                     continue;
                 }
-                $options = $containerConfig['storage'][$configKey]['options'];
+                $options = $containerConfig[self::CONFIG_LOCATION][$configKey]['options'];
 
-                $configDir = rtrim($options['directory'] ?? LocationAwareConfigRepository::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
+                $configDir = rtrim($options['directory'] ?? self::getStorageDirectoryFromSymfonyConfig($containerConfig, $config['defaultStorageDirectoryName'], $config['storageDirectoryEnvVariableName']), '/\\');
                 $configDir = "$configDir/";
                 if (is_dir($configDir)) {
                     // @phpstan-ignore-next-line
@@ -217,6 +184,18 @@ abstract class Kernel extends SymfonyKernel
                 }
             }
         });
+    }
+
+    private static function getStorageDirectoryFromSymfonyConfig(array $config, string $configKey, string $storageDir): string
+    {
+        if (isset($_SERVER[$storageDir])) {
+            trigger_deprecation('pimcore/pimcore', '10.6',
+                sprintf('Setting storage directory (%s) in the .env file is deprecated, instead use the symfony config. It will be removed in Pimcore 11.', $storageDir));
+
+            return $_SERVER[$storageDir];
+        }
+
+        return $config[self::CONFIG_LOCATION][$configKey]['options']['directory'];
     }
 
     /**

@@ -17,29 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Admin;
 
-use Symfony\Contracts\EventDispatcher\Event;
-
-class IndexActionSettingsEvent extends Event
+/**
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\IndexActionSettingsEvent instead
+ */
+class IndexActionSettingsEvent extends \Pimcore\Bundle\AdminBundle\Event\IndexActionSettingsEvent
 {
-    private array $settings;
-
-    public function __construct(array $settings)
-    {
-        $this->settings = $settings;
-    }
-
-    public function getSettings(): array
-    {
-        return $this->settings;
-    }
-
-    public function setSettings(array $settings): void
-    {
-        $this->settings = $settings;
-    }
-
-    public function addSetting(string $key, mixed $value): void
-    {
-        $this->settings[$key] = $value;
-    }
 }

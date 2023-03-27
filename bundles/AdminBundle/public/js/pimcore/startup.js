@@ -376,7 +376,7 @@ Ext.onReady(function () {
 
     //search element types
     pimcore.globalmanager.add("document_search_types", ["page", "snippet", "folder", "link", "hardlink", "email", "newsletter"]);
-    pimcore.globalmanager.add("asset_search_types", ["folder", "image", "text", "audio", "video", "document", "archive", "unknown"]);
+    pimcore.globalmanager.add("asset_search_types", pimcore.settings.asset_search_types);
     pimcore.globalmanager.add("object_search_types", ["object", "folder", "variant"]);
 
     //translation admin keys

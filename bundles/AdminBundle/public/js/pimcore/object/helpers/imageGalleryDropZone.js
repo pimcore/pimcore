@@ -73,7 +73,7 @@ Ext.define('pimcore.object.helpers.ImageGalleryDropZone', {
             var y = p.el.getY();
             var w = p.el.getWidth();
 
-            if(xy[1] >y && (xy[1] < (y + h)) && xy[0] > x && (xy[0] < (x + w))) {
+            if(pos != currentPosition && (xy[1] >y && (xy[1] < (y + h)) && xy[0] > x && (xy[0] < (x + w)))) {
                 match = true;
                 break;
             }else if (pos == len -1 && currentPosition != len - 1) {

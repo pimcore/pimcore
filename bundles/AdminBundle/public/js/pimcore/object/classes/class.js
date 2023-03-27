@@ -1076,7 +1076,14 @@ pimcore.object.classes.klass = Class.create({
             fieldLabel: t("key"),
             labelWidth: 100,
             width: 250,
-            value: data.index_key
+            value: data.index_key,
+            validator: function (value) {
+                if(value !== value.replace(/[^a-za-z0-9_\-+]/g,'')){
+                    this.setvalue(value.replace(/[^a-za-z0-9_\-+]/g,''));
+                }
+
+                return true;
+            }
         };
 
         //fixes data to match store model
