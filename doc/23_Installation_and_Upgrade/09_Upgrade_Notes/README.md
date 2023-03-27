@@ -150,6 +150,14 @@
       - Print related Events have been moved from into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
     - [Personalization and targeting] has been moved to `pimcore/personalization` package.
       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting` in the PimcorePersonalizationBundle instead.
+      - Targeting is now using the opt-in approach and will not be enabled by default. So, user should set the following cookie `pimcore_targeting_enabled=1` to enable targeting. User can use tools like`Cookiebot` to choose consent and set the cookie accordingly.
+       Targeting can also be enabled by setting the following config.
+      ```yaml
+      pimcore_personalization:
+          targeting:
+              enabled: true
+      ```
+      
     - [Google Marketing] has been moved to `pimcore/google-marketing-bundle` package.
       - Config `pimcore:services:google` has been removed, please use `pimcore_google_marketing` in the PimcoreGoogleMarketingBundle instead.
     - [Google] Classes Google\Cse and Google\Cse\Item have been removed.
@@ -268,7 +276,6 @@ pimcore:
 - Moved implementation of `PimcoreBundleAdminSupportInterface` from `AbstractPimcoreBundle` to bundle classes.
     Moved `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` from `AbstractPimcoreBundle` to `BundleAdminSupportTrait`.
 - [Cache] Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
-- [Targeting] Targeting is now using the opt-in approach and will not be enabled by default. So, user should set the following cookie `pimcore_targeting_enabled=1` to enable targeting. User can use tools like `Cookiebot` to choose consent and set the cookie accordingly.
 
 ## 10.6.0
 
