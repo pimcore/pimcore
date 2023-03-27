@@ -110,7 +110,7 @@ class File
         $count = iterator_count($contents);
         if ($count === 0) {
             $storage->deleteDirectory($storagePath);
-            $storagePath = dirname($storagePath, 1);
+            $storagePath = dirname($storagePath);
             self::recursiveDeleteEmptyDirs($storage, $storagePath);
         }
     }
