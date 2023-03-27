@@ -237,7 +237,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
         $url = $this->data['path'] ?? '';
 
-        if (array_key_exists('appendslash', $this->data) && $this->data['appendslash']) {
+        if ($this->getAppendSlash()) {
             $url .= '/';
         }
 
@@ -353,6 +353,14 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     public function getAnchor()
     {
         return $this->data['anchor'] ?? '';
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAppendSlash()
+    {
+        return isset($this->data['appendslash']) && $this->data['appendslash'];
     }
 
     /**
