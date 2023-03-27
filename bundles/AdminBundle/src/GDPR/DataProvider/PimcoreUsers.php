@@ -20,7 +20,6 @@ namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Db;
 use Pimcore\Model\User;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @internal
@@ -29,12 +28,12 @@ class PimcoreUsers implements DataProviderInterface
 {
     protected TokenStorageUserResolver $userResolver;
 
-    private ContainerInterface $container;
+    private string $logsDir;
 
-    public function __construct(TokenStorageUserResolver $userResolver, ContainerInterface $container)
+    public function __construct(TokenStorageUserResolver $userResolver, $logsDir)
     {
         $this->userResolver = $userResolver;
-        $this->container = $container;
+        $this->logsDir = $logsDir;
     }
 
     /**
@@ -156,12 +155,10 @@ class PimcoreUsers implements DataProviderInterface
 
     protected function getUsageLogDataForUser(User\AbstractUser $user): array
     {
-        $logDir = $this->container->getParameter('kernel.logs_dir');
-
         $pattern = ' [' . $user->getId() . ',';
         $matches = [];
 
-        $handle = @fopen($logDir . '/usage.log', 'r');
+        $handle = @fopen($this->logsDir . '/usage.log', 'r');
         if ($handle) {
             while (!feof($handle)) {
                 $buffer = fgets($handle);
@@ -172,7 +169,7 @@ class PimcoreUsers implements DataProviderInterface
             fclose($handle);
         }
 
-        $archiveFiles = glob($logDir . '/usage-archive-*.log.gz');
+        $archiveFiles = glob($this->logsDir . '/usage-archive-*.log.gz');
         foreach ($archiveFiles as $archiveFile) {
             $handle = @gzopen($archiveFile, 'r');
             if ($handle) {

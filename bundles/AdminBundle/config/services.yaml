@@ -47,7 +47,7 @@ services:
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\SentMail: ~
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers:
         arguments:
-            $container: '@service_container'
+            $logsDir: '%kernel.logs_dir%'
 
 
     #
