@@ -44,6 +44,11 @@ class Imagick extends Adapter
 
     private ?array $initalOptions = null;
 
+    public function __construct(
+        protected Filesystem $filesystem,
+    ) {
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -266,8 +271,7 @@ class Imagick extends Adapter
 
         if (!stream_is_local($path)) {
             $i->setImageFormat($format);
-            $filesystem = new Filesystem();
-            $filesystem->dumpFile($path, $i->getImageBlob());
+            $this->filesystem->dumpFile($path, $i->getImageBlob());
             $success = file_exists($path);
         } else {
             if ($this->checkPreserveAnimation($format, $i)) {
@@ -282,8 +286,7 @@ class Imagick extends Adapter
         }
 
         if ($realTargetPath) {
-            $filesystem = new Filesystem();
-            $filesystem->rename($path, $realTargetPath);
+            $this->filesystem->rename($path, $realTargetPath);
         }
 
         return $this;
