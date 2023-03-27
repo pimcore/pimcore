@@ -385,36 +385,6 @@ function recursiveDelete(string $directory, bool $empty = true): bool
     return false;
 }
 
-function recursiveCopy(string $source, string $destination): bool
-{
-    $filesystem = new \Symfony\Component\Filesystem\Filesystem();
-
-    if (is_dir($source)) {
-        if (!is_dir($destination)) {
-            $filesystem->mkdir($destination, 0775);
-        }
-
-        foreach (
-            $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
-                RecursiveIteratorIterator::SELF_FIRST
-            ) as $item) {
-            if ($item->isDir()) {
-                $filesystem->mkdir($destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName(), 0775);
-            } else {
-                copy($item, $destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-            }
-        }
-    } elseif (is_file($source)) {
-        if (is_dir(dirname($destination))) {
-            $filesystem->mkdir(dirname($destination), 0775);
-        }
-        copy($source, $destination);
-    }
-
-    return true;
-}
-
 function p_r(): void
 {
     $cloner = new \Symfony\Component\VarDumper\Cloner\VarCloner();

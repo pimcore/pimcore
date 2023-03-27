@@ -55,21 +55,6 @@ class File
         }
     }
 
-    public static function rename(string $oldPath, string $newPath): bool
-    {
-        if (stream_is_local($oldPath) && stream_is_local($newPath)) {
-            // rename is only possible if both stream wrapper are the same
-            // unfortunately it seems that there's no other alternative for stream_is_local() although it isn't
-            // absolutely correct it solves the problem temporary
-            $return = rename($oldPath, $newPath, self::getContext());
-        } else {
-            $return = recursiveCopy($oldPath, $newPath);
-            recursiveDelete($oldPath);
-        }
-
-        return $return;
-    }
-
     /**
      * @return null|resource
      */
