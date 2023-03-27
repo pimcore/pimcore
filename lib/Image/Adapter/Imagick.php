@@ -44,11 +44,6 @@ class Imagick extends Adapter
 
     private ?array $initalOptions = null;
 
-    public function __construct(
-        protected Filesystem $filesystem,
-    ) {
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -269,9 +264,10 @@ class Imagick extends Adapter
             $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . pathinfo($path, PATHINFO_EXTENSION);
         }
 
+        $filesystem = new Filesystem();
         if (!stream_is_local($path)) {
             $i->setImageFormat($format);
-            $this->filesystem->dumpFile($path, $i->getImageBlob());
+            $filesystem->dumpFile($path, $i->getImageBlob());
             $success = file_exists($path);
         } else {
             if ($this->checkPreserveAnimation($format, $i)) {
@@ -286,7 +282,7 @@ class Imagick extends Adapter
         }
 
         if ($realTargetPath) {
-            $this->filesystem->rename($path, $realTargetPath);
+            $filesystem->rename($path, $realTargetPath);
         }
 
         return $this;
