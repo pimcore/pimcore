@@ -65,9 +65,9 @@ class AdminStyle
             } else {
                 $this->elementIconClass = 'pimcore_icon_asset_default';
 
-                $fileExt = File::getFileExtension($element->getFilename());
+                $fileExt = pathinfo($element->getFilename(), PATHINFO_EXTENSION);
                 if ($fileExt) {
-                    $this->elementIconClass .= ' pimcore_icon_' . File::getFileExtension($element->getFilename());
+                    $this->elementIconClass .= ' pimcore_icon_' . pathinfo($element->getFilename(), PATHINFO_EXTENSION);
                 }
             }
         } elseif ($element instanceof Document) {

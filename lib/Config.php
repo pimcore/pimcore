@@ -93,7 +93,7 @@ final class Config implements ArrayAccess
             // check for environment configuration
             $env = self::getEnvironment();
             if ($env) {
-                $fileExt = File::getFileExtension($name);
+                $fileExt = pathinfo($name, PATHINFO_EXTENSION);
                 $pureName = str_replace('.' . $fileExt, '', $name);
                 foreach ($pathsToCheck as $path) {
                     $tmpFile = $path . '/' . $pureName . '_' . $env . '.' . $fileExt;

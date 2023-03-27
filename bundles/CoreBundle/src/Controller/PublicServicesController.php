@@ -38,7 +38,7 @@ class PublicServicesController extends Controller
         $thumbnailStream = null;
 
         $filename = $request->get('filename');
-        $requestedFileExtension = strtolower(File::getFileExtension($filename));
+        $requestedFileExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
         $config = [
             'prefix' => $request->get('prefix', ''),

@@ -114,7 +114,7 @@ class Processor
 
         foreach ($formats as $format) {
             $thumbDir = $asset->getRealPath().'/'.$asset->getId().'/video-thumb__'.$asset->getId().'__'.$config->getName();
-            $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename()) . '.' . $format;
+            $filename = preg_replace("/\." . preg_quote(pathinfo($asset->getFilename(), PATHINFO_EXTENSION), '/') . '/', '', $asset->getFilename()) . '.' . $format;
             $storagePath = $thumbDir . '/' . $filename;
             $tmpPath = File::getLocalTempFilePath($format);
 

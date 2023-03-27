@@ -261,7 +261,7 @@ class Imagick extends Adapter
         $realTargetPath = null;
         if (!stream_is_local($path)) {
             $realTargetPath = $path;
-            $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($path);
+            $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . pathinfo($path, PATHINFO_EXTENSION);
         }
 
         if (!stream_is_local($path)) {

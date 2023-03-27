@@ -284,7 +284,7 @@ trait ImageThumbnailTrait
 
     public function getFileExtension(): string
     {
-        return \Pimcore\File::getFileExtension($this->getPath());
+        return pathinfo($this->getPath(), PATHINFO_EXTENSION);
     }
 
     /**

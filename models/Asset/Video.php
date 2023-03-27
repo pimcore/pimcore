@@ -290,7 +290,7 @@ class Video extends Model\Asset
     {
         $data = [];
 
-        if (in_array(File::getFileExtension($this->getFilename()), ['mp4', 'webm'])) {
+        if (in_array(pathinfo($this->getFilename(),PATHINFO_EXTENSION), ['mp4', 'webm'])) {
             $chunkSize = 1024;
             $file_pointer = $this->getStream();
 

@@ -34,21 +34,6 @@ class File
      */
     protected static $context = null;
 
-    public static function getFileExtension(string $name): string
-    {
-        $name = strtolower($name);
-
-        $pos = strrpos($name, '.');
-        if ($pos) {
-            $extension = substr($name, $pos + 1);
-            if ($extension && strpos($extension, '/') === false) {
-                return $extension;
-            }
-        }
-
-        return '';
-    }
-
     public static function getValidFilename(string $tmpFilename, ?string $language = null, string $replacement = '-'): string
     {
         $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename, $language);
