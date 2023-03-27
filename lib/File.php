@@ -27,8 +27,6 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class File
 {
-    public static int $defaultMode = 0664;
-
     /**
      * @var null|resource
      */
@@ -45,11 +43,6 @@ class File
         $tmpFilename = trim($tmpFilename, '. ');
 
         return $tmpFilename;
-    }
-
-    public static function getDefaultMode(): int
-    {
-        return self::$defaultMode;
     }
 
     public static function putPhpFile(string $path, string $data): void

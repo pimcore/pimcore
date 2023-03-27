@@ -249,7 +249,7 @@ class Processor
                             unlink($steam);
 
                             // set proper permissions
-                            @chmod($storagePath, File::getDefaultMode());
+                            @chmod($storagePath, 0664);
                         }
                     }
 
