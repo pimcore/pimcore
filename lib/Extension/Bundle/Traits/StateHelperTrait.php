@@ -19,7 +19,11 @@ namespace Pimcore\Extension\Bundle\Traits;
 
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 
+trigger_deprecation('pimcore/pimcore', '10.6', 'The "%s" trait is deprecated and will be removed in Pimcore 11.', StateHelperTrait::class);
+
 /**
+ * @deprecated since Pimcore 10.6 and will be removed in Pimcore 11
+ *
  * Helper trait exposing static isEnabled() and isInstalled() methods for bundles which can be used
  * to check bundle state from non-service definitions (e.g. class definitions).
  */
