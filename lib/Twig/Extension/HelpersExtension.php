@@ -136,7 +136,7 @@ class HelpersExtension extends AbstractExtension
             . '-->';
     }
 
-    public function getFileExtension($fileName): string
+    public function getFileExtension(string $fileName): string
     {
         return pathinfo($fileName, PATHINFO_EXTENSION);
     }
