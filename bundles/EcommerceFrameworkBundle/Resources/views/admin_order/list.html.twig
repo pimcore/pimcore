@@ -81,10 +81,7 @@
         </tr>
         </thead>
         <tbody>
-        {% set totalSums = {} %}
         {% for item in paginator.items %}
-            {% set totalSums = totalSums|merge({(item['Currency']): ((totalSums[item['Currency']] is defined ? totalSums[item['Currency']] : 0) + item['TotalPrice'])}) %}
-
         <tr>
             <td>
                 {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item['OrderId']}|merge(urlParams)) %}
@@ -105,26 +102,6 @@
         </tr>
         {% endfor %}
         </tbody>
-        <tfoot>
-        {% if totalSums|length == 0  %}
-            {% set totalSums = {(defaultCurrency.getShortName()): 0} %}
-        {% endif %}
-        <tr>
-            <td colspan="1">
-                {% if totalSums|length > 1  %}
-                    <strong>
-                        {{ 'bundle_ecommerce.back-office.order.price.total'|trans([],'admin') }}
-                    </strong>
-                {% endif %}
-            </td>
-            <td colspan="3" class="text-right">
-                {% for currency, totalSum in totalSums %}
-                    <strong>{{ formatter.formatCurrency(totalSum, currency) }}</strong>
-                    {% if not loop.last %} | {% endif %}
-                {% endfor %}
-            </td>
-        </tr>
-        </tfoot>
     </table>
 
     {% if paginator.getPaginationData().pageCount > 1 %}
