@@ -15,14 +15,13 @@
 
 namespace Pimcore\Event\Model;
 
-use Pimcore\Event\Traits\ElementDeleteInfoEventTrait;
-
 /**
  * Class DocumentDeleteInfoEvent
  *
  * @package Pimcore\Event\Model
+ *
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Model\DocumentDeleteInfoEvent instead
  */
-class DocumentDeleteInfoEvent extends DocumentEvent implements ElementDeleteInfoEventInterface
+class DocumentDeleteInfoEvent extends \Pimcore\Bundle\AdminBundle\Event\Model\DocumentDeleteInfoEvent
 {
-    use ElementDeleteInfoEventTrait;
 }

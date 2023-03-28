@@ -15,14 +15,13 @@
 
 namespace Pimcore\Event\Model;
 
-use Pimcore\Event\Traits\ElementDeleteInfoEventTrait;
-
 /**
  * Class AssetDeleteInfoEvent
  *
  * @package Pimcore\Event\Model
+ *
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Model\AssetDeleteInfoEvent instead
  */
-class AssetDeleteInfoEvent extends AssetEvent implements ElementDeleteInfoEventInterface
+class AssetDeleteInfoEvent extends \Pimcore\Bundle\AdminBundle\Event\Model\AssetDeleteInfoEvent
 {
-    use ElementDeleteInfoEventTrait;
 }

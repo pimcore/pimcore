@@ -317,25 +317,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     }
 
     /**
-     * Configures a "typed locator" (a class exposing get/has for a specific type) wrapping
-     * a standard service locator. Example: Pimcore\Targeting\DataProviderLocator
-     *
-     * @param ContainerBuilder $container
-     * @param string $locatorClass
-     * @param array $services
-     */
-    private function configureTypedLocator(ContainerBuilder $container, string $locatorClass, array $services)
-    {
-        $serviceLocator = new Definition(ServiceLocator::class, [$services]);
-        $serviceLocator
-            ->setPublic(false)
-            ->addTag('container.service_locator');
-
-        $locator = $container->getDefinition($locatorClass);
-        $locator->setArgument('$locator', $serviceLocator);
-    }
-
-    /**
      * Handle pimcore.security.encoder_factories mapping
      *
      * @param ContainerBuilder $container
