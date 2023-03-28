@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -9,11 +10,11 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\SystemInfoBundle\Controller;
+namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
@@ -24,36 +25,31 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/settings")
+ * @Route("/install")
  *
  * @internal
  */
-class SettingsController extends AdminController
+class InstallController extends AdminController
 {
     /**
-     * @Route("/phpinfo", name="pimcore_bundle_systeminfo_settings_phpinfo", methods={"GET"})
+     * @Route("/check", name="pimcore_admin_install_check", methods={"GET", "POST"})
      *
      * @param Request $request
+     * @param Connection $db
      * @param Profiler|null $profiler
-     *
-     * @throws \Exception
      *
      * @return Response
      */
-    public function phpinfoAction(Request $request, ?Profiler $profiler): Response
+    public function checkAction(Request $request, Connection $db, ?Profiler $profiler): Response
     {
-        if ($profiler) {
+        if($profiler) {
             $profiler->disable();
         }
 
-        if (!$this->getAdminUser()->isAdmin()) {
-            throw new \Exception('Permission denied');
-        }
+        $viewParams = Requirements::checkAll($db);
+        $viewParams['headless'] = $request->query->getBoolean('headless') || $request->request->getBoolean('headless');
 
-        ob_start();
-        phpinfo();
-        $content = ob_get_clean();
-
-        return new Response($content);
+        return $this->render('@PimcoreAdmin/admin/install/check.html.twig', $viewParams);
     }
 }
+

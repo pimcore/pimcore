@@ -697,3 +697,4 @@ classificationstore_mbx_enterkey_prompt: Enter name
 classificationstore_error_addcollection_msg: Error adding group
 log_search_pid: PID
 log_refresh_seconds: Seconds
+system_requirements_check: System-Requirements Check
