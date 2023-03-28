@@ -144,7 +144,7 @@
     - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
     - [UUID] has been moved into PimcoreUuidBundle
       - Config `pimcore:general:instance_identifier` has been removed, please use `pimcore_uuid:instance_identifier` in the PimcoreUuidBundle instead. Please run `bin/console config:dump pimcore_uuid` to see more about the instance identifier config after installing the bundle.
-    - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`
+    - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`. Please pay attention to the new namespaces for the classes from this bundle.
     - [Web2Print] has been moved into PimcoreWebToPrintBundle
       - Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
       - Print related Events have been moved from into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
