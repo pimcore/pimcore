@@ -573,6 +573,9 @@ final class ClassDefinition extends Model\AbstractModel
 
     public function delete()
     {
+        if (!$this->isWritable()) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
         $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_DELETE);
 
         // delete all objects using this class
