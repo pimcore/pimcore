@@ -72,7 +72,6 @@
     "neitanod/forceutf8": "^2.0.4",
     "nesbot/carbon": "^2.65",
     "pear/net_url2": "^2.2",
-    "google/apiclient": "^2.12",
     "matomo/device-detector": "^6.0",
     "presta/sitemap-bundle": "^3.3",
     "sabre/dav": "^4.1.2",
