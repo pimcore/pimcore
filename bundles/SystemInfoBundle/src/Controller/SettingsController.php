@@ -15,9 +15,7 @@
 
 namespace Pimcore\Bundle\SystemInfoBundle\Controller;
 
-use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Tool\Requirements;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;

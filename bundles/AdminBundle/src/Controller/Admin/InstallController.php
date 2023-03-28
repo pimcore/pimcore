@@ -10,8 +10,8 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
@@ -42,7 +42,7 @@ class InstallController extends AdminController
      */
     public function checkAction(Request $request, Connection $db, ?Profiler $profiler): Response
     {
-        if($profiler) {
+        if ($profiler) {
             $profiler->disable();
         }
 
@@ -52,4 +52,3 @@ class InstallController extends AdminController
         return $this->render('@PimcoreAdmin/admin/install/check.html.twig', $viewParams);
     }
 }
-
