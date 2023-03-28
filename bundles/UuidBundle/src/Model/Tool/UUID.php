@@ -31,9 +31,9 @@ final class UUID extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|string
      */
-    protected int $itemId;
+    protected int|string $itemId;
 
     /**
      * @internal
@@ -63,6 +63,9 @@ final class UUID extends Model\AbstractModel
      */
     protected mixed $item = null;
 
+    /**
+     * @return $this
+     */
     public function setInstanceIdentifier(string $instanceIdentifier): static
     {
         $this->instanceIdentifier = $instanceIdentifier;
@@ -93,18 +96,24 @@ final class UUID extends Model\AbstractModel
         return $this;
     }
 
-    public function setItemId(int $id): static
+    /**
+     * @return $this
+     */
+    public function setItemId(int|string $id): static
     {
         $this->itemId = $id;
 
         return $this;
     }
 
-    public function getItemId(): int
+    public function getItemId(): int|string
     {
         return $this->itemId;
     }
 
+    /**
+     * @return $this
+     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -152,6 +161,9 @@ final class UUID extends Model\AbstractModel
         $this->uuid = $uuid;
     }
 
+    /**
+     * @return $this
+     */
     public function setItem(mixed $item): static
     {
         $this->setItemId($item->getId());

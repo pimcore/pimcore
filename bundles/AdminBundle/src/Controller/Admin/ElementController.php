@@ -48,7 +48,7 @@ class ElementController extends AdminController
      */
     public function lockElementAction(Request $request): Response
     {
-        Element\Editlock::lock($request->request->getInt('id'), $request->request->get('type'));
+        Element\Editlock::lock($request->request->getInt('id'), $request->request->get('type'), $request->getSession()->getId());
 
         return $this->adminJson(['success' => true]);
     }

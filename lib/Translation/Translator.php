@@ -197,17 +197,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                     }
                 }
 
-                // aliases support
-                if ($domain === 'admin' || $domain === 'admin_ext') {
-                    $aliasesPath = $this->getKernel()->locateResource($this->getAdminPath() . '/aliases.json');
-                    $aliases = json_decode(file_get_contents($aliasesPath), true);
-                    foreach ($aliases as $aliasTarget => $aliasSource) {
-                        if (isset($data[$aliasSource]) && (!isset($data[$aliasTarget]) || empty($data[$aliasTarget]))) {
-                            $data[$aliasTarget] = $data[$aliasSource];
-                        }
-                    }
-                }
-
                 $data = [
                     $domain => $data,
                     $domain.MessageCatalogue::INTL_DOMAIN_SUFFIX => $dataIntl,

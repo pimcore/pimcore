@@ -42,7 +42,6 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -464,7 +463,7 @@ class DataObjectHelperController extends AdminController
                             }
                         } else {
                             if (DataObject\Service::isHelperGridColumnConfig($key)) {
-                                $calculatedColumnConfig = $this->getCalculatedColumnConfig($savedColumns[$key]);
+                                $calculatedColumnConfig = $this->getCalculatedColumnConfig($request, $savedColumns[$key]);
                                 if ($calculatedColumnConfig) {
                                     $availableFields[] = $calculatedColumnConfig;
                                 }
@@ -508,7 +507,7 @@ class DataObjectHelperController extends AdminController
 
         $frontendLanguages = Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), $config['general']['valid_languages']);
         if ($frontendLanguages) {
-            $language = explode(',', $frontendLanguages)[0];
+            $language = $frontendLanguages[0];
         } else {
             $language = $request->getLocale();
         }
@@ -670,10 +669,10 @@ class DataObjectHelperController extends AdminController
         }
     }
 
-    protected function getCalculatedColumnConfig(array $config): mixed
+    protected function getCalculatedColumnConfig(Request $request, array $config): mixed
     {
         try {
-            $calculatedColumnConfig = Tool\Session::useSession(function (AttributeBagInterface $session) use ($config) {
+            $calculatedColumnConfig = Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($config) {
                 //otherwise create a new one
 
                 $calculatedColumn = [];
@@ -742,7 +741,7 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        Tool\Session::useSession(function (AttributeBagInterface $session) use ($helperColumns) {
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($helperColumns) {
             $existingColumns = $session->get('helpercolumns', []);
             $helperColumns = array_merge($helperColumns, $existingColumns);
             $session->set('helpercolumns', $helperColumns);
@@ -929,7 +928,7 @@ class DataObjectHelperController extends AdminController
                     $gridConfig->setDescription($metadata['gridConfigDescription']);
                     $gridConfig->setShareGlobally($metadata['shareGlobally'] && $this->getAdminUser()->isAdmin());
                     $gridConfig->setSetAsFavourite($metadata['setAsFavourite'] && $this->getAdminUser()->isAdmin());
-                    $gridConfig->setSaveFilters($metadata['saveFilters'] && $this->getAdminUser()->isAdmin());
+                    $gridConfig->setSaveFilters($metadata['saveFilters']);
                 }
 
                 $gridConfigData = json_encode($gridConfigData);
@@ -1293,6 +1292,7 @@ class DataObjectHelperController extends AdminController
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
         $delimiter = $settings['delimiter'] ?? ';';
+        $header = $settings['header'] ?? 'title';
 
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -1328,7 +1328,7 @@ class DataObjectHelperController extends AdminController
 
         $list = $beforeListExportEvent->getArgument('list');
 
-        $fields = $request->get('fields');
+        $fields = json_decode($request->get('fields')[0], true);
 
         $addTitles = (bool) $request->get('initial');
 
@@ -1347,7 +1347,7 @@ class DataObjectHelperController extends AdminController
             $context = array_merge($context, $contextFromRequest);
         }
 
-        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles, $context);
+        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $header, $addTitles, $context);
 
         $storage = Storage::get('temp');
         $csvFile = $this->getCsvFile($fileHandle);
@@ -1358,6 +1358,12 @@ class DataObjectHelperController extends AdminController
         stream_copy_to_stream($fileStream, $temp, null, 0);
 
         $firstLine = true;
+
+        if ($request->get('initial') && $header === 'no_header') {
+            array_shift($csv);
+            $firstLine = false;
+        }
+
         $lineCount = count($csv);
 
         if (!$addTitles && $lineCount > 0) {
@@ -1425,36 +1431,19 @@ class DataObjectHelperController extends AdminController
      * @Route("/download-xlsx-file", name="downloadxlsxfile", methods={"GET"})
      *
      * @param Request $request
+     * @param GridHelperService $gridHelperService
      *
      * @return BinaryFileResponse
      */
-    public function downloadXlsxFileAction(Request $request): BinaryFileResponse
+    public function downloadXlsxFileAction(Request $request, GridHelperService $gridHelperService): BinaryFileResponse
     {
         $storage = Storage::get('temp');
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $csvFile = $this->getCsvFile($fileHandle);
 
         try {
-            $csvReader = new Csv();
-            $csvReader->setDelimiter(';');
-            $csvReader->setSheetIndex(0);
-
-            $spreadsheet = $csvReader->loadSpreadsheetFromString($storage->read($csvFile));
-            $writer = new Xlsx($spreadsheet);
-            $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
-            $writer->save($xlsxFilename);
-
-            $response = new BinaryFileResponse($xlsxFilename);
-            $response->headers->set('Content-Type', 'application/xlsx');
-            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.xlsx');
-            $response->deleteFileAfterSend(true);
-
-            $storage->delete($csvFile);
-
-            $storage->delete($csvFile);
-
-            return $response;
-        } catch (FilesystemException | UnableToReadFile $exception) {
+            return $gridHelperService->createXlsxExportFile($storage, $fileHandle, $csvFile);
+        } catch (\Exception | FilesystemException | UnableToReadFile $exception) {
             // handle the error
             throw $this->createNotFoundException('XLSX file not found');
         }

@@ -28,36 +28,22 @@ use Pimcore\Tool\Serialize;
 class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use DataObject\Traits\ObjectVarTrait;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
+     * @var null|string[]
      */
-    public string $fieldtype = 'link';
+    public ?array $allowedTypes = null;
 
     /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string
+     * @var null|string[]
      */
-    public $queryColumnType = 'text';
+    public ?array $allowedTargets = null;
 
     /**
-     * Type for the column
-     *
-     * @internal
-     *
-     * @var string
+     * @var null|string[]
      */
-    public $columnType = 'text';
+    public ?array $disabledFields = null;
 
     /**
      * @param mixed $data
@@ -429,5 +415,80 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return null;
+    }
+
+    public function getColumnType(): string
+    {
+        return 'text';
+    }
+
+    public function getQueryColumnType(): string
+    {
+        return $this->getColumnType();
+    }
+
+    public function getFieldType(): string
+    {
+        return 'link';
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedTypes(): ?array
+    {
+        return $this->allowedTypes;
+    }
+
+    /**
+     * @param null|string[] $allowedTypes
+     *
+     * @return $this
+     */
+    public function setAllowedTypes(?array $allowedTypes): static
+    {
+        $this->allowedTypes = $allowedTypes;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getAllowedTargets(): ?array
+    {
+        return $this->allowedTargets;
+    }
+
+    /**
+     * @param null|string[] $allowedTargets
+     *
+     * @return $this
+     */
+    public function setAllowedTargets(?array $allowedTargets): static
+    {
+        $this->allowedTargets = $allowedTargets;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string[]
+     */
+    public function getDisabledFields(): ?array
+    {
+        return $this->disabledFields;
+    }
+
+    /**
+     * @param null|string[] $disabledFields
+     *
+     * @return $this
+     */
+    public function setDisabledFields(?array $disabledFields): static
+    {
+        $this->disabledFields = $disabledFields;
+
+        return $this;
     }
 }

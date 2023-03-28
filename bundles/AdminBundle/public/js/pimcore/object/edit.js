@@ -21,10 +21,10 @@ pimcore.object.edit = Class.create({
     initialize: function(object) {
         this.object = object;
         this.dataFields = {};
+        this.toolbar = null;
     },
 
     getLayout: function (conf) {
-
         if (this.layout == null) {
             var items = [];
             if (conf) {

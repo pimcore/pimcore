@@ -13,29 +13,11 @@ services:
         arguments:
             - '@logger'
         tags:
-            - { name: pimcore.maintenance.task, type: scheduledtasks }
-
-    Pimcore\Maintenance\Tasks\LogMailMaintenanceTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: logmaintenance }
+            - { name: pimcore.maintenance.task, type: scheduledtasks, messengerMessageClass: '\Pimcore\Messenger\ScheduledTaskMessage' }
 
     Pimcore\Maintenance\Tasks\LogCleanupTask:
         tags:
             - { name: pimcore.maintenance.task, type: cleanuplogfiles }
-
-    Pimcore\Maintenance\Tasks\LogErrorCleanupTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: httperrorlog }
-
-    Pimcore\Maintenance\Tasks\LogArchiveTask:
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        tags:
-            - { name: pimcore.maintenance.task, type: archiveLogEntries }
 
     Pimcore\Maintenance\Tasks\CleanupBrickTablesTask:
         arguments:
@@ -66,12 +48,6 @@ services:
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: VersionsCleanupStackTraceDb }
-
-    Pimcore\Maintenance\Tasks\RedirectCleanupTask:
-        arguments:
-            - '@logger'
-        tags:
-            - { name: pimcore.maintenance.task, type: redirectcleanup }
 
     Pimcore\Maintenance\Tasks\DbCleanupBrokenViewsTask:
         arguments:
@@ -106,7 +82,3 @@ services:
             - '@logger'
         tags:
             - { name: pimcore.maintenance.task, type: documents_static_page_generate }
-
-    Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask:
-        tags:
-            - { name: pimcore.maintenance.task, type: optimize_fulltext_indexes }

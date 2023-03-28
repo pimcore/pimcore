@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreGetDataInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\PreSetDataInterface;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
@@ -36,7 +37,8 @@ final class Localizedfield extends Model\AbstractModel implements
     DirtyIndicatorInterface,
     LazyLoadedFieldsInterface,
     Model\Element\ElementDumpStateInterface,
-    OwnerAwareFieldInterface
+    OwnerAwareFieldInterface,
+    ObjectAwareFieldInterface
 {
     use Model\DataObject\Traits\OwnerAwareFieldTrait;
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
@@ -213,13 +215,12 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @param Concrete|Model\Element\ElementDescriptor|null $object
-     * @param bool $markAsDirty
      *
      * @return $this
      *
      * @throws \Exception
      */
-    public function setObject(Model\Element\ElementDescriptor|Concrete|null $object, bool $markAsDirty = true): static
+    public function setObject(Model\Element\ElementDescriptor|Concrete|null $object): static
     {
         if ($object instanceof Model\Element\ElementDescriptor) {
             $object = Service::getElementById($object->getType(), $object->getId());
@@ -229,9 +230,7 @@ final class Localizedfield extends Model\AbstractModel implements
             throw new \Exception('must be instance of object concrete');
         }
 
-        if ($markAsDirty) {
-            $this->markAllLanguagesAsDirty();
-        }
+        $this->markAllLanguagesAsDirty();
         $this->object = $object;
         $this->objectId = $object ? $object->getId() : null;
         $this->setClass($object ? $object->getClass() : null);
@@ -241,10 +240,6 @@ final class Localizedfield extends Model\AbstractModel implements
 
     public function getObject(): ?Concrete
     {
-        if ($this->objectId && !$this->object) {
-            $this->setObject(Concrete::getById($this->objectId));
-        }
-
         return $this->object;
     }
 
@@ -753,6 +748,13 @@ final class Localizedfield extends Model\AbstractModel implements
         }
     }
 
+    public function markLanguagesAsDirty(array $languages): void
+    {
+        foreach ($languages as $language => $key) {
+            $this->markLanguageAsDirty($language);
+        }
+    }
+
     /**
      * @internal
      *
@@ -783,5 +785,19 @@ final class Localizedfield extends Model\AbstractModel implements
     public function getObjectId(): ?int
     {
         return $this->objectId;
+    }
+
+    /**
+     * @internal
+     */
+    public function setObjectOmitDirty(Localizedfield|AbstractData|Objectbrick\Data\AbstractData|Concrete $object): void
+    {
+        $dirtyLanguages = $this->getDirtyLanguages();
+        $this->setObject($object);
+        if (is_array($dirtyLanguages)) {
+            $this->markLanguagesAsDirty($dirtyLanguages);
+        } else {
+            $this->resetLanguageDirtyMap();
+        }
     }
 }

@@ -125,13 +125,15 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             }
         }
 
-        $tablesLen = array_map('strlen', $tables);
-        array_multisort($tablesLen, $tables);
-        $longestTablename = end($tables);
+        if ($tables) {
+            $tablesLen = array_map('strlen', $tables);
+            array_multisort($tablesLen, $tables);
+            $longestTablename = end($tables);
 
-        $length = strlen($longestTablename);
-        if ($length > 64) {
-            throw new \Exception('table name ' . $longestTablename . ' would be too long. Max length is 64. Current length would be ' .  $length . '.');
+            $length = strlen($longestTablename);
+            if ($length > 64) {
+                throw new \Exception('table name ' . $longestTablename . ' would be too long. Max length is 64. Current length would be ' .  $length . '.');
+            }
         }
     }
 
@@ -146,7 +148,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             throw new \Exception('A object-brick needs a key to be saved!');
         }
 
-        if (!preg_match('/[a-zA-Z]+[a-zA-Z0-9]+/', $this->getKey())) {
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $this->getKey()) || $this->isForbiddenName()) {
             throw new \Exception(sprintf('Invalid key for object-brick: %s', $this->getKey()));
         }
 

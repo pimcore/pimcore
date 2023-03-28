@@ -171,29 +171,24 @@ class NotificationEmailService extends AbstractNotificationService
 
     protected function getHtmlBody(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string
     {
-        // allow retrieval of inherited values
-        $inheritanceBackup = DataObject::getGetInheritedValues();
-        DataObject::setGetInheritedValues(true);
-
         $translatorLocaleBackup = null;
         if ($this->translator instanceof LocaleAwareInterface) {
             $translatorLocaleBackup = $this->translator->getLocale();
             $this->translator->setLocale($language);
         }
 
-        $emailTemplate = $this->template->render(
-            $mailPath, $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)
-        );
-
-        //reset inheritance
-        DataObject::setGetInheritedValues($inheritanceBackup);
-
-        if ($this->translator instanceof LocaleAwareInterface) {
-            //reset translation locale
-            $this->translator->setLocale($translatorLocaleBackup);
+        try {
+            // allow retrieval of inherited values
+            return DataObject\Service::useInheritedValues(true, fn () => $this->template->render(
+                $mailPath,
+                $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language),
+            ));
+        } finally {
+            if ($this->translator instanceof LocaleAwareInterface) {
+                //reset translation locale
+                $this->translator->setLocale($translatorLocaleBackup);
+            }
         }
-
-        return $emailTemplate;
     }
 
     protected function getNotificationEmailParameters(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $deeplink, string $language): array

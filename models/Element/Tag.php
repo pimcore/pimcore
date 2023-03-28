@@ -220,6 +220,9 @@ final class Tag extends Model\AbstractModel
         return $this->id;
     }
 
+    /**
+     * @return $this
+     */
     public function setId(?int $id): static
     {
         $this->id = $id;
@@ -232,6 +235,9 @@ final class Tag extends Model\AbstractModel
         return $this->name;
     }
 
+    /**
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -244,6 +250,9 @@ final class Tag extends Model\AbstractModel
         return $this->parentId;
     }
 
+    /**
+     * @return $this
+     */
     public function setParentId(int $parentId): static
     {
         $this->parentId = $parentId;
@@ -290,7 +299,7 @@ final class Tag extends Model\AbstractModel
         return '/' . implode('/', $parentNames);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getNamePath();
     }

@@ -590,5 +590,3 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 }
-
-@class_alias(TestDataHelper::class, 'Pimcore\Tests\Support\Helper\Document\TestDataHelper');

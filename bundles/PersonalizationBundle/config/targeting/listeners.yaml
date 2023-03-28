@@ -1,0 +1,14 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\TargetingListener: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\DocumentTargetGroupListener: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\FullPageCacheCookieCleanupListener: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\VisitedPagesCountListener: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\ToolbarListener: ~
+    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\TargetingSessionBagListener: ~
+
+

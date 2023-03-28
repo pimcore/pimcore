@@ -30,15 +30,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     use DataObject\Traits\ClassSavedTrait;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'fieldcollections';
-
-    /**
      * @internal
      *
      * @var array
@@ -596,7 +587,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        if ($fd instanceof IdRewriterInterface) {
+                        if ($fd instanceof IdRewriterInterface
+                            && $fd instanceof DataObject\ClassDefinition\Data) {
                             $d = $fd->rewriteIds($item, $idMapping, $params);
                             $setter = 'set' . ucfirst($fd->getName());
                             $item->$setter($d);
@@ -814,5 +806,10 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
 
         return null;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'fieldcollections';
     }
 }

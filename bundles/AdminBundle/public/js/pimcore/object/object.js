@@ -16,6 +16,7 @@ pimcore.registerNS("pimcore.object.object");
  * @private
  */
 pimcore.object.object = Class.create(pimcore.object.abstract, {
+    frontendLanguages: null,
     willClose: false,
     initialize: function (id, options) {
         this.id = intval(id);
@@ -56,13 +57,15 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.reports = pimcore.globalmanager.get('customReportsPanelImplementationFactory').getNewReportInstance("object_concrete");
         }
         this.variants = new pimcore.object.variantsTab(this);
-        this.appLogger = new pimcore.log.admin({
-            localMode: true,
-            searchParams: {
-                relatedobject: this.id
-            }
-        });
+        if(pimcore.globalmanager.get('applicationLoggerPanelImplementationFactory').hasImplementation()) {
+            this.appLogger = pimcore.globalmanager.get('applicationLoggerPanelImplementationFactory').getNewLoggerInstance({localMode: true,
+                searchParams: {
+                    relatedobject: this.id
+                }
+            });
+        }
         this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
+        this.frontendLanguages = pimcore.settings.websiteLanguages;
 
         this.getData();
     },
@@ -115,6 +118,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             if (this.toolbar) {
                 this.toolbar.destroy();
+            }
+            if (pimcore.globalmanager.get('global_language_' + this.id)) {
+                pimcore.globalmanager.remove('global_language_' + this.id);
             }
             pimcore.helpers.closeObject(this.id);
         }
@@ -257,6 +263,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     forgetOpenTab: function () {
         pimcore.globalmanager.remove("object_" + this.id);
+        if (pimcore.globalmanager.get('global_language_' + this.id)) {
+            pimcore.globalmanager.remove('global_language_' + this.id);
+        }
         pimcore.helpers.forgetOpenTab("object_" + this.id + "_object");
         pimcore.helpers.forgetOpenTab("object_" + this.id + "_variant");
 
@@ -355,7 +364,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
         }
 
-        if (user.isAllowed("application_logging") && this.data.general.showAppLoggerTab) {
+        if (this.appLogger && user.isAllowed("application_logging") && this.data.general.showAppLoggerTab) {
             try {
                 var appLoggerTab = this.appLogger.getTabPanel();
                 items.push(appLoggerTab);
@@ -600,6 +609,22 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 this.draftVersionNotification.show();
             }
 
+            this.languageSwitcher = Ext.create('Ext.button.Split', {
+                iconCls: "pimcore_icon_language_" + this.frontendLanguages[0].toLowerCase(),
+                scale: "medium",
+                menu: this.getLanguageMenuItems(),
+                handler: function() {
+                    if (pimcore.globalmanager.get('global_language_' + this.id)) {
+                        this.toolbar.fireEvent(
+                            pimcore.events.globalLanguageChanged,
+                            pimcore.globalmanager.get('global_language_' + this.id)
+                        );
+                    }
+                }.bind(this)
+            });
+
+            buttons.push(this.languageSwitcher);
+
             this.toolbar = new Ext.Toolbar({
                 id: "object_toolbar_" + this.id,
                 region: "north",
@@ -615,6 +640,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 this.toolbarButtons.save.hide();
             }
         }
+        this.edit.toolbar = this.toolbar;
 
         return this.toolbar;
     },

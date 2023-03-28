@@ -21,10 +21,12 @@ use Pimcore;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
+use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 {
+    use ObjectVarTrait;
     use OwnerAwareFieldTrait;
 
     protected string|null $unitId = null;
@@ -95,5 +97,5 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 
     abstract public function getValue(): mixed;
 
-    abstract public function __toString();
+    abstract public function __toString(): string;
 }

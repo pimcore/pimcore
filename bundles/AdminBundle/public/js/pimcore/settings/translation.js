@@ -159,7 +159,7 @@ pimcore.settings.translation.domain = Class.create({
 
                     let languageStore = [];
                     for (var i = 0; i < this.languages.length; i++) {
-                        languageStore.push([this.languages[i], t(this.languages[i])]);
+                        languageStore.push([this.languages[i], this.languages[i]]);
                     }
 
                     this.filterLocaleField.getStore().loadData(languageStore);

@@ -35,6 +35,9 @@ class Dao extends Model\Dao\AbstractDao
         return $this->delete($object, true);
     }
 
+    /**
+     * @return DataObject\Fieldcollection\Data\AbstractData[]
+     */
     public function load(DataObject\Concrete $object): array
     {
         /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
@@ -134,10 +137,9 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param DataObject\Concrete $object
      * @param bool $saveMode true if called from save method
      *
-     * @return array
+     * @return array{saveLocalizedRelations?: true, saveFieldcollectionRelations?: true}
      */
     public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {

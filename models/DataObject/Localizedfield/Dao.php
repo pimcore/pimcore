@@ -163,11 +163,9 @@ class Dao extends Model\Dao\AbstractDao
                 'language' => $language,
             ];
 
-            if ($container instanceof DataObject\Objectbrick\Definition) {
+            if ($container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
                 $insertData['fieldname'] = $context['fieldname'];
-            } elseif ($container instanceof DataObject\Fieldcollection\Definition) {
-                $insertData['fieldname'] = $context['fieldname'];
-                $insertData['index'] = $context['index'];
+                $insertData['index'] = $context['index'] ?? 0;
             }
 
             foreach ($fieldDefinitions as $fieldName => $fd) {
@@ -196,7 +194,8 @@ class Dao extends Model\Dao\AbstractDao
                         $fd->save($this->model, $childParams);
                     }
                 }
-                if ($fd instanceof ResourcePersistenceAwareInterface) {
+                if ($fd instanceof ResourcePersistenceAwareInterface
+                    && $fd instanceof DataObject\ClassDefinition\Data) {
                     if (is_array($fd->getColumnType())) {
                         $fieldDefinitionParams = $this->getFieldDefinitionParams($fieldName, $language, ['isUpdate' => ($params['isUpdate'] ?? false)]);
                         $insertDataArray = $fd->getDataForResource(
@@ -225,7 +224,7 @@ class Dao extends Model\Dao\AbstractDao
                 if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
                     $language
                 )) {
-                    Helper::insertOrUpdate($this->db, $storeTable, $insertData);
+                    Helper::upsert($this->db, $storeTable, $insertData, $this->getPrimaryKey($storeTable));
                 }
             } catch (TableNotFoundException $e) {
                 // if the table doesn't exist -> create it! deferred creation for object bricks ...
@@ -307,7 +306,8 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 foreach ($fieldDefinitions as $fd) {
-                    if ($fd instanceof QueryResourcePersistenceAwareInterface) {
+                    if ($fd instanceof QueryResourcePersistenceAwareInterface
+                        &&  $fd instanceof DataObject\ClassDefinition\Data) {
                         $key = $fd->getName();
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
@@ -407,7 +407,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 $queryTable = $this->getQueryTableName().'_'.$language;
-                Helper::insertOrUpdate($this->db, $queryTable, $data);
+                Helper::upsert($this->db, $queryTable, $data, $this->getPrimaryKey($queryTable));
                 if ($inheritanceEnabled) {
                     $context = isset($params['context']) ? $params['context'] : [];
                     if ($context['containerType'] === 'objectbrick') {
@@ -613,6 +613,7 @@ class Dao extends Model\Dao\AbstractDao
                 ]
             );
         } else {
+            $object->__objectAwareFields['localizedfields'] = true;
             $container = $this->model->getClass();
             $data = $this->db->fetchAllAssociative(
                 'SELECT * FROM '.$this->getTableName().' WHERE ooo_id = ? AND language IN ('.implode(
@@ -646,7 +647,9 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     $params['context']['object'] = $object;
 
-                    if ($fd instanceof LazyLoadingSupportInterface && $fd->getLazyLoading()) {
+                    if ($fd instanceof LazyLoadingSupportInterface
+                        && $fd instanceof DataObject\ClassDefinition\Data
+                        && $fd->getLazyLoading()) {
                         $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
                     } else {
                         $value = $fd->load($this->model, $params);
@@ -837,7 +840,8 @@ QUERY;
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
         if ($localizedFieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
             foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
-                if ($value instanceof ResourcePersistenceAwareInterface) {
+                if ($value instanceof ResourcePersistenceAwareInterface
+                    && $value instanceof DataObject\ClassDefinition\Data) {
                     if ($value->getColumnType()) {
                         $key = $value->getName();
 

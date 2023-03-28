@@ -371,12 +371,12 @@ Ext.onReady(function () {
         });
 
         pimcore.globalmanager.add("document_types_store", store);
-        pimcore.globalmanager.add("document_valid_types", ["page","snippet","email","newsletter","link","hardlink","printpage","printcontainer"]);
+        pimcore.globalmanager.add("document_valid_types", ["page","snippet","email","newsletter","link","hardlink"]);
     }
 
     //search element types
     pimcore.globalmanager.add("document_search_types", ["page", "snippet", "folder", "link", "hardlink", "email", "newsletter"]);
-    pimcore.globalmanager.add("asset_search_types", ["folder", "image", "text", "audio", "video", "document", "archive", "unknown"]);
+    pimcore.globalmanager.add("asset_search_types", pimcore.settings.asset_search_types);
     pimcore.globalmanager.add("object_search_types", ["object", "folder", "variant"]);
 
     //translation admin keys
@@ -498,27 +498,6 @@ Ext.onReady(function () {
     });
     sitesStore.load();
     pimcore.globalmanager.add("sites", sitesStore);
-
-    // target groups
-    Ext.define('pimcore.model.target_groups', {
-        extend: 'Ext.data.Model',
-        fields: ["id", "text"]
-    });
-
-    var targetGroupStore = Ext.create('Ext.data.JsonStore', {
-        model: "pimcore.model.target_groups",
-        proxy: {
-            type: 'ajax',
-            url: Routing.generate('pimcore_admin_targeting_targetgrouplist'),
-            reader: {
-                type: 'json'
-            }
-        }
-    });
-
-    targetGroupStore.load();
-    pimcore.globalmanager.add("target_group_store", targetGroupStore);
-
 
     // check for updates
     window.setTimeout(function () {
@@ -885,19 +864,6 @@ Ext.onReady(function () {
 
     pimcore.helpers.registerKeyBindings(document);
 
-
-    if(pimcore.settings.twoFactorSetupRequired) {
-        Ext.Msg.show({
-            title: t('setup_two_factor'),
-            message: t('2fa_setup_message'),
-            buttons: Ext.Msg.OK,
-            icon: Ext.Msg.INFO,
-            fn: function(btn) {
-                pimcore.settings.profile.twoFactorSettings.prototype.openSetupWindow();
-            }
-        });
-    }
-
     if(pimcore.currentuser.isPasswordReset) {
         pimcore.helpers.openProfile();
     }
@@ -992,3 +958,5 @@ pimcore.layout.refresh = function () {
 pimcore.helpers.unload = function () {
 
 };
+
+L.Icon.Default.imagePath = '../bundles/pimcoreadmin/build/admin/images/';

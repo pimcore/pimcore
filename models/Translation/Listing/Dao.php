@@ -97,6 +97,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translations;
     }
 
+    /**
+     * @return list<array<string,mixed>>
+     */
     public function loadRaw(): array
     {
         $queryBuilder = $this->getQueryBuilder(['*']);

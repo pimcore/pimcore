@@ -18,7 +18,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Doctrine\DBAL\Connection;
 use Exception;
-use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
@@ -28,6 +27,7 @@ use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
@@ -38,12 +38,12 @@ use Pimcore\Tool\Session;
 use Pimcore\Version;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 /**
  * @internal
@@ -61,7 +61,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
      * @Route("/", name="pimcore_admin_index", methods={"GET"})
      *
      * @param Request $request
-     * @param SiteConfigProvider $siteConfigProvider
      * @param KernelInterface $kernel
      * @param Executor $maintenanceExecutor
      * @param CsrfProtectionHandler $csrfProtection
@@ -73,7 +72,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
      */
     public function indexAction(
         Request $request,
-        SiteConfigProvider $siteConfigProvider,
         KernelInterface $kernel,
         Executor $maintenanceExecutor,
         CsrfProtectionHandler $csrfProtection,
@@ -90,19 +88,10 @@ class IndexController extends AdminController implements KernelResponseEventInte
             ->addRuntimePerspective($templateParams, $user)
             ->addPluginAssets($templateParams);
 
-        $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtection, $siteConfigProvider);
+        $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtection);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
-            // only one login is allowed to setup 2FA by the user himself
-            $user->setTwoFactorAuthentication('enabled', true);
-            // disable the 2FA prompt for the current session
-            Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
-                $adminSession->set('2fa_required', false);
-            });
-
-            $user->save();
-
-            $templateParams['settings']['twoFactorSetupRequired'] = true;
+            return $this->redirectToRoute('pimcore_admin_2fa_setup');
         }
 
         // allow to alter settings via an event
@@ -174,7 +163,18 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection, SiteConfigProvider $siteConfigProvider): static
+    protected function setAdminLanguage(Request $request, User $user): static
+    {
+        // set user language
+        $request->setLocale($user->getLanguage());
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($user->getLanguage());
+        }
+
+        return $this;
+    }
+
+    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection): static
     {
         $config                = $templateParams['config'];
         $dashboardHelper       = new \Pimcore\Helper\Dashboard($user);
@@ -196,7 +196,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'disableMinifyJs'     => \Pimcore::disableMinifyJs(),
             'environment'         => $kernel->getEnvironment(),
             'cached_environments' => Tool::getCachedSymfonyEnvironments(),
-            'sessionId'           => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
+            'sessionId'           => htmlentities($request->getSession()->getId(), ENT_QUOTES, 'UTF-8'),
 
             // languages
             'language'         => $request->getLocale(),
@@ -223,7 +223,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'asset_tree_paging_limit'        => $config['assets']['tree_paging_limit'],
             'document_tree_paging_limit'     => $config['documents']['tree_paging_limit'],
             'object_tree_paging_limit'       => $config['objects']['tree_paging_limit'],
-            'maxmind_geoip_installed'        => (bool) $this->getParameter('pimcore.geoip.db_file'),
             'hostname'                       => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
 
             'document_auto_save_interval' => $config['documents']['auto_save_interval'],
@@ -234,20 +233,19 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'availablePerspectives' => \Pimcore\Perspective\Config::getAvailablePerspectives($user),
             'disabledPortlets'      => $dashboardHelper->getDisabledPortlets(),
 
-            // google analytics
-            'google_analytics_enabled' => (bool) $siteConfigProvider->isSiteReportingConfigured(),
-
             // this stuff is used to decide whether the "add" button should be grayed out or not
             'image-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable(),
             'video-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Video\Thumbnail\Config())->isWriteable(),
             'document-types-writeable'            => (new DocType())->isWriteable(),
-            'web2print-writeable'                 => \Pimcore\Web2Print\Config::isWriteable(),
             'predefined-properties-writeable'     => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
             'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
             'perspectives-writeable'              => \Pimcore\Perspective\Config::isWriteable(),
             'custom-views-writeable'              => \Pimcore\CustomView\Config::isWriteable(),
             'class-definition-writeable'          => isset($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE']) ? (bool)$_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] : true,
             'object-custom-layout-writeable' => (new CustomLayout())->isWriteable(),
+
+            // search types
+            'asset_search_types' => Asset::getTypes(),
         ];
 
         $this
@@ -257,7 +255,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             ->addCustomViewSettings($settings)
             ->addNotificationSettings($settings, $config);
 
-        $settings['csrfToken'] = $csrfProtection->getCsrfToken();
+        $settings['csrfToken'] = $csrfProtection->getCsrfToken($request->getSession());
 
         $templateParams['settings'] = $settings;
 

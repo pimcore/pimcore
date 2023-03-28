@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
@@ -27,11 +26,11 @@ use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
-use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -50,8 +49,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         protected DocumentResolver $documentResolver,
         protected EditmodeResolver $editmodeResolver,
         protected RequestHelper $requestHelper,
-        protected UserLoader $userLoader,
-        private DocumentTargetingConfigurator $targetingConfigurator
+        protected UserLoader $userLoader
     ) {
     }
 
@@ -97,9 +95,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 // for public versions
                 $document = $this->handleVersion($request, $document);
 
-                // apply target group configuration
-                $this->applyTargetGroups($request, $document);
-
                 $this->documentResolver->setDocument($request, $document);
             }
         }
@@ -128,29 +123,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function applyTargetGroups(Request $request, Document $document): void
-    {
-        if (!$document instanceof Document\Targeting\TargetingDocumentInterface) {
-            return;
-        }
-
-        if (class_exists(Staticroute::class) && null !== Staticroute::getCurrentRoute()) {
-            return;
-        }
-
-        // reset because of preview and editmode (saved in session)
-        $document->setUseTargetGroup(null);
-
-        $this->targetingConfigurator->configureTargetGroup($document);
-
-        if ($document->getUseTargetGroup()) {
-            $this->logger->info('Setting target group to {targetGroup} for document {document}', [
-                'targetGroup' => $document->getUseTargetGroup(),
-                'document' => $document->getFullPath(),
-            ]);
-        }
-    }
-
     private function handleAdminUserDocumentParams(Request $request, ?Document $document, User $user): ?Document
     {
         if (!$document) {
@@ -159,7 +131,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
         // editmode document
         if ($this->editmodeResolver->isEditmode($request)) {
-            $document = $this->handleEditmode($document, $user);
+            $document = $this->handleEditmode($document, $user, $request->getSession());
         }
 
         // document preview
@@ -170,7 +142,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             // why was it an object?
             // $docKey = "document_" . $this->getParam("document")->getId();
 
-            if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId())) {
+            if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $request->getSession()->getId())) {
                 // if there is a document in the session use it
                 $this->logger->debug('Loading preview document {document} from session', [
                     'document' => $document->getFullPath(),
@@ -204,10 +176,10 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    protected function handleEditmode(Document $document, User $user): Document
+    protected function handleEditmode(Document $document, User $user, SessionInterface $session): Document
     {
         // check if there is the document in the session
-        if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId())) {
+        if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId(), $session->getId())) {
             // if there is a document in the session use it
             $this->logger->debug('Loading editmode document {document} from session', [
                 'document' => $document->getFullPath(),
@@ -238,7 +210,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     {
         // object preview
         if ($objectId = $request->get('pimcore_object_preview')) {
-            if ($object = Service::getElementFromSession('object', $objectId)) {
+            if ($object = Service::getElementFromSession('object', $objectId, $request->getSession()->getId())) {
                 $this->logger->debug('Loading object {object} ({objectId}) from session', [
                     'object' => $object->getFullPath(),
                     'objectId' => $object->getId(),

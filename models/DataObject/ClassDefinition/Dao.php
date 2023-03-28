@@ -146,6 +146,7 @@ class Dao extends Model\Dao\AbstractDao
               `position` varchar(70) NOT NULL DEFAULT '0',
               INDEX `forward_lookup` (`src_id`, `ownertype`, `ownername`, `position`),
               INDEX `reverse_lookup` (`dest_id`, `type`),
+              INDEX `fieldname` (`fieldname`),
 			  CONSTRAINT `".self::getForeignKeyName($objectDatastoreTableRelation, 'src_id').'` FOREIGN KEY (`src_id`) REFERENCES objects (`id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
@@ -162,7 +163,8 @@ class Dao extends Model\Dao\AbstractDao
         // add non existing columns in the table
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
-                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
+                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
+                    && $value instanceof DataObject\ClassDefinition\Data) {
                     // if a datafield requires more than one column in the datastore table => only for non-relation types
                     if (!$value->isRelationType()) {
                         if (is_array($value->getColumnType())) {
@@ -179,7 +181,8 @@ class Dao extends Model\Dao\AbstractDao
                     $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
                 }
 
-                if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
+                if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
+                    && $value instanceof DataObject\ClassDefinition\Data) {
                     // if a datafield requires more than one column in the query table
                     if (is_array($value->getQueryColumnType())) {
                         foreach ($value->getQueryColumnType() as $fkey => $fvalue) {

@@ -21,15 +21,12 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
-use Pimcore\Model\Document\TypeDefinition\Loader\TypeLoader;
 use Pimcore\Model\Element\DuplicateFullPathException;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
-use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -46,8 +43,6 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $fullPathCache = null;
 
@@ -58,17 +53,8 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $key = null;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    protected ?string $path = null;
 
     /**
      * @internal
@@ -88,14 +74,14 @@ class Document extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $children = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $siblings = [];
 
@@ -114,16 +100,11 @@ class Document extends Element\AbstractElement
         return $blockedVars;
     }
 
-    /**
-     * get possible types
-     *
-     * @return array
-     */
     public static function getTypes(): array
     {
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
 
-        return $documentsConfig['types'];
+        return  array_keys($documentsConfig['type_definitions']['map']);
     }
 
     /**
@@ -225,32 +206,11 @@ class Document extends Element\AbstractElement
                 return null;
             }
 
-            try {
-                // Getting Typeloader from container
-                $loader = \Pimcore::getContainer()->get(TypeLoader::class);
-                $newDocument = $loader->build($document->getType());
-            } catch(UnsupportedException $ex) {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '10.6.0',
-                    sprintf('%s - Loading documents via fixed namespace is deprecated and will be removed in Pimcore 11. Use pimcore:type_definitions instead', $ex->getMessage())
-                );
-                /**
-                 * @deprecated since Pimcore 10.6 and will be removed in Pimcore 11. Use type_definitions instead
-                 */
-                $className = 'Pimcore\\Model\\Document\\' . ucfirst($document->getType());
+            // Getting classname from document resolver
+            $className = \Pimcore::getContainer()->get('pimcore.class.resolver.document')->resolve($document->getType());
 
-                // this is the fallback for custom document types using prefixes
-                // so we need to check if the class exists first
-                if (!Tool::classExists($className)) {
-                    $oldStyleClass = 'Document_' . ucfirst($document->getType());
-                    if (Tool::classExists($oldStyleClass)) {
-                        $className = $oldStyleClass;
-                    }
-                }
-                /** @var Document $newDocument */
-                $newDocument = self::getModelFactory()->build($className);
-            }
+            /** @var Document $newDocument */
+            $newDocument = self::getModelFactory()->build($className);
 
             if (get_class($document) !== get_class($newDocument)) {
                 $document = $newDocument;
@@ -586,7 +546,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Get a list of the children (not recursivly)
-     *
      */
     public function getChildren(bool $includingUnpublished = false): Listing
     {
@@ -613,7 +572,7 @@ class Document extends Element\AbstractElement
     /**
      * Returns true if the document has at least one child
      */
-    public function hasChildren(bool $includingUnpublished = false): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
         return $this->getDao()->hasChildren($includingUnpublished);
     }
@@ -649,7 +608,7 @@ class Document extends Element\AbstractElement
     /**
      * Returns true if the document has at least one sibling
      */
-    public function hasSiblings(bool $includingUnpublished = null): bool
+    public function hasSiblings(?bool $includingUnpublished = null): bool
     {
         return $this->getDao()->hasSiblings($includingUnpublished);
     }
@@ -1021,7 +980,7 @@ class Document extends Element\AbstractElement
         return 'document_list_' . ($includingUnpublished ? '1' : '0');
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->parent = null;

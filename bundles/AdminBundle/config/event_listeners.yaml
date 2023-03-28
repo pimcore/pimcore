@@ -10,10 +10,6 @@ services:
 
     Pimcore\Bundle\AdminBundle\EventListener\AdminSecurityListener: ~
 
-    Pimcore\Bundle\AdminBundle\EventListener\AdminAuthenticationDoubleCheckListener:
-        arguments:
-            $unauthenticatedRoutes: '%pimcore_admin.unauthenticated_routes%'
-
     Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener: ~
     #
     # EXCEPTION HANDLING

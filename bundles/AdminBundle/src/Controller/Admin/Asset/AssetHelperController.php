@@ -43,7 +43,6 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -391,7 +390,7 @@ class AssetHelperController extends AdminController
             }
         }
 
-        Tool\Session::useSession(function (AttributeBagInterface $session) use ($helperColumns) {
+        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($helperColumns) {
             $existingColumns = $session->get('helpercolumns', []);
             $helperColumns = array_merge($helperColumns, $existingColumns);
             $session->set('helpercolumns', $helperColumns);
@@ -765,9 +764,9 @@ class AssetHelperController extends AdminController
         return $this->adminJson(['success' => true]);
     }
 
-    public function encodeFunc(string $value): string
+    public function encodeFunc(?string $value): string
     {
-        $value = str_replace('"', '""', $value);
+        $value = str_replace('"', '""', $value ?? '');
         //force wrap value in quotes and return
         return '"' . $value . '"';
     }
@@ -874,34 +873,19 @@ class AssetHelperController extends AdminController
      * @Route("/download-xlsx-file", name="pimcore_admin_asset_assethelper_downloadxlsxfile", methods={"GET"})
      *
      * @param Request $request
+     * @param GridHelperService $gridHelperService
      *
      * @return BinaryFileResponse
      */
-    public function downloadXlsxFileAction(Request $request): BinaryFileResponse
+    public function downloadXlsxFileAction(Request $request, GridHelperService $gridHelperService): BinaryFileResponse
     {
         $storage = Storage::get('temp');
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $csvFile = $this->getCsvFile($fileHandle);
 
         try {
-            $csvReader = new Csv();
-            $csvReader->setDelimiter(';');
-            $csvReader->setSheetIndex(0);
-
-            $spreadsheet = $csvReader->loadSpreadsheetFromString($storage->read($csvFile));
-            $writer = new Xlsx($spreadsheet);
-            $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
-            $writer->save($xlsxFilename);
-
-            $response = new BinaryFileResponse($xlsxFilename);
-            $response->headers->set('Content-Type', 'application/xlsx');
-            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.xlsx');
-            $response->deleteFileAfterSend(true);
-
-            $storage->delete($csvFile);
-
-            return $response;
-        } catch (FilesystemException | UnableToReadFile $exception) {
+            return $gridHelperService->createXlsxExportFile($storage, $fileHandle, $csvFile);
+        } catch (\Exception | FilesystemException | UnableToReadFile $exception) {
             // handle the error
             throw $this->createNotFoundException('XLSX file not found');
         }

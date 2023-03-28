@@ -36,27 +36,23 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
-     *
-     * @var Model\Dependency|null
      */
     protected ?Model\Dependency $dependencies = null;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $__dataVersionTimestamp = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $path = null;
 
     /**
      * @internal
+     *
+     * @var array<string, Model\Property>|null
      */
     protected ?array $properties = null;
 
@@ -77,15 +73,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $modificationDate = null;
 
     /**
      * @internal
-     *
-     * @var int
      */
     protected int $versionCount = 0;
 
@@ -238,9 +230,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->parent;
     }
 
-    /**
-     * @return Model\Property[]
-     */
     public function getProperties(): array
     {
         $type = Service::getElementType($this);
@@ -368,12 +357,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->versionCount ? $this->versionCount : 0;
     }
 
-    /**
-     * @return $this
-     */
-    public function setVersionCount(?int $versionCount): static
+    public function setVersionCount(int $versionCount): static
     {
-        $this->versionCount = (int) $versionCount;
+        $this->versionCount = $versionCount;
 
         return $this;
     }
@@ -556,7 +542,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getFullPath();
     }
@@ -697,7 +683,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setInDumpState(false);
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->dependencies = null;

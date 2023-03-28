@@ -1,31 +1,3 @@
-# CKEDITOR (use builder: http://ckeditor.com/builder);
-upload build-config.js
-
-OR:
-
-+ select "full" distribution
-
-Add plugins:
-+ plugin sourcedialog
-+ plugin tableresize
-
-Remove plugins:
-- About CKEditor
-- Content Templates
-- File Browser
-- Flash Dialog
-- Form Elements
-- Insert Smiley
-- Magic Line
-- Maximize
-- New Page
-- Preview
-- Print
-- Save
-- SpellCheckAsYouType (SCAYT)
-
-Delete: samples/
-
 # EXT JS
 
 current version: 7.0.0
@@ -140,12 +112,6 @@ and adapt the styles as needed (see color map below). Also the resource paths ne
 fonts/OpenSans-LightItalic.ttf => fonts/OpenSans-Italic.ttf
 fonts/OpenSans-Light.ttf => fonts/OpenSans-Regular.ttf
 
-# Moment JS
-current version: 2.24.0
-
-# Leaflet JS
-current version: 1.6.0
-
 # miniPaint
 current version: 4.2.4
 
@@ -171,11 +137,3 @@ Build instructions:
         </li>
     </ul>
 </li>
-
-# Ace editor
-current version: 1.4.12
-
-Build instructions:
- - Download latest build from https://github.com/ajaxorg/ace-builds and extract /src-min-noconflict
- - Cleanup all theme-*.js files except "theme-chrome.js" & "theme-twilight.js"
- - Replace the current folder with extracted one here `/bundles/AdminBundle/public/js/lib/ace/src-min-noconflict`

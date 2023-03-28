@@ -24,6 +24,9 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Routing\DocumentRoute;
+use Pimcore\Tool;
+use Pimcore\Tool\Frontend;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -82,18 +85,6 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @param string $type
-     *
-     * @deprecated will be removed in Pimcore 11
-     */
-    public function addDirectRouteDocumentType(string $type): void
-    {
-        if (!in_array($type, $this->getDirectRouteDocumentTypes())) {
-            $this->directRouteDocumentTypes[] = $type;
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getRouteByName(string $name): ?DocumentRoute
@@ -115,11 +106,20 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context): void
     {
         $document = Document::getByPath($context->getPath());
+        $site = $this->siteResolver->getSite($context->getRequest());
+
+        // If the request is not from a site and the document is part of a site
+        // or the ID of the requested site does not match the site where the document is located.
+        // Then we have to throw a NotFoundHttpException
+        if (!$site && $document && !Tool::isFrontendRequestByAdmin()) {
+            $siteIdOfDocument = Frontend::getSiteIdForDocument($document);
+            if ($siteIdOfDocument) {
+                throw new NotFoundHttpException('The page does not exist on this configured site.');
+            }
+        }
 
         // check for a pretty url inside a site
         if (!$document && $this->siteResolver->isSiteRequest($context->getRequest())) {
-            $site = $this->siteResolver->getSite($context->getRequest());
-
             $sitePrettyDocId = $this->documentService->getDao()->getDocumentIdByPrettyUrlInSite($site, $context->getOriginalPath());
             if ($sitePrettyDocId) {
                 if ($sitePrettyDoc = Document::getById($sitePrettyDocId)) {

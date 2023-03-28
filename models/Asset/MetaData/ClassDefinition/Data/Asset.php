@@ -23,7 +23,10 @@ class Asset extends Data
 {
     public function normalize(mixed $value, array $params = []): mixed
     {
-        $element = Service::getElementByPath('asset', $value);
+        $element = null;
+        if ($value) {
+            $element = Service::getElementByPath('asset', $value);
+        }
         if ($element) {
             return $element->getId();
         }
@@ -39,35 +42,6 @@ class Asset extends Data
         }
 
         return $element;
-    }
-
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return string
-     *
-     * @deprecated use denormalize() instead, will be removed in Pimcore 11
-     */
-    public function unmarshal(mixed $value, array $params = []): mixed
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.4',
-            sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
-        $element = null;
-        if (is_numeric($value)) {
-            $element = Service::getElementById('asset', $value);
-        }
-        if ($element) {
-            $value = $element->getRealFullPath();
-        } else {
-            $value = '';
-        }
-
-        return $value;
     }
 
     public function transformGetterData(mixed $data, array $params = []): mixed
@@ -90,7 +64,10 @@ class Asset extends Data
 
     public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
-        $element = Service::getElementByPath('asset', $data);
+        $element = null;
+        if ($data) {
+            $element = Service::getElementByPath('asset', $data);
+        }
         if ($element) {
             return $element->getId();
         }

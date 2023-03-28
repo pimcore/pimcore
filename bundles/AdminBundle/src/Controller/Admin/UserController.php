@@ -16,18 +16,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Writer\PngWriter;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Logger;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\User;
 use Pimcore\Tool;
-use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -35,6 +33,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @internal
@@ -272,16 +272,12 @@ class UserController extends AdminController implements KernelControllerEventInt
     /**
      * @Route("/user/update", name="pimcore_admin_user_update", methods={"PUT"})
      *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
      * @throws \Exception
      */
     public function updateAction(Request $request): JsonResponse
     {
-        /** @var User|null $user */
-        $user = User\UserRole::getById((int)$request->get('id'));
+        /** @var User|User\Role|null $user */
+        $user = User\UserRole::getById($request->request->getInt('id'));
 
         if (!$user) {
             throw $this->createNotFoundException();
@@ -546,8 +542,9 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function updateCurrentUserAction(Request $request): JsonResponse
+    public function updateCurrentUserAction(Request $request, ValidatorInterface $validator): JsonResponse
     {
+        //TODO Can be completely validated with Symfony Validator
         $user = $this->getAdminUser();
         if ($user != null) {
             if ($user->getId() == $request->get('id')) {
@@ -565,7 +562,7 @@ class UserController extends AdminController implements KernelControllerEventInt
 
                     if (empty($values['old_password'])) {
                         // if the user want to reset the password, the old password isn't required
-                        $oldPasswordCheck = Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+                        $oldPasswordCheck = Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession) {
                             if ($adminSession->get('password_reset')) {
                                 return true;
                             }
@@ -573,9 +570,9 @@ class UserController extends AdminController implements KernelControllerEventInt
                             return false;
                         });
                     } else {
-                        // the password has to match
-                        $checkUser = Tool\Authentication::authenticatePlaintext($user->getName(), $values['old_password']);
-                        if ($checkUser) {
+                        $errors = $validator->validate($values['old_password'], [new UserPassword()]);
+
+                        if (count($errors) === 0) {
                             $oldPasswordCheck = true;
                         }
                     }
@@ -648,7 +645,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         $userData['twoFactorAuthentication']['isActive'] = $user->getTwoFactorAuthentication('enabled') && $user->getTwoFactorAuthentication('secret');
         $userData['hasImage'] = $user->hasImage();
 
-        $userData['isPasswordReset'] = Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+        $userData['isPasswordReset'] = Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession) {
             return $adminSession->get('password_reset');
         });
 
@@ -789,6 +786,15 @@ class UserController extends AdminController implements KernelControllerEventInt
             throw $this->createAccessDeniedHttpException('Only admin users are allowed to modify admin users');
         }
 
+        //Check if uploaded file is an image
+        $avatarFile = $request->files->get('Filedata');
+
+        $assetType = Asset::getTypeFromMimeMapping($avatarFile->getMimeType(), $avatarFile);
+
+        if (!$avatarFile instanceof UploadedFile || $assetType !== 'image') {
+            throw new \Exception('Unsupported file format.');
+        }
+
         $userObj->setImage($_FILES['Filedata']['tmp_name']);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
@@ -824,44 +830,6 @@ class UserController extends AdminController implements KernelControllerEventInt
         $userObj->setImage(null);
 
         return $this->adminJson(['success' => true]);
-    }
-
-    /**
-     * @Route("/user/renew-2fa-qr-secret", name="pimcore_admin_user_renew2fasecret", methods={"GET"})
-     *
-     * @param Request $request
-     * @param GoogleAuthenticatorInterface $twoFactor
-     *
-     * @return BinaryFileResponse
-     */
-    public function renew2FaSecretAction(Request $request, GoogleAuthenticatorInterface $twoFactor): BinaryFileResponse
-    {
-        $user = $this->getAdminUser();
-        $proxyUser = $this->getAdminUser(true);
-
-        $newSecret = $twoFactor->generateSecret();
-        $user->setTwoFactorAuthentication('enabled', true);
-        $user->setTwoFactorAuthentication('type', 'google');
-        $user->setTwoFactorAuthentication('secret', $newSecret);
-        $user->save();
-
-        Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
-            Tool\Session::regenerateId();
-            $adminSession->set('2fa_required', true);
-        });
-
-        $url = $twoFactor->getQRContent($proxyUser);
-
-        $result = Builder::create()
-            ->writer(new PngWriter())
-            ->data($url)
-            ->size(200)
-            ->build();
-
-        $qrCodeFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/qr-code-' . uniqid() . '.png';
-        $result->saveToFile($qrCodeFile);
-
-        return new BinaryFileResponse($qrCodeFile);
     }
 
     /**
@@ -901,6 +869,25 @@ class UserController extends AdminController implements KernelControllerEventInt
         if (!$user) {
             throw $this->createNotFoundException();
         }
+        $user->setTwoFactorAuthentication('enabled', false);
+        $user->setTwoFactorAuthentication('secret', '');
+        $user->save();
+
+        return $this->adminJson([
+            'success' => true,
+        ]);
+    }
+
+    /**
+     * @Route("/user/reset-my-2fa-secret", name="pimcore_admin_user_reset_my_2fa_secret", methods={"PUT"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function resetMy2FaSecretAction(Request $request): JsonResponse
+    {
+        $user = $this->getAdminUser();
         $user->setTwoFactorAuthentication('enabled', false);
         $user->setTwoFactorAuthentication('secret', '');
         $user->save();

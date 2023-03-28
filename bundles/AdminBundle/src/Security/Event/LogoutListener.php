@@ -77,10 +77,10 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
         $this->tokenStorage->setToken(null);
 
         // clear open edit locks for this session
-        Editlock::clearSession(Session::getSessionId());
+        Editlock::clearSession($request->getSession()->getId());
 
         /** @var PimcoreLogoutEvent|null $event */
-        $event = Session::useSession(function (AttributeBagInterface $adminSession) use ($request) {
+        $event = Session::useBag($request->getSession(), function (AttributeBagInterface $adminSession) use ($request) {
             $event = null;
 
             $user = $adminSession->get('user');

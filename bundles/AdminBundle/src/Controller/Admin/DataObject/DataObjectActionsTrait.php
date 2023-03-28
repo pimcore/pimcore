@@ -122,7 +122,7 @@ trait DataObjectActionsTrait
             $objects = [];
             foreach ($list->getObjects() as $object) {
                 if ($csvMode) {
-                    $o = DataObject\Service::getCsvDataForObject($object, $requestedLanguage, $request->get('fields'), DataObject\Service::getHelperDefinitions(), $localeService, false, $allParams['context']);
+                    $o = DataObject\Service::getCsvDataForObject($object, $requestedLanguage, $request->get('fields'), DataObject\Service::getHelperDefinitions(), $localeService, 'title', false, $allParams['context']);
                 } else {
                     $o = DataObject\Service::gridObjectData($object, $allParams['fields'] ?? null, $requestedLanguage,
                         ['csvMode' => $csvMode]);
@@ -291,11 +291,6 @@ trait DataObjectActionsTrait
         $fieldDefinition = $class->getFieldDefinition($key);
         if ($fieldDefinition) {
             return $fieldDefinition;
-        }
-
-        $localized = $class->getFieldDefinition('localizedfields');
-        if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-            $fieldDefinition = $localized->getFieldDefinition($key);
         }
 
         return $fieldDefinition;

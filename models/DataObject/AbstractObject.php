@@ -55,7 +55,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * possible types of a document
      *
-     * @var array
+     * @var string[]
      */
     public static array $types = [self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT];
 
@@ -65,8 +65,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected static bool $disableDirtyDetection = false;
 
@@ -79,145 +77,44 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
-     */
-    protected ?int $id = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
-     */
-    protected ?int $parentId = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     */
-    protected ?Element\AbstractElement $parent = null;
-
-    /**
-     * @internal
-     *
-     * @var string
      */
     protected string $type = 'object';
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $key = null;
 
     /**
      * @internal
-     *
-     * @var string|null
-     */
-    protected ?string $path = null;
-
-    /**
-     * @internal
-     *
-     * @var int
      */
     protected int $index = 0;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
-     */
-    protected ?int $creationDate = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var int|null
-     */
-    protected ?int $modificationDate = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     */
-    protected ?int $userOwner = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     */
-    protected ?int $userModification = null;
 
     /**
      * Contains a list of sibling documents
      *
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $siblings = [];
 
     /**
      * @internal
      *
-     * @var array
+     * @var array<string, Listing>
      */
     protected array $children = [];
 
     /**
      * @internal
-     *
-     * @deprecated
-     *
-     * @var string
-     */
-    protected ?string $locked = null;
-
-    /**
-     * @internal
-     *
-     * @var string|null
      */
     protected ?string $childrenSortBy = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $childrenSortOrder = null;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var int
-     */
-    protected int $versionCount = 0;
-
-    /**
-     * @internal
-     *
-     * @deprecated
-     *
-     * @var array|null
-     */
-    protected ?array $properties = null;
 
     /**
      * {@inheritdoc}
@@ -305,11 +202,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return self::$getInheritedValues;
     }
 
-    /**
-     * get possible types
-     *
-     * @return array
-     */
     public static function getTypes(): array
     {
         return self::$types;
@@ -461,7 +353,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * Returns a list of the children objects
      */
     public function getChildren(
-        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER,
+        ],
         bool $includingUnpublished = false
     ): Listing {
         $cacheKey = $this->getListingCacheKey(func_get_args());
@@ -490,8 +386,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      */
     public function hasChildren(
-        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
-        bool $includingUnpublished = null
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER,
+        ],
+        ?bool $includingUnpublished = null
     ): bool {
         return $this->getDao()->hasChildren($objectTypes, $includingUnpublished);
     }
@@ -500,7 +400,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * Get a list of the sibling objects
      */
     public function getSiblings(
-        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER,
+        ],
         bool $includingUnpublished = false
     ): Listing {
         $cacheKey = $this->getListingCacheKey(func_get_args());
@@ -531,8 +435,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * Returns true if the object has at least one sibling
      */
     public function hasSiblings(
-        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
-        bool $includingUnpublished = null
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER,
+        ],
+        ?bool $includingUnpublished = null
     ): bool {
         return $this->getDao()->hasSiblings($objectTypes, $includingUnpublished);
     }
@@ -979,7 +887,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function setChildren(
         ?Listing $children,
-        array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER],
+        array $objectTypes = [
+            self::OBJECT_TYPE_OBJECT,
+            self::OBJECT_TYPE_VARIANT,
+            self::OBJECT_TYPE_FOLDER,
+        ],
         bool $includingUnpublished = false
     ): static {
         if ($children === null) {
@@ -1138,7 +1050,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * load lazy loaded fields before cloning
      */
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
 

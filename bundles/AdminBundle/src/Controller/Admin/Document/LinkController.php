@@ -51,7 +51,7 @@ class LinkController extends DocumentControllerBase
             throw $this->createNotFoundException('Link not found');
         }
 
-        if (($lock = $this->checkForLock($link)) instanceof JsonResponse) {
+        if (($lock = $this->checkForLock($link, $request->getSession()->getId())) instanceof JsonResponse) {
             return $lock;
         }
 

@@ -18,7 +18,6 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Redirect;
 
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
@@ -191,29 +190,9 @@ class Hardlink extends Document
         return $this->children[$cacheKey];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasChildren(bool $includingUnpublished = false): bool
+    public function hasChildren(?bool $includingUnpublished = null): bool
     {
-        return count($this->getChildren($includingUnpublished)) > 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doDelete(): void
-    {
-        // check for redirects pointing to this document, and delete them too
-        $redirects = new Redirect\Listing();
-        $redirects->setCondition('target = ?', $this->getId());
-        $redirects->load();
-
-        foreach ($redirects->getRedirects() as $redirect) {
-            $redirect->delete();
-        }
-
-        parent::doDelete();
+        return count($this->getChildren((bool)$includingUnpublished)) > 0;
     }
 
     /**

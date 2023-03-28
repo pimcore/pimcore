@@ -41,6 +41,9 @@ class Definition extends Model\AbstractModel
         return $this->key;
     }
 
+    /**
+     * @return $this
+     */
     public function setKey(string $key): static
     {
         $this->key = $key;
@@ -53,7 +56,10 @@ class Definition extends Model\AbstractModel
         return $this->category;
     }
 
-    public function setCategory(string $category): Definition
+    /**
+     * @return $this
+     */
+    public function setCategory(string $category): static
     {
         $this->category = $category;
 

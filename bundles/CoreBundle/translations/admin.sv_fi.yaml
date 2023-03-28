@@ -400,13 +400,6 @@ translations_are_not_configured: "\xD6vers\xE4ttning \xE4r ej konfigurerad"
 read_more_here: "L\xE4s mer om h\xE4r"
 publish_version: Publicera version
 start: Start
-su: "S\xF6n"
-mo: "M\xE5n"
-tu: Tis
-we: Ons
-th: Tors
-fr: Fre
-sa: "L\xF6r"
 session_error_text: "Det verkar vara problem med din session. Vi rekommenderar att
   du laddar om hela sidan f\xF6r att spara, men du kan f\xF6rs\xF6ka spara dina \xE4ndringar
   f\xF6rst."

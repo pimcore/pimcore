@@ -262,9 +262,9 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                         linkParams.push("_dc=" + date.getTime());
 
                         // add target group parameter if available
-                        if(this["edit"] && this.edit["targetGroup"]) {
-                            if(this.edit.targetGroup && this.edit.targetGroup.getValue()) {
-                                linkParams.push("_ptg=" + this.edit.targetGroup.getValue());
+                        if(this["edit"] && this.edit.areaToolBar) {
+                            if(this.edit.areaToolBar.targetGroup && this.edit.areaToolBar.targetGroup.getValue()) {
+                                linkParams.push("_ptg=" + this.edit.areaToolBar.targetGroup.getValue());
                             }
                         }
 
@@ -344,7 +344,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         }
 
         Ext.Ajax.request({
-            url: Routing.getBaseUrl() + '/admin/' + this.getType() + '/save-to-session',
+            url: Routing.generate(this.getSaveToSessionRoute()),
             method: "post",
             params: this.getSaveData(),
             success: onComplete
@@ -353,7 +353,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
     removeFromSession: function () {
         Ext.Ajax.request({
-            url: Routing.getBaseUrl() + '/admin/' + this.getType() + '/remove-from-session',
+            url: Routing.generate(this.getRemoveFromSessionRoute()),
             method: 'DELETE',
             params: {id: this.data.id}
         });
@@ -512,5 +512,14 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             }
         } catch(e) {
         }
-    }
+    },
+
+    getSaveToSessionRoute: function() {
+        return "pimcore_admin_document_" + this.type + '_savetosession';
+    },
+
+    getRemoveFromSessionRoute: function() {
+        return "pimcore_admin_document_" + this.type + '_removefromsession';
+    },
+
 });

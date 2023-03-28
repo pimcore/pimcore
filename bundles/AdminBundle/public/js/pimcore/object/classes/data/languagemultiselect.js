@@ -59,7 +59,7 @@ pimcore.object.classes.data.languagemultiselect = Class.create(pimcore.object.cl
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-        return [
+        const stylingItems = [
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -81,7 +81,14 @@ pimcore.object.classes.data.languagemultiselect = Class.create(pimcore.object.cl
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('height_explanation')
-            },
+            }
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            return stylingItems;
+        }
+
+        return stylingItems.concat([
             {
                 xtype: "combo",
                 fieldLabel: t("multiselect_render_type"),
@@ -103,7 +110,7 @@ pimcore.object.classes.data.languagemultiselect = Class.create(pimcore.object.cl
                 name: "onlySystemLanguages",
                 checked: datax.onlySystemLanguages
             }
-        ]
+        ]);
     },
 
 

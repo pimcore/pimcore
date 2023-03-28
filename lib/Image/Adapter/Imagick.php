@@ -36,6 +36,9 @@ class Imagick extends Adapter
 
     protected string $imagePath;
 
+    /**
+     * @var array<string, bool>
+     */
     protected static array $supportedFormatsCache = [];
 
     private ?array $initalOptions = null;
@@ -43,7 +46,7 @@ class Imagick extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function load(string $imagePath, array $options = []): bool|static
+    public function load(string $imagePath, array $options = []): static|false
     {
         $this->initalOptions ??= $options;
 
@@ -558,8 +561,8 @@ class Imagick extends Adapter
 
         $this->contain($width, $height, $forceResize);
 
-        $x = ($width - $this->getWidth()) / 2;
-        $y = ($height - $this->getHeight()) / 2;
+        $x = (int)(($width - $this->getWidth()) / 2);
+        $y = (int)(($height - $this->getHeight()) / 2);
 
         $newImage = $this->createCompositeImageFromResource($width, $height, $x, $y);
         $this->resource = $newImage;
@@ -975,7 +978,7 @@ class Imagick extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function supportsFormat(string $format, bool $force = false): mixed
+    public function supportsFormat(string $format, bool $force = false): bool
     {
         if ($force) {
             return $this->checkFormatSupport($format);

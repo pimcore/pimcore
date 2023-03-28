@@ -32,15 +32,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     use DataObject\Traits\ClassSavedTrait;
 
     /**
-     * Static type of this element
-     *
-     * @internal
-     *
-     * @var string
-     */
-    public string $fieldtype = 'objectbricks';
-
-    /**
      * @internal
      *
      * @var array
@@ -230,15 +221,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             $result->metaData['objectid'] = $baseObject->getId();
             $result->metaData['inherited'] = $level != 0;
         } else {
-            $fieldValue = null;
             $fieldValue = $item->$valueGetter();
             $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject, $params);
 
             if ($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
-                $backup = DataObject::getGetInheritedValues();
-                DataObject::setGetInheritedValues(true);
-                $parentItem = $parent->{'get' . ucfirst($this->getName())}()->$getter();
-                DataObject::setGetInheritedValues($backup);
+                $parentItem = DataObject\Service::useInheritedValues(true,
+                    fn () => $parent->{'get' . ucfirst($this->getName())}()->$getter()
+                );
+
                 if (!empty($parentItem)) {
                     return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $params);
                 }
@@ -780,7 +770,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if ($fd instanceof IdRewriterInterface) {
+                    if ($fd instanceof IdRewriterInterface
+                    && $fd instanceof DataObject\ClassDefinition\Data) {
                         $d = $fd->rewriteIds($item, $idMapping, $params);
                         $setter = 'set' . ucfirst($fd->getName());
                         $item->$setter($d);
@@ -881,7 +872,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 $fds = $brickDef->getFieldDefinitions();
                 foreach ($fds as $fd) {
                     $value = $item->{'get' . $fd->getName()}();
-                    if ($fd instanceof NormalizerInterface) {
+                    if ($fd instanceof NormalizerInterface
+                        && $fd instanceof DataObject\ClassDefinition\Data) {
                         $result[$type][$fd->getName()] = $fd->normalize($value, $params);
                     } else {
                         throw new \Exception($fd->getName() . ' does not implement NormalizerInterface');
@@ -918,5 +910,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
 
         return null;
+    }
+
+    public function getFieldType(): string
+    {
+        return 'objectbricks';
     }
 }

@@ -40,6 +40,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 abstract class ElementControllerBase extends AdminController
 {
+    /**
+     * @return array<string, mixed>
+     */
     protected function getTreeNodeConfig(ElementInterface $element): array
     {
         return [];

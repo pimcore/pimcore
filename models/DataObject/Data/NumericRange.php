@@ -72,7 +72,7 @@ class NumericRange implements OwnerAwareFieldInterface
         ];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         $minimum = $this->getMinimum() ?: '-∞';
         $maximum = $this->getMaximum() ?: '+∞';

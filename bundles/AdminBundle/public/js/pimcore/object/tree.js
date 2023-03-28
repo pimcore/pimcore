@@ -80,10 +80,17 @@ pimcore.registerNS("pimcore.object.tree");
 
          var itemsPerPage = pimcore.settings['object_tree_paging_limit'];
 
-         rootNodeConfig.text = t("home");
-         rootNodeConfig.id = "" +  rootNodeConfig.id;
+         let rootNodeConfigText = t('home');
+         let rootNodeConfigIconCls = "pimcore_icon_home";
+         if(this.config.customViewId !== undefined && rootNodeConfig.id !== 1) {
+             rootNodeConfigText = rootNodeConfig.key;
+             rootNodeConfigIconCls = rootNodeConfig.iconCls;
+         }
+
+         rootNodeConfig.text = rootNodeConfigText;
          rootNodeConfig.allowDrag = true;
-         rootNodeConfig.iconCls = "pimcore_icon_home";
+         rootNodeConfig.id = "" + rootNodeConfig.id;
+         rootNodeConfig.iconCls = rootNodeConfigIconCls;
          rootNodeConfig.cls = "pimcore_tree_node_root";
          rootNodeConfig.expanded = true;
 
@@ -310,7 +317,6 @@ pimcore.registerNS("pimcore.object.tree");
                          node.data.basePath = newBasePath;
                          node.data.path = node.data.basePath + "/" + node.data.text;
                      });
-                     pimcore.elementservice.nodeMoved("object", oldParent, newParent);
                  } else {
                      tree.loadMask.hide();
                      pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),

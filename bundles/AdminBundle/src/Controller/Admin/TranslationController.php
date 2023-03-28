@@ -55,7 +55,7 @@ class TranslationController extends AdminController
         $admin = $domain == Translation::DOMAIN_ADMIN;
 
         $dialect = $request->get('csvSettings', null);
-        $session = Session::get('pimcore_importconfig');
+        $session = Session::getSessionBag($request->getSession(), 'pimcore_importconfig');
         $tmpFile = $session->get('translation_import_file');
 
         if ($dialect) {
@@ -126,7 +126,7 @@ class TranslationController extends AdminController
         $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $filename;
         File::put($importFile, $tmpData);
 
-        Session::useSession(function (AttributeBagInterface $session) use ($importFile) {
+        Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($importFile) {
             $session->set('translation_import_file', $importFile);
         }, 'pimcore_importconfig');
 

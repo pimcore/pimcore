@@ -96,7 +96,8 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 
-            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
+            if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface
+                && $value instanceof DataObject\ClassDefinition\Data) {
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
@@ -113,7 +114,8 @@ class Dao extends Model\Dao\AbstractDao
                 $this->addIndexToField($value, $tableStore, 'getColumnType', true);
             }
 
-            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
+            if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface
+                && $value instanceof DataObject\ClassDefinition\Data) {
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {

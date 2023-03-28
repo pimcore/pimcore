@@ -4,13 +4,6 @@ services:
         autoconfigure: true
         public: false
 
-    Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler:
-        public: true
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: pimcore_admin.session }
-
     #
     # Notification Services
     #
@@ -36,12 +29,6 @@ services:
     Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator: ~
 
     #
-    # REDIRECTS
-    #
-
-    Pimcore\Routing\Redirect\Csv: ~
-
-    #
     # GDPR Services
     #
 
@@ -65,6 +52,13 @@ services:
     # Grid Helper Service
     #
     Pimcore\Bundle\AdminBundle\Helper\GridHelperService: ~
+
+
+    #
+    # Default Preview Generator
+    #
+    Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface:
+        class: Pimcore\Bundle\AdminBundle\Service\PreviewGenerator
 
     #
     # Twig Extensions

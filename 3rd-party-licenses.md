@@ -16,9 +16,9 @@ License: GPLv3
 pimcore includes the GPLv3 version of the ExtJS JavaScript framework.  
 http://www.sencha.com/license/  
 
-### CKEditor by Frederico Knabben
-License: LGPL / GPLv2 / MPL  
-http://ckeditor.com/license
+### TinyMCE
+License: MIT
+https://github.com/tinymce/tinymce/blob/develop/LICENSE.TXT
 
 ### Leaflet 
 License: BSD  
@@ -26,11 +26,7 @@ https://github.com/Leaflet/Leaflet/blob/master/LICENSE
 
 ### miniPaint
 License: MIT  
-https://github.com/viliusle/miniPaint/blob/master/MIT-LICENSE.txt 
-
-### VR View
-License: Apache License 2.0  
-https://github.com/googlevr/vrview/blob/master/LICENSE 
+https://github.com/viliusle/miniPaint/blob/master/MIT-LICENSE.txt
 
 ### moment.js
 License: MIT  

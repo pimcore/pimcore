@@ -41,7 +41,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of versions for the specicified parameters, returns an array of Version elements
      *
-     * @return array
+     * @return Model\Version[]
      */
     public function load(): array
     {

@@ -58,7 +58,7 @@ class NewsletterController extends DocumentControllerBase
             throw $this->createNotFoundException('Document not found');
         }
 
-        if (($lock = $this->checkForLock($email)) instanceof JsonResponse) {
+        if (($lock = $this->checkForLock($email, $request->getSession()->getId())) instanceof JsonResponse) {
             return $lock;
         }
 
@@ -103,7 +103,7 @@ class NewsletterController extends DocumentControllerBase
         }
 
         list($task, $page, $version) = $this->saveDocument($page, $request);
-        $this->saveToSession($page);
+        $this->saveToSession($page, $request->getSession());
 
         if ($task === self::TASK_PUBLISH || $task === self::TASK_UNPUBLISH) {
             $treeData = $this->getTreeNodeConfig($page);

@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
+use Pimcore\Helper\LongRunningHelper;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
@@ -26,7 +27,7 @@ use Psr\Log\LoggerInterface;
  */
 class AssetUpdateTasksHandler
 {
-    public function __construct(protected LoggerInterface $logger)
+    public function __construct(protected LoggerInterface $logger, protected LongRunningHelper $longRunningHelper)
     {
     }
 
@@ -47,18 +48,22 @@ class AssetUpdateTasksHandler
         } elseif ($asset instanceof Asset\Video) {
             $this->processVideo($asset);
         }
+
+        $this->longRunningHelper->deleteTemporaryFiles();
     }
 
     private function saveAsset(Asset $asset): void
     {
         Version::disable();
+        $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
         $asset->save();
         Version::enable();
     }
 
     private function processDocument(Asset\Document $asset): void
     {
-        if (!$asset->getCustomSetting('document_page_count')) {
+        $pageCount = $asset->getCustomSetting('document_page_count');
+        if (!$pageCount || $pageCount === 'failed') {
             $asset->processPageCount();
             $this->saveAsset($asset);
         }

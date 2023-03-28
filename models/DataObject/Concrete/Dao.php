@@ -236,7 +236,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         foreach ($fieldDefinitions as $fieldName => $fd) {
             $getter = 'get' . ucfirst($fieldName);
 
-            if ($fd instanceof CustomResourcePersistingInterface) {
+            if ($fd instanceof CustomResourcePersistingInterface
+                && $fd instanceof DataObject\ClassDefinition\Data) {
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, relational data-types, ...
                 $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
                     'isUpdate' => $isUpdate,
@@ -277,9 +278,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 }
             }
         }
-
+        $tableName = 'object_store_' . $this->model->getClassId();
         if ($isUpdate) {
-            Helper::insertOrUpdate($this->db, 'object_store_' . $this->model->getClassId(), $data);
+            Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
         } else {
             $this->db->insert('object_store_' . $this->model->getClassId(), Helper::quoteDataIdentifiers($this->db, $data));
         }
@@ -304,7 +305,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd instanceof QueryResourcePersistenceAwareInterface) {
+            if ($fd instanceof QueryResourcePersistenceAwareInterface
+                && $fd instanceof DataObject\ClassDefinition\Data) {
                 //exclude untouchables if value is not an array - this means data has not been loaded
                 if (!in_array($key, $untouchable)) {
                     $method = 'get' . $key;
@@ -398,7 +400,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
         $data['oo_id'] = $this->model->getId();
 
-        Helper::insertOrUpdate($this->db, 'object_query_' . $this->model->getClassId(), $data);
+        $tableName = 'object_query_' . $this->model->getClassId();
+        Helper::upsert($this->db, $tableName, $data, $this->getPrimaryKey($tableName));
 
         DataObject::setGetInheritedValues($inheritedValues);
     }

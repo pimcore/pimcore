@@ -96,11 +96,13 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     protected function getAdminUser(bool $proxyUser = false): User|UserProxy|null
     {
-        if ($proxyUser) {
-            return $this->tokenResolver->getUserProxy();
+        $user = $this->getUser();
+
+        if (!$user instanceof UserProxy) {
+            return null;
         }
 
-        return $this->tokenResolver->getUser();
+        return $proxyUser ? $user : $user->getUser();
     }
 
     /**

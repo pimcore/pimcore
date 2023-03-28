@@ -148,10 +148,10 @@ class Dao extends Model\Element\Dao
         $dataDocument['path'] = $this->model->getRealPath();
 
         // update the values in the database
-        Helper::insertOrUpdate($this->db, 'documents', $dataDocument);
+        Helper::upsert($this->db, 'documents', $dataDocument, $this->getPrimaryKey('documents'));
 
         if ($typeSpecificTable) {
-            Helper::insertOrUpdate($this->db, $typeSpecificTable, $dataTypeSpecific);
+            Helper::upsert($this->db, $typeSpecificTable, $dataTypeSpecific, $this->getPrimaryKey($typeSpecificTable));
         }
 
         $this->updateLocks();
@@ -321,13 +321,8 @@ class Dao extends Model\Element\Dao
 
     /**
      * Quick check if there are children.
-     *
-     * @param bool|null $includingUnpublished
-     * @param Model\User|null $user
-     *
-     * @return bool
      */
-    public function hasChildren(bool $includingUnpublished = null, User $user = null): bool
+    public function hasChildren(?bool $includingUnpublished = null, ?User $user = null): bool
     {
         if (!$this->model->getId()) {
             return false;
@@ -367,7 +362,7 @@ class Dao extends Model\Element\Dao
      *
      * @return int
      */
-    public function getChildAmount(User $user = null): int
+    public function getChildAmount(?User $user = null): int
     {
         if (!$this->model->getId()) {
             return 0;
@@ -397,7 +392,7 @@ class Dao extends Model\Element\Dao
      *
      * @return bool
      */
-    public function hasSiblings(bool $includingUnpublished = null): bool
+    public function hasSiblings(?bool $includingUnpublished = null): bool
     {
         if (!$this->model->getParentId()) {
             return false;
@@ -567,7 +562,7 @@ class Dao extends Model\Element\Dao
     public function saveIndex(int $index): void
     {
         $this->db->update('documents', [
-            'index' => $index,
+            $this->db->quoteIdentifier('index') => $index,
         ], [
             'id' => $this->model->getId(),
         ]);

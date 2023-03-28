@@ -70,7 +70,10 @@ class Asset extends Element\AbstractElement
      *
      * @internal
      *
-     * @var array
+     * @var string[]
+     *
+     * @deprecated use getTypes() instead.
+     *
      */
     public static array $types = ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown'];
 
@@ -164,7 +167,12 @@ class Asset extends Element\AbstractElement
 
     public static function getTypes(): array
     {
-        return self::$types;
+        $assetsConfig = Config::getSystemConfiguration('assets');
+        if (isset($assetsConfig['type_definitions']['map']) && is_array($assetsConfig['type_definitions']['map'])) {
+            return array_keys($assetsConfig['type_definitions']['map']);
+        }
+
+        return [];
     }
 
     /**
@@ -242,7 +250,8 @@ class Asset extends Element\AbstractElement
 
             try {
                 $asset->getDao()->getById($id);
-                $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
+
+                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($asset->getType());
                 /** @var Asset $newAsset */
                 $newAsset = self::getModelFactory()->build($className);
 
@@ -257,7 +266,7 @@ class Asset extends Element\AbstractElement
                 $asset->resetDirtyMap();
 
                 Cache::save($asset, $cacheKey);
-            } catch (NotFoundException $e) {
+            } catch (NotFoundException|UnsupportedException $e) {
                 return null;
             }
         } else {
@@ -280,28 +289,27 @@ class Asset extends Element\AbstractElement
     {
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
-        $class = Asset::class;
+        $type = 'unknown';
         if (array_key_exists('filename', $data) && (array_key_exists('data', $data) || array_key_exists('sourcePath', $data) || array_key_exists('stream', $data))) {
+            $mimeType = 'directory';
+            $mimeTypeGuessData = null;
             if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
+                $mimeTypeGuessData = $tmpFile;
                 if (array_key_exists('data', $data)) {
                     File::put($tmpFile, $data['data']);
-                    self::checkMaxPixels($tmpFile, $data);
-                    $mimeType = MimeTypes::getDefault()->guessMimeType($tmpFile);
                     unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
                         // stream is a local file, so we don't have to write a tmp file
-                        self::checkMaxPixels($streamMeta['uri'], $data);
-                        $mimeType = MimeTypes::getDefault()->guessMimeType($streamMeta['uri']);
+                        $mimeTypeGuessData = $streamMeta['uri'];
                     } else {
                         // write a tmp file because the stream isn't a pointer to the local filesystem
                         $isRewindable = @rewind($data['stream']);
                         $dest = fopen($tmpFile, 'w+', false, File::getContext());
                         stream_copy_to_stream($data['stream'], $dest);
-                        self::checkMaxPixels($tmpFile, $data);
-                        $mimeType = MimeTypes::getDefault()->guessMimeType($tmpFile);
+                        $mimeTypeGuessData = $tmpFile;
 
                         if (!$isRewindable) {
                             $data['stream'] = $dest;
@@ -311,29 +319,33 @@ class Asset extends Element\AbstractElement
                         }
                     }
                 }
+                $mimeType = MimeTypes::getDefault()->guessMimeType($mimeTypeGuessData);
             } else {
-                if (is_dir($data['sourcePath'])) {
-                    $mimeType = 'directory';
-                } else {
-                    self::checkMaxPixels($data['sourcePath'], $data);
-                    $mimeType = MimeTypes::getDefault()->guessMimeType($data['sourcePath']);
+                if (!is_dir($data['sourcePath'])) {
+                    $mimeTypeGuessData = $data['sourcePath'];
                     if (is_file($data['sourcePath'])) {
                         $data['stream'] = fopen($data['sourcePath'], 'rb', false, File::getContext());
                     }
+                    $mimeType = MimeTypes::getDefault()->guessMimeType($mimeTypeGuessData);
                 }
-
                 unset($data['sourcePath']);
             }
 
             $type = self::getTypeFromMimeMapping($mimeType, $data['filename']);
-            $class = '\\Pimcore\\Model\\Asset\\' . ucfirst($type);
+            // only check maxpixels if it is an image
+            if ($type === 'image' && $mimeTypeGuessData) {
+                self::checkMaxPixels($mimeTypeGuessData, $data);
+            }
+
             if (array_key_exists('type', $data)) {
                 unset($data['type']);
             }
         }
 
+        $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+
         /** @var Asset $asset */
-        $asset = self::getModelFactory()->build($class);
+        $asset = self::getModelFactory()->build($className);
         $asset->setParentId($parentId);
         self::checkCreateData($data);
         $asset->setValues($data);
@@ -350,15 +362,15 @@ class Asset extends Element\AbstractElement
         // this check is intentionally done in Asset::create() because in Asset::update() it would result
         // in an additional download from remote storage if configured, so in terms of performance
         // this is the more efficient way
-        $maxPixels = (int) Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
+        $maxPixels = (int)Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
         if ($size = @getimagesize($localPath)) {
-            $imagePixels = (int) ($size[0] * $size[1]);
+            $imagePixels = (int)($size[0] * $size[1]);
             if ($imagePixels > $maxPixels) {
                 Logger::error("Image to be created {$localPath} (temp. path) exceeds max pixel size of {$maxPixels}, you can change the value in config pimcore.assets.image.max_pixels");
 
                 $diff = sqrt(1 + ($maxPixels / $imagePixels));
-                $suggestion_0 = (int) round($size[0] / $diff, -2, PHP_ROUND_HALF_DOWN);
-                $suggestion_1 = (int) round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
+                $suggestion_0 = (int)round($size[0] / $diff, -2, PHP_ROUND_HALF_DOWN);
+                $suggestion_1 = (int)round($size[1] / $diff, -2, PHP_ROUND_HALF_DOWN);
 
                 $mp = $maxPixels / 1_000_000;
                 // unlink file before throwing exception
@@ -408,19 +420,10 @@ class Asset extends Element\AbstractElement
         }
 
         $type = null;
+        $assetTypes = Pimcore::getContainer()->getParameter('pimcore.config')['assets']['type_definitions']['map'];
 
-        $mappings = [
-            'unknown' => ["/\.stp$/"],
-            'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/", '/photoshop/'],
-            'text' => ['/text\//', '/xml$/', '/\.json$/'],
-            'audio' => ['/audio/'],
-            'video' => ['/video/'],
-            'document' => ['/msword/', '/pdf/', '/powerpoint/', '/office/', '/excel/', '/opendocument/'],
-            'archive' => ['/zip/', '/tar/'],
-        ];
-
-        foreach ($mappings as $assetType => $patterns) {
-            foreach ($patterns as $pattern) {
+        foreach ($assetTypes as $assetType => $assetTypeConfiguration) {
+            foreach ($assetTypeConfiguration['matching'] as $pattern) {
                 if (preg_match($pattern, $mimeType . ' .' . File::getFileExtension($filename))) {
                     $type = $assetType;
 
@@ -706,7 +709,8 @@ class Asset extends Element\AbstractElement
                 }
 
                 // not only check if the type is set but also if the implementation can be found
-                $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
+                $className = \Pimcore::getContainer()->get('pimcore.class.resolver.asset')->resolve($type);
+
                 if (!self::getModelFactory()->supports($className)) {
                     throw new Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
@@ -1564,7 +1568,7 @@ class Asset extends Element\AbstractElement
         return array_merge(...$dependencies);
     }
 
-    public function __clone()
+    public function __clone(): void
     {
         parent::__clone();
         $this->parent = null;

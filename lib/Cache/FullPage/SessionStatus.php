@@ -71,6 +71,9 @@ class SessionStatus
         return false;
     }
 
+    /**
+     * @return string[]
+     */
     private function getIgnoredSessionKeys(): array
     {
         $event = new IgnoredSessionKeysEvent([$this->symfonyMetadataStorageKey]);

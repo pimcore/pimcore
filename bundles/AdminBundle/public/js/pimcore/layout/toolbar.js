@@ -280,9 +280,10 @@ pimcore.layout.toolbar = Class.create({
              }
 
              menu.file = {
+                 label: t('file'),
+                 iconCls: 'pimcore_main_nav_icon_file',
                  items: fileItems,
                  shadow: false,
-                 listeners: true,
                  cls: "pimcore_navigation_flyout"
              };
          }
@@ -290,15 +291,6 @@ pimcore.layout.toolbar = Class.create({
          if (perspectiveCfg.inToolbar("extras")) {
  
              var extrasItems = [];
-
-             if (user.isAllowed("redirects") && perspectiveCfg.inToolbar("extras.redirects")) {
-                 extrasItems.push({
-                     text: t("redirects"),
-                     iconCls: "pimcore_nav_icon_redirects",
-                     itemId: 'pimcore_menu_extras_redirects',
-                     handler: this.editRedirects
-                 });
-             }
 
              let translationItems = [];
 
@@ -341,16 +333,7 @@ pimcore.layout.toolbar = Class.create({
                      handler: this.notes
                  });
              }
- 
-             if (user.isAllowed("application_logging")&& perspectiveCfg.inToolbar("extras.applicationlog")) {
-                 extrasItems.push({
-                     text: t("log_applicationlog"),
-                     iconCls: "pimcore_nav_icon_log_admin",
-                     itemId: 'pimcore_menu_extras_application_log',
-                     handler: this.logAdmin
-                 });
-             }
- 
+
              if(user.isAllowed("gdpr_data_extractor")&& perspectiveCfg.inToolbar("extras.gdpr_data_extractor")) {
                  extrasItems.push({
                      text: t("gdpr_data_extractor"),
@@ -407,6 +390,18 @@ pimcore.layout.toolbar = Class.create({
 
                  var systemItems = [];
 
+                 if (perspectiveCfg.inToolbar("extras.systemtools.requirements")) {
+                     systemItems.push(
+                         {
+                             text: t("system_requirements_check"),
+                             iconCls: "pimcore_nav_icon_systemrequirements",
+                             itemId: 'pimcore_menu_extras_system_info_system_requirements_check',
+                             handler: this.showSystemRequirementsCheck,
+                             priority: 30
+                         }
+                     );
+                 }
+
                  extrasItems.push({
                      text: t("system_infos_and_tools"),
                      iconCls: "pimcore_nav_icon_info",
@@ -423,52 +418,23 @@ pimcore.layout.toolbar = Class.create({
              // adding menu even though extraItems can be empty
              // items can be added via event later
              menu.extras = {
+                 label: t('tools'),
+                 iconCls: 'pimcore_main_nav_icon_build',
                  items: extrasItems,
                  shadow: false,
-                 listeners: true,
                  cls: "pimcore_navigation_flyout"
              };
          }
- 
+
          if (perspectiveCfg.inToolbar("marketing")) {
              // marketing menu
              var marketingItems = [];
 
-             if (user.isAllowed("targeting") && perspectiveCfg.inToolbar("marketing.targeting")) {
-                 marketingItems.push({
-                     text: t("personalization") + " / " + t("targeting"),
-                     iconCls: "pimcore_nav_icon_usergroup",
-                     itemId: 'pimcore_menu_marketing_personalization',
-                     hideOnClick: false,
-                     menu: {
-                         cls: "pimcore_navigation_flyout",
-                         shadow: false,
-                         items: [
-                             {
-                                 text: t("global_targeting_rules"),
-                                 iconCls: "pimcore_nav_icon_targeting",
-                                 itemId: 'pimcore_menu_marketing_personalization_global_targeting_rules',
-                                 handler: this.showTargetingRules
-                             }, {
-                                 text: t('target_groups'),
-                                 iconCls: "pimcore_nav_icon_target_groups",
-                                 itemId: 'pimcore_menu_marketing_personalization_target_groups',
-                                 handler: this.showTargetGroups
-                             }, {
-                                 text: t("targeting_toolbar"),
-                                 iconCls: "pimcore_nav_icon_targeting_toolbar",
-                                 itemId: 'pimcore_menu_marketing_personalization_targeting_toolbar',
-                                 handler: this.showTargetingToolbarSettings
-                             }
-                         ]
-                     }
-                 });
-             }
-
              menu.marketing = {
+                 label: t('marketing'),
+                 iconCls: 'pimcore_main_nav_icon_marketing',
                  items: marketingItems,
                  shadow: false,
-                 listeners: true,
                  cls: "pimcore_navigation_flyout"
              };
          }
@@ -520,16 +486,7 @@ pimcore.layout.toolbar = Class.create({
                      handler: this.websiteSettings
                  });
              }
- 
-             if (user.isAllowed("web2print_settings") && perspectiveCfg.inToolbar("settings.web2print")) {
-                 settingsItems.push({
-                     text: t("web2print_settings"),
-                     iconCls: "pimcore_nav_icon_print_settings",
-                     itemId: 'pimcore_menu_settings_web2print_settings',
-                     handler: this.web2printSettings
-                 });
-             }
- 
+
              if (user.isAllowed("users") && perspectiveCfg.inToolbar("settings.users")) {
                  var userItems = [];
  
@@ -621,83 +578,81 @@ pimcore.layout.toolbar = Class.create({
                          items: []
                      }
                  };
- 
-                 if (user.isAllowed("classes")) {
-                     if (perspectiveCfg.inToolbar("settings.objects.classes")) {
-                         objectMenu.menu.items.push({
-                             text: t("classes"),
-                             iconCls: "pimcore_nav_icon_class",
-                             itemId: 'pimcore_menu_settings_data_objects_classes',
-                             handler: this.editClasses
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.fieldcollections")) {
-                         objectMenu.menu.items.push({
-                             text: t("field_collections"),
-                             iconCls: "pimcore_nav_icon_fieldcollection",
-                             itemId: 'pimcore_menu_settings_data_objects_fieldcollections',
-                             handler: this.editFieldcollections
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.objectbricks")) {
-                         objectMenu.menu.items.push({
-                             text: t("objectbricks"),
-                             iconCls: "pimcore_nav_icon_objectbricks",
-                             itemId: 'pimcore_menu_settings_data_objects_objectbricks',
-                             handler: this.editObjectBricks
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.quantityValue")) {
-                         objectMenu.menu.items.push({
-                             text: t("quantityValue_field"),
-                             iconCls: "pimcore_nav_icon_quantityValue",
-                             itemId: 'pimcore_menu_settings_data_objects_quantity_value',
-                             cls: "pimcore_main_menu",
-                             handler: function () {
-                                 try {
-                                     pimcore.globalmanager.get("quantityValue_units").activate();
-                                 }
-                                 catch (e) {
-                                     pimcore.globalmanager.add("quantityValue_units", new pimcore.object.quantityValue.unitsettings());
-                                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.classes") && user.isAllowed("classes")) {
+                     objectMenu.menu.items.push({
+                         text: t("classes"),
+                         iconCls: "pimcore_nav_icon_class",
+                         itemId: 'pimcore_menu_settings_data_objects_classes',
+                         handler: this.editClasses
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.fieldcollections") && user.isAllowed("fieldcollections")) {
+                     objectMenu.menu.items.push({
+                         text: t("field_collections"),
+                         iconCls: "pimcore_nav_icon_fieldcollection",
+                         itemId: 'pimcore_menu_settings_data_objects_fieldcollections',
+                         handler: this.editFieldcollections
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.objectbricks") && user.isAllowed("objectbricks")) {
+                     objectMenu.menu.items.push({
+                         text: t("objectbricks"),
+                         iconCls: "pimcore_nav_icon_objectbricks",
+                         itemId: 'pimcore_menu_settings_data_objects_objectbricks',
+                         handler: this.editObjectBricks
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.quantityValue") && user.isAllowed("quantityValueUnits")) {
+                     objectMenu.menu.items.push({
+                         text: t("quantityValue_field"),
+                         iconCls: "pimcore_nav_icon_quantityValue",
+                         itemId: 'pimcore_menu_settings_data_objects_quantity_value',
+                         cls: "pimcore_main_menu",
+                         handler: function () {
+                             try {
+                                 pimcore.globalmanager.get("quantityValue_units").activate();
                              }
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.classificationstore")) {
-                         objectMenu.menu.items.push({
-                             text: t("classification_store"),
-                             iconCls: "pimcore_nav_icon_classificationstore",
-                             itemId: 'pimcore_menu_settings_data_objects_classificationstore',
-                             handler: this.editClassificationStoreConfig
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.bulkExport")) {
-                         objectMenu.menu.items.push({
-                             text: t("bulk_export"),
-                             iconCls: "pimcore_nav_icon_export",
-                             itemId: 'pimcore_menu_settings_data_objects_bulk_export',
-                             handler: this.bulkExport
-                         });
-                     }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.bulkImport")) {
-                         objectMenu.menu.items.push({
-                             text: t("bulk_import"),
-                             iconCls: "pimcore_nav_icon_import",
-                             itemId: 'pimcore_menu_settings_data_objects_bulk_import',
-                             handler: this.bulkImport.bind(this)
-                         });
-                     }
- 
- 
-                     if (objectMenu.menu.items.length > 0) {
-                         settingsItems.push(objectMenu);
-                     }
+                             catch (e) {
+                                 pimcore.globalmanager.add("quantityValue_units", new pimcore.object.quantityValue.unitsettings());
+                             }
+                         }
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.classificationstore") && user.isAllowed("classificationstore")) {
+                     objectMenu.menu.items.push({
+                         text: t("classification_store"),
+                         iconCls: "pimcore_nav_icon_classificationstore",
+                         itemId: 'pimcore_menu_settings_data_objects_classificationstore',
+                         handler: this.editClassificationStoreConfig
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.bulkExport") && user.isAllowed("classes")) {
+                     objectMenu.menu.items.push({
+                         text: t("bulk_export"),
+                         iconCls: "pimcore_nav_icon_export",
+                         itemId: 'pimcore_menu_settings_data_objects_bulk_export',
+                         handler: this.bulkExport
+                     });
+                 }
+
+                 if (perspectiveCfg.inToolbar("settings.objects.bulkImport") && user.isAllowed("classes")) {
+                     objectMenu.menu.items.push({
+                         text: t("bulk_import"),
+                         iconCls: "pimcore_nav_icon_import",
+                         itemId: 'pimcore_menu_settings_data_objects_bulk_import',
+                         handler: this.bulkImport.bind(this)
+                     });
+                 }
+
+
+                 if (objectMenu.menu.items.length > 0) {
+                     settingsItems.push(objectMenu);
                  }
              }
 
@@ -784,7 +739,7 @@ pimcore.layout.toolbar = Class.create({
                  }
  
                  if (perspectiveCfg.inToolbar("settings.cache.generatePreviews")) {
-                     if (pimcore.settings.document_generatepreviews && (pimcore.settings.chromium || pimcore.settings.htmltoimage)) {
+                     if (pimcore.settings.document_generatepreviews && (pimcore.settings.chromium || pimcore.settings.gotenberg)) {
                          cacheItems.push({
                              text: t("generate_page_previews"),
                              iconCls: "pimcore_nav_icon_page_previews",
@@ -847,9 +802,10 @@ pimcore.layout.toolbar = Class.create({
  
              // help menu
             menu.settings = {
+                label: t('settings'),
+                iconCls: 'pimcore_main_nav_icon_settings',
                 items: settingsItems,
                 shadow: false,
-                listeners: true,
                 cls: "pimcore_navigation_flyout"
             };
          }
@@ -925,8 +881,8 @@ pimcore.layout.toolbar = Class.create({
              menu.notification = {
                  items: notificationItems,
                  shadow: false,
-                 listeners: false,
                  cls: "pimcore_navigation_flyout",
+                 exclude: true,
              };
          }
 
@@ -939,55 +895,65 @@ pimcore.layout.toolbar = Class.create({
 
          document.dispatchEvent(preMenuBuild);
 
+         // building the html markup for the main navigation
+         pimcore.helpers.buildMainNavigationMarkup(menu);
+
          if(Object.keys(menu).length !== 0) {
-             Object.keys(menu).forEach(key => {
+             Object.keys(menu).filter(key => {
+                 return (menu[key].items && menu[key].items.length > 0) || menu[key]['noSubmenus'];
+             }).forEach(key => {
                  // Building all submenus
                  // menu[key].items can be empty
                  // menu items can be added via event after the inital setup
                  // if items are empty do not build submenus or main menu item
-
-                 if(menu[key].items.length > 0) {
+                 if(!menu[key]['noSubmenus']) {
                      pimcore.helpers.buildMenu(menu[key].items);
+                 }
 
-                     let menuItem = {
-                         items: menu[key].items,
-                         shadow: menu[key].shadow,
-                         cls: "pimcore_navigation_flyout",
+                 let menuItem = {
+                     shadow: menu[key].shadow,
+                     cls: "pimcore_navigation_flyout",
+                 }
+
+                 if(menu[key].listeners) {
+                     menuItem.listeners = menu[key].listeners
+                 }
+
+                 if(menu[key].items) {
+                     menuItem.items = menu[key].items;
+
+                     if(!menu[key]['exclude'] && !menu[key]['noSubmenus']) {
+                         menuItem.listeners =
+                             {
+                                 ...menuItem.listeners, ...{
+                                     "show": function (e) {
+                                         Ext.get('pimcore_menu_' + key).addCls('active');
+                                     },
+                                     "hide": function (e) {
+                                         Ext.get('pimcore_menu_' + key).removeCls('active');
+                                     }
+                                 }
+                             }
                      }
+                 }
 
-                     if(menu[key].listeners === true) {
-                         menuItem.listeners = {
-                             "show": function (e) {
-                                 Ext.get('pimcore_menu_' + key).addCls('active');
-                             },
-                             "hide": function (e) {
-                                 Ext.get('pimcore_menu_' + key).removeCls('active');
-                             },
-                         }
-                     }
+                 // Adding single main menu item
+                 let menuKey = key + 'Menu';
+                 this[menuKey] = Ext.create('pimcore.menu.menu', menuItem);
 
-                     // Adding single main menu item
-                     this[key + 'Menu'] = Ext.create('pimcore.menu.menu', menuItem);
+                 // if the main menu has its own handler use it
+                 if(menu[key]['handler']) {
+                     Ext.get("pimcore_menu_" + key).on("mousedown", menu[key]['handler']);
+                 }
+
+                 // only add the default show sub menu if there are items
+                 if(menu[key]['items'] && !menu[key]['exclude'] && !menu[key]['handler']) {
+                     // make sure the elements are clickable
+                     Ext.get("pimcore_menu_" + key).on("mousedown", this.showSubMenu.bind(this[menuKey]));
                  }
              });
          }
- 
- 
-         if (this.fileMenu) {
-             Ext.get("pimcore_menu_file").on("mousedown", this.showSubMenu.bind(this.fileMenu));
-         }
-         if (this.extrasMenu) {
-             Ext.get("pimcore_menu_extras").on("mousedown", this.showSubMenu.bind(this.extrasMenu));
-         }
-         if (this.marketingMenu) {
-             Ext.get("pimcore_menu_marketing").on("mousedown", this.showSubMenu.bind(this.marketingMenu));
-         }
-         if (this.settingsMenu) {
-             Ext.get("pimcore_menu_settings").on("mousedown", this.showSubMenu.bind(this.settingsMenu));
-         }
-         if (this.searchMenu) {
-             Ext.get("pimcore_menu_search").on("mousedown", this.showSubMenu.bind(this.searchMenu));
-         }
+
          if (pimcore.settings.notifications_enabled && this.notificationMenu) {
              Ext.get('pimcore_notification').show();
              Ext.get("pimcore_notification").on("mousedown", this.showSubMenu.bind(this.notificationMenu));
@@ -1132,16 +1098,6 @@ pimcore.layout.toolbar = Class.create({
              pimcore.globalmanager.add("translationdomainmanager", new pimcore.settings.translation.domain(domain));
          }
      },
-
-     editRedirects: function () {
- 
-         try {
-             pimcore.globalmanager.get("redirects").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("redirects", new pimcore.settings.redirects());
-         }
-     },
  
      openPerspective: function(name) {
          location.href = Routing.generate('pimcore_admin_index', {perspective: name});
@@ -1166,50 +1122,6 @@ pimcore.layout.toolbar = Class.create({
          pimcore.helpers.sendTestEmail(pimcore.settings.mailDefaultAddress);
      },
 
-     showTargetingRules: function () {
-         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-         try {
-             tabPanel.setActiveTab(pimcore.globalmanager.get("targeting").getLayout());
-         }
-         catch (e) {
-             var targeting = new pimcore.settings.targeting.rules.panel();
-             pimcore.globalmanager.add("targeting", targeting);
- 
-             tabPanel.add(targeting.getLayout());
-             tabPanel.setActiveTab(targeting.getLayout());
- 
-             targeting.getLayout().on("destroy", function () {
-                 pimcore.globalmanager.remove("targeting");
-             }.bind(this));
- 
-             pimcore.layout.refresh();
-         }
-     },
- 
-     showTargetGroups: function () {
-         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-         try {
-             tabPanel.setActiveTab(pimcore.globalmanager.get("targetGroupsPanel").getLayout());
-         }
-         catch (e) {
-             var targetGroups = new pimcore.settings.targeting.targetGroups.panel();
-             pimcore.globalmanager.add("targetGroupsPanel", targetGroups);
- 
-             tabPanel.add(targetGroups.getLayout());
-             tabPanel.setActiveTab(targetGroups.getLayout());
- 
-             targetGroups.getLayout().on("destroy", function () {
-                 pimcore.globalmanager.remove("targetGroupsPanel");
-             }.bind(this));
- 
-             pimcore.layout.refresh();
-         }
-     },
- 
-     showTargetingToolbarSettings: function () {
-         new pimcore.settings.targetingToolbar();
-     },
- 
      notes: function () {
          try {
              pimcore.globalmanager.get("notes").activate();
@@ -1240,27 +1152,6 @@ pimcore.layout.toolbar = Class.create({
              pimcore.globalmanager.add("settings_website", new pimcore.settings.website());
          }
      },
- 
-     reportSettings: function () {
- 
-         try {
-             pimcore.globalmanager.get("reports_settings").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("reports_settings", new pimcore.report.settings());
-         }
-     },
- 
-     web2printSettings: function () {
- 
-         try {
-             pimcore.globalmanager.get("settings_web2print").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("settings_web2print", new pimcore.settings.web2print());
-         }
-     },
- 
      editClassificationStoreConfig: function () {
          try {
              pimcore.globalmanager.get("classificationstore_config").activate();
@@ -1330,15 +1221,10 @@ pimcore.layout.toolbar = Class.create({
      showMaintenance: function () {
          new pimcore.settings.maintenance();
      },
- 
-     logAdmin: function () {
-         try {
-             pimcore.globalmanager.get("pimcore_applicationlog_admin").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("pimcore_applicationlog_admin", new pimcore.log.admin());
-         }
-     },
+
+    showSystemRequirementsCheck: function () {
+        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_admin_install_check'), "pimcore_icon_systemrequirements", "System-Requirements Check");
+    },
 
      showElementHistory: function() {
          try {

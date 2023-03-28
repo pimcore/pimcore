@@ -38,7 +38,13 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
                 text: buttonLabel,
                 style: "margin-right: 10px",
                 handler: function () {
-                    this.openSetupWindow();
+                    Ext.Ajax.request({
+                        url: Routing.generate('pimcore_admin_user_reset_my_2fa_secret'),
+                        method: 'PUT',
+                        success: function (response) {
+                            document.getElementById('pimcore_logout_form').submit();
+                        }.bind(this)
+                    });
                 }.bind(this)
             }, {
                 xtype: "button",
@@ -57,43 +63,5 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
         };
 
         return panelConf;
-    },
-
-    openSetupWindow: function () {
-        var win = Ext.create('Ext.window.Window', {
-            title: t('two_factor_authentication'),
-            resizable: false,
-            closable: false,
-            draggable: false,
-            width: 450,
-            height: 450,
-            layout: {
-                type: 'vbox',
-                align: 'center'
-            },
-            modal: true,
-            items: [
-                {
-                    xtype: "container",
-                    html: '<img src="'+Routing.generate('pimcore_admin_user_renew2fasecret')+'"/>',
-                    width: 230,
-                    height: 230
-                },
-                {
-                    xtype: "container",
-                    html: t('2fa_alert_text'),
-                    width: 420,
-                    height: 420
-                }
-            ],
-            buttons: [{
-                text: t('2fa_alert_submit'),
-                handler: function() {
-                    window.location.reload();
-                }
-            }]
-        });
-
-        win.show();
     }
 });

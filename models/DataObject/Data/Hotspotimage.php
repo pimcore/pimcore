@@ -192,17 +192,13 @@ class Hotspotimage implements OwnerAwareFieldInterface
                 'x' => $crop['cropLeft'],
             ]);
 
-            $hash = md5(\Pimcore\Tool\Serialize::serialize($thumbConfig->getItems()));
-            $thumbConfig->setName($thumbConfig->getName() . '_auto_' . $hash);
+            $thumbConfig->generateAutoName();
         }
 
         return $this->getImage()->getThumbnail($thumbConfig, $deferred);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         if ($this->image) {
             return $this->image->__toString();

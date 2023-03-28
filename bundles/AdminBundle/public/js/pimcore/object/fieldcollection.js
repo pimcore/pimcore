@@ -18,7 +18,8 @@ pimcore.registerNS("pimcore.object.fieldcollection");
 pimcore.object.fieldcollection = Class.create({
 
     forbiddenNames: [
-        "abstract", "class", "data", "folder", "list", "permissions", "resource", "concrete", "interface", "default"
+        "abstract", "class", "data", "folder", "list", "permissions", "resource", "dao", "concrete", "items",
+        "object", "interface", "default"
     ],
 
     initialize: function () {
@@ -127,7 +128,8 @@ pimcore.object.fieldcollection = Class.create({
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick' : this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
+            "beforeitemmove": this.onTreeNodeBeforeMove.bind(this),
         };
 
         return treeNodeListeners;
@@ -183,6 +185,10 @@ pimcore.object.fieldcollection = Class.create({
         }));
 
         menu.showAt(e.pageX, e.pageY);
+    },
+
+    onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
+        return pimcore.helpers.treeDragDropValidate(node, oldParent, newParent);
     },
 
     addField: function () {

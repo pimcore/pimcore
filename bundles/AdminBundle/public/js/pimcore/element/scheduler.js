@@ -144,6 +144,14 @@ pimcore.element.scheduler = Class.create({
                 {text: t("date"), width: 120, sortable: true, dataIndex: 'date', editor: new Ext.form.DateField()                },
                 {text: t("time"), width: 100, sortable: true, dataIndex: 'time', editor: new Ext.form.TimeField({
                         format: "H:i",
+                        listeners: {
+                            focus : function(component) {
+                                component.setValue(Ext.util.Format.htmlDecode(component.value));
+                            },
+                            blur: function(component){
+                                component.setValue(Ext.util.Format.htmlEncode(component.value));
+                            }
+                        }
                     })
                 },
                 {text: t("action"), width: 100, sortable: false, dataIndex: 'action', editor: new Ext.form.ComboBox({
@@ -302,9 +310,15 @@ pimcore.element.scheduler = Class.create({
 
         var value;
         for (var i = 0; i < data.length; i++) {
+            let dateString = data[i].data.date;
+            if(data[i].data.time !== undefined) {
+                dateString += " " +  data[i].data.time;
+            } else {
+                dateString += " 00:00";
+            }
+            let dateTime = new Date(dateString);
             value = {
-                date:  data[i].data.date,
-                time: data[i].data.time,
+                date:  Math.floor(dateTime / 1000),
                 action: data[i].data.action,
                 active: data[i].data.active
             };

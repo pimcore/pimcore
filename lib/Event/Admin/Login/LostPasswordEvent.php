@@ -16,57 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Admin\Login;
 
-use Pimcore\Event\Traits\ResponseAwareTrait;
-use Pimcore\Model\User;
-use Symfony\Contracts\EventDispatcher\Event;
-
-class LostPasswordEvent extends Event
+/**
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Login\LostPasswordEvent instead
+ */
+class LostPasswordEvent extends \Pimcore\Bundle\AdminBundle\Event\Login\LostPasswordEvent
 {
-    use ResponseAwareTrait;
-
-    protected User $user;
-
-    protected string $loginUrl;
-
-    protected bool $sendMail = true;
-
-    public function __construct(User $user, string $loginUrl)
-    {
-        $this->user = $user;
-        $this->loginUrl = $loginUrl;
-    }
-
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-
-    public function getLoginUrl(): string
-    {
-        return $this->loginUrl;
-    }
-
-    /**
-     * Determines if lost password mail should be sent
-     *
-     * @return bool
-     */
-    public function getSendMail(): bool
-    {
-        return $this->sendMail;
-    }
-
-    /**
-     * Sets flag whether to send lost password mail or not
-     *
-     * @param bool $sendMail
-     *
-     * @return $this
-     */
-    public function setSendMail(bool $sendMail): static
-    {
-        $this->sendMail = (bool)$sendMail;
-
-        return $this;
-    }
 }

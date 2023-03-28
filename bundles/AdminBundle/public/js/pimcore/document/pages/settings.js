@@ -20,64 +20,6 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
     getLayout: function () {
 
         if (this.layout == null) {
-            // meta-data
-            var addMetaData = function (value) {
-
-                if(typeof value != "string") {
-                    value = "";
-                }
-
-                var count = this.metaDataPanel.query("button").length+1;
-
-                var compositeField = new Ext.form.FieldContainer({
-                    layout: 'hbox',
-                    hideLabel: true,
-                    items: [{
-                        xtype: "textfield",
-                        value: value,
-                        width: 636,
-                        name: "metadata_" + count,
-                    }]
-                });
-
-                compositeField.add({
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: function (compositeField, el) {
-                        this.metaDataPanel.remove(compositeField);
-                        this.metaDataPanel.updateLayout();
-                    }.bind(this, compositeField)
-                });
-
-                this.metaDataPanel.add(compositeField);
-                this.metaDataPanel.updateLayout();
-            }.bind(this);
-
-            this.metaDataPanel = new Ext.form.FieldSet({
-                title: t("html_tags") + " (&lt;meta .../&gt; &lt;link .../&gt; ...)",
-                collapsible: false,
-                autoHeight:true,
-                width: 700,
-                style: "margin-top: 20px;",
-                items: [{
-                    xtype: "toolbar",
-                    style: "margin-bottom: 10px;",
-                    items: ["->", {
-                        xtype: 'button',
-                        iconCls: "pimcore_icon_add",
-                        handler: addMetaData
-                    }]
-                }]
-            });
-
-            try {
-                if(typeof this.document.data.metaData == "object" && this.document.data.metaData.length > 0) {
-                    for(var r=0; r<this.document.data.metaData.length; r++) {
-                        addMetaData(this.document.data.metaData[r]);
-                    }
-                }
-            } catch (e) {}
-
 
             var updateSerpPreview = function () {
 
@@ -124,7 +66,6 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             var serpAbsoluteUrl = this.document.data.url;
 
             // create layout
-
             this.layout = new Ext.FormPanel({
                 title: t('SEO') + ' &amp; ' + t('settings'),
                 border: false,
@@ -134,7 +75,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                 items: [
                     {
                         xtype:'fieldset',
-                        title: t('title') + ", " + t("description") + " & " + t('metadata'),
+                        title: t('title') + " & " + t("description"),
                         itemId: "metaDataPanel",
                         collapsible: true,
                         autoHeight:true,
@@ -175,7 +116,6 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                     }
                                 }
                             },
-                            this.metaDataPanel,
                             {
                                 xtype: "container",
                                 itemId: "serpPreview",
@@ -227,7 +167,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                             method: "POST",
                                             params: {
                                                 id: this.document.id,
-                                                path: el.getValue()
+                                                path: pimcore.helpers.sanitizeUrlSlug(el.getValue())
                                             },
                                             success: function (res) {
                                                 res = Ext.decode(res.responseText);
@@ -241,43 +181,36 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                                 }
                                             }
                                         });
+                                    }.bind(this),
+                                    "change": function (el) {
+                                        const sanitizedValue = pimcore.helpers.sanitizeUrlSlug(el.getValue());
+                                        el.setValue(sanitizedValue);
                                     }.bind(this)
                                 }
                             }
                         ]
-                    }, {
-                        xtype:'fieldset',
-                        title: t('assign_target_groups'),
-                        collapsible: true,
-                        autoHeight:true,
-                        defaults: {
-                            labelWidth: 300
-                        },
-                        defaultType: 'textfield',
-                        items :[
-                            Ext.create('Ext.ux.form.MultiSelect', {
-                                fieldLabel: t('visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups'),
-                                store: pimcore.globalmanager.get("target_group_store"),
-                                displayField: "text",
-                                valueField: "id",
-                                name: 'targetGroupIds',
-                                width: 700,
-                                //listWidth: 200,
-                                value: this.document.data["targetGroupIds"].split(',').map(Number).filter(item => item),
-                                minHeight: 100
-                            })
-                        ]
                     },
-                    this.getControllerViewFields(true),
-                    this.getStaticGeneratorFields(true),
-                    this.getPathAndKeyFields(true),
-                    this.getContentMasterFields(true)
                 ]
-
             });
+
+            // To add additional block to settings
+            const additionalSettings = new CustomEvent(pimcore.events.prepareDocumentPageSettingsLayout, {
+                detail: {
+                   layout: this.layout,
+                   document: this.document
+                }
+            });
+            document.dispatchEvent(additionalSettings);
+
+            this.layout.add(this.getControllerViewFields(true));
+            this.layout.add(this.getStaticGeneratorFields(true));
+            this.layout.add(this.getPathAndKeyFields(true));
+            this.layout.add(this.getContentMasterFields(true));
         }
 
         return this.layout;
     }
+
+
 
 });

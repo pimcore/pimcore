@@ -9,10 +9,15 @@
             {{ error|trans([],'admin')|raw }}
         </div>
         {% endif %}
+        {% if login_error is defined and login_error %}
+        <div class="text error">
+            {{ login_error.messageKey|trans(login_error.messageData, 'security') }}
+        </div>
+        {% endif %}
 
         <input type="text" name="username" autocomplete="username" placeholder="{{ 'username'|trans([], 'admin') }}" required autofocus>
         <input type="password" name="password" autocomplete="current-password" placeholder="{{ 'password'|trans([], 'admin') }}" required>
-        <input type="hidden" name="csrfToken" id="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+        <input type="hidden" name="csrfToken" id="csrfToken" value="{{ pimcore_csrf.getCsrfToken(app.request.session) }}">
 
         <button type="submit">{{ 'login'|trans([], 'admin') }}</button>
     </form>

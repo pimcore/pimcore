@@ -56,14 +56,14 @@ class Mail extends Email
     /**
      * Contains the dynamic Params for the Twig engine
      *
-     * @var array
+     * @var mixed[]
      */
     private array $params = [];
 
     /**
      * Options passed to html2text
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private array $html2textOptions = [
         'ignore_errors' => true,
@@ -109,6 +109,9 @@ class Mail extends Email
 
     private Model\Tool\Email\Log $lastLogEntry;
 
+    /**
+     * @return $this
+     */
     public function setHostUrl(string $url): static
     {
         $this->hostUrl = $url;
@@ -182,9 +185,12 @@ class Mail extends Email
         }
     }
 
+    /**
+     * @return $this
+     */
     public function setIgnoreDebugMode(bool $value): static
     {
-        $this->ignoreDebugMode = (bool)$value;
+        $this->ignoreDebugMode = $value;
 
         return $this;
     }
@@ -232,7 +238,7 @@ class Mail extends Email
     /**
      * Returns options for html2text
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getHtml2TextOptions(): array
     {
@@ -328,7 +334,7 @@ class Mail extends Email
     /**
      * Returns the parameters which were set with "setParams" or "setParam"
      *
-     * @return array
+     * @return mixed[]
      */
     public function getParams(): array
     {
@@ -403,31 +409,23 @@ class Mail extends Email
         if ($document instanceof Model\Document\Email) {
             if (!$this->recipientsCleared) {
                 $to = \Pimcore\Helper\Mail::parseEmailAddressField($document->getTo());
-                if (!empty($to)) {
-                    foreach ($to as $toEntry) {
-                        $this->addTo(new Address($toEntry['email'], $toEntry['name'] ?? ''));
-                    }
+                foreach ($to as $toEntry) {
+                    $this->addTo(new Address($toEntry['email'], $toEntry['name']));
                 }
 
                 $cc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getCc());
-                if (!empty($cc)) {
-                    foreach ($cc as $ccEntry) {
-                        $this->addCc(new Address($ccEntry['email'], $ccEntry['name'] ?? ''));
-                    }
+                foreach ($cc as $ccEntry) {
+                    $this->addCc(new Address($ccEntry['email'], $ccEntry['name']));
                 }
 
                 $bcc = \Pimcore\Helper\Mail::parseEmailAddressField($document->getBcc());
-                if (!empty($bcc)) {
-                    foreach ($bcc as $bccEntry) {
-                        $this->addBcc(new Address($bccEntry['email'], $bccEntry['name'] ?? ''));
-                    }
+                foreach ($bcc as $bccEntry) {
+                    $this->addBcc(new Address($bccEntry['email'], $bccEntry['name']));
                 }
 
                 $replyTo = \Pimcore\Helper\Mail::parseEmailAddressField($document->getReplyTo());
-                if (!empty($replyTo)) {
-                    foreach ($replyTo as $replyToEntry) {
-                        $this->addReplyTo(new Address($replyToEntry['email'], $replyToEntry['name'] ?? ''));
-                    }
+                foreach ($replyTo as $replyToEntry) {
+                    $this->addReplyTo(new Address($replyToEntry['email'], $replyToEntry['name']));
                 }
             }
         }
@@ -435,11 +433,9 @@ class Mail extends Email
         if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
             //if more than one "from" email address is defined -> we set the first one
             $fromArray = \Pimcore\Helper\Mail::parseEmailAddressField($document->getFrom());
-            if (!empty($fromArray)) {
-                list($from) = $fromArray;
-                if ($from) {
-                    $this->from(new Address($from['email'], $from['name']));
-                }
+            if ($fromArray) {
+                [$from] = $fromArray;
+                $this->from(new Address($from['email'], $from['name']));
             }
         }
 
@@ -573,6 +569,11 @@ class Mail extends Email
         return $this;
     }
 
+    /**
+     * @param array<Address|string> $addresses
+     *
+     * @return array<Address|string>
+     */
     private function filterLogAddresses(array $addresses): array
     {
         foreach ($addresses as $addrKey => $address) {
@@ -592,6 +593,11 @@ class Mail extends Email
         return $addresses;
     }
 
+    /**
+     * @param array<Address|string> $recipients
+     *
+     * @return array<Address|string>
+     */
     private function getDebugMailRecipients(array $recipients): array
     {
         $headers = $this->getHeaders();
@@ -865,7 +871,9 @@ class Mail extends Email
     }
 
     /**
-     * format Address from old params(string $address, string $name)
+     * @param Address|string|string[] ...$addresses
+     *
+     * @return array<Address|string>
      */
     private function formatAddress(Address|string|array ...$addresses): array
     {

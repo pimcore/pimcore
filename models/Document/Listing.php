@@ -28,7 +28,7 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
  * @method int[] loadIdList()
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQueryBuilder(?callable $callback)
- * @method array loadIdPathList()
+ * @method list<array<string,mixed>> loadIdPathList()
  */
 class Listing extends Model\Listing\AbstractListing implements PaginateListingInterface
 {

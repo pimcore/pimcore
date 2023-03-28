@@ -62,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'gridconfigs', $data);
+        Helper::upsert($this->db, 'gridconfigs', $data, $this->getPrimaryKey('gridconfigs'));
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {
