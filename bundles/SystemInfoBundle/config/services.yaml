@@ -9,8 +9,3 @@ services:
         resource: '../src/Controller'
         public: true
         tags: [ 'controller.service_arguments' ]
-
-    # auto-register all commands as services
-    Pimcore\Bundle\SystemInfoBundle\Command\:
-        resource: '../src/Command'
-        tags: [ 'console.command' ]

@@ -140,7 +140,7 @@
     - [Search] has been moved into PimcoreSimpleBackendSearchBundle
     - [SEO] Document Editor, Redirects, Sitemaps, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
     - [WordExport] has been moved into PimcoreWordExportBundle
-    - [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
+    - [System Info & Tools] Php Info and Opcache Status has been moved into `pimcore/system-info-bundle` package.
     - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
     - [UUID] has been moved into PimcoreUuidBundle
       - Config `pimcore:general:instance_identifier` has been removed, please use `pimcore_uuid:instance_identifier` in the PimcoreUuidBundle instead. Please run `bin/console config:dump pimcore_uuid` to see more about the instance identifier config after installing the bundle.

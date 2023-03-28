@@ -16,6 +16,7 @@ pimcore.bundle.system_info.startup = Class.create({
     },
 
     addSystemInfoMenu: function (menu) {
+        let that = this;
         const items = [];
         const user = pimcore.globalmanager.get('user');
         const perspectiveConfig = pimcore.globalmanager.get("perspective");
@@ -28,7 +29,7 @@ pimcore.bundle.system_info.startup = Class.create({
                             text: t('bundle_systemInfo_php_info'),
                             iconCls: 'pimcore_nav_icon_php',
                             itemId: 'pimcore_menu_extras_system_info_php_info',
-                            handler: this.showPhpInfo,
+                            handler: that.showPhpInfo,
                             priority: 10,
                         });
                     }
@@ -38,18 +39,8 @@ pimcore.bundle.system_info.startup = Class.create({
                             text: t('bundle_systemInfo_php_opcache_status'),
                             iconCls: 'pimcore_nav_icon_reports',
                             itemId: 'pimcore_menu_extras_system_info_php_opcache_status',
-                            handler: this.showOpcacheStatus,
+                            handler: that.showOpcacheStatus,
                             priority: 20,
-                        });
-                    }
-
-                    if (perspectiveConfig.inToolbar('extras.systemtools.requirements')) {
-                        menu.extras.items[index].menu.items.push({
-                            text: t('bundle_systemInfo_system_requirements_check'),
-                            iconCls: 'pimcore_nav_icon_systemrequirements',
-                            itemId: 'pimcore_menu_extras_system_info_system_requirements_check',
-                            handler: this.showSystemRequirementsCheck,
-                            priority: 30,
                         });
                     }
                 }
@@ -66,11 +57,6 @@ pimcore.bundle.system_info.startup = Class.create({
     showOpcacheStatus: function () {
         pimcore.helpers.openGenericIframeWindow("opcachestatus", Routing.generate('pimcore_bundle_systeminfo_opcache_index'), "pimcore_icon_reports", "PHP OPcache Status");
     },
-
-    showSystemRequirementsCheck: function () {
-        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_bundle_systeminfo_settings_installcheck'), "pimcore_icon_systemrequirements", "System-Requirements Check");
-    },
-
 });
 
 var bundle_system_info = new pimcore.bundle.system_info.startup();
