@@ -107,6 +107,20 @@ class Document extends Element\AbstractElement
         return  array_keys($documentsConfig['type_definitions']['map']);
     }
 
+    public static function getTypesConfiguration(): array
+    {
+        $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+
+         // remove unused class value
+        return array_map(function ($item) {
+            if(key_exists('class', $item)) {
+                unset($item['class']);
+            }
+
+            return $item;
+        }, $documentsConfig['type_definitions']['map']);
+    }
+
     /**
      * @internal
      *

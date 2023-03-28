@@ -103,7 +103,13 @@ class Dao extends Model\Element\Dao
         $typeSpecificTable = null;
         $validColumnsTypeSpecific = [];
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
-        $validTables = $documentsConfig['valid_tables'];
+        $validTables = [];
+        foreach ($documentsConfig['type_definitions']['map'] as $type => $config) {
+            if (isset($config['valid_table']) && $config['valid_table']) {
+                $validTables[] = $type;
+            }
+        }
+
         if (in_array($this->model->getType(), $validTables)) {
             $typeSpecificTable = 'documents_' . $this->model->getType();
             $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);

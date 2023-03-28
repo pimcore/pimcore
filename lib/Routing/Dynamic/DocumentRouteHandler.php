@@ -74,8 +74,12 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     public function getDirectRouteDocumentTypes(): array
     {
         if (empty($this->directRouteDocumentTypes)) {
-            $routingConfig = \Pimcore\Config::getSystemConfiguration('routing');
-            $this->directRouteDocumentTypes = $routingConfig['direct_route_document_types'];
+            $documentConfig = \Pimcore\Config::getSystemConfiguration('documents');
+            foreach ($documentConfig['type_definitions']['map'] as $type => $config) {
+                if (isset($config['direct_route']) && $config['direct_route']) {
+                    $this->directRouteDocumentTypes[] = $type;
+                }
+            }
         }
 
         return $this->directRouteDocumentTypes;

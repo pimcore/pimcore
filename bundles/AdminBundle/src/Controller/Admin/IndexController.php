@@ -29,6 +29,7 @@ use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
+use Pimcore\Model\Document;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\User;
@@ -246,6 +247,9 @@ class IndexController extends AdminController implements KernelResponseEventInte
 
             // search types
             'asset_search_types' => Asset::getTypes(),
+
+            // document types
+            'document_types_configuration' => Document::getTypesConfiguration(),
         ];
 
         $this

@@ -3378,3 +3378,12 @@ pimcore.helpers.priorityCompare = function(a, b) {
     return 0;
 }
 
+
+pimcore.helpers.documentTypeHasSpecificRole = function(documentType, role) {
+    let isAllowed = pimcore.settings.document_types_configuration[documentType][role];
+    if(isAllowed) {
+        return true;
+    }
+
+    return false;
+}

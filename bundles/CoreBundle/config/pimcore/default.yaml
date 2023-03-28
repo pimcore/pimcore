@@ -218,21 +218,42 @@ pimcore:
     documents:
         type_definitions:
             map:
-                folder: \Pimcore\Model\Document\Folder
-                page: \Pimcore\Model\Document\Page
-                snippet: \Pimcore\Model\Document\Snippet
-                link: \Pimcore\Model\Document\Link
-                hardlink: \Pimcore\Model\Document\Hardlink
-                email: \Pimcore\Model\Document\Email
-                newsletter: \Pimcore\Model\Document\Newsletter
-
+                folder:
+                    class: \Pimcore\Model\Document\Folder
+                    translatable: false
+                    direct_route: false
+                    translatable_inheritance: true
+                page:
+                    class: \Pimcore\Model\Document\Page
+                    valid_table: 'page'
+                snippet:
+                    class: \Pimcore\Model\Document\Snippet
+                    valid_table: 'snippet'
+                    children_supported: false
+                link:
+                    class: \Pimcore\Model\Document\Link
+                    translatable: false
+                    valid_table: 'link'
+                    direct_route: false
+                hardlink:
+                    class: \Pimcore\Model\Document\Hardlink
+                    translatable: false
+                    valid_table: 'hardlink'
+                    direct_route: false
+                email:
+                    class: \Pimcore\Model\Document\Email
+                    valid_table: 'email'
+                    translatable_inheritance: false
+                    children_supported: false
+                newsletter:
+                    class: \Pimcore\Model\Document\Newsletter
+                    translatable: false
+                    valid_table: 'newsletter'
+                    translatable_inheritance: false
+                    children_supported: false
         editables:
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-        valid_tables: ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet']
-
-    routing:
-        direct_route_document_types: ['page', 'snippet', 'email', 'newsletter']
 
     newsletter:
         source_adapters:
