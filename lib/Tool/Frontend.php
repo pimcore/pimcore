@@ -24,7 +24,6 @@ use Pimcore\Model\Site;
 
 final class Frontend
 {
-
     public static function isDocumentInSite(?Site $site, Document $document): bool
     {
         $inSite = true;
@@ -54,12 +53,11 @@ final class Frontend
     {
         $siteIdOfDocument = self::getSiteIdForDocument($document);
 
-        if(!$siteIdOfDocument) {
+        if (!$siteIdOfDocument) {
             return null;
         }
 
         return Site::getById($siteIdOfDocument);
-
     }
 
     public static function getSiteIdForDocument(Document $document): ?int
@@ -75,17 +73,17 @@ final class Frontend
         return null;
     }
 
-    private static function getSiteMapping() : array
+    private static function getSiteMapping(): array
     {
         $cacheKey = 'sites_path_mapping';
 
-        if(RuntimeCache::isRegistered($cacheKey)) {
+        if (RuntimeCache::isRegistered($cacheKey)) {
             return RuntimeCache::get($cacheKey);
         }
 
         $siteMapping = Pimcore\Cache::load($cacheKey);
 
-        if(!$siteMapping) {
+        if (!$siteMapping) {
             $siteMapping = [];
             $sites = new Site\Listing();
             $sites->setOrderKey('(SELECT LENGTH(`path`) FROM documents WHERE documents.id = sites.rootId) DESC', false);

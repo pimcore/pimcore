@@ -111,13 +111,12 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         // If the request is not from a site and the document is part of a site
         // or the ID of the requested site does not match the site where the document is located.
         // Then we have to throw a NotFoundHttpException
-        if(!$site && $document && !Tool::isFrontendRequestByAdmin()) {
+        if (!$site && $document && !Tool::isFrontendRequestByAdmin()) {
             $siteIdOfDocument = Frontend::getSiteIdForDocument($document);
-            if($siteIdOfDocument) {
-                throw new NotFoundHttpException("The page does not exist on this configured site.");
+            if ($siteIdOfDocument) {
+                throw new NotFoundHttpException('The page does not exist on this configured site.');
             }
         }
-
 
         // check for a pretty url inside a site
         if (!$document && $this->siteResolver->isSiteRequest($context->getRequest())) {
