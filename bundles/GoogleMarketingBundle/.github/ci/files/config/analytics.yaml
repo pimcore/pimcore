@@ -6,7 +6,7 @@ services:
     #
     # GOOGLE TAG MANAGER
     #
-    Pimcore\Bundle\GoogleMarketingBundle\EventSubscriber\TrackingCodeSubscriber: ~
+    Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend\TrackingCodeSubscriber: ~
 
     Pimcore\Bundle\GoogleMarketingBundle\Config\ConfigProvider: ~
     Pimcore\Bundle\GoogleMarketingBundle\Config\Config:

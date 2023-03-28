@@ -10,3 +10,5 @@ services:
 
     Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend\TrackingCodeFlashMessageListener: ~
     Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SessionBagListener: ~
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend\TrackingCodeSubscriber: ~

@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\GoogleMarketingBundle\EventSubscriber;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
