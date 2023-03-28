@@ -4,8 +4,30 @@ This section describes the installation of the E-Commerce Framework and the firs
 
 ## Installation
 
-The E-Commerce Framework is shipped with Pimcore core. To install it, navigate to `Tools` > `Bundles` in Pimcore 
-Admin UI and activate and install the `PimcoreEcommerceFrameworkBundle`. 
+### Minimum Requirements
+* Pimcore >= 11.0
+
+### Install
+
+Install bundle via composer:
+```bash 
+composer require pimcore/ecommerce-framework-bundle
+```
+
+Enable bundle via console or extensions manager:
+```bash
+php bin/console pimcore:bundle:install PimcoreEcommerceFrameworkBundle
+```
+
+Check if the bundle has been installed:
+```bash
+php bin/console pimcore:bundle:list
++---------------------------------+---------+-----------+----+-----+-----+
+| Bundle                          | Enabled | Installed | I? | UI? | UP? |
++---------------------------------+---------+-----------+----+-----+-----+
+| PimcoreEcommerceFrameworkBundle  | ✔     | ✔        | ❌  | ✔ | ❌ |
++---------------------------------+---------+-----------+----+-----+-----+
+```
 
 The installer does following tasks:  
 - Install several field collections.
