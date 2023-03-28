@@ -43,11 +43,12 @@ pimcore.report.custom.definition.sql = Class.create({
                     xtype: "textarea",
                     name: "sql",
                     fieldLabel: "SELECT <br /><small>(eg. a,b,c)</small>",
+                    fieldStyle: 'font-family: monospace',
                     value: (sourceDefinitionData ? sourceDefinitionData.sql : ""),
-                    width: 500,
-                    height: 150,
+                    width: 900,
+                    height: 200,
                     grow: true,
-                    growMax: 200,
+                    growMax: 400,
                     enableKeyEvents: true,
                     listeners: {
                         keyup: this.onSqlEditorKeyup.bind(this)
@@ -57,11 +58,12 @@ pimcore.report.custom.definition.sql = Class.create({
                     xtype: "textarea",
                     name: "from",
                     fieldLabel: "FROM <br /><small>(eg. d INNER JOIN e ON c.a = e.b)</small>",
+                    fieldStyle: 'font-family: monospace',
                     value: (sourceDefinitionData ? sourceDefinitionData.from : ""),
-                    width: 500,
-                    height: 150,
+                    width: 900,
+                    height: 200,
                     grow: true,
-                    growMax: 200,
+                    growMax: 400,
                     enableKeyEvents: true,
                     listeners: {
                         keyup: this.onSqlEditorKeyup.bind(this)
@@ -71,11 +73,12 @@ pimcore.report.custom.definition.sql = Class.create({
                     xtype: "textarea",
                     name: "where",
                     fieldLabel: "WHERE <br /><small>(eg. c = 'some_value')</small>",
+                    fieldStyle: 'font-family: monospace',
                     value: (sourceDefinitionData ? sourceDefinitionData.where : ""),
-                    width: 500,
-                    height: 150,
+                    width: 900,
+                    height: 200,
                     grow: true,
-                    growMax: 200,
+                    growMax: 400,
                     enableKeyEvents: true,
                     listeners: {
                         keyup: this.onSqlEditorKeyup.bind(this)
@@ -85,8 +88,9 @@ pimcore.report.custom.definition.sql = Class.create({
                     xtype: "textarea",
                     name: "groupby",
                     fieldLabel: "GROUP BY <br /><small>(eg. b, c )</small>",
+                    fieldStyle: 'font-family: monospace',
                     value: (sourceDefinitionData ? sourceDefinitionData.groupby : ""),
-                    width: 500,
+                    width: 900,
                     height: 150,
                     grow: true,
                     growMax: 200,
@@ -100,7 +104,7 @@ pimcore.report.custom.definition.sql = Class.create({
 
         this.sqlText = new Ext.form.DisplayField({
             name: "sqlText",
-            style: "color: blue;"
+            fieldStyle: 'font-family: monospace',
         });
         this.element.add(this.sqlText);
         this.element.updateLayout();
@@ -131,7 +135,7 @@ pimcore.report.custom.definition.sql = Class.create({
         var values = this.getValues();
 
         if(this.sqlText) {
-            var sqlText = "";
+            let sqlText = "";
             if(values.sql) {
                 if(values.sql.trim().indexOf("SELECT") !== 0) {
                     sqlText += "SELECT ";
@@ -141,21 +145,21 @@ pimcore.report.custom.definition.sql = Class.create({
 
             if(values.from) {
                 if(values.from.trim().indexOf("FROM") !== 0) {
-                    sqlText += " FROM ";
+                    sqlText += "<br>FROM ";
                 }
                 sqlText += values.from;
             }
 
             if(values.where) {
                 if(values.where.trim().indexOf("WHERE") !== 0) {
-                    sqlText += " WHERE ";
+                    sqlText += "<br>WHERE ";
                 }
                 sqlText += values.where;
             }
 
             if(values.groupby) {
                 if(values.groupby.trim().indexOf("GROUP BY") !== 0) {
-                    sqlText += " GROUP BY ";
+                    sqlText += "<br>GROUP BY ";
                 }
                 sqlText += values.groupby;
             }
