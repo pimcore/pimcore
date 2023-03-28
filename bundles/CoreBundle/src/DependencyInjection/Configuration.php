@@ -892,22 +892,6 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    private function addClassResolverNode(ArrayNodeDefinition $node, string $name): void
-    {
-        $node
-            ->children()
-                ->arrayNode($name)
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('map')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
     /**
      * Add implementation node config with array (map[class,matching], prefixes)
      */
