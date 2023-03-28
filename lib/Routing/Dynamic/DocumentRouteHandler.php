@@ -24,6 +24,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Routing\DocumentRoute;
+use Pimcore\Tool;
 use Pimcore\Tool\Frontend;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -110,7 +111,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         // If the request is not from a site and the document is part of a site
         // or the ID of the requested site does not match the site where the document is located.
         // Then we have to throw a NotFoundHttpException
-        if(!$site && $document && !$context->getRequest()->get('pimcore_editmode')) {
+        if(!$site && $document && !Tool::isFrontendRequestByAdmin()) {
             $siteIdOfDocument = Frontend::getSiteIdForDocument($document);
             if($siteIdOfDocument) {
                 throw new NotFoundHttpException("The page does not exist on this configured site.");
