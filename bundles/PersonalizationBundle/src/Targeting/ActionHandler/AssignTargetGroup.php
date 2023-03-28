@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler;
 
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\Rule;
 use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
-use Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionMatcherInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Storage\TargetingStorageInterface;
 
