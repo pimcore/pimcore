@@ -150,14 +150,13 @@
       - Print related Events have been moved from into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
     - [Personalization and targeting] has been moved to `pimcore/personalization` package.
       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting` in the PimcorePersonalizationBundle instead.
-      - Targeting is now using the opt-in approach and will not be enabled by default. So, user should set the following cookie `pimcore_targeting_enabled=1` to enable targeting. User can use tools like`Cookiebot` to choose consent and set the cookie accordingly.
-       Targeting can also be enabled by setting the following config.
+      - Targeting is now using the opt-in approach and will not be enabled by default. Add following config to enable it:
       ```yaml
       pimcore_personalization:
           targeting:
               enabled: true
       ```
-      
+      Also, a user can use cookie `pimcore_targeting_enabled=1` to enable targeting.
     - [Google Marketing] has been moved to `pimcore/google-marketing-bundle` package.
       - Config `pimcore:services:google` has been removed, please use `pimcore_google_marketing` in the PimcoreGoogleMarketingBundle instead.
     - [Google] Classes Google\Cse and Google\Cse\Item have been removed.
