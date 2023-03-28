@@ -272,6 +272,7 @@ pimcore:
     Moved `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` from `AbstractPimcoreBundle` to `BundleAdminSupportTrait`.
 - [Cache] Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
 - [Events] Moved `SEARCH_LIST_BEFORE_FILTER_PREPARE`, `SEARCH_LIST_BEFORE_LIST_LOAD`, `SEARCH_LIST_AFTER_LIST_LOAD`, `QUICKSEARCH_LIST_BEFORE_LIST_LOAD` and `QUICKSEARCH_LIST_AFTER_LIST_LOAD` events from `Pimcore\Bundle\AdminBundle\Event\AdminEvents` to `Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents`.
+- [Sites] Calling absolute path from a site is not possible anymore. If the absolute path is called, a 404 error will be returned instead.
 
 ## 10.6.0
 
