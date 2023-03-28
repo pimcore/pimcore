@@ -361,6 +361,10 @@ class CustomLayout extends Model\AbstractModel
 
     public function delete()
     {
+        if (!$this->isWritable()) {
+            throw new DataObject\Exception\DefinitionWriteException();
+        }
+
         // empty object cache
         try {
             Cache::clearTag('customlayout_' . $this->getId());
