@@ -11,8 +11,8 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
@@ -44,14 +44,14 @@ class RenderletListener implements EventSubscriberInterface
     {
         $requestParams = $event->getArgument('requestParams');
         $element = $event->getArgument('element');
-        if(!$element instanceof TargetingDocumentInterface) {
+        if (!$element instanceof TargetingDocumentInterface) {
             return;
         }
 
         // set selected target group on element
-        if($requestParams['_ptg'] ?? false) {
+        if ($requestParams['_ptg'] ?? false) {
             $targetGroup = TargetGroup::getById((int)$requestParams['_ptg']);
-            if($targetGroup) {
+            if ($targetGroup) {
                 $element->setUseTargetGroup($targetGroup->getId());
             }
         }

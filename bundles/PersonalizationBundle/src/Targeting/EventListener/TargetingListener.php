@@ -29,11 +29,11 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActio
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ResponseTransformingActionHandlerInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Code\TargetingCodeGenerator;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoResolver;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
-use Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -56,6 +56,7 @@ class TargetingListener implements EventSubscriberInterface
     private RequestHelper $requestHelper;
 
     private TargetingCodeGenerator $codeGenerator;
+
     private TargetingEnableService $targetingEnableService;
 
     public function __construct(
@@ -87,9 +88,9 @@ class TargetingListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-       if(!$this->targetingEnableService->isTargetingEnabled()) {
+        if (!$this->targetingEnableService->isTargetingEnabled()) {
             return;
-       }
+        }
 
         $request = $event->getRequest();
 
@@ -144,7 +145,7 @@ class TargetingListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        if(!$this->targetingEnableService->isTargetingEnabled()) {
+        if (!$this->targetingEnableService->isTargetingEnabled()) {
             return;
         }
 

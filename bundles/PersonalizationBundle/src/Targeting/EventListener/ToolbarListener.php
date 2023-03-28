@@ -103,7 +103,7 @@ class ToolbarListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        if(!$this->targetingEnableService->isTargetingEnabled()) {
+        if (!$this->targetingEnableService->isTargetingEnabled()) {
             return;
         }
         if (!$event->isMainRequest()) {

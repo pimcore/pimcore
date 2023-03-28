@@ -58,11 +58,11 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if(!$this->targetingEnableService->isTargetingEnabled()) {
+        if (!$this->targetingEnableService->isTargetingEnabled()) {
             return;
         }
 
-        if(!$this->isEnabled()) {
+        if (!$this->isEnabled()) {
             return;
         }
 
@@ -94,11 +94,11 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     public function configureIgnoredSessionKeys(IgnoredSessionKeysEvent $event): void
     {
-        if(!$this->targetingEnableService->isTargetingEnabled()) {
+        if (!$this->targetingEnableService->isTargetingEnabled()) {
             return;
         }
 
-        if(!$this->isEnabled()) {
+        if (!$this->isEnabled()) {
             return;
         }
 
@@ -116,11 +116,11 @@ class TargetingSessionBagListener implements EventSubscriberInterface
      */
     public function prepareFullPageCacheResponse(PrepareResponseEvent $event): void
     {
-        if(!$this->targetingEnableService->isTargetingEnabled()) {
+        if (!$this->targetingEnableService->isTargetingEnabled()) {
             return;
         }
 
-        if(!$this->isEnabled()) {
+        if (!$this->isEnabled()) {
             return;
         }
 
@@ -153,5 +153,4 @@ class TargetingSessionBagListener implements EventSubscriberInterface
     {
         return \Pimcore::getKernel()->getContainer()->getParameter('pimcore_personalization.targeting.session.enabled');
     }
-
 }

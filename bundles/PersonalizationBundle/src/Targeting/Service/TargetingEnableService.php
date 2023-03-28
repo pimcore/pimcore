@@ -11,8 +11,8 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\Service;
@@ -31,13 +31,14 @@ class TargetingEnableService
         $this->requestHelper = $requestHelper;
     }
 
-    public function isTargetingEnabled(): bool {
-
+    public function isTargetingEnabled(): bool
+    {
         $request = $this->requestHelper->getCurrentRequest();
 
-        if($this->enabled || $request->cookies->getBoolean('pimcore_targeting_enabled')) {
+        if ($this->enabled || $request->cookies->getBoolean('pimcore_targeting_enabled')) {
             return true;
         }
+
         return false;
     }
 }
