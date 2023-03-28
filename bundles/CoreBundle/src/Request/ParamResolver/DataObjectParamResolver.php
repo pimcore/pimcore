@@ -58,7 +58,7 @@ class DataObjectParamResolver implements ValueResolverInterface
         }
 
         /** @var Concrete|null $object */
-        $object = $class::getById($value);
+        $object = $value instanceof AbstractObject ? $value : $class::getById($value);
         if (!$object) {
             throw new NotFoundHttpException(sprintf('Invalid data object ID given for parameter "%s".', $param));
         } elseif (

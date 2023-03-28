@@ -82,7 +82,7 @@ pimcore.object.classes.data.booleanSelect = Class.create(pimcore.object.classes.
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-        return [
+        const stylingItems = [
             {
                 xtype: "textfield",
                 fieldLabel: t("width"),
@@ -93,7 +93,14 @@ pimcore.object.classes.data.booleanSelect = Class.create(pimcore.object.classes.
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('width_explanation')
-            },
+            }
+        ];
+
+        if (this.isInCustomLayoutEditor()) {
+            return stylingItems;
+        }
+
+        return stylingItems.concat([
             {
                 xtype: "textfield",
                 fieldLabel: t("yes_label"),
@@ -112,7 +119,8 @@ pimcore.object.classes.data.booleanSelect = Class.create(pimcore.object.classes.
                 name: "emptyLabel",
                 value: datax.emptyLabel
             }
-        ];
+        ]);
+
     },
 
     applyData: function ($super) {

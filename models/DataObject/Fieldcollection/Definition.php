@@ -37,6 +37,14 @@ class Definition extends Model\AbstractModel
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
     /**
+     * @var array
+     */
+    protected const FORBIDDEN_NAMES = [
+        'abstract', 'class', 'data', 'folder', 'list', 'permissions', 'resource', 'dao', 'concrete', 'items',
+        'object', 'interface', 'default',
+    ];
+
+    /**
      * {@inheritdoc}
      */
     protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
@@ -125,7 +133,7 @@ class Definition extends Model\AbstractModel
             throw new \Exception('A field-collection needs a key to be saved!');
         }
 
-        if (!preg_match('/[a-zA-Z]+/', $this->getKey())) {
+        if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $this->getKey()) || $this->isForbiddenName()) {
             throw new \Exception(sprintf('Invalid key for field-collection: %s', $this->getKey()));
         }
 
@@ -281,5 +289,10 @@ class Definition extends Model\AbstractModel
         $cd .= ' */';
 
         return $cd;
+    }
+
+    public function isForbiddenName(): bool
+    {
+        return in_array($this->getKey(), self::FORBIDDEN_NAMES);
     }
 }

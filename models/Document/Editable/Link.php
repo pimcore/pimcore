@@ -95,6 +95,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             $prefix = '';
             $suffix = '';
             $noText = false;
+            $disabledText = false;
 
             if (array_key_exists('textPrefix', $this->config)) {
                 $prefix = $this->config['textPrefix'];
@@ -109,6 +110,11 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
             if (isset($this->config['noText']) && $this->config['noText'] == true) {
                 $noText = true;
                 unset($this->config['noText']);
+            }
+
+            if (array_key_exists('disabledFields', $this->config) && is_array($this->config['disabledFields'])) {
+                $disabledText = in_array('text', $this->config['disabledFields'], true);
+                unset($this->config['disabledFields']);
             }
 
             // add attributes to link
@@ -180,7 +186,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
                 $attribs[] = $this->data['attributes'];
             }
 
-            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($this->data['text'])) . $suffix . '</a>';
+            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($disabledText ? $url : $this->data['text'])) . $suffix . '</a>';
         }
 
         return '';

@@ -4,8 +4,30 @@ This section describes the installation of the E-Commerce Framework and the firs
 
 ## Installation
 
-The E-Commerce Framework is shipped with Pimcore core. To install it, navigate to `Tools` > `Bundles` in Pimcore 
-Admin UI and activate and install the `PimcoreEcommerceFrameworkBundle`. 
+### Minimum Requirements
+* Pimcore >= 11.0
+
+### Install
+
+Install bundle via composer:
+```bash 
+composer require pimcore/ecommerce-framework-bundle
+```
+
+Enable bundle via console or extensions manager:
+```bash
+php bin/console pimcore:bundle:install PimcoreEcommerceFrameworkBundle
+```
+
+Check if the bundle has been installed:
+```bash
+php bin/console pimcore:bundle:list
++---------------------------------+---------+-----------+----+-----+-----+
+| Bundle                          | Enabled | Installed | I? | UI? | UP? |
++---------------------------------+---------+-----------+----+-----+-----+
+| PimcoreEcommerceFrameworkBundle  | ✔     | ✔        | ❌  | ✔ | ❌ |
++---------------------------------+---------+-----------+----+-----+-----+
+```
 
 The installer does following tasks:  
 - Install several field collections.
@@ -43,7 +65,7 @@ There are two ways of preparing a Pimcore class for product-usage in the E-Comme
 
 > For the abstract class use the parent class functionality of Pimcore. For implementing the interfaces use either 
 the parent class functionality or the overriding models functionality of Pimcore 
-(see also [Overriding Models](https://github.com/pimcore/pimcore/tree/11.x/doc/Development_Documentation/20_Extending_Pimcore/03_Overriding_Models.md)).
+(see also [Overriding Models](https://github.com/pimcore/pimcore/tree/11.x/doc/20_Extending_Pimcore/03_Overriding_Models.md)).
 
 > If using the abstract class, also have a look at its [implementation](https://github.com/pimcore/pimcore/blob/11.x/bundles/EcommerceFrameworkBundle/Model/AbstractProduct.php). 
 You might need to override a few methods that cannot be implemented by the abstract class and throw an 

@@ -398,13 +398,6 @@ translations_are_not_configured: Vertalingen niet geconfigureerd
 read_more_here: Lees meer over
 publish_version: Publicatie versie
 start: Begin
-su: Zo
-mo: Ma
-tu: Di
-we: Wo
-th: Do
-fr: Vr
-sa: Za
 session_error_text: Er lijkt een probleem te zijn met uw sessie. Wilt u op eigen risico
   op deze pagina blijven?
 session_error: Sessiefout

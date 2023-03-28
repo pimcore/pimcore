@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,37 +15,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Admin\Login;
 
-use Symfony\Contracts\EventDispatcher\Event;
-
-class LoginRedirectEvent extends Event
+/**
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Login\LoginRedirectEvent instead
+ */
+class LoginRedirectEvent extends \Pimcore\Bundle\AdminBundle\Event\Login\LoginRedirectEvent
 {
-    protected string $routeName;
-
-    protected array $routeParams;
-
-    public function __construct(string $routeName, array $routeParams = [])
-    {
-        $this->routeName = $routeName;
-        $this->routeParams = $routeParams;
-    }
-
-    public function getRouteName(): string
-    {
-        return $this->routeName;
-    }
-
-    public function setRouteName(string $routeName): void
-    {
-        $this->routeName = $routeName;
-    }
-
-    public function getRouteParams(): array
-    {
-        return $this->routeParams;
-    }
-
-    public function setRouteParams(array $routeParams): void
-    {
-        $this->routeParams = $routeParams;
-    }
 }
