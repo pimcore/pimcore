@@ -92,5 +92,3 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
         return $priorities;
     }
 }
-
-@class_alias(ApplicationLoggerDb::class, 'Pimcore\Log\Handler\ApplicationLoggerDb');
