@@ -25,6 +25,7 @@ use Pimcore\Bundle\SimpleBackendSearchBundle\Model\Search\Backend\Data;
 use Pimcore\Config;
 use Pimcore\Db\Helper;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -280,7 +281,7 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminSearchEvents::ASSET_LIST_BEFORE_LIST_LOAD);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
             /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
@@ -291,7 +292,7 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminSearchEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
             /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
@@ -302,7 +303,7 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch($beforeListLoadEvent, AdminSearchEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
             /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
