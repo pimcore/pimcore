@@ -310,9 +310,15 @@ pimcore.element.scheduler = Class.create({
 
         var value;
         for (var i = 0; i < data.length; i++) {
+            let dateString = data[i].data.date;
+            if(data[i].data.time !== undefined) {
+                dateString += " " +  data[i].data.time;
+            } else {
+                dateString += " 00:00";
+            }
+            let dateTime = new Date(dateString);
             value = {
-                date:  data[i].data.date,
-                time: data[i].data.time,
+                date:  Math.floor(dateTime / 1000),
                 action: data[i].data.action,
                 active: data[i].data.active
             };

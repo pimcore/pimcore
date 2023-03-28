@@ -244,6 +244,8 @@ visibility_of_system_properties: Visibility of system properties
 translate: translate
 translations_admin_hint: 'HINT: Please Reload UI to apply translation changes!'
 allowed_types: Allowed Types
+allowed_targets: Allowed Targets
+disabled_fields: Disabled Fields
 columnlength: Columnlength
 visible_in_searchresult: Visible in Search Result
 visible_in_gridview: Visible in Grid View

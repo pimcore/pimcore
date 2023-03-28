@@ -1793,10 +1793,16 @@ pimcore.helpers.openImageHotspotMarkerEditor = function (imageId, data, saveCall
 
 pimcore.helpers.editmode = {};
 
-pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
+pimcore.helpers.editmode.openLinkEditPanel = function (data, callback, config) {
+    const TARGETS = ["", "_blank", "_self", "_top", "_parent"];
+    const TYPES = ["asset", "document", "object"];
 
+    config = config || {};
+    const disabledFields = config.disabledFields || [];
+    const allowedTargets = Ext.Array.intersect(TARGETS, config.allowedTargets || TARGETS);
+    const allowedTypes = Ext.Array.intersect(TYPES, config.allowedTypes || TYPES);
 
-    var internalTypeField = new Ext.form.Hidden({
+    const internalTypeField = new Ext.form.Hidden({
         fieldLabel: 'internalType',
         value: data.internalType,
         name: 'internalType',
@@ -1804,7 +1810,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         width: 520
     });
 
-    var linkTypeField = new Ext.form.Hidden({
+    const linkTypeField = new Ext.form.Hidden({
         fieldLabel: 'linktype',
         value: data.linktype,
         name: 'linktype',
@@ -1812,7 +1818,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         width: 520
     });
 
-    var fieldPath = new Ext.form.TextField({
+    const pathField = new Ext.form.TextField({
         fieldLabel: t('path'),
         value: data.path,
         name: "path",
@@ -1832,33 +1838,36 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         }
     });
 
-
-    fieldPath.on("render", function (el) {
+    pathField.on("render", function (el) {
         // add drop zone
         new Ext.dd.DropZone(el.getEl(), {
             reference: this,
             ddGroup: "element",
             getTargetFromEvent: function (e) {
-                return fieldPath.getEl();
+                return pathField.getEl();
             },
 
             onNodeOver: function (target, dd, e, data) {
-                if (data.records.length === 1 && data.records[0].data.type !== "folder") {
+                if (data.records.length !== 1) {
+                    return;
+                }
+
+                data = data.records[0].data;
+                if (data.type !== "folder" && allowedTypes.includes(data.elementType)) {
                     return Ext.dd.DropZone.prototype.dropAllowed;
                 }
             }.bind(this),
 
             onNodeDrop: function (target, dd, e, data) {
-
                 if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
                     return false;
                 }
 
                 data = data.records[0].data;
-                if (data.type !== "folder") {
+                if (data.type !== "folder" && allowedTypes.includes(data.elementType)) {
                     internalTypeField.setValue(data.elementType);
                     linkTypeField.setValue('internal');
-                    fieldPath.setValue(data.path);
+                    pathField.setValue(data.path);
                     return true;
                 }
                 return false;
@@ -1866,12 +1875,18 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         });
     }.bind(this));
 
-    const fcItems = [
-        fieldPath
+    const textField = disabledFields.includes('text') ? null : {
+        fieldLabel: t('text'),
+        name: 'text',
+        value: data.text
+    };
+
+    const fieldContainerItems = [
+        pathField,
     ];
 
-    if(pimcore.helpers.hasSearchImplementation()) {
-        fcItems.push({
+    if (pimcore.helpers.hasSearchImplementation()) {
+        fieldContainerItems.push({
             xtype: "button",
             iconCls: "pimcore_icon_search",
             style: "margin-left: 5px",
@@ -1880,17 +1895,119 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                     if (item) {
                         internalTypeField.setValue(item.type);
                         linkTypeField.setValue('internal');
-                        fieldPath.setValue(item.fullpath);
+                        pathField.setValue(item.fullpath);
                         return true;
                     }
                 }, {
-                    type: ["asset", "document", "object"]
+                    type: allowedTypes
                 });
             }
         });
     }
 
-    var form = new Ext.FormPanel({
+    const fieldContainer = {
+        xtype: "fieldcontainer",
+        layout: 'hbox',
+        border: false,
+        items: fieldContainerItems,
+    };
+
+    const propertyFields = [];
+    if (!disabledFields.includes('target')) {
+        propertyFields.push({
+            xtype: "combo",
+            fieldLabel: t('target'),
+            name: 'target',
+            triggerAction: 'all',
+            editable: true,
+            mode: "local",
+            store: allowedTargets,
+            value: data.target,
+            width: 300
+        });
+    }
+    if (!disabledFields.includes('parameters')) {
+        propertyFields.push({
+            fieldLabel: t('parameters'),
+            name: 'parameters',
+            value: data.parameters
+        });
+    }
+    if (!disabledFields.includes('anchor')) {
+        propertyFields.push({
+            fieldLabel: t('anchor'),
+            name: 'anchor',
+            value: data.anchor
+        });
+    }
+    if (!disabledFields.includes('title')) {
+        propertyFields.push({
+            fieldLabel: t('title'),
+            name: 'title',
+            value: data.title
+        });
+    }
+    const propertiesFieldSet = propertyFields.length === 0 ? null : {
+        xtype: 'fieldset',
+        layout: 'vbox',
+        title: t('properties'),
+        collapsible: false,
+        defaultType: 'textfield',
+        width: '100%',
+        defaults: {
+            width: 250
+        },
+        items: propertyFields
+    };
+
+    const advancedFields = [];
+    if (!disabledFields.includes('accesskey')) {
+        advancedFields.push({
+            fieldLabel: t('accesskey'),
+            name: 'accesskey',
+            value: data.accesskey
+        });
+    }
+    if (!disabledFields.includes('rel')) {
+        advancedFields.push({
+            fieldLabel: t('relation'),
+            name: 'rel',
+            width: 300,
+            value: data.rel
+        });
+    }
+    if (!disabledFields.includes('tabindex')) {
+        advancedFields.push({
+            fieldLabel: ('tabindex'),
+            name: 'tabindex',
+            value: data.tabindex
+        });
+    }
+    if (!disabledFields.includes('class')) {
+        advancedFields.push({
+            fieldLabel: t('class'),
+            name: 'class',
+            width: 300,
+            value: data["class"]
+        });
+    }
+    if (!disabledFields.includes('attributes')) {
+        advancedFields.push({
+            fieldLabel: t('attributes') + ' (key="value")',
+            name: 'attributes',
+            width: 300,
+            value: data["attributes"]
+        });
+    }
+    const advancedTab = advancedFields.length === 0 ? null : {
+        title: t('advanced'),
+        layout: 'form',
+        defaultType: 'textfield',
+        border: false,
+        items: advancedFields
+    };
+
+    const form = new Ext.FormPanel({
         itemId: "form",
         items: [
             {
@@ -1909,94 +2026,33 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                             // the types are already set correctly
                             internalTypeField,
                             linkTypeField,
-                            {
-                                fieldLabel: t('text'),
-                                name: 'text',
-                                value: data.text
-                            },
+                            textField,
                             {
                                 xtype: "fieldcontainer",
                                 layout: 'hbox',
                                 border: false,
-                                items: fcItems
-                            },
-                            {
-                                xtype: 'fieldset',
-                                layout: 'vbox',
-                                title: t('properties'),
-                                collapsible: false,
-                                defaultType: 'textfield',
-                                width: '100%',
-                                defaults: {
-                                    width: 250
-                                },
-                                items: [
-                                    {
-                                        xtype: "combo",
-                                        fieldLabel: t('target'),
-                                        name: 'target',
-                                        triggerAction: 'all',
-                                        editable: true,
-                                        mode: "local",
-                                        store: ["", "_blank", "_self", "_top", "_parent"],
-                                        value: data.target,
-                                        width: 300
-                                    },
-                                    {
-                                        fieldLabel: t('parameters'),
-                                        name: 'parameters',
-                                        value: data.parameters
-                                    },
-                                    {
-                                        fieldLabel: t('anchor'),
-                                        name: 'anchor',
-                                        value: data.anchor
-                                    },
-                                    {
-                                        fieldLabel: t('title'),
-                                        name: 'title',
-                                        value: data.title
+                                items: [pathField, {
+                                    xtype: "button",
+                                    iconCls: "pimcore_icon_search",
+                                    style: "margin-left: 5px",
+                                    handler: function () {
+                                        pimcore.helpers.itemselector(false, function (item) {
+                                            if (item) {
+                                                internalTypeField.setValue(item.type);
+                                                linkTypeField.setValue('internal');
+                                                pathField.setValue(item.fullpath);
+                                                return true;
+                                            }
+                                        }, {
+                                            type: Ext.Array.intersect(["asset", "document", "object"], allowedTypes)
+                                        });
                                     }
-                                ]
-                            }
+                                }]
+                            },
+                            propertiesFieldSet
                         ]
                     },
-                    {
-                        title: t('advanced'),
-                        layout: 'form',
-                        defaultType: 'textfield',
-                        border: false,
-                        items: [
-                            {
-                                fieldLabel: t('accesskey'),
-                                name: 'accesskey',
-                                value: data.accesskey
-                            },
-                            {
-                                fieldLabel: t('relation'),
-                                name: 'rel',
-                                width: 300,
-                                value: data.rel
-                            },
-                            {
-                                fieldLabel: ('tabindex'),
-                                name: 'tabindex',
-                                value: data.tabindex
-                            },
-                            {
-                                fieldLabel: t('class'),
-                                name: 'class',
-                                width: 300,
-                                value: data["class"]
-                            },
-                            {
-                                fieldLabel: t('attributes') + ' (key="value")',
-                                name: 'attributes',
-                                width: 300,
-                                value: data["attributes"]
-                            }
-                        ]
-                    }
+                    advancedTab
                 ]
             }
         ],
@@ -2026,10 +2082,10 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
     });
 
 
-    var window = new Ext.Window({
+    const window = new Ext.Window({
         modal: false,
         width: 600,
-        height: 470,
+        maxHeight: 470,
         title: t("edit_link"),
         items: [form],
         layout: "fit"
