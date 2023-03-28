@@ -271,7 +271,7 @@ pimcore:
 - Moved implementation of `PimcoreBundleAdminSupportInterface` from `AbstractPimcoreBundle` to bundle classes.
     Moved `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` from `AbstractPimcoreBundle` to `BundleAdminSupportTrait`.
 - [Cache] Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
-- [Sites] Calling absolut path from a site is not possible anymore. If the absolut path is called, a 404 error will be returned instead.
+- [Sites] Calling absolute path from a site is not possible anymore. If the absolute path is called, a 404 error will be returned instead.
 
 ## 10.6.0
 
