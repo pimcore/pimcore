@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\StaticPageContextAwareTrait;
@@ -34,6 +33,7 @@ use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoResolver;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -44,7 +44,6 @@ class TargetingListener implements EventSubscriberInterface
 {
     use StopwatchTrait;
     use PimcoreContextAwareTrait;
-    use EnabledTrait;
     use ResponseInjectionTrait;
     use StaticPageContextAwareTrait;
 
@@ -57,19 +56,22 @@ class TargetingListener implements EventSubscriberInterface
     private RequestHelper $requestHelper;
 
     private TargetingCodeGenerator $codeGenerator;
+    private TargetingEnableService $targetingEnableService;
 
     public function __construct(
         VisitorInfoResolver $visitorInfoResolver,
         ActionHandlerInterface $actionHandler,
         VisitorInfoStorageInterface $visitorInfoStorage,
         RequestHelper $requestHelper,
-        TargetingCodeGenerator $codeGenerator
+        TargetingCodeGenerator $codeGenerator,
+        TargetingEnableService $targetingEnableService
     ) {
         $this->visitorInfoResolver = $visitorInfoResolver;
         $this->actionHandler = $actionHandler;
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->requestHelper = $requestHelper;
         $this->codeGenerator = $codeGenerator;
+        $this->targetingEnableService = $targetingEnableService;
     }
 
     public static function getSubscribedEvents(): array
@@ -85,15 +87,9 @@ class TargetingListener implements EventSubscriberInterface
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        if (!$this->enabled) {
+       if(!$this->targetingEnableService->isTargetingEnabled()) {
             return;
-        }
-
-        if ($event->getRequest()->cookies->has('pimcore_targeting_disabled')) {
-            $this->disable();
-
-            return;
-        }
+       }
 
         $request = $event->getRequest();
 
@@ -148,7 +144,7 @@ class TargetingListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        if (!$this->enabled) {
+        if(!$this->targetingEnableService->isTargetingEnabled()) {
             return;
         }
 

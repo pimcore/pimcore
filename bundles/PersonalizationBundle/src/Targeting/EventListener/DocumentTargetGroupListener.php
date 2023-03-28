@@ -21,17 +21,13 @@ use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\AssignDocumentTargetGro
 use Pimcore\Bundle\PersonalizationBundle\Event\Targeting\TargetingEvent;
 use Pimcore\Bundle\PersonalizationBundle\Event\TargetingEvents;
 use Pimcore\Bundle\PersonalizationBundle\Model\Document\Page;
-use Pimcore\Bundle\PersonalizationBundle\Model\Document\Targeting\TargetingDocumentInterface;
-use Pimcore\Bundle\PersonalizationBundle\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Bundle\PersonalizationBundle\Targeting\Model\VisitorInfo;
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
-use Pimcore\Event\DocumentEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Model\Document;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -63,8 +59,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            TargetingEvents::PRE_RESOLVE => 'onVisitorInfoResolve',
-            DocumentEvents::EDITABLE_RENDERLET_PRE_RENDER => 'configureElementTargeting',
+            TargetingEvents::PRE_RESOLVE => 'onVisitorInfoResolve'
         ];
     }
 
@@ -105,23 +100,6 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
                 new AssignDocumentTargetGroupEvent($visitorInfo, $document, $targetGroup),
                 TargetingEvents::ASSIGN_DOCUMENT_TARGET_GROUP
             );
-        }
-    }
-
-    public function configureElementTargeting(GenericEvent $event): void
-    {
-        $requestParams = $event->getArgument('requestParams');
-        $element = $event->getArgument('element');
-        if (!$element instanceof TargetingDocumentInterface) {
-            return;
-        }
-
-        // set selected target group on element
-        if ($requestParams['_ptg'] ?? false) {
-            $targetGroup = TargetGroup::getById((int)$requestParams['_ptg']);
-            if ($targetGroup) {
-                $element->setUseTargetGroup($targetGroup->getId());
-            }
         }
     }
 }

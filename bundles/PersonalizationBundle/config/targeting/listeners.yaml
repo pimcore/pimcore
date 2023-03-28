@@ -10,13 +10,5 @@ services:
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\VisitedPagesCountListener: ~
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\ToolbarListener: ~
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\TargetingSessionBagListener: ~
-    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingElementListener: ~
-    Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingDocumentRendererListener: ~
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener:
-        class: Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\TargetingFullPageCacheListener
-        public: true
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 120 }
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -120 }
-            - { name: kernel.event_listener, event: kernel.response, method: stopPropagationCheck, priority: 100 }
+
