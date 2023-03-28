@@ -6,7 +6,17 @@ first.
 
 ## Setup
 
-Basically the targeting engine works out of the box, however if you'd like to use geo-related conditions in your 
+You need to enable targeting either by setting the following config
+
+```yaml
+      pimcore_personalization:
+          targeting:
+              enabled: true
+```
+
+or using the cookie `pimcore_targeting_enabled=1`.
+
+if you'd like to use geo-related conditions in your 
 targeting rules it's necessary to configure the underlying data provider first. 
 
 ### Configuring the MaxMind GeoIP Data Provider

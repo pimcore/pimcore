@@ -265,6 +265,7 @@ pimcore:
         valid_languages:
             - en
             - de
+```
 - [Bootstrap]
   - Relying on `Pimcore\Bootstrap::bootstrap()` for autoloading classes will not work anymore.
   - Removed unused constant `PIMCORE_APP_BUNDLE_CLASS_FILE`
