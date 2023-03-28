@@ -359,6 +359,9 @@ class CustomLayout extends Model\AbstractModel
         }
     }
 
+    /**
+     * @throws DataObject\Exception\DefinitionWriteException
+     */
     public function delete()
     {
         if (!$this->isWritable()) {

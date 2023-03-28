@@ -571,6 +571,9 @@ final class ClassDefinition extends Model\AbstractModel
         return $cd;
     }
 
+    /**
+     * @throws Exception\DefinitionWriteException
+     */
     public function delete()
     {
         if (!$this->isWritable()) {
