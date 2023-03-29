@@ -208,7 +208,8 @@ pimcore.object.klass = Class.create({
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: "pimcore_icon_class pimcore_icon_overlay_delete",
-            handler: this.deleteClass.bind(this, tree, record)
+            handler: this.deleteClass.bind(this, tree, record),
+            disabled: !pimcore.settings['class-definition-writeable']
         }));
 
 
