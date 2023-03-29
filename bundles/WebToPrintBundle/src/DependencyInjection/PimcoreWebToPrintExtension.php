@@ -35,7 +35,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
  *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-final class PimcoreWebToPrintExtension extends ConfigurableExtension  implements PrependExtensionInterface
+final class PimcoreWebToPrintExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
     public function loadInternal(array $config, ContainerBuilder $container): void
     {

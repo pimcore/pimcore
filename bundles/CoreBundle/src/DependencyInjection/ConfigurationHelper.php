@@ -10,8 +10,8 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PCL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
@@ -38,7 +38,6 @@ final class ConfigurationHelper
         foreach ($nodes as $node) {
             ConfigurationHelper::addConfigLocationTargetNode($storageNode, $node, '/var/config/' . $node);
         }
-
     }
 
     public static function addConfigLocationTargetNode(NodeBuilder $node, string $name, string $folder): void
@@ -67,7 +66,7 @@ final class ConfigurationHelper
         $finder = new Finder();
 
         if (is_dir($configPath)) {
-            $dirs []= $configPath;
+            $dirs[]= $configPath;
         }
 
         if (empty($dirs)) {
@@ -94,7 +93,7 @@ final class ConfigurationHelper
         return $result;
     }
 
-    public static function getConfigNodeFromSymfonyTree( ContainerBuilder $container, string $nodeName): array
+    public static function getConfigNodeFromSymfonyTree(ContainerBuilder $container, string $nodeName): array
     {
         $containerConfig = $container->getExtensionConfig($nodeName);
         $containerConfig = array_merge(...$containerConfig);
@@ -105,6 +104,7 @@ final class ConfigurationHelper
         $containerConfig = $processor->processConfiguration($configuration, [$nodeName => $containerConfig]);
 
         $resolvingBag = $container->getParameterBag();
+
         return $resolvingBag->resolveValue($containerConfig);
     }
 }

@@ -139,7 +139,7 @@ final class Configuration implements ConfigurationInterface
             'predefined_asset_metadata',
             'perspectives',
             'custom_views',
-            'object_custom_layouts'
+            'object_custom_layouts',
         ]);
         $this->addChromiumNode($rootNode);
 

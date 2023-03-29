@@ -239,5 +239,4 @@ class LocationAwareConfigRepository
             touch($systemConfigFile);
         }
     }
-
 }
