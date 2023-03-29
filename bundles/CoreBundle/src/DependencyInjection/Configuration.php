@@ -933,7 +933,7 @@ final class Configuration implements ConfigurationInterface
                                 ->end()
                                 ->scalarNode('valid_table')->defaultNull()->end()
                                 ->booleanNode('direct_route')
-                                    ->defaultTrue()
+                                    ->defaultFalse()
                                 ->end()
                                 ->booleanNode('translatable_inheritance')
                                     ->defaultTrue()

@@ -9,6 +9,8 @@ pimcore:
                 printpage:
                     class: Pimcore\Bundle\WebToPrintBundle\Model\Document\Printpage
                     children_supported: false
+                    direct_route: true
                 printcontainer:
                     class: Pimcore\Bundle\WebToPrintBundle\Model\Document\Printcontainer
                     only_printable_childrens: true
+                    direct_route: true
