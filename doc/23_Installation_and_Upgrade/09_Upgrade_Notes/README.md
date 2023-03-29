@@ -297,6 +297,16 @@ pimcore:
                     children_supported: true
                     only_printable_childrens: false
 ```
+
+[Core] The default behaviour of asset install is changed, which means that the files (like css, js) will be copied instead of symlinked. So, you have to run the command `bin/console assets:install` for every change. 
+You can change it back by adding the following to composer.json.
+
+```json
+"extra": {
+  "symfony-assets-install": "relative"
+}
+```
+
 ## 10.6.0
 
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
