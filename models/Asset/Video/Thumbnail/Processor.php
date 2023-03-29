@@ -246,10 +246,6 @@ class Processor
                             $source = fopen($steam, 'rb');
                             Storage::get('thumbnail')->writeStream($storagePath, $source);
                             fclose($source);
-                            unlink($steam);
-
-                            // set proper permissions
-                            @chmod($storagePath, 0664);
                         }
                     }
 
