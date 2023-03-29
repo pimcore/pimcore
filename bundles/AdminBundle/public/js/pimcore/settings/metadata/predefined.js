@@ -218,7 +218,9 @@ pimcore.settings.metadata.predefined = Class.create({
                     tooltip: t('delete'),
                     handler: function (grid, rowIndex) {
                         let data = grid.getStore().getAt(rowIndex);
-                        pimcore.helpers.deleteConfirm(t('predefined_metadata'), data.data.name, function () {
+                        pimcore.helpers.deleteConfirm(t('predefined_metadata'),
+                            Ext.util.Format.htmlEncode(data.data.name),
+                            function () {
                             grid.getStore().removeAt(rowIndex);
                         }.bind(this));
                     }.bind(this)

@@ -101,6 +101,8 @@ class AdminEvents
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
+     *
+     * @deprecated Will be moved to Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents in Pimcore 11.
      */
     const SEARCH_LIST_BEFORE_FILTER_PREPARE = 'pimcore.admin.search.list.beforeFilterPrepare';
 
@@ -115,6 +117,8 @@ class AdminEvents
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
+     *
+     * @deprecated Will be moved to Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents in Pimcore 11.
      */
     const SEARCH_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.search.list.beforeListLoad';
 
@@ -129,6 +133,8 @@ class AdminEvents
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
+     *
+     * @deprecated Will be moved to Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents in Pimcore 11.
      */
     const SEARCH_LIST_AFTER_LIST_LOAD = 'pimcore.admin.search.list.afterListLoad';
 
@@ -472,6 +478,8 @@ class AdminEvents
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
+     *
+     * @deprecated Will be moved to Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents in Pimcore 11.
      */
     const QUICKSEARCH_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.quickSearch.list.beforeListLoad';
 
@@ -486,6 +494,8 @@ class AdminEvents
      * @Event("Symfony\Component\EventDispatcher\GenericEvent")
      *
      * @var string
+     *
+     * @deprecated Will be moved to Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents in Pimcore 11.
      */
     const QUICKSEARCH_LIST_AFTER_LIST_LOAD = 'pimcore.admin.quickSearch.list.afterListLoad';
 
