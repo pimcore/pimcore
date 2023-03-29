@@ -111,9 +111,9 @@ class Document extends Element\AbstractElement
     {
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
 
-         // remove unused class value
+        // remove unused class value
         return array_map(function ($item) {
-            if(key_exists('class', $item)) {
+            if (key_exists('class', $item)) {
                 unset($item['class']);
             }
 
