@@ -461,7 +461,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @return int|string
+     * @return string
      */
     private function getWidthWithUnit()
     {
@@ -475,7 +475,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @return int|string
+     * @return string
      */
     private function getHeightWithUnit()
     {
