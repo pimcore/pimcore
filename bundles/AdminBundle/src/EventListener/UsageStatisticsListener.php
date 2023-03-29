@@ -21,6 +21,7 @@ use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Log\Simple;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -31,6 +32,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class UsageStatisticsListener implements EventSubscriberInterface
 {
+    use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
     protected TokenStorageUserResolver $userResolver;
@@ -76,16 +78,12 @@ class UsageStatisticsListener implements EventSubscriberInterface
 
         $params = $this->getParams($request);
         $user = $this->userResolver->getUser();
-
-        $parts = [
+        $this->logger->info($request->attributes->get('_controller'), [
             $user ? $user->getId() : '0',
-            $request->attributes->get('_controller'),
             $request->attributes->get('_route'),
-            @json_encode($request->attributes->get('_route_params')),
-            @json_encode($params),
-        ];
-
-        Simple::log('usagelog', implode('|', $parts));
+            $request->attributes->get('_route_params'),
+            $params,
+        ]);
     }
 
     protected function getParams(Request $request): array
