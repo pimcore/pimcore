@@ -21,6 +21,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search;
+use Pimcore\Model\Version;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -77,8 +78,9 @@ class SearchBackendReindexCommand extends AbstractCommand
                 foreach ($elements as $element) {
                     try {
                         //process page count, if not exists
-                        if ($element instanceof Asset\Document && $element->getCustomSetting('document_page_count')) {
+                        if ($element instanceof Asset\Document && !$element->getCustomSetting('document_page_count')) {
                             $element->processPageCount();
+                            $this->saveAsset($element);
                         }
 
                         $searchEntry = Search\Backend\Data::getForElement($element);
@@ -100,5 +102,13 @@ class SearchBackendReindexCommand extends AbstractCommand
         $db->executeQuery('OPTIMIZE TABLE search_backend_data;');
 
         return 0;
+    }
+
+    private function saveAsset(Asset $asset)
+    {
+        Version::disable();
+        $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
+        $asset->save();
+        Version::enable();
     }
 }
