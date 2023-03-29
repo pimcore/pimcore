@@ -89,8 +89,21 @@ the queue directly.
 Keep in mind, that the cron job has to run as the same user as the web interface to avoid permission issues (eg. `www-data`).
 
 ### Handle Failed jobs
-If there are maintenance jobs that are failed in the processing, after defined retries they are moved to `pimcore_failed_jobs`
-transports. You can process the failed jobs again by fixing the underlying issue with command `bin/console messenger:consume pimcore_failed_jobs`.
+If there are maintenance jobs that are failed in the processing, after defined retries they are discarded from the respective transport. 
+However, you can move the failed jobs to a new transport e.g. `pimcore_failed_jobs` instead of discarding them completely, with following config:
+```yaml
+framework:
+    messenger:
+        transports:
+            pimcore_failed_jobs:
+                dsn: "doctrine://default?queue_name=pimcore_failed_jobs&table_name=messenger_messages_pimcore_failed"
+
+            pimcore_core:
+                dsn: "doctrine://default?queue_name=pimcore_core"
+                failure_transport: pimcore_failed_jobs
+```
+which can be re-processed later after fixing the underlying issue with command `bin/console messenger:consume pimcore_failed_jobs`.
+
 Please follow the [Symfony docs](https://symfony.com/doc/current/messenger.html#saving-retrying-failed-messages) for options on failed jobs processing.
 
 ## 6. Additional Information & Help

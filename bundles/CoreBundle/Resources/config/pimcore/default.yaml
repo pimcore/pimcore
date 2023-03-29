@@ -32,18 +32,10 @@ framework:
             main: native://default
             pimcore_newsletter: native://default
     messenger:
-        failure_transport: pimcore_failed_jobs
         transports:
             pimcore_core: "doctrine://default?queue_name=pimcore_core"
             pimcore_maintenance: "doctrine://default?queue_name=pimcore_maintenance"
             pimcore_image_optimize: "doctrine://default?queue_name=pimcore_image_optimize"
-            pimcore_failed_jobs:
-                dsn: "doctrine://default?queue_name=pimcore_failed_jobs"
-                retry_strategy:
-                    max_retries: 5
-                    delay: 1000
-                    multiplier: 2
-
         routing:
             'Pimcore\Messenger\SendNewsletterMessage': pimcore_core
             'Pimcore\Messenger\VideoConvertMessage': pimcore_core
