@@ -492,7 +492,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                                     if (this.fieldConfig.labelWidth) {
                                         childConfig.labelWidth = this.fieldConfig.labelWidth;
                                     }
-                                    if (this.fieldConfig.labelAlign) {
+                                    if (this.fieldConfig.labelAlign && !childConfig.labelAlign) {
                                         childConfig.labelAlign = this.fieldConfig.labelAlign;
                                     }
 

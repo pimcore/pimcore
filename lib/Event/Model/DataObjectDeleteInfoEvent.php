@@ -16,14 +16,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Model;
 
-use Pimcore\Event\Traits\ElementDeleteInfoEventTrait;
-
 /**
  * Class DataObjectDeleteInfoEvent
  *
  * @package Pimcore\Event\Model
+ *
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Model\DataObjectDeleteInfoEvent instead
  */
-class DataObjectDeleteInfoEvent extends DataObjectEvent implements ElementDeleteInfoEventInterface
+class DataObjectDeleteInfoEvent extends \Pimcore\Bundle\AdminBundle\Event\Model\DataObjectDeleteInfoEvent
 {
-    use ElementDeleteInfoEventTrait;
 }

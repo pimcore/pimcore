@@ -27,8 +27,10 @@ pimcore:
     documents:
         type_definitions:
             map:
-                snippet: Pimcore\Bundle\PersonalizationBundle\Model\Document\Snippet
-                page: Pimcore\Bundle\PersonalizationBundle\Model\Document\Page
+                snippet:
+                    class: Pimcore\Bundle\PersonalizationBundle\Model\Document\Snippet
+                page:
+                    class: Pimcore\Bundle\PersonalizationBundle\Model\Document\Page
     objects:
         class_definitions:
             data:

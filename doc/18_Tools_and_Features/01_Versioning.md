@@ -127,7 +127,4 @@ $object->save();
 $versions = $currentObject->getVersions();
 $previousVersion = $versions[count($versions)-2];
 $previousObject = $previousVersion->getData();
- 
-Simple::log("example", "previous value: ".$previousVersion->getData()->getSomeValue());
-Simple::log("example", "current value ".$currentObject->getSomeValue());
 ```

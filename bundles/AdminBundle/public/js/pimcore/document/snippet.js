@@ -177,8 +177,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         // data
         try {
             parameters.data = Ext.encode(this.edit.getValues());
-
-            if (this.edit.targetGroup && this.edit.targetGroup.getValue()) {
+            if(this.edit.areaToolBar && this.edit.areaToolBar.targetGroup && this.edit.areaToolBar.targetGroup.getValue()) {
                 parameters.appendEditables = "true";
             }
         }

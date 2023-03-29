@@ -33,7 +33,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Mail](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/MailEvents.php)
 - [Notifications](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/NotificationEvents.php)
 - [Redirect](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/RedirectEvents.php)
-- [Admin](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/AdminEvents.php)
+- [Admin](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/Event/AdminEvents.php)
 - [Frontend](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/FrontendEvents.php)
 - [Cache](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/CoreCacheEvents.php)
 - [Full-Page Cache](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/FullPageCacheEvents.php)
@@ -104,7 +104,7 @@ To ensure maximum security, it is advisable to combine this with an object DI to
 ### Hook into the Open Document|Asset|Data Object dialog
 
 By the default, Pimcore tries to a resolve an element by its ID or path.
-You can change this behavior by handling the [AdminEvents::RESOLVE_ELEMENT](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/AdminEvents.php) event
+You can change this behavior by handling the [AdminEvents::RESOLVE_ELEMENT](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/Event/AdminEvents.php) event
 and implement your own logic.
 
 ```php
@@ -161,3 +161,4 @@ into the /news/in-enim-justo_2/image_1 asset folder.
                 }
         });
 ```  
+

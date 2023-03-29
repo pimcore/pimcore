@@ -16,29 +16,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Admin\Login;
 
-use Pimcore\Event\Traits\RequestAwareTrait;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\EventDispatcher\Event;
-
-class LoginCredentialsEvent extends Event
+/**
+ * @deprecated and will be removed in Pimcore 11. Use Pimcore\Bundle\AdminBundle\Event\Login\LoginCredentialsEvent instead
+ */
+class LoginCredentialsEvent extends \Pimcore\Bundle\AdminBundle\Event\Login\LoginCredentialsEvent
 {
-    use RequestAwareTrait;
-
-    protected array $credentials;
-
-    public function __construct(Request $request, array $credentials)
-    {
-        $this->request = $request;
-        $this->credentials = $credentials;
-    }
-
-    public function getCredentials(): array
-    {
-        return $this->credentials;
-    }
-
-    public function setCredentials(array $credentials): void
-    {
-        $this->credentials = $credentials;
-    }
 }

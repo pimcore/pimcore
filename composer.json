@@ -72,7 +72,6 @@
     "neitanod/forceutf8": "^2.0.4",
     "nesbot/carbon": "^2.65",
     "pear/net_url2": "^2.2",
-    "google/apiclient": "^2.12",
     "matomo/device-detector": "^6.0",
     "presta/sitemap-bundle": "^3.3",
     "sabre/dav": "^4.1.2",
@@ -110,7 +109,6 @@
     "symfony/security-core": "^6.2",
     "symfony/security-http": "^6.2",
     "symfony/serializer": "^6.2",
-    "symfony/stopwatch": "^6.2",
     "symfony/templating": "^6.2",
     "symfony/translation": "^6.2",
     "symfony/doctrine-bridge": "^6.2",
@@ -152,7 +150,7 @@
     "codeception/codeception": "^5.0.3",
     "codeception/module-symfony": "^3.1.0",
     "codeception/phpunit-wrapper": "^9",
-    "phpstan/phpstan": "1.9.17",
+    "phpstan/phpstan": "1.10.5",
     "phpstan/phpstan-symfony": "^1.2.20",
     "phpunit/phpunit": "^9.3",
     "gotenberg/gotenberg-php": "^1.1",
@@ -182,19 +180,15 @@
       "Pimcore\\Bundle\\AdminBundle\\": "bundles/AdminBundle/src/",
       "Pimcore\\Bundle\\InstallBundle\\": "bundles/InstallBundle/src/",
       "Pimcore\\Bundle\\CoreBundle\\": "bundles/CoreBundle/src/",
-      "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/",
       "Pimcore\\Bundle\\ApplicationLoggerBundle\\": "bundles/ApplicationLoggerBundle/src/",
       "Pimcore\\Bundle\\UuidBundle\\": "bundles/UuidBundle/src/",
       "Pimcore\\Bundle\\GlossaryBundle\\": "bundles/GlossaryBundle/src/",
       "Pimcore\\Bundle\\SimpleBackendSearchBundle\\": "bundles/SimpleBackendSearchBundle/src/",
-      "Pimcore\\Bundle\\GoogleMarketingBundle\\": "bundles/GoogleMarketingBundle/src/",
       "Pimcore\\Bundle\\XliffBundle\\": "bundles/XliffBundle/src/",
       "Pimcore\\Bundle\\SeoBundle\\": "bundles/SeoBundle/src/",
-      "Pimcore\\Bundle\\SystemInfoBundle\\": "bundles/SystemInfoBundle/src/",
       "Pimcore\\Bundle\\CustomReportsBundle\\": "bundles/CustomReportsBundle/src/",
       "Pimcore\\Bundle\\StaticRoutesBundle\\": "bundles/StaticRoutesBundle/src/",
       "Pimcore\\Bundle\\WordExportBundle\\": "bundles/WordExportBundle/src/",
-      "Pimcore\\Bundle\\FileExplorerBundle\\": "bundles/FileExplorerBundle/src/",
       "Pimcore\\Bundle\\WebToPrintBundle\\": "bundles/WebToPrintBundle/src/",
       "Pimcore\\Bundle\\TinymceBundle\\": "bundles/TinymceBundle/src/",
       "Pimcore\\Bundle\\PersonalizationBundle\\": "bundles/PersonalizationBundle/src/",
@@ -204,8 +198,7 @@
       "lib/Pimcore.php"
     ],
     "exclude-from-classmap": [
-      "lib/compatibility-stubs.php",
-      "lib/Pimcore/Bundle/EcommerceFrameworkBundle/config/namespace_compatibility.php"
+      "lib/compatibility-stubs.php"
     ]
   },
   "autoload-dev": {

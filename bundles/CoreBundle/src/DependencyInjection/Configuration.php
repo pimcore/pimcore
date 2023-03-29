@@ -835,10 +835,6 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('valid_tables')
-                    ->info('list of supported documents_* tables')
-                    ->scalarPrototype()->end()
-                ->end()
                 ->arrayNode('areas')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -879,7 +875,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
-        $this->addClassResolverNode($documentsNode, 'type_definitions');
+        $this->addDocumentDefinition($documentsNode, 'type_definitions');
     }
 
     /**
@@ -897,22 +893,6 @@ final class Configuration implements ConfigurationInterface
                             ->prototype('scalar')->end()
                         ->end()
                         ->arrayNode('prefixes')
-                            ->prototype('scalar')->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    private function addClassResolverNode(ArrayNodeDefinition $node, string $name): void
-    {
-        $node
-            ->children()
-                ->arrayNode($name)
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('map')
-                            ->useAttributeAsKey('name')
                             ->prototype('scalar')->end()
                         ->end()
                     ->end()
@@ -945,6 +925,41 @@ final class Configuration implements ConfigurationInterface
         ->end();
     }
 
+    private function addDocumentDefinition(ArrayNodeDefinition $node, string $name): void
+    {
+        $node
+            ->children()
+                ->arrayNode($name)
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('map')
+                            ->arrayPrototype()
+                            ->children()
+                                ->scalarNode('class')->end()
+                                ->booleanNode('translatable')
+                                    ->defaultTrue()
+                                ->end()
+                                ->scalarNode('valid_table')->defaultNull()->end()
+                                ->booleanNode('direct_route')
+                                    ->defaultFalse()
+                                ->end()
+                                ->booleanNode('translatable_inheritance')
+                                    ->defaultTrue()
+                                ->end()
+                                ->booleanNode('children_supported')
+                                    ->defaultTrue()
+                                ->end()
+                                ->booleanNode('only_printable_childrens')
+                                    ->defaultFalse()
+                                ->end()
+                             ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
     private function addRoutingNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
@@ -952,9 +967,6 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->arrayNode('direct_route_document_types')
-                            ->scalarPrototype()->end()
-                        ->end()
                         ->arrayNode('static')
                             ->addDefaultsIfNotSet()
                             ->children()
