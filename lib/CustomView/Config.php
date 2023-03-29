@@ -27,22 +27,13 @@ final class Config
 
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
-    protected ?string $writeTarget = null;
-
-    protected ?array $options = null;
-
     private static function getRepository(): LocationAwareConfigRepository
     {
         if (!self::$locationAwareConfigRepository) {
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
             $config = $containerConfig[self::CONFIG_ID]['definitions'];
 
-            $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
-                $containerConfig,
-                self::CONFIG_ID,
-                'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS',
-                'PIMCORE_WRITE_TARGET_CUSTOM_VIEWS'
-            );
+            $storageConfig = $containerConfig['config_location'][self::CONFIG_ID];
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,

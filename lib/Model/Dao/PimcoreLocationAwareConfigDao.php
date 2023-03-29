@@ -45,9 +45,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
         $this->locationAwareConfigRepository = new Config\LocationAwareConfigRepository(
             $params['containerConfig'] ?? [],
             $this->settingsStoreScope,
-            $params['storageDirectory'] ?? null,
-            $params['writeTargetEnvVariableName'] ?? null,
-            $params['defaultWriteLocation'] ?? null
+            $params['storageConfig'] ?? null
         );
     }
 
