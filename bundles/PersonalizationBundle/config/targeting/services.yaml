@@ -4,39 +4,7 @@ services:
         autowire: true
         autoconfigure: true
 
-    #
-    # INSTALLER
-    #
-    Pimcore\Bundle\PersonalizationBundle\Installer:
-        public: true
-        arguments:
-            $bundle: "@=service('kernel').getBundle('PimcorePersonalizationBundle')"
 
-    # auto-register all controllers as services
-    Pimcore\Bundle\PersonalizationBundle\Controller\:
-        resource: '../src/Controller'
-        public: true
-        tags: [ 'controller.service_arguments' ]
 
     Pimcore\Bundle\PersonalizationBundle\Targeting\Maintenance\TargetingStorageTask: ~
-
-    Pimcore\Bundle\PersonalizationBundle\DataCollector\PimcoreTargetingDataCollector:
-        tags:
-            -   name: data_collector
-                template: '@PimcorePersonalization/Profiler/targeting_data_collector.html.twig'
-                id: 'pimcore_targeting'
-                priority: 312
-
-    #
-    # Event Listeners
-    #
-
-    Pimcore\Bundle\PersonalizationBundle\EventListener\IndexSettingsListener:
-        tags:
-            - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }
-
-    # Newsletter Adapter
-    pimcore.document.newsletter.factory.default:
-        class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
-        arguments:
-            - 'Pimcore\Bundle\PersonalizationBundle\Document\Newsletter\AddressSourceAdapter\DefaultAdapter'
+    Pimcore\Bundle\PersonalizationBundle\Targeting\Service\TargetingEnableService: ~

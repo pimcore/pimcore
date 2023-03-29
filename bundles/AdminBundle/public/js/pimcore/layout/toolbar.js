@@ -390,6 +390,18 @@ pimcore.layout.toolbar = Class.create({
 
                  var systemItems = [];
 
+                 if (perspectiveCfg.inToolbar("extras.systemtools.requirements")) {
+                     systemItems.push(
+                         {
+                             text: t("system_requirements_check"),
+                             iconCls: "pimcore_nav_icon_systemrequirements",
+                             itemId: 'pimcore_menu_extras_system_info_system_requirements_check',
+                             handler: this.showSystemRequirementsCheck,
+                             priority: 30
+                         }
+                     );
+                 }
+
                  extrasItems.push({
                      text: t("system_infos_and_tools"),
                      iconCls: "pimcore_nav_icon_info",
@@ -1209,6 +1221,10 @@ pimcore.layout.toolbar = Class.create({
      showMaintenance: function () {
          new pimcore.settings.maintenance();
      },
+
+    showSystemRequirementsCheck: function () {
+        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", Routing.generate('pimcore_admin_install_check'), "pimcore_icon_systemrequirements", "System-Requirements Check");
+    },
 
      showElementHistory: function() {
          try {

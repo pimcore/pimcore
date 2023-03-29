@@ -1,3 +1,0 @@
-doctrine_migrations:
-    migrations_paths:
-        Pimcore\Bundle\EcommerceFrameworkBundle\Migrations: '@PimcoreEcommerceFrameworkBundle/Migrations'
