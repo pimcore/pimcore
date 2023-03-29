@@ -460,6 +460,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getConfig()['width'] ?? '100%';
     }
 
+    /**
+     * @return int|string
+     */
     private function getWidthWithUnit()
     {
         $width = $this->getWidth();
@@ -471,6 +474,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $width;
     }
 
+    /**
+     * @return int|string
+     */
     private function getHeightWithUnit()
     {
         $height = $this->getHeight();
