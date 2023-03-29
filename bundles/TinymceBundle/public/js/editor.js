@@ -66,7 +66,7 @@ pimcore.bundle.tinymce.editor = Class.create({
         }
 
         let defaultConfig = {};
-        if('' !== subSpace) {
+        if('' !== subSpace && parent.pimcore[e.detail.context][subSpace]) {
             defaultConfig = parent.pimcore[e.detail.context][subSpace].wysiwyg ? parent.pimcore[e.detail.context][subSpace].wysiwyg.defaultEditorConfig : {};
         }
 

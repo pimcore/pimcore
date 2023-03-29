@@ -61,34 +61,47 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight
             + "px;");
 
-        // register at global DnD manager
-        if (typeof dndManager !== 'undefined') {
-            dndManager.addDropTarget(Ext.get(this.id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+        if(this.startWysiwygEditor()) {
+            // register at global DnD manager
+            if (typeof dndManager !== 'undefined') {
+                dndManager.addDropTarget(Ext.get(this.id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+            }
         }
-
-        this.startWysiwygEditor();
     },
 
     startWysiwygEditor: function () {
+
         const initializeWysiwyg = new CustomEvent(pimcore.events.initializeWysiwyg, {
             detail: {
                 config: Object.assign({}, this.config),
                 context: "document"
-            }
+            },
+            cancelable: true
         });
-        document.dispatchEvent(initializeWysiwyg);
+        const initIsAllowed = document.dispatchEvent(initializeWysiwyg);
+        if(!initIsAllowed) {
+            return false;
+        }
 
         const createWysiwyg = new CustomEvent(pimcore.events.createWysiwyg, {
             detail: {
                 textarea: this.textarea,
                 context: "document",
             },
+            cancelable: true
         });
-        document.dispatchEvent(createWysiwyg);
+        const createIsAllowed = document.dispatchEvent(createWysiwyg);
+        if(!createIsAllowed) {
+            return false;
+        }
 
         document.addEventListener(pimcore.events.changeWysiwyg, function (e) {
-            this.setValue(e.detail.data);
+            if(`${this.id}_textarea` === e.detail.e.target.id) {
+                this.setValue(e.detail.data);
+            }
         }.bind(this));
+
+        return true;
     },
 
     onNodeDrop: function (target, dd, e, data) {
@@ -103,7 +116,7 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
                 e: e,
                 data: data,
                 context: "document",
-            },
+            }
         });
 
         document.dispatchEvent(onDropWysiwyg);

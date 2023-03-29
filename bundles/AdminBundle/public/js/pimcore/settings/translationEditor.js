@@ -43,17 +43,19 @@ pimcore.settings.translation.editor = Class.create({
 
             this.component = new Ext.Panel(pConf);
 
-            this.component.on("beforedestroy", function () {
-                    const beforeDestroyWysiwyg = new CustomEvent(pimcore.events.beforeDestroyWysiwyg, {
-                        detail: {
-                            context: "object",
-                        },
-                    });
-                    document.dispatchEvent(beforeDestroyWysiwyg);
-                }.bind(this)
-            );
-
             this.component.on("afterlayout", this.startWysiwygEditor.bind(this));
+
+            if(this.ddWysiwyg) {
+                this.component.on("beforedestroy", function () {
+                        const beforeDestroyWysiwyg = new CustomEvent(pimcore.events.beforeDestroyWysiwyg, {
+                            detail: {
+                                context: "object",
+                            },
+                        });
+                        document.dispatchEvent(beforeDestroyWysiwyg);
+                    }.bind(this)
+                );
+            }
         } else {
             this.component = new Ext.form.TextArea({
                 width: '100%',
@@ -127,6 +129,36 @@ pimcore.settings.translation.editor = Class.create({
             return;
         }
 
+        const initializeWysiwyg = new CustomEvent(pimcore.events.initializeWysiwyg, {
+            detail: {
+                config: {},
+                context: "translation"
+            },
+            cancelable: true
+        });
+        const initIsAllowed = document.dispatchEvent(initializeWysiwyg);
+        if(!initIsAllowed) {
+            return;
+        }
+
+        const createWysiwyg = new CustomEvent(pimcore.events.createWysiwyg, {
+            detail: {
+                textarea: this.editableDivId,
+                context: "translation",
+            },
+            cancelable: true
+        });
+        const createIsAllowed = document.dispatchEvent(createWysiwyg);
+        if(!createIsAllowed) {
+            return;
+        }
+
+        document.addEventListener(pimcore.events.changeWysiwyg, function (e) {
+            if (this.editableDivId === e.detail.e.target.id) {
+                this.value = e.detail.data;
+            }
+        }.bind(this));
+
         // add drop zone, use the parent panel here (container), otherwise this can cause problems when specifying a fixed height on the wysiwyg
         this.ddWysiwyg = new Ext.dd.DropZone(Ext.get(this.editableDivId).parent(), {
             ddGroup: "element",
@@ -145,28 +177,8 @@ pimcore.settings.translation.editor = Class.create({
 
             }.bind(this),
 
-            onNodeDrop : this.onNodeDrop.bind(this)
+            onNodeDrop: this.onNodeDrop.bind(this)
         });
-
-        const initializeWysiwyg = new CustomEvent(pimcore.events.initializeWysiwyg, {
-            detail: {
-                config: {},
-                context: "translation"
-            }
-        });
-        document.dispatchEvent(initializeWysiwyg);
-
-        const createWysiwyg = new CustomEvent(pimcore.events.createWysiwyg, {
-            detail: {
-                textarea: this.editableDivId,
-                context: "translation",
-            },
-        });
-        document.dispatchEvent(createWysiwyg);
-
-        document.addEventListener(pimcore.events.changeWysiwyg, function (e) {
-            this.value = e.detail.data;
-        }.bind(this));
 
     },
 
