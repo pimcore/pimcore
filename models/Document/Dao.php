@@ -106,7 +106,7 @@ class Dao extends Model\Element\Dao
         $validTables = [];
         foreach ($documentsConfig['type_definitions']['map'] as $type => $config) {
             if (isset($config['valid_table']) && $config['valid_table']) {
-                $validTables[] = $type;
+                $validTables[] = $config['valid_table'];
             }
         }
 
