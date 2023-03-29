@@ -86,7 +86,7 @@ pimcore.bundle.personalization.document.areatoolbar = Class.create({
                             }.bind(this)
                         );
                     } else {
-                        docEdit.reload(true);
+                        docEdit.reload();
                         this.updateTargetGroupText(this.targetGroup.getValue());
                     }
                 }.bind(this)

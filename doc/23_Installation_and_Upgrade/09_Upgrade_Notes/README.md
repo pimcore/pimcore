@@ -140,16 +140,23 @@
     - [Search] has been moved into PimcoreSimpleBackendSearchBundle
     - [SEO] Document Editor, Redirects, Sitemaps, robots.txt and HTTP Errors has been moved into PimcoreSeoBundle
     - [WordExport] has been moved into PimcoreWordExportBundle
-    - [System Info & Tools] Php Info, Opcache Status and System Requirements check has been moved into `pimcore/system-info-bundle` package.
+    - [System Info & Tools] Php Info and Opcache Status has been moved into `pimcore/system-info-bundle` package.
     - [File Explorer] System File explorer has been moved to `pimcore/system-file-explorer` package.
     - [UUID] has been moved into PimcoreUuidBundle
       - Config `pimcore:general:instance_identifier` has been removed, please use `pimcore_uuid:instance_identifier` in the PimcoreUuidBundle instead. Please run `bin/console config:dump pimcore_uuid` to see more about the instance identifier config after installing the bundle.
-    - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`
+    - [Application Logger] Application logger has been moved into `PimcoreApplicationLoggerBundle`. Please pay attention to the new namespaces for the classes from this bundle.
     - [Web2Print] has been moved into PimcoreWebToPrintBundle
       - Config `pimcore:documents:web_to_print` has been removed, please use `pimcore_web_to_print` in the PimcoreWebToPrintBundle instead.
       - Print related Events have been moved from into PimcoreWebToPrintBundle. Please check and adapt the Events' namespaces.
     - [Personalization and targeting] has been moved to `pimcore/personalization` package.
       - Config `pimcore:targeting:` has been removed, please use `pimcore_personalization.targeting` in the PimcorePersonalizationBundle instead.
+      - Targeting is now using the opt-in approach and will not be enabled by default. Add following config to enable it:
+      ```yaml
+      pimcore_personalization:
+          targeting:
+              enabled: true
+      ```
+      Also, a user can use cookie `pimcore_targeting_enabled=1` to enable targeting.
     - [Google Marketing] has been moved to `pimcore/google-marketing-bundle` package.
       - Config `pimcore:services:google` has been removed, please use `pimcore_google_marketing` in the PimcoreGoogleMarketingBundle instead.
     - [Google] Classes Google\Cse and Google\Cse\Item have been removed.
@@ -258,7 +265,6 @@ pimcore:
             - en
             - de
 ```
-
 - [Bootstrap]
   - Relying on `Pimcore\Bootstrap::bootstrap()` for autoloading classes will not work anymore.
   - Removed unused constant `PIMCORE_APP_BUNDLE_CLASS_FILE`
@@ -271,6 +277,7 @@ pimcore:
 - Moved implementation of `PimcoreBundleAdminSupportInterface` from `AbstractPimcoreBundle` to bundle classes.
     Moved `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` from `AbstractPimcoreBundle` to `BundleAdminSupportTrait`.
 - [Cache] Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
+- [Sites] Calling absolute path from a site is not possible anymore. If the absolute path is called, a 404 error will be returned instead.
 
 ## 10.6.0
 
