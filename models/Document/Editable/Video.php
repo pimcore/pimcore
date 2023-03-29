@@ -460,6 +460,28 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getConfig()['width'] ?? '100%';
     }
 
+    private function getWidthWithUnit()
+    {
+        $width = $this->getWidth();
+
+        if (is_numeric($width)) {
+            $width .= 'px';
+        }
+
+        return $width;
+    }
+
+    private function getHeightWithUnit()
+    {
+        $height = $this->getHeight();
+
+        if (is_numeric($height)) {
+            $height .= 'px';
+        }
+
+        return $height;
+    }
+
     /**
      * @return int|string
      */
@@ -1047,7 +1069,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 }
             </style>
             <div class="pimcore_editable_video_progress" id="' . $uid . '">
-                <img src="' . $thumbnail . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
+                <img src="' . $thumbnail . '" style="width: ' . $this->getWidthWithUnit() . '; height: ' . $this->getHeightWithUnit() . ';">
                 <div class="pimcore_editable_video_progress_status"></div>
             </div>
         </div>';
@@ -1061,18 +1083,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     private function getEmptyCode(): string
     {
         $uid = 'video_' . uniqid();
-        $width = $this->getWidth();
-        $height = $this->getHeight();
-
-        if (is_numeric($width)) {
-            $width .= 'px';
-        }
-
-        if (is_numeric($height)) {
-            $height .= 'px';
-        }
-
-        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $width . '; height: ' . $height . ';"></div></div>';
+        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $this->getWidthWithUnit() . '; height: ' . $this->getHeightWithUnit() . ';"></div></div>';
     }
 
     private function updateAllowedTypesFromConfig(array $config): void
