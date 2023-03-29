@@ -30,7 +30,7 @@ class PimcoreUsers implements DataProviderInterface
 
     private string $logsDir;
 
-    public function __construct(TokenStorageUserResolver $userResolver, $logsDir)
+    public function __construct(TokenStorageUserResolver $userResolver, string $logsDir)
     {
         $this->userResolver = $userResolver;
         $this->logsDir = $logsDir;
