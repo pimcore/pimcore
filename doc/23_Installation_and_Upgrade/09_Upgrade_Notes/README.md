@@ -278,6 +278,9 @@ pimcore:
     Moved `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` from `AbstractPimcoreBundle` to `BundleAdminSupportTrait`.
 - [Cache] Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
 - [Sites] Calling absolute path from a site is not possible anymore. If the absolute path is called, a 404 error will be returned instead.
+- [Navigation] Changed the navigation building process. It is easier to add main and submenus. For details please see [Adding Custom Main Navigation Items](https://pimcore.com/docs/pimcore/11.0/Development_Documentation/Extending_Pimcore/Bundle_Developers_Guide/Event_Listener_UI.html#page_Adding-Custom-Main-Navigation-Items)
+- [Sites] Default Site Id has been updated from `default` to `0`. Please update configs using default site id accordingly.
+
 
 ## 10.6.0
 
@@ -287,8 +290,8 @@ pimcore:
 - [Twig] Pimcore now requires the `twig/extra-bundle` which eases the usage of Twig's "extra" extensions.
 - [UrlSlug] Deprecated `$index` property and its getter and setter methods as they were not being used. These will be removed in Pimcore 11.
 - [DataObject]: Since the `o_` prefix will be removed in Pimcore 11, a new method has been added: `DataObject\Service::getVersionDependentDatabaseColumnName()`.
-    This method will return the field/column name for the current version and provide a way to support both version for bundles.
-    E.g. passing `o_id` in Pimcore 10 will return `o_id`, but `id` in Pimcore 11.
+  This method will return the field/column name for the current version and provide a way to support both version for bundles. 
+  E.g. passing `o_id` in Pimcore 10 will return `o_id`, but `id` in Pimcore 11. 
 - [Ecommerce] Elasticsearch 7 support has been deprecated, elasticsearch 8 supported was added.
 - [CustomLayout] Passing `int` to `setDefault` is deprecated and will be removed in Pimcore 11. Use type `bool` instead. Same for `getDefault` method, it will return type `bool` only in Pimcore 11.
 - [DataObjects] Traits `ColumnType` and `QueryColumnType` are deprecated. These will be removed in Pimcore 11.
@@ -296,25 +299,22 @@ pimcore:
 - [DataObject]: The usage of `getO_` or `setO_` methods is deprecated. The BC layer supporting these methods will be removed in Pimcore 11.
 - [Classification Store] Deleting the data from deleted groups and keys.
 - [Commands] Calling `configureParallelization` on `Parallelization` trait is deprecated and will be removed in Pimcore 11. Please call `Parallelization::configureCommand` instead.
+- [Console] Trait `ConsoleCommandPluginTrait` is deprecated and will be removed in Pimcore 11.
 - [Events] Event `pimcore.element.note.postAdd` has been deprecated. Use `pimcore.note.postAdd` instead. Note: The event type changed from `ElementEvent` to `ModelEvent`.
 - [Document] Deprecated loading documents via fixed namespace only. It will be removed in Pimcore 11. Use `pimcore:type_definitions` instead.
 - [Annotations] Using Annotations `@ResponseHeader` & `@ParamConverter`, `@Template` and rest from [SensioFrameworkExtraBundle](https://symfony.com/bundles/SensioFrameworkExtraBundle/current/index.html#annotations-for-controllers) is deprecated and will not be supported on Pimcore 11. Use `#[ResponseHeader]`,`#[DataObjectParam]` argument, `#[Template]` and other attributes instead.
-- [Navigation] Changed the navigation building process. It is easier to add main and submenus. For details please see [Adding Custom Main Navigation Items](https://pimcore.com/docs/pimcore/11.0/Development_Documentation/Extending_Pimcore/Bundle_Developers_Guide/Event_Listener_UI.html#page_Adding-Custom-Main-Navigation-Items)
-- [Sites] Default Site Id has been updated from `default` to `0`. Please update configs using default site id accordingly.
 - [Asset] Deprecated VR Preview. For details please see [#14111](https://github.com/pimcore/pimcore/issues/14111).
 - [Authentication] The method `Pimcore\Tool\Authentication::authenticateHttpBasic()` has been deprecated and will be removed in Pimcore 11.
 - [Authentication] The method `Pimcore\Tool\Authentication::authenticatePlaintext()` has been deprecated and will be removed in Pimcore 11.
 - [Authentication] It is now possible to configure the password algorithm and its options that Pimcore uses for its backend users and your objects that contain a password field.
-
-    ```yaml
+  ```yaml
     pimcore:
         security:
             password:
                 algorithm: !php/const PASSWORD_BCRYPT
                 options:
                     cost: 13
-    ```
-
+  ```
 - [Google] Classes `Google\Cse` and `Google\Cse\Item` are deprecated and will be removed in Pimcore 11.
 - [Document] Deprecated the `HTML-Tags` field under the `SEO & Settings` panel of Document/Page, `setMetaData()` and `getMetaData()`
 - [Document] The `HTML-Tags` (document metadata) field under SEO & Settings panel is now only visible and editable by Admin users`.
@@ -324,6 +324,17 @@ pimcore:
 - [Bundles] Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in the `PimcoreBundleInterface`. These methods will be provided by the new `PimcoreBundleAdminSupportInterface`.
 - [Web2print] Deprecated `HeadlessChrome` processor, it will be removed and replaced by `Chromium` processor (which doesn't require NodeJS to work) in Pimcore 11.
 - [Database] Deprecated `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
+- [Events] The `SEARCH_LIST_BEFORE_FILTER_PREPARE`, `SEARCH_LIST_BEFORE_LIST_LOAD`, `SEARCH_LIST_AFTER_LIST_LOAD`, `QUICKSEARCH_LIST_BEFORE_LIST_LOAD` and `QUICKSEARCH_LIST_AFTER_LIST_LOAD` events from `Pimcore\Bundle\AdminBundle\Event\AdminEvents` are deprecated and wont't work in Pimcore 11. Please use `Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents` in Pimcore 11.  
+- Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in `AbstractPimcoreBundle`. Please use the `PimcoreBundleAdminSupportInterface` and the `BundleAdminSupportTrait` instead.
+- [Events] Deprecated Admin Event classes (below), please use these classes from AdminBundle instead.
+  - `Pimcore\Event\AdminEvents`
+  - `Pimcore\Event\Admin\AdminStyleEvent`
+  - `Pimcore\Event\Admin\IndexActionSettingsEvent`
+  - `Pimcore\Event\Admin\Login\*`
+  - `Pimcore\Event\Model\AssetDeleteInfoEvent`
+  - `Pimcore\Event\Model\DocumentDeleteInfoEvent`
+  - `Pimcore\Event\Model\ObjectDeleteInfoEvent`
+  - `Pimcore\Event\Model\ElementDeleteInfoEventInterface`
 
 ## 10.5.13
 
