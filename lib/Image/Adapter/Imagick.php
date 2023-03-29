@@ -282,7 +282,7 @@ class Imagick extends Adapter
         }
 
         if ($realTargetPath) {
-            $filesystem->rename($path, $realTargetPath);
+            $filesystem->rename($path, $realTargetPath, true);
         }
 
         return $this;
