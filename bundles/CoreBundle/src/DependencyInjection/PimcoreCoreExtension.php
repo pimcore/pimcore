@@ -197,7 +197,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     private function configureClassResolvers(ContainerBuilder $container, array $config): void
     {
-        $container->setParameter('pimcore.documents.classes.map', $config['documents']['type_definitions']['map']);
+        $container->setParameter('pimcore.documents.classes.map', $this->flattenConfigurationForClassResolver($config['documents']['type_definitions']));
         $container->setParameter('pimcore.assets.classes.map', $this->flattenConfigurationForClassResolver($config['assets']['type_definitions']));
     }
 

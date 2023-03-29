@@ -40,7 +40,8 @@
 - TargetingSessionBagListener - changed the signature of `__construct`.
 - Removed deprecated methods `getObject()` and `setObject()` on the classes `Pimcore\Model\Document\Link` and `Pimcore\Model\DataObject\Data\Link`, please use `getElement()` and `setElement()` instead.
 - Removed deprecated `Pimcore\Db\ConnectionInterface` interface, `Pimcore\Db\Connection` class and `Pimcore\Db\PimcoreExtensionsTrait` trait.
-- Removed deprecated `Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method, please use the `pimcore.routing.direct_route_document_types` config instead.
+- Removed deprecated `Pimcore\Routing\Dynamic\DocumentRouteHandler::addDirectRouteDocumentType()` method, please use the `pimcore.documents.type_definitions.map.%document_type%.direct_route` config instead.
+- Refactored `pimcore.documents.valid_tables` to be an option under each document type definition (eg. `pimcore.documents.type_definitions.map.%document_type%.valid_table`) instead of an own array node
 - Removed deprecated `Pimcore\Model\Element\Service::getSaveCopyName()` method, please use the `Pimcore\Model\Element\Service::getSafeCopyName()` method instead.
     Column identifiers for the `insert()` and `update()` method data must be self quoted now. You can use the `Pimcore\Db\Helper::quoteDataIdentifiers()` method for that.
 - [Config] `Pimcore\Config\Config` has been removed, see [#12477](https://github.com/pimcore/pimcore/issues/12477). Please use the returned array instead, e.g.
@@ -282,8 +283,20 @@ pimcore:
 - [Sites] Calling absolute path from a site is not possible anymore. If the absolute path is called, a 404 error will be returned instead.
 - [Navigation] Changed the navigation building process. It is easier to add main and submenus. For details please see [Adding Custom Main Navigation Items](https://pimcore.com/docs/pimcore/11.0/Development_Documentation/Extending_Pimcore/Bundle_Developers_Guide/Event_Listener_UI.html#page_Adding-Custom-Main-Navigation-Items)
 - [Sites] Default Site Id has been updated from `default` to `0`. Please update configs using default site id accordingly.
-
-
+- [Documents] Configuration of document types has changed. Now it is possible to change the navigational behavior and more of each document type in the configuration.
+```yaml
+    documents:
+        type_definitions:
+            map:
+                page:
+                    class: \Pimcore\Model\Document\Page
+                    translatable: true
+                    valid_table: 'page'
+                    direct_route: true
+                    translatable_inheritance: true
+                    children_supported: true
+                    only_printable_childrens: false
+```
 ## 10.6.0
 
 - [Storage config] Deprecated setting write targets and storage directory in the .env file. Instead, use the [symfony config](../07_Updating_Pimcore/11_Preparing_for_V11.md)
