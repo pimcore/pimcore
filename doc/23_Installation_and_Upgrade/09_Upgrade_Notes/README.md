@@ -2,6 +2,7 @@
 
 ## 11.0.0
 
+- [Logging] Change logging from the redirects of the `SeoBundle` to the channel `routing`
 - [JS Libraries] Packaged some JS libraries with encore
 - [PHP Options] Removed setting following options: `memory_limit`, `max_execution_time`, `max_input_time` and `display_errors`
 - [Logging] Removed constant `PIMCORE_PHP_ERROR_LOG`
@@ -277,6 +278,7 @@ pimcore:
 - Moved implementation of `PimcoreBundleAdminSupportInterface` from `AbstractPimcoreBundle` to bundle classes.
     Moved `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` from `AbstractPimcoreBundle` to `BundleAdminSupportTrait`.
 - [Cache] Responses containing a header `Cache-Control: no-cache`, `Cache-Control: private` or `Cache-Control: no-store` will no longer be cached by the full page cache.
+- [Events] Moved `SEARCH_LIST_BEFORE_FILTER_PREPARE`, `SEARCH_LIST_BEFORE_LIST_LOAD`, `SEARCH_LIST_AFTER_LIST_LOAD`, `QUICKSEARCH_LIST_BEFORE_LIST_LOAD` and `QUICKSEARCH_LIST_AFTER_LIST_LOAD` events from `Pimcore\Bundle\AdminBundle\Event\AdminEvents` to `Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents`.
 - [Sites] Calling absolute path from a site is not possible anymore. If the absolute path is called, a 404 error will be returned instead.
 - [Navigation] Changed the navigation building process. It is easier to add main and submenus. For details please see [Adding Custom Main Navigation Items](https://pimcore.com/docs/pimcore/11.0/Development_Documentation/Extending_Pimcore/Bundle_Developers_Guide/Event_Listener_UI.html#page_Adding-Custom-Main-Navigation-Items)
 - [Sites] Default Site Id has been updated from `default` to `0`. Please update configs using default site id accordingly.
