@@ -184,7 +184,7 @@ class RoutingListener implements EventSubscriberInterface
             $url = $request->getScheme() . '://' . $hostRedirect . $request->getBaseUrl() . $request->getPathInfo() . $qs;
 
             // log all redirects to the redirect log
-            $this->logger->info(Tool::getAnonymizedClientIp(), ["Host-Redirect Source: " . $request->getRequestUri() . ' -> ' . $url]);
+            $this->logger->info(Tool::getAnonymizedClientIp(), ['Host-Redirect Source: ' . $request->getRequestUri() . ' -> ' . $url]);
 
             $event->setResponse(new RedirectResponse($url, Response::HTTP_MOVED_PERMANENTLY));
         }
