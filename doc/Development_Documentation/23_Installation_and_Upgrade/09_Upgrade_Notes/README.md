@@ -41,7 +41,7 @@
 - [Bundles] Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in the `PimcoreBundleInterface`. These methods will be provided by the new `PimcoreBundleAdminSupportInterface`.
 - [Web2print] Deprecated `HeadlessChrome` processor, it will be removed and replaced by `Chromium` processor (which doesn't require NodeJS to work) in Pimcore 11.
 - [Database] Deprecated `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.
-- [Events] The `SEARCH_LIST_BEFORE_FILTER_PREPARE`, `SEARCH_LIST_BEFORE_LIST_LOAD`, `SEARCH_LIST_AFTER_LIST_LOAD`, `QUICKSEARCH_LIST_BEFORE_LIST_LOAD` and `QUICKSEARCH_LIST_AFTER_LIST_LOAD` events from `Pimcore\Bundle\AdminBundle\Event\AdminEvents` are deprecated and wont't work in Pimcore 11. Please use the events in `Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents`.  
+- [Events] The `SEARCH_LIST_BEFORE_FILTER_PREPARE`, `SEARCH_LIST_BEFORE_LIST_LOAD`, `SEARCH_LIST_AFTER_LIST_LOAD`, `QUICKSEARCH_LIST_BEFORE_LIST_LOAD` and `QUICKSEARCH_LIST_AFTER_LIST_LOAD` events from `Pimcore\Bundle\AdminBundle\Event\AdminEvents` are deprecated and wont't work in Pimcore 11. Please use `Pimcore\Bundle\SimpleBackendSearchBundle\Event\AdminSearchEvents` in Pimcore 11.  
 - Deprecated `getJsPaths`, `getCssPaths`, `getEditmodeJsPaths` and `getEditmodeCssPaths` in `AbstractPimcoreBundle`. Please use the `PimcoreBundleAdminSupportInterface` and the `BundleAdminSupportTrait` instead.
 - [Events] Deprecated Admin Event classes (below), please use these classes from AdminBundle instead.
   - `Pimcore\Event\AdminEvents`
