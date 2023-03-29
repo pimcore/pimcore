@@ -352,6 +352,7 @@ pimcore:
   - `Pimcore\Event\Model\DocumentDeleteInfoEvent`
   - `Pimcore\Event\Model\ObjectDeleteInfoEvent`
   - `Pimcore\Event\Model\ElementDeleteInfoEventInterface`
+- [Extension Manager] Trait `StateHelperTrait` is deprecated and will be removed in Pimcore 11.
 
 ## 10.5.13
 
