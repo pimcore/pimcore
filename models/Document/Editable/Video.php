@@ -1089,6 +1089,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     private function getEmptyCode(): string
     {
         $uid = 'video_' . uniqid();
+
         return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $this->getWidthWithUnit() . '; height: ' . $this->getHeightWithUnit() . ';"></div></div>';
     }
 
