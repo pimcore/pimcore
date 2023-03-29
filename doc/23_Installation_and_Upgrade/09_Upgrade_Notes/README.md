@@ -2,6 +2,7 @@
 
 ## 11.0.0
 
+- [Logging] Change logging from the redirects of the `SeoBundle` to the channel `routing`
 - [JS Libraries] Packaged some JS libraries with encore
 - [PHP Options] Removed setting following options: `memory_limit`, `max_execution_time`, `max_input_time` and `display_errors`
 - [Logging] Removed constant `PIMCORE_PHP_ERROR_LOG`
