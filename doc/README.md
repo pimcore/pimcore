@@ -9,7 +9,7 @@ This documentation section provides all information you need to use the Core Fra
 
 Pimcore provides a fully flexible and extendable platform for managing and exploiting data of any type. The Core Framework is the foundation of the whole platform and provides a lot of basic functionalities.
 
-It gathers 4 major modules to answer a lot of use cases:
+It gathers four major modules to answer a lot of use cases:
 - Product Information (PIM) and Master Data Management (MDM)
 - Digital Asset Management (DAM)
 - Enterprise Content Management (CMS/UX)
@@ -24,7 +24,7 @@ The Core Framework comes with several core features that can be fully adapted or
 The Core Framework documentation is divided into three sections that aim to guide the readers through its first use of the platform:
 
 * See the [Getting Started](#getting-started) section for an overview of the Core Framework or information about the installation process and the MVC pattern integration within Pimcore.
-* See the [Modules](#modules) section for details about managed elements in Pimcore and associated actions.
+* See the [Element Types](#element-types) section for details about managed elements in Pimcore and associated actions.
 * See the [Platform Topics](#platform-topics) section for documentation about all features implemented within Pimcore.
 
 ## Getting Started
@@ -32,7 +32,7 @@ The Core Framework documentation is divided into three sections that aim to guid
 * [Getting Started](./01_Getting_Started/README.md) 
 * [MVC](./02_MVC/README.md) 
 
-## Modules
+## Element Types
 * [Documents - *Managing Web Pages*](./03_Documents/README.md) 
 * [Assets - *Media Library / Digital Asset Management*](./04_Assets/README.md) 
 * [Objects - *Custom Data Models / Entities, PIM / MDM*](./05_Objects/README.md) 
