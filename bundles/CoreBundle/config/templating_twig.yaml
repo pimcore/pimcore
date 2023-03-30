@@ -3,11 +3,6 @@ services:
         autowire: true
         autoconfigure: true
 
-    # public alias to Twig engine
-    pimcore.templating.engine.twig:
-        alias: twig
-        public: true
-
     Pimcore\Twig\Extension\HelpersExtension: ~
 
     Pimcore\Twig\Extension\DocumentEditableExtension: ~
@@ -18,7 +13,6 @@ services:
     Pimcore\Twig\Extension\PimcoreObjectExtension: ~
 
     Pimcore\Twig\Extension\PimcoreToolExtension: ~
-
 
     Pimcore\Twig\Extension\NavigationExtension: ~
 

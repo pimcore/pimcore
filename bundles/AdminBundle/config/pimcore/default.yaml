@@ -1,6 +1,5 @@
 # Pimcore
 pimcore_admin:
-
     session:
         attribute_bags:
             - pimcore_admin

@@ -4,7 +4,7 @@ services:
         autoconfigure: true
 
     # Class resolver for all types
-    Pimcore\Resolver\ClassResolver:
+    Pimcore\Resolver\ClassResolver: ~
 
     pimcore.class.resolver.document:
         public: true

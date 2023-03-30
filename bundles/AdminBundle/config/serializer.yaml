@@ -13,21 +13,15 @@ services:
     # without influencing each other.
     #
 
-    Pimcore\Admin\Serializer:
+    pimcore_admin.serializer:
         class: Symfony\Component\Serializer\Serializer
         public: true
         arguments: ['@?', '@?']
 
-    pimcore_admin.serializer:
-        alias: Pimcore\Admin\Serializer
-        public: true
-
-    pimcore_admin.serializer.encoder.json:
-        class: Symfony\Component\Serializer\Encoder\JsonEncoder
+    Symfony\Component\Serializer\Encoder\JsonEncoder:
         tags:
             -  { name: pimcore_admin.serializer.encoder }
 
-    pimcore_admin.serializer.normalizer.reference_loop:
-        class: Pimcore\Bundle\AdminBundle\Serializer\Normalizer\ReferenceLoopNormalizer
+    Pimcore\Bundle\AdminBundle\Serializer\Normalizer\ReferenceLoopNormalizer:
         tags:
             -  { name: pimcore_admin.serializer.normalizer }

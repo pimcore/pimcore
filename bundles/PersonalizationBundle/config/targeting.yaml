@@ -2,7 +2,6 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
 
     #
     # TARGETING STORAGE
@@ -58,7 +57,6 @@ services:
     Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoStorage: ~
     Pimcore\Bundle\PersonalizationBundle\Targeting\VisitorInfoResolver: ~
 
-
     #
     # DATA PROVIDERS
     #
@@ -85,6 +83,7 @@ services:
     Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\TargetingStorage: ~
 
     Pimcore\Bundle\PersonalizationBundle\Targeting\Service\VisitedPagesCounter: ~
+
     Pimcore\Bundle\PersonalizationBundle\Targeting\DataProvider\VisitedPagesCounter: ~
 
 
@@ -93,6 +92,7 @@ services:
     #
 
     Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionFactoryInterface: '@Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionFactory'
+
     Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionFactory:
         arguments:
             $conditions: '%pimcore_personalization.targeting.conditions%'
@@ -103,6 +103,7 @@ services:
             $cache: '@pimcore.cache.pool'
 
     Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionMatcherInterface: '@Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionMatcher'
+
     Pimcore\Bundle\PersonalizationBundle\Targeting\ConditionMatcher:
         arguments:
             $expressionLanguage: '@pimcore_personalization.targeting.condition_matcher.expression_language'
@@ -113,11 +114,14 @@ services:
     #
 
     Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\ActionHandlerInterface: '@Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler'
-    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler: ~
-    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\AssignTargetGroup: ~
-    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\Redirect: ~
-    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\CodeSnippet: ~
 
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\DelegatingActionHandler: ~
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\AssignTargetGroup: ~
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\Redirect: ~
+
+    Pimcore\Bundle\PersonalizationBundle\Targeting\ActionHandler\CodeSnippet: ~
 
     #
     # DOCUMENT HANDLING
@@ -125,7 +129,6 @@ services:
 
     Pimcore\Bundle\PersonalizationBundle\Targeting\Document\DocumentTargetingConfigurator:
         public: true
-
 
     #
     # TARGETING CODE
@@ -185,6 +188,8 @@ services:
             - { name: kernel.event_listener, event: pimcore.admin.indexAction.settings, method: indexSettings }
 
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingElementListener: ~
+
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\Frontend\TargetingDocumentRendererListener: ~
+
     Pimcore\Bundle\PersonalizationBundle\Targeting\EventListener\RenderletListener: ~
 

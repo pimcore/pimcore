@@ -10,7 +10,6 @@ services:
     Pimcore\Document\Editable\Block\BlockStateStack:
         public: true
 
-
     Pimcore\Document\Editable\EditableHandler:
         public: true
         arguments:
@@ -22,21 +21,17 @@ services:
         tags:
             - { name: monolog.logger, channel: pimcore }
 
-
     Pimcore\Document\Editable\EditmodeEditableDefinitionCollector: ~
 
     #
     # AREABRICKS
     #
 
-    pimcore.area.brick_manager: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
-
     # scoped container containing only the registered area bricks
     # will be configured in areabrick pass
     pimcore.document.areabrick.brick_locator:
         class: Symfony\Component\DependencyInjection\ServiceLocator
         tags: ['container.service_locator']
-
 
     Pimcore\Extension\Document\Areabrick\AreabrickManager:
         arguments:

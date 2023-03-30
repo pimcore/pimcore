@@ -21,6 +21,7 @@ services:
     #
 
     Pimcore\HttpKernel\BundleLocator\BundleLocatorInterface: '@Pimcore\HttpKernel\BundleLocator\BundleLocator'
+
     Pimcore\HttpKernel\BundleLocator\BundleLocator: ~
 
     Pimcore\HttpKernel\WebPathResolver: ~

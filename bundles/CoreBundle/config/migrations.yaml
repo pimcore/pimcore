@@ -10,7 +10,7 @@ services:
         public: true
 
     Doctrine\Migrations\DependencyFactory:
-        alias: 'doctrine.migrations.dependency_factory'
+        alias: doctrine.migrations.dependency_factory
 
     Pimcore\Migrations\DirectoryAwareVersionComparator:
         arguments:
