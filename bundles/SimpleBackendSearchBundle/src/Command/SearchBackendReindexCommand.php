@@ -105,7 +105,7 @@ class SearchBackendReindexCommand extends AbstractCommand
         return 0;
     }
 
-    private function saveAsset(Asset $asset)
+    private function saveAsset(Asset $asset): void
     {
         Version::disable();
         $asset->markFieldDirty('modificationDate'); // prevent modificationDate from being changed
