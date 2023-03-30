@@ -35,7 +35,7 @@ services:
         deprecated:
             package: 'pimcore/pimcore'
             version: '10.6'
-            message: 'Using the service id "pimcore.area.brick_manager" is deprecated. Please use Pimcore\Extension\Document\Areabrick\AreabrickManager instead.'
+            message: 'Using the service id "%alias_id%" is deprecated. Please use Pimcore\Extension\Document\Areabrick\AreabrickManager instead.'
 
     # scoped container containing only the registered area bricks
     # will be configured in areabrick pass
