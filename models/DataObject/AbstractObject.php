@@ -527,13 +527,15 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         try {
             // If user data has been modified
             $modifiedFields = array_filter($this->getDirtyFields(), fn ($field) => !in_array($field, ['userModification', 'modificationDate']));
+            $parameters[] = $modifiedFields;
 
             $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
             $preEvent = new DataObjectEvent($this, $parameters);
             if ($this->getId()) {
                 $isUpdate = true;
+                $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
                 if (count($modifiedFields) > 0) {
-                    $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
+                    $this->dispatchEvent($preEvent, DataObjectEvents::PRE_SAVE_MODIFICATION);
                 }
             } else {
                 self::disableDirtyDetection();
@@ -635,11 +637,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $this->clearDependentCache($additionalTags);
 
             $postEvent = new DataObjectEvent($this, $parameters);
-            if ($isUpdate && count($modifiedFields) > 0) {
+            if ($isUpdate) {
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
                 }
                 $this->dispatchEvent($postEvent, DataObjectEvents::POST_UPDATE);
+                if (count($modifiedFields) > 0) {
+                    $this->dispatchEvent($postEvent, DataObjectEvents::POST_SAVE_MODIFICATION);
+                }
             } else {
                 self::setDisableDirtyDetection($isDirtyDetectionDisabled);
                 $this->dispatchEvent($postEvent, DataObjectEvents::POST_ADD);
