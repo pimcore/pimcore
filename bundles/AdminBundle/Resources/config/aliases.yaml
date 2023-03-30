@@ -7,14 +7,17 @@ services:
         deprecated:
             package: 'pimcore/pimcore'
             version: '10.6'
+            message: 'The "%alias_id%" alias is deprecated and will be removed in Pimcore 11'
     pimcore_admin.security.token_storage_user_resolver: '@Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver'
     pimcore_admin.security.user_loader:
         alias: '@Pimcore\Bundle\AdminBundle\Security\User\UserLoader'
         deprecated:
             package: 'pimcore/pimcore'
             version: '10.6'
+            message: 'The "%alias_id%" alias is deprecated and will be removed in Pimcore 11'
     pimcore_admin.security.user_checker:
         alias: '@Pimcore\Bundle\AdminBundle\Security\User\UserChecker'
         deprecated:
             package: 'pimcore/pimcore'
             version: '10.6'
+            message: 'The "%alias_id%" alias is deprecated and will be removed in Pimcore 11'
