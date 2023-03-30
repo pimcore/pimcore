@@ -296,7 +296,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     iconCls: "pimcore_icon_delete",
                     handler: this.deleteLayout.bind(this),
                     hidden: typeof this.klass.id === 'undefined',
-                    disabled: !pimcore.settings['class-definition-writeable']
+                    disabled: !pimcore.settings['object-custom-layout-writeable']
                 }
             ]
         };
