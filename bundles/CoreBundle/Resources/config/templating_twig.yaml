@@ -8,6 +8,9 @@ services:
     pimcore.templating.engine.twig:
         alias: twig
         public: true
+        deprecated:
+            package: 'pimcore/pimcore'
+            version: '10.6'
 
     Pimcore\Twig\Extension\HelpersExtension: ~
 
