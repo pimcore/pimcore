@@ -2,7 +2,6 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        public: false
 
     # resolvers and operator/value factories will be injected from compiler pass
     # TODO refactor how the service is used and change to private. Currently it is

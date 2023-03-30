@@ -1,6 +1,5 @@
 services:
     _defaults:
-        public: false
         autowire: true
         autoconfigure: true
 
@@ -27,13 +26,11 @@ services:
     # mimics functionality from the ApplicationLogger itself to be used from any
     # monolog handler.
     Pimcore\Bundle\ApplicationLoggerBundle\Processor\ApplicationLoggerProcessor:
-        public: false
 
     # IntrospectionProcessor adds data regarding called function/line. The skipClassesPartials makes sure
     # we skip the stack frame when called through ApplicationLogger.
     pimcore.app_logger.introspection_processor:
         class: Monolog\Processor\IntrospectionProcessor
-        public: false
         autoconfigure: false
         arguments:
             $level: 'DEBUG'

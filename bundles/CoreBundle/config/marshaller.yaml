@@ -16,8 +16,7 @@ services:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_date, key: 'block_date' }
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_datetime, key: 'block_datetime' }
 
-    Pimcore\DataObject\FielddefinitionMarshaller\BlockDataMarshaller\EncryptedField:
-        class: Pimcore\DataObject\BlockDataMarshaller\EncryptedField
+    Pimcore\DataObject\BlockDataMarshaller\EncryptedField:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_block_encryptedField, key: 'block_encryptedField' }
 
@@ -59,35 +58,29 @@ services:
 
     # classification store
 
-    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\BooleanSelect:
-        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\BooleanSelect
+    Pimcore\DataObject\ClassificationstoreDataMarshaller\BooleanSelect:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_booleanSelect, key: 'classificationstore_booleanSelect' }
 
-    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\EncryptedField:
-        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField
+    Pimcore\DataObject\ClassificationstoreDataMarshaller\EncryptedField:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_encryptedField, key: 'classificationstore_encryptedField' }
 
-    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\Multiselect:
-        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\Multiselect
+    Pimcore\DataObject\ClassificationstoreDataMarshaller\Multiselect:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_multiselect, key: 'classificationstore_multiselect' }
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_countrymultiselect, key: 'classificationstore_countrymultiselect' }
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_languagesmultiselect, key: 'classificationstore_languagemultiselect' }
 
-    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\RgbaColor:
-        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\RgbaColor
+    Pimcore\DataObject\ClassificationstoreDataMarshaller\RgbaColor:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_rgbaColor, key: 'classificationstore_rgbaColor' }
 
-    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\Table:
-        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\Table
+    Pimcore\DataObject\ClassificationstoreDataMarshaller\Table:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_table, key: 'classificationstore_table' }
 
-    Pimcore\DataObject\FielddefinitionMarshaller\Classificationstore\QuantityValue:
-        class: Pimcore\DataObject\ClassificationstoreDataMarshaller\QuantityValue
+    Pimcore\DataObject\ClassificationstoreDataMarshaller\QuantityValue:
         tags:
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_quantityValue, key: 'classificationstore_quantityValue' }
             - { name: pimcore.dataobject.fielddefinition.marshaller, id: fielddefinition_marshaller_classificationstore_inputQuantityValue, key: 'classificationstore_inputQuantityValue' }

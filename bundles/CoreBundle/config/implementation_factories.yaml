@@ -42,4 +42,3 @@ services:
 
     # fallback model builder for pimcore model factory
     Pimcore\Model\Factory\FallbackBuilder:
-        public: false

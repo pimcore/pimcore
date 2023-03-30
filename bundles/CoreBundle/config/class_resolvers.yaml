@@ -5,7 +5,6 @@ services:
 
     # Class resolver for all types
     Pimcore\Resolver\ClassResolver:
-        public: false
 
     pimcore.class.resolver.document:
         public: true

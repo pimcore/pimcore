@@ -23,7 +23,6 @@ services:
 
     # Authenticators for handling admin login and session authentications
     Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminTokenAuthenticator:
-        public: false
         calls:
             - [ setLogger, [ '@logger' ] ]
         tags:
