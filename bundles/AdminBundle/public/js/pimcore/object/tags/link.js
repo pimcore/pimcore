@@ -142,11 +142,23 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
     },
 
     openEditor: function () {
+        let config = [];
+
+        if (!empty(this.fieldConfig.allowedTypes)){
+            config['allowedTypes'] = this.fieldConfig.allowedTypes;
+        }
+        if (!empty(this.fieldConfig.allowedTargets)){
+            config['allowedTargets'] = this.fieldConfig.allowedTargets;
+        }
+        if (!empty(this.fieldConfig.disabledFields)){
+            config['disabledFields'] = this.fieldConfig.disabledFields;
+        }
+
         this.window = pimcore.helpers.editmode.openLinkEditPanel(this.data, {
             empty: this.empty.bind(this),
             cancel: this.cancel.bind(this),
             save: this.save.bind(this)
-        });
+        }, config);
     },
 
     openSearchEditor: function () {

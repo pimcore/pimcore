@@ -102,8 +102,8 @@ class Document extends Model\Asset
             return new Document\ImageThumbnail(null);
         }
 
-        $pageCount = $this->getCustomSetting('document_page_count');
-        if (!$pageCount || $pageCount === 'failed') {
+        if (!$this->getCustomSetting('document_page_count')) {
+            Logger::info('Image thumbnail not yet available, processing is done asynchronously.');
             $this->addToUpdateTaskQueue();
         }
 

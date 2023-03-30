@@ -92,47 +92,6 @@ class AdminEvents
     const SAVE_ACTION_SYSTEM_SETTINGS = 'pimcore.admin.saveAction.system.settings';
 
     /**
-     * Fired before the request params are parsed.
-     *
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
-     * Arguments:
-     *  - requestParams | contains the request parameters
-     *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
-     *
-     * @var string
-     */
-    const SEARCH_LIST_BEFORE_FILTER_PREPARE = 'pimcore.admin.search.list.beforeFilterPrepare';
-
-    /**
-     * Allows you to modify the search backend list before it is loaded.
-     *
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
-     * Arguments:
-     *  - list | the search backend list
-     *  - context | contains contextual information
-     *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
-     *
-     * @var string
-     */
-    const SEARCH_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.search.list.beforeListLoad';
-
-    /**
-     * Allows you to modify the the result after the list was loaded.
-     *
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
-     * Arguments:
-     *  - list | raw result as an array
-     *  - context | contains contextual information
-     *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
-     *
-     * @var string
-     */
-    const SEARCH_LIST_AFTER_LIST_LOAD = 'pimcore.admin.search.list.afterListLoad';
-
-    /**
      * Fired before the request params are parsed. This event apply to the grid list.
      *
      * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
@@ -188,7 +147,7 @@ class AdminEvents
     const OBJECT_LIST_BEFORE_EXPORT = 'pimcore.admin.object.list.beforeExport';
 
     /**
-     * Allows you to modify the the result after the list was loaded. This event apply to the grid list.
+     * Allows you to modify the result after the list was loaded. This event apply to the grid list.
      *
      * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
      * Arguments:
@@ -243,7 +202,7 @@ class AdminEvents
     const ASSET_GET_FIELD_GRID_CONFIG = 'pimcore.admin.asset.getFieldGridConfig';
 
     /**
-     * Allows you to modify the the result after the list was loaded. This event apply to both the folder content preview list and the grid list.
+     * Allows you to modify the result after the list was loaded. This event apply to both the folder content preview list and the grid list.
      *
      * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
      * Arguments:
@@ -312,7 +271,7 @@ class AdminEvents
     const DOCUMENT_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.document.list.beforeListLoad';
 
     /**
-     * Allows you to modify the the result after the list was loaded. This event apply to the seo panel tree.
+     * Allows you to modify the result after the list was loaded. This event apply to the seo panel tree.
      *
      * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
      * Arguments:
@@ -462,35 +421,7 @@ class AdminEvents
     const CLASS_OBJECTBRICK_UPDATE_DEFINITION = 'pimcore.admin.class.objectbrick.updateDefinition';
 
     /**
-     * Allows you to modify the search backend list before it is loaded.
-     *
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
-     * Arguments:
-     *  - list | the search backend list
-     *  - context | contains contextual information
-     *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
-     *
-     * @var string
-     */
-    const QUICKSEARCH_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.quickSearch.list.beforeListLoad';
-
-    /**
-     * Allows you to modify the the result after the list was loaded.
-     *
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
-     * Arguments:
-     *  - list | raw result as an array
-     *  - context | contains contextual information
-     *
-     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
-     *
-     * @var string
-     */
-    const QUICKSEARCH_LIST_AFTER_LIST_LOAD = 'pimcore.admin.quickSearch.list.afterListLoad';
-
-    /**
-     * Fired before the an element is opened
+     * Fired before an element is opened
      *
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ElementController
      * Arguments:
@@ -504,7 +435,7 @@ class AdminEvents
     const RESOLVE_ELEMENT = 'pimcore.admin.resolve.element';
 
     /**
-     * Fired before the an element is opened
+     * Fired before an element is opened
      *
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ElementController
      * Arguments:

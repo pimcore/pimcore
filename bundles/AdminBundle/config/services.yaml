@@ -45,7 +45,9 @@ services:
             $config: '%pimcore.gdpr-data-extrator.assets%'
 
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\SentMail: ~
-    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers: ~
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers:
+        arguments:
+            $logsDir: '%kernel.logs_dir%'
 
 
     #

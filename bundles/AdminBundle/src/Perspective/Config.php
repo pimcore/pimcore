@@ -40,12 +40,7 @@ final class Config
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
             $config = $containerConfig[self::CONFIG_ID]['definitions'];
 
-            $storageConfig = LocationAwareConfigRepository::getStorageConfigurationCompatibilityLayer(
-                $containerConfig,
-                self::CONFIG_ID,
-                'PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES',
-                'PIMCORE_WRITE_TARGET_PERSPECTIVES'
-            );
+            $storageConfig = $containerConfig['config_location'][self::CONFIG_ID];
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
