@@ -48,3 +48,18 @@ parameters:
 			message: "#^Method Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\MessageHandler\\\\SearchBackendHandler\\:\\:shouldFlush\\(\\) is unused\\.$#"
 			count: 1
 			path: bundles/SimpleBackendSearchBundle/src/MessageHandler/SearchBackendHandler.php
+
+		-
+			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Model\\\\Document\\\\Targeting\\\\TargetingDocumentInterface not found\\.$#"
+			count: 1
+			path: models/Document/Editable/Renderlet.php
+
+		-
+			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Document\\\\DocumentTargetingConfigurator not found\\.$#"
+			count: 1
+			path: models/Document/Editable/Renderlet.php
+
+		-
+			message: "#^Class Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Document\\\\DocumentTargetingConfigurator not found\\.$#"
+			count: 1
+			path: models/Document/Editable/Snippet.php
