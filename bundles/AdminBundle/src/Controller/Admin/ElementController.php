@@ -18,8 +18,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\PimcoreAdminExtension;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Db;
-use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ResolveElementEvent;
 use Pimcore\Logger;
 use Pimcore\Model;

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Helper\Dashboard;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -33,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PortalController extends AdminController implements KernelControllerEventInterface
 {
-    protected ?\Pimcore\Helper\Dashboard $dashboardHelper = null;
+    protected ?Dashboard $dashboardHelper = null;
 
     protected function getCurrentConfiguration(Request $request): array
     {
@@ -381,6 +382,6 @@ class PortalController extends AdminController implements KernelControllerEventI
             return;
         }
 
-        $this->dashboardHelper = new \Pimcore\Helper\Dashboard($this->getAdminUser());
+        $this->dashboardHelper = new Dashboard($this->getAdminUser());
     }
 }
