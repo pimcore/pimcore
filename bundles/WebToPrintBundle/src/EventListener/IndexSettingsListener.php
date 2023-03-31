@@ -16,7 +16,7 @@
 namespace Pimcore\Bundle\WebToPrintBundle\EventListener;
 
 use Pimcore\Bundle\WebToPrintBundle\Config;
-use Pimcore\Event\Admin\IndexActionSettingsEvent;
+use Pimcore\Bundle\AdminBundle\Event\IndexActionSettingsEvent;
 
 class IndexSettingsListener
 {

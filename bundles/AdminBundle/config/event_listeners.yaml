@@ -51,3 +51,9 @@ services:
             - { name: monolog.logger, channel: admin_statistics }
 
     Pimcore\Bundle\AdminBundle\EventListener\EnablePreviewTimeSliderListener: ~
+
+    #
+    # Workflows
+    #
+    Pimcore\Bundle\AdminBundle\EventListener\WorkflowManagementListener:
+        public: true # can be disabled

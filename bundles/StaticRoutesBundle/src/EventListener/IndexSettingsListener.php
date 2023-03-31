@@ -16,7 +16,7 @@
 namespace Pimcore\Bundle\StaticRoutesBundle\EventListener;
 
 use Pimcore\Bundle\StaticRoutesBundle\Model\Staticroute;
-use Pimcore\Event\Admin\IndexActionSettingsEvent;
+use Pimcore\Bundle\AdminBundle\Event\IndexActionSettingsEvent;
 
 class IndexSettingsListener
 {

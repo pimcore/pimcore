@@ -273,6 +273,8 @@ pimcore:
   - Relying on `Pimcore\Bootstrap::bootstrap()` for autoloading classes will not work anymore.
   - Removed unused constant `PIMCORE_APP_BUNDLE_CLASS_FILE`
 - [Security] Enabled Content Security Policy by default.
+- [Admin] Removed deprecated Admin Event classes: `Pimcore\Event\Admin\*`, `Pimcore\Event\AdminEvents`, `Pimcore\Event\Model\*`.
+- [Events] Report Event `pimcore.admin.reports.save_settings` has been renamed to `pimcore.reports.save_settings`.
 - Moved `FullTextIndexOptimizeTask` command to SimpleBackendSearchBundle. According to that the namespace changed from `Pimcore\Maintenance\Tasks\FullTextIndexOptimizeTask` to `Pimcore\Bundle\SimpleBackendSearchBundle\Task\Maintenance\FullTextIndexOptimizeTask`.
 - [DataBase] Removed deprecated `PhpArrayFileTable`.
 - [Database] Removed `Pimcore\Db\Helper::insertOrUpdate()` method, please use `Pimcore\Db\Helper::upsert()` instead.

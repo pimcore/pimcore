@@ -21,20 +21,21 @@ use League\Flysystem\UnableToReadFile;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Bundle\AdminBundle\Model\GridConfig;
+use Pimcore\Bundle\AdminBundle\Model\GridConfigFavourite;
+use Pimcore\Bundle\AdminBundle\Model\GridConfigShare;
 use Pimcore\Db;
-use Pimcore\Event\AdminEvents;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
-use Pimcore\Model\GridConfig;
-use Pimcore\Model\GridConfigFavourite;
-use Pimcore\Model\GridConfigShare;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\User;
-use Pimcore\Tool;
+use Pimcore\Bundle\AdminBundle\Tool;
+use Pimcore\Tool\Session;
 use Pimcore\Tool\Storage;
 use Pimcore\Version;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -390,7 +391,7 @@ class AssetHelperController extends AdminController
             }
         }
 
-        Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($helperColumns) {
+        Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($helperColumns) {
             $existingColumns = $session->get('helpercolumns', []);
             $helperColumns = array_merge($helperColumns, $existingColumns);
             $session->set('helpercolumns', $helperColumns);

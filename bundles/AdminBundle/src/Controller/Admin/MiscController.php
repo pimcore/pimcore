@@ -21,6 +21,7 @@ use Pimcore\Config;
 use Pimcore\Controller\Config\ControllerDataProvider;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
+use Pimcore\Bundle\AdminBundle\Tool as AdminTool;
 use Pimcore\Tool\Storage;
 use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -196,7 +197,7 @@ class MiscController extends AdminController
     public function adminCssAction(Request $request, Config $config): Response
     {
         // customviews config
-        $cvData = \Pimcore\CustomView\Config::get();
+        $cvData = \Pimcore\Bundle\AdminBundle\CustomView\Config::get();
 
         // languages
         $languages = \Pimcore\Tool::getValidLanguages();
@@ -339,7 +340,7 @@ class MiscController extends AdminController
      */
     public function getLanguageFlagAction(Request $request): BinaryFileResponse
     {
-        $iconPath = Tool::getLanguageFlagFile($request->get('language'));
+        $iconPath = AdminTool::getLanguageFlagFile($request->get('language'));
         $response = new BinaryFileResponse($iconPath);
         $response->headers->set('Content-Type', 'image/svg+xml');
 
@@ -374,7 +375,7 @@ class MiscController extends AdminController
                 $languageOptions[] = [
                     'language' => $short,
                     'display' => $translation . " ($short)",
-                    'flag' => \Pimcore\Tool::getLanguageFlagFile($short, true),
+                    'flag' => AdminTool::getLanguageFlagFile($short, true),
                 ];
             }
         }

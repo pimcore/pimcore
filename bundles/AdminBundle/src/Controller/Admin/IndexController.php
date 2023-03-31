@@ -19,12 +19,13 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Doctrine\DBAL\Connection;
 use Exception;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Helper\Dashboard;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelResponseEventInterface;
-use Pimcore\Event\Admin\IndexActionSettingsEvent;
-use Pimcore\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Event\IndexActionSettingsEvent;
+use Pimcore\Bundle\AdminBundle\Event\AdminEvents;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Asset;
@@ -35,7 +36,6 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Admin;
-use Pimcore\Tool\Session;
 use Pimcore\Version;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -79,7 +79,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         Config $config
     ): Response {
         $user = $this->getAdminUser();
-        $perspectiveConfig = new \Pimcore\Perspective\Config();
+        $perspectiveConfig = new \Pimcore\Bundle\AdminBundle\Perspective\Config();
         $templateParams = [
             'config' => $config,
             'perspectiveConfig' => $perspectiveConfig,
@@ -150,7 +150,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
 
     protected function addRuntimePerspective(array &$templateParams, User $user): static
     {
-        $runtimePerspective = \Pimcore\Perspective\Config::getRuntimePerspective($user);
+        $runtimePerspective = \Pimcore\Bundle\AdminBundle\Perspective\Config::getRuntimePerspective($user);
         $templateParams['runtimePerspective'] = $runtimePerspective;
 
         return $this;
@@ -178,7 +178,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
     protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection): static
     {
         $config                = $templateParams['config'];
-        $dashboardHelper       = new \Pimcore\Helper\Dashboard($user);
+        $dashboardHelper       = new Dashboard($user);
         $customAdminEntrypoint = $this->getParameter('pimcore_admin.custom_admin_route_name');
 
         try {
@@ -231,7 +231,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
 
             // perspective and portlets
             'perspective'           => $templateParams['runtimePerspective'],
-            'availablePerspectives' => \Pimcore\Perspective\Config::getAvailablePerspectives($user),
+            'availablePerspectives' => \Pimcore\Bundle\AdminBundle\Perspective\Config::getAvailablePerspectives($user),
             'disabledPortlets'      => $dashboardHelper->getDisabledPortlets(),
 
             // this stuff is used to decide whether the "add" button should be grayed out or not
@@ -240,8 +240,8 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'document-types-writeable'            => (new DocType())->isWriteable(),
             'predefined-properties-writeable'     => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
             'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
-            'perspectives-writeable'              => \Pimcore\Perspective\Config::isWriteable(),
-            'custom-views-writeable'              => \Pimcore\CustomView\Config::isWriteable(),
+            'perspectives-writeable'              => \Pimcore\Bundle\AdminBundle\Perspective\Config::isWriteable(),
+            'custom-views-writeable'              => \Pimcore\Bundle\AdminBundle\CustomView\Config::isWriteable(),
             'class-definition-writeable'          => isset($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE']) ? (bool)$_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] : true,
             'object-custom-layout-writeable' => (new CustomLayout())->isWriteable(),
 
@@ -340,7 +340,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         $cvData = [];
 
         // still needed when publishing objects
-        $cvConfig = \Pimcore\CustomView\Config::get();
+        $cvConfig = \Pimcore\Bundle\AdminBundle\CustomView\Config::get();
 
         if ($cvConfig) {
             foreach ($cvConfig as $node) {
