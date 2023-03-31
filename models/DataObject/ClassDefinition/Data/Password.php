@@ -388,7 +388,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
-        if(is_string($data) && $this->isPasswordTooLong($data)) {
+        if (is_string($data) && $this->isPasswordTooLong($data)) {
             throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is too long');
         }
 
