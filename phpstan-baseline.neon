@@ -16,16 +16,6 @@ parameters:
 			path: lib/Mail.php
 
 		-
-			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:postMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
-			count: 1
-			path: bundles/PersonalizationBundle/src/Targeting/ConditionMatcher.php
-
-		-
-			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Bundle\\\\PersonalizationBundle\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:preMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
-			count: 1
-			path: bundles/PersonalizationBundle/src/Targeting/ConditionMatcher.php
-
-		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
